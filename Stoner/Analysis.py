@@ -325,33 +325,38 @@ class AnalysisMixin(object):
             raise RuntimeError("Bad column index: {}".format(col))
         return data, name
 
-    def __poly_outlier(self, row, column, window, metric, xcol=None, order=1):
+    def _poly_outlier(self, row, column, window, metric=3.0, xcol=None, order=1,yerr=None):
         """Alternative outlier detection function that fits a polynomial locally over the window.
 
         Args:
             row (1D array): Current row of data
             column int): Column index of y values to examine
             window (2D array): Local window of data
-            metric (float): Some measure of how sensitive the dection should be
 
         Keyyword Arguments:
+            metric (float): Some measure of how sensitive the dection should be
             xcol (column index): Column of data to use for X values. Defaults to current setas value
             order (int): Order of polynomial to fit. Must be < length of window-1
 
         Returns:
             True if current row is an outlier
         """
-        if order > window.shape[0] - 1:
+        if order > window.shape[0] - 2:
             raise ValueError("order should be smaller than the window length.")
-        if xcol is None:
-            xcol = self.setas._get_cols("xcol")
-        else:
-            xcol = self.find_col(xcol)
+        _=self._col_args(xcol=xcol,ycol=column,yerr=yerr)
 
-        popt, pcov = _np_.polyfit(window[:, xcol], window[:, column], deg=order, cov=True)
-        pval = _np_.polyval(popt, row[xcol])
+           
+        x=window[:,_.xcol]-row[_.xcol]
+        y=window[:,_.ycol]
+        if _.yerr is not None and len(_.yerr)>0:
+            w=1.0/window[:,_.yerr]
+        else:
+            w=None
+            
+        popt, pcov = _np_.polyfit(x,y, w=w,deg=order, cov=True)
+        pval = _np_.polyval(popt, 0.0)
         perr = _np_.sqrt(_np_.diag(pcov))[-1]
-        return abs(row[column] - pval) > metric * perr
+        return abs(pval-row[_.ycol]) > metric * perr
 
     def _get_curve_fit_data(self,xcol,ycol,bounds,sigma):
         """"Gather up the xdata and sigma columns for curve_fit."""
@@ -543,7 +548,7 @@ class AnalysisMixin(object):
         additional column with the uncertainites will be added to the data.
         """
         a = self.find_col(a)
-        if isinstance(a, tuple) and isinstance(b, tuple) and len(a) == 2 and len(b) == 2:  #Error columns on
+        if isinstance(a, (tuple,list)) and isinstance(b, (tuple,list)) and len(a) == 2 and len(b) == 2:  #Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
@@ -890,7 +895,8 @@ class AnalysisMixin(object):
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        if isinstance(a, tuple) and isinstance(b, tuple) and len(a) == 2 and len(b) == 2:  #Error columns on
+        a = self.find_col(a)
+        if isinstance(a, (list,tuple)) and isinstance(b, (list,tuple)) and len(a) == 2 and len(b) == 2:  #Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
@@ -935,7 +941,8 @@ class AnalysisMixin(object):
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        if isinstance(a, tuple) and isinstance(b, tuple) and len(a) == 2 and len(b) == 2:  #Error columns on
+        a = self.find_col(a)
+        if isinstance(a, (list,tuple)) and isinstance(b, (list,tuple)) and len(a) == 2 and len(b) == 2:  #Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
@@ -1488,7 +1495,7 @@ class AnalysisMixin(object):
         additional column with the uncertainites will be added to the data.
         """
         a = self.find_col(a)
-        if isinstance(a, tuple) and isinstance(b, tuple) and len(a) == 2 and len(b) == 2:  #Error columns on
+        if isinstance(a, (list,tuple)) and isinstance(b, (list,tuple)) and len(a) == 2 and len(b) == 2:  #Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
@@ -1603,7 +1610,7 @@ class AnalysisMixin(object):
         index = []
         column = self.find_col(column)  #going to be easier if this is an integer later on
         for i, t in enumerate(self.rolling_window(window, wrap=False, exclude_centre=width)):
-            if func(self.data[i], column, t, certainty, **kargs):
+            if func(self.data[i], column, t, metric=certainty, **kargs):
                 index.append(i)
         self['outliers'] = index  #add outlier indecies to metadata
         index.reverse()  #Always reverse the index in case we're deleting rows in sucession
@@ -2207,7 +2214,8 @@ class AnalysisMixin(object):
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        if isinstance(a, tuple) and isinstance(b, tuple) and len(a) == 2 and len(b) == 2:  #Error columns on
+        a = self.find_col(a)
+        if isinstance(a, (list,tuple)) and isinstance(b, (list,tuple)) and len(a) == 2 and len(b) == 2:  #Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
@@ -2229,7 +2237,7 @@ class AnalysisMixin(object):
         self.add_column((adata - bdata), header=header, index=a, replace=replace)
         if err_calc is not None:
             a = self.find_col(a)
-            self.add_column(err_data, header=err_header, index=a, replace=False)
+            self.add_column(err_data, header=err_header, index=a+1, replace=False)
         return self
 
     def threshold(self, threshold, **kargs):

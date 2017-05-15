@@ -119,7 +119,8 @@ class _setas(object):
 
     @property
     def clone(self):
-        new = _setas()
+        cls=self.__class__
+        new = cls()
         for attr in self.__dict__:
             if not callable(self.__dict__[attr]):
                 new.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
@@ -261,6 +262,7 @@ class _setas(object):
                 value.extend(list("." * (len(self.column_headers) - len(value))))
             if len(self.setas)<self._size:
                 self.setas.extend("."*(self._size-len(self.setas)))
+            value=value[:len(self.setas)]
             for i, v in enumerate(list(value)):
                 if v.lower() not in "xyzedfuvw.-":
                     raise ValueError("Set as column element is invalid: {}".format(v))
@@ -531,6 +533,8 @@ class _evaluatable(object):
 
 class regexpDict(sorteddict):
     """An ordered dictionary that permits looks up by regular expression."""
+    allowed_keys=(object,)
+    
     def __init__(self,*args,**kargs):
         super(regexpDict,self).__init__(*args,**kargs)
 
@@ -588,7 +592,7 @@ class regexpDict(sorteddict):
         try:
             key=self.__lookup__(name,exact=True)
         except KeyError:
-            if not isinstance(name,string_types):
+            if not isinstance(name,self.allowed_keys):
                 raise KeyError("{} is not a match to any key.".format(name))
             key=name
         super(regexpDict,self).__setitem__(key, value)
@@ -638,6 +642,8 @@ class typeHintedDict(regexpDict):
         Rather than subclassing a plain dict, this is a subclass of a :py:class:`blist.sorteddict` which stores the entries in a binary list structure.
         This makes accessing the keys much faster and also ensures that keys are always returned in alphabetical order.
     """
+    allowed_keys=string_types
+    #Force metadata keys to be strings
     _typehints = sorteddict()
 
     __regexGetType = re.compile(r'([^\{]*)\{([^\}]*)\}')
@@ -910,7 +916,8 @@ class typeHintedDict(regexpDict):
         Returns:
             A copy of the current typeHintedDict
         """
-        ret = typeHintedDict()
+        cls=self.__class__
+        ret = cls()
         for k in self.keys():
             t = self._typehints[k]
             nk = k + "{" + t + "}"
@@ -2125,6 +2132,18 @@ class DataFile(metadataObject):
             bool: True if item in self.metadata"""
         return item in self.metadata
 
+    def __deepcopy__(self, memo):
+        """Provides support for copy.deepcopy to work."""
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            try:
+                setattr(result, k, copy.deepcopy(v, memo))
+            except Exception:
+                setattr(result, k, copy.copy(v))                
+        return result
+
     def __delitem__(self, item):
         """Implements row or metadata deletion.
 
@@ -2303,7 +2322,7 @@ class DataFile(metadataObject):
         return ret
 
     def __getstate__(self):
-        return {"data": self.data, "column_headers": self.column_headers, "metadata": self.metadata}
+        return {"data": self.data, "column_headers": self.column_headers, "metadata": self.metadata,"filename":self.filename}
 
 
     def __iter__(self):
@@ -2516,7 +2535,8 @@ class DataFile(metadataObject):
         self["TDI Format"]=fmt
 
     def __reduce_ex__(self, p):
-        return (DataFile, (), self.__getstate__())
+        cls=self.__class__
+        return (cls, (), self.__getstate__())
 
     def __regexp_meta__(self, test):
         """Do a regular expression search for all meta data items.
@@ -2745,6 +2765,15 @@ class DataFile(metadataObject):
                         ret[c]=ret[c][0]
                     else:
                         ret[c]=None
+        elif isinstance(scalar,bool) and not scalar:
+            for c in ret:
+                if c.startswith("x") or c.startswith("has_"):
+                    continue
+                if not isinstance(ret[c],Iterable) and ret[c] is not None:
+                    ret[c]=list([ret[c]])
+                elif ret[c] is None:
+                    ret[c]=[]
+            
         return ret
 
     def _pop_mask(self):
@@ -2768,7 +2797,7 @@ class DataFile(metadataObject):
 
 #   PUBLIC METHODS
 
-    def add_column(self, column_data, header=None, index=None, func_args=None, replace=False):
+    def add_column(self, column_data, header=None, index=None, func_args=None, replace=False,setas=None):
         """Appends a column of data or inserts a column to a datafile instance.
 
         Args:
@@ -2781,6 +2810,7 @@ class DataFile(metadataObject):
             func_args (dict): If column_data is a callable object, then this argument
                 can be used to supply a dictionary of function arguments to the callable object.
             replace (bool): Replace the data or insert the data (default)
+            setas (str): Set the type of column (x,y,z data etc - see :py:attr:`Stoner.Core.DataFile.setas`)
 
         Returns:
             self: The :py:class:`DataFile` instance with the additonal column inserted.
@@ -2797,7 +2827,14 @@ class DataFile(metadataObject):
             index = self.find_col(index)
             if header is None:
                 header = self.column_headers[index]
-
+                
+        if isinstance(setas,str) and len(setas)==1 and setas in "xyzdefuvw.-":
+            pass
+        elif setas is not None:
+            raise TypeError("setas parameter should be a single letter in the set xyzdefuvw.-, not {}".format(setas))
+        else:
+            setas="."
+                
         if isinstance(column_data, list):
             column_data = _np_.array(column_data)
 
@@ -2830,16 +2867,24 @@ class DataFile(metadataObject):
             _np__data = _np_.append(_np__data, _np_.zeros(dr - cl))
         if replace:
             self.data[:, index] = _np__data
+            if setas!="-":
+                self.setas[index]=setas
+                           
         else:
             if dc * dr == 0:
                 self.data = DataArray(_np_.transpose(_np_.atleast_2d(_np__data)),setas=self.data._setas)
                 self.column_headers=[header,]
+                self.setas=setas
+                
             else:
                 columns=copy.copy(self.column_headers)
-                setas=list(self.setas)
-                setas.insert(index,".")
+                old_setas=list(self.setas)
+                if setas!="-":
+                    old_setas.insert(index,setas)
+                else:
+                    old_setas.insert(index,old_setas[index])
                 self.data = DataArray(_np_.insert(self.data, index, _np__data, 1))
-                self.setas(setas)
+                self.setas(old_setas)
                 columns.insert(index,header)
                 self.column_headers=columns
         return self

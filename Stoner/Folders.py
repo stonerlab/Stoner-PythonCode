@@ -22,6 +22,17 @@ from .Core import metadataObject,DataFile,regexpDict
 
 regexp_type=(re._pattern_type,)
 
+def _pathsplit(pth):
+    """Split pth into a sequence of individual parts with path.split."""
+    dpart,fpart=path.split(pth)
+    if dpart=="":
+        return [fpart,]
+    else:
+        rest=_pathsplit(dpart)
+        rest.append(fpart)
+        return rest
+    
+
 
 class baseFolder(MutableSequence):
     
@@ -41,6 +52,7 @@ class baseFolder(MutableSequence):
         lsgrp (list of str): the names of all the groups in the folder
         mindepth (int): the minimum level of nesting groups in the folder.
         not_empty (iterator of metadaaObject): iterates over all members of the folder that have non-zero length
+        shape (tuple): a data structure that indicates the structure of the objectFolder - tuple of number of files and dictionary of the shape of each group.
         type (subclass of metadtaObject): the class of objects sotred in this folder
     """
     
@@ -77,14 +89,19 @@ class baseFolder(MutableSequence):
                 the mixin classes
             - calls the mixin init methods.
         """
-        self.args=copy(args)
-        self.kargs=copy(kargs)
-        #List of routines that define the interface for manipulating the objects stored in the folder
-        for k in list(self.kargs.keys()): # Store keyword parameters as attributes
-            if not hasattr(self,k) or k in ["type","kargs","args"]:
-                value=kargs.pop(k,None)
-                self.__setattr__(k,value)
-                if self.debug: print("Setting self.{} to {}".format(k,value))
+        if len(args)==1 and isinstance(args[0],baseFolder): # Special case for type changing.
+            self.args=()
+            self.kargs={}
+            self.__init_from_other(args[0])
+        else:
+            self.args=copy(args)
+            self.kargs=copy(kargs)
+            #List of routines that define the interface for manipulating the objects stored in the folder
+            for k in list(self.kargs.keys()): # Store keyword parameters as attributes
+                if not hasattr(self,k) or k in ["type","kargs","args"]:
+                    value=kargs.pop(k,None)
+                    self.__setattr__(k,value)
+                    if self.debug: print("Setting self.{} to {}".format(k,value))
         if python_v3:
             super(baseFolder,self).__init__()
         else:
@@ -93,6 +110,11 @@ class baseFolder(MutableSequence):
     ###########################################################################
     ################### Properties of baseFolder ##############################
 
+    @property
+    def clone(self):
+        """Clone just does a deepcopy as a property for compatibility with :py:class:`Stoner.Core.DataFile`."""
+        return deepcopy(self)
+    
     @property
     def depth(self):
         """Gives the maximum number of levels of group below the current objectFolder."""
@@ -148,7 +170,8 @@ class baseFolder(MutableSequence):
     @property
     def ls(self):
         """List just the names of the objects in the folder."""
-        return self.__names__()
+        for f in self.__names__():
+            yield f
 
     @property
     def lsgrp(self):
@@ -196,6 +219,11 @@ class baseFolder(MutableSequence):
         else:
             self._objects=value
 
+    @property
+    def shape(self):
+        """Return a data structure that is characteristic of the objectFolder's shape."""
+        grp_shape={k:self[k].shape for k in self.groups}
+        return (len(self),grp_shape)
 
     @property
     def type(self):
@@ -378,8 +406,20 @@ class baseFolder(MutableSequence):
             for iname in islice(self.__names__(),name.start,name.stop,name.step):
                 other.__setter__(iname,self.__getter__(iname))
             return other
+        elif isinstance(name,tuple): # Recursive indexing through tree with a tuple
+            item=name[0]
+            name=tuple(name[1:])
+            if len(name)==0: #Final stage of indexing and we're still in the data folder
+                return self[item]
+            elif len(name)==1: # This allows indexing into a metadataobject
+                name=name[0]
+                grp=self[item]
+                return grp[name]
+            else: # Continuing to index into the tree of groups
+                grp=self[item]
+                return grp[name]
         else:
-            raise KeyError("Can't index the baseFolder with {}",format(name))
+            raise KeyError("Can't index the baseFolder with {}".format(name))
 
     def __setitem__(self,name,value):
         """Attempts to store a value in either the groups or objects.
@@ -461,11 +501,13 @@ class baseFolder(MutableSequence):
             return result
         elif isinstance(other,int_types): #Simple decimate
             for i in range(other):
-                self.add_group("Group {}".format(i))
-            for ix,d in enumerate(self):
+                result.add_group("Group {}".format(i))
+            for ix in range(len(self)):
+                d=self.__getter__(ix,instantiate=None)
                 group=ix%other
-                self.groups["Group {}".format(group)]+=d
-            self.__clear__()
+                result.groups["Group {}".format(group)].__setter__(self.__lookup__(ix),d)
+            result.__clear__()
+            return result
             
     def __sub_core_int__(self,result,other):
         """Remove indexed file."""
@@ -483,7 +525,7 @@ class baseFolder(MutableSequence):
     
     def __sub_core_data__(self,result,other):
         """Remove a data object."""
-        othername=getattr(other,"filename",getattr(other,"title"))
+        othername=getattr(other,"filename",getattr(other,"title",None))
         if othername in result.__names__():
             result.__deleter__(othername)
         else:
@@ -744,6 +786,26 @@ class baseFolder(MutableSequence):
 
     ###########################################################################
     ###################### Private Methods ####################################
+
+    def __init_from_other(self,other):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        for k, v in other.__dict__.items():
+            if k=="groups":
+                continue
+            if k=="objects":
+                continue
+            try:
+                setattr(result, k, deepcopy(v))
+            except Exception:
+                setattr(result, k, copy(v))                
+
+        for g in other.groups:
+            self.groups[g]=cls(other.groups[g])
+        for n in other.ls:
+            self.__setter__(n,other.__getter__(n,instantiate=None))
+
+        return result
     
     def _update_from_object_attrs(self,obj):
         """Updates an object from object_attrs store."""
@@ -753,10 +815,10 @@ class baseFolder(MutableSequence):
         return obj
 
 
-    def _pruner_(self,grp,breadcrumb):
+    def _pruner_(self,grp,breadcrumb,prunelist=None):
         """Removes any empty groups fromthe objectFolder tree."""
-        if len(grp)==0:
-            self._pruneable.append(breadcrumb)
+        if len(grp)==0 and len(grp.groups)==0:
+            prunelist.append(breadcrumb)
             ret=True
         else:
             ret=False
@@ -783,7 +845,7 @@ class baseFolder(MutableSequence):
                 where f is either a objectFolder or metadataObject.
         """
         group=kargs.pop("group",False)
-        replace_terminal=kargs.op("replace_terminal",False)
+        replace_terminal=kargs.pop("replace_terminal",False)
         only_terminal=kargs.pop("only_terminal",True)
         walker_args=kargs.pop("walker_args",dict())
         breadcrumb=kargs.pop("breadcrumb",dict())
@@ -875,7 +937,7 @@ class baseFolder(MutableSequence):
             
         Keyword Arguments:
             invert (bool): Invert the sense of the filter (done by doing an XOR whith the filter condition
-            copy (bool): If True, then a new copy of the current baseFolder is made before filtering.
+            copy (bool): If set True then the :py:class:`DataFolder` is copied before being filtered. \Default is False - work in place.
             
         Returns:
             The current objectFolder object
@@ -903,17 +965,20 @@ class baseFolder(MutableSequence):
         result.extend(names)
         return result
 
-    def filterout(self, filter): # pylint: disable=redefined-builtin
+    def filterout(self, filter,copy=False): # pylint: disable=redefined-builtin
         """Synonym for self.filter(filter,invert=True)
         
         Args:
-        filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a 
-            metadataObject and evaluates True or False
+            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a 
+                metadataObject and evaluates True or False
+            
+        Keyword Arguments:
+            copy (bool): If set True then the :py:class:`DataFolder` is copied before being filtered. \Default is False - work in place.
         
         Returns:
             The current objectFolder object with the files in the file list filtered.
         """
-        return self.filter(filter, invert=True)
+        return self.filter(filter, invert=True,copy=copy)
 
     def flatten(self, depth=None):
         """Compresses all the groups and sub-groups iunto a single flat file list.
@@ -934,7 +999,7 @@ class baseFolder(MutableSequence):
             for g in self.groups:
                 self.groups[g].flatten()
                 self.extend([
-                    self.groups[g].__getter__(self.groups[g].__lookup__(n),instantiate=False)
+                    self.groups[g].__getter__(self.groups[g].__lookup__(n),instantiate=None)
                     for n in self.groups[g].__names__()])
             self.groups={}
         return self
@@ -1048,6 +1113,7 @@ class baseFolder(MutableSequence):
         elif isinstance(value,string_types):
             return value
         else:
+            print(type(value))
             name="Untitled-{}".format(self._last_name)
             while name in self:
                 self._last_name+=1
@@ -1074,10 +1140,10 @@ class baseFolder(MutableSequence):
         Returns:
             A copy of thte pruned objectFolder.
         """
-        self._pruneable=[] # slightly ugly to avoid modifying whilst iterating
-        self.walk_groups(self._pruner_,group=True)
-        while len(self._pruneable)!=0:
-            for p in self._pruneable:
+        pruneable=[] # slightly ugly to avoid modifying whilst iterating
+        self.walk_groups(self._pruner_,group=True,walker_args={"prunelist":pruneable})
+        while len(pruneable)!=0:
+            for p in pruneable:
                 pth=tuple(p[:-1])
                 item=p[-1]
                 if len(pth)==0:
@@ -1085,9 +1151,8 @@ class baseFolder(MutableSequence):
                 else:
                     grp=self[pth]
                     del grp[item]
-            self._pruneable=[]
-            self.walk_groups(self._pruner_,group=True)
-        del self._pruneable
+            pruneable=[]
+            self.walk_groups(self._pruner_,group=True,walker_args={"prunelist":pruneable})
         return self
 
     def select(self,*args, **kargs):
@@ -1139,6 +1204,7 @@ class baseFolder(MutableSequence):
             then pass them via the first positional dictionary value.
         """
         recurse=kargs.pop("recurse",False)
+        negate=kargs.pop("negate",False)
         if len(args)==1:
             if callable(args[0]):
                 kargs["__"]=args[0]
@@ -1156,6 +1222,7 @@ class baseFolder(MutableSequence):
                 if callable(kargs[arg]) and kargs[arg](f):
                     break
                 elif isinstance(arg,string_types):
+                    val=kargs[arg]
                     parts=arg.split("__")
                     if parts[-1] in operator and len(parts)>1:
                         if len(parts)>2 and parts[-2]=="not":
@@ -1174,7 +1241,7 @@ class baseFolder(MutableSequence):
                         else: #Everything else is exact matches
                             op="eq"
                     func=operator[op]
-                    if arg in f and negate^func(f[arg],kargs[arg]):
+                    if arg in f and negate^func(f[arg],val):
                         break
             else: # No tests matched - contineu to next line
                 continue
@@ -1263,10 +1330,10 @@ class baseFolder(MutableSequence):
         relpaths=[path.relpath(f,self.directory) for f in self.__names__()]
         dels=list()
         for i,f in enumerate(relpaths):
-            grp=path.split(f)[0]
+            grp=_pathsplit(f)[0]
             if grp!=f and grp!="":
                 self.add_group(grp)
-                self.groups[grp].append([i])
+                self.groups[grp].append(self.__getter__(i,instantiate=None))
                 dels.append(i)
         for i in sorted(dels,reverse=True):
             del self[i]
@@ -1309,7 +1376,7 @@ class baseFolder(MutableSequence):
                 where f is either a objectFolder or metadataObject.
         """
         group=kargs.pop("group",False)
-        replace_terminal=kargs.op("replace_terminal",False)
+        replace_terminal=kargs.pop("replace_terminal",False)
         only_terminal=kargs.pop("only_terminal",True)
         walker_args=kargs.pop("walker_args",dict())
         walker_args=dict() if walker_args is None else walker_args
@@ -1384,7 +1451,7 @@ class DiskBssedFolder(object):
         for k in defaults:
             setattr(self,k,kargs.pop(k,defaults[k]))
         super(DiskBssedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
-        if self.readlist and len(args)>0:
+        if self.readlist and len(args)>0 and isinstance(args[0],string_types):
             self.getlist(directory=args[0])
         
         
@@ -1477,7 +1544,7 @@ class DiskBssedFolder(object):
     def __sub_core__(self,result,other):
         """Additional logic to check for match to basenames,"""
         if isinstance(other,string_types):
-            if other in result.basenames and path.join(result.directory,other) in result.ls:
+            if other in list(result.basenames) and path.join(result.directory,other) in list(result.ls):
                 other=path.join(result.directory,other)
                 result.__deleter__(other)
                 return result
@@ -1487,8 +1554,8 @@ class DiskBssedFolder(object):
     def __lookup__(self,name):
         """Addional logic for the looking up names."""
         if isinstance(name,string_types):
-            if self.basenames.count(name)==1:
-                return self.__names__()[self.basenames.index(name)]
+            if list(self.basenames).count(name)==1:
+                return self.__names__()[list(self.basenames).index(name)]
             
         return super(DiskBssedFolder,self).__lookup__(name)
         
@@ -1521,15 +1588,17 @@ class DiskBssedFolder(object):
                 m=p.search(tmp.filename)
                 for k in m.groupdict():
                     tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
-        if self.read_means:
+        if self.read_means: #Add mean and standard deviations to the metadata
             if len(tmp)==0:
                 pass
             elif len(tmp)==1:
                 for h in tmp.column_headers:
                     tmp[h]=tmp.column(h)[0]
+                    tmp["{}_stdev".format(h)]=None
             else:
                 for h in tmp.column_headers:
                     tmp[h]=_np_.mean(tmp.column(h))
+                    tmp["{}_stdev".format(h)]=_np_.std(tmp.column(h))
         tmp['Loaded from']=tmp.filename
         tmp=self._update_from_object_attrs(tmp)
         self.__setter__(name,tmp)
@@ -1550,10 +1619,8 @@ class DiskBssedFolder(object):
     @property
     def basenames(self):
         """Returns a list of just the filename parts of the objectFolder."""
-        ret=[]
         for x in self.__names__():
-            ret.append(path.basename(x))
-        return ret
+            yield path.basename(x)
 
     @property
     def pattern(self):
@@ -1753,40 +1820,65 @@ class DataFolder(DiskBssedFolder,baseFolder):
 
         return self
 
-    def extract(self,metadata):
+    def extract(self,*metadata,**kargs):
         """Walks through the terminal group and gets the listed metadata from each file and constructsa replacement metadataObject.
 
         Args:
-            metadata (list): List of metadata indices that should be used to construct the new data file.
+            *metadata (str): One or more metadata indices that should be used to construct the new data file.
+            
+        Ketyword Arguments:
+            copy (bool): Take a copy of the :py:class:`DataFolder` before starting the extract (default is True)
 
         Returns:
             An instance of a metadataObject like object.
         """
+        copy=kargs.pop("copy",True)
+
+        args=[]
+        for m in metadata:
+            if isinstance(m,string_types):
+                args.append(m)
+            elif isinstance(m,Iterable):
+                args.extend(m)
+            else:
+                raise TypeError("Metadata values should be strings, or lists of strings, not {}".format(type(m)))
+        metadata=args
 
         def _extractor(group,trail,metadata):
 
             results=group.type()
             results.metadata=group[0].metadata
-
-            ok_data=list
+            headers=[]
+            
+            ok_data=list()
             for m in metadata: # Sanity check the metadata to include
                 try:
-                    test=_np_.array(results[m])
+                    test=results[m]
+                    if not isinstance(test,Iterable) or isinstance(test,string_types):
+                        test=_np_.array([test])
+                    else:
+                        test=_np_.array(test)
                 except Exception:
                     continue
                 else:
                     ok_data.append(m)
-                    results.column_headers.extend([m]*len(test))
+                    headers.extend([m]*len(test))
 
-            row=_np_.array([])
             for d in group:
+                row=_np_.array([])
                 for m in ok_data:
                     row=_np_.append(row,_np_.array(d[m]))
                 results+=row
+            results.column_headers=headers
 
             return results
+        
+        if copy:
+            ret=deepcopy(self)
+        else:
+            ret=self
 
-        return self.walk_groups(_extractor,group=True,replace_terminal=True,walker_args={"metadata":metadata})
+        return ret.walk_groups(_extractor,group=True,replace_terminal=True,walker_args={"metadata":metadata})
 
     def gather(self,xcol=None,ycol=None):
         """Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a :py:class:`Stoner.Core.metadataObject`
@@ -1799,77 +1891,57 @@ class DataFolder(DiskBssedFolder,baseFolder):
             This is a wrapper around walk_groups that assembles the data into a single file for further analysis/plotting.
 
         """
-        def _gatherer(group,trail,xcol=None,ycol=None):
+        def _gatherer(group,trail,xcol=None,ycol=None,xerr=None,yerr=None,**kargs):
             yerr=None
             xerr=None
-            if xcol is None and ycol is None:
-                lookup=True
-                cols=group[0]._get_cols()
-                xcol=cols["xcol"]
-                ycol=cols["ycol"]
-                if  cols["has_xerr"]:
-                    xerr=cols["xerr"]
-                if cols["has_yerr"]:
-                    yerr=cols["yerr"]
+            cols=group[0]._col_args(xcol=xcol,ycol=ycol,xerr=xerr,yerr=yerr,scalar=False)
+            lookup=xcol is None and ycol is None
+            xcol=cols["xcol"]
+
+            if  cols["has_xerr"]:
+                xerr=cols["xerr"]
             else:
-                lookup=False
-
-            xcol=group[0].find_col(xcol)
-            ycol=group[0].find_col(ycol)
-
+                xerr=None
+           
+            common_x=kargs.pop("common_x",True)
+                        
             results=group.type()
             results.metadata=group[0].metadata
             xbase=group[0].column(xcol)
             xtitle=group[0].column_headers[xcol]
-            results&=xbase
-            results.column_headers[0]=xtitle
-            setas=["x"]
+            results.add_column(xbase,header=xtitle,setas="x")
             if cols["has_xerr"]:
                 xerrdata=group[0].column(xerr)
-                results&=xerrdata
-                results.column_headers[-1]="Error in {}".format(xtitle)
-                setas.append("d")
+                xerr_title="Error in {}".format(xtitle)
+                results.add_column(xerrdata,header=xerr_title,setas="d")
             for f in group:
                 if lookup:
-                    cols=f._get_cols()
+                    cols=f._col_args(scalar=False)
                     xcol=cols["xcol"]
-                    ycol=cols["ycol"]
-                    zcol=cols["zcol"]
                 xdata=f.column(xcol)
-                ydata=f.column(ycol)
-                if _np_.any(xdata!=xbase):
-                    results&=xdata
-                    results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[xcol])
+                if _np_.any(xdata!=xbase) and not common_x:
+                    xtitle=group[0].column_headers[xcol]
+                    results.add_column(xbase,header=xtitle,setas="x")
                     xbase=xdata
-                    setas.append("x")
                     if cols["has_xerr"]:
                         xerr=cols["xerr"]
-                        if _np_.any(f.column(xerr)!=xerrdata):
-                            xerrdata=f.column(xerr)
-                            results&=xerrdata
-                            results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[xerr])
-                            setas.append("d")
-                for i in range(len(ycol)):
-                    results&=ydata[:,i]
-                    setas.append("y")
-                    results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[ycol[i]])
-                    if cols["has_yerr"]:
-                        yerr=cols["yerr"][i]
-                        results&=f.column(yerr)
-                        results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[yerr])
-                        setas.append("e")
-                if len(zcol)>0:
-                    zdata=f.column(zcol)
-                    for i in range(len(zcol)):
-                        results&=zdata[:,i]
-                        setas.append("z")
-                        results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[zcol[i]])
-                        if cols["has_zerr"]:
-                            zerr=cols["zerr"][i]
-                            results&=f.column(zerr)
-                            results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[zerr])
-                            setas.append("f")
-            results.setas=setas
+                        xerrdata=f.column(xerr)
+                        xerr_title="Error in {}".format(xtitle)
+                        results.add_column(xerrdata,header=xerr_title,setas="d")
+                for col,has_err,ecol,setcol,setecol in zip(["ycol","zcol","ucol","vcol","wcol"],
+                                                    ["has_yerr","has_zerr","","",""],
+                                                    ["yerr","zerr","","",""], "yzuvw","ef..."):
+                    if len(cols[col])==0:
+                        continue
+                    data=f.column(cols[col])
+                    for i in range(len(cols[col])):
+                        title="{}:{}".format(path.basename(f.filename),f.column_headers[cols[col][i]])
+                        results.add_column(data[:,i],header=title,setas=setcol)
+                    if has_err!="" and cols[has_err]:
+                        err_data=f.column(cols[ecol])
+                        for i in range(len(cols[ecol])):
+                            title="{}:{}".format(path.basename(f.filename),f.column_headers[cols[ecol][i]])
+                            results.add_column(err_data[:,i],header=title,setas=setecol)
             return results
 
         return self.walk_groups(_gatherer,group=True,replace_terminal=True,walker_args={"xcol":xcol,"ycol":ycol})
