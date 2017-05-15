@@ -74,7 +74,7 @@ file formats.
 There are also two mxin classes designed to work with DataFile to enable additional functionality for writing analysis programs.
 
 *   **Stoner.Analysis.AnalysisMixin** provides additional methods for curve-fitting, differentiating, smoothing and carrying out
-        basic calculations on data.
+    basic calculations on data.
 
 * **Stoner.plot.PlotMixin** provides additional routines for plotting data on 2D or 3D plots.
 
@@ -108,7 +108,7 @@ Resources
 
 Included in the `github repository`_  are a (small) collection of sample scripts
 for carrying out various operations and some sample data files for testing the loading and processing of data. There is also a
-:ref:`User_Guide` as part of this documentation, along with a :doc:`complete API reference <Stoner>`
+`User_Guide`_ as part of this documentation, along with a :doc:`complete API reference <Stoner>`
 
 Contact and Licensing
 =====================
@@ -134,14 +134,7 @@ making beta packages available.
 Development Version
 -------------------
 
-The current development version is 0.7. Features of 0.7 include
-
-    *   Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin
-    *   Addition of Stoner.Image package to handle image analysis
-    *   Refactor DataFolder to use Mixin classes
-    *   DataFolder now defaults to using :py:class:`Stoner.Core.Data`
-    *   DataFolder has an options to skip iterating over empty Data files
-    *  Further improvements to :py:attr:`Stoner.Core.DataFile.setas` handline.
+The development version will be on version 0.8. Presently nothing has been done on this.
 
 Online documentation for all versions can be found on the ReadTheDocs pages `online documentation`_
 
@@ -158,19 +151,36 @@ Citing the Stoner Package
 We maintain a digital object identifier (doi) for this package (linked to on the status bar at the top of this readme) and
 encourage any users to cite this package via that doi.
 
-Stable Version
---------------
+Stable Versions
+---------------
 
-The current stable version is 0.6. This features some major changes in the architecture, switching from a numpy MaskedArray
-as the main data store to a custom sub-class that contains most of the logic for indexing data by column name and designation.
-The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.
-Other underlying changes are a switch to using properties rather than straight attribute access.
+The current stable version is 0.7. Features of 0.7 include
+
+    *   Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin
+    *   Addition of Stoner.Image package to handle image analysis
+    *   Refactor DataFolder to use Mixin classes
+    *   DataFolder now defaults to using :py:class:`Stoner.Core.Data`
+    *   DataFolder has an options to skip iterating over empty Data files
+    *   Further improvements to :py:attr:`Stoner.Core.DataFile.setas` handline.
+
+0.7 will continue to have bug fix releases and back-ports of anything very useful.
+
+The old stable version was 0.6. This features 
+
+    *   Some major changes in the architecture, 
+    *   Switching from a numpy MaskedArray as the main data store to a custom sub-class that contains most of the logic 
+        for indexing data by column name and designation.
+    *   The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.
+    *   Other underlying changes are a switch to using properties rather than straight attribute access.
 
 0.6 now also makes use of filemagic to work out the mime type of files to be loaded to try and improve the resilience of the automatic
 file format detection on platforms where this is supported and adds some extra methods to AnalyseFile for extrapolation.
 
-0.6 should work on Python 2.7 and 3.5
+No further relases will be made to 0.6.
+
+0.6 and 0.7 should work on Python 2.7 and 3.5
 
 .. _online documentation: http://stoner-pythoncode.readthedocs.io/en/latest/
 .. _github repository: http://www.github.com/gb119/Stoner-PythonCode/
 .. _Dr Gavin Burnell: http://www.stoner.leeds.ac.uk/people/gb
+.. _User_Guide: http://stoner-pythoncode.readthedocs.io/en/latest/UserGuide/ugindex.html

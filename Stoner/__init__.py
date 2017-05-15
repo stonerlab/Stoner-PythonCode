@@ -12,7 +12,7 @@ from .Core import DataFile,Data
 from .Folders import DataFolder
 
 from os import path as _path_
-__version_info__ = ('0', '7', '0rc4')
+__version_info__ = ('0', '7', '0')
 __version__ = '.'.join(__version_info__)
 
 __home__=_path_.realpath(_path_.dirname(__file__))
