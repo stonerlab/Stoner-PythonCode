@@ -43,7 +43,6 @@ clean:
 	-rm -rf classes/* functions/*
 
 readme:
-	pandoc -f rst -t markdown_github -o README.md readme.rst
 	cp readme.rst ../README.rst
 
 html: readme

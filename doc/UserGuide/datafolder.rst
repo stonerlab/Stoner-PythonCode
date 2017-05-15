@@ -118,7 +118,7 @@ groups, then they are merged with the addition operator.
 Getting a List of Files
 -----------------------
 
-To get a list of the names of the files in a :py:class:`DataFolder`, you can use the py:attr:`DataFolder.ls` attribute.
+To get a list of the names of the files in a :py:class:`DataFolder`, you can use the :py:attr:`DataFolder.ls` attribute.
 Sub-:py:class:`DataFolder`s also have a name (essentially a string key to the dictionary that holds them), this can be accessed
 via the :py:attr:`DataFolder.lsgrp` generator fumnction.::
 
