@@ -13,8 +13,24 @@
 
 import sys, os
 import os.path as path
+import shutil
 
-sys.path.append(path.realpath(path.join(path.dirname(__file__),"..")))
+my_path=path.dirname(__file__)
+
+if "READTHEDOCS" in os.environ:
+    print("Read the Docs special link.")
+    plt_path=path.join(my_path,"_build","plot_directive")
+    print(plt_path)
+    if not path.exists(plt_path):
+        print("Creating plot_directives path.")
+        os.makedirs(path.join(my_path,"_build","plot_directive"))
+    if path.exists(path.join(plt_path,"samples")):
+        print("Removing stale files.")
+        shutil.rmtree(path.join(my_path,"_build","plot_directive","samples"))
+    print("Copying cached figures")
+    shutil.copytree(path.join(my_path,"cached_figs/samples"),path.join(my_path,"_build","plot_directive","samples"))
+
+sys.path.append(path.realpath(path.join(my_path,"..")))
 
 from better import better_theme_path
 
@@ -287,8 +303,7 @@ napoleon_use_rtype = False
 
 automodapi_toctreedirnm='classes'
 
-plot_formats = [("png",96),]
-plot_html_show_formats = False
+plot_html_show_formats = True
 plot_include_source = True
 plot_html_show_source_link = False
 
