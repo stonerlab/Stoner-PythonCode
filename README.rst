@@ -18,6 +18,9 @@
 .. image:: https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg
    :target: https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode
 
+.. image:: http://depsy.org/api/package/pypi/Stoner/badge.svg
+   :target: http://depsy.org/package/python/Stoner
+
 Introduction
 ============
 
