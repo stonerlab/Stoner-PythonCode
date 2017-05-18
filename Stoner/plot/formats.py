@@ -212,11 +212,12 @@ class DefaultPlotStyle(object):
             return self._stylesheet[1]
         levels = type.mro(type(self))[:-1]
         sheets=[]
+        classes=[]
         for c in levels: # Iterate through all possible parent classes and build a list of stylesheets
-            if c is self.__class__:
+            if c is self.__class__ or c in classes:
                 continue
-            for f in [join(dirname(getfile(c)), c.stylename + ".mplstyle"),
-                      join(dirname(getfile(c)), "stylelib",c.stylename + ".mplstyle"),
+            for f in [join(realpath(dirname(getfile(c))), c.stylename + ".mplstyle"),
+                      join(dirname(realpath(getfile(c))), "stylelib",c.stylename + ".mplstyle"),
                       join(dirname(realpath(__file__)), "stylelib",c.stylename + ".mplstyle"),
                 ]: # Look in first of all the same directory as the class file and then in a stylib folder
                 if exists(f):
@@ -225,9 +226,10 @@ class DefaultPlotStyle(object):
             else: # Fallback, does the parent class define a builtin stylesheet ?
                 if c.stylename in plt.style.available:
                     sheets.append(c.stylename)
+            classes.append(c) # Stop double visiting files
         #Now do the same for this class, but allow the stylename to be an instance variable as well
-        for f in [join(dirname(getfile(self.__class__)), self.stylename + ".mplstyle"),
-                  join(dirname(getfile(self.__class__)), "stylelib",self.stylename + ".mplstyle"),
+        for f in [join(dirname(realpath(getfile(self.__class__))), self.stylename + ".mplstyle"),
+                  join(dirname(realpath(getfile(self.__class__))), "stylelib",self.stylename + ".mplstyle"),
             ]:
             if exists(f):
                 sheets.append(f)
