@@ -72,6 +72,19 @@ class Datatest(unittest.TestCase):
         self.d["X-Dat"]=[11,12,13,14,15]
         self.assertEqual(self.d["X-Dat",2],13,"Failed indexing of metadata lists with tuple")
         self.assertEqual(self.d["X-Dat"][2],13,"Failed indexing of metadata lists with double indices")
+        d=Data(np.ones((10,10)))
+        d[0,0]=5 #Index by tuple into data
+        d["Column_1",0]=6 # Index by column name, row into data
+        d[0,"Column_2"]=7 #Index by row, column name into data
+        d["Column_3"]=[1,2,3,4] # Create a metadata
+        d["Column_3",2]=2 # Index existing metadata via tuple
+        d.metadata[0,5]=10
+        d[0,5]=12 # Even if tuple, index metadata if already existing.
+        self.assertTrue(np.all(d[0]==np.array([5,6,7,1,1,1,1,1,1,1])),"setitem on Data to index into Data.data failed.")
+        self.assertEqual(d.metadata["Column_3"],[1,2,2,4],"Tuple indexing into metadata Failed.")
+        self.assertEqual(d.metadata[0,5],12,"Indexing of pre-existing metadta keys rather than Data./data failed.")
+        
+        
 
 
     def test_len(self):
@@ -233,6 +246,7 @@ class Datatest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Datatest("test_operators")
     test.setUp()
+    test.test_indexing()
     test.test_constructor()
     test.test_attributes()
     test.test_operators()

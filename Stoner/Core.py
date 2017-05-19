@@ -554,6 +554,8 @@ class regexpDict(sorteddict):
             KeyError: if no key matches name.
         """
         ret=None
+        if not exact and not isinstance(name,string_types):
+            name=repr(name)
         try: #name directly as key
             super(regexpDict,self).__getitem__(name)
             ret=name
@@ -2675,12 +2677,29 @@ class DataFile(metadataObject):
         """Called for :py:class:`DataFile`[name ] = value to write mewtadata entries.
 
         Args:
-            name (string): The string key used to access the metadata
-            value (any): The value to be written into the metadata. Currently bool, int, float and string values are correctly handled. Everythign else is treated as a string.
+            name (string, tuple): The string key used to access the metadata or a tuple index into data
+            value (any): The value to be written into the metadata or data/
 
-        Returns:
-            Nothing."""
-        self.metadata[name] = value
+        Notes:
+            If name is a string or already exists as key in metadata, this setitem will set metadata values, otherwise if name
+            is a tuple then if the first elem,ent in a string it checks to see if that is an existing metadata item that is iterable,
+            and if so, sets the metadta. In all other circumstances, it attempts to set an item in the main data array.
+        """
+        if isinstance(name,string_types) or name in self.metadata:
+            self.metadata[name] = value
+        elif isinstance(name,tuple):
+            if isinstance(name[0],string_types) and name[0] in self.metadata and isinstance(self.metadata[name[0]],Iterable):
+                if len(name)==2:
+                    key=name[0]
+                    name=name[1]
+                else:
+                    key=name[0]
+                    name=tuple(name[1:])
+                self.metadata[key][name]=value
+            else:
+                self.data[name]=value
+        else:
+            self.data[name]=value
 
     def __setstate__(self, state):
         """Internal function for pickling."""
