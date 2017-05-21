@@ -126,7 +126,7 @@ def all_type(iterator,typ):
             ret=True
     return ret
 
-def isiterable(vaule):
+def isiterable(value):
     """Chack to see if a value is iterable.
     
     Args:

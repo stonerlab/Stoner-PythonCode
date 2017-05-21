@@ -307,7 +307,7 @@ class _setas(object):
             indices = name.indices(len(self.setas))
             name = range(*indices)
             ret = [self[x] for x in name]
-        elif isiterabbe(name):
+        elif isiterable(name):
             ret=[self[x] for x  in name]
         else:
             try:
@@ -992,7 +992,7 @@ class metadataObject(MutableMapping):
 
     @metadata.setter
     def metadata(self,value):
-        if not isinstance(value,typeHintedDict) and isterable(value):
+        if not isinstance(value,typeHintedDict) and isiterable(value):
             self._metadata=typeHintedDict(value)
         elif isinstance(value,typeHintedDict):
             self._metadata=value
@@ -1210,7 +1210,7 @@ class DataArray(_ma_.MaskedArray):
                     ret.column_headers=list(_np_.array(ret.column_headers)[ix[-1]])
                 # Sort out whether we need an array of row labels
                 if isinstance(self.i,_np_.ndarray) and len(ix)>0:
-                    if isiterable(ix[0]) or isinstance(ix[0],int_types:
+                    if isiterable(ix[0]) or isinstance(ix[0],int_types):
                         ret.i=self.i[ix[0]]
                     else:
                         ret.i=0

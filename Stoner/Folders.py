@@ -1854,7 +1854,7 @@ class DataFolder(DiskBssedFolder,baseFolder):
             for m in metadata: # Sanity check the metadata to include
                 try:
                     test=results[m]
-                    if not isiiterable(test) or isinstance(test,string_types):
+                    if not isiterable(test) or isinstance(test,string_types):
                         test=_np_.array([test])
                     else:
                         test=_np_.array(test)
