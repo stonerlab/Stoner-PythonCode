@@ -9,7 +9,7 @@ Classes:
 
 __all__ = ["PlotMixin","hsl2rgb"]
 from Stoner.compat import python_v3,string_types,index_types
-from Stoner.tools import _attribute_store, isNone
+from Stoner.tools import _attribute_store, isNone,all_type,isiterable
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 
@@ -157,8 +157,10 @@ class PlotMixin(object):
         """Set the labels for the plot columns."""
         if value is None:
             self._labels=copy.deepcopy(self.column_headers)
-        else:
+        elif isiterable(value) and all_type(value,string_types):
             self._labels = value
+        else:
+            raise TypeError("labels should be iterable and all strings, or None, not {}".format(type(value)))
             
     @property
     def showfig(self):
@@ -494,7 +496,7 @@ class PlotMixin(object):
             if self.fig is None: # oops we need a figure first!
                 self.figure()
             ax = self.fig.gca()
-            if not isinstance(value, Iterable) or isinstance(value, string_types):
+            if not isiterable(value) or isinstance(value, string_types):
                 value = (value, )
             func = ax.__getattribute__("set_{}".format(name))
             if isinstance(value, dict):

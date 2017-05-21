@@ -3,7 +3,7 @@ from __future__ import print_function
 __all__ = ["StonerLoadError", "StonerSetasError","regexpDict","typeHintedDict","metadataObject","DataArray","DataFile","Data"]
 
 from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,_lmfit,Model
-from .tools import isNone,all_size,all_type,format_error,_attribute_store,operator
+from .tools import isNone,all_size,all_type,format_error,_attribute_store,operator,isiterable
 from .plot.core import PlotMixin
 from .Analysis import AnalysisMixin
 import re
@@ -19,7 +19,7 @@ import os.path as path
 import inspect as _inspect_
 
 import itertools
-from collections import Iterable, OrderedDict,MutableMapping
+from collections import OrderedDict,MutableMapping
 
 
 try:
@@ -194,7 +194,7 @@ class _setas(object):
         try:
             assert len(args) == 0 or len(args) == 1
             if len(args) == 1:
-                assert isinstance(args[0], string_types) or isinstance(args[0], Iterable) or isinstance(args[0], _setas)
+                assert isinstance(args[0], string_types) or isiterable(args[0]) or isinstance(args[0], _setas)
             elif len(args) == 1:
                 assert len(kargs) > 0
         except AssertionError:
@@ -254,7 +254,7 @@ class _setas(object):
                             self.setas[c] = typ
                     except KeyError:
                         pass
-        elif isinstance(value, Iterable):
+        elif isiterable(value):
             if len(value) > self._size:
                 value = value[:self._size]
             elif len(value) < self._size:
@@ -307,7 +307,7 @@ class _setas(object):
             indices = name.indices(len(self.setas))
             name = range(*indices)
             ret = [self[x] for x in name]
-        elif isinstance(name,Iterable):
+        elif isiterabbe(name):
             ret=[self[x] for x  in name]
         else:
             try:
@@ -423,7 +423,7 @@ class _setas(object):
             indices = col.indices(self.shape[1])
             col = range(*indices)
             col = self.find_col(col)
-        elif isinstance(col, Iterable):
+        elif isiterable(col):
             col = [self.find_col(x) for x in col]
         else:
             raise TypeError('Column index must be an integer, string, list or slice, not a {}'.format(type(col)))
@@ -574,7 +574,7 @@ class regexpDict(sorteddict):
                 nm=name
             if isinstance(nm,re._pattern_type):
                 ret=[n for n in self.keys() if nm.match(n)]
-        if ret is None or isinstance(ret,Iterable) and len(ret)==0:
+        if ret is None or isiterable(ret) and len(ret)==0:
             raise KeyError("{} is not a match to any key.".format(name))
         else:
             if multiple: #sort out returing multiple entries or not
@@ -992,7 +992,7 @@ class metadataObject(MutableMapping):
 
     @metadata.setter
     def metadata(self,value):
-        if not isinstance(value,typeHintedDict) and isinstance(value,Iterable):
+        if not isinstance(value,typeHintedDict) and isterable(value):
             self._metadata=typeHintedDict(value)
         elif isinstance(value,typeHintedDict):
             self._metadata=value
@@ -1180,7 +1180,7 @@ class DataArray(_ma_.MaskedArray):
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
-        elif isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[-1],Iterable): # indexing with a list of columns
+        elif isinstance(ix,tuple) and len(ix)>0 and isiterable(ix[-1]): # indexing with a list of columns
             ix=list(ix)
             ix[-1]=[self._setas.find_col(c) for c in ix[-1]]
             ix=tuple(ix)
@@ -1206,11 +1206,11 @@ class DataArray(_ma_.MaskedArray):
                 ret.isrow=single_row
                 ret.setas=self.setas.clone
                 ret.column_headers=copy.copy(self.column_headers)
-                if len(ix)>0 and isinstance(ix[-1],Iterable):
+                if len(ix)>0 and isiterable(ix[-1]):
                     ret.column_headers=list(_np_.array(ret.column_headers)[ix[-1]])
                 # Sort out whether we need an array of row labels
                 if isinstance(self.i,_np_.ndarray) and len(ix)>0:
-                    if isinstance(ix[0],(Iterable,int)):
+                    if isiterable(ix[0]) or isinstance(ix[0],int_types:
                         ret.i=self.i[ix[0]]
                     else:
                         ret.i=0
@@ -1322,15 +1322,15 @@ class DataArray(_ma_.MaskedArray):
         if self.ndim==0:
             pass
         elif self.ndim==1 and self.isrow:
-            if isinstance(value,Iterable) and len(value)>0:
+            if isiterable(value) and len(value)>0:
                 self._ibase=_np_.array([min(value)])
             else:
                 self._ibase=_np_.array([value])
         elif self.ndim>=1:
             r=self.shape[0]
-            if isinstance(value,Iterable) and len(value)==r: #Iterable and the correct length - assing straight
+            if isiterable(value) and len(value)==r: #Iterable and the correct length - assing straight
                 self._ibase=_np_.array(value)
-            elif isinstance(value,Iterable): # Iterable but not the correct length - count from min of value
+            elif isiterable(value): # Iterable but not the correct length - count from min of value
                 self._ibase=_np_.arange(min(value),min(value)+r)
             else: # No iterable
                 self._ibase=_np_.arange(value,value+r)
@@ -1585,9 +1585,9 @@ class DataFile(metadataObject):
             self.metadata = arg.metadata.copy()
             self.data = DataArray(arg.data,setas=arg.setas.clone)
             self.data.setas = arg.setas.clone
-        elif isinstance(arg,Iterable) and all_type(arg,string_types):
+        elif isiterable(arg) and all_type(arg,string_types):
             self.column_headers=list(arg)
-        elif isinstance(arg,Iterable) and all_type(arg,_np_.ndarray):
+        elif isiterable(arg) and all_type(arg,_np_.ndarray):
             self._init_many(*arg,**kargs)
         else:
             raise SyntaxError("No constructor for {}".format(type(arg)))
@@ -1596,7 +1596,7 @@ class DataFile(metadataObject):
     def _init_double(self, *args, **kargs):
         """Two argument constructors handled here. Called form __init__"""
         (arg0, arg1) = args
-        if isinstance(arg1,dict) or (isinstance(arg1,Iterable) and all_type(arg1,string_types)):
+        if isinstance(arg1,dict) or (isiterable(arg1) and all_type(arg1,string_types)):
             self._init_single(arg0,**kargs)
             self._init_single(arg1,**kargs)
         elif isinstance(arg0,_np_.ndarray) and isinstance(arg1,_np_.ndarray) and len(arg0.shape)==1 and len(arg1.shape)==1:
@@ -2442,7 +2442,7 @@ class DataFile(metadataObject):
             else:
                 lines = itertools.imap(lambda x: x, other.splitlines())
             newdata.__read_iterable(lines)
-        elif isinstance(other, Iterable):
+        elif isiterable(other):
             newdata.__read_iterable(other)
         return self.__class__(newdata)
 
@@ -2688,7 +2688,7 @@ class DataFile(metadataObject):
         if isinstance(name,string_types) or name in self.metadata:
             self.metadata[name] = value
         elif isinstance(name,tuple):
-            if isinstance(name[0],string_types) and name[0] in self.metadata and isinstance(self.metadata[name[0]],Iterable):
+            if isinstance(name[0],string_types) and name[0] in self.metadata and isiterable(self.metadata[name[0]]):
                 if len(name)==2:
                     key=name[0]
                     name=name[1]
@@ -2772,7 +2772,7 @@ class DataFile(metadataObject):
                     cols[c]=self.find_col(cols[c])
                 elif isinstance(cols[c],_np_.ndarray) and cols[c].size==len(self):
                     continue
-                elif isinstance(cols[c],Iterable):
+                elif isiterable(cols[c]):
                     cols[c]=self.find_col(cols[c])
             else:
                 cols[c]=self.find_col(cols[c])
@@ -2788,7 +2788,7 @@ class DataFile(metadataObject):
             for c in ret:
                 if c.startswith("x") or c.startswith("has_"):
                     continue
-                if not isinstance(ret[c],Iterable) and ret[c] is not None:
+                if not isiterable(ret[c]) and ret[c] is not None:
                     ret[c]=list([ret[c]])
                 elif ret[c] is None:
                     ret[c]=[]
@@ -3061,11 +3061,11 @@ class DataFile(metadataObject):
                 col = list(range(*indices))
             elif callable(col) and val is None: # Delete rows usinga callalble taking the whole row
                 col=[r.i for r in self.rows() if col(r)]
-            elif isinstance(col,Iterable) and all_type(col,bool): # Delete rows by a list of booleans
+            elif isiterable(col) and all_type(col,bool): # Delete rows by a list of booleans
                 if len(col)<len(self):
                     col.extend([False]*(len(self)-len(col)))
                 col=[i for i in range(len(self)) if col[i]]
-            if isinstance(col, Iterable) and all_type(col,int_types) and val is None and not invert:
+            if isiterable(col) and all_type(col,int_types) and val is None and not invert:
                 col.sort(reverse=True)
                 for c in col:
                     self.del_rows(c)
@@ -3089,7 +3089,7 @@ class DataFile(metadataObject):
                                          for x in self])[0]
                 elif isinstance(val, float):
                     rows = _np_.nonzero([bool(x == val) != invert for x in d])[0]
-                elif isinstance(val, Iterable) and len(val) == 2:
+                elif isiterable(val) and len(val) == 2:
                     (upper, lower) = (max(list(val)), min(list(val)))
                     rows = _np_.nonzero([bool(lower <= x <= upper) != invert for x in d])[0]
                 else:
@@ -3684,7 +3684,7 @@ class DataFile(metadataObject):
         elif isinstance(order,index_types):
             order = [recs.dtype.names[self.find_col(order)]]
             d = _np_.sort(recs, order=order)
-        elif isinstance(order, Iterable):
+        elif isiterable(order):
             order = [recs.dtype.names[self.find_col(x)] for x in order]
             d = _np_.sort(recs, order=order)
         else:

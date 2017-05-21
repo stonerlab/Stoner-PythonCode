@@ -8,9 +8,7 @@ Created on Mon May 23 12:05:59 2016
 from .core import ImageArray
 from Stoner.Folders import DiskBssedFolder, baseFolder
 from Stoner.compat import string_types
-
-from collections import Iterable
-
+from Stoner.tools import isiterable
 
 def _load_ImageArray(f, **kargs):
     """Simple meothd to load an image array."""
@@ -86,7 +84,7 @@ class ImageFolder(DiskBssedFolder,baseFolder):
         metadata=[k.metadata for k in self] #this can take some time if it's loading in the images
         if isinstance(key, string_types):
             key=metadata[0].__lookup__(key,multiple=True)
-        elif isinstance(key,Iterable):
+        elif isiterable(key):
             newkey=[]
             for k in key:
                 newkey.extnd(metadata[0].__lookup__(k,multiple=True))

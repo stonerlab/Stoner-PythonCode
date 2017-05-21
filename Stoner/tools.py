@@ -8,7 +8,7 @@ Created on Wed Apr 19 19:47:50 2017
 
 @author: Gavin Burnell
 """
-from collections import Iterable
+from collections import Iterable,MutableSequence
 from .compat import string_types,bytes2str
 import re
 from numpy import log10,floor,abs,logical_and,isnan
@@ -61,7 +61,7 @@ def isNone(iterator):
     """
     if iterator is None:
         ret=True
-    elif isinstance(iterator,Iterable) and not isinstance(iterator,string_types):
+    elif isiterable(iterator) and not isinstance(iterator,string_types):
         if len(iterator)==0:
             ret=True
         else:
@@ -118,13 +118,24 @@ def all_type(iterator,typ):
         the search type *typ*.
     """
     ret=False
-    if isinstance(iterator,Iterable):
+    if isiterable(iterator):
         for i in iterator:
             if not isinstance(i,typ):
                 break
         else:
             ret=True
     return ret
+
+def isiterable(vaule):
+    """Chack to see if a value is iterable.
+    
+    Args:
+        value (object): Entitiy to check if it is iterable
+        
+    Returns:
+        (bool): True if value is an instance of collections.Iterable.
+    """
+    return isinstance(value,Iterable)
 
 def tex_escape(text):
     """
@@ -362,3 +373,50 @@ class _attribute_store(dict):
         except KeyError:
             raise AttributeError
 
+class typedList(MutableSequence):
+    """Subclass list to make setitem enforce  strict typing of members of the list."""
+    
+    def __init__(self,*args,**kargs):
+        if len(args)==0 or not isinstance(args[0],type):
+            self._type=str # Default list type is a string
+        else:
+            self._type=args.pop(0)
+        if len(args)==0:
+            self._store=list(*args,**kargs)
+        elif len(args)==1 and all_type(args[0],self._type):
+            self._store=list(*args,**kargs)
+        else:
+            if len(args)>1:
+                raise SyntaxError("List should be constructed with at most two arguments, a type and an iterable")
+            else:
+                raise TypeError("List should be initialised with elements that are all of type {}".format(self._type))
+                
+    def __delitem__(self,index):
+        del self._store[index]
+
+    def __setitem__(self,name,value):
+        if not isinstance(value,self._type) or (isiterable(value) and not all_type(value,self._type)):
+            raise TypeError("Elelements of this list should be of type {}".format(self._type))
+        self._store[name]=value
+        
+    def __getitem__(self,name):
+        return self._store[name]
+    
+    def __len__(self):
+        return len(self._store)
+    
+    def __repr__(self):
+        return repr(self._store)
+
+    def extend(self,other):
+        if not isiterable(other) or  not all_type(other,self._type):
+            raise TypeError("Elelements of this list should be of type {}".format(self._type))
+        else:
+            self._store.extend(other)
+    
+    def insert(self,index,obj):
+        if not isinstance(obj,self._type):
+            raise TypeError("Elelements of this list should be of type {}".format(self._type))
+        else:
+            self._store.insert(index,obj)
+            

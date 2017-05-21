@@ -6,7 +6,7 @@ Provides  :py:class:`AnalysisMixin` - DataFile with extra bells and whistles.
 __all__ = ["AnalysisMixin"]
 
 from .compat import python_v3,string_types,int_types,index_types,LooseVersion
-from .tools import isNone
+from .tools import isNone,isiterable
 import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
@@ -368,7 +368,7 @@ class AnalysisMixin(object):
             sigma=None
         if isinstance(xcol,string_types):
             xdat = working[:, self.find_col(xcol)]
-        elif isinstance(xcol,Iterable):
+        elif isiterable(xcol):
             xdat=()
             for c in xcol:
                 xdat = xdat  + (working[:, self.find_col(c)],)
@@ -592,7 +592,7 @@ class AnalysisMixin(object):
         nc = _np_.zeros(len(self))
         for r in self:
             ret = func(r,**kargs)
-            if isinstance(ret, Iterable):
+            if isiterable(ret):
                 if _np_.size(ret) == 1:
                     ret = ret
                 elif len(ret) == len(r):
@@ -1008,7 +1008,7 @@ class AnalysisMixin(object):
             kindf=kinds[kind]
         else:
             raise RuntimeError("Failed to recognise extrpolation function '{}'".format(kind))
-        scalar_x=not isinstance(new_x,Iterable)
+        scalar_x=not isiterable(new_x)
         if scalar_x:
             new_x=[new_x]
         if isinstance(new_x,ma.MaskedArray):
@@ -1663,7 +1663,7 @@ class AnalysisMixin(object):
         """
         _=self._col_args(scalar=False,xcol=xcol,ycol=ycol)
         xcol,ycol=_.xcol,_.ycol
-        if isinstance(ycol,Iterable):
+        if isiterable(ycol):
             ycol=ycol[0]
         if width is None:  # Set Width to be length of data/20
             width = len(self) / 20
@@ -1746,7 +1746,7 @@ class AnalysisMixin(object):
         _=self._col_args(xcol=xcol,ycol=ycol,scalar=False)
 
         working = self.search(_.xcol, bounds)
-        if not isinstance(_.ycol,Iterable):
+        if not isiterable(_.ycol):
             _.ycol=[_.ycol]
         p=_np_.zeros((len(_.ycol),polynomial_order+1))
         for i,ycol in enumerate(_.ycol):    
@@ -1912,7 +1912,7 @@ class AnalysisMixin(object):
 
         window=get_window(window,size)
         # Handle multiple or single y columns
-        if not isinstance(_.ycol,Iterable):
+        if not isiterable(_.ycol):
             _.ycol=[_.ycol]
 
         #Do the convolution itself
@@ -2171,7 +2171,7 @@ class AnalysisMixin(object):
         else:
             assert callable(func), "Keyword func should be callable if given"
             (args, varargs, keywords, defaults) = getargspec(func)
-            assert isinstance(p0, Iterable), "Keyword parameter p0 shoiuld be iterable if keyword func is given"
+            assert isiterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given"
             assert len(p0) == len(args) - 2, "Keyword p0 should be the same length as the optional arguments to func"
         # This is a bit of a hack, we turn (x,y) points into a 1D array of x and then y data
         set1 = _np_.append(x, y)
@@ -2283,7 +2283,7 @@ class AnalysisMixin(object):
         current = self.column(col)
 
         #Recursively call if we've got an iterable threshold
-        if isinstance(threshold, Iterable):
+        if isiterable(threshold):
             ret = []
             for th in threshold:
                 ret.append(self.threshold(th,col=col,xcol=xcol,rising=rising,falling=falling,all_vals=all_vals))

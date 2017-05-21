@@ -5,7 +5,7 @@ Classes:
 """
 __all__ = ["baseFolder","DataFolder","PlotFolder"]
 from .compat import python_v3,int_types,string_types,get_filedialog
-from .tools import operator
+from .tools import operator,isiterable
 import os
 import re
 import os.path as path
@@ -134,7 +134,7 @@ class baseFolder(MutableSequence):
     @files.setter
     def files(self,value):
         """Just a wrapper to clear and then set the objects."""
-        if isinstance(value,Iterable):
+        if isiterable(value):
             self.__clear__()
             for i,v in enumerate(value):
                 self.insert(i,v)
@@ -1236,7 +1236,7 @@ class baseFolder(MutableSequence):
                     else:
                         if isinstance(kargs[arg],tuple) and len(kargs[arg]==2):
                             op="between" #Assume two length tuples are testing for range
-                        elif not isinstance(kargs[arg],string_types) and isinstance(kargs[arg],Iterable):
+                        elif not isinstance(kargs[arg],string_types) and isiterable(kargs[arg]):
                             op="in" # Assume other iterables are testing for memebership
                         else: #Everything else is exact matches
                             op="eq"
@@ -1272,7 +1272,7 @@ class baseFolder(MutableSequence):
         ret=None
         if isinstance(key, string_types+regexp_type):
             ret=_np_.array([d[key] for d in self])
-        elif isinstance(key,Iterable):
+        elif isiterable(key):
             ret=_np_.column_stack([self.slice_metadata(k) for k in key])
         if ret is None:
             raise KeyError("{} not recognised for sliceing metadata".format(key))
@@ -1634,7 +1634,7 @@ class DiskBssedFolder(object):
             self._pattern=(value,)
         elif isinstance(value,re._pattern_type):
             self._pattern=(value,)
-        elif isinstance(value,Iterable):
+        elif isiterable(value):
             self._pattern=[x for x in value]
         else:
             raise ValueError("pattern should be a string, regular expression or iterable object not a {}".format(type(value)))
@@ -1838,7 +1838,7 @@ class DataFolder(DiskBssedFolder,baseFolder):
         for m in metadata:
             if isinstance(m,string_types):
                 args.append(m)
-            elif isinstance(m,Iterable):
+            elif isiterable(m):
                 args.extend(m)
             else:
                 raise TypeError("Metadata values should be strings, or lists of strings, not {}".format(type(m)))
@@ -1854,7 +1854,7 @@ class DataFolder(DiskBssedFolder,baseFolder):
             for m in metadata: # Sanity check the metadata to include
                 try:
                     test=results[m]
-                    if not isinstance(test,Iterable) or isinstance(test,string_types):
+                    if not isiiterable(test) or isinstance(test,string_types):
                         test=_np_.array([test])
                     else:
                         test=_np_.array(test)
