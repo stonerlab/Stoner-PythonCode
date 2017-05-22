@@ -9,7 +9,7 @@ Classes:
 
 __all__ = ["PlotMixin","hsl2rgb"]
 from Stoner.compat import python_v3,string_types,index_types
-from Stoner.tools import _attribute_store, isNone,all_type,isiterable
+from Stoner.tools import _attribute_store, isNone,all_type,isiterable,typedList
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 
@@ -91,7 +91,7 @@ class PlotMixin(object):
             "showfig": bool
         }
         super(PlotMixin,self).__init__(*args,**kargs)
-        self._labels = copy.deepcopy(self.column_headers)
+        self._labels = typedList(string_types,self.column_headers)
         if self.debug: print("Done PlotMixin init")
 
 
@@ -156,9 +156,9 @@ class PlotMixin(object):
     def labels(self,value):
         """Set the labels for the plot columns."""
         if value is None:
-            self._labels=copy.deepcopy(self.column_headers)
+            self._labels=typedList(string_types,self.column_headers)
         elif isiterable(value) and all_type(value,string_types):
-            self._labels = value
+            self._labels = typedList(string_types,value)
         else:
             raise TypeError("labels should be iterable and all strings, or None, not {}".format(type(value)))
             
@@ -344,10 +344,7 @@ class PlotMixin(object):
             else:
                 return [self._col_label(i) for i in ix]
         else:
-            if isinstance(self._labels, list) and len(self._labels) > ix:
-                return self._labels[ix]
-            else:
-                return self.column_headers[ix]
+            return self.labels[ix]
 
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones."""

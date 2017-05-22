@@ -687,7 +687,7 @@ class AnalysisMixin(object):
                 s = list(ret.setas)
                 s[-3:] = ["y", "e", "."]
                 ret.setas = s
-                head = self.column_headers[ycol[i]]
+                head = str(self.column_headers[ycol[i]])
                 ret.column_headers[i * 3 + 1:i * 3 + 5] = [head, "d{}".format(head), "#/bin {}".format(head)]
         else:
             ret = (bin_centres, ybin, ebin, nbins)

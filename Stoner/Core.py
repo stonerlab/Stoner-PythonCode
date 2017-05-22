@@ -3,7 +3,7 @@ from __future__ import print_function
 __all__ = ["StonerLoadError", "StonerSetasError","regexpDict","typeHintedDict","metadataObject","DataArray","DataFile","Data"]
 
 from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,_lmfit,Model
-from .tools import isNone,all_size,all_type,format_error,_attribute_store,operator,isiterable
+from .tools import isNone,all_size,all_type,format_error,_attribute_store,operator,isiterable,typedList
 from .plot.core import PlotMixin
 from .Analysis import AnalysisMixin
 import re
@@ -95,7 +95,7 @@ class _setas(object):
         self._cols = _attribute_store()
         self._shape=tuple()
         self._setas = list()
-        self._column_headers = []
+        self._column_headers = typedList(string_types)
 
 
         if initial_val is not None:
@@ -148,10 +148,7 @@ class _setas(object):
 
     @column_headers.setter
     def column_headers(self,value):
-        if all_type(value,string_types):
-            self._column_headers=list(value)
-        else:
-            raise AttributeError("Column_headers attribute should be an iterable of strings")
+        self._column_headers=typedList(string_types,value)
 
     @property
     def setas(self):

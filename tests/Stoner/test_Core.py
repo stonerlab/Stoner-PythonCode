@@ -38,7 +38,7 @@ class Datatest(unittest.TestCase):
         d=Data([np.ones(100),np.zeros(100)])
         self.assertTrue(d.shape==(100,2),"Constructor from iterable list of nd array failed")
         d=Data([np.ones(100),np.zeros(100)],["X","Y"])
-        self.assertTrue(d.column_headers==["X","Y"],"Failed to set column headers in constructor")
+        self.assertTrue(d.column_headers==["X","Y"],"Failed to set column headers in constructor: {}".format(d.column_headers))
 
     def test_column(self):
         for i,c in enumerate(self.d.column_headers):

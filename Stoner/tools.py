@@ -13,6 +13,7 @@ from .compat import string_types,bytes2str
 import re
 from numpy import log10,floor,abs,logical_and,isnan
 from cgi import escape as html_escape
+from copy import deepcopy
 
 operator={
     "eq":lambda k,v:k==v,
@@ -377,9 +378,10 @@ class typedList(MutableSequence):
     """Subclass list to make setitem enforce  strict typing of members of the list."""
     
     def __init__(self,*args,**kargs):
-        if len(args)==0 or not isinstance(args[0],type):
+        if len(args)==0 or not (isinstance(args[0],type) or (isinstance(args[0],tuple) and all_type(args[0],type))):
             self._type=str # Default list type is a string
         else:
+            args=list(args)
             self._type=args.pop(0)
         if len(args)==0:
             self._store=list(*args,**kargs)
@@ -390,29 +392,59 @@ class typedList(MutableSequence):
                 raise SyntaxError("List should be constructed with at most two arguments, a type and an iterable")
             else:
                 raise TypeError("List should be initialised with elements that are all of type {}".format(self._type))
-                
+
+    def __add__(self,other):
+        if isiterable(other):
+            new=deepcopy(self)
+            new.extend(other)
+            return new
+        else:
+            return NotImplemented
+        
+    def __iadd__(self,other):
+        if isiterable(other):
+            self.extend(other)
+            return self
+        else:
+            return NotImplemented
+        
+    def __radd__(self,other):
+        if isinstance(other,list):
+            return other+self._store
+        else:
+            return NotImplemented
+        
+    def __eq__(self,other):
+        return self._store==other
+                        
     def __delitem__(self,index):
         del self._store[index]
-
-    def __setitem__(self,name,value):
-        if not isinstance(value,self._type) or (isiterable(value) and not all_type(value,self._type)):
-            raise TypeError("Elelements of this list should be of type {}".format(self._type))
-        self._store[name]=value
         
-    def __getitem__(self,name):
-        return self._store[name]
+    def __getitem__(self,index):
+        return self._store[index]
     
     def __len__(self):
         return len(self._store)
-    
+
     def __repr__(self):
         return repr(self._store)
 
+    def __setitem__(self,name,value):
+        if isiterable(name) or isinstance(name,slice):
+            if not isiterable(value) or not all_type(value,self._type):
+                raise TypeError("Elelements of this list should be of type {} and must set the correct number of elements".format(self._type))
+        elif not isinstance(value,self._type):
+            raise TypeError("Elelements of this list should be of type {}".format(self._type))
+        self._store[name]=value
+        
     def extend(self,other):
         if not isiterable(other) or  not all_type(other,self._type):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         else:
             self._store.extend(other)
+            
+    def index(self,search,start=0):
+        return self._store[start:].index(search)
     
     def insert(self,index,obj):
         if not isinstance(obj,self._type):
