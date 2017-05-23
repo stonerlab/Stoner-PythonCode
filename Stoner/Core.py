@@ -2567,11 +2567,52 @@ class DataFile(metadataObject):
                 Returns:
                     self in a textual format. """
         return self.__repr_core__(256)
+    
+    def _repr_html_(self):
+        """Version of repr_core that does and html output.
+        
+        """
+        shorten=256
+        outp = "<table><tr><th>TDI Format 1.5</th><th>" + "</th><th>".join(self.column_headers) + "</th></tr>\n"
+        m = len(self.metadata)
+        self.data = _np_.atleast_2d(self.data)
+        r = _np_.shape(self.data)[0]
+        md = self.metadata.export_all()
+        for x in range(min(r, m)):
+            if self.data.ndim!=2 or self.shape[1]==1:
+                outp = outp + "<tr><td>"+md[x] + "</td><td>{}</td></tr>\n".format(self.data[x])
+            else:
+                outp = outp + "<tr><td>"+md[x] + "</td><td>"+"</td><td>".join([str(y) for y in self.data[x].filled()]) + "</td></tr>\n"
+        if m > r:  # More metadata
+            for x in range(r, m):
+                outp = outp + "</tr><td>"+md[x] + "<td colspan={}></tr>\n".format(self.shape[1])
+        elif r > m:  # More data than metadata
+            if shorten is not None and shorten and r - m > shorten:
+                for x in range(m, m + shorten - 100):
+                    if self.data.ndim!=2 or self.shape[1]==1:
+                        outp += "<tr><td>&nbsp;" + "</td><td>{}</td></tr>\n".format(self.data[x])
+                    else:
+                        outp += "<tr><td>&nbsp;</td><td>" + "</td><td>".join([str(y) for y in self.data[x].filled()]) + "</td></tr>\n"
+                outp += "<tr><td colspan={}>... {} lines skipped...</td></tr>\n".format(self.shape[1]+1,r - m - shorten + 100)
+                for x in range(-100, -1):
+                    if self.data.ndim!=2 or self.shape[1]==1:
+                        outp += "<tr><td>&nbsp;" + "</td><td>{}</td></tr>\n".format(self.data[x])
+                    else:
+                        outp += "<tr><td>&nbsp;</td><td>" + "</td><td>".join([str(y) for y in self.data[x].filled()]) + "</td></tr>\n"
+            else:
+                for x in range(m, r):
+                    if self.data.ndim!=2 or self.shape[1]==1:
+                        outp += "<tr><td>&nbsp;" + "</td><td>{}</td></tr>\n".format(self.data[x])
+                    else:
+                        outp += "<tr><td>&nbsp;</td><td>" + "</td><td>".join([str(y) for y in self.data[x].filled()]) + "</td></tr>\n"
+        outp+="</table>\n"
+        return outp
+        
 
     def __repr_core__(self, shorten=1000):
         """Actuall do the repr work, but allow for a shorten parameter to
-        save printing big files out to disc."""
-
+        save printing big files out to disc.
+        """
         outp = "TDI Format 1.5\t" + "\t".join(self.column_headers) + "\n"
         m = len(self.metadata)
         self.data = _np_.atleast_2d(self.data)
