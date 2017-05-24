@@ -8,11 +8,12 @@ Created on Wed Apr 19 19:47:50 2017
 
 @author: Gavin Burnell
 """
-from collections import Iterable
+from collections import Iterable,MutableSequence
 from .compat import string_types,bytes2str
 import re
-from numpy import log10,floor,abs,logical_and
+from numpy import log10,floor,abs,logical_and,isnan
 from cgi import escape as html_escape
+from copy import deepcopy
 
 operator={
     "eq":lambda k,v:k==v,
@@ -35,6 +36,20 @@ operator={
     "iendsswith":lambda k,v:str(v).upper().endswith(k.upper()),
 }
 
+prefs={"text":{
+        3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
+        -3: "m", -6: "u", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
+        },
+        "latex":{
+        3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
+        -3: "m", -6: r"\mu", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
+        },
+        "html":{
+        3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
+        -3: "m", -6: r"&micro;", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
+        }
+    }
+
 
 def isNone(iterator):
     """Returns True if input is None or an empty iterator, or an iterator of None.
@@ -47,7 +62,7 @@ def isNone(iterator):
     """
     if iterator is None:
         ret=True
-    elif isinstance(iterator,Iterable) and not isinstance(iterator,string_types):
+    elif isiterable(iterator) and not isinstance(iterator,string_types):
         if len(iterator)==0:
             ret=True
         else:
@@ -104,13 +119,24 @@ def all_type(iterator,typ):
         the search type *typ*.
     """
     ret=False
-    if isinstance(iterator,Iterable):
+    if isiterable(iterator):
         for i in iterator:
             if not isinstance(i,typ):
                 break
         else:
             ret=True
     return ret
+
+def isiterable(value):
+    """Chack to see if a value is iterable.
+    
+    Args:
+        value (object): Entitiy to check if it is iterable
+        
+    Returns:
+        (bool): True if value is an instance of collections.Iterable.
+    """
+    return isinstance(value,Iterable)
 
 def tex_escape(text):
     """
@@ -143,7 +169,86 @@ def tex_escape(text):
     return regex.sub(lambda match: conv[match.group()], text)
 
 
-def format_error(value, error, **kargs):
+def format_val(value,**kargs):
+    """Format a number as an SI quantity
+    
+    Args:
+        value(float): Value to format
+
+    Keyword Arguments:
+        fmt (str): Specify the output format, opyions are:
+            *  "text" - plain text output
+            * "latex" - latex output
+            * "html" - html entities
+        escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)
+        mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
+            to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
+            i.e. mantissa and exponent format is used.
+        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
+            prepended to the units string. In LaTeX mode, the units string is embedded in \\mathrm
+        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
+            inside the math-mode markers, but not embedded in \\mathrm.
+
+    Returns:
+        (str): The formatted value.
+    """
+    mode=kargs.pop("mode","float")
+    units=kargs.pop("units","")
+    prefix=kargs.pop("prefix","")
+    latex=kargs.pop("latex",False)
+    fmt=kargs.pop("fmt","latex" if latex else "text")
+    escape=kargs.pop("escape",False)
+    escape_func={"latex":tex_escape,"html":html_escape}.get(mode,lambda x:x)
+
+    if escape:
+        prefix=escape_func(prefix)
+        units=escape_func(units)
+
+    if mode == "float":  # Standard
+        suffix_val = ""
+    elif mode == "eng":  #Use SI prefixes
+        v_mag = floor(log10(abs(value)) / 3.0) * 3.0
+        prefixes = prefs.get(fmt,prefs["text"])
+        if v_mag in prefixes:
+            if fmt=="latex":
+                suffix_val = r"\mathrm{{{{{}}}}}".format(prefixes[v_mag])
+            else:
+                suffix_val = prefixes[v_mag]
+            value /= 10 ** v_mag
+        else:  # Implies 10^-3<x<10^3
+            suffix_val = ""
+    elif mode == "sci":  # Scientific mode - raise to common power of 10
+        v_mag = floor(log10(abs(value)))
+        if fmt=="latex":
+            suffix_val = r"\times 10^{{{{{}}}}}".format(int(v_mag))
+        elif fmt=="html":
+            suffix_val = "&times; 10<sup>{}</sup> ".format(int(v_mag))
+        else:
+            suffix_val = "E{} ".format(int(v_mag))
+        value /= 10 ** v_mag
+    else:  # Bad mode
+        raise RuntimeError("Unrecognised mode: {} in format_error".format(mode))
+
+    #Protect {} in units string
+    units = units.replace("{", "{{").replace("}", "}}")
+    prefix = prefix.replace("{", "{{").replace("}", "}}")
+    if fmt=="latex":  # Switch to latex math mode symbols
+        val_fmt_str = r"${}{{}}".format(prefix)
+        if units != "":
+            suffix_fmt = r"\mathrm{{{{{}}}}}".format(units)
+        else:
+            suffix_fmt = ""
+        suffix_fmt += "$"
+    elif fmt=="html":  # Switch to latex math mode symbols
+        val_fmt_str = r"{}{{}}".format(prefix)
+        suffix_fmt = units
+    else:  # Plain text
+        val_fmt_str = r"{}{{}}".format(prefix)
+        suffix_fmt = units
+    fmt_str = val_fmt_str + suffix_val + suffix_fmt
+    return fmt_str.format(value)
+        
+def format_error(value, error=None, **kargs):
     """This handles the printing out of the answer with the uncertaintly to 1sf and the
     value to no more sf's than the uncertainty.
 
@@ -166,34 +271,21 @@ def format_error(value, error, **kargs):
     Returns:
         String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.
     """
-    mode=kargs.pop("mode","float")
-    units=kargs.pop("units","")
-    prefix=kargs.pop("prefix","")
-    latex=kargs.pop("latex",False)
-    fmt=kargs.pop("fmt","latex" if latex else "text")
-    escape=kargs.pop("escape",False)
+    mode=kargs.get("mode","float")
+    units=kargs.get("units","")
+    prefix=kargs.get("prefix","")
+    latex=kargs.get("latex",False)
+    fmt=kargs.get("fmt","latex" if latex else "text")
+    escape=kargs.get("escape",False)
     escape_func={"latex":tex_escape,"html":html_escape}.get(mode,lambda x:x)
+
+    if error == 0.0 or isnan(error):  # special case for zero uncertainty
+        return format_val(value,**kargs)
 
     if escape:
         prefix=escape_func(prefix)
         units=escape_func(units)
 
-    prefs={"text":{
-            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
-            -3: "m", -6: "u", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
-            },
-            "latex":{
-            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
-            -3: "m", -6: r"\mu", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
-            },
-            "html":{
-            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
-            -3: "m", -6: r"&micro;", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
-            }
-        }
-
-    if error == 0.0:  # special case for zero uncertainty
-        return repr(value)
     #Sort out special fomatting for different modes
     if mode == "float":  # Standard
         suffix_val = ""
@@ -281,3 +373,82 @@ class _attribute_store(dict):
             return self[name]
         except KeyError:
             raise AttributeError
+
+class typedList(MutableSequence):
+    """Subclass list to make setitem enforce  strict typing of members of the list."""
+    
+    def __init__(self,*args,**kargs):
+        if len(args)==0 or not (isinstance(args[0],type) or (isinstance(args[0],tuple) and all_type(args[0],type))):
+            self._type=str # Default list type is a string
+        else:
+            args=list(args)
+            self._type=args.pop(0)
+        if len(args)==0:
+            self._store=list(*args,**kargs)
+        elif len(args)==1 and all_type(args[0],self._type):
+            self._store=list(*args,**kargs)
+        else:
+            if len(args)>1:
+                raise SyntaxError("List should be constructed with at most two arguments, a type and an iterable")
+            else:
+                raise TypeError("List should be initialised with elements that are all of type {}".format(self._type))
+
+    def __add__(self,other):
+        if isiterable(other):
+            new=deepcopy(self)
+            new.extend(other)
+            return new
+        else:
+            return NotImplemented
+        
+    def __iadd__(self,other):
+        if isiterable(other):
+            self.extend(other)
+            return self
+        else:
+            return NotImplemented
+        
+    def __radd__(self,other):
+        if isinstance(other,list):
+            return other+self._store
+        else:
+            return NotImplemented
+        
+    def __eq__(self,other):
+        return self._store==other
+                        
+    def __delitem__(self,index):
+        del self._store[index]
+        
+    def __getitem__(self,index):
+        return self._store[index]
+    
+    def __len__(self):
+        return len(self._store)
+
+    def __repr__(self):
+        return repr(self._store)
+
+    def __setitem__(self,name,value):
+        if isiterable(name) or isinstance(name,slice):
+            if not isiterable(value) or not all_type(value,self._type):
+                raise TypeError("Elelements of this list should be of type {} and must set the correct number of elements".format(self._type))
+        elif not isinstance(value,self._type):
+            raise TypeError("Elelements of this list should be of type {}".format(self._type))
+        self._store[name]=value
+        
+    def extend(self,other):
+        if not isiterable(other) or  not all_type(other,self._type):
+            raise TypeError("Elelements of this list should be of type {}".format(self._type))
+        else:
+            self._store.extend(other)
+            
+    def index(self,search,start=0):
+        return self._store[start:].index(search)
+    
+    def insert(self,index,obj):
+        if not isinstance(obj,self._type):
+            raise TypeError("Elelements of this list should be of type {}".format(self._type))
+        else:
+            self._store.insert(index,obj)
+            

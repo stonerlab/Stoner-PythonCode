@@ -6,7 +6,7 @@ Provides  :py:class:`AnalysisMixin` - DataFile with extra bells and whistles.
 __all__ = ["AnalysisMixin"]
 
 from .compat import python_v3,string_types,int_types,index_types,LooseVersion
-from .tools import isNone
+from .tools import isNone,isiterable
 import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
@@ -57,7 +57,8 @@ def _lmfit_p0_dict(p0,model):
     if isinstance(p0, (list, tuple, _np_.ndarray)):
         p0 = {p: pv for p, pv in zip(model.param_names, p0)}
     elif isinstance(p0,Parameters):
-        p0={k:p0[k].value for k in p0}
+        pass
+        #p0={k:p0[k].value for k in p0}
     if not isinstance(p0, dict):
         raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
     #p0={p0[k] for k in model.param_names}
@@ -202,7 +203,6 @@ def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
     default=_np_.array([[1.00,0.0,0.0],[0.0,1.0,0.0]])
     for pi,(u,v) in zip(popt,mapping):
         default[u,v]=pi
-
     default_err=_np_.zeros((2,3))
     for pi,(u,v) in zip(perr,mapping):
         default_err[u,v]=pi
@@ -325,33 +325,38 @@ class AnalysisMixin(object):
             raise RuntimeError("Bad column index: {}".format(col))
         return data, name
 
-    def __poly_outlier(self, row, column, window, metric, xcol=None, order=1):
+    def _poly_outlier(self, row, column, window, metric=3.0, xcol=None, order=1,yerr=None):
         """Alternative outlier detection function that fits a polynomial locally over the window.
 
         Args:
             row (1D array): Current row of data
             column int): Column index of y values to examine
             window (2D array): Local window of data
-            metric (float): Some measure of how sensitive the dection should be
 
         Keyyword Arguments:
+            metric (float): Some measure of how sensitive the dection should be
             xcol (column index): Column of data to use for X values. Defaults to current setas value
             order (int): Order of polynomial to fit. Must be < length of window-1
 
         Returns:
             True if current row is an outlier
         """
-        if order > window.shape[0] - 1:
+        if order > window.shape[0] - 2:
             raise ValueError("order should be smaller than the window length.")
-        if xcol is None:
-            xcol = self.setas._get_cols("xcol")
-        else:
-            xcol = self.find_col(xcol)
+        _=self._col_args(xcol=xcol,ycol=column,yerr=yerr)
 
-        popt, pcov = _np_.polyfit(window[:, xcol], window[:, column], deg=order, cov=True)
-        pval = _np_.polyval(popt, row[xcol])
+           
+        x=window[:,_.xcol]-row[_.xcol]
+        y=window[:,_.ycol]
+        if _.yerr is not None and len(_.yerr)>0:
+            w=1.0/window[:,_.yerr]
+        else:
+            w=None
+            
+        popt, pcov = _np_.polyfit(x,y, w=w,deg=order, cov=True)
+        pval = _np_.polyval(popt, 0.0)
         perr = _np_.sqrt(_np_.diag(pcov))[-1]
-        return abs(row[column] - pval) > metric * perr
+        return abs(pval-row[_.ycol]) > metric * perr
 
     def _get_curve_fit_data(self,xcol,ycol,bounds,sigma):
         """"Gather up the xdata and sigma columns for curve_fit."""
@@ -363,7 +368,7 @@ class AnalysisMixin(object):
             sigma=None
         if isinstance(xcol,string_types):
             xdat = working[:, self.find_col(xcol)]
-        elif isinstance(xcol,Iterable):
+        elif isiterable(xcol):
             xdat=()
             for c in xcol:
                 xdat = xdat  + (working[:, self.find_col(c)],)
@@ -387,7 +392,7 @@ class AnalysisMixin(object):
 
 
 
-    def __lmfit_one(self,model,xcol,ydata,scale_covar,sigma,p0,prefix,result=False,header="",replace=False,output="row"):
+    def __lmfit_one(self,model,xcol,ydata,scale_covar,sigma,p0,prefix,**kargs):
         """Carry out a single fit wioth lmfit.
 
         Args:
@@ -397,6 +402,9 @@ class AnalysisMixin(object):
             scale_covat (bool): Whether sigmas are absolute or relative.
             sigma (array): Uncertainties of ydata.
             p0 (dict): Dictionary of parameters including independent data
+            prefix (str): Prefix for labels in metadata
+            
+        Keyword Arguments:
             result (bool,str): Where the result goes
             header (str): Name of new data column if used
             replace (bool): whether to add new dataa
@@ -408,6 +416,10 @@ class AnalysisMixin(object):
         if not _lmfit:
             raise RuntimeError("lmfit module not available.")
 
+        replace=kargs.pop("replace",False)
+        result=kargs.pop("result",False)
+        header=kargs.pop("header","")
+        output=kargs.pop("output","row")
         fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
         if fit.success:
             row = []
@@ -536,7 +548,7 @@ class AnalysisMixin(object):
         additional column with the uncertainites will be added to the data.
         """
         a = self.find_col(a)
-        if isinstance(a, tuple) and isinstance(b, tuple) and len(a) == 2 and len(b) == 2:  #Error columns on
+        if isinstance(a, (tuple,list)) and isinstance(b, (tuple,list)) and len(a) == 2 and len(b) == 2:  #Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
@@ -580,7 +592,7 @@ class AnalysisMixin(object):
         nc = _np_.zeros(len(self))
         for r in self:
             ret = func(r,**kargs)
-            if isinstance(ret, Iterable):
+            if isiterable(ret):
                 if _np_.size(ret) == 1:
                     ret = ret
                 elif len(ret) == len(r):
@@ -656,7 +668,10 @@ class AnalysisMixin(object):
             else:
                 w = _np_.ones((data.shape[0], len(ycol)))
                 W = data.shape[0]
-                e = _np_.std(data[:, ycol], axis=0) / _np_.sqrt(W)
+                if data[:, ycol].size>1:
+                    e = _np_.std(data[:, ycol], axis=0) / _np_.sqrt(W)
+                else:
+                    e=_np_.nan
             y = _np_.sum(data[:, ycol] * (w / W), axis=0)
             ybin[i,:] = y
             ebin[i,:] = e
@@ -672,7 +687,7 @@ class AnalysisMixin(object):
                 s = list(ret.setas)
                 s[-3:] = ["y", "e", "."]
                 ret.setas = s
-                head = self.column_headers[ycol[i]]
+                head = str(self.column_headers[ycol[i]])
                 ret.column_headers[i * 3 + 1:i * 3 + 5] = [head, "d{}".format(head), "#/bin {}".format(head)]
         else:
             ret = (bin_centres, ybin, ebin, nbins)
@@ -825,6 +840,10 @@ class AnalysisMixin(object):
 
         Returns:
             self: The newly modified :py:class:`AnalysisMixin`.
+            
+        Example:
+            .. plot:: samples/decompose.py
+               :include-source:
         """
         if xcol is None and ycol is None:
             if "_startx" in kwords:
@@ -876,7 +895,8 @@ class AnalysisMixin(object):
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        if isinstance(a, tuple) and isinstance(b, tuple) and len(a) == 2 and len(b) == 2:  #Error columns on
+        a = self.find_col(a)
+        if isinstance(a, (list,tuple)) and isinstance(b, (list,tuple)) and len(a) == 2 and len(b) == 2:  #Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
@@ -921,7 +941,8 @@ class AnalysisMixin(object):
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        if isinstance(a, tuple) and isinstance(b, tuple) and len(a) == 2 and len(b) == 2:  #Error columns on
+        a = self.find_col(a)
+        if isinstance(a, (list,tuple)) and isinstance(b, (list,tuple)) and len(a) == 2 and len(b) == 2:  #Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
@@ -977,31 +998,37 @@ class AnalysisMixin(object):
         kinds={"linear":lambda x,m,c:m*x+c,
                "quadratic":lambda x,a,b,c:a*x**2+b*x+c,
                "cubic":lambda x,a,b,c,d: a*x**3+b*x**2+c*x+d}
+        errs={"linear":lambda x,me,ce:_np_.sqrt((me*x)**2+ce**2),
+              "quadratic":lambda x,ae,be,ce:_np_.sqrt((2*x**2*ae)**2+(x*be)**2+ce**2),
+              "cubic":lambda x,ae,be,ce,de:_np_.sqrt((3*ae*x**3)**2+(2*x**2*be)**2+(x*ce)**2+de**2)}
+        
         if callable(kind):
             pass
         elif kind in kinds:
-            kind=kinds[kind]
+            kindf=kinds[kind]
         else:
             raise RuntimeError("Failed to recognise extrpolation function '{}'".format(kind))
-        scalar_x=not isinstance(new_x,Iterable)
+        scalar_x=not isiterable(new_x)
         if scalar_x:
             new_x=[new_x]
         if isinstance(new_x,ma.MaskedArray):
             new_x=new_x.compressed
-        results=_np_.zeros((len(new_x),len(_.ycol)))
+        results=_np_.zeros((len(new_x),2*len(_.ycol)))
+        work=self.clone
         for ix,x in enumerate(new_x):
             r=self.closest(x,xcol=_.xcol)
             if isinstance(overlap,int):
                 if (r.i-overlap/2)<0:
                     ll=0
-                    hl=overlap
+                    hl=min(len(self),overlap)
                 elif (r.i+overlap/2)>len(self):
                     hl=len(self)
-                    ll=hl-overlap
+                    ll=max(hl-overlap,0)
                 else:
                     ll=r.i-overlap/2
                     hl=r.i+overlap/2
-                bounds=lambda xv,rv:ll<=rv.i<hl
+                bounds={"_i__between":(ll,hl)}
+                mid_x=(self[ll,_.xcol]+self[hl-1,_.xcol])/2.0
             elif isinstance(overlap,float):
                 if (r[_.xcol]-overlap/2)<self.min(_.xcol)[0]:
                     ll=self.min(_.xcol)[0]
@@ -1012,13 +1039,18 @@ class AnalysisMixin(object):
                 else:
                     ll=r[_.xcol]-overlap/2
                     hl=r[_.xcol]+overlap/2
-                bounds=lambda xv,rv:ll<=xv<=hl
-            ret=self.curve_fit(kind,_.xcol,_.ycol,sigma=_.yerr,bounds=bounds)
+                bounds={"{}__between".format(self.column_headers[_.xcol]):(ll,hl)}
+                mid_x=(ll+hl)/2.0
+            pointdata=work.select(**bounds)
+            pointdata.data[:,_.xcol]=pointdata.column(_.xcol)-mid_x
+            ret=pointdata.curve_fit(kindf,_.xcol,_.ycol,sigma=_.yerr,absolute_sigma=True)
             if isinstance(ret,tuple):
                 ret=[ret]
             for iy,rt in enumerate(ret):
-                pcov,popt=rt
-                results[ix,iy]=kind(x,*pcov)
+                popt,pcov=rt
+                perr=_np_.sqrt(_np_.diag(pcov))
+                results[ix,2*iy]=kindf(x-mid_x,*popt)
+                results[ix,2*iy+1]=errs[kind](x-mid_x,*perr)
         if scalar_x:
             results=results[0]
         return results
@@ -1263,13 +1295,17 @@ class AnalysisMixin(object):
         ydata = ydata[mask] 
         xdata = xdata[mask] #lmfit doesn't seem to work well with masked data - here we just delete masked points
         xvar = model.independent_vars[0]
+        if isinstance(p0,Parameters):
+            for p,pp in p0.items():
+                model.set_param_hint(p,value=pp.value,vary=pp.vary,min=pp.min,max=pp.max,expr=pp.expr)
+            p0=None
         if p0 is None: # We're working off parameter hints, but still need to set the independent var
             p0=dict()
 
         if single_fit:
             p0[xvar] = xdata
 
-            ret_val=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix,result,header,replace,output)
+            ret_val=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix,result=result,header=header,replace=replace,output=output)
         else: # chi^2 mode
             pn=p0
             ret_val=_np_.zeros((pn.shape[0],pn.shape[1]*2+1))
@@ -1459,7 +1495,7 @@ class AnalysisMixin(object):
         additional column with the uncertainites will be added to the data.
         """
         a = self.find_col(a)
-        if isinstance(a, tuple) and isinstance(b, tuple) and len(a) == 2 and len(b) == 2:  #Error columns on
+        if isinstance(a, (list,tuple)) and isinstance(b, (list,tuple)) and len(a) == 2 and len(b) == 2:  #Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
@@ -1574,7 +1610,7 @@ class AnalysisMixin(object):
         index = []
         column = self.find_col(column)  #going to be easier if this is an integer later on
         for i, t in enumerate(self.rolling_window(window, wrap=False, exclude_centre=width)):
-            if func(self.data[i], column, t, certainty, **kargs):
+            if func(self.data[i], column, t, metric=certainty, **kargs):
                 index.append(i)
         self['outliers'] = index  #add outlier indecies to metadata
         index.reverse()  #Always reverse the index in case we're deleting rows in sucession
@@ -1627,7 +1663,7 @@ class AnalysisMixin(object):
         """
         _=self._col_args(scalar=False,xcol=xcol,ycol=ycol)
         xcol,ycol=_.xcol,_.ycol
-        if isinstance(ycol,Iterable):
+        if isiterable(ycol):
             ycol=ycol[0]
         if width is None:  # Set Width to be length of data/20
             width = len(self) / 20
@@ -1707,21 +1743,22 @@ class AnalysisMixin(object):
                 This method is depricated and may be removed in a future version in favour of the more general curve_fit
             """
         from Stoner.Util import ordinal
+        _=self._col_args(xcol=xcol,ycol=ycol,scalar=False)
 
-        if None in (xcol, ycol):
-            cols = self.setas._get_cols()
-            if xcol is None:
-                xcol = cols["xcol"]
-            if ycol is None:
-                ycol = cols["ycol"][0]
-
-        working = self.search(xcol, bounds)
-        p = _np_.polyfit(working[:, self.find_col(xcol)], working[:, self.find_col(ycol)], polynomial_order)
-        if result is not None:
-            if header is None:
-                header = "Fitted {} with {} order polynomial".format(self.column_headers[self.find_col(ycol)],
-                                                                     ordinal(polynomial_order))
-            self.add_column(_np_.polyval(p, x=self.column(xcol)), index=result, replace=replace, column_header=header)
+        working = self.search(_.xcol, bounds)
+        if not isiterable(_.ycol):
+            _.ycol=[_.ycol]
+        p=_np_.zeros((len(_.ycol),polynomial_order+1))
+        for i,ycol in enumerate(_.ycol):    
+            p[i,:] = _np_.polyfit(working[:, self.find_col(_.xcol)], working[:, self.find_col(ycol)], polynomial_order)
+            if result is not None:
+                if header is None:
+                    header = "Fitted {} with {} order polynomial".format(self.column_headers[self.find_col(ycol)],
+                                                                         ordinal(polynomial_order))
+                self.add_column(_np_.polyval(p[i,:], x=self.column(_.xcol)), index=result, replace=replace, header=header)
+        if len(_.ycol)==1:
+            p=p[0,:]
+        self["{}-order polyfit coefficients".format(ordinal(polynomial_order))]=list(p)
         return p
 
     def scale(self,other,xcol=None,ycol=None,**kargs):
@@ -1748,6 +1785,9 @@ class AnalysisMixin(object):
             *opt_trans*,*trans_err*,*new_xy_data*. Where *opt_trans* is the optimum affine transformation, *trans_err* is a matrix
             giving the standard error in the transformation matrix components and  *new_xy_data* is an (n x 2) array of the transformed data.
 
+        Example:
+            .. plot:: samples/scale_curves.py
+               :include-source:        
         """
         _=self._col_args(xcol=xcol,ycol=ycol)
         #
@@ -1807,14 +1847,14 @@ class AnalysisMixin(object):
                 m0=_np_.array([[1.0,0.0,0.0],[0.0,1.0,0.0]])
         elif isinstance(use_estimate,_np_.ndarray) and use_estimate.shape==(2,3): #use_estimate is an initial value transformation
             m0=use_estimate
-        else: # Don't try to be cleber
+        else: # Don't try to be clever
             m0=_np_.array([[1.0,0.0,0.0],[0.0,1.0,0.0]])
         popt,perr,trans=_twoD_fit(xy1,xy2,xmode=xmode,ymode=ymode,m0=m0)
         data=self.data[:,[_.xcol,_.ycol]]
         new_data=trans(data)
         if replace: # In place scaling, replace and return self
-            self["Transform"]=popt
-            self["Transform Err"]=perr
+            self.metadata["Transform"]=popt
+            self.metadata["Transform Err"]=perr
             self.data[:,_.xcol]=new_data[:,0]
             self.data[:,_.ycol]=new_data[:,1]
             if headers:
@@ -1872,7 +1912,7 @@ class AnalysisMixin(object):
 
         window=get_window(window,size)
         # Handle multiple or single y columns
-        if not isinstance(_.ycol,Iterable):
+        if not isiterable(_.ycol):
             _.ycol=[_.ycol]
 
         #Do the convolution itself
@@ -2131,7 +2171,7 @@ class AnalysisMixin(object):
         else:
             assert callable(func), "Keyword func should be callable if given"
             (args, varargs, keywords, defaults) = getargspec(func)
-            assert isinstance(p0, Iterable), "Keyword parameter p0 shoiuld be iterable if keyword func is given"
+            assert isiterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given"
             assert len(p0) == len(args) - 2, "Keyword p0 should be the same length as the optional arguments to func"
         # This is a bit of a hack, we turn (x,y) points into a 1D array of x and then y data
         set1 = _np_.append(x, y)
@@ -2174,7 +2214,8 @@ class AnalysisMixin(object):
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        if isinstance(a, tuple) and isinstance(b, tuple) and len(a) == 2 and len(b) == 2:  #Error columns on
+        a = self.find_col(a)
+        if isinstance(a, (list,tuple)) and isinstance(b, (list,tuple)) and len(a) == 2 and len(b) == 2:  #Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
@@ -2196,7 +2237,7 @@ class AnalysisMixin(object):
         self.add_column((adata - bdata), header=header, index=a, replace=replace)
         if err_calc is not None:
             a = self.find_col(a)
-            self.add_column(err_data, header=err_header, index=a, replace=False)
+            self.add_column(err_data, header=err_header, index=a+1, replace=False)
         return self
 
     def threshold(self, threshold, **kargs):
@@ -2242,7 +2283,7 @@ class AnalysisMixin(object):
         current = self.column(col)
 
         #Recursively call if we've got an iterable threshold
-        if isinstance(threshold, Iterable):
+        if isiterable(threshold):
             ret = []
             for th in threshold:
                 ret.append(self.threshold(th,col=col,xcol=xcol,rising=rising,falling=falling,all_vals=all_vals))

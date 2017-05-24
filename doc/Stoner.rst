@@ -1,91 +1,17 @@
 Stoner Package
 ###############
 
-:mod:`Core` Module
-==================
+.. automodapi:: Stoner.Core
 
-Classes
--------
-.. automodsumm:: Stoner.Core
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
+.. automodapi:: Stoner.Analysis
 
-Functions
----------
-.. automodsumm:: Stoner.Core
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
+.. automodapi:: Stoner.plot
 
-:mod:`Analysis` Module
-=======================
+.. automodapi:: Stoner.plot.formats
 
-Classes
--------
-.. automodsumm:: Stoner.Analysis
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
+.. automodapi:: Stoner.plot.utils
 
-Functions
----------
-.. automodsumm:: Stoner.Analysis
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
-
-
-:mod:`plot` Package
-===================
-
-Classes
--------
-.. automodsumm:: Stoner.plot.core
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
-
-Functions
----------
-.. automodsumm:: Stoner.plot.core
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
-   
-:mod:`plot.formats` Module
--------------------------
-
-
-Classes
-~~~~~~~
-.. automodsumm:: Stoner.plot.formats
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
-
-See also the stylesheets available in the stylelib directory.
-
-:mod:`plot.utils` Module
-------------------------
-
-Functions
-~~~~~~~~~
-.. automodsumm:: Stoner.plot.utils
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
-
-
-:mod:`Folders` Module
-======================
-
-Classes
--------
-.. automodsumm:: Stoner.Folders
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
+.. automodapi:: Stoner.Folders
 
 :mod:`FileFormats` Module
 =========================
@@ -134,119 +60,30 @@ Facility Outputs
     RasorFile
     SNSFile
 
-:mod:`Fit` Module
-=================
-
-lmfit Model Classes
--------------------
-.. automodsumm:: Stoner.Fit
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
-
-Bare functions
---------------
-.. automodsumm:: Stoner.Fit
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
-
+.. automodapi:: Stoner.Fit
 
 The following modules offer specialised file and foler formats.
 
-:mod:`HDF5` Module
-=========================
-.. automodsumm:: Stoner.HDF5
-   :toctree: classes
-   :template: classdocs.rst
 
-:mod:`Zip` Module
-=========================
+.. automodapi:: Stoner.HDF5
 
+.. automodapi:: Stoner.Zip
 
-Classes
--------
-.. automodsumm:: Stoner.Zip
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
+.. automodapi:: Stoner.Util
 
-Functions
----------
-.. automodsumm:: Stoner.Zip
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
-
-:mod:`Util` Module
-==================
-
-Classes
--------
-.. automodsumm:: Stoner.Util
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
-
-Functions
----------
-.. automodsumm:: Stoner.Util
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
-
+.. automodapi:: Stoner.tools
 
 Subpackages
 ===========
 
-:mod:`Image` Package
---------------------
+.. automodapi:: Stoner.Image
 
-Classes
-~~~~~~~
-.. automodsumm:: Stoner.Image.core
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
+.. automodapi:: Stoner.Image.folders
 
-Functions
-~~~~~~~~~
-.. automodsumm:: Stoner.Image.core
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
+.. automodapi:: Stoner.Image.stack
 
-:mod:`Image.folders` Package
----------------------------
+.. automodapi:: Stoner.Image.kerr
 
-Classes
-~~~~~~~
-.. automodsumm:: Stoner.Image.folders
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
+.. automodapi:: Stoner.Image.imagefuncs
 
-Functions
-~~~~~~~~~
-.. automodsumm:: Stoner.Image.folders
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
-
-:mod:`Image.stack` Package
----------------------------
-
-Classes
-~~~~~~~
-.. automodsumm:: Stoner.Image.stack
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
-
-Functions
-~~~~~~~~~
-.. automodsumm:: Stoner.Image.stack
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
-   
+.. automodapi:: Stoner.Image.util

@@ -1,10 +1,14 @@
 """Provides extra classes that can load data from various instruments into DataFile type objects.
 
-Eacg class has a priority attribute that is used to determine the order in which
-they are tried by DataFile and friends where trying to load data. High priority
-is run last.
+You do not need to use these classes directly, they are made available to :py:class:`Stoner.Core.Data` which
+will load each of them in turn when asked to load an unknown data file.
 
-Eacg class should implement a load() method and optionally a save() method.
+Each class has a priority attribute that is used to determine the order in which
+they are tried by :py:class:`Stoner.Core.Data` and friends where trying to load data. 
+High priority is run last (so is a bit of a misnomer!).
+
+Eacg class should implement a load() method and optionally a save() method. Classes should make every effort to
+positively identify that the file is one that they understand and throw a :py:exception:Stoner.Core.StonerLoadError` if not.
 """
 
 from __future__ import print_function
@@ -613,7 +617,7 @@ class RigakuFile(DataFile):
                         else:
                             self[key] = _np_.array([newvalue])
                     else:
-                        if isinstance(self[key][0], str):
+                        if isinstance(self[key][0], str) and isinstance(self[key],list):
                             self[key].append(newvalue)
                         else:
                             self[key] = _np_.append(self[key], newvalue)
@@ -1505,12 +1509,30 @@ class KermitPNGFile(DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=32 # reasonably generic format
+    priority=16 # We're checking for a the specoific PNG signature
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
     patterns=["*.png"] # Recognised filename patterns
 
     mime_type="image/png"
+
+    def _check_signature(self,filename):
+        """Check that this is a PNG file and raie a StonerLoadError if not."""
+        try:
+            with open(filename,"rb") as test:
+                sig=test.read(8)
+            if python_v3:
+                sig=[x for x in sig]
+            else:
+                sig=[ord(b) for b in sig]
+            if self.debug:
+                print(sig)
+            if sig!=[137,80,78,71,13,10,26,10]:
+                raise StonerLoadError("Signature mismatrch")
+        except Exception:
+            from traceback import format_exc
+            raise StonerLoadError("Not a PNG file!>\n{}".format(format_exc()))
+        return True
 
     def _load(self, filename=None, *args, **kargs):
         """PNG file loader routine.
@@ -1526,6 +1548,7 @@ class KermitPNGFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
+        self._check_signature(filename)
         try:
             with PIL.Image.open(self.filename,"r") as img:
                 for k in img.info:

@@ -9,7 +9,7 @@ Classes:
 
 __all__ = ["PlotMixin","hsl2rgb"]
 from Stoner.compat import python_v3,string_types,index_types
-from Stoner.tools import _attribute_store, isNone
+from Stoner.tools import _attribute_store, isNone,all_type,isiterable,typedList
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 
@@ -91,7 +91,7 @@ class PlotMixin(object):
             "showfig": bool
         }
         super(PlotMixin,self).__init__(*args,**kargs)
-        self._labels = copy.deepcopy(self.column_headers)
+        self._labels = typedList(string_types,self.column_headers)
         if self.debug: print("Done PlotMixin init")
 
 
@@ -156,9 +156,11 @@ class PlotMixin(object):
     def labels(self,value):
         """Set the labels for the plot columns."""
         if value is None:
-            self._labels=copy.deepcopy(self.column_headers)
+            self._labels=typedList(string_types,self.column_headers)
+        elif isiterable(value) and all_type(value,string_types):
+            self._labels = typedList(string_types,value)
         else:
-            self._labels = value
+            raise TypeError("labels should be iterable and all strings, or None, not {}".format(type(value)))
             
     @property
     def showfig(self):
@@ -275,13 +277,18 @@ class PlotMixin(object):
             matpltolib.pyplot.figure with a quiver plot."""
         if not _3D:
             raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
-        ax=plt.gca(projection="3d")
+        ax=kargs.pop("ax",plt.gca(projection="3d"))
         vector_field = ax.quiver(X, Y, Z, U,V,W,**kargs)
 
         return vector_field
 
-
-
+    def _span_slice(self,col,num):
+        """Create a slice that covers the range of a given column."""
+        v=self.column(col)
+        v1,v2=_np_.min(v),_np_.max(v)
+        span=v2-v1
+        delta=span/num
+        return slice(v1,v2+(delta/2),delta)
 
     def _VectorFieldPlot(self, X, Y, Z, U, V, W, **kargs):
         """Helper function to plot vector fields using mayavi.mlab.
@@ -337,10 +344,7 @@ class PlotMixin(object):
             else:
                 return [self._col_label(i) for i in ix]
         else:
-            if isinstance(self._labels, list) and len(self._labels) > ix:
-                return self._labels[ix]
-            else:
-                return self.column_headers[ix]
+            return self.labels[ix]
 
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones."""
@@ -486,8 +490,10 @@ class PlotMixin(object):
         if "set_{}".format(name) in dir(plt.Axes):
             tfig = plt.gcf()
             tax = tfig.gca()  # protect the current axes and figure
+            if self.fig is None: # oops we need a figure first!
+                self.figure()
             ax = self.fig.gca()
-            if not isinstance(value, Iterable) or isinstance(value, string_types):
+            if not isiterable(value) or isinstance(value, string_types):
                 value = (value, )
             func = ax.__getattribute__("set_{}".format(name))
             if isinstance(value, dict):
@@ -497,7 +503,7 @@ class PlotMixin(object):
             plt.figure(tfig.number)
             plt.sca(tax)
 
-    def add_column(self, column_data, header=None, index=None, func_args=None, replace=False):
+    def add_column(self, column_data, header=None, index=None, **kargs):
         """Appends a column of data or inserts a column to a datafile instance.
     
         Args:
@@ -510,6 +516,8 @@ class PlotMixin(object):
             func_args (dict): If column_data is a callable object, then this argument
                 can be used to supply a dictionary of function arguments to the callable object.
             replace (bool): Replace the data or insert the data (default)
+            setas (str): Set the type of column (x,y,z data etc - see :py:attr:`Stoner.Core.DataFile.setas`)
+
     
         Returns:
             A :py:class:`DataFile` instance with the additonal column inserted.
@@ -519,7 +527,7 @@ class PlotMixin(object):
             the original DataFile Instance as well as returning it.
         """
         # Call the parent method and then update this label
-        super(PlotMixin,self).add_column(column_data,header=header,index=index,func_args=func_args,replace=replace)
+        super(PlotMixin,self).add_column(column_data,header=header,index=index,**kargs)
         #Mostly this is duplicating the parent method
         if index is None:
             index = len(self.column_headers)-1
@@ -642,25 +650,27 @@ class PlotMixin(object):
         if shape is None or not (isinstance(shape, tuple) and len(shape) == 2):
             shape = (_np_.floor(_np_.sqrt(len(self))), _np_.floor(_np_.sqrt(len(self))))
         if xlim is None:
-            xlim = (_np_.min(self.column(xcol)) * (shape[0] - 1) / shape[0], _np_.max(self.column(xcol)) *
-                    (shape[0] - 1) / shape[0])
-        if isinstance(xlim, tuple) and len(xlim) == 2:
+            xlim=self._span_slice(xcol,shape[0])
+        elif isinstance(xlim, tuple) and len(xlim) == 2:
             xlim = (xlim[0], xlim[1], (xlim[1] - xlim[0]) / shape[0])
+            xlim=slice(*xlim)
         elif isinstance(xlim, tuple) and len(xlim) == 3:
             xlim[2] = len(range(*xlim))
+            xlim=slice(*xlim)
         else:
             raise RuntimeError("X limit specification not good.")
         if ylim is None:
-            ylim = (_np_.min(self.column(ycol)) * (shape[1] - 1) / shape[1], _np_.max(self.column(ycol)) *
-                    (shape[0] - 1) / shape[0])
-        if isinstance(ylim, tuple) and len(ylim) == 2:
+            ylim=self._span_slice(ycol,shape[1])
+        elif isinstance(ylim, tuple) and len(ylim) == 2:
             ylim = (ylim[0], ylim[1], (ylim[1] - ylim[0]) / shape[1])
+            ylim=slice(*ylim)
         elif isinstance(ylim, tuple) and len(ylim) == 3:
             ylim[2] = len(range(*ylim))
+            ylim=slice(*ylim)
         else:
             raise RuntimeError("Y limit specification not good.")
 
-        np = _np_.mgrid[slice(*xlim), slice(*ylim)].T
+        np = _np_.mgrid[xlim,ylim].T
 
         points = _np_.array([self.column(xcol), self.column(ycol)]).T
         if zcol is None:
@@ -675,6 +685,7 @@ class PlotMixin(object):
             Z = _np_.zeros((np.shape[0], np.shape[1], zdata.shape[1]))
             for i in range(zdata.shape[1]):
                 Z[:,:, i] = griddata(points, zdata[:, i], np, method=method)
+
         return np[:,:, 0], np[:,:, 1], Z
 
     def image_plot(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, **kargs):
@@ -1215,6 +1226,7 @@ class PlotMixin(object):
         """
         try:
             from mayavi import mlab, core
+            mlab.figure()
             mayavi=True
         except ImportError:
             mayavi=False
@@ -1334,7 +1346,7 @@ class PlotMixin(object):
         """
         locals().update(self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, **kargs))
         defaults = {
-            "pivot": "center",
+            "pivot": "mid",
             "color": (0, 0, 0, 0.5),
             "headlength": 5,
             "headaxislength": 5,

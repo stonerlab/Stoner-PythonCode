@@ -203,14 +203,11 @@ def hysteresis_correct(data, **kargs):
     if "setas" in kargs: # Allow us to override the setas variable
         data.setas=kargs.pop("setas")
 
+    xcol=kargs.pop("xcol",None)
+    ycol=kargs.pop("ycol",None)
     #Get xcol and ycols from kargs if specified
-    xc = kargs.pop("xcol",data.find_col(data.setas["x"]))
-    yc = kargs.pop("ycol",data.find_col(data.setas["y"]))
-    setas=data.setas
-    setas[xc]="x"
-    setas[yc]="y"
-    data.setas=setas
-
+    _=data._col_args(xcol=xcol,ycol=ycol)
+    data.setas(x=_.xcol,y=_.ycol)
     #Split into two sets of data:
 
     #Get other keyword arguments
@@ -291,7 +288,7 @@ def hysteresis_correct(data, **kargs):
         Hsat[1-i]=mean(hs) # Get the H_sat value
         if hs.size>1:
             Hsat_err[1-i]=sem(hs)
-        mr=d.threshold(0.0,col=xc,xcol=yc,all_vals=True,rising=True,falling=True)
+        mr=d.threshold(0.0,col=_.xcol,xcol=_.ycol,all_vals=True,rising=True,falling=True)
         Mr[i]=mean(mr)
         if mr.size>1:
             Mr_err[i]=sem(mr)

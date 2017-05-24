@@ -76,12 +76,13 @@ class TexEngFormatter(EngFormatter):
             ret = ""
         elif value != 0.0:
             power = _np_.floor(_np_.log10(_np_.abs(value)))
-            power = (_np_.sign(power) * (_np_.floor(_np_.abs(power / 3.0))) - 1) * 3.0
-            if _np_.abs(power) < 3:
+            pre=_np_.ceil(power/3.0)*3
+            power = power % 3
+            if pre==0:
                 ret = "${}$".format(value)
             else:
-                v = int(value / (10 ** power))
-                ret = "${}\\mathrm{{{} {}}}$".format(v, self.prefix[int(power)], self.unit)
+                v = value / (10 ** pre)
+                ret = "${}\\mathrm{{{} {}}}$".format(v, self.prefix[int(pre)], self.unit)
         else:
             ret = "$0.0$"
         return ret
@@ -211,11 +212,12 @@ class DefaultPlotStyle(object):
             return self._stylesheet[1]
         levels = type.mro(type(self))[:-1]
         sheets=[]
+        classes=[]
         for c in levels: # Iterate through all possible parent classes and build a list of stylesheets
-            if c is self.__class__:
+            if c is self.__class__ or c in classes:
                 continue
-            for f in [join(dirname(getfile(c)), c.stylename + ".mplstyle"),
-                      join(dirname(getfile(c)), "stylelib",c.stylename + ".mplstyle"),
+            for f in [join(realpath(dirname(getfile(c))), c.stylename + ".mplstyle"),
+                      join(dirname(realpath(getfile(c))), "stylelib",c.stylename + ".mplstyle"),
                       join(dirname(realpath(__file__)), "stylelib",c.stylename + ".mplstyle"),
                 ]: # Look in first of all the same directory as the class file and then in a stylib folder
                 if exists(f):
@@ -224,9 +226,10 @@ class DefaultPlotStyle(object):
             else: # Fallback, does the parent class define a builtin stylesheet ?
                 if c.stylename in plt.style.available:
                     sheets.append(c.stylename)
+            classes.append(c) # Stop double visiting files
         #Now do the same for this class, but allow the stylename to be an instance variable as well
-        for f in [join(dirname(getfile(self.__class__)), self.stylename + ".mplstyle"),
-                  join(dirname(getfile(self.__class__)), "stylelib",self.stylename + ".mplstyle"),
+        for f in [join(dirname(realpath(getfile(self.__class__))), self.stylename + ".mplstyle"),
+                  join(dirname(realpath(getfile(self.__class__))), "stylelib",self.stylename + ".mplstyle"),
             ]:
             if exists(f):
                 sheets.append(f)
@@ -276,11 +279,8 @@ class DefaultPlotStyle(object):
                 if attrname in plt.rcParams.keys():
                     params[attrname] = value
         plt.rcParams.update(params)  # Apply these parameters
-        if "projection" in kargs:
-            projection = kargs["projection"]
-            del kargs["projection"]
-        else:
-            projection = "rectilinear"
+        projection=kargs.pop("projection","rectilinear")
+        self.template_figure_figsize=kargs.pop("figsize",self.template_figure_figsize)
         if isinstance(figure, bool) and not figure:
             ret = None
         elif figure is not None:
@@ -294,7 +294,7 @@ class DefaultPlotStyle(object):
                 else:
                     ax = fig.add_axes(rect)
             else:
-                ax = fig.gca(projection=projection)
+                ax = kargs.pop("ax",fig.gca(projection=projection))
             ret = fig
         else:
             if projection == "3d":

@@ -31,6 +31,7 @@ except ImportError:
 
 from scipy.integrate import quad
 import scipy.constants.codata as consts
+import scipy.constants as cnst
 try:
     if python_v3:
         import configparser as ConfigParser
@@ -243,6 +244,11 @@ def arrhenius(x, A, DE):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
+    
+    Example:
+        .. plot:: samples/Fitting/Arrhenius.py
+        :include-source:
+            
     """
     _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
     return A * _np_.exp(-DE / (_kb * x))
@@ -262,6 +268,10 @@ class Arrhenius(Model):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
+    
+    Example:
+        .. plot:: samples/Fitting/Arrhenius.py
+        :include-source:
     """
     
     display_names=["A",r"\Delta E"]
@@ -278,7 +288,7 @@ class Arrhenius(Model):
         d1, d2 = 1., 0.0
         if x is not None:
             d1, d2 = _np_.polyfit(-1.0 / x, _np_.log(data), 1)
-        pars = self.make_params(A=_np_.exp(d2), dE=_kb * d1)
+        pars = self.make_params(A=_np_.exp(d2), DE=_kb * d1)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -296,6 +306,10 @@ def nDimArrhenius(x, A, DE, n):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)` where
     :math:`k_B` is Boltzmann's constant.
+
+    Example:
+        .. plot:: samples/Fitting/nDimArrhenius.py
+        :include-source:
     """
     return arrhenius(x ** n, A, DE)
 
@@ -315,6 +329,10 @@ class NDimArrhenius(Model):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)` where
     :math:`k_B` is Boltzmann's constant.
+
+    Example:
+        .. plot:: samples/Fitting/nDimArrhenius.py
+        :include-source:
     """
     
     display_names=["A",r"\Delta E","n"]
@@ -330,7 +348,7 @@ class NDimArrhenius(Model):
         d1, d2 = 1., 0.0
         if x is not None:
             d1, d2 = _np_.polyfit(-1.0 / x, _np_.log(data), 1)
-        pars = self.make_params(A=_np_.exp(d2), dE=_kb * d1, n=1.0)
+        pars = self.make_params(A=_np_.exp(d2), DE=_kb * d1, n=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -348,8 +366,12 @@ def modArrhenius(x, A, DE, n):
 
     The Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
+
+    Example:
+        .. plot:: samples/Fitting/modArrhenius.py
+        :include-source:
     """
-    return (x ** n) * Arrhenius(x, A, DE)
+    return (x ** n) * arrhenius(x, A, DE)
 
 
 class ModArrhenius(Model):
@@ -367,6 +389,10 @@ class ModArrhenius(Model):
 
     The Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
+
+    Example:
+        .. plot:: samples/Fitting/modArrhenius.py
+        :include-source:
     """
 
     display_names=["A",r"\Delta E","n"]
@@ -382,7 +408,7 @@ class ModArrhenius(Model):
         d1, d2 = 1., 0.0
         if x is not None:
             d1, d2 = _np_.polyfit(-1.0 / x, _np_.log(data), 1)
-        pars = self.make_params(A=_np_.exp(d2), dE=_kb * d1, n=1.0)
+        pars = self.make_params(A=_np_.exp(d2), DE=_kb * d1, n=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -397,7 +423,12 @@ def powerLaw(x, A, k):
     Return:
         Power law.
 
-    :math:`p=Ax^k`"""
+    :math:`p=Ax^k`
+
+    Example:
+        .. plot:: samples/Fitting/Powerlaw.py
+        :include-source:
+    """
     return A * x ** k
 
 
@@ -414,6 +445,10 @@ def quadratic(x, a, b, c):
         Array of data.
 
     :math:`y=ax^2+bx+c`
+
+    Example:
+        .. plot:: samples/Fitting/Quadratic.py
+        :include-source:
     """
     return a * x ** 2 + b * x + c
 
@@ -433,6 +468,10 @@ def simmons(V, A, phi, d):
     .. note::
 
         Simmons model from Simmons J. App. Phys. 34 6 1963
+
+    Example:
+        .. plot:: samples/Fitting/Simmons.py
+        :include-source:
     """
     I = 6.2e6 * A / d ** 2 * ((phi - V / 2) * _np_.exp(-1.025 * d * _np_.sqrt(phi - V / 2)) -
                               (phi + V / 2) * _np_.exp(-1.025 * d * _np_.sqrt(phi + V / 2)))
@@ -455,6 +494,10 @@ class Simmons(Model):
     .. note::
 
        Simmons model from Simmons J. App. Phys. 34 6 1963
+
+    Example:
+        .. plot:: samples/Fitting/Simmons.py
+        :include-source:
     """
 
     display_names=["A",r"\phi","d"]
@@ -465,7 +508,7 @@ class Simmons(Model):
 
     def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
         """Just set the A, phi and d values to typical answers for a small tunnel junction"""
-        pars = self.make_params(A=1E-12, phi=3.0, d=10.0)
+        pars = self.make_params(A=1E3, phi=3.0, d=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -482,11 +525,17 @@ def bdr(V, A, phi, dphi, d, mass):
 
     Return:
         Data for tunneling rate  according to the BDR model.
-
     .. note::
 
        See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)
+
+    Example:
+        .. plot:: samples/Fitting/BDR.py
+        :include-source:
     """
+    mass=abs(mass)
+    phi=abs(phi)
+    d=abs(d)
     I = 3.16e10 * A ** 2 * _np_.sqrt(phi) / d * _np_.exp(-1.028 * _np_.sqrt(phi) * d) * (
         V - 0.0214 * _np_.sqrt(mass) * d * dphi / phi ** 1.5 * V ** 2 + 0.0110 * mass * d ** 2 / phi * V ** 3)
     return I
@@ -510,6 +559,10 @@ class BDR(Model):
     .. note::
 
        See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)
+
+    Example:
+        .. plot:: samples/Fitting/BDR.py
+        :include-source:
     """
 
     def __init__(self, *args, **kwargs):
@@ -533,6 +586,10 @@ def fowlerNordheim(V, A, phi, d):
 
     Return:
         Tunneling rate according to Fowler Nordheim model.
+
+    Example:
+        .. plot:: samples/Fitting/FowlerNordheim.py
+        :include-source:
     """
     I = V / _np_.abs(V) * 3.38e6 * A * V ** 2 / (d ** 2 * phi) * _np_.exp(-0.689 * phi ** 1.5 * d / _np_.abs(V))
     return I
@@ -550,6 +607,10 @@ class FowlerNordheim(Model):
 
     Return:
         Tunneling rate according to Fowler Nordheim model.
+
+    Example:
+        .. plot:: samples/Fitting/FowlerNordheim.py
+        :include-source:
     """
 
     def __init__(self, *args, **kwargs):
@@ -615,6 +676,10 @@ def wlfit(B, s0, DS, B1, B2):
     .. note::
 
        2D WL model as per Wu et al  PRL 98, 136801 (2007), Porter et al PRB 86, 064423 (2012)
+
+    Example:
+        .. plot:: samples/Fitting/weak_localisation.py
+        :include-source:
     """
 
     e = 1.6e-19  #C
@@ -660,6 +725,10 @@ class WLfit(Model):
     .. note::
 
        2D WL model as per Wu et al  PRL 98, 136801 (2007), Porter et al PRB 86, 064423 (2012)
+
+    Example:
+        .. plot:: samples/Fitting/weak_localisation.py
+        :include-source:
     """
 
     display_names=[r"\sigma_0","D_S","B_1","B_2"]
@@ -771,6 +840,10 @@ def strijkers(V, omega, delta, P, Z):
        PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
 
     This version only uses 1 delta, not modified for proximity
+
+    Example:
+        .. plot:: samples/lmfit_demo.py
+        :include-source:
     """
     return _strijkers_core(V, omega, delta, P, Z)
 
@@ -794,6 +867,10 @@ class Strijkers(Model):
        PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
 
     This version only uses 1 delta, not modified for proximity
+
+    Example:
+        .. plot:: samples/lmfit_demo.py
+        :include-source:
     """
 
     display_names=[r"\omega",r"\Delta","P","Z"]
@@ -822,6 +899,10 @@ def fluchsSondheimer(t, l, p, sigma_0):
 
     Note:
         Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330
+
+    Example:
+        .. plot:: samples/Fitting/f_s.py
+        :include-source:
     """
     k = t / l
 
@@ -830,7 +911,9 @@ def fluchsSondheimer(t, l, p, sigma_0):
     result = _np_.zeros(k.shape)
     for i in range(len(k)):
         v = k[i]
-        result[i] = 1 - (3 * (1 - p) / (8 * v)) + (3 * (1 - p) / (2 * v)) * quad(kernel, 0, 1, v)
+        ret1 = 1 - (3 * (1 - p) / (8 * v)) + (3 * (1 - p) / (2 * v))
+        ret2 = quad(kernel, 0, 1, (v,))[0]
+        result[i]=ret1*ret2
     return result / sigma_0
 
 
@@ -849,6 +932,10 @@ class FluchsSondheimer(Model):
 
     Note:
         Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330
+
+    Example:
+        .. plot:: samples/Fitting/f_s.py
+        :include-source:
     """
 
     display_names=[r"\lambda_{mfp}","p_{refl}",r"\sigma_0"]
@@ -880,6 +967,10 @@ def blochGrueneisen(T, thetaD, rho0, A, n):
 
     Return:
         Evaluation of the BlochGrueneisen function for R(T)
+
+    Example:
+        .. plot:: samples/Fitting/b_g.py
+        :include-source:
     """
     ret = _np_.zeros(T.shape)
     for i, t in enumerate(T):
@@ -901,6 +992,10 @@ class BlochGrueneisen(Model):
 
     Return:
         Evaluation of the BlochGrueneisen function for R(T)
+
+    Example:
+        .. plot:: samples/Fitting/b_g.py
+        :include-source:
     """
 
     display_names=[r"\theta_D",r"\rho_0","A","n"]
@@ -927,13 +1022,19 @@ def langevin(H, M_s, m, T):
     Returns:
         Magnetic Momemnts (array).
 
-    The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
+    Note:
+        The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
+
+    Example:
+        .. plot:: samples/Fitting/langevin.py
+        :include-source:
     """
     from scipy.constants import k, mu_0
 
-    x = mu_0 * m * H / (k * T)
-    return M_s * _np_.coth(x) - 1.0 / x
-
+    x = mu_0 * H*m / (k * T)
+    n=M_s/m
+    
+    return m*n*(1.0/_np_.tanh(x)-1.0/x)
 
 class Langevin(Model):
 
@@ -948,7 +1049,12 @@ class Langevin(Model):
     Returns:
         Magnetic Momemnts (array).
 
-    The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
+    Note:
+        The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
+
+    Example:
+        .. plot:: samples/Fitting/langevin.py
+        :include-source:
     """
 
     def __init__(self, *args, **kwargs):
@@ -960,10 +1066,11 @@ class Langevin(Model):
 
         M_s is taken as half the difference of the range of thew M data,
         we can find m/T from the susceptibility chi= M_s \mu_o m / kT,"""
+        from scipy.signal import savgol_filter
+        from scipy.constants import k, mu_0, e, electron_mass, hbar
+
         M_s = (_np_.max(data) - _np_.min(data)) / 2.0
         if h is not None:
-            from scipy.signal import savgol_filter
-            from scipy.constants import k, mu_0, e, electron_mass, hbar
             d = _np_.sort(_np_.row_stack((h, data)))
             dd = savgol_filter(d, 7, 1)
             yd = dd[1] / dd[0]
@@ -992,6 +1099,10 @@ def vftEquation(x, A, DE, x_0):
 
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
     a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
+
+    Example:
+        .. plot:: samples/Fitting/vftEquation.py
+        :include-source:
     """
     _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
     return A * _np_.exp(-DE / (_kb * (x - x_0)))
@@ -1012,6 +1123,12 @@ class VFTEquation(Model):
 
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
     a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
+    
+    See :py:func:`Stoner.Fit.vftEquation` for an example.
+
+    Example:
+        .. plot:: samples/Fitting/vftEquation.py
+        :include-source:
     """
 
     display_names=["A",r"\Delta E","x_0"]
@@ -1087,18 +1204,23 @@ class StretchedExp(Model):
         pars = self.make_params(A=A, beta=beta, x_0=x0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
-def kittelEquation(H,gamma,M_s,H_k):
+def kittelEquation(H,g,M_s,H_k):
     """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
         H (array): Magnetic fields in A/m
-        gamma (float): gyromagnetic radius
+        g (float): h g factor for the gyromagnetic radius
         M_s (float): Magnetisation of sample in A/m
         H_k (float): Anisotropy field term (including demagnetising factors) in A/m
 
     Returns:
         Reesonance peak frequencies in Hz
+
+    Example:
+        .. plot:: samples/Fitting/kittel.py
+        :include-source:                
     """
+    gamma=g*cnst.e/(2*cnst.m_e)
     return (consts.mu0*gamma/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
 
 class KittelEquation(Model):
@@ -1107,15 +1229,19 @@ class KittelEquation(Model):
 
     Args:
         H (array): Magnetic fields in A/m
-        gamma (float): gyromagnetic radius
+        g (float): h g factor for the gyromagnetic radius
         M_s (float): Magnetisation of sample in A/m
         H_k (float): Anisotropy field term (including demagnetising factors) in A/m
 
     Returns:
         Reesonance peak frequencies in Hz
+
+    Example:
+        .. plot:: samples/Fitting/kittel.py
+        :include-source:                
     """
 
-    display_names=[r"\gamma","M_s","H_k"]
+    display_names=[r"\g","M_s","H_k"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1123,9 +1249,16 @@ class KittelEquation(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+    
         M_s=(_np_.pi*data/consts.mu0)/x-x
+        M_s=_np_.mean(M_s[1:])
+        g=2
 
-        pars = self.make_params(gamma=2, M_s=M_s, H_k=0.0)
+        pars = self.make_params(g=g, M_s=M_s, H_k=100.0)
+        pars["M_s"].min=0
+        pars["g"].min=g/100
+        pars["H_k"].min=0
+        pars["H_k"].max=M_s.max()
         return update_param_vals(pars, self.prefix, **kwargs)
 
 

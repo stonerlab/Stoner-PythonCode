@@ -1,4 +1,3 @@
-# Makefile for Sphinx documentation
 #
 
 # You can set these variables from the command line.
@@ -42,10 +41,12 @@ clean:
 	-rm -rf $(BUILDDIR)/*
 	-rm -rf classes/* functions/*
 
-html:
+readme:
+	cp readme.rst ../README.rst
+
+html: readme
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
-	pandoc -f rst -t markdown_github -o ../README.md readme.rst
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
 dirhtml:

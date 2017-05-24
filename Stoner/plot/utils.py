@@ -51,7 +51,7 @@ def errorfill(x, y,
               ls=None,
               lw=None,
               alpha=1,
-              alpha_fill=0.7,
+              alpha_fill=0.5,
               label='',
               label_fill='',
               ax=None, **kargs):
@@ -93,7 +93,8 @@ def errorfill(x, y,
     kwargs_fill = dict(color=color, alpha=alpha_fill, label=label_fill)
     if yerr is not None:
         ymin, ymax = extrema_from_error_input(y, yerr)
-        fill_between(x, ymax, ymin, ax=ax, **kwargs_fill)
+        if x.size>1:
+            fill_between(x, ymax, ymin, ax=ax, **kwargs_fill)
     elif xerr is not None:
         xmin, xmax = extrema_from_error_input(x, xerr)
         fill_between_x(y, xmax, xmin, ax=ax, **kwargs_fill)
@@ -117,6 +118,11 @@ def fill_between(x, y1, y2=0, ax=None, **kwargs):
     ax = ax if ax is not None else plt.gca()
     ym = (y1 + y2) / 2.0
     yd = (y1 - y2) / 3.0
+    #Remove any bad data points
+    keep = np.logical_not(np.isnan(ym))
+    x=x[keep]
+    ym=ym[keep]
+    yd=yd[keep]
     alpha = kwargs["alpha"]
     a = np.linspace(0.1, 0.9, 15)
     z = lambda x, s,y: s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
@@ -125,7 +131,8 @@ def fill_between(x, y1, y2=0, ax=None, **kwargs):
         y1 = ym - (z(y, yd,y))
         y2 = ym + (z(y, yd,y))
         kwargs["alpha"] = alpha * h
-        ax.fill_between(x, y1, y2, **kwargs)
+        if x.size>1:
+            ax.fill_between(x, y1, y2, **kwargs)
     ax.add_patch(plt.Rectangle((0, 0), 0, 0, **kwargs))
 
 
@@ -135,7 +142,6 @@ def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
     ym = (y1 + y2) / 2.0
     yd = (y1 - y2) / 3.0
     alpha = kwargs["alpha"]
-    a = np.linspace(0.1, 0.9, 15)
     a = np.linspace(0.1, 0.9, 15)
     z = lambda x, s,y: s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
     for h in a:
