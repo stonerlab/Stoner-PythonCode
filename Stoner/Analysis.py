@@ -6,7 +6,7 @@ Provides  :py:class:`AnalysisMixin` - DataFile with extra bells and whistles.
 __all__ = ["AnalysisMixin"]
 
 from .compat import python_v3,string_types,int_types,index_types,LooseVersion
-from .tools import isNone,isiterable
+from .tools import isNone,isiterable,all_type
 import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
@@ -664,7 +664,11 @@ class AnalysisMixin(object):
             if yerr is not None:
                 w = 1.0 / data[:, yerr] ** 2
                 W = _np_.sum(w, axis=0)
-                e = 1.0 / _np_.sqrt(W)
+                if data.shape[0]>3:
+                    e = max(_np_.std(data[:, ycol], axis=0) / _np_.sqrt(data.shape[0]),
+                                  (1.0/_np_.sqrt(W))/data.shape[0])
+                else:
+                    e=1.0/_np_.sqrt(W)
             else:
                 w = _np_.ones((data.shape[0], len(ycol)))
                 W = data.shape[0]
@@ -1322,7 +1326,7 @@ class AnalysisMixin(object):
 
         Args:
             xcol (index): Column of data with X values
-            bins (int or float): Number of bins (int) or width of bins (if float)
+            bins (1d_)array or int or float): Number of bins (int) or width of bins (if float)
             mode (string): "lin" for linear binning, "log" for logarithmic binning.
 
         Keyword Arguments:
@@ -1380,6 +1384,10 @@ class AnalysisMixin(object):
                 bin_start = _np_.array(splits[:-1])
                 bin_stop = _np_.array(splits[1:])
                 bin_centres = _np_.array(centers)
+        elif isinstance(bins,_np_.ndarray) and bins.ndim==1: # Yser provided manuals bins
+            bin_start=bins[:-1]
+            bin_stop=bins[1:]
+            bin_centres=(bin_start+bin_stop)/2.0
         else:
             raise TypeError("bins must be either an integer or a float, not a {}".format(type(bins)))
         if len(bin_start) > len(self):
@@ -1415,13 +1423,14 @@ class AnalysisMixin(object):
             self._pop_mask()
         return result
 
-    def mean(self, column=None, bounds=None):
+    def mean(self, column=None,sigma=None, bounds=None):
         """FInd mean value of a data column.
 
         Args:
             column (index): Column to look for the maximum in
 
         Keyword Arguments:
+            sigma (column index or array): The uncertainity noted for each value in the mean
             bounds (callable): A callable function that takes a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
 
@@ -1435,14 +1444,27 @@ class AnalysisMixin(object):
         .. todo::
             Fix the row index when the bounds function is used - see note of \b max
         """
-        if column is None:
-            col = self.setas._get_cols("ycol")
-        else:
-            col = self.find_col(column)
+        _=self._col_args(scalar=True,ycol=column,yerr=sigma)
+
         if bounds is not None:
             self._push_mask()
-            self._set_mask(bounds, True, col)
-        result = self.data[:, col].mean()
+            self._set_mask(bounds, True, _.ycol)
+
+        if isiterable(sigma) and len(sigma)==len(self) and all_type(sigma,float):
+            sigma=_np_.array(sigma)
+            _["has_yerr"]=True
+        elif _.has_yerr:
+            sigma=self.data[:,_.yerr]
+
+
+        if not _.has_yerr:
+            result = self.data[:, _.ycol].mean()
+        else:
+            ydata=self.data[:,_.ycol]
+            w=1/(sigma**2+1E-8)
+            norm=w.sum(axis=0)
+            error=_np_.sqrt((sigma**2).sum(axis=0))/len(sigma)
+            result=(ydata*w).mean(axis=0)/norm,error            
         if bounds is not None:
             self._pop_mask()
         return result
