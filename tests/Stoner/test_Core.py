@@ -17,6 +17,7 @@ pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
 from Stoner import Data,__home__
+from Stoner.Core import typeHintedDict
 
 class Datatest(unittest.TestCase):
 
@@ -242,14 +243,28 @@ class Datatest(unittest.TestCase):
         d.data["Column 2",:]=np.zeros(len(d)) #TODO make this work with d["Column 2",:] as well
         self.assertTrue(d.z.max()==0.0 and d.z.min()==0.0,"Failed to set Dataarray using string indexing")
 
+class typeHintedDictTest(unittest.TestCase):
+    """Test typeHintedDict class"""
+    
+    def test_filter(self):
+        d = typeHintedDict([('el1',1),('el2',2),('el3',3),('other',4)])
+        d.filter('el')
+        self.assertTrue(len(d)==3)
+        d.filter(lambda x: x.endswith('3'))
+        self.assertTrue(len(d)==1)
+        self.assertTrue(d['el3']==3)
+        
+        
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    test=Datatest("test_operators")
-    test.setUp()
-    test.test_indexing()
-    test.test_constructor()
-    test.test_attributes()
-    test.test_operators()
-    test.test_methods()
-    test.test_setas_metadata()
-    test.test_filter()
+#    test=Datatest("test_operators")
+#    test.setUp()
+#    test.test_indexing()
+#    test.test_constructor()
+#    test.test_attributes()
+#    test.test_operators()
+#    test.test_methods()
+#    test.test_setas_metadata()
+#    test.test_filter()
+    test2=typeHintedDictTest()
+    test2.test_filter()

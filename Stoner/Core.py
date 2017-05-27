@@ -922,7 +922,30 @@ class typeHintedDict(regexpDict):
             nk = k + "{" + t + "}"
             ret[nk] = copy.deepcopy(self[k])
         return ret
-
+        
+    def filter(self, name):
+        """Filter the dictionary keys by name
+        
+        Reduce the metadata dictionary leaving only keys satisfied by name.
+        
+        Keyword Arguments:
+            name(str or callable):
+                either a str to match or a callable function that takes metadata key-value
+                as an argument and returns True or False
+        """
+        rem = []
+        for k in self.keys():
+            if isinstance(name, string_types):
+                if not name in k:
+                    rem.append(k)
+            elif hasattr(name, '__call__'):
+                if not name(k):
+                    rem.append(k)
+            else:
+                raise ValueError('name must be a string or a function')
+        for k in rem:
+            del(self[k])
+            
     def type(self, key):
         """Returns the typehint for the given k(s).
 

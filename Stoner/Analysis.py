@@ -684,15 +684,17 @@ class AnalysisMixin(object):
         if clone:
             ret = self.clone
             ret.data = _np_.atleast_2d(bin_centres).T
-            ret.column_headers[0] = self.column_headers[xcol]
+            ret.column_headers= [self.column_headers[xcol]]
             ret.setas = ["x"]
             for i in range(ybin.shape[1]):
-                ret = ret & ybin[:, i] & ebin[:, i] & nbins[:, i]
-                s = list(ret.setas)
+                head = str(self.column_headers[ycol[i]])
+
+                ret.add_column(ybin[:, i],header=head)
+                ret.add_column(ebin[:, i],header="d{}".format(head))
+                ret.add_column(nbins[:, i],header="#/bin {}".format(head))
+                s=list(ret.setas)
                 s[-3:] = ["y", "e", "."]
                 ret.setas = s
-                head = str(self.column_headers[ycol[i]])
-                ret.column_headers[i * 3 + 1:i * 3 + 5] = [head, "d{}".format(head), "#/bin {}".format(head)]
         else:
             ret = (bin_centres, ybin, ebin, nbins)
         return ret
