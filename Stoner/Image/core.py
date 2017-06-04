@@ -27,9 +27,12 @@ import matplotlib.pyplot as plt
 from Stoner.Core import typeHintedDict,metadataObject
 from Stoner.Image.util import convert
 from Stoner import Data
-from Stoner.compat import string_types,get_filedialog # Some things to help with Python2 and Python3 compatibility
+from Stoner.compat import python_v3,string_types,get_filedialog # Some things to help with Python2 and Python3 compatibility
 import inspect
-from cStringIO import StringIO
+if python_v3:
+    from io import StringIO
+else:
+    from cStringIO import StringIO
 
 
 
