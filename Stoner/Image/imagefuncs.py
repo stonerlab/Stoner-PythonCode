@@ -405,8 +405,10 @@ def imshow(im, figure='new', title=None, cmap='gray', **kwargs):
     if title is None:
         if 'filename' in im.metadata.keys():
             plt.title(os.path.split(im['filename'])[1])
+        elif hasattr(im,"filename"):
+            plt.title(os.path.split(im.filename)[1])
         else:
-            plt.title('')
+            plt.title(' ')
     else:
         plt.title(title)
     plt.axis('off')
