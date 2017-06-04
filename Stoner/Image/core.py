@@ -128,61 +128,61 @@ class ImageArray(np.ndarray,metadataObject):
         array_args = {k:kargs.pop(k) for k in array_arg_keys if k in kargs.keys()}
         user_metadata = kargs.pop('metadata',{})
         asfloat = kargs.pop('asfloat', False) or kargs.pop('convert_float',False) #convert_float for back compatability
-        _debug = kargs.pop('_debug', False)
+        _debug = kargs.pop('debug', False)
                            
         ### 0 args initialisation
         if len(args)==0:
             ret = np.empty((0,0), dtype=float).view(cls)
-            ret.metadata.update(user_metadata)
-            return ret       
-        
-        ### 1 args initialisation
-        arg = args[0]
-        loadfromfile=False
-        if isinstance(arg, cls):
-            ret = arg           
-        elif isinstance(arg, np.ndarray):
-            # numpy array or ImageArray)
-            if len(arg.shape)==2:
-                ret = arg.view(ImageArray)
-            elif len(arg.shape)==1:
-                arg = np.array([arg]) #force 2d array
-                ret = arg.view(ImageArray)
-            else:
-                raise ValueError('Array dimension 0 must be at most 2. Got {}'.format(len(arg.shape)))
-        elif isinstance(arg, bool) and not arg:
-            patterns=(('png', '*.png'), ('npy','*.npy'))
-            arg = get_filedialog(what='r',filetypes=patterns)
-            if len(arg)==0:
-                raise ValueError('No file given')
-            else:
-                loadfromfile=True
-        elif isinstance(arg, string_types) or loadfromfile:
-            # Filename- load datafile
-            if not os.path.exists(arg):
-                raise ValueError('File path does not exist {}'.format(arg))
-            ret = cls._load(arg, **array_args)
-        elif isinstance(arg, ImageFile):
-            #extract the image
-            ret = arg.image
         else:
-            try:  #try converting to a numpy array (eg a list type)
-                ret = np.asarray(arg, **array_args).view(cls)
-                if ret.dtype=='O': #object dtype - can't deal with this
-                    raise ValueError
-            except ValueError: #ok couldn't load from iterable, we're done
-                raise ValueError("No constructor for {}".format(type(arg)))
-        if asfloat and ret.dtype.kind!='f': #convert to float type in place
-            dl = dtype_range[ret.dtype.type]
-            ret = np.array(ret, dtype=np.float64).view(cls)
-            ret = ret / float(dl[1])
+            
+            ### 1 args initialisation
+            arg = args[0]
+            loadfromfile=False
+            if isinstance(arg, cls):
+                ret = arg           
+            elif isinstance(arg, np.ndarray):
+                # numpy array or ImageArray)
+                if len(arg.shape)==2:
+                    ret = arg.view(ImageArray)
+                elif len(arg.shape)==1:
+                    arg = np.array([arg]) #force 2d array
+                    ret = arg.view(ImageArray)
+                else:
+                    raise ValueError('Array dimension 0 must be at most 2. Got {}'.format(len(arg.shape)))
+                ret.metadata=getattr(arg,"metadata",typeHintedDict())
+            elif isinstance(arg, bool) and not arg:
+                patterns=(('png', '*.png'), ('npy','*.npy'))
+                arg = get_filedialog(what='r',filetypes=patterns)
+                if len(arg)==0:
+                    raise ValueError('No file given')
+                else:
+                    loadfromfile=True
+            elif isinstance(arg, string_types) or loadfromfile:
+                # Filename- load datafile
+                if not os.path.exists(arg):
+                    raise ValueError('File path does not exist {}'.format(arg))
+                ret = cls._load(arg, **array_args)
+            elif isinstance(arg, ImageFile):
+                #extract the image
+                ret = arg.image
+            else:
+                try:  #try converting to a numpy array (eg a list type)
+                    ret = np.asarray(arg, **array_args).view(cls)
+                    if ret.dtype=='O': #object dtype - can't deal with this
+                        raise ValueError
+                except ValueError: #ok couldn't load from iterable, we're done
+                    raise ValueError("No constructor for {}".format(type(arg)))
+            if asfloat and ret.dtype.kind!='f': #convert to float type in place
+                dl = dtype_range[ret.dtype.type]
+                ret = np.array(ret, dtype=np.float64).view(cls)
+                ret = ret / float(dl[1])
                 
         #all constructors call array_finalise so metadata is now initialised
         if 'Loaded from' not in ret.metadata.keys():
             ret.metadata['Loaded from']=''
         ret.filename = ret.metadata['Loaded from']
         ret.metadata.update(user_metadata) 
-        ret._debug = _debug
+        ret.debug = _debug
         return ret
 
     def __array_finalize__(self, obj):
@@ -195,7 +195,7 @@ class ImageArray(np.ndarray,metadataObject):
         attributes are just copied over (plus any other attributes set in 
         _extra_attributes).
         """
-        if hasattr(self, '_debug') and self._debug:
+        if getattr(self, 'debug',False):
             print(type(self), type(obj))
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 2)
@@ -263,7 +263,7 @@ class ImageArray(np.ndarray,metadataObject):
                     to float values between 0 and 1 (necessary for some forms 
                     of processing)
         """
-        pass #already sorted metadata and ndarray setup through __new__
+        super(ImageArray,self).__init__(*args,**kwargs)
 
     @classmethod
     def _load(cls,filename,**array_args):
@@ -296,11 +296,19 @@ class ImageArray(np.ndarray,metadataObject):
 # Propety Accessor Functions
 #==============================================================r
     @property
+    def aspect(self):
+        """Return the aspect ratio (width/height) of the image."""
+        return float(self.shape[1])/self.shape[0]
+
+    @property
     def clone(self):
         """return a copy of the instance"""
         ret = ImageArray(np.copy(self))
         for k,v in self._extra_attributes.items():
-            setattr(ret, k, deepcopy(v))
+            try:
+                setattr(ret, k, deepcopy(v))
+            except Exception:
+                setattr(ret,k,copy(v))
         return ret        
 
     @property
@@ -372,26 +380,29 @@ class ImageArray(np.ndarray,metadataObject):
         might be cool sometime.
         """
         ret=None
+        try:
+            ret=super(ImageArray,self).__getattr__(name)
+        except AttributeError:
         #first check kermit funcs
-        if name.startswith('_'):
-            pass
-        elif name in dir(self._kfuncs):
-            workingfunc=getattr(self._kfuncs,name)
-            ret=self._func_generator(workingfunc)
-        elif '_' in name: #ok we might have a skimage module_function request
-            t=name.split('_')
-            t[1]='_'.join(t[1:]) #eg rescale_intensity needs stitching back together
-            t = ['skimage.'+t[0],t[1]]
-            if t[0] in self._ski_funcs.keys():
-                if t[1] in self._ski_funcs[t[0]][1]:
-                    workingfunc=getattr(self._ski_funcs[t[0]][0],t[1])
-                    ret=self._func_generator(workingfunc)        
-        if ret is None: #Ok maybe just a request for an skimage func, no module
-            for key in self._ski_funcs.keys(): #now look in skimage funcs
-                if name in self._ski_funcs[key][1]:
-                    workingfunc=getattr(self._ski_funcs[key][0],name)
-                    ret=self._func_generator(workingfunc)
-                    break
+            if name.startswith('_'):
+                pass
+            elif name in dir(self._kfuncs):
+                workingfunc=getattr(self._kfuncs,name)
+                ret=self._func_generator(workingfunc)
+            elif '_' in name: #ok we might have a skimage module_function request
+                t=name.split('_')
+                t[1]='_'.join(t[1:]) #eg rescale_intensity needs stitching back together
+                t = ['skimage.'+t[0],t[1]]
+                if t[0] in self._ski_funcs.keys():
+                    if t[1] in self._ski_funcs[t[0]][1]:
+                        workingfunc=getattr(self._ski_funcs[t[0]][0],t[1])
+                        ret=self._func_generator(workingfunc)        
+            if ret is None: #Ok maybe just a request for an skimage func, no module
+                for key in self._ski_funcs.keys(): #now look in skimage funcs
+                    if name in self._ski_funcs[key][1]:
+                        workingfunc=getattr(self._ski_funcs[key][0],name)
+                        ret=self._func_generator(workingfunc)
+                        break
 
         if ret is None:
             raise AttributeError('No attribute found of name {}'.format(name))
@@ -432,7 +443,7 @@ class ImageArray(np.ndarray,metadataObject):
         
     def __getitem__(self,index):
         """Patch indexing of strings to metadata."""
-        if self._debug:
+        if getattr(self,"debug",False):
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 2)
             print('caller name:', calframe[1][3])
@@ -706,7 +717,6 @@ class ImageFile(metadataObject):
     """
     
     _image = None
-    _metadata = None
     
     def __init__(self, *args, **kargs):
         """Mostly a pass through to ImageArray constructor.
@@ -715,19 +725,31 @@ class ImageFile(metadataObject):
         through to image attribute.
         """
         super(ImageFile,self).__init__(*args,**kargs)
-        if len(args)>0 and isinstance(args[0],string_types):
-            self.image = ImageArray(*args, **kargs)
+        if len(args)==0:
+            self._image=ImageArray()
+            self.metadata.update(self.image.metadata)
+        elif len(args)>0 and isinstance(args[0],string_types):
+            self._image = ImageArray(*args, **kargs)
+            self.metadata.update(self._image.metadata)
         elif len(args)>0 and isinstance(args[0],ImageFile): # Fixing type
-            self.image=args[0].image
-            self.metadata=args[0].metadata
+            self._image=args[0].image
+            self.metadata.update(args[0].metadata)
         elif len(args)>0 and isinstance(args[0],np.ndarray): # Fixing type
-            self.image=ImageArray(*args,**kargs)
+            self._image=ImageArray(*args,**kargs)
+            self.metadata.update(self._image.metadata)
+
+        if isinstance(self._image,ImageArray):
+            self.metadata=deepcopy(self._image.metadata)
+            self._image.metadata.clear()
+
+
+    #####################################################################################################################################
+    ############################# Properties #### #######################################################################################                        
     
     @property
     def clone(self):
         """Make a copy of this ImageFile."""
-        new=self.__class__()
-        new.image=self.image.copy()
+        new=self.__class__(self.image.clone)
         for attr in self.__dict__:
             if callable(getattr(self,attr)) or attr in ["image"]:
                 continue
@@ -745,23 +767,35 @@ class ImageFile(metadataObject):
     @image.setter
     def image(self, v):
         """Ensure stored image is always an ImageArray."""
+        filename=self.filename
         self._image = ImageArray(v)
+        self.filename=filename
         
     @property
     def filename(self):
         """Pass through to image attribute."""
-        return self.image.filename
+        if self._image is not None:
+            return self.image.filename
+        else:
+            return ""
     
     @filename.setter
     def filename(self,value):
         """Pass through to image attribute."""
+        if self._image is None:
+            self._image=ImageArray()
         self.image.filename=value
+
+    #####################################################################################################################################
+    ############################# Special methods #######################################################################################            
     
     def __getitem__(self, n):
         """A pass through to ImageArray."""
         try:
             return self.image.__getitem__(n)
         except KeyError:
+            if n not in self.metadata and n in self._image.metadata:
+                self.metadata[n]=self._image.metadata[n]
             return self.metadata.__getitem__(n)
    
     def __setitem__(self, n, v):
@@ -787,6 +821,33 @@ class ImageFile(metadataObject):
             if hasattr(ret, '__call__'): #we have a method
                 ret = self._func_generator(ret) #modiy so that we can change image in place
         return ret
+
+    def __setattr__(self, n, v):
+        """Handles setting attributes."""
+        if not hasattr(self,n):
+            setattr(self._image,n,v)
+        else:
+            super(ImageFile,self).__setattr__(n, v)
+            
+    def __neg__(self):
+        """Intelliegent negate function that handles unsigned integers."""
+        ret=self.clone
+        if self._image.dtype.kind=="u":
+            l,h=dtype_range[self._image.dtype]
+            ret.image=h-self.image
+        else:
+            ret.image=-self.image
+        return ret
+    
+    def __invert__(self):
+        ret=self.clone
+        ret.image=self.image.T
+        return ret
+        
+    
+    #####################################################################################################################################
+    ############################# Private methods #######################################################################################            
+
         
     def _func_generator(self, workingfunc):
         """ImageFile generator. 
@@ -798,25 +859,22 @@ class ImageFile(metadataObject):
         def gen_func(*args, **kargs):
             r = workingfunc(*args, **kargs)
             if isinstance(r,ImageArray) and r.shape==self.image.shape:
+                self.metadata.update(r.metadata)
+                r.metadata.clear()
+                filename=self.filename
                 self.image = r
+                self.filename=filename
             else:
                 return r
         
         gen_func.__doc__=workingfunc.__doc__
         gen_func.__name__=workingfunc.__name__
         return gen_func            
-    
-    def __setattr__(self, n, v):
-        """Handles setting attributes."""
-        if not hasattr(self,n):
-            setattr(self._image,n,v)
-        else:
-            super(ImageFile,self).__setattr__(n, v)
-            
+                
     def _repr_png_(self):
         """Provide a display function for iPython/Jupyter."""
         fig=self.image.imshow()
-        plt.title=self.filename
+        plt.title(self.filename)
         data=StringIO()
         fig.savefig(data,format="png")
         plt.close(fig)
@@ -825,6 +883,8 @@ class ImageFile(metadataObject):
         data.close()
         return ret
         
+    #####################################################################################################################################
+    ############################## Public methods #######################################################################################            
 
     def save(self, filename=None, **kargs):
         """Saves the image into the file 'filename'. 

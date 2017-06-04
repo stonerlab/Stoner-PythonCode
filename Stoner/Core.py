@@ -997,18 +997,21 @@ class metadataObject(MutableMapping):
                                    tries to retain information about the type of
                                    data so as to aid import and export from CM group LabVIEw code.
 
-    """
+    """       
 
     def __init__(self, *args, **kargs):
         """Initialises the current metadata attribute."""
         metadata=kargs.pop("metadata",None)
-        self._metadata=typeHintedDict()
         if metadata is not None:
-            self.metadata=metadata
+            self.metadata.update(metadata)
 
     @property
     def metadata(self):
-        return self._metadata
+        try:
+            return self._metadata
+        except AttributeError: #Oops no metadata yet
+            self._metadata=typeHintedDict()
+            return self._metadata
 
     @metadata.setter
     def metadata(self,value):

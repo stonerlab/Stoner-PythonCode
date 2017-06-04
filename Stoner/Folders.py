@@ -387,10 +387,10 @@ class baseFolder(MutableSequence):
                 of not loading the objects in the folder into memory if a :py:class:`DiskBasedFolder` is
                 used.
         """
+        if name in self.groups:
+            return self.groups[name]
         if isinstance(name,string_types+regexp_type):
-            if name in self.groups:
-                return self.groups[name]
-            elif name in self.objects:
+            if name in self.objects:
                 name=self.__lookup__(name)
                 return self.__getter__(name)
             else:
