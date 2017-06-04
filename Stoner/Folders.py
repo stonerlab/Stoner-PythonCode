@@ -5,7 +5,7 @@ Classes:
 """
 __all__ = ["baseFolder","DataFolder","PlotFolder"]
 from .compat import python_v3,int_types,string_types,get_filedialog
-from .tools import operator,isiterable
+from .tools import operator,isiterable,isproperty
 import os
 import re
 import os.path as path
@@ -489,7 +489,7 @@ class baseFolder(MutableSequence):
             else:
                 raise RuntimeError("Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type,result.type))
         elif isinstance(other,result.type):
-            result.append(self.type(other))
+            result.append(other)
         else:
             result=NotImplemented
         return result
@@ -773,7 +773,7 @@ class baseFolder(MutableSequence):
         """Pass through to set the sample attributes."""
         if name.startswith("_") or name in ["debug","groups","args","kargs","objects","key"]: # pass ddirectly through for private attributes
             super(baseFolder,self).__setattr__(name,value)
-        elif hasattr(self,name) and not callable(getattr(self,name,None)): #If we recognise this our own attribute, then just set it
+        elif hasattr(self,name) and (isproperty(self,name) or not callable(getattr(self,name,None))): #If we recognise this our own attribute, then just set it
             super(baseFolder,self).__setattr__(name,value)
         elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type() and not callable(getattr(self._type,name))):
             #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
@@ -1446,8 +1446,10 @@ class DiskBssedFolder(object):
         defaults=copy(self._defaults)
         if "directory" in defaults and defaults["directory"] is None:
             defaults["directory"]=os.getcwd()
-        if "type" in defaults and defaults["type"] is None:
+        if "type" in defaults and defaults["type"] is None and self._type==metadataObject:
             defaults["type"]=Data
+        elif self._type!=metadataObject: # Looks like we've already set our type in a subbclass
+            defaults.pop("type")
         for k in defaults:
             setattr(self,k,kargs.pop(k,defaults[k]))
         super(DiskBssedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist

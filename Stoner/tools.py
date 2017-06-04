@@ -11,7 +11,7 @@ Created on Wed Apr 19 19:47:50 2017
 from collections import Iterable,MutableSequence
 from .compat import string_types,bytes2str
 import re
-from numpy import log10,floor,abs,logical_and,isnan
+from numpy import log10,floor,abs,logical_and,isnan,round
 from cgi import escape as html_escape
 from copy import deepcopy
 
@@ -137,6 +137,22 @@ def isiterable(value):
         (bool): True if value is an instance of collections.Iterable.
     """
     return isinstance(value,Iterable)
+
+def isproperty(obj,name):
+    """Check whether an attribute of an object or class is a property.
+    
+    Args:
+        obj (instance or class): Thing that has the attribute to check
+        name (str): Name of the attrbiute that might be a property
+        
+    Returns:
+        (bool): Whether the name is a property or not.
+    """
+    if isinstance(obj,object):
+        obj=obj.__class__
+    elif not issubclass(obj,object):
+        raise TypeError("Can only check for property status on attributes of an object or a class not a {}".format(type(obj)))
+    return hasattr(obj,name) and isinstance(getattr(obj,name),property)
 
 def tex_escape(text):
     """
@@ -373,6 +389,17 @@ class _attribute_store(dict):
             return self[name]
         except KeyError:
             raise AttributeError
+            
+def quantize(number,quantum):
+    """Round a number to the nearest multiple of a quantum.
+    
+    Args:
+        number (float,array): Number(s) to be rounded to the nearest qyuantum
+        quantum (float): Quantum to round to
+    Returns:
+        number rounded to qunatum
+    """
+    return round(number/quantum)*quantum
 
 class typedList(MutableSequence):
     """Subclass list to make setitem enforce  strict typing of members of the list."""

@@ -235,5 +235,7 @@ class ImageFileTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=ImageArrayTest("test_filename")
     test2=ImageFileTest("test_methods")
+    test2.setUp()
+    test2.test_attrs()
     unittest.main()
 
