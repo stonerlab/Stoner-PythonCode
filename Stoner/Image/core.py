@@ -323,6 +323,16 @@ class ImageArray(np.ndarray,metadataObject):
         return self[:]
     
     @property
+    def CW(self):
+        """Rotate clockwise by 90 deg."""
+        return self.T[:,::-1]
+    
+    @property
+    def CCW(self):
+        """Rotate counter-clockwise by 90 deg."""
+        return self.T[::-1,:]
+    
+    @property
     def _kfuncs(self):
         """Provide an attribtute that caches the imported ImageArray functions."""
         if self._kfuncs_proxy is None:
@@ -760,6 +770,25 @@ class ImageFile(metadataObject):
         return new
 
     @property
+    def data(self):
+        """alias for image[:]. Equivalence to Stoner.data behaviour"""
+        return self.image
+    
+    @property
+    def CW(self):
+        """Rotate clockwise by 90 deg."""
+        ret=self.clone
+        ret.image=ret.image.CW
+        return ret
+    
+    @property
+    def CCW(self):
+        """Rotate counter-clockwise by 90 deg."""
+        ret=self.clone
+        ret.image=ret.image.CCW
+        return ret
+
+    @property
     def image(self):
         """Access the image data."""
         return self._image
@@ -840,9 +869,8 @@ class ImageFile(metadataObject):
         return ret
     
     def __invert__(self):
-        ret=self.clone
-        ret.image=self.image.T
-        return ret
+        """Equivalent to clockwise rotation"""
+        return self.CW
         
     
     #####################################################################################################################################

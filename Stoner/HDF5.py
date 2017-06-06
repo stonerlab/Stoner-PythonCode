@@ -534,11 +534,14 @@ class STXMImage(ImageFile):
 
     def __init__(self,*args,**kargs):
         if len(args)>0 and isinstance(args[0],string_types):
-            d=SLS_STXMFile(*args)
-            self.image=d.data
-            self.filename=d.filename
-            kargs["metadata"]=d.metadata
+            d=SLS_STXMFile(args[0])
+            args=args[1:]
+        else:
+            d=Data()
         super(STXMImage,self).__init__(*args[1:],**kargs)
+        self.image=d.data
+        self.metadata.update(d.metadata)
+        self.filename=d.filename
         
     def __floordiv__(self,other):
         if isinstance(other,metadataObject):

@@ -771,11 +771,11 @@ class baseFolder(MutableSequence):
 
     def __setattr__(self,name,value):
         """Pass through to set the sample attributes."""
-        if name.startswith("_") or name in ["debug","groups","args","kargs","objects","key"]: # pass ddirectly through for private attributes
+        if name.startswith("_") or name in ["debug","groups","args","kargs","objects","key","multifile"]: # pass ddirectly through for private attributes
             super(baseFolder,self).__setattr__(name,value)
         elif hasattr(self,name) and (isproperty(self,name) or not callable(getattr(self,name,None))): #If we recognise this our own attribute, then just set it
             super(baseFolder,self).__setattr__(name,value)
-        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type() and not callable(getattr(self._type,name))):
+        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type) and not callable(getattr(self._type,name)):
             #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
             self._object_attrs[name]=value
         else:
