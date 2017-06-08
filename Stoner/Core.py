@@ -551,12 +551,12 @@ class regexpDict(sorteddict):
             KeyError: if no key matches name.
         """
         ret=None
-        if not exact and not isinstance(name,string_types):
-            name=repr(name)
         try: #name directly as key
             super(regexpDict,self).__getitem__(name)
             ret=name
-        except KeyError: #Fall back to regular expression lookup
+        except (KeyError,TypeError): #Fall back to regular expression lookup
+            if not exact and not isinstance(name,string_types):
+                name=repr(name)
             if exact:
                 raise KeyError("{} not a key and exact match requested.".format(name))
             nm=name           
@@ -570,7 +570,7 @@ class regexpDict(sorteddict):
             else:
                 nm=name
             if isinstance(nm,re._pattern_type):
-                ret=[n for n in self.keys() if nm.match(n)]
+                ret=[n for n in self.keys() if isinstance(n,string_types) and nm.match(n)]
         if ret is None or isiterable(ret) and len(ret)==0:
             raise KeyError("{} is not a match to any key.".format(name))
         else:
@@ -605,7 +605,7 @@ class regexpDict(sorteddict):
         try:
             name=self.__lookup__(name)
             return True
-        except KeyError:
+        except (KeyError,TypeError):
             return False
         
     def has_key(self,name):
@@ -997,18 +997,21 @@ class metadataObject(MutableMapping):
                                    tries to retain information about the type of
                                    data so as to aid import and export from CM group LabVIEw code.
 
-    """
+    """       
 
     def __init__(self, *args, **kargs):
         """Initialises the current metadata attribute."""
         metadata=kargs.pop("metadata",None)
-        self._metadata=typeHintedDict()
         if metadata is not None:
-            self.metadata=metadata
+            self.metadata.update(metadata)
 
     @property
     def metadata(self):
-        return self._metadata
+        try:
+            return self._metadata
+        except AttributeError: #Oops no metadata yet
+            self._metadata=typeHintedDict()
+            return self._metadata
 
     @metadata.setter
     def metadata(self,value):
@@ -2339,7 +2342,8 @@ class DataFile(metadataObject):
                     ret=self.data[name]
                 except KeyError:
                     raise KeyError("{} was neither a key in the metadata nor a column in the main data.".format(name))
-
+        elif isinstance(name,tuple) and name in self.metadata:
+            ret=self.metadata[name]
         else:
             ret=self.data[name]
         return ret
@@ -2808,7 +2812,7 @@ class DataFile(metadataObject):
             is a tuple then if the first elem,ent in a string it checks to see if that is an existing metadata item that is iterable,
             and if so, sets the metadta. In all other circumstances, it attempts to set an item in the main data array.
         """
-        if isinstance(name,string_types) or name in self.metadata:
+        if isinstance(name,string_types) or str(name) in self.metadata:
             self.metadata[name] = value
         elif isinstance(name,tuple):
             if isinstance(name[0],string_types) and name[0] in self.metadata and isiterable(self.metadata[name[0]]):
