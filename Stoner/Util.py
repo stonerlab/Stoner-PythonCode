@@ -63,7 +63,7 @@ def split(data, col=None, folder=None, spliton=0, rising=True, falling=False, sk
         output = folder
 
     if isinstance(spliton, int_types+(float,)):
-        spl=d.threshold(threshold=float(spliton),col=col,rising=rising,falling=falling,all_vals=True)
+        spl=d.threshold(threshold=float(spliton),col=col,rising=rising,falling=falling,all_vals=True, interpolate=False)
 
     elif spliton in ['peaks','troughs','both']:
         width = len(d) / 10

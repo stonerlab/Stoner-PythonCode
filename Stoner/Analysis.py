@@ -75,16 +75,20 @@ def _outlier(row, column, window, metric):
     return abs(row[column] - av) > metric * std
 
 
-def _threshold(threshold, data, rising=True, falling=False):
+def _threshold(threshold, data, rising=True, falling=False, interpolate=True):
     """ Internal function that implements the threshold method - also used in peak-finder
 
     Args:
         threshold (float): Threshold valuye in data to look for
         rising (bool): Find points where data is rising up past threshold
         falling (bool): Find points where data is falling below the threshold
+        interpolate (bool): if interpolate find fractional indicies of crossing 
+                           (slower but more precise), otherwise integer indices
+                           are returned.
 
     Returns:
-        A numpy array of fractional indices where the data has crossed the threshold assuming a
+        A numpy array of fractional (or integer if interpolate is False) indices 
+        where the data has crossed the threshold assuming a
         straight line interpolation between two points.
     """
 
@@ -104,16 +108,22 @@ def _threshold(threshold, data, rising=True, falling=False):
 
     # Now we refine the estimate of zero crossing with a cubic interpolation
     # and use Newton's root finding method to locate the zero in the interpolated data
-
-    intr=interp1d(index,data.ravel()-threshold,kind="cubic")
-    roots=[]
-    for ix in range(sdat.shape[0]):
-        x=sdat[ix]
-        if expr(x): # There's a root somewhere here !
-            try:
-                roots.append(newton(intr,ix))
-            except ValueError: # fell off the end here
-                pass
+    
+    if interpolate:
+        intr=interp1d(index,data.ravel()-threshold,kind="cubic")
+        roots=[]
+        for ix in range(sdat.shape[0]):
+            x=sdat[ix]
+            if expr(x): # There's a root somewhere here !
+                try:
+                    roots.append(newton(intr,ix))
+                except ValueError: # fell off the end here
+                    pass
+    else:
+        roots=[]
+        for i in range(1,len(index)): #first point cannot be a thresh
+            if expr(sdat[i]):
+                roots.append(i)
     return _np_.array(roots)
 
 def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
@@ -511,7 +521,7 @@ class AnalysisMixin(object):
         # Now we refine the estimate of zero crossing with a cubic interpolation
         # and use Newton's root finding method to locate the zero in the interpolated data
 
-        intr=interp1d(index,data-threshold,kind="cubic")
+        intr=interp1d(index,data-threshold,kind="linear")
         roots=[]
         for ix,x in enumerate(sdat):
             if expr(x) and ix>0 and ix<len(data)-1: # There's a root somewhere here !
@@ -2256,7 +2266,9 @@ class AnalysisMixin(object):
             transpose (bbool): Swap the x and y columns around - this is most useful when the column assignments
                 have been done via the setas attribute
             all_vals (bool): Return all values that match the criteria, or just the first in the file.
-
+            interpolate (bool): whether to interpolate the return value between data points or to 
+                        simply return the index or x value immediately after the threshold condition 
+                        is satisfied (faster but less precise). Default True
         Returns:
             float: Either a sing;le fractional row index, or an in terpolated x value
 
@@ -2279,6 +2291,7 @@ class AnalysisMixin(object):
         rising=kargs.pop("rising",True)
         falling=kargs.pop("falling",False)
         all_vals=kargs.pop("all_vals",False)
+        interpolate=kargs.pop("interpolate",True)
 
         current = self.column(col)
 
@@ -2286,7 +2299,7 @@ class AnalysisMixin(object):
         if isiterable(threshold):
             ret = []
             for th in threshold:
-                ret.append(self.threshold(th,col=col,xcol=xcol,rising=rising,falling=falling,all_vals=all_vals))
+                ret.append(self.threshold(th,col=col,xcol=xcol,rising=rising,falling=falling,all_vals=all_vals,interpolate=interpolate))
             #Now we have to clean up the  retujrn list into a DataArray
             retval=DataArray(ret)
             if isinstance(ret[0],DataArray): # if xcol was False we got a complete row back
@@ -2306,7 +2319,7 @@ class AnalysisMixin(object):
                     retval.isrow=False
             return retval
         else:
-            ret = _threshold(threshold, current, rising=rising, falling=falling)
+            ret = _threshold(threshold, current, rising=rising, falling=falling, interpolate=interpolate)
             if not all_vals:
                 ret=[ret[0]] if len(ret)>0 else []
 

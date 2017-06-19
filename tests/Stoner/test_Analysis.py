@@ -48,8 +48,25 @@ class Analysis_test(unittest.TestCase):
         d.peaks(width=8,poly=4,significance=40,modify=True)
         self.assertEqual(len(d),10,"Failed on peaks test.")
     
+    def test_threshold(self):
+        #set up some zigzag data
+        #mins at 0,100,200,300,400, max at 50, 150, 250, 350 and zeros in between 
+        ar = np.zeros((400,2))
+        ar[:,0]=np.arange(0,len(ar))
+        for i in range(4):
+            ar[i*100:i*100+50,1] = np.linspace(-1,1,50)
+        for i in range(4):
+            ar[i*100+50:i*100+100,1] = np.linspace(1,-1,50)
+        d = Data(ar, setas='xy')
+        self.assertTrue(len(d.threshold(0,rising=True,falling=False,all_vals=True)==4))
+        self.assertTrue(len(d.threshold(0,rising=False,falling=True,all_vals=True)==4))
+        self.assertTrue(len(d.threshold(0,interpolate=False,rising=False,falling=True,all_vals=True)==4))
+        self.assertTrue(d.threshold(0,all_vals=True)[1]==124.5)
+        self.assertTrue(d.threshold(0,interpolate=False,all_vals=True)[1]==125.0)
+    
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Analysis_test("test_functions")
     test.setUp()
     test.test_functions()   
     test.test_peaks()
+    test.test_threshold()
