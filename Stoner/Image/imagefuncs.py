@@ -29,6 +29,7 @@ If you want to add new functions that's great. There's a few important points:
 
 import numpy as np,matplotlib.pyplot as plt, os
 from skimage import exposure,feature,filters,measure,transform,util
+import cv2
 from .core import ImageArray
 from Stoner import Data
 
@@ -59,12 +60,52 @@ def adjust_contrast(im, lims=(0.1,0.9), percent=True):
     return im
 
 
+def align(im, ref):
+    """Use cv2 module to align images.
+    Args:
+        im (ndarray) image to align
+        ref (ndarray) reference array
+    
+    Returns
+        (ndarray) aligned image,
+        
+    from: http://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
+    """
+    im1_gray = cv2.cvtColor(ref,cv2.COLOR_BGR2GRAY)
+    im2_gray = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
+ 
+    # Find size of image1
+    sz = im.shape
+ 
+    # Define the motion model
+    warp_mode = cv2.MOTION_TRANSLATION
+    warp_matrix = np.eye(2, 3, dtype=np.float32)
+ 
+    # Specify the number of iterations.
+    number_of_iterations = 5000;
+ 
+    # Specify the threshold of the increment
+    # in the correlation coefficient between two iterations
+    termination_eps = 1e-10;
+ 
+    # Define termination criteria
+    criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, number_of_iterations,  termination_eps)
+ 
+    # Run the ECC algorithm. The results are stored in warp_matrix.
+    (cc, warp_matrix) = cv2.findTransformECC (im1_gray,im2_gray,warp_matrix, warp_mode, criteria)
+ 
+    # Use warpAffine for Translation, Euclidean and Affine
+    im2_aligned = cv2.warpAffine(im, warp_matrix, (sz[1],sz[0]), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
+ 
+    return im2_aligned
 
-def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None):
+def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None,do_shift=True):
     """Align images to correct for image drift.
 
     Args:
         ref (ImageArray): Reference image with assumed zero drift
+        
+    Keyword Arguments:
         threshold (float): threshold for detecting imperfections in images
             (see skimage.feature.corner_fast for details)
         upsample_factor (float): the resolution for the shift 1/upsample_factor pixels registered.
@@ -72,6 +113,8 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None):
         box (sequence of 4 ints): defines a region of the image to use for identifyign the drift
             defaults to the whol image. Use this to avoid drift calculations being confused by
             the scale bar/annotation region.
+        do_shift (bool): Shift the image, or just calculate the drift and store in metadata (default True, shit)
+    
     Returns:
         A shifted iamge with the image shift added to the metadata as 'correct drift'.
 
@@ -96,7 +139,8 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None):
     imed=imed.corner_fast(threshold=threshold)
 
     shift,err,phase=feature.register_translation(refed,imed,upsample_factor=upsample_factor)
-    im=im.translate(translation=(-shift[1],-shift[0])) #x,y
+    if do_shift:
+        im=im.translate(translation=(-shift[1],-shift[0])) #x,y
     im.metadata['correct_drift']=(-shift[1],-shift[0])
     return im
 
@@ -248,24 +292,24 @@ def split_image(im):
     """split image into different domains, maybe by peak fitting the histogram?"""
     pass
 
-def translate(im, translation, add_metadata=False):
+def translate(im, translation, add_metadata=False,order=3,mode="wrap"):
     """Translates the image.
     Areas lost by move are cropped, and areas gained are made black (0)
     The area not lost or cropped is added as a metadata parameter
     'translation_limits'
 
-    Parameters
-    ----------
-    translate: 2-tuple
-        translation (x,y)
+    Args:
+        translate (2-tuple): translation (x,y)
+        
+    Keyword Arguments:
+        add_metadata (bool): Record the shift in the image metadata
+        order (int): Interpolation order (default, 3, bi-cubic) 
 
-    Returns
-    -------
-    im: ImageArray
-        translated image
+    Returns:
+        im (ImageArray): translated image
     """
     trans=transform.SimilarityTransform(translation=translation)
-    im=im.warp(trans)
+    im=im.warp(trans,order=order,mode=mode)
     if add_metadata:
         im.metadata['translation']=translation
         im.metadata['translation_limits']=translate_limits(im,translation)
@@ -405,8 +449,10 @@ def imshow(im, figure='new', title=None, cmap='gray', **kwargs):
     if title is None:
         if 'filename' in im.metadata.keys():
             plt.title(os.path.split(im['filename'])[1])
+        elif hasattr(im,"filename"):
+            plt.title(os.path.split(im.filename)[1])
         else:
-            plt.title('')
+            plt.title(' ')
     else:
         plt.title(title)
     plt.axis('off')

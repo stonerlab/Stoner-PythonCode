@@ -35,6 +35,8 @@ install:
   - conda install --yes -c neutronpy lmfit
   - conda install --yes -c conda-forge tabulate
   - pip install filemagic
+  - pip install tabulate
+  - pip install opencv_python
   - pip install coveralls
   - pip install npTDMS
   - pip install .

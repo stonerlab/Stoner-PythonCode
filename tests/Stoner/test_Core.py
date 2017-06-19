@@ -81,7 +81,7 @@ class Datatest(unittest.TestCase):
         d["Column_3",2]=2 # Index existing metadata via tuple
         d.metadata[0,5]=10
         d[0,5]=12 # Even if tuple, index metadata if already existing.
-        self.assertTrue(np.all(d[0]==np.array([5,6,7,1,1,1,1,1,1,1])),"setitem on Data to index into Data.data failed.")
+        self.assertTrue(np.all(d[0]==np.array([5,6,7,1,1,1,1,1,1,1])),"setitem on Data to index into Data.data failed.\n{}".format(d[0]))
         self.assertEqual(d.metadata["Column_3"],[1,2,2,4],"Tuple indexing into metadata Failed.")
         self.assertEqual(d.metadata[0,5],12,"Indexing of pre-existing metadta keys rather than Data./data failed.")
         
@@ -222,7 +222,8 @@ class Datatest(unittest.TestCase):
         self.assertTrue(d.column_headers==[e.column_headers[x] for x in [2,0,1]],"Swap column test failed: {}".format(d.column_headers))
         e=self.d(setas="yx")
         self.assertTrue(e.shape==self.d.shape and e.setas[0]=="y","Failed on a DataFile.__call__ test")
-        self.assertEqual(len(repr(self.d).split("\n")),102,"Failed to do repr function")
+        spl=len(repr(self.d).split("\n"))
+        self.assertEqual(spl,104,"Failed to do repr function got {} lines".format(spl))
         e=self.d.clone
         e=e.add_column(e.x,header=e.column_headers[0])
         e.del_column(duplicates=True)
@@ -257,14 +258,14 @@ class typeHintedDictTest(unittest.TestCase):
         
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-#    test=Datatest("test_operators")
-#    test.setUp()
-#    test.test_indexing()
-#    test.test_constructor()
-#    test.test_attributes()
-#    test.test_operators()
-#    test.test_methods()
-#    test.test_setas_metadata()
-#    test.test_filter()
-    test2=typeHintedDictTest()
+    test=Datatest("test_operators")
+    test.setUp()
+    test.test_indexing()
+    test.test_constructor()
+    test.test_attributes()
+    test.test_operators()
+    test.test_methods()
+    test.test_setas_metadata()
+    test.test_filter()
+    test2=typeHintedDictTest("test_filter")
     test2.test_filter()

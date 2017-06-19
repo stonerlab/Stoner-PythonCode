@@ -12,11 +12,12 @@ to :py:class:`Stoner.Core.Data`.
 from Stoner.compat import string_types,bytes2str,get_filedialog
 import h5py
 import numpy as _np_
-from .Core import DataFile, StonerLoadError
+from .Core import DataFile, StonerLoadError, metadataObject
 from .Core import Data
-from .Image.core import ImageArray
+from .Image.core import ImageFile
 import os.path as path
 import os
+from copy import copy
 
 
 class HDF5File(DataFile):
@@ -525,13 +526,33 @@ class SLS_STXMFile(DataFile):
         for attr in group.attrs:
             self.metadata["{}.{}".format(root,attr)]=group.attrs[attr]
             
-class STXMImage(ImageArray):
+class STXMImage(ImageFile):
     
     """An instance of KerrArray that will load itself from a Swiss Light Source STXM image"""
 
     _reduce_metadata=False
 
-    @classmethod
-    def _load(self,filename):
-        d=SLS_STXMFile(filename)
-        return d.data,d.metadata
+    def __init__(self,*args,**kargs):
+        if len(args)>0 and isinstance(args[0],string_types):
+            d=SLS_STXMFile(args[0])
+            args=args[1:]
+        else:
+            d=Data()
+        super(STXMImage,self).__init__(*args[1:],**kargs)
+        self.image=d.data
+        self.metadata.update(d.metadata)
+        self.filename=d.filename
+        
+    def __floordiv__(self,other):
+        if isinstance(other,metadataObject):
+            if self["collection.polarization.value"]>0 and other["collection.polarization.value"]<0:
+                plus,minus=self,other
+            elif self["collection.polarization.value"]<0 and other["collection.polarization.value"]>0:
+                plus,minus=other,self
+            else:
+                raise ValueError("XMCD Ratio can only be found from a positive and minus image")
+            ret=self.clone
+            ret.image=(plus.image-minus.image)/(plus.image+minus.image)
+            return ret
+        else:
+            raise TypeError("Can only do XMCD calculation with another STXMFile")
