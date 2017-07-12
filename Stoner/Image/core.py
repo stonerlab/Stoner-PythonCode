@@ -266,31 +266,79 @@ class ImageArray(np.ndarray,metadataObject):
         super(ImageArray,self).__init__(*args,**kwargs)
 
     @classmethod
-    def _load(cls,filename,**array_args):
+    def _load(cls,filename,**kargs):
         """Load an image from a file and return as a ImageArray."""
-        if filename.endswith('.npy'):
-            image = np.load(filename)
-            image = np.array(image, **array_args).view(cls)
-        else:        
-            with Image.open(filename,'r') as img:
-                image=np.asarray(img).view(cls)
-                # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
-                # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
-                if np.issubdtype(image.dtype,np.integer):
-                    bits=np.ceil(np.log2(image.max()))
-                    if bits<=8:
-                        image=image.astype("uint8")
-                    elif bits<=16:
-                        image=image.astype("uint16")
-                    elif bits<=32:
-                        image=image.astype("uint32")
-                for k in img.info:
-                    v=img.info[k]
-                    if "b'" in v: v=v.strip(" b'")    
-                    image.metadata[k]=v
+        fmt=kargs.pop("fmt",os.path.splitext(filename)[1][1:])
+        handlers={"npy":cls._load_npy, "png":cls._load_png,"tiff":cls._load_tiff,"tif":cls._load_tiff}
+        if fmt not in handlers:
+            raise ValueError("{} is not a recognised format for loading.".format(fmt))
+        ret=handlers[fmt](filename,**kargs)
+        return ret
+    
+    @classmethod
+    def _load_npy(cls,filename,**kargs):
+        """Load image data from a numpy file."""
+        image = np.load(filename)
+        image = np.array(image, **kargs).view(cls)
         image.metadata["Loaded from"]=os.path.realpath(filename)
         image.filename=os.path.realpath(filename)
         return image
+
+    @classmethod
+    def _load_png(cls,filename,**kargs):
+        with Image.open(filename,'r') as img:
+            image=np.asarray(img).view(cls)
+            # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
+            # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
+            if np.issubdtype(image.dtype,np.integer):
+                bits=np.ceil(np.log2(image.max()))
+                if bits<=8:
+                    image=image.astype("uint8")
+                elif bits<=16:
+                    image=image.astype("uint16")
+                elif bits<=32:
+                    image=image.astype("uint32")
+            for k in img.info:
+                v=img.info[k]
+                if "b'" in v: v=v.strip(" b'")    
+                image.metadata[k]=v
+        image.metadata["Loaded from"]=os.path.realpath(filename)
+        image.filename=os.path.realpath(filename)
+        return image
+
+    @classmethod
+    def _load_tiff(cls,filename,**kargs):
+        with Image.open(filename,'r') as img:
+            image=np.asarray(img).view(cls)
+            # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
+            # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
+            if np.issubdtype(image.dtype,np.integer):
+                bits=np.ceil(np.log2(image.max()))
+                if bits<=8:
+                    image=image.astype("uint8")
+                elif bits<=16:
+                    image=image.astype("uint16")
+                elif bits<=32:
+                    image=image.astype("uint32")
+            tags=img.tag_v2
+            if 270 in tags:
+                from json import loads
+                try:
+                    metadata_string=tags[270]
+                    metadata=loads(metadata_string)
+                except Exception:
+                    metadata=[]
+            else:
+                metadata=[]
+            for line in metadata:
+                parts=line.split("=")
+                k=parts[0]
+                v="=".join(parts[1:])
+                image.metadata[k]=v
+        image.metadata["Loaded from"]=os.path.realpath(filename)
+        image.filename=os.path.realpath(filename)
+        return image
+
         
 #==============================================================
 # Propety Accessor Functions
@@ -728,6 +776,8 @@ class ImageFile(metadataObject):
     
     _image = None
     
+    fmts=["png","npy","tiff"]
+    
     def __init__(self, *args, **kargs):
         """Mostly a pass through to ImageArray constructor.
         
@@ -737,20 +787,12 @@ class ImageFile(metadataObject):
         super(ImageFile,self).__init__(*args,**kargs)
         if len(args)==0:
             self._image=ImageArray()
-            self.metadata.update(self.image.metadata)
         elif len(args)>0 and isinstance(args[0],string_types):
             self._image = ImageArray(*args, **kargs)
-            self.metadata.update(self._image.metadata)
         elif len(args)>0 and isinstance(args[0],ImageFile): # Fixing type
             self._image=args[0].image
-            self.metadata.update(args[0].metadata)
         elif len(args)>0 and isinstance(args[0],np.ndarray): # Fixing type
             self._image=ImageArray(*args,**kargs)
-            self.metadata.update(self._image.metadata)
-
-        if isinstance(self._image,ImageArray):
-            self.metadata=deepcopy(self._image.metadata)
-            self._image.metadata.clear()
 
 
     #####################################################################################################################################
@@ -761,7 +803,7 @@ class ImageFile(metadataObject):
         """Make a copy of this ImageFile."""
         new=self.__class__(self.image.clone)
         for attr in self.__dict__:
-            if callable(getattr(self,attr)) or attr in ["image"]:
+            if callable(getattr(self,attr)) or attr in ["image","metadata"]:
                 continue
             try:
                 setattr(new,attr,deepcopy(getattr(self,attr)))
@@ -814,6 +856,15 @@ class ImageFile(metadataObject):
         if self._image is None:
             self._image=ImageArray()
         self.image.filename=value
+        
+    @property
+    def metadata(self):
+        """Intercept metadata and redirect to image.metadata."""
+        return self.image.metadata
+    
+    @metadata.setter
+    def metadata(self,value):
+        self.image.metadata=value
 
     #####################################################################################################################################
     ############################# Special methods #######################################################################################            
@@ -871,11 +922,17 @@ class ImageFile(metadataObject):
     def __invert__(self):
         """Equivalent to clockwise rotation"""
         return self.CW
-        
+
+    def __floordiv__(self,other):
+        """Calculate and XMCD ratio on the images."""
+        if not isinstance(other,ImageFile):
+            return NotImplemented
+        ret=self.clone
+        ret.image=(self.image-other.image)/(self.image+other.image)
+        return ret
     
     #####################################################################################################################################
     ############################# Private methods #######################################################################################            
-
         
     def _func_generator(self, workingfunc):
         """ImageFile generator. 
@@ -887,11 +944,15 @@ class ImageFile(metadataObject):
         def gen_func(*args, **kargs):
             r = workingfunc(*args, **kargs)
             if isinstance(r,ImageArray) and r.shape==self.image.shape:
+                #Enure that we've captured any metadata added inside the working function
                 self.metadata.update(r.metadata)
-                r.metadata.clear()
+                #Now swap the iamge in, but keep the metadata
+                r.metadata=self.metadata
                 filename=self.filename
                 self.image = r
                 self.filename=filename
+                
+                return self
             else:
                 return r
         
@@ -929,36 +990,52 @@ class ImageFile(metadataObject):
                 filename is False then a file dialog is forced.
             
         """
-        fmt=kargs.pop("fmt",["png"])
-        if not isinstance(fmt,list):
-            fmt=[fmt]
-        if set(fmt)&set(['png','npy',"tiff"])==set([]):
-            raise ValueError('fmt must be "png" or "npy" or "tiff"')
+        #Standard filename block
         if filename is None:
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):
             # now go and ask for one
             filename = self.__file_dialog('w')
+            
+        
+        def_fmt=os.path.splitext(filename)[1][1:] # Get a default format from the filename
+        if def_fmt not in self.fmts: # Default to png if nothing else
+            def_fmt="png"
+        fmt=kargs.pop("fmt",[def_fmt])
+        
+        if not isinstance(fmt,list):
+            fmt=[fmt]
+        if set(fmt)&set(self.fmts)==set([]):
+            raise ValueError('fmt must be {}'.format(",".join(self.fmts)))
         self.filename=filename
-        if "png" in fmt:
-            pngname = os.path.splitext(filename)[0] + '.png'
-            meta=PngImagePlugin.PngInfo()
-            info=self.metadata.export_all()
-            info=[(i.split('=')[0],"=".join(i.split('=')[1:])) for i in info]
-            for k,v in info:        
-                meta.add_text(k,v)
-            s=(self.image-self.image.min())*256/(self.image.max()-self.image.min())
-            im=Image.fromarray(s.astype('uint8'),mode='L')
-            im.save(pngname,pnginfo=meta)
-        if "npy" in fmt:
-            npyname = os.path.splitext(filename)[0] + '.npy'
-            np.save(npyname, self)
-        if "tiff" in fmt:
-            from PIL.TiffImagePlugin import ImageFileDirectory_v2
-            import json
-            im=Image.fromarray(self.image.asint( np.uint32),mode="I")
-            ifd = ImageFileDirectory_v2()
-            ifd[270]=json.dumps(self.metadata.export_all())
-            tiffname = os.path.splitext(filename)[0] + '.tiff'
-            im.save(tiffname,tiffinfo=ifd)
+        for fm in fmt:
+            saver=getattr(self,"save_{}".format(fm),"save_png")
+            saver(filename)
+        
+    def save_png(self,filename):
+        """Save the ImageFile with metadata in a png file."""
+        pngname = os.path.splitext(filename)[0] + '.png'
+        meta=PngImagePlugin.PngInfo()
+        info=self.metadata.export_all()
+        info=[(i.split('=')[0],"=".join(i.split('=')[1:])) for i in info]
+        for k,v in info:        
+            meta.add_text(k,v)
+        s=(self.image-self.image.min())*256/(self.image.max()-self.image.min())
+        im=Image.fromarray(s.astype('uint8'),mode='L')
+        im.save(pngname,pnginfo=meta)
+
+    def save_npy(self,filename):
+        """Save the ImageFile as a numpy array."""
+        npyname = os.path.splitext(filename)[0] + '.npy'
+        np.save(npyname, self)
+
+    def save_tiff(self,filename):
+        """Save the ImageFile as a tiff image with metadata."""
+        from PIL.TiffImagePlugin import ImageFileDirectory_v2
+        import json
+        im=Image.fromarray(self.image.asint( np.uint32),mode="I")
+        ifd = ImageFileDirectory_v2()
+        ifd[270]=json.dumps(self.metadata.export_all())
+        tiffname = os.path.splitext(filename)[0] + '.tiff'
+        im.save(tiffname,tiffinfo=ifd)
             

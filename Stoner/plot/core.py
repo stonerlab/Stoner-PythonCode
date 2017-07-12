@@ -633,7 +633,7 @@ class PlotMixin(object):
             ReturnsL
                 X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data
         """
-        if None in (xcol, ycol, zcol):
+        if xcol is None or ycol is None or zcol is None:
             if "_startx" in kargs:
                 startx = kargs["_startx"]
                 del kargs["_startx"]
