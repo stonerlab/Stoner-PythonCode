@@ -9,12 +9,12 @@ e.figure(figsize=(8,4))
 e.setas="xy.uv."
 e.subplot(121)
 e.plot()
-e.title="2D Vector, 2D Field"
+e.title="3D Vector, 2D Field"
 
 #3D Vector on a 2D Field
 e.subplot(122)
 e.setas="xy.uvw"
 e.plot()
-e.title="3D Vector, 2D Field"
+e.title="3D Vector, 3D Field"
 
 e.tight_layout()

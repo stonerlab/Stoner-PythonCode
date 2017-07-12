@@ -65,6 +65,13 @@ def read(fname):
     with io.open(os.path.join(mydir, fname)) as fd:
         return fd.readlines()
 
+def requires(fname):
+    mydir=os.path.dirname(__file__)
+    with io.open(os.path.join(mydir, fname)) as fd:
+        entries=fd.readlines()
+        entries=[entry for entry in entries if entry[0] not in " #\n\t"]
+        return entries
+
 setup(
     name = "Stoner",
     version = str(Stoner.__version__),
@@ -81,7 +88,7 @@ setup(
     package_dir={'Stoner': 'Stoner'},
     package_data={'Stoner':['stylelib/*.mplstyle']},
     test_suite="tests",
-    install_requires=["numpy>=1.7","scipy>=0.14","matplotlib>=1.5","h5py","lmfit","filemagic","pillow","scikit-image"],
+    install_requires=requires("requirements.txt"),
     long_description= ''.join(yield_sphinx_only_markup(read('doc/readme.rst'))),
     classifiers=[
         "Development Status :: 4 - Beta",
