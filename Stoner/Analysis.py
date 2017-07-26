@@ -611,7 +611,7 @@ class AnalysisMixin(object):
         Args:
             xcol (index): Index of column of data with X values
             ycol (index): Index of column of data with Y values
-            bins (int or float): Number of bins (if integer) or size of bins (if float)
+            bins (int, float or 1d array): Number of bins (if integer) or size of bins (if float), or bin edges (if array)
             mode (string): "log" or "lin" for logarithmic or linear binning
 
         Keyword Arguments:
@@ -629,6 +629,7 @@ class AnalysisMixin(object):
         Note:
             Algorithm inspired by MatLab code wbin,    Copyright (c) 2012:
             Michael Lindholm Nielsen
+            
 
         See Also:
             User Guide section :ref:`binning_guide`
@@ -1363,6 +1364,8 @@ class AnalysisMixin(object):
                 bin_start = _np_.exp(bin_start)
                 bin_stop = _np_.exp(bin_stop)
                 bin_centres = _np_.exp(bin_centres)
+            else:
+                raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
         elif isinstance(bins, float):  # Given a bin with as a flot
             if mode.lower().startswith("lin"):
                 bin_width = bins
@@ -1386,10 +1389,17 @@ class AnalysisMixin(object):
                 bin_start = _np_.array(splits[:-1])
                 bin_stop = _np_.array(splits[1:])
                 bin_centres = _np_.array(centers)
+            else:
+                raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
         elif isinstance(bins,_np_.ndarray) and bins.ndim==1: # Yser provided manuals bins
             bin_start=bins[:-1]
             bin_stop=bins[1:]
-            bin_centres=(bin_start+bin_stop)/2.0
+            if mode.lower().startwith("lin"):
+                bin_centres=(bin_start+bin_stop)/2.0
+            elif mode.lower().startswith("log"):
+                bin_centres=_np_.exp(_np_.log(bin_start)+_np_.log(bin_stop)/2.0)
+            else:
+                raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))                
         else:
             raise TypeError("bins must be either an integer or a float, not a {}".format(type(bins)))
         if len(bin_start) > len(self):

@@ -2605,9 +2605,9 @@ class DataFile(metadataObject):
         from tabulate import tabulate
         from textwrap import TextWrapper
         rows,cols=self._repr_limits
-        c_w=max([len(x) for x in self.column_headers])
-        wrapper=TextWrapper(subsequent_indent="\t",width=max(20,80-c_w*min(cols,self.shape[1])))
         r,c=self.shape
+        c_w=max([len(x) for x in self.column_headers[:c]])
+        wrapper=TextWrapper(subsequent_indent="\t",width=max(20,80-c_w*min(cols,self.shape[1])))
         if r>rows:
             shorten=[True,False]
             r=rows+rows%2
@@ -2624,7 +2624,7 @@ class DataFile(metadataObject):
         if shorten[1]:
             ch=self.column_headers[:c-2]+["...", self.column_headers[-1]]
         else:
-            ch=self.column_headers
+            ch=self.column_headers[:c]
         outp[0,1:]=ch
         outp[0,0]="TDI Format 1.5"
         i=1
