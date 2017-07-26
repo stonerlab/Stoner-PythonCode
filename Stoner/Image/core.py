@@ -30,9 +30,9 @@ from Stoner import Data
 from Stoner.compat import python_v3,string_types,get_filedialog # Some things to help with Python2 and Python3 compatibility
 import inspect
 if python_v3:
-    from io import StringIO
+    from io import BytesIO as StreamIO
 else:
-    from cStringIO import StringIO
+    from cStringIO import StringIO as StreamIO
 
 
 
@@ -964,7 +964,7 @@ class ImageFile(metadataObject):
         """Provide a display function for iPython/Jupyter."""
         fig=self.image.imshow()
         plt.title(self.filename)
-        data=StringIO()
+        data=StreamIO()
         fig.savefig(data,format="png")
         plt.close(fig)
         data.seek(0)

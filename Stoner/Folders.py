@@ -1293,7 +1293,7 @@ class baseFolder(MutableSequence):
             A copy of the current objectFolder object
         """
         if isinstance(key, string_types):
-            k=[(x.get(key),i) for x,i in enumerate(self)]
+            k=[(x.get(key),i) for i,x in enumerate(self)]
             k=sorted(k,reverse=reverse)
             new_order=[self[i] for x,i in k]
         elif key is None:
