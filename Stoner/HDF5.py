@@ -522,7 +522,7 @@ class SLS_STXMFile(DataFile):
                 if _np_.product(thing.shape)==1:
                     self.metadata[name]=thing.value[0]
                 else:
-                    self.metadata[name]=thing.value
+                    self.metadata[name]=thing[...]
         for attr in group.attrs:
             self.metadata["{}.{}".format(root,attr)]=group.attrs[attr]
             

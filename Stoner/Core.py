@@ -527,7 +527,6 @@ class _evaluatable(object):
     needs to be taken to convert a string representation to a valid Python type."""
     pass
 
-
 class regexpDict(sorteddict):
     """An ordered dictionary that permits looks up by regular expression."""
     allowed_keys=(object,)
@@ -655,7 +654,7 @@ class typeHintedDict(regexpDict):
     # Match floating point types
     __regexBoolean = re.compile(r'^Boolean')
     __regexString = re.compile(r'^(String|Path|Enum)')
-    __regexEvaluatable = re.compile(r'^(Cluster|\dD Array|List)')
+    __regexEvaluatable = re.compile(r'^(Cluster||\d+D Array|List)')
 
     __types = {
         'Boolean': bool,
@@ -671,7 +670,7 @@ class typeHintedDict(regexpDict):
     # the string type for standard Python classes
 
     __tests = [(__regexSignedInt, int), (__regexUnsignedInt, int), (__regexFloat, float), (__regexBoolean, bool),
-               (__regexString, str), (__regexEvaluatable, _evaluatable())]
+               (__regexString, str),  (__regexEvaluatable, _evaluatable())]
 
     # This is used to work out the correct python class for
     # some string types
@@ -890,7 +889,7 @@ class typeHintedDict(regexpDict):
                     pass # Silently fail
         else:
             self._typehints[name] = self.findtype(value)
-            super(typeHintedDict, self).__setitem__(name, self.__mungevalue(self._typehints[name], value))
+            super(typeHintedDict, self).__setitem__(name,  value)
 
     def __delitem__(self, name):
         """Deletes the specified key.
@@ -1101,7 +1100,7 @@ class DataArray(_ma_.MaskedArray):
         obj.i=i
         obj.setas._row=_row and len(obj.shape)==1
         #Set shared mask - stops some deprication warnings
-        obj._shared_mask=True
+        obj.unshare_mask()
         return obj
 
     def __array_finalize__(self, obj):
@@ -1271,6 +1270,9 @@ class DataArray(_ma_.MaskedArray):
             ix=list(ix[1:])
             ix.append(self._setas.find_col(c))
             ix=tuple(ix)
+            
+        if self.sharedmask: #We do not want to share a mask when we're about to change soimething here...
+            self.unshare_mask()
 
         super(DataArray,self).__setitem__(ix,val)
 

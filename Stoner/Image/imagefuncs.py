@@ -29,7 +29,10 @@ If you want to add new functions that's great. There's a few important points:
 
 import numpy as np,matplotlib.pyplot as plt, os
 from skimage import exposure,feature,filters,measure,transform,util
-import cv2
+try:
+    import cv2
+except ImportError:
+    cv2=None
 from .core import ImageArray
 from Stoner import Data
 
@@ -71,33 +74,36 @@ def align(im, ref):
         
     from: http://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
     """
-    im1_gray = cv2.cvtColor(ref,cv2.COLOR_BGR2GRAY)
-    im2_gray = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
- 
-    # Find size of image1
-    sz = im.shape
- 
-    # Define the motion model
-    warp_mode = cv2.MOTION_TRANSLATION
-    warp_matrix = np.eye(2, 3, dtype=np.float32)
- 
-    # Specify the number of iterations.
-    number_of_iterations = 5000;
- 
-    # Specify the threshold of the increment
-    # in the correlation coefficient between two iterations
-    termination_eps = 1e-10;
- 
-    # Define termination criteria
-    criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, number_of_iterations,  termination_eps)
- 
-    # Run the ECC algorithm. The results are stored in warp_matrix.
-    (cc, warp_matrix) = cv2.findTransformECC (im1_gray,im2_gray,warp_matrix, warp_mode, criteria)
- 
-    # Use warpAffine for Translation, Euclidean and Affine
-    im2_aligned = cv2.warpAffine(im, warp_matrix, (sz[1],sz[0]), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
- 
-    return im2_aligned
+    if cv2 is not None:
+        im1_gray = cv2.cvtColor(ref,cv2.COLOR_BGR2GRAY)
+        im2_gray = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
+     
+        # Find size of image1
+        sz = im.shape
+     
+        # Define the motion model
+        warp_mode = cv2.MOTION_TRANSLATION
+        warp_matrix = np.eye(2, 3, dtype=np.float32)
+     
+        # Specify the number of iterations.
+        number_of_iterations = 5000;
+     
+        # Specify the threshold of the increment
+        # in the correlation coefficient between two iterations
+        termination_eps = 1e-10;
+     
+        # Define termination criteria
+        criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, number_of_iterations,  termination_eps)
+     
+        # Run the ECC algorithm. The results are stored in warp_matrix.
+        (cc, warp_matrix) = cv2.findTransformECC (im1_gray,im2_gray,warp_matrix, warp_mode, criteria)
+     
+        # Use warpAffine for Translation, Euclidean and Affine
+        im2_aligned = cv2.warpAffine(im, warp_matrix, (sz[1],sz[0]), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
+     
+        return im2_aligned
+    else: # No cv2 available so don't do anything.
+        return None
 
 def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None,do_shift=True):
     """Align images to correct for image drift.
