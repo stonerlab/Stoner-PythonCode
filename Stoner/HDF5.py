@@ -506,6 +506,13 @@ class SLS_STXMFile(DataFile):
         if isinstance(filename, string_types):
             f.file.close()
         self["Loaded from"]=self.filename
+        
+        if "instrument.sample_x.data" in self.metadata:
+            self.metadata["actual_x"]=self.metadata["instrument.sample_x.data"].reshape(self.shape)
+        if "instrument.sample_y.data" in self.metadata:
+            self.metadata["actual_y"]=self.metadata["instrument.sample_y.data"].reshape(self.shape)
+        self.metadata["sample_x"],self.metadata["sample_y"]=_np_.meshgrid(self.metadata["counter0.sample_x"],self.metadata["counter0.sample_y"])            
+        
         return self
         
     def scan_meta(self,group):

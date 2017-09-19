@@ -816,6 +816,11 @@ class ImageFile(metadataObject):
         """alias for image[:]. Equivalence to Stoner.data behaviour"""
         return self.image
     
+    @data.setter
+    def data(self,value):
+        """Simple minded pass through."""
+        self.image=value
+    
     @property
     def CW(self):
         """Rotate clockwise by 90 deg."""
