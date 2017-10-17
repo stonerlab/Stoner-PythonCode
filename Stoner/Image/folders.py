@@ -9,6 +9,10 @@ from .core import ImageArray
 from Stoner.Folders import DiskBssedFolder, baseFolder
 from Stoner.compat import string_types
 from Stoner.tools import isiterable
+from Stoner.Image import ImageFile,ImageArray
+
+from matplotlib.animation import FuncAnimation
+import numpy as np
 
 def _load_ImageArray(f, **kargs):
     """Simple meothd to load an image array."""
@@ -105,4 +109,40 @@ class ImageFolder(DiskBssedFolder,baseFolder):
         from Stoner.Image import ImageStack
         k = ImageStack(self)
         return k
+    
+    def mean(self):
+        """Calculate the mean value of all the images in the stack."""
+        total=np.zeros_like(self[0])
+        for i in self:
+            total+=i
+        total/=len(self)
+        if isinstance(self._type,np.ndarray):
+            ret= total.view(type=self._type)
+            ret.metadata.update(self[0].metadata)
+        elif isinstance(self._type,ImageFile):
+            ret=self._type()
+            ret.image=total
+            ret.metadata.update(self[0],metadata)
+        else:
+            ret=total
+        return ret
+            
+        
+    
+    def view(self,interval=200):
+        """Create a matplotlib animated view of the contents.
       
+            Keyword Arguments:
+                interval (int): delay between frames in ms
+                
+        """
+        
+        fig=self[0].imshow(animated=True)
+        def anim(n):
+            self[n].imshow(figure=fig)
+            
+        return FuncAnimation(fig,anim,frames=len(self),interval=interval,blit=True)
+        
+            
+        
+

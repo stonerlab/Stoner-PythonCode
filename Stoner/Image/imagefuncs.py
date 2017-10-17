@@ -30,10 +30,22 @@ If you want to add new functions that's great. There's a few important points:
 import numpy as np,matplotlib.pyplot as plt, os
 from scipy.interpolate import griddata
 from skimage import exposure,feature,filters,measure,transform,util
-try:
+try: #Make OpenCV an optional import
     import cv2
 except ImportError:
     cv2=None
+    
+try: #Make imreg_dfft2 optional
+    import imreg_dft
+except ImportError:
+    imreg_dft=None
+    
+try: #image_registration module
+    from image_registration import chi2_shift
+    from image_registration import fft_tools
+except ImportError:
+    chi2_shift=None
+    
 from .core import ImageArray
 from Stoner import Data
 
@@ -64,18 +76,44 @@ def adjust_contrast(im, lims=(0.1,0.9), percent=True):
     return im
 
 
-def align(im, ref):
-    """Use cv2 module to align images.
+def align(im, ref, method=None,**kargs):
+    """Use one of a variety of algroithms to align two images.
+    
     Args:
         im (ndarray) image to align
         ref (ndarray) reference array
+        
+    Keyword Args:
+        method (str or None): If given specifies which module to try and use. 
+        **kargs (various): All other keyword arguments are passed to the specific algorithm.
     
     Returns
-        (ndarray) aligned image,
+        (ImageArray or ndarray) aligned image
         
-    from: http://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
+    Notes:
+        Currently three algorithms are supported:
+            - image_registration module's chi^2 shift: This uses a dft with an automatic
+              up-sampling of the fourier transform for sub-pixel alignment. The metadata
+              key *chi2_shift* contains the translation vector and errors.
+            - imreg_dft module's similarity function. This implements a full scale, rotation, translation
+              algorithm (by default cosntrained for just translation). It's unclear how much sub-pixel translation
+              is accomodated.
+            - cv2 module based affine transform on a gray scale image.       
+              from: http://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
     """
-    if cv2 is not None:
+    if (method is None and chi2_shift is not None) or method == "chi2_shift":
+        kargs["zeromean"]=kargs.get("zeromean",True)
+        result=np.array(chi2_shift(ref,im,**kargs))
+        new_im=im.__class__(fft_tools.shiftnd(im,-result[0:2]))
+        new_im.metadata.update(im.metadata)
+        new_im.metadata["chi2_shift"]=result
+    elif (method is None and imreg_dft is not None) or method=="imreg_dft":
+        constraints=kargs.pop("constraints",{"angle":[0.0,0.0],"scale":[1.0,0.0]})
+        result=imreg_dft.similarity(ref,im,constraints=constraints)
+        new_im=result.pop("timg").view(type=ImageArray)
+        new_im.metadata.update(im.metadata)
+        new_im.metadata.update(result)
+    elif (method is None and cv2 is not None) or method=="cv2":
         im1_gray = cv2.cvtColor(ref,cv2.COLOR_BGR2GRAY)
         im2_gray = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
      
@@ -100,11 +138,11 @@ def align(im, ref):
         (cc, warp_matrix) = cv2.findTransformECC (im1_gray,im2_gray,warp_matrix, warp_mode, criteria)
      
         # Use warpAffine for Translation, Euclidean and Affine
-        im2_aligned = cv2.warpAffine(im, warp_matrix, (sz[1],sz[0]), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
+        new_im = cv2.warpAffine(im, warp_matrix, (sz[1],sz[0]), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
      
-        return im2_aligned
     else: # No cv2 available so don't do anything.
-        return None
+        new_im=None
+    return new_im
 
 def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None,do_shift=True):
     """Align images to correct for image drift.
@@ -171,6 +209,18 @@ def edge_det(filename,threshold1,threshold2):
     Inbetween 1&2, if the pixel is connected to similar pixels then the pixel conributes to the edge '''
     pass
 
+def fft(im,shift=True,phase=False):
+    """Perform a 2d fft of the image and shift the result to get zero frequency in the centre."""
+    r=np.fft.fft2(im)
+    r=np.fft.fftshift(r)
+    if not phase:
+        r=np.abs(r)
+    else:
+        r=np.angle(r)
+    r=im.__class__(r)
+    r.metadata.update(im.metadata)
+    return r
+
 def filter_image(im, sigma=2):
     """Alias for skimage.filters.gaussian
     """
@@ -185,7 +235,8 @@ def gridimage(im,points=None,xi=None,method="linear",fill_value=1.0,rescale=Fals
     
     Keyword Arguments:
         method ("linear","cubic","nearest"): how to interpolate, default is linear
-        fill_value (folat): What to put when the co-ordinates go out of range (default is 1.0)
+        fill_value (folat): What to put when the co-ordinates go out of range (default is 1.0). May be a callable in which
+            case the initial image is presented as the only argument
         rescale (bool): If the x and y co-ordinates are very different in scale, set this to True.
         
     Returns:
@@ -198,12 +249,15 @@ def gridimage(im,points=None,xi=None,method="linear",fill_value=1.0,rescale=Fals
         , for example, by the :py:class:`Stoner.HDF5.SXTMImage` loader if the interformeter stage data was found in the file.
         
         The metadata used in this case is then adjusted as well to ensure that repeated application of this method doesn't change the image
-        after it has been corrected once."""
-        
+        after it has been corrected once.
+    """    
     if points is None:
         points=np.column_stack((im["actual_x"].ravel(),im["actual_y"].ravel()))
     if xi is None:
         xi=xi=(im["sample_x"],im["sample_y"])
+        
+    if callable(fill_value):
+        fill_value=fill_value(im)
         
     im2=griddata(points,im.ravel(),xi,method,fill_value,rescale)
     im2=im.__class__(im2)
@@ -211,6 +265,55 @@ def gridimage(im,points=None,xi=None,method="linear",fill_value=1.0,rescale=Fals
     im2.metadata["actual_x"]=xi[0]
     im2.metadata["actual_y"]=xi[1]
     return im2
+
+def hist(im,*args,**kargs):
+    """Pass through to :py:func:`matplotlib.pyplot.hist` function."""
+    return plt.hist(im.ravel(),*args,**kargs)
+
+def imshow(im, **kwargs):
+    """quick plot of image
+    
+    Keyword Arguments:
+        figure (int, str or matplotlib.figure): if int then use figure number given, 
+            if figure is 'new' then create a new figure, if None then use whatever default 
+            figure is available
+        title (str,None,False): Title for plot - defaults to False (no title). None will take the title from the filename if present
+        cmap (str,matplotlib.cmap): Colour scheme for plot, defaults to gray
+    
+    Any masked areas are set to NaN which stops them being plotted at all.
+    """
+    figure=kwargs.pop("figure","new")
+    title=kwargs.pop("title",False)
+    cmap=kwargs.pop("cmap","gray")
+    if np.ma.is_masked(im):
+        im_data=im.clone
+        im_data[im_data.mask]=np.NaN
+    else:
+        im_data=im
+    if figure is not None and isinstance(figure,int):
+        fig=plt.figure(figure)
+        plt.imshow(im_data, figure=fig, cmap=cmap, **kwargs)
+    elif figure is not None and figure=='new':
+        fig=plt.figure()
+        plt.imshow(im_data, figure=fig, cmap=cmap, **kwargs)
+    elif figure is not None: #matplotlib.figure instance
+        fig=plt.imshow(im_data, figure=figure, cmap=cmap, **kwargs)
+    else:
+        fig=plt.imshow(im_data, cmap=cmap, **kwargs)
+    if title is None:
+        if 'filename' in im.metadata.keys():
+            plt.title(os.path.split(im['filename'])[1])
+        elif hasattr(im,"filename"):
+            plt.title(os.path.split(im.filename)[1])
+        else:
+            plt.title(' ')
+    elif isinstance(title,bool) and not title:
+        pass
+    else:
+        plt.title(title)
+    plt.axis('off')
+    return fig
+
 
 def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None,mode="clip"):
     """Subtract a polynomial background from image
@@ -272,13 +375,23 @@ def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None,mode="clip"):
         im=im.normalise()
     return im
 
-def normalise(im):
-    """Make data between 0 and 1"""
+def normalise(im,scale=(-1,1)):
+    """Norm alise the data to a fixed scale
+    
+    Keyword Arguements:
+        scale (2-tuple): The range to scale the image to, defaults to -1 to 1.
+        
+    Returns:
+        A scaled version of the data. The ndarray min and max methods are used to allow masked images
+        to be operated on only on the unmasked areas."""
     im=im.astype(float)
-    im=(im-np.min(im))/(np.max(im)-np.min(im))
+    scaled=(im-im.min())/(im.max()-im.min())
+    delta=scale[1]-scale[0]
+    offset=scale[0]
+    im=scaled*delta+offset
     return im
 
-def profile_line(img, src, dst, linewidth=1, order=1, mode='constant', cval=0.0):
+def profile_line(img, src, dst, linewidth=1, order=1, mode='constant', cval=0.0,constrain=True):
     """Wrapper for sckit-image method of the same name to get a line_profile.
 
     Parameters:
@@ -290,6 +403,7 @@ def profile_line(img, src, dst, linewidth=1, order=1, mode='constant', cval=0.0)
         order (int 1-3): Order of interpolation used to find image data when not aligned to a point
         mode (str): How to handle data outside of the image.
         cval (float): The constant value to assume for data outside of the image is mode is "constant"
+        constrain (bool): Ensure the src and dst are within the image (default True).
 
     Returns:
         A :py:class:`Stoner.Data` object containing the line profile data and the metadata from the image.
@@ -299,6 +413,14 @@ def profile_line(img, src, dst, linewidth=1, order=1, mode='constant', cval=0.0)
         src=(int(src[0]/scale),int(src[1]/scale))
     if isinstance(dst[0],float):
         dst=(int(dst[0]/scale),int(dst[1]/scale))
+        
+    if constrain:
+        fix=lambda x,mx: sorted([0,x,mx])[1]
+        r,c=img.shape
+        src=list(src)
+        src=(fix(src[0],r),fix(src[1],c))
+        dst=(fix(dst[0],r),fix(dst[1],c))
+    
 
     result=measure.profile_line(img,src,dst,linewidth,order,mode,cval)
     points=measure.profile._line_profile_coordinates(src, dst, linewidth)[:,:,0]
@@ -310,6 +432,36 @@ def profile_line(img, src, dst, linewidth=1, order=1, mode='constant', cval=0.0)
     ret.column_headers=["X","Y","Distance","Intensity"]
     ret.setas="..xy"
     ret.metadata=img.metadata.copy()
+    return ret
+
+def quantize(im,output,levels=None):
+    """Quantise the image data into fixed levels given by a mapping
+    
+    Args:
+        output (list,array,tuple): Output levels to return.
+        
+    Keyword Arguments:
+        levels (list, array or None): The input band markers. If None is constructed from the data.
+        
+    The number of levels should be one less than the number of output levels given.
+    """
+    if levels is None:
+        levels=np.linspace(im.min(),im.max(),len(output)+1)
+    elif len(levels)==len(output)+1:
+        pass
+    elif len(levels)==len(output)-1:
+        lvl=np.zeros(len(output)+1)
+        lvl[1:-1]=levels
+        lvl[0]=im.min()
+        lvl[-1]=im.max()
+        levels=lvl
+    else:
+        raise RuntimeError("{} output levels and {} input levels".format(len(output),len(levels)))
+        
+    ret=im.clone
+    for lvl,lvh,val in zip(levels[:-1],levels[1:],output):
+        select=np.logical_and(np.less_equal(im,lvh),np.greater(im,lvl))
+        ret[select]=val
     return ret
 
 def rotate(im, angle):
@@ -471,35 +623,6 @@ def do_nothing(im):
     """exactly what it says on the tin"""
     return im
     
-def imshow(im, figure='new', title=None, cmap='gray', **kwargs):
-    """quick plot of image
-    Parameters
-    ----------
-    figure: int, str or matplotlib.figure
-        if int then use figure number given
-        if figure is 'new' then create a new figure
-        if None then use whatever default figure is available"""
-    if figure is not None and isinstance(figure,int):
-        fig=plt.figure(figure)
-        plt.imshow(im, figure=fig, cmap=cmap, **kwargs)
-    elif figure is not None and figure=='new':
-        fig=plt.figure()
-        plt.imshow(im, figure=fig, cmap=cmap, **kwargs)
-    elif figure is not None: #matplotlib.figure instance
-        fig=plt.imshow(im, figure=figure, cmap=cmap, **kwargs)
-    else:
-        fig=plt.imshow(im, cmap=cmap, **kwargs)
-    if title is None:
-        if 'filename' in im.metadata.keys():
-            plt.title(os.path.split(im['filename'])[1])
-        elif hasattr(im,"filename"):
-            plt.title(os.path.split(im.filename)[1])
-        else:
-            plt.title(' ')
-    else:
-        plt.title(title)
-    plt.axis('off')
-    return fig
 
 def float_and_croptext(im):
     """convert image to float and crop_text

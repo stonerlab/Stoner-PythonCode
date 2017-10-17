@@ -740,8 +740,9 @@ class baseFolder(MutableSequence):
         cls=self.__class__.__name__
         pth=getattr(self,"key")
         if pth is None:
-            pth=self.directory
-        s="{}({}) with pattern {} has {} files and {} groups\n".format(cls,pth,self.pattern,len(self),len(self.groups))
+            pth=getattr(self,"directory","")
+            pattern=getattr(self,"pattern","")
+        s="{}({}) with pattern {} has {} files and {} groups\n".format(cls,pth,pattern,len(self),len(self.groups))
         for g in self.groups: # iterate over groups
             r=self.groups[g].__repr__()
             for l in r.split("\n"): # indent each line by one tab
@@ -773,7 +774,7 @@ class baseFolder(MutableSequence):
         """Pass through to set the sample attributes."""
         if name.startswith("_") or name in ["debug","groups","args","kargs","objects","key","multifile"]: # pass ddirectly through for private attributes
             super(baseFolder,self).__setattr__(name,value)
-        elif hasattr(self,name) and (isproperty(self,name) or not callable(getattr(self,name,None))): #If we recognise this our own attribute, then just set it
+        elif name in dir(self) and (isproperty(self,name) or not callable(getattr(self,name,None))): #If we recognise this our own attribute, then just set it
             super(baseFolder,self).__setattr__(name,value)
         elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type) and not callable(getattr(self._type,name)):
             #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
@@ -1109,7 +1110,13 @@ class baseFolder(MutableSequence):
     def make_name(self,value=None):
         """Construct a name from the value object if possible."""
         if isinstance(value,self.type):
-            return value.filename
+            name=getattr(value,"filename","")
+            if name=="":
+                name="Untitled-{}".format(self._last_name)
+                while name in self:
+                    self._last_name+=1
+                    name="Untitled-{}".format(self._last_name)                
+            return name
         elif isinstance(value,string_types):
             return value
         else:

@@ -155,7 +155,7 @@ class ImageArrayTest(unittest.TestCase):
         self.assertTrue(hasattr(t, 'abc'))
         t = self.imarr * np.random.random(self.imarr.shape)
         self.assertTrue(isinstance(t, ImageArray), 'problem with ufuncs')
-        self.assertTrue(hasattr(t, 'abc'))
+        self.assertTrue(hasattr(t, 'abc'),"Ufunc lost attribute!")
 
     #####  test functionality  ##
     def test_save(self):
@@ -193,8 +193,8 @@ class ImageArrayTest(unittest.TestCase):
     def test_other_funcs(self):
         """test imagefuncs add ons. the functions themselves are not checked
         and should include a few examples in the doc strings for testing"""
-        self.assertTrue('do_nothing' in dir(self.imarr), 'imagefuncs not being added to dir')
-        self.assertTrue('img_as_float' in dir(self.imarr), 'skimage funcs not being added to dir')
+        self.assertTrue(hasattr(self.imarr,'do_nothing'), 'imagefuncs not being added to dir')
+        self.assertTrue(hasattr(self.imarr,'img_as_float'), 'skimage funcs not being added to dir')
         im = self.imarr.do_nothing() #see if it can run
         self.assertTrue(np.allclose(im, self.imarr), 'imagefuncs not working')
         self.assertFalse(shares_memory(im, self.imarr), 'imagefunc failed to clone')
@@ -203,7 +203,7 @@ class ImageArrayTest(unittest.TestCase):
         im2 = im1.rescale_intensity() #test skimage
         self.assertTrue(np.allclose(im2, im0), 'skimage func failed')
         self.assertFalse(shares_memory(im2, im1), 'skimage failed to clone')
-        im3 = im1.exposure_rescale_intensity() #test call with module name
+        im3 = im1.exposure__rescale_intensity() #test call with module name
         self.assertTrue(np.allclose(im3, im0), 'skimage call with module name failed')
 
 class ImageFileTest(unittest.TestCase):

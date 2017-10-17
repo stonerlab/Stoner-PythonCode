@@ -24,3 +24,8 @@ class FuncsTest(unittest.TestCase):
 #        print(self.a1.metadata)
 #        print(all([k in self.a.metadata.keys() for k in self.a1.metadata.keys()]))
                 
+if __name__=="__main__": # Run some tests manually to allow debugging
+    test=FuncsTest("test_funcs")
+    test.setUp()
+    unittest.main()
+
