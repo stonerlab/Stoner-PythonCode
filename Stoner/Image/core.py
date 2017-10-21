@@ -27,6 +27,7 @@ import matplotlib.pyplot as plt
 from Stoner.Core import typeHintedDict,metadataObject,regexpDict
 from Stoner.Image.util import convert
 from Stoner import Data
+from Stoner.tools import istuple,fix_signature
 from Stoner.compat import python_v3,string_types,get_filedialog # Some things to help with Python2 and Python3 compatibility
 import inspect
 from functools import wraps
@@ -523,8 +524,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                 r.metadata=sm  # and put the returned metadata as the merged data
             #NB we might not be returning an ndarray at all here !
             return r
-        gen_func.__wrapped__.__signature__=inspect.signature(workingfunc)
-        return gen_func 
+        return fix_signature(gen_func,workingfunc)
 
     @property
     def draw(self):
@@ -1083,8 +1083,7 @@ class ImageFile(metadataObject):
                 return self
             else:
                 return r
-        gen_func.__wrapped__.__signature__=inspect.signature(workingfunc)
-        return gen_func            
+        return fix_signature(gen_func,workingfunc)
                 
     def _repr_png_(self):
         """Provide a display function for iPython/Jupyter."""
@@ -1175,15 +1174,14 @@ class DrawProxy(object):
     def __getattr__(self,name):
         """Retiurn a callable function that will carry out the draw operation requested."""
         func=getattr(draw,name)
+        @wraps(func)
         def _proxy(*args,**kargs):
             value=kargs.pop("value",np.ones(1,dtype=self.img.dtype)[0])
             coords=func(*args,**kargs)
             self.img[coords]=value
             return self.img
         
-        _proxy.__doc__=func.__doc__
-        _proxy.__name__=func.__name__
-        return _proxy 
+        return fix_signature(_proxy,func)
     
     def __dir__(self):
         """Pass through to the dir of skimage.draw."""
@@ -1313,6 +1311,7 @@ class MaskProxy(object):
         if not ".*__{}$".format(name) in self._IA._funcs:
             raise AttributeError("{} not a callable mask method.".format(name))
         func=self._IA._funcs[".*__{}$".format(name)]
+        @wraps(func)
         def _proxy_call(*args,**kargs):
             r=func(self._mask.astype(int),*args,**kargs)
             if isinstance(r,np.ndarray) and r.shape==self._IA.shape:
@@ -1320,7 +1319,7 @@ class MaskProxy(object):
             return r
         _proxy_call.__doc__=func.__doc__
         _proxy_call.__name__=func.__name__
-        return _proxy_call
+        return fix_signature(_proxy_call,func)
     
     def __rep__(self):
         return repr(self._mask)

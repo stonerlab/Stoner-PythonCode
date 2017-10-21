@@ -11,6 +11,8 @@ Created on Wed Apr 19 19:47:50 2017
 from collections import Iterable,MutableSequence
 from .compat import string_types,bytes2str
 import re
+import inspect
+
 from numpy import log10,floor,abs,logical_and,isnan,round
 from cgi import escape as html_escape
 from copy import deepcopy
@@ -153,6 +155,39 @@ def isproperty(obj,name):
     elif not issubclass(obj,object):
         raise TypeError("Can only check for property status on attributes of an object or a class not a {}".format(type(obj)))
     return hasattr(obj,name) and isinstance(getattr(obj,name),property)
+
+def istuple(obj,*args,strict=True):
+    """Determine if obj is a tuple of a certain signature.
+    
+    Args:
+        obj(object): The object to check
+        *args(type): Each of the suceeding arguments are used to determine the expected type of each element.
+        
+    Keywoprd Arguments:
+        strict(bool): Whether the elements of the tuple have to be exactly the type specified or just castable as the type
+        
+    Returns:
+        (bool): True if obj is a matching tuple.
+    """
+    if not isinstance(obj,tuple):
+        return False
+    if len(args)>0 and len(obj)!=len(args):
+        return False
+    for t,e in zip(args,obj):
+        if strict:
+            if not isinstance(e,t):
+                bad=True
+                break
+        else:
+            try:
+                v=t(e)
+            except ValueError:
+                bad=True
+                break
+    else:
+        bad=False
+    return not bad
+
 
 def tex_escape(text):
     """
@@ -364,6 +399,18 @@ def format_error(value, error=None, **kargs):
         error = int(error)
         value = int(value)
     return fmt_str.format(value, error)
+
+def fix_signature(proxy_func,wrapped_func):
+    """Tries to update proxy_func to have a signature that matches the wrapped func."""
+    try:
+        proxy_func.__wrapped__.__signature__=inspect.signature(wrapped_func)
+    except AttributeError: #Non-critical error
+        try:
+            proxy_func.__signature__= inspect.signature(wrapped_func)
+        except AttributeError:
+            pass
+    return proxy_func            
+
 
 class _attribute_store(dict):
     

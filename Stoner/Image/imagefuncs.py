@@ -28,6 +28,7 @@ If you want to add new functions that's great. There's a few important points:
 """
 
 import numpy as np,matplotlib.pyplot as plt, os
+from Stoner.tools import istuple,isiterable
 from scipy.interpolate import griddata
 from skimage import exposure,feature,filters,measure,transform,util
 try: #Make OpenCV an optional import
@@ -49,6 +50,32 @@ except ImportError:
 from .core import ImageArray
 from Stoner import Data
 
+def _scale(coord,scale=1.0,to_pixel=True):
+    """Convert pixel cordinates to scaled co-ordinates or visa versa.
+    
+    Args:
+        coord(int,float or iterable): Coordinates to be scaled
+    
+    Keyword Arguments:
+        scale(float): Microns per Pixel scale of image
+        to_pixel(bool): Force the conversion to be to pixels
+        
+    Returns:
+        scaled co-ordinates.
+    """
+    if isinstance(coord,int):
+        if not to_pixel:
+            coord=float(coord)*scale
+    elif isinstance(coord,float):
+        if to_pixel:
+            coord=int(round(coord/scale))
+    elif isiterable(coord):
+        coord=tuple([_scale(c,scale,to_pixel) for c in coord])
+    else:
+        raise ValueError("coord should be an integer or a float or an iterable of integers and floats")
+    return coord
+        
+        
 def adjust_contrast(im, lims=(0.1,0.9), percent=True):
     """rescale the intensity of the image. Mostly a call through to
     skimage.exposure.rescale_intensity. The absolute limits of contrast are
@@ -386,7 +413,7 @@ def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None,mode="clip"):
         im=im.normalise()
     return im
 
-def normalise(im,scale=(-1,1)):
+def normalise(im,scale=None):
     """Norm alise the data to a fixed scale
     
     Keyword Arguements:
@@ -396,13 +423,17 @@ def normalise(im,scale=(-1,1)):
         A scaled version of the data. The ndarray min and max methods are used to allow masked images
         to be operated on only on the unmasked areas."""
     im=im.astype(float)
+    if scale is None:
+        scale=(-1.0,1.0)
+    if not istuple(scale,float,float,strict=False):
+        raise ValueError("scale should be a 2-tuple of floats.")
     scaled=(im-im.min())/(im.max()-im.min())
     delta=scale[1]-scale[0]
     offset=scale[0]
     im=scaled*delta+offset
     return im
 
-def profile_line(img, src, dst, linewidth=1, order=1, mode='constant', cval=0.0,constrain=True):
+def profile_line(img, *args, linewidth=1, order=1, mode='constant', cval=0.0,constrain=True,**kargs):
     """Wrapper for sckit-image method of the same name to get a line_profile.
 
     Parameters:
@@ -420,18 +451,35 @@ def profile_line(img, src, dst, linewidth=1, order=1, mode='constant', cval=0.0,
         A :py:class:`Stoner.Data` object containing the line profile data and the metadata from the image.
     """
     scale=img.get("MicronsPerPixel",1.0)
-    if isinstance(src[0],float):
-        src=(int(src[0]/scale),int(src[1]/scale))
-    if isinstance(dst[0],float):
-        dst=(int(dst[0]/scale),int(dst[1]/scale))
-        
+    r,c=img.shape
+    if len(args)==0:
+        if "x" in kargs:
+            src=(kargs["x"],0)
+            dst=(kargs["x"],r)
+        if "y" in kargs:
+            src=(0,kargs["y"])
+            dst=(c,kargs["y"])
+    else:
+        src=args[0]
+        dst=args[1]
+            
+    if isinstance(src,float):
+        src=(src,src)
+    if isinstance(dst,float):
+        dst=(dst,dst)
+    dst=_scale(dst,scale)
+    src=_scale(src,scale)
+    if not istuple(src,int,int):
+        raise ValueError("src co-ordinates are not a 2-tuple of ints.")
+    if not istuple(dst,int,int):
+        raise ValueError("dst co-ordinates are not a 2-tuple of ints.")
+       
     if constrain:
         fix=lambda x,mx: sorted([0,x,mx])[1]
         r,c=img.shape
         src=list(src)
         src=(fix(src[0],r),fix(src[1],c))
-        dst=(fix(dst[0],r),fix(dst[1],c))
-    
+        dst=(fix(dst[0],r),fix(dst[1],c))  
 
     result=measure.profile_line(img,src,dst,linewidth,order,mode,cval)
     points=measure.profile._line_profile_coordinates(src, dst, linewidth)[:,:,0]
