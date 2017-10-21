@@ -540,6 +540,11 @@ class STXMImage(ImageFile):
     _reduce_metadata=False
 
     def __init__(self,*args,**kargs):
+        """Construct a STXMImage file.
+        
+        Keyword Args:
+            regrid (bool): If set True, the gridimage() method is automatically called to re-grid the image to known co-ordinates."""
+        regrid=kargs.pop("regrid",False)
         if len(args)>0 and isinstance(args[0],string_types):
             d=SLS_STXMFile(args[0])
             args=args[1:]
@@ -549,6 +554,8 @@ class STXMImage(ImageFile):
         self.image=d.data
         self.metadata.update(d.metadata)
         self.filename=d.filename
+        if regrid:
+            self.gridimage()
         
     def __floordiv__(self,other):
         if isinstance(other,metadataObject):

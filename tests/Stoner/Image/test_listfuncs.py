@@ -4,7 +4,7 @@ Created on Mon Jun 20 19:21:48 2016
 
 @author: phyrct
 """
-from Stoner.Image import ImageArray
+from Stoner.Image import ImageArray,ImageFile
 import unittest
 from os.path import dirname,join
 
@@ -18,7 +18,9 @@ class FuncsTest(unittest.TestCase):
         
     def test_funcs(self):
         b=self.a.translate((2.5,3))
-        c=b.correct_drift(ref=self.a)
+        self.c=b.correct_drift(ref=self.a)
+        self.d=b.align(self.a,method="scharr")
+        print(self.d["tvec"],self.c["correct_drift"])
 #        print("#"*80)
 #        print(self.a.metadata)
 #        print(self.a1.metadata)

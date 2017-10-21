@@ -101,7 +101,18 @@ def align(im, ref, method=None,**kargs):
             - cv2 module based affine transform on a gray scale image.       
               from: http://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
     """
-    if (method is None and chi2_shift is not None) or method == "chi2_shift":
+    im=im.T
+    ref=ref.T
+    #To be consistent with x-y co-ordinate systems
+    if method=="scharr" and imreg_dft is not None:
+        scale=np.ceil(np.max(im.shape)/200.0)
+        ref1=ref.gaussian_filter(sigma=scale,mode="wrap").scharr()
+        im1=im.gaussian_filter(sigma=scale,mode="wrap").scharr()
+        im1=im1.align(ref1,method="imreg_dft")
+        tvec=np.array(im1["tvec"])
+        new_im=im.shift(tvec)
+        new_im["tvec"]=tvec
+    elif (method is None and chi2_shift is not None) or method == "chi2_shift":
         kargs["zeromean"]=kargs.get("zeromean",True)
         result=np.array(chi2_shift(ref,im,**kargs))
         new_im=im.__class__(fft_tools.shiftnd(im,-result[0:2]))
@@ -141,8 +152,8 @@ def align(im, ref, method=None,**kargs):
         new_im = cv2.warpAffine(im, warp_matrix, (sz[1],sz[0]), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
      
     else: # No cv2 available so don't do anything.
-        new_im=None
-    return new_im
+        raise RuntimeError("Couldn't find an image alignment algorithm to use")
+    return new_im.T
 
 def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None,do_shift=True):
     """Align images to correct for image drift.
@@ -503,6 +514,7 @@ def translate(im, translation, add_metadata=False,order=3,mode="wrap"):
     Returns:
         im (ImageArray): translated image
     """
+    translation=[-x for x in translation]
     trans=transform.SimilarityTransform(translation=translation)
     im=im.warp(trans,order=order,mode=mode)
     if add_metadata:

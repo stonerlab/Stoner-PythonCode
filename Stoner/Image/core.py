@@ -29,6 +29,7 @@ from Stoner.Image.util import convert
 from Stoner import Data
 from Stoner.compat import python_v3,string_types,get_filedialog # Some things to help with Python2 and Python3 compatibility
 import inspect
+from functools import wraps
 if python_v3:
     from io import BytesIO as StreamIO
 else:
@@ -420,7 +421,8 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                 for d in dir(mod):
                     if not d.startswith("_"):
                         func=getattr(mod,d)
-                        if callable(func) and func.__module__==mod.__name__:   
+                        if callable(func) and func.__module__==mod.__name__:
+                            func.transpose=True
                             name="{}__{}".format(func.__module__,d).replace(".","__")
                             func_proxy[name]=func
             #Add the scikit images modules
@@ -495,10 +497,15 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         
         This method also updates the name and documentation strings for the wrapper to match the wrapped function - 
         thus ensuring that Spyder's help window can generate useful information.
+        
         """
-
+        @wraps(workingfunc)
         def gen_func(*args, **kwargs):
-            change=self.clone
+            transpose = getattr(workingfunc,"transpose",False)
+            if transpose:
+                change=self.clone.T
+            else:
+                change=self.clone
             r=workingfunc(change, *args, **kwargs) #send copy of self as the first arg
             if isinstance(r,Data):
                 pass #Data return is ok
@@ -507,14 +514,16 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                 r.metadata=self.metadata.copy()
                 r.column_headers[0]=workingfunc.__name__
             elif isinstance(r,np.ndarray): #make sure we return a ImageArray
-                r=r.view(type=self.__class__)
+                if transpose:
+                    r=r.view(type=self.__class__).T
+                else:
+                    r=r.view(type=self.__class__)
                 sm=self.metadata.copy() #Copy the currenty metadata
                 sm.update(r.metadata) # merge in any new metadata from the call
                 r.metadata=sm  # and put the returned metadata as the merged data
             #NB we might not be returning an ndarray at all here !
             return r
-        gen_func.__doc__=workingfunc.__doc__
-        gen_func.__name__=workingfunc.__name__
+        gen_func.__wrapped__.__signature__=inspect.signature(workingfunc)
         return gen_func 
 
     @property
@@ -621,6 +630,9 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                 pass
             elif isinstance(box,int):
                 box=(box,self.shape[1]-box,box,self.shape[0]-box)
+            elif isinstance(box,float):
+                box=[round(self.shape[1]*box/2),round(self.shape[1]*(1-box/2)),round(self.shape[1]*box/2),round(self.shape[1]*(1-box/2))]
+                box=tuple([int(x) for x in box])
             else:
                 raise ValueError('crop accepts tuple of length 4, {} given.'.format(len(box)))
         else:
@@ -1006,7 +1018,7 @@ class ImageFile(metadataObject):
     
     def __sub_core__(self,result,other):
         """Actually do result=result-other."""
-        if isinstance(other,result) and result.shape==other.shape:
+        if isinstance(other,result.__class__) and result.shape==other.shape:
             result.image-=other.image
         elif isinstance(other,np.ndarray) and other.shape==result.shape:
             result.image-=other            
@@ -1048,6 +1060,7 @@ class ImageFile(metadataObject):
         of the same shape as our current image then
         use that to update image attribute, otherwise return given output.
         """
+        @wraps(workingfunc)
         def gen_func(*args, **kargs):
 
             if len(args)>0:
@@ -1070,9 +1083,7 @@ class ImageFile(metadataObject):
                 return self
             else:
                 return r
-        
-        gen_func.__doc__=workingfunc.__doc__
-        gen_func.__name__=workingfunc.__name__
+        gen_func.__wrapped__.__signature__=inspect.signature(workingfunc)
         return gen_func            
                 
     def _repr_png_(self):
