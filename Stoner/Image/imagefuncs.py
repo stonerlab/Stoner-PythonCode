@@ -433,7 +433,7 @@ def normalise(im,scale=None):
     im=scaled*delta+offset
     return im
 
-def profile_line(img, *args, linewidth=1, order=1, mode='constant', cval=0.0,constrain=True,**kargs):
+def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode='constant', cval=0.0,constrain=True,**kargs):
     """Wrapper for sckit-image method of the same name to get a line_profile.
 
     Parameters:
@@ -452,17 +452,13 @@ def profile_line(img, *args, linewidth=1, order=1, mode='constant', cval=0.0,con
     """
     scale=img.get("MicronsPerPixel",1.0)
     r,c=img.shape
-    if len(args)==0:
+    if src is None and dst is None:
         if "x" in kargs:
             src=(kargs["x"],0)
             dst=(kargs["x"],r)
         if "y" in kargs:
             src=(0,kargs["y"])
-            dst=(c,kargs["y"])
-    else:
-        src=args[0]
-        dst=args[1]
-            
+            dst=(c,kargs["y"])            
     if isinstance(src,float):
         src=(src,src)
     if isinstance(dst,float):

@@ -156,7 +156,7 @@ def isproperty(obj,name):
         raise TypeError("Can only check for property status on attributes of an object or a class not a {}".format(type(obj)))
     return hasattr(obj,name) and isinstance(getattr(obj,name),property)
 
-def istuple(obj,*args,strict=True):
+def istuple(obj,*args,**kargs):
     """Determine if obj is a tuple of a certain signature.
     
     Args:
@@ -169,6 +169,7 @@ def istuple(obj,*args,strict=True):
     Returns:
         (bool): True if obj is a matching tuple.
     """
+    strict=kargs.pop("strict",True)
     if not isinstance(obj,tuple):
         return False
     if len(args)>0 and len(obj)!=len(args):
