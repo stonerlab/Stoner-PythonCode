@@ -741,7 +741,7 @@ class baseFolder(MutableSequence):
         pth=getattr(self,"key")
         if pth is None:
             pth=getattr(self,"directory","")
-            pattern=getattr(self,"pattern","")
+        pattern=getattr(self,"pattern","")
         s="{}({}) with pattern {} has {} files and {} groups\n".format(cls,pth,pattern,len(self),len(self.groups))
         for g in self.groups: # iterate over groups
             r=self.groups[g].__repr__()

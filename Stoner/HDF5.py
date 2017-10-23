@@ -554,7 +554,11 @@ class STXMImage(ImageFile):
         self.image=d.data
         self.metadata.update(d.metadata)
         self.filename=d.filename
-        if regrid:
+        if isinstance(regrid,tuple):
+            self.gridimage(*regrid)
+        elif isinstance(regrid,dict):
+            self.gridimage(**regrid)
+        elif regrid:
             self.gridimage()
         
     def __floordiv__(self,other):

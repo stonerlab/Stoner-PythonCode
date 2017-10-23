@@ -918,8 +918,8 @@ class typeHintedDict(regexpDict):
         ret = cls()
         for k in self.keys():
             t = self._typehints[k]
-            nk = k + "{" + t + "}"
-            ret[nk] = copy.deepcopy(self[k])
+            ret._typehints[k]=t
+            super(typeHintedDict,ret).__setitem__(k,copy.deepcopy(self[k]))
         return ret
         
     def filter(self, name):
