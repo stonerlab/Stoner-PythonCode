@@ -8,6 +8,7 @@ __all__ = ["AnalysisMixin"]
 from .compat import python_v3,string_types,int_types,index_types,LooseVersion
 from .tools import isNone,isiterable,all_type
 import numpy as _np_
+import scipy as _sp_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
 from scipy.signal import get_window,convolve
@@ -1582,6 +1583,137 @@ class AnalysisMixin(object):
                 header = str(header)
             self.divide(t, base, header=header, replace=replace)
         return self
+
+    def odr(self, model, xcol=None, ycol=None, p0=None, sigma_x=None,sigma_y=None,**kargs):
+        """Wrapper around scipy.odr orthogonal distance regression fitting.
+
+        Args:
+            model (scipy.odr.Model): An instance of an scipy.odr.Model that represents the model to be fitted to the data
+            xcol (index or None): Columns to be used for the x  data for the fitting. If not givem defaults to the :py:attr:`Stoner.Core.DataFile.setas` x column
+            ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the :py:attr:`Stoner.Core.DataFile.setas` y column
+
+        Keyword Arguments:
+            p0 (list, tuple or array): A vector of initial parameter values to try.
+            sigma_x (index): The index of the column with the x-error bars
+            sigma_y (index): The index of the column with the x-error bars
+            bounds (callable): A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+            result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
+                the last column will be used. If result is a string or an integer then it is used as a column index.
+                Default to None for not adding fitted data
+            replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
+            header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
+            output (str, default "fit"): Specifiy what to return.
+
+        Returns:
+            The return value is determined by the *output* parameter. Options are
+                - "ffit"    just the :py:class:`scipy.odr.Output` instance
+                - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+                - "full"    a tuple of the fit instance and the row.
+                - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally as a column of data.
+
+        See Also:
+            :py:meth:`AnalysisMixin.curve_fit`
+            :py:meth:`AnalysisMixin.lmfit`            
+            User guide section :ref:`fitting_with_limits`
+
+        """
+        bounds = kargs.pop("bounds", lambda x, y: not _np_.any(y.mask))
+        result = kargs.pop("result", None)
+        replace = kargs.pop("replace", False)
+        header = kargs.pop("header", None)
+        # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
+        absolute_sigma = kargs.pop("absolute_sigma", True)
+        scale_covar = kargs.pop("scale_covar", not absolute_sigma)
+        #Support both asrow and output, the latter wins if both supplied
+        asrow = kargs.pop("asrow", False)
+        output = kargs.pop("output", "row" if asrow else "fit")
+
+        if isinstance(model, _sp_.odr.Model):
+            pass
+        elif isclass(model) and issubclass(model,_sp_.odr.Model):
+            model=model()
+        elif callable(model):
+            model=_sp_.odr.Model(model)
+            if p0 is None or len(p0)!=len(model.param_names):
+                p0=dict()
+                for k in model.param_names:
+                    if k not in kargs:
+                        raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function {}".format(len(model.param_names),k,model.func.__name__))
+                    else:
+                        p0[k] = kargs[k]
+        else:
+            raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
+
+
+        prefix = str(kargs.pop("prefix",  model.__class__.__name__))+":"
+
+
+
+        _=self._col_args(xcol=xcol,ycol=ycol,xerr=sigma_x,yerr=sigma_y)
+        working = self.search(_.xcol, bounds)
+        working = ma.mask_rowcols(working, axis=0)
+
+
+        xdata = working[:, self.find_col(_.xcol)]
+        ydata = working[:, self.find_col(_.ycol)]
+        if not _.has_xerr:
+            sx=_np_.ones_like(xdata)
+        else:
+            sx=working[:, self.find_col(_.xerr)]
+        if not _.has_yerr:
+            sy=_np_.ones_like(ydata)
+        else:
+            sy=working[:, self.find_col(_.yerr)]
+            
+        if not absolute_sigma:
+            data=_sp_.odr.Data(xdata,ydata,wd=1/sx**2,we=1/sy**2)
+        else:
+            data=_sp_.odr.RealData(xdata,ydata,sx=sx,sy=sy)
+        
+        fit=_sp_.odr.ODR(data,model,beta0=p0)
+        try:
+            fit_result=fit.run()
+        except _sp_.odr.OdrError as err:
+            print(err)
+            return None
+        except _sp_.odr.OdrStop as err:
+            print(err)
+            return None
+        popt,perr=fit_result.beta,fit_result.sd_beta
+        row = []
+        # Store our current mask, calculate new column's mask and turn off mask
+        tmp_mask=self.mask
+        col_mask=_np_.any(tmp_mask,axis=1)
+        self.mask=False
+
+        if (isinstance(result, bool) and result): # Appending data and mask
+            self.add_column(model.fcn(popt,self.column(xcol)), header=header, index=None)
+            tmp_mask=_np_.column_stack((tmp_mask,col_mask))
+        elif isinstance(result, index_types): # Inserting data and mask
+            self.add_column(model.fcn(popt,self.column(xcol)), header=header, index=result, replace=replace)
+            tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
+        elif result is not None: # Oops restore mask and bail
+            self.mask=tmp_mask
+            raise RuntimeError("Didn't recognize result as an index type or True")
+        self.mask=tmp_mask #Restore mask
+
+        for p in fit.params:
+            self["{}{}".format(prefix, p)] = fit.params[p].value
+            self["{}{} err".format(prefix, p)] = fit.params[p].stderr
+            row.extend([fit.params[p].value, fit.params[p].stderr])
+        self["{}chi^2".format(prefix)] = fit.chisqr
+        row.append(fit.chisqr)
+        self["{}nfev".format(prefix)] = fit.nfev
+        retval = {"fit": fit, "row": row, "full": (fit, row),"data":self}
+        if output not in retval:
+            raise RuntimeError("Failed to recognise output format:{}".format(output))
+        else:
+            return retval[output]
+        
+            
+            
+
+
 
     def outlier_detection(self, column=None, window=7, certainty=3.0, action='mask', width=1, func=None, **kargs):
         """Function to detect outliers in a column of data.
