@@ -36,9 +36,9 @@ class TexFormatter(Formatter):
         elif value != 0.0:
             power = _np_.floor(_np_.log10(_np_.abs(value)))
             if _np_.abs(power) < 4:
-                ret = "${}$".format(value)
+                ret = "${}$".format(self._round(value))
             else:
-                v = value / (10 ** power)
+                v = self._round(value / (10 ** power))
                 ret = "${}\\times 10^{{{:.0f}}}$".format(v, power)
         else:
             ret = "$0.0$"
@@ -49,6 +49,14 @@ class TexFormatter(Formatter):
 
     def format_data_short(self, value):
         return "{:g}".format(value)
+    
+    def _round(self,value):
+        for i in range(5):
+            vt=_np_.round(value,i)
+            if _np_.abs(value-vt)<10**(-i-2):
+                value=vt
+                break
+        return value
 
 
 class TexEngFormatter(EngFormatter):
@@ -294,7 +302,11 @@ class DefaultPlotStyle(object):
                 else:
                     ax = fig.add_axes(rect)
             else:
-                ax = kargs.pop("ax",fig.gca(projection=projection))
+                if projection == "3d":                
+                    ax = kargs.pop("ax",fig.gca(projection="3d"))
+                else:
+                    ax = kargs.pop("ax",fig.gca())
+                    
             ret = fig
         else:
             if projection == "3d":

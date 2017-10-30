@@ -11,13 +11,43 @@ from Stoner.compat import string_types
 from Stoner.tools import isiterable
 from Stoner.Image import ImageFile,ImageArray
 
-from matplotlib.animation import FuncAnimation
+from skimage.viewer import CollectionViewer
 import numpy as np
 
 def _load_ImageArray(f, **kargs):
     """Simple meothd to load an image array."""
     kargs.pop("img_num",None)
     return ImageArray(f, **kargs)
+
+class _generator(object):
+    """A helper class to iterator over ImageFolder yet remember it's own length."""
+    
+    def __init__(self,fldr):
+        self.fldr=fldr
+        self.len=len(fldr)
+        
+    def __len__(self):
+        return self.len
+    
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        for i in self.fldr:
+            if hasattr(i,"image"):
+                ret=i.image
+            else:
+                ret=i
+            yield ret
+
+    def __getitem__(self,index):
+        ret=self.fldr[index]
+        if hasattr(ret,"image"):
+            ret=ret.image
+        return ret
+
+    next=__next__
+
 
 class ImageFolder(DiskBssedFolder,baseFolder):
     
@@ -59,7 +89,11 @@ class ImageFolder(DiskBssedFolder,baseFolder):
         if "flat" in self._defaults:
             del self._defaults["flat"]
         super(ImageFolder,self).__init__(*args,**kargs)
-        
+
+    @property
+    def images(self):
+        """A generator that iterates over just the images in the Folder."""
+        return _generator(self)        
     
     def loadgroup(self):
         """Load all files from this group into memory"""
@@ -104,7 +138,7 @@ class ImageFolder(DiskBssedFolder,baseFolder):
                 metadata=[m[0] for m in metadata]
         return metadata
     
-    def stack(self):
+    def as_stack(self):
         """Return a ImageStack of the images in the current group."""
         from Stoner.Image import ImageStack
         k = ImageStack(self)
@@ -125,8 +159,7 @@ class ImageFolder(DiskBssedFolder,baseFolder):
             ret.metadata.update(self[0],metadata)
         else:
             ret=total
-        return ret
-            
+        return ret            
         
     
     def view(self,interval=200):
@@ -136,13 +169,8 @@ class ImageFolder(DiskBssedFolder,baseFolder):
                 interval (int): delay between frames in ms
                 
         """
-        
-        fig=self[0].imshow(animated=True)
-        def anim(n):
-            self[n].imshow(figure=fig)
-            
-        return FuncAnimation(fig,anim,frames=len(self),interval=interval,blit=True)
-        
-            
+        cv=CollectionViewer(self.images)
+        cv.show()
+        return cv
         
 
