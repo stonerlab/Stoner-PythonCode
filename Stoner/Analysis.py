@@ -10,6 +10,7 @@ from .tools import isNone,isiterable,all_type
 import numpy as _np_
 import scipy as _sp_
 import numpy.ma as ma
+from scipy.odr import Model as odrModel
 from scipy.integrate import cumtrapz
 from scipy.signal import get_window,convolve
 from scipy.interpolate import interp1d,  UnivariateSpline
@@ -42,6 +43,49 @@ else:
 # Module Private Functions
 #==========================================================================================================================================
 
+
+class _odr_Model(odrModel):
+    """A wrapper for converting lmfit models to odr models."""
+    
+    def __init__(self,*args,**kargs):
+        """Initialise with lmfit.models.Model or callable."""
+        meta=kargs.pop("meta",dict())
+        if len(args)>0:
+            args=list(args)
+            model=args.pop(0)
+        else:
+            raise RuntimeError("Need at least one argument to make a fitting model.""")
+            
+        if isclass(model) and issubclass(mode,Model): #Instantiate if only a class passed in
+            model=model() 
+        if isinstance(model,Model):
+            self.model=model
+            model=lambda beta,x,**kargs: self.model.func(x,*beta,**kargs)
+            meta["param_names"]=self.model.param_names
+            meta["name"]=self.model.__class__.__name__
+        elif callable(model):
+            meta["name"]==model.__name__
+            args,carargs,jeywords,defaults=getargspec(model)[0:4]
+            meta["param_names"]=list(args)
+            model=lambda beta,x,**kargs: model(x,*beta,**kargs)
+        p0=kargs.pop("p0",kargs.pop("estimate",None))
+        if p0 is None or len(p0)!=len(self.param_names):
+            p0=list()
+            for k in meta["param_names"]:
+                if k in kargs:
+                    p0.append(kargs.pop(k))
+                elif hasattr(self,"model") and hasattr(self.model,"param_hints") and k in self.model.param_hints:
+                    p0.append(self.model.param_hints[k]["value"])
+                else:                    
+                    raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function".format(len(meta["param_names"]),k))
+        kargs["estimate"]=p0
+        
+        kargs["meta"]=meta
+        
+        print(kargs)
+
+            
+        super(_odr_Model,self).__init__(model,*args,**kargs)
 
 
 def _lmfit_p0_dict(p0,model):
@@ -1584,11 +1628,11 @@ class AnalysisMixin(object):
             self.divide(t, base, header=header, replace=replace)
         return self
 
-    def odr(self, model, xcol=None, ycol=None, p0=None, sigma_x=None,sigma_y=None,**kargs):
+    def odr(self, model, xcol=None, ycol=None, sigma_x=None,sigma_y=None,**kargs):
         """Wrapper around scipy.odr orthogonal distance regression fitting.
 
         Args:
-            model (scipy.odr.Model): An instance of an scipy.odr.Model that represents the model to be fitted to the data
+            model (scipy.odr.Model, lmfit.models.Model or callable): Tje model that describes the data. See below for more details.
             xcol (index or None): Columns to be used for the x  data for the fitting. If not givem defaults to the :py:attr:`Stoner.Core.DataFile.setas` x column
             ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the :py:attr:`Stoner.Core.DataFile.setas` y column
 
@@ -1606,10 +1650,21 @@ class AnalysisMixin(object):
 
         Returns:
             The return value is determined by the *output* parameter. Options are
-                - "ffit"    just the :py:class:`scipy.odr.Output` instance
+                - "fit"    just the :py:class:`scipy.odr.Output` instance (default)
                 - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
                 - "full"    a tuple of the fit instance and the row.
                 - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally as a column of data.
+
+        Notes:
+            The function tries to make use of whatever model you give it. Specifically, it accepts:
+                
+                -   A subclass or an instance of :py:class:`scipy.odr.Model` : this is the native model type for the underlying scipy odr package.
+                -   A subclass or instance of an lmfit.models.Model: the :py:mod:`Stoner.Fit` module has a number of useful prebuilt lmfit models that can be used directly
+                    by this function.
+                -   A callable function which should have a signature f(x,parameter1,parameter2...) and *not* the scip.odr stadnard f(beta,x)
+                
+            This function ois designed to be as compatible as possible with :py:meth:`AnalysisMixin.curve_fit` and  :py:meth:`AnalysisMixin.lmfit`
+            to facilitate easy of switching between them.
 
         See Also:
             :py:meth:`AnalysisMixin.curve_fit`
@@ -1629,30 +1684,25 @@ class AnalysisMixin(object):
         output = kargs.pop("output", "row" if asrow else "fit")
 
         if isinstance(model, _sp_.odr.Model):
-            pass
+            model.name=model.__class__.__name__
         elif isclass(model) and issubclass(model,_sp_.odr.Model):
             model=model()
-        elif callable(model):
-            model=_sp_.odr.Model(model)
-            if p0 is None or len(p0)!=len(model.param_names):
-                p0=dict()
-                for k in model.param_names:
-                    if k not in kargs:
-                        raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function {}".format(len(model.param_names),k,model.func.__name__))
-                    else:
-                        p0[k] = kargs[k]
+            model.name=model.__class__.__name__
+        elif (isclass(model) and issubclass(model,Model)) or isinstance(model,Model) or callable(model):
+            model=_odr_Model(model,**kargs)
         else:
             raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
 
+        print(model.__dict__,model.__class__.__name__)
 
-        prefix = str(kargs.pop("prefix",  model.__class__.__name__))+":"
-
-
+        prefix = str(kargs.pop("prefix",  model.name))+":"
+        
+        #Get the inital guess if possible
+        p0=kargs.pop("p0",getattr(model,"p0",None))
 
         _=self._col_args(xcol=xcol,ycol=ycol,xerr=sigma_x,yerr=sigma_y)
         working = self.search(_.xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
-
 
         xdata = working[:, self.find_col(_.xcol)]
         ydata = working[:, self.find_col(_.ycol)]
@@ -1670,7 +1720,7 @@ class AnalysisMixin(object):
         else:
             data=_sp_.odr.RealData(xdata,ydata,sx=sx,sy=sy)
         
-        fit=_sp_.odr.ODR(data,model,beta0=p0)
+        fit=_sp_.odr.ODR(data,model,beta0=model.estimate)
         try:
             fit_result=fit.run()
         except _sp_.odr.OdrError as err:
@@ -1680,6 +1730,9 @@ class AnalysisMixin(object):
             print(err)
             return None
         popt,perr=fit_result.beta,fit_result.sd_beta
+        delta,eps=fit_result.delta,fit_result.eps
+        chi_square=_np_.sum(delta**2/_np_.abs(fit_result.xplus))+_np_.sum(eps**2/_np_.abs(fit_result.y))
+        
         row = []
         # Store our current mask, calculate new column's mask and turn off mask
         tmp_mask=self.mask
@@ -1687,33 +1740,30 @@ class AnalysisMixin(object):
         self.mask=False
 
         if (isinstance(result, bool) and result): # Appending data and mask
-            self.add_column(model.fcn(popt,self.column(xcol)), header=header, index=None)
+            self.add_column(model.fcn(popt,self.column(_.xcol)), header=header, index=None)
             tmp_mask=_np_.column_stack((tmp_mask,col_mask))
         elif isinstance(result, index_types): # Inserting data and mask
-            self.add_column(model.fcn(popt,self.column(xcol)), header=header, index=result, replace=replace)
+            self.add_column(model.fcn(popt,self.column(_.xcol)), header=header, index=result, replace=replace)
             tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
         elif result is not None: # Oops restore mask and bail
             self.mask=tmp_mask
             raise RuntimeError("Didn't recognize result as an index type or True")
         self.mask=tmp_mask #Restore mask
 
-        for p in fit.params:
-            self["{}{}".format(prefix, p)] = fit.params[p].value
-            self["{}{} err".format(prefix, p)] = fit.params[p].stderr
-            row.extend([fit.params[p].value, fit.params[p].stderr])
-        self["{}chi^2".format(prefix)] = fit.chisqr
-        row.append(fit.chisqr)
-        self["{}nfev".format(prefix)] = fit.nfev
-        retval = {"fit": fit, "row": row, "full": (fit, row),"data":self}
+        param_names=getattr(model,"param_names",None)
+        if param_names is None:
+            param_names=["Parameter {}".format(i+1) for i in range(len(popt))]
+        for i,p in enumerate(param_names):
+            self["{}{}".format(prefix, p)] = popt[i]
+            self["{}{} err".format(prefix, p)] = perr[i]
+            row.extend([popt[i],perr[i]])
+        self["{}chi^2".format(prefix)]=chi_square
+        row.append(chi_square)
+        retval = {"fit": fit_result, "row": row, "full": (fit_result, row),"data":self}
         if output not in retval:
             raise RuntimeError("Failed to recognise output format:{}".format(output))
         else:
             return retval[output]
-        
-            
-            
-
-
 
     def outlier_detection(self, column=None, window=7, certainty=3.0, action='mask', width=1, func=None, **kargs):
         """Function to detect outliers in a column of data.
