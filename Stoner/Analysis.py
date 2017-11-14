@@ -64,27 +64,28 @@ class _odr_Model(odrModel):
             meta["param_names"]=self.model.param_names
             meta["name"]=self.model.__class__.__name__
         elif callable(model):
-            meta["name"]==model.__name__
-            args,carargs,jeywords,defaults=getargspec(model)[0:4]
-            meta["param_names"]=list(args)
-            model=lambda beta,x,**kargs: model(x,*beta,**kargs)
+            self.model=None
+            meta["name"]=model.__name__
+            arguments,carargs,jeywords,defaults=getargspec(model)[0:4]
+            meta["param_names"]=list(arguments[1:])
+            print(arguments,carargs,jeywords,defaults)
+            func=model
+            def model(beta,x,**args):
+                return func(x,*beta)
         p0=kargs.pop("p0",kargs.pop("estimate",None))
         if p0 is None or len(p0)!=len(self.param_names):
             p0=list()
             for k in meta["param_names"]:
                 if k in kargs:
                     p0.append(kargs.pop(k))
-                elif hasattr(self,"model") and hasattr(self.model,"param_hints") and k in self.model.param_hints:
+                elif hasattr(self.model,"param_hints") and k in self.model.param_hints:
                     p0.append(self.model.param_hints[k]["value"])
                 else:                    
                     raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function".format(len(meta["param_names"]),k))
         kargs["estimate"]=p0
         
         kargs["meta"]=meta
-        
-        print(kargs)
-
-            
+                   
         super(_odr_Model,self).__init__(model,*args,**kargs)
 
 
@@ -1260,9 +1261,9 @@ class AnalysisMixin(object):
            values of the parameters. In this mode the return value is a 2D array whose rows correspond to the inputs to the rows of p0, the
            columns are the fitted values of the parameters with an additional column for :math:`\\chi^2`.
 
-          Example:
-              .. plot:: samples/lmfit_simple.py
-                 :include-source:
+        Example:
+            .. plot:: samples/lmfit_simple.py
+                :include-source:
         """
         if Model is None:  #Will be the case if lmfit is not imported.
             raise RuntimeError(
@@ -1665,6 +1666,11 @@ class AnalysisMixin(object):
                 
             This function ois designed to be as compatible as possible with :py:meth:`AnalysisMixin.curve_fit` and  :py:meth:`AnalysisMixin.lmfit`
             to facilitate easy of switching between them.
+            
+        Example:
+            .. plot:: samples/lmfit_simple.py
+                 :include-source:
+
 
         See Also:
             :py:meth:`AnalysisMixin.curve_fit`
@@ -1682,6 +1688,7 @@ class AnalysisMixin(object):
         #Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
+        prefix = str(kargs.pop("prefix",None))
 
         if isinstance(model, _sp_.odr.Model):
             model.name=model.__class__.__name__
@@ -1693,10 +1700,9 @@ class AnalysisMixin(object):
         else:
             raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
 
-        print(model.__dict__,model.__class__.__name__)
-
-        prefix = str(kargs.pop("prefix",  model.name))+":"
-        
+        if prefix is None:
+            prefix=str(model.name)
+        prefix="{}:".format(prefix)
         #Get the inital guess if possible
         p0=kargs.pop("p0",getattr(model,"p0",None))
 
