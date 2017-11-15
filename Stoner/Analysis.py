@@ -1688,7 +1688,7 @@ class AnalysisMixin(object):
         #Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
-        prefix = str(kargs.pop("prefix",None))
+        prefix = kargs.pop("prefix",None)
 
         if isinstance(model, _sp_.odr.Model):
             model.name=model.__class__.__name__
@@ -1702,6 +1702,8 @@ class AnalysisMixin(object):
 
         if prefix is None:
             prefix=str(model.name)
+        else:
+            prefix=str(prefix)
         prefix="{}:".format(prefix)
         #Get the inital guess if possible
         p0=kargs.pop("p0",getattr(model,"p0",None))
