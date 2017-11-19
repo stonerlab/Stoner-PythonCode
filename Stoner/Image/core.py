@@ -1004,17 +1004,31 @@ class ImageFile(metadataObject):
             return NotImplemented
         return result
     
-    def __truediv__(self,other):
-        """Implement the divide operator"""
-        result=self.clone
-        result=self.__div_core__(result,other)
-        return result
-
-    def __itruediv__(self,other):
-        """Implement the inplace divide operator"""
-        result=self
-        result=self.__div_core__(result,other)
-        return result
+    if python_v3:        
+        def __truediv__(self,other):
+            """Implement the divide operator"""
+            result=self.clone
+            result=self.__div_core__(result,other)
+            return result
+    
+        def __itruediv__(self,other):
+            """Implement the inplace divide operator"""
+            result=self
+            result=self.__div_core__(result,other)
+            return result
+    else:
+        def __div__(self,other):
+            """Implement the divide operator"""
+            result=self.clone
+            result=self.__div_core__(result,other)
+            return result
+    
+        def __idiv__(self,other):
+            """Implement the inplace divide operator"""
+            result=self
+            result=self.__div_core__(result,other)
+            return result
+        
 
     def __div_core__(self,result,other):
         """Actually do result=result/other."""
