@@ -128,17 +128,18 @@ def align(im, ref, method=None,**kargs):
             - cv2 module based affine transform on a gray scale image.       
               from: http://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
     """
-    im=im.T
-    ref=ref.T
     #To be consistent with x-y co-ordinate systems
     if method=="scharr" and imreg_dft is not None:
-        scale=np.ceil(np.max(im.shape)/200.0)
+        im=im.T
+        ref=ref.T
+        scale=np.ceil(np.max(im.shape)/500.0)
         ref1=ref.gaussian_filter(sigma=scale,mode="wrap").scharr()
         im1=im.gaussian_filter(sigma=scale,mode="wrap").scharr()
         im1=im1.align(ref1,method="imreg_dft")
         tvec=np.array(im1["tvec"])
         new_im=im.shift(tvec)
-        new_im["tvec"]=tvec
+        new_im["tvec"]=tuple(-tvec)
+        new_im=new_im.T
     elif (method is None and chi2_shift is not None) or method == "chi2_shift":
         kargs["zeromean"]=kargs.get("zeromean",True)
         result=np.array(chi2_shift(ref,im,**kargs))
@@ -306,7 +307,12 @@ def gridimage(im,points=None,xi=None,method="linear",fill_value=1.0,rescale=Fals
 
 def hist(im,*args,**kargs):
     """Pass through to :py:func:`matplotlib.pyplot.hist` function."""
-    return plt.hist(im.ravel(),*args,**kargs)
+    counts,edges=np.histogram(im.ravel(),*args,**kargs)
+    centres=(edges[1:]+edges[:-1])/2
+    new=Data(np.column_stack((centres,counts)))
+    new.column_headers=["Intensity","Frequency"]
+    new.setas="xy"
+    return new
 
 def imshow(im, **kwargs):
     """quick plot of image

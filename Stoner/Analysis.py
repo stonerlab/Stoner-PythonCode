@@ -1325,7 +1325,7 @@ class AnalysisMixin(object):
             for p in model.param_names:
                 check&=p in model.param_hints and "value" in model.param_hints[p]
             if not check: # Ok, param_hints didn't have all the parameter values setup.
-                p0=model.guess(ydata,xdata)
+                p0=model.guess(ydata,x=xdata)
                 p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
 
 
