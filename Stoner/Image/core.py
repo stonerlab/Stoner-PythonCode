@@ -116,6 +116,9 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
     _defaults={"debug":False, "_hardmask":False}
 
     #now initialise class
+    
+    if not python_v3: # Ugh what a horrible hack!
+        _mask = np.ma.MaskedArray([]).mask
 
     def __new__(cls, *args, **kargs):
         """Construct an ImageArray object.
