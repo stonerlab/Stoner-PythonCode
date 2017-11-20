@@ -20,6 +20,7 @@ def _load_ImageArray(f, **kargs):
     return ImageArray(f, **kargs)
 
 class _generator(object):
+    
     """A helper class to iterator over ImageFolder yet remember it's own length."""
     
     def __init__(self,fldr):
@@ -156,18 +157,15 @@ class ImageFolder(DiskBssedFolder,baseFolder):
         elif isinstance(self._type,ImageFile):
             ret=self._type()
             ret.image=total
-            ret.metadata.update(self[0],metadata)
+            ret.metadata.update(self[0].metadata)
         else:
             ret=total
         return ret            
         
     
-    def view(self,interval=200):
+    def view(self):
         """Create a matplotlib animated view of the contents.
-      
-            Keyword Arguments:
-                interval (int): delay between frames in ms
-                
+                      
         """
         cv=CollectionViewer(self.images)
         cv.show()

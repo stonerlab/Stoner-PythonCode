@@ -77,8 +77,9 @@ def _scale(coord,scale=1.0,to_pixel=True):
         
         
 def adjust_contrast(im, lims=(0.1,0.9), percent=True):
-    """rescale the intensity of the image. Mostly a call through to
-    skimage.exposure.rescale_intensity. The absolute limits of contrast are
+    """rescale the intensity of the image. 
+    
+    Mostly a call through to skimage.exposure.rescale_intensity. The absolute limits of contrast are
     added to the metadata as 'adjust_contrast'
 
     Parameters
@@ -174,7 +175,7 @@ def align(im, ref, method=None,**kargs):
         criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, number_of_iterations,  termination_eps)
      
         # Run the ECC algorithm. The results are stored in warp_matrix.
-        (cc, warp_matrix) = cv2.findTransformECC (im1_gray,im2_gray,warp_matrix, warp_mode, criteria)
+        (_, warp_matrix) = cv2.findTransformECC (im1_gray,im2_gray,warp_matrix, warp_mode, criteria)
      
         # Use warpAffine for Translation, Euclidean and Affine
         new_im = cv2.warpAffine(im, warp_matrix, (sz[1],sz[0]), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
@@ -206,7 +207,6 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None,do_shift
     Adds 'drift_shift' to the metadata as the (x,y) vector that translated the
     image back to it's origin.
     """
-
     if box is None:
         box=im.max_box
     cim=im.crop_image(box=box)
@@ -222,7 +222,7 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None,do_shift
     imed=imed>imed.threshold_otsu()
     imed=imed.corner_fast(threshold=threshold)
 
-    shift,err,phase=feature.register_translation(refed,imed,upsample_factor=upsample_factor)
+    shift,_,phase=feature.register_translation(refed,imed,upsample_factor=upsample_factor)
     if do_shift:
         im=im.translate(translation=(-shift[1],-shift[0])) #x,y
     im.metadata['correct_drift']=(-shift[1],-shift[0])
@@ -230,6 +230,7 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None,do_shift
 
 def subtract_image(im, background, contrast=16, clip=True):
     """subtract a background image from the ImageArray
+    
     Multiply the contrast by the contrast parameter.
     If clip is on then clip the intensity after for the maximum allowed data range.
     """
@@ -239,30 +240,24 @@ def subtract_image(im, background, contrast=16, clip=True):
         im=im.clip_intensity()
     return im
 
-
-    
-def edge_det(filename,threshold1,threshold2):
-    '''Detects an edges in an image according to the thresholds 1 and 2.
-    Below threshold 1, a pixel is disregarded from the edge
-    Above threshold 2, pixels contribute to the edge
-    Inbetween 1&2, if the pixel is connected to similar pixels then the pixel conributes to the edge '''
-    pass
-
 def fft(im,shift=True,phase=False):
     """Perform a 2d fft of the image and shift the result to get zero frequency in the centre."""
     r=np.fft.fft2(im)
-    r=np.fft.fftshift(r)
+    
+    if shift:
+        r=np.fft.fftshift(r)
+
     if not phase:
         r=np.abs(r)
     else:
         r=np.angle(r)
+
     r=im.__class__(r)
     r.metadata.update(im.metadata)
     return r
 
 def filter_image(im, sigma=2):
-    """Alias for skimage.filters.gaussian
-    """
+    """Alias for skimage.filters.gaussian"""
     return im.gaussian(sigma=sigma)
 
 def gridimage(im,points=None,xi=None,method="linear",fill_value=1.0,rescale=False):
@@ -420,14 +415,15 @@ def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None,mode="clip"):
     return im
 
 def normalise(im,scale=None):
-    """Norm alise the data to a fixed scale
+    """Norm alise the data to a fixed scale.
     
     Keyword Arguements:
         scale (2-tuple): The range to scale the image to, defaults to -1 to 1.
         
     Returns:
         A scaled version of the data. The ndarray min and max methods are used to allow masked images
-        to be operated on only on the unmasked areas."""
+        to be operated on only on the unmasked areas.
+    """
     im=im.astype(float)
     if scale is None:
         scale=(-1.0,1.0)
@@ -527,29 +523,25 @@ def quantize(im,output,levels=None):
 
 def rotate(im, angle):
     """Rotates the image.
+    
     Areas lost by move are cropped, and areas gained are made black (0)
 
-    Parameters
-    ----------
-    rotation: float
-        clockwise rotation angle in radians (rotated about top right corner)
+    Args:
+        rotation: float
+            clockwise rotation angle in radians (rotated about top right corner)
 
-    Returns
-    -------
-    im: ImageArray
-        rotated image
+    Returns:
+        im: ImageArray
+            rotated image
     """
     rot=transform.SimilarityTransform(rotation=angle)
     im.warp(rot)
     im.metadata['transform:rotation']=angle
     return im
 
-def split_image(im):
-    """split image into different domains, maybe by peak fitting the histogram?"""
-    pass
-
 def translate(im, translation, add_metadata=False,order=3,mode="wrap"):
     """Translates the image.
+    
     Areas lost by move are cropped, and areas gained are made black (0)
     The area not lost or cropped is added as a metadata parameter
     'translation_limits'
@@ -574,19 +566,19 @@ def translate(im, translation, add_metadata=False,order=3,mode="wrap"):
 
 def translate_limits(im, translation):
     """Find the limits of an image after a translation
+    
     After using ImageArray.translate some areas will be black,
     this finds the max area that still has original pixels in
 
-    Parameters
-    ----------
-    translation: 2-tuple
-        the (x,y) translation applied to the image
+    Args:
+        translation: 2-tuple
+            the (x,y) translation applied to the image
 
-    Returns
-    -------
-    limits: 4-tuple
-        (xmin,xmax,ymin,ymax) the maximum coordinates of the image with original
-        information"""
+    Returns:
+        limits: 4-tuple
+            (xmin,xmax,ymin,ymax) the maximum coordinates of the image with original
+            information
+    """
     t=translation
     s=im.shape
     if t[0]<=0:
@@ -599,10 +591,6 @@ def translate_limits(im, translation):
         ymin,ymax=t[1],s[0]
     return (xmin,xmax,ymin,ymax)
 
-def NPPixel_BW(np_image,thresh1,thresh2):
-    '''Changes the colour if pixels in a np array according to an inputted threshold'''
-    pass
-
 def plot_histogram(im):
     """plot the histogram and cumulative distribution for the image"""
     hist,bins=im.histogram()
@@ -613,14 +601,17 @@ def plot_histogram(im):
     plt.plot(bins,cum,'r-')
     
 def threshold_minmax(im,threshmin=0.1,threshmax=0.9):
-    """returns a boolean array which is thresholded between threshmin and 
-    threshmax (ie True if value is between threshmin and threshmax)"""
+    """returns a boolean array which is thresholded between threshmin and  threshmax. 
+    
+    (ie True if value is between threshmin and threshmax)
+    """
     im=im.convert_float()
     return np.logical_and(im>threshmin, im<threshmax)
     
 def defect_mask(im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=False):
-    """Tries to create a boolean array which is a mask for typical defects
-    found in Image images. Best for unprocessed raw images. (for subtract images
+    """Tries to create a boolean array which is a mask for typical defects found in Image images. 
+    
+    Best for unprocessed raw images. (for subtract images
     see defect_mask_subtract_image)
     Looks for big bright things by thresholding and small and dark defects using
     skimage's corner_fast algorithm
@@ -652,7 +643,7 @@ def defect_mask(im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=False
     cor=im.corner_fast(threshold=corner_thresh)
     blobs=cor.blob_doh(min_sigma=1,max_sigma=20,num_sigma=3,threshold=0.01)
     q=np.zeros_like(im)
-    for y,x,s in blobs:
+    for y,x,_ in blobs:
         q[y-radius:y+radius,x-radius:x+radius]=1.0
     totmask=np.logical_or(q,th)
     if return_extra:
