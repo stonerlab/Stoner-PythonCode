@@ -105,6 +105,13 @@ def all_size(iterator,size=None):
         ret=True
     return ret
 
+def isAnyNone(*args):
+    """Intelligently check whether any of the inputs are None."""
+    for arg in args:
+        if arg is None:
+            return True
+    else:
+        return False
 
 def all_type(iterator,typ):
     """Determines if an interable omnly contains a common type.

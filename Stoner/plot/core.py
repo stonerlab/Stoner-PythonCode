@@ -9,7 +9,7 @@ Classes:
 
 __all__ = ["PlotMixin","hsl2rgb"]
 from Stoner.compat import python_v3,string_types,index_types
-from Stoner.tools import _attribute_store, isNone,all_type,isiterable,typedList
+from Stoner.tools import _attribute_store, isNone,isAnyNone,all_type,isiterable,typedList
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 
@@ -19,7 +19,6 @@ import os
 
 import platform
 import copy
-from collections import Iterable
 from colorsys import hls_to_rgb
 from warnings import warn
 
@@ -363,8 +362,7 @@ class PlotMixin(object):
             del kargs["startx"]
         else:
             startx = 0
-        if "multi_y" not in kargs:
-            kargs["multi_y"] = False
+
         c = self.setas._get_cols(startx=startx)
         for k in ["xcol", "ycol", "zcol", "ucol", "vcol", "wcol", "xerr", "yerr", "zerr"]:
             if k in kargs and k == "xcol" and kargs["xcol"] is None:
@@ -372,7 +370,7 @@ class PlotMixin(object):
             elif k in kargs and k == "xerr" and kargs["xerr"] is None:
                 kargs["xerr"] = c.xerr
             elif k in kargs and k != "xcol" and kargs[k] is None and len(c[k]) > 0:
-                if kargs["multi_y"]:
+                if kargs.get("multi_y",False):
                     kargs[k] = c[k]
                 else:
                     kargs[k] = c[k][0]
@@ -633,7 +631,7 @@ class PlotMixin(object):
             ReturnsL
                 X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data
         """
-        if xcol is None or ycol is None or zcol is None:
+        if isAnyNone(xcol, ycol, zcol):
             if "_startx" in kargs:
                 startx = kargs["_startx"]
                 del kargs["_startx"]

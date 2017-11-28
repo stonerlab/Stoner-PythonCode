@@ -510,10 +510,12 @@ class _setas(object):
             "wcol": wcol,
             "axes": axes
         })
-        ret["has_xerr"] = xerr is not None
-        ret["has_yerr"] = len(yerr)>0
-        ret["has_zerr"] = len(zerr)>0
-        ret["has_uvw"] = len(ucol) >0
+        for n in list(ret.keys()):
+            if ret[n] is None or (isinstance(ret[n],list) and len(ret[n])==0):
+                ret["has_{}".format(n)]=False
+            else:
+                ret["has_{}".format(n)]=True                
+        ret["has_uvw"] = ret["has_ucol"] & ret["has_vcol"] & ret["has_wcol"]
         if what == "xcol":
             ret = ret["xcol"]
         elif what in ("ycol", "zcol", "ucol", "vcol", "wcol", "yerr", "zerr"):
@@ -3676,9 +3678,9 @@ class DataFile(metadataObject):
         """
         cols = self.setas._get_cols()
         tmp = self.clone
-        xcol = cols["xcol"]
-        ycol = cols["ycol"][0]
-        zcol = cols["zcol"][0]
+        xcol = cols["xcol"] if cols.has_xcol else None
+        ycol = cols["ycol"][0] if cols.has_ucol else None
+        zcol = cols["zcol"][0] if cols.has_zcol else None
 
         if "accuracy" in kargs:
             accuracy = kargs["accuracy"]
@@ -3686,14 +3688,17 @@ class DataFile(metadataObject):
             accuracy = 0.0
 
         if "x" in kargs:
-            tmp.data = tmp.search(xcol, kargs["x"], accuracy=accuracy)
+            tmp.data = tmp.search(xcol, kargs.pop("x"), accuracy=accuracy)
         if "y" in kargs:
-            tmp.data = tmp.search(ycol, kargs["y"], accuracy=accuracy)
+            tmp.data = tmp.search(ycol, kargs.pop("y"), accuracy=accuracy)
         if "z" in kargs:
-            tmp.data = tmp.search(zcol, kargs["z"], accuracy=accuracy)
+            tmp.data = tmp.search(zcol, kargs.pop("z"), accuracy=accuracy)
         if "r" in kargs:
-            func = lambda x, r: kargs["r"](r[xcol], r[ycol], r[zcol])
+            func = lambda x, r: kargs.pop("r")(r[xcol], r[ycol], r[zcol])
             tmp.data = tmp.search(0, func, accuracy=accuracy)
+            
+        if len(kargs)>0: # Fallback to working with select if nothing else.
+            tmp.select(**kargs)        
         return tmp
 
     def select(self,*args, **kargs):
