@@ -36,9 +36,9 @@ class TexFormatter(Formatter):
         elif value != 0.0:
             power = _np_.floor(_np_.log10(_np_.abs(value)))
             if _np_.abs(power) < 4:
-                ret = "${}$".format(value)
+                ret = "${}$".format(self._round(value))
             else:
-                v = value / (10 ** power)
+                v = self._round(value / (10 ** power))
                 ret = "${}\\times 10^{{{:.0f}}}$".format(v, power)
         else:
             ret = "$0.0$"
@@ -49,6 +49,14 @@ class TexFormatter(Formatter):
 
     def format_data_short(self, value):
         return "{:g}".format(value)
+    
+    def _round(self,value):
+        for i in range(5):
+            vt=_np_.round(value,i)
+            if _np_.abs(value-vt)<10**(-i-2):
+                value=vt
+                break
+        return value
 
 
 class TexEngFormatter(EngFormatter):
@@ -212,11 +220,12 @@ class DefaultPlotStyle(object):
             return self._stylesheet[1]
         levels = type.mro(type(self))[:-1]
         sheets=[]
+        classes=[]
         for c in levels: # Iterate through all possible parent classes and build a list of stylesheets
-            if c is self.__class__:
+            if c is self.__class__ or c in classes:
                 continue
-            for f in [join(dirname(getfile(c)), c.stylename + ".mplstyle"),
-                      join(dirname(getfile(c)), "stylelib",c.stylename + ".mplstyle"),
+            for f in [join(realpath(dirname(getfile(c))), c.stylename + ".mplstyle"),
+                      join(dirname(realpath(getfile(c))), "stylelib",c.stylename + ".mplstyle"),
                       join(dirname(realpath(__file__)), "stylelib",c.stylename + ".mplstyle"),
                 ]: # Look in first of all the same directory as the class file and then in a stylib folder
                 if exists(f):
@@ -225,9 +234,10 @@ class DefaultPlotStyle(object):
             else: # Fallback, does the parent class define a builtin stylesheet ?
                 if c.stylename in plt.style.available:
                     sheets.append(c.stylename)
+            classes.append(c) # Stop double visiting files
         #Now do the same for this class, but allow the stylename to be an instance variable as well
-        for f in [join(dirname(getfile(self.__class__)), self.stylename + ".mplstyle"),
-                  join(dirname(getfile(self.__class__)), "stylelib",self.stylename + ".mplstyle"),
+        for f in [join(dirname(realpath(getfile(self.__class__))), self.stylename + ".mplstyle"),
+                  join(dirname(realpath(getfile(self.__class__))), "stylelib",self.stylename + ".mplstyle"),
             ]:
             if exists(f):
                 sheets.append(f)
@@ -292,7 +302,11 @@ class DefaultPlotStyle(object):
                 else:
                     ax = fig.add_axes(rect)
             else:
-                ax = kargs.pop("ax",fig.gca(projection=projection))
+                if projection == "3d":                
+                    ax = kargs.pop("ax",fig.gca(projection="3d"))
+                else:
+                    ax = kargs.pop("ax",fig.gca())
+                    
             ret = fig
         else:
             if projection == "3d":
