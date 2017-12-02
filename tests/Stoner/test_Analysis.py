@@ -33,7 +33,7 @@ class Analysis_test(unittest.TestCase):
         self.s1=self.d1.section(z=(12,13))
         self.assertTrue(142.710<self.d2.mean("Temp")<142.711,"Failed on the mean test.")
         self.assertTrue(round(self.d2.span("Temp")[0],1)==4.3 and round(self.d2.span("Temp")[1],1)==291.6,"Span test failed.")
-        f=self.d2.split("Temp",lambda x,r:x<150)
+        f=self.d2.split(lambda r:r["Temp"]<150)
         self.assertTrue(len(f[0])==838,"Split failed to work.")
         self.assertEqual(len(self.d3.threshold(2000,rising=True,falling=True,all_vals=True)),5,"Threshold failure.")
         self.d4.add(0,1,"Add")

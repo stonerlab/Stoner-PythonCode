@@ -1654,6 +1654,11 @@ class DataFile(metadataObject):
         self._public_attrs_real.update(dict(value))
 
     @property
+    def basename(self):
+        """Returns the basename of the current filename."""
+        return os.path.basename(self.filename)
+
+    @property
     def clone(self):
         """Gets a deep copy of the current DataFile.
         """
@@ -3830,6 +3835,69 @@ class DataFile(metadataObject):
         self.column_headers=ch
         return self
 
+    def split(self, *args):
+        """Recursively splits the current :py:class:`DataFile` object into a :py:class:`Stoner.Forlders.DataFolder` objects where each one contains the rows
+        from the original object which had the same value of a given column(s) or function.
+
+        Args:
+            *args (column index or function): Each argument is used in turn to find key values for the files in the DataFolder
+            
+        Returns:
+            Stoner.Folders.DataFolder: A :py:class:`Stoner.Folders.DataFolder` object containing the individual
+            :py:class:`AnalysisMixin` objects
+
+        Note:
+            On each iteration the first argument is called. If it is a column type then rows which amtch each unique value are collated
+            together and made into a separate file. If the argument is a callable, then it is called for each row, passing the row
+            as a single 1D array and the return result is used to group lines together. The return value should be hashable.
+            
+            Once this is done and the :py:class:`Stoner.Folders.DataFolder` exists, if there are remaining argument, then the method is 
+            called recusivelyt for each file and the resulkting DataFolder added into the root DataFolder and the file is removed.
+            
+            Thus, when all of the arguments are evaluated, the resulting DataFolder is a multi-level tree.
+
+            .. warning::
+                
+                There has been a change in the arguments for the split function  from version 0.8 of the Stoner Package.
+        """
+        from Stoner.Folders import DataFolder
+        if len(args)==0:
+            xcol=self.setas._get_cols("xcol")
+        else:
+            args=list(args)
+            xcol=args.pop(0)
+        data=OrderedDict()
+
+        if isinstance(xcol,index_types):
+            for val in _np_.unique(self.column(xcol)):
+                newfile=self.clone
+                newfile.filename="{}={} {}".format(self.column_headers[self.find_col(xcol)],val,self.filename)
+                newfile.data=self.search(xcol, val)
+                data[val]=newfile
+        elif callable(xcol):
+            try: # Try to call function with all data in one go
+                keys=xcol(self.data)
+                if not isiterable(keys) or len(keys)!=len(self):
+                    raise RuntimeError("Not returning an index of keys")
+            except: #Ok try instead to do it row by row
+                keys=[xcol(r) for r in self]                
+            keys=_np_.array(keys)
+            for key in _np_.unique(keys):
+                data[key]=self.clone
+                data[key].data=self.data[keys==key,:]
+                data[key].filename="{}={} {}".format(xcol.__name__,key,self.filename)
+                data[key].setas=self.setas
+        else:
+            raise NotImplementedError("Unable to split a file with an argument of type {}".format(type(xcol)))
+        out = DataFolder(nolist=True)        
+        for k,f in data.items():
+            if len(args)>0:
+                out.add_group(k)
+                out.groups[k]=f.split(*args)
+            else:
+                out+=f
+        return out
+
     def swap_column(self, *swp,**kargs):
         """Swaps pairs of columns in the data.
 
@@ -3923,7 +3991,7 @@ class Data(AnalysisMixin,PlotMixin,DataFile):
             error=float_info.epsilon
         return format_error(value,error,fmt=fmt,mode=mode,units=units,prefix=prefix,scape=escape)
 
-    def annotate_fit(self,model,x=None,y=None,z=None,prefix=None,text_only=False,**kargs):
+    def annotate_fit(self,model,x=None,y=None,z=None,text_only=False,**kargs):
         """Annotate a plot with some information about a fit.
 
         Args:
@@ -3947,20 +4015,30 @@ class Data(AnalysisMixin,PlotMixin,DataFile):
         """
         mode=kargs.pop("mode","float")
         if _lmfit and _inspect_.isclass(model) and issubclass(model,Model):
+            prefix=kargs.pop("prefix",self.get("lmfit.prefix",model.__name__))
             model=model()
         elif _lmfit and isinstance(model,Model):
+            prefix=kargs.pop("prefix",self.get("lmfit.prefix",model.__class__.__name__))
+            
             pass
         elif callable(model):
-            prefix=model.__name__
+            prefix=kargs.pop("prefix",model.__name__)
             model=Model(model)
         else:
             raise RuntimeError("model should be either an lmfit.Model or a callable function, not a {}".format(type(model)))
 
         if prefix is not None:
+
+            if isinstance(prefix,(list,tuple)):
+                prefix=prefix[0]
+                
+            prefix=prefix.strip(" :")
             prefix="" if prefix == "" else prefix+":"
-        elif "lmfit.prefix" in self:
-            prefix=self["lmfit.prefix"][0]
+
         else:
+            if isinstance(prefix,(list,tuple)):
+                prefix=prefix[0]
+
             if model.prefix=="":
                 prefix=""
             else:

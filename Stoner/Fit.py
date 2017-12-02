@@ -1241,7 +1241,7 @@ class KittelEquation(Model):
         :include-source:                
     """
 
-    display_names=[r"\g","M_s","H_k"]
+    display_names=["g","M_s","H_k"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1262,3 +1262,119 @@ class KittelEquation(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
+def lorentzian_diff(x,A,sigma,mu):
+    """Implement a differential form of a Lorentzian peak.
+    
+    Args:
+        x (array): x data
+        A (flaot): Peak amplitude
+        sigma (float): peak wideth
+        mu (float): peak location in x
+        
+        Returns 
+            :math:`\\frac{A \\sigma \\left(2 \\mu - 2 x\\right)}{\\pi \\left(\\sigma^{2} + \\left(- \\mu + x\\right)^{2}\\right)^{2}}`
+        """
+    return A*sigma*(2*mu - 2*x)/(pi*(sigma**2 + (-mu + x)**2)**2)
+
+class Lorentzian_diff(Model):
+    """lmfit Model rerprenting the differential form of a Lorentzian Peak.
+    
+    Args:
+        x (array): x data
+        A (flaot): Peak amplitude
+        sigma (float): peak wideth
+        mu (float): peak location in x
+        
+        Returns 
+            :math:`\\frac{A \\sigma \\left(2 \\mu - 2 x\\right)}{\\pi \\left(\\sigma^{2} + \\left(- \\mu + x\\right)^{2}\\right)^{2}}`
+    """
+    display_names=["A",r"\sigma",r"\mu"]
+
+    def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
+        super(Lorentzian_diff, self).__init__(lorentzian_diff, *args, **kwargs)
+    
+    def guess(self, data, x=None, **kwargs):
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+    
+        if x is None:
+            x=_np_.linspace(1,len(data),len(data)+1)
+            
+        x1=x[_np_.argmax(data)]
+        x2=x[_np_.argmin(data)]
+        sigma=abs(x1-x2)
+        mu=(x1+x2)/2.0
+        y1=_np_.max(data)
+        y2=_np_.min(data)
+        dy=y1-y2
+        A=dy*(4*_np_.pi*sigma**2)/(3*_np_.sqrt(3))
+
+        pars = self.make_params(A=A,sigma=sigma,mu=mu)
+        pars["A"].min=0
+        pars["sigma"].min=0
+        pars["mu"].min=_np_.min(x)
+        pars["mu"].max=_np_.max(x)
+        return update_param_vals(pars, self.prefix, **kwargs)
+    
+    
+def fmr_power(H,H_res,Delta_H,K_1,K_2):
+    """A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
+    
+    Args:
+        H (array) magnetic field data
+        H_res (float): Resonance field of peak
+        Delta_H (float): Preak wideth
+        K_1, K_2 (float): Relative weighting of each component.
+    
+    Returns:
+        Array of model absorption values.
+        
+    math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
+    """
+    return 4*Delta_H*K_1*(H - H_res)/(Delta_H**2 + 4*(H - H_res)**2)**2 - K_2*(Delta_H**2 - 4*(H - H_res)**2)/(Delta_H**2 + 4*(H - H_res)**2)**2
+
+class FMR_Power(Model):
+    """A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
+    
+    Args:
+        H (array) magnetic field data
+        H_res (float): Resonance field of peak
+        Delta_H (float): Preak wideth
+        K_1, K_2 (float): Relative weighting of each component.
+    
+    Returns:
+        Array of model absorption values.
+        
+    math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
+    """
+    display_names=["H_{res}",r"\Delta_H","K_1","K_2"]
+
+    def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
+        super(FMR_Power, self).__init__(fmr_power, *args, **kwargs)
+    
+    def guess(self, data, x=None, **kwargs):
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+    
+        if x is None:
+            x=_np_.linspace(1,len(data),len(data)+1)
+            
+        x1=x[_np_.argmax(data)]
+        x2=x[_np_.argmin(data)]
+        Delta_H=abs(x1-x2)
+        H_res=(x1+x2)/2.0
+        y1=_np_.max(data)
+        y2=_np_.min(data)
+        dy=y1-y2
+        K_2=dy*(4*_np_.pi*Delta_H**2)/(3*_np_.sqrt(3))
+        ay=(y1+y2)/2
+        K_1=ay*_np_.pi/Delta_H
+               
+
+        pars = self.make_params(Delta_H=Delta_H,H_res=H_res,K_1=K_1,K_2=K_2)
+        pars["K_1"].min=0
+        pars["K_2"].min=0
+        pars["Delta_H"].min=0
+        pars["H_res"].min=_np_.min(x)
+        pars["H_res"].max=_np_.max(x)
+        return update_param_vals(pars, self.prefix, **kwargs)

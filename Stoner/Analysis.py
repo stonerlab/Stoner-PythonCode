@@ -6,7 +6,7 @@ Provides  :py:class:`AnalysisMixin` - DataFile with extra bells and whistles.
 __all__ = ["AnalysisMixin"]
 
 from .compat import python_v3,string_types,int_types,index_types,LooseVersion
-from .tools import isNone,isiterable,all_type
+from .tools import isNone,isiterable,all_type,istuple
 import numpy as _np_
 import scipy as _sp_
 import numpy.ma as ma
@@ -1297,7 +1297,6 @@ class AnalysisMixin(object):
         else:
             raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
 
-
         prefix = str(kargs.pop("prefix",  model.__class__.__name__))+":"
 
 
@@ -1600,12 +1599,12 @@ class AnalysisMixin(object):
             self.add_column(err_data, header=err_header, index=a + 1, replace=False)
         return self
 
-    def normalise(self, target, base, replace=True, header=None):
+    def normalise(self, target=None, base=None, replace=True, header=None):
         """Normalise data columns by dividing through by a base column value.
 
         Args:
-            target (index): One or more target columns to normalise can be a string, integer or list of strings or integers.
-            base (index): The column to normalise to, can be an integer or string
+            target (index): One or more target columns to normalise can be a string, integer or list of strings or integers. If None then the default 'y' column is used.
+            base (index): The column to normalise to, can be an integer or string. If None then the target column is normalised to the range (-1,+1) of (0,1)
 
         Keyword Arguments:
             replace (bool): Set True(default) to overwrite  the target data columns
@@ -1619,6 +1618,9 @@ class AnalysisMixin(object):
         additional column with the uncertainites will be added to the data.
         """
 
+        _=self._col_args(scalar=True,ycol=target)
+        
+        target=_.ycol
         if not isinstance(target, list):
             target = [self.find_col(target)]
         for t in target:
@@ -1626,7 +1628,20 @@ class AnalysisMixin(object):
                 header = self.column_headers[self.find_col(t)] + "(norm)"
             else:
                 header = str(header)
-            self.divide(t, base, header=header, replace=replace)
+            if not istuple(base,float,float) and base is not None:
+                self.divide(t, base, header=header, replace=replace)
+            else:
+                i_range=(_np_.min(self[:,t]),_np_.max(self[:,t]))
+                if istuple(base,float,float):
+                    o_range=base
+                elif i_range[0]<0 and i_range[1]>0: #range (-1,1)
+                    o_range=(-1,1)
+                else:
+                    o_range=(0,1)
+                col=(((self[:,t]-i_range[0])/(i_range[1]-i_range[0]))*(o_range[1]-o_range[0])+o_range[0])
+                setas=self.setas.clone
+                self.add_column(col,index=t,replace=replace,header=header)
+                self.setas=setas
         return self
 
     def odr(self, model, xcol=None, ycol=None, sigma_x=None,sigma_y=None,**kargs):
@@ -2237,69 +2252,6 @@ class AnalysisMixin(object):
             raise RuntimeError("replace should be column index, boolean or None")
 
         return ret
-
-    def split(self, xcol=None, func=None):
-        """Splits the current :py:class:`AnalysisMixin` object into multiple :py:class:`AnalysisMixin` objects where each one contains the rows
-        from the original object which had the same value of a given column.
-
-        Args:
-            xcol (index): The index of the column to look for values in.
-                This can be a list in which case a :py:class:`Stoner.Folders.DataFolder` with groups
-                with subfiles is built up by applying each item in the xcol list recursively.
-            func (callable):  Function that can be evaluated to find the value to determine which output object
-                each row belongs in. If this is left as the default None then the column value is converted
-                to a string and that is used.
-
-        Returns:
-            Stoner.Folders.DataFolder: A :py:class:`Stoner.Folders.DataFolder` object containing the individual
-            :py:class:`AnalysisMixin` objects
-
-        Note:
-            The function to be of the form f(x,r) where x is a single float value and r is a list of floats representing
-            the complete row. The return value should be a hashable value. func can also be a list if xcol is a list,
-            in which the func values are used along with the @a xcol values.
-        """
-        from Stoner.Folders import DataFolder
-        if xcol is None:
-            xcol = self.setas._get_cols("xcol")
-        else:
-            xcol = self.find_col(xcol)
-        out = DataFolder(nolist=True)
-        files = dict()
-        morecols = []
-        morefuncs = None
-        if isinstance(xcol, list) and len(xcol) <= 1:
-            xcol = xcol[0]
-        elif isinstance(xcol, list):
-            morecols = xcol[1:]
-            xcol = xcol[0]
-        if isinstance(func, list) and len(func) <= 1:
-            func = func[0]
-        elif isinstance(func, list):
-            morefuncs = func[1:]
-            func = func[0]
-        if func is None:
-            for val in _np_.unique(self.column(xcol)):
-                files[str(val)] = self.clone
-                files[str(val)].data = self.search(xcol, val)
-        else:
-            xcol = self.find_col(xcol)
-            for r in self.rows():
-                x = r[xcol]
-                key = func(x, r)
-                if key not in files:
-                    files[key] = self.clone
-                    files[key].data = _np_.array([r])
-                else:
-                    files[key] = files[key] + r
-        for k in files:
-            files[k].filename = "{}:{}={}".format(files[k].filename,self.column_headers[xcol], k)
-        if len(morecols) > 0:
-            for k in sorted(list(files.keys())):
-                out.groups[k] = files[k].split(morecols, morefuncs)
-        else:
-            out.files = [files[k] for k in sorted(list(files.keys()))]
-        return out
 
     def stitch(self, other, xcol=None, ycol=None, overlap=None, min_overlap=0.0, mode="All", func=None, p0=None):
         """Apply a scaling to this data set to make it stich to another dataset.

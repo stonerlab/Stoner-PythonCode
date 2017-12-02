@@ -289,6 +289,10 @@ class DefaultPlotStyle(object):
         plt.rcParams.update(params)  # Apply these parameters
         projection=kargs.pop("projection","rectilinear")
         self.template_figure_figsize=kargs.pop("figsize",self.template_figure_figsize)
+        if "ax" in kargs: # Giving an axis instance in kargs means we can use that as out figure
+            ax=kargs.get("ax")
+            plt.sca(ax)
+            figure=plt.gcf().number
         if isinstance(figure, bool) and not figure:
             ret = None
         elif figure is not None:

@@ -398,10 +398,20 @@ class PlotMixin(object):
         """Fix parameters to the plotting function to provide defaults and no extransous arguments.
 
         Returns:
-            dictionary of correct arguments, dictionary of all arguments"""
+            dictionary of correct arguments, dictionary of all arguments,dictionary of keyword arguments"""
         if defaults is None:
             defaults = dict()
         defaults.update(kargs)
+        
+        fig_kargs=["num", "figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass", "clear","ax"]
+
+        pass_fig_kargs={}        
+        for k in fig_kargs:
+            if k in kargs:
+                pass_fig_kargs[k]=kargs[k]
+                if k not in otherkargs and k not in defaults:
+                    del kargs[k]
+            
         # Defaults now a dictionary of default arugments overlaid with keyword argument values
         # Now inspect the plotting function to see what it takes.
         if function is None:
@@ -424,7 +434,7 @@ class PlotMixin(object):
             nonkargs[k] = defaults[k]
             if k not in args:
                 del defaults[k]
-        return defaults, nonkargs
+        return defaults, nonkargs,pass_fig_kargs
 
     def _fix_titles(self, ix, multiple, **kargs):
         """Does the titling and labelling for a matplotlib plot."""
@@ -723,7 +733,7 @@ class PlotMixin(object):
             "xlabel": self._col_label(self.find_col(xcol)),
             "ylabel": self._col_label(self.find_col(ycol))
         }
-        kargs, nonkargs = self._fix_kargs(None, defaults, **kargs)
+        kargs, nonkargs,_ = self._fix_kargs(None, defaults, **kargs)
         plotter = nonkargs["plotter"]
         self.__figure, ax = self._fix_fig(nonkargs["figure"])
         if "cmap" in kargs:
@@ -798,12 +808,12 @@ class PlotMixin(object):
         if "template" in kargs:
             self.template=kargs.pop("template")
 
-        plotters = [None, None, self.plot_xy, self.plot_xyz, self.plot_xyuv, self.plot_xyuv, self.plot_xyzuvw]
-        if 2 <= axes <= 6:
-            plotter = plotters[axes]
+        plotters = {2:self.plot_xy, 3:self.plot_xyz, 4:self.plot_xyuv, 5:self.plot_xyuv, 6:self.plot_xyzuvw}
+        try:
+            plotter=plotters.get(axes,None)
             ret = plotter(*args, **kargs)
             plt.show()
-        else:
+        except KeyError:
             raise RuntimeError("Unable to work out plot type !")
         return ret
 
@@ -941,7 +951,7 @@ class PlotMixin(object):
 
         return self.showfig
 
-    def plot_xy(self, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, multiple=None, **kargs):
+    def plot_xy(self, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **kargs):
         """Makes a simple X-Y plot of the specified data.
 
         Args:
@@ -974,12 +984,8 @@ class PlotMixin(object):
         c = self._fix_cols(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, multi_y=True, **kargs)
         (kargs["xerr"], kargs["yerr"]) = (c.xerr, c.yerr)
 
-        if "template" in kargs: #Catch template in kargs
-            self.template=kargs.pop("template")
-        try:
-            title = os.path.basename(self.filename)
-        except TypeError:
-            title = None             
+        self.template=kargs.pop("template",self.template)
+        title=kargs.pop("title",self.basename)
          
         defaults = {
             "plotter": plt.plot,
@@ -1011,28 +1017,27 @@ class PlotMixin(object):
                          "pickradius", "rasterized", "sketch_params", "snap", "solid_capstyle", "solid_joinstyle",
                          "transform", "url", "visible", "xdata", "ydata", "zorder"]
 
-        if multiple == None:
-            multiple = self.multiple
-        else:
-            self.multiple = multiple
-        kargs, nonkargs = self._fix_kargs(None, defaults, otherargs, **kargs)
+        multiple=kargs.pop("multiple",self.multiple)
+
+        kargs, nonkargs,fig_kargs = self._fix_kargs(None, defaults, otherargs, **kargs)
 
         for err in ["xerr", "yerr"]:  # Check for x and y error keywords
-            if err in kargs and not isNone(kargs[err]):
-                if isinstance(kargs[err], index_types):
-                    kargs[err] = self.column(kargs[err])
-                elif isinstance(kargs[err], list) and isinstance(c.ycol, list) and len(kargs[err]) == len(c.ycol):
-                    # Ok, so it's a list, so redo the check for each  item.
-                    for i in range(len(kargs[err])):
-                        if isinstance(kargs[err][i], index_types):
-                            kargs[err][i] = self.column(kargs[err][i])
-                        else:
-                            kargs[err][i] = _np_.zeros(len(self))
-                else:
-                    kargs[err] = _np_.zeros(len(self))
-            else:
+            if isNone(kargs.get(err,None)):
                 kargs.pop(err,None)
 
+            elif isinstance(kargs[err], index_types):
+                kargs[err] = self.column(kargs[err])
+            elif isiterable(kargs[err]) and isinstance(c.ycol, list) and len(kargs[err]) == len(c.ycol):
+                # Ok, so it's a list, so redo the check for each  item.
+                for i in range(len(kargs[err])):
+                    if isinstance(kargs[err][i], index_types):
+                        kargs[err][i] = self.column(kargs[err][i])
+                    else:
+                        kargs[err][i] = _np_.zeros(len(self))
+            elif isiterable(kargs[err]) and len(kargs[err])==len(self):
+                kargs[err] = _np_.array(kargs[err])
+            else:
+                kargs[err] = _np_.zeros(len(self))
 
         temp_kwords = copy.copy(kargs)
         if isinstance(c.ycol, (index_types)):
@@ -1045,9 +1050,9 @@ class PlotMixin(object):
                 n = int(_np_.ceil(len(c.ycol) / m))
                 self.__figure, _ = plt.subplots(nrows=m, ncols=n)
             else:
-                self.__figure, _ = self._fix_fig(self.__figure)
+                self.__figure, _ = self._fix_fig(nonkargs["figure"],**fig_kargs)
         else:
-            self.__figure, _ = self._fix_fig(nonkargs["figure"])
+            self.__figure, _ = self._fix_fig(nonkargs["figure"],**fig_kargs)
         for ix in range(len(c.ycol)):
             if multiple != "common":
                 nonkargs["ylabel"] = self._col_label(self.find_col(c.ycol[ix]))
@@ -1140,7 +1145,7 @@ class PlotMixin(object):
             otherkargs = ["rstride", "cstride", "color", "cmap", "facecolors", "norm", "vmin", "vmax", "shade","linewidth","ax"]
         else:
             otherkargs = ["vmin", "vmax","shade","color","linewidth"]
-        kargs, nonkargs = self._fix_kargs(None, defaults, otherkargs=otherkargs, projection=projection,**kargs)
+        kargs, nonkargs,_ = self._fix_kargs(None, defaults, otherkargs=otherkargs, projection=projection,**kargs)
         plotter = nonkargs["plotter"]
         self.__figure, ax = self._fix_fig(nonkargs["figure"], projection=projection)
         if isinstance(plotter,string_types):
@@ -1269,7 +1274,7 @@ class PlotMixin(object):
             else:
                 otherkargs = ["color","linewidth"]
 
-        kargs, nonkargs = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
+        kargs, nonkargs,_ = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
         colors = nonkargs.pop("color",True)
         if isinstance(colors, bool) and colors:
             pass
@@ -1363,7 +1368,7 @@ class PlotMixin(object):
         if "template" in kargs: #Catch template in kargs
             self.template=kargs.pop("template")
 
-        kargs, nonkargs = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
+        kargs, nonkargs,_ = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
         plotter = nonkargs["plotter"]
         self.__figure, _ = self._fix_fig(nonkargs["figure"])
         fig = plotter(self.column(self.find_col(xcol)), self.column(self.find_col(ycol)),
