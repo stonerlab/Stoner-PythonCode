@@ -89,7 +89,7 @@ class TexEngFormatter(EngFormatter):
             if pre==0:
                 ret = "${}$".format(value)
             else:
-                v = value / (10 ** pre)
+                v = self._round(value / (10 ** pre))
                 ret = "${}\\mathrm{{{} {}}}$".format(v, self.prefix[int(pre)], self.unit)
         else:
             ret = "$0.0$"
@@ -100,6 +100,15 @@ class TexEngFormatter(EngFormatter):
 
     def format_data_short(self, value):
         return "{:g}".format(value)
+
+    def _round(self,value):
+        for i in range(5):
+            vt=_np_.round(value,i)
+            if _np_.abs(value-vt)<10**(-i-4):
+                value=vt
+                break
+        return value
+
 
 
 class DefaultPlotStyle(object):
