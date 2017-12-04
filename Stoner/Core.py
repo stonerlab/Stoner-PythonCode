@@ -2609,33 +2609,47 @@ class DataFile(metadataObject):
         except Exception:
             return self.__repr_core__(256)
 
-    def _repr_table_(self):
+    def _repr_table_(self,fmt="rst"):
         """Convert the DataFile to a 2D array and then feed to tabulate."""
         from tabulate import tabulate
+        tabulate.PRESERVE_WHITESPACE = True
         from textwrap import TextWrapper
+        lb="<br/>" if fmt=="html" else "\n"
         rows,cols=self._repr_limits
         r,c=self.shape
-        c_w=max([len(x) for x in self.column_headers[:c]])
+        interesting,col_assignments=self._interesting_cols(cols)
+        c_w=max([len(self.column_headers[x]) for x in interesting if x>-1])
         wrapper=TextWrapper(subsequent_indent="\t",width=max(20,80-c_w*min(cols,self.shape[1])))
         if r>rows:
             shorten=[True,False]
             r=rows+rows%2
         else:
             shorten=[False,False]
-            
-        if c>cols:
-            shorten[1]=True
-            c=cols
-            
+
+        shorten[1]=c>cols 
+        c=min(c,cols)            
         r=max(len(self.metadata),r)
+        
         outp=_np_.zeros((r+1,c+1),dtype=object)
-        outp[:,:]=""
+        outp[:,:]="..."
         if shorten[1]:
-            ch=self.column_headers[:c-2]+["...", self.column_headers[-1]]
+            ch=[]
+            for c in interesting:
+                if c>=0:
+                    ch.append(self.column_headers[c])
+                else:
+                    ch.append("...")
         else:
             ch=self.column_headers[:c]
+        for ix,(h,i) in enumerate(zip(ch,col_assignments)):
+            spaces1=" "*((wrapper.width-len(h))//2)
+            spaces2=" "*((wrapper.width-len(i))//2)
+            ch[ix]="{}{}{}{}{}".format(spaces1,h,lb,spaces2,i)
         outp[0,1:]=ch
-        outp[0,0]="TDI Format 1.5"
+        outp[1,1:]=col_assignments
+        outp[1,0]
+        
+        outp[0,0]="TDI Format 1.5\nindex"
         i=1
         for md in self.metadata.export_all():
             md=md.replace("=","= ")
@@ -2644,69 +2658,19 @@ class DataFile(metadataObject):
                     outp=_np_.append(outp,[[""]*outp.shape[1]],axis=0)
                 outp[i,0]=line
                 i+=1
-        if shorten==[True,True]:
-            outp[1:r/2,1:c-1]=self.data[0:r/2-1,0:c-2].astype(str)
-            outp[r/2+1:,1:c-1]=self.data[-r/2:,0:c-2].astype(str)
-            outp[1:r/2,-1]=self.data[0:r/2-1,-1].astype(str)
-            outp[r/2+1:,-1]=self.data[-r/2:,-1].astype(str)
-            outp[r/2]="..."
-            outp[:,c-1]="..."
-        elif shorten==[True,False]:
-            outp[1:r/2,1:]=self.data[0:r/2-1,:].astype(str)
-            outp[r/2+1:,1:]=self.data[-r/2:,:].astype(str)
-            outp[r/2]="..."
-        elif shorten==[False,True]:
-            outp[1:,1:c-1]=self.data[:,0:c-2].astype(str)
-            outp[1:,-1]=self.data[:,-1].astype(str)
-            outp[:,c-1]="..."
-        else:
-            outp[1:self.shape[0]+1,1:self.shape[1]+1]=self.data.astype(str)
-        return tabulate(outp[1:],outp[0],tablefmt="rst")
+        for ic,c in enumerate(interesting):
+            if c>=0:
+                if shorten[0]:
+                    outp[1:r//2,ic+1]=self.data[0:r//2-1,c].astype(str)
+                    outp[r//2+1:,ic+1]=self.data[-r//2:,c].astype(str)
+                else:
+                    outp[1:,ic+1]=self.data[:,c].astype(str)
+        return tabulate(outp[1:],outp[0],tablefmt=fmt,numalign="decimal",stralign="left")
               
-             
-        
-    
     def _repr_html_(self):
-        """Version of repr_core that does and html output.
+        """Version of repr_core that does and html output.        """        
+        return self._repr_table_("html")
         
-        """
-        shorten=256
-        outp = "<table><tr><th>TDI Format 1.5</th><th>" + "</th><th>".join(self.column_headers) + "</th></tr>\n"
-        m = len(self.metadata)
-        self.data = _np_.atleast_2d(self.data)
-        r = _np_.shape(self.data)[0]
-        md = self.metadata.export_all()
-        for x in range(min(r, m)):
-            if self.data.ndim!=2 or self.shape[1]==1:
-                outp = outp + "<tr><td>"+md[x] + "</td><td>{}</td></tr>\n".format(self.data[x])
-            else:
-                outp = outp + "<tr><td>"+md[x] + "</td><td>"+"</td><td>".join([str(y) for y in self.data[x].filled()]) + "</td></tr>\n"
-        if m > r:  # More metadata
-            for x in range(r, m):
-                outp = outp + "</tr><td>"+md[x] + "<td colspan={}></tr>\n".format(self.shape[1])
-        elif r > m:  # More data than metadata
-            if shorten is not None and shorten and r - m > shorten:
-                for x in range(m, m + shorten - 100):
-                    if self.data.ndim!=2 or self.shape[1]==1:
-                        outp += "<tr><td>&nbsp;" + "</td><td>{}</td></tr>\n".format(self.data[x])
-                    else:
-                        outp += "<tr><td>&nbsp;</td><td>" + "</td><td>".join([str(y) for y in self.data[x].filled()]) + "</td></tr>\n"
-                outp += "<tr><td colspan={}>... {} lines skipped...</td></tr>\n".format(self.shape[1]+1,r - m - shorten + 100)
-                for x in range(-100, -1):
-                    if self.data.ndim!=2 or self.shape[1]==1:
-                        outp += "<tr><td>&nbsp;" + "</td><td>{}</td></tr>\n".format(self.data[x])
-                    else:
-                        outp += "<tr><td>&nbsp;</td><td>" + "</td><td>".join([str(y) for y in self.data[x].filled()]) + "</td></tr>\n"
-            else:
-                for x in range(m, r):
-                    if self.data.ndim!=2 or self.shape[1]==1:
-                        outp += "<tr><td>&nbsp;" + "</td><td>{}</td></tr>\n".format(self.data[x])
-                    else:
-                        outp += "<tr><td>&nbsp;</td><td>" + "</td><td>".join([str(y) for y in self.data[x].filled()]) + "</td></tr>\n"
-        outp+="</table>\n"
-        return outp
-        
-
     def __repr_core__(self, shorten=1000):
         """Actuall do the repr work, but allow for a shorten parameter to
         save printing big files out to disc.
@@ -2876,6 +2840,55 @@ class DataFile(metadataObject):
     def __str__(self):
         """Provides an implementation for str(DataFile) that does not shorten the output."""
         return self.__repr_core__(False)
+
+
+    def _interesting_cols(self,cols):
+        """Workout which columns the user might be interested in in the basis of the setas.
+        
+        ArgsL
+            cols (float): Maximum Number of columns to display
+        
+        Returns
+            list(ints): The indices of interesting columns with breaks in runs indicated by -1
+        """
+        c=self.shape[1]
+        if c>cols:
+            interesting=[]
+            last=-1
+            for ix,typ in enumerate(self.setas):
+                if last!=-1 and last!=ix-1:
+                    interesting.append(-1)
+                    last=-1
+                if typ!=".":
+                    interesting.append(ix)
+                    last=ix
+            if len(interesting)>0 and interesting[-1]==-1:
+                interesting=interesting[:-1]
+            if len(interesting)>0:
+                c_start=max(interesting)+1
+            else:
+                c_start=0
+            interesting.extend(range(c_start,c))
+            if interesting[cols-3]!=-1:
+                interesting[cols-2]=-1
+            else:
+                interesting[cols-2]=c-2
+            interesting[cols-1]=c-1
+            interesting=interesting[:cols]
+            c=cols
+        else:
+            interesting=list(range(c))
+            
+        col_assignments=[]
+        for i in interesting:
+            if i!=-1:
+                if self.setas[i]!=".":
+                    col_assignments.append("{} ({})".format(i,self.setas[i]))
+                else:
+                    col_assignments.append("{}".format(i))
+            else:
+                col_assignments.append("")
+        return interesting,col_assignments
 
     def _push_mask(self, mask=None):
         """Copy the current data mask to a temporary store and replace it with a new mask if supplied.
@@ -3449,6 +3462,9 @@ class DataFile(metadataObject):
 
         if failed:
             raise SyntaxError("Failed to load file")
+        for k,i in kargs.items():
+            if not callable(getattr(self,k,lambda x:False)):
+                setattr(self,k,i)
         return self
 
     def rename(self, old_col, new_col):
