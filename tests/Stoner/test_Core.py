@@ -223,7 +223,7 @@ class Datatest(unittest.TestCase):
         e=self.d(setas="yx")
         self.assertTrue(e.shape==self.d.shape and e.setas[0]=="y","Failed on a DataFile.__call__ test")
         spl=len(repr(self.d).split("\n"))
-        self.assertEqual(spl,104,"Failed to do repr function got {} lines".format(spl))
+        self.assertEqual(spl,105,"Failed to do repr function got {} lines".format(spl))
         e=self.d.clone
         e=e.add_column(e.x,header=e.column_headers[0])
         e.del_column(duplicates=True)

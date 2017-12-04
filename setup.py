@@ -89,6 +89,12 @@ setup(
     package_data={'Stoner':['stylelib/*.mplstyle']},
     test_suite="tests",
     install_requires=requires("requirements.txt"),
+    extras_require = { "PrettyPrint":["tabulate>=0.7.5"],
+                       "mimetype_detection":["magic"],
+                       "TDMS":["nptdms"],
+                       "numba":["numba"],
+                       "cv2":["cv2"],
+                       "image_alignment":["imreg_dft","image_registration"]},
     long_description= ''.join(yield_sphinx_only_markup(read('doc/readme.rst'))),
     classifiers=[
         "Development Status :: 4 - Beta",

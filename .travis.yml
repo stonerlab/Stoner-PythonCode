@@ -30,12 +30,10 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
-  - conda install --yes numpy numpy scipy matplotlib h5py seaborn
+  - conda install --yes numpy numpy scipy matplotlib h5py seaborn h5py
   - conda install --yes blist pillow numba scikit-image
-  - conda install --yes -c neutronpy lmfit
-  - conda install --yes -c conda-forge tabulate
+  - conda install --yes -c conda-forge lmfit tabulate
   - pip install filemagic
-  - pip install tabulate
   - pip install opencv_python
   - pip install coveralls
   - pip install npTDMS

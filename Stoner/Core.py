@@ -2618,8 +2618,9 @@ class DataFile(metadataObject):
         rows,cols=self._repr_limits
         r,c=self.shape
         interesting,col_assignments=self._interesting_cols(cols)
+        c=min(c,cols)            
         c_w=max([len(self.column_headers[x]) for x in interesting if x>-1])
-        wrapper=TextWrapper(subsequent_indent="\t",width=max(20,80-c_w*min(cols,self.shape[1])))
+        wrapper=TextWrapper(subsequent_indent="\t",width=max(20,max(20,(80-c_w*c))))
         if r>rows:
             shorten=[True,False]
             r=rows+rows%2
@@ -2627,7 +2628,6 @@ class DataFile(metadataObject):
             shorten=[False,False]
 
         shorten[1]=c>cols 
-        c=min(c,cols)            
         r=max(len(self.metadata),r)
         
         outp=_np_.zeros((r+1,c+1),dtype=object)
@@ -2642,14 +2642,15 @@ class DataFile(metadataObject):
         else:
             ch=self.column_headers[:c]
         for ix,(h,i) in enumerate(zip(ch,col_assignments)):
-            spaces1=" "*((wrapper.width-len(h))//2)
-            spaces2=" "*((wrapper.width-len(i))//2)
+            spaces1=" "*((c_w-len(h))//2)
+            spaces2=" "*((c_w-len(i))//2)
             ch[ix]="{}{}{}{}{}".format(spaces1,h,lb,spaces2,i)
+            print(len(spaces1),len(spaces2))
         outp[0,1:]=ch
         outp[1,1:]=col_assignments
         outp[1,0]
         
-        outp[0,0]="TDI Format 1.5\nindex"
+        outp[0,0]="TDI Format 1.5{}index".format(lb)
         i=1
         for md in self.metadata.export_all():
             md=md.replace("=","= ")
