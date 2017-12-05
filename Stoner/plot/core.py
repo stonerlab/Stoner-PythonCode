@@ -458,6 +458,8 @@ class PlotMixin(object):
 
                 All other attrbiutes are passed over to the parent class
                 """
+        if name.startswith("plt_") and hasattr(plt,name[4:]):
+            return getattr(plt,name[4:])
         try:
             return super(PlotMixin, self).__getattr__(name)
         except AttributeError:

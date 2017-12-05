@@ -4021,6 +4021,8 @@ class Data(AnalysisMixin,PlotMixin,DataFile):
             prefix (str): The prefix placed ahead of the model parameters in the metadata.
             text_only (bool): If False (default), add the text to the plot and return the current object, otherwise, 
                 return just the text and don't add to a plot.
+            prefix(str): If given  overridges the prefix from the model to determine a prefix to the parameter names in the metadata
+            display_prefix (str,None): if given, overrides the prefix when  labelling the parameter values in the text.
 
         Returns:
             
@@ -4070,11 +4072,16 @@ class Data(AnalysisMixin,PlotMixin,DataFile):
 
         try: # if the model has an attribute display params then use these as the parameter anmes
             for k,display_name in zip(model.param_names,model.display_names):
-                self[k+" label"]=display_name
+                if prefix is not None and prefix is not "":
+                    self["{}{} label".format(prefix,k)]=display_name
+                else:
+                    self[k+" label"]=display_name
         except (AttributeError,KeyError):
             pass
+        
+        display_prefix=kargs.pop("display_prefix",prefix)
 
-        text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex",mode=mode) for k in model.param_names])
+        text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex",mode=mode,) for k in model.param_names])
         if not text_only:
             ax=self.fig.gca()
             if "zlim" in ax.properties():
