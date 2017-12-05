@@ -87,7 +87,7 @@ class TexEngFormatter(EngFormatter):
             pre=_np_.ceil(power/3.0)*3
             power = power % 3
             if pre==0:
-                ret = "${}$".format(self._round(value))
+                ret = "${}\\,\\mathrm{{{}}}$".format(self._round(value), self.unit)
             else:
                 v = self._round(value / (10 ** pre))
                 ret = "${}\\mathrm{{{} {}}}$".format(v, self.prefix[int(pre)], self.unit)
