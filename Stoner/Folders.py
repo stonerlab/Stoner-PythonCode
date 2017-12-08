@@ -13,6 +13,7 @@ import fnmatch
 import numpy as _np_
 from copy import copy,deepcopy
 import unicodedata
+from inspect import ismethod
 import string
 from collections import Iterable,MutableSequence
 from itertools import islice
@@ -667,7 +668,7 @@ class baseFolder(MutableSequence):
                 
             try:
                 instance=super(baseFolder,self).__getattribute__("instance")
-                if callable(getattr(instance,item,None)): # It's a method
+                if ismethod(getattr(instance,item,None)): # It's a method
                     ret=self.__getattr_proxy(item)
                 else: # It's a static attribute
                     if item in self._object_attrs:

@@ -1085,6 +1085,7 @@ class DataArray(_ma_.MaskedArray):
         # We first cast to be our class type
         setas=kargs.pop("setas",_setas())
         mask=kargs.pop("mask",None)
+        column_headers=kargs.pop("column_headers",[])
         _row=kargs.pop("isrow",False)
         if isinstance(input_array,DataArray):
             i=input_array.i
@@ -1103,6 +1104,7 @@ class DataArray(_ma_.MaskedArray):
         obj.setas._row=_row and len(obj.shape)==1
         #Set shared mask - stops some deprication warnings
         obj.unshare_mask()
+        obj.column_headers=column_headers
         return obj
 
     def __array_finalize__(self, obj):
@@ -1685,15 +1687,19 @@ class DataFile(metadataObject):
     def data(self, value):
         """Set the data attribute, but force it through numpy.ma.masked_array first."""
         nv=value
-        if len(nv.shape) == 0:
+        if len(nv.shape) == 0: #nv is a scalar - make it a 2D array
             nv = _ma_.atleast_2d(nv)
-        elif len(nv.shape) == 1:
+        elif len(nv.shape) == 1: #nv is a vector - make it a 2D array
             nv = _ma_.atleast_2d(nv).T
-        elif len(nv.shape) > 2:
+        elif len(nv.shape) > 2: #nv has more than 2D - raise an error # TODO 0.9? Support 3D arrays in DataFile?
             raise ValueError("DataFile.data should be no more than 2 dimensional not shape {}", format(nv.shape))
-        if not isinstance(nv,DataArray):
+        if not isinstance(nv,DataArray): # nv isn't a DataArray, so preserve setas (does this preserve column_headers too?)
             nv = DataArray(nv)
             nv._setas=getattr(self,"_data")._setas.clone
+        elif nv.shape[1]==self.shape[1]: # nv is a DataArray with the same number of columns - preserve column_headers and setas
+            ch=getattr(self,"_data").column_headers
+            nv._setas=getattr(self,"_data")._setas.clone
+            nv.column_headers=ch
         nv._setas.shape=nv.shape
         self._data=nv
 
@@ -1875,11 +1881,15 @@ class DataFile(metadataObject):
             """
         if isinstance(other, _np_.ndarray):
             if len(self) == 0:
+                ch=getattr(other,"column_headers",[])
+                setas=getattr(other,"setas","")
                 t = _np_.atleast_2d(other)
                 c = t.shape[1]
                 if len(self.column_headers) < c:
                     newdata.column_headers.extend(["Column_{}".format(x) for x in range(c - len(self.column_headers))])
                 newdata.data = t
+                newdata.setas=setas
+                newdata.column_headers=ch
                 ret = newdata
             elif len(_np_.shape(other)) == 1:
                 # 1D array, so assume a single row of data
@@ -2617,7 +2627,7 @@ class DataFile(metadataObject):
         lb="<br/>" if fmt=="html" else "\n"
         rows,cols=self._repr_limits
         r,c=self.shape
-        interesting,col_assignments=self._interesting_cols(cols)
+        interesting,col_assignments,cols=self._interesting_cols(cols)
         c=min(c,cols)            
         c_w=max([len(self.column_headers[x]) for x in interesting if x>-1])
         wrapper=TextWrapper(subsequent_indent="\t",width=max(20,max(20,(80-c_w*c))))
@@ -2632,15 +2642,8 @@ class DataFile(metadataObject):
         
         outp=_np_.zeros((r+1,c+1),dtype=object)
         outp[:,:]="..."
-        if shorten[1]:
-            ch=[]
-            for c in interesting:
-                if c>=0:
-                    ch.append(self.column_headers[c])
-                else:
-                    ch.append("...")
-        else:
-            ch=self.column_headers[:c]
+        ch=[self.column_headers[ix] if ix>=0 else "...." for ix in interesting]
+
         for ix,(h,i) in enumerate(zip(ch,col_assignments)):
             spaces1=" "*((c_w-len(h))//2)
             spaces2=" "*((c_w-len(i))//2)
@@ -2662,10 +2665,10 @@ class DataFile(metadataObject):
         for ic,c in enumerate(interesting):
             if c>=0:
                 if shorten[0]:
-                    outp[1:r//2,ic+1]=self.data[0:r//2-1,c].astype(str)
-                    outp[r//2+1:,ic+1]=self.data[-r//2:,c].astype(str)
+                    outp[1:r//2,ic+1]=self.data[:r//2-1,c].astype(str)
+                    outp[r//2+1:r+1,ic+1]=self.data[-r//2:,c].astype(str)
                 else:
-                    outp[1:,ic+1]=self.data[:,c].astype(str)
+                    outp[1:len(self.data)+1,ic+1]=self.data[:,c].astype(str)
         return tabulate(outp[1:],outp[0],tablefmt=fmt,numalign="decimal",stralign="left")
               
     def _repr_html_(self):
@@ -2870,6 +2873,8 @@ class DataFile(metadataObject):
             else:
                 c_start=0
             interesting.extend(range(c_start,c))
+            if len(interesting)<cols:
+                cols=len(interesting)
             if interesting[cols-3]!=-1:
                 interesting[cols-2]=-1
             else:
@@ -2889,7 +2894,7 @@ class DataFile(metadataObject):
                     col_assignments.append("{}".format(i))
             else:
                 col_assignments.append("")
-        return interesting,col_assignments
+        return interesting,col_assignments,cols
 
     def _push_mask(self, mask=None):
         """Copy the current data mask to a temporary store and replace it with a new mask if supplied.
@@ -3906,7 +3911,7 @@ class DataFile(metadataObject):
                 data[key].setas=self.setas
         else:
             raise NotImplementedError("Unable to split a file with an argument of type {}".format(type(xcol)))
-        out = DataFolder(nolist=True)        
+        out = DataFolder(nolist=True,setas=self.setas)        
         for k,f in data.items():
             if len(args)>0:
                 out.add_group(k)

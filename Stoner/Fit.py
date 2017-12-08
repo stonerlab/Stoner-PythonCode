@@ -1209,12 +1209,14 @@ def kittelEquation(H,g,M_s,H_k):
 
     Args:
         H (array): Magnetic fields in A/m
-        g (float): h g factor for the gyromagnetic radius
+        g (float): g factor for the gyromagnetic radius
         M_s (float): Magnetisation of sample in A/m
         H_k (float): Anisotropy field term (including demagnetising factors) in A/m
 
     Returns:
         Reesonance peak frequencies in Hz
+        
+    :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
 
     Example:
         .. plot:: samples/Fitting/kittel.py
@@ -1222,6 +1224,29 @@ def kittelEquation(H,g,M_s,H_k):
     """
     gamma=g*cnst.e/(2*cnst.m_e)
     return (consts.mu0*gamma/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
+
+def inverse_kittel(f,g,M_s,H_k):
+    """Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency
+    
+    Args:
+        f (array): Resonance Frequency in Hz
+        g (float): g factor for the gyromagnetic radius
+        M_s (float): Magnetisation of sample in A/m
+        H_k (float): Anisotropy field term (including demagnetising factors) in A/m
+
+    Returns:
+        Reesonance peak frequencies in Hz
+    
+    Notes:
+        In practice one often measures FMR by sweepign field for constant frequency and then locates the
+        peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a :math:`H_{res}\\pm \\Delta H_{res}`
+        In order to make use of this data with :py:math:`Stoner.Analysis.AnalysisMixin.lmfit` or :py:math:`Stoner.Analysis.AnalysisMixin.curve_fit`
+        it makes more sense to fit the Kittel Equation written in terms of H than frequency.
+        
+       :math:`H_{res}=- H_{k} - \\frac{M_{s}}{2} + \\frac{1}{2 \\gamma \\mu_{0}} \\sqrt{M_{s}^{2} \\gamma^{2} \\mu_{0}^{2} + 16 \\pi^{2} f^{2}}` 
+    """            
+    gamma=g*cnst.e/(2*cnst.m_e)
+    return -H_k - M_s/2 + _np_.sqrt(M_s**2*gamma**2*cnst.mu_0**2 + 16*_np_.pi**2*f**2)/(2*gamma*cnst.mu_0)
 
 class KittelEquation(Model):
     
@@ -1236,6 +1261,8 @@ class KittelEquation(Model):
     Returns:
         Reesonance peak frequencies in Hz
 
+    :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
+
     Example:
         .. plot:: samples/Fitting/kittel.py
         :include-source:                
@@ -1249,18 +1276,57 @@ class KittelEquation(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
-    
-        M_s=(_np_.pi*data/consts.mu0)/x-x
-        M_s=_np_.mean(M_s[1:])
         g=2
+        H_k=100
+        gamma=g*cnst.e/(2*cnst.m_e)    
+        M_s=(4*_np_.pi**2*data**2 - gamma**2*cnst.mu_0**2*(x**2 + 2*x*H_k + H_k**2))/(gamma**2*cnst.mu_0**2*(x + H_k))
+        M_s=_np_.mean(M_s)
 
-        pars = self.make_params(g=g, M_s=M_s, H_k=100.0)
+        pars = self.make_params(g=g, M_s=M_s, H_k=H_k)
         pars["M_s"].min=0
         pars["g"].min=g/100
         pars["H_k"].min=0
         pars["H_k"].max=M_s.max()
         return update_param_vals(pars, self.prefix, **kwargs)
 
+
+class Inverse_Kittel(Model):
+    
+    """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
+
+    Args:
+        H (array): Magnetic fields in A/m
+        g (float): h g factor for the gyromagnetic radius
+        M_s (float): Magnetisation of sample in A/m
+        H_k (float): Anisotropy field term (including demagnetising factors) in A/m
+
+    Returns:
+        Reesonance peak frequencies in Hz
+
+    :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
+
+    """
+
+    display_names=["g","M_s","H_k"]
+
+    def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
+        super(Inverse_Kittel, self).__init__(inverse_kittel, *args, **kwargs)
+
+    def guess(self, data, x=None, **kwargs):
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+        g=2
+        H_k=100
+        gamma=g*cnst.e/(2*cnst.m_e)    
+        M_s=(4*_np_.pi**2*x**2 - gamma**2*cnst.mu_0**2*(data**2 + 2*data*H_k + H_k**2))/(gamma**2*cnst.mu_0**2*(data + H_k))
+        M_s=_np_.mean(M_s)
+
+        pars = self.make_params(g=g, M_s=M_s, H_k=H_k)
+        pars["M_s"].min=0
+        pars["g"].min=g/100
+        pars["H_k"].min=0
+        pars["H_k"].max=M_s.max()
+        return update_param_vals(pars, self.prefix, **kwargs)
 
 def lorentzian_diff(x,A,sigma,mu):
     """Implement a differential form of a Lorentzian peak.

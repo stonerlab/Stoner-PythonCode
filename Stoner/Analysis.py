@@ -56,7 +56,7 @@ class _odr_Model(odrModel):
         else:
             raise RuntimeError("Need at least one argument to make a fitting model.""")
             
-        if isclass(model) and issubclass(mode,Model): #Instantiate if only a class passed in
+        if isclass(model) and issubclass(model,Model): #Instantiate if only a class passed in
             model=model() 
         if isinstance(model,Model):
             self.model=model
@@ -73,7 +73,7 @@ class _odr_Model(odrModel):
             def model(beta,x,**args):
                 return func(x,*beta)
         p0=kargs.pop("p0",kargs.pop("estimate",None))
-        if p0 is None or len(p0)!=len(self.param_names):
+        if p0 is None or len(p0)!=len(meta["param_names"]):
             p0=list()
             for k in meta["param_names"]:
                 if k in kargs:
@@ -468,7 +468,9 @@ class AnalysisMixin(object):
         output=kargs.pop("output","row")
         fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
         if fit.success:
+            DataArray=self.data.__class__
             row = []
+            ch=[]
             # Store our current mask, calculate new column's mask and turn off mask
             tmp_mask=self.mask
             col_mask=_np_.any(tmp_mask,axis=1)
@@ -489,10 +491,12 @@ class AnalysisMixin(object):
                 self["{}{}".format(prefix, p)] = fit.params[p].value
                 self["{}{} err".format(prefix, p)] = fit.params[p].stderr
                 row.extend([fit.params[p].value, fit.params[p].stderr])
+                ch.extend([p,"{}.stderr".format(p)])
             self["{}chi^2".format(prefix)] = fit.chisqr
+            ch.append("$\\chi^2$")
             row.append(fit.chisqr)
             self["{}nfev".format(prefix)] = fit.nfev
-            retval = {"fit": fit, "row": row, "full": (fit, row),"data":self}
+            retval = {"fit": fit, "row": DataArray(row,column_headers=ch), "full": (fit, row),"data":self}
             if output not in retval:
                 raise RuntimeError("Failed to recognise output format:{}".format(output))
             else:
