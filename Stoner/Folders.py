@@ -1957,7 +1957,13 @@ class DataFolder(DiskBssedFolder,baseFolder):
 objectFolder=DataFolder # Just a backwards compatibility shim
 
 class PlotFolder(DataFolder):
-    """A subclass of :py:class:`objectFolder` with extra methods for plotting lots of files."""
+    """A subclass of :py:class:`objectFolder` with extra methods for plotting lots of files.
+    
+    Example:
+
+        .. plot:: samples/plot-folder-test.py
+            :include-source:                
+    """
     
     def figure(self,*args,**kargs):
         """Pass through for :py:func:`matplotlib.pyplot.figure` but alos takes a note of the arguments for later."""
