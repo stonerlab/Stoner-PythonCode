@@ -1,8 +1,0 @@
-
-
-ImageFolder.slice_metadata
-===============================================
-
-.. currentmodule:: Stoner.Image.folders
-
-.. automethod:: ImageFolder.slice_metadata

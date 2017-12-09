@@ -1,8 +1,0 @@
-
-
-ImageArray.box
-================================
-
-.. currentmodule:: Stoner.Image.core
-
-.. automethod:: ImageArray.box

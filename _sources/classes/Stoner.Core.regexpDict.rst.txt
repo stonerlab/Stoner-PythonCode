@@ -1,0 +1,51 @@
+regexpDict
+==========
+
+.. currentmodule:: Stoner.Core
+
+.. autoclass:: regexpDict
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~regexpDict.allowed_keys
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~regexpDict.clear
+      ~regexpDict.copy
+      ~regexpDict.fromkeys
+      ~regexpDict.get
+      ~regexpDict.has_key
+      ~regexpDict.items
+      ~regexpDict.keys
+      ~regexpDict.move_to_end
+      ~regexpDict.pop
+      ~regexpDict.popitem
+      ~regexpDict.setdefault
+      ~regexpDict.update
+      ~regexpDict.values
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: allowed_keys
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: clear
+   .. automethod:: copy
+   .. automethod:: fromkeys
+   .. automethod:: get
+   .. automethod:: has_key
+   .. automethod:: items
+   .. automethod:: keys
+   .. automethod:: move_to_end
+   .. automethod:: pop
+   .. automethod:: popitem
+   .. automethod:: setdefault
+   .. automethod:: update
+   .. automethod:: values

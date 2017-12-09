@@ -1,8 +1,0 @@
-
-
-ImageArray.clip_intensity
-===========================================
-
-.. currentmodule:: Stoner.Image.core
-
-.. automethod:: ImageArray.clip_intensity

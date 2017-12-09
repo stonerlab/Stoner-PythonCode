@@ -1,8 +1,0 @@
-
-
-DataFile.save
-=========================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: DataFile.save

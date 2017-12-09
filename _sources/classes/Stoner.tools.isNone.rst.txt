@@ -1,0 +1,6 @@
+isNone
+======
+
+.. currentmodule:: Stoner.tools
+
+.. autofunction:: isNone

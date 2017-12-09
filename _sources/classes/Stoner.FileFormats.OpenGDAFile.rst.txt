@@ -29,9 +29,6 @@ Stoner.FileFormats.OpenGDAFile
       ~Stoner.FileFormats.OpenGDAFile.get_filename
       ~Stoner.FileFormats.OpenGDAFile.insert_rows
       ~Stoner.FileFormats.OpenGDAFile.items
-      ~Stoner.FileFormats.OpenGDAFile.iteritems
-      ~Stoner.FileFormats.OpenGDAFile.iterkeys
-      ~Stoner.FileFormats.OpenGDAFile.itervalues
       ~Stoner.FileFormats.OpenGDAFile.keys
       ~Stoner.FileFormats.OpenGDAFile.load
       ~Stoner.FileFormats.OpenGDAFile.pop
@@ -46,6 +43,7 @@ Stoner.FileFormats.OpenGDAFile
       ~Stoner.FileFormats.OpenGDAFile.select
       ~Stoner.FileFormats.OpenGDAFile.setdefault
       ~Stoner.FileFormats.OpenGDAFile.sort
+      ~Stoner.FileFormats.OpenGDAFile.split
       ~Stoner.FileFormats.OpenGDAFile.swap_column
       ~Stoner.FileFormats.OpenGDAFile.unique
       ~Stoner.FileFormats.OpenGDAFile.update
@@ -55,27 +53,5 @@ Stoner.FileFormats.OpenGDAFile
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.FileFormats.OpenGDAFile.T
-      ~Stoner.FileFormats.OpenGDAFile.clone
-      ~Stoner.FileFormats.OpenGDAFile.column_headers
-      ~Stoner.FileFormats.OpenGDAFile.data
-      ~Stoner.FileFormats.OpenGDAFile.dict_records
-      ~Stoner.FileFormats.OpenGDAFile.dims
-      ~Stoner.FileFormats.OpenGDAFile.dtype
-      ~Stoner.FileFormats.OpenGDAFile.filename
-      ~Stoner.FileFormats.OpenGDAFile.mask
-      ~Stoner.FileFormats.OpenGDAFile.metadata
-      ~Stoner.FileFormats.OpenGDAFile.mime_type
-      ~Stoner.FileFormats.OpenGDAFile.patterns
-      ~Stoner.FileFormats.OpenGDAFile.priority
-      ~Stoner.FileFormats.OpenGDAFile.records
-      ~Stoner.FileFormats.OpenGDAFile.setas
-      ~Stoner.FileFormats.OpenGDAFile.shape
-      ~Stoner.FileFormats.OpenGDAFile.subclasses
    
    

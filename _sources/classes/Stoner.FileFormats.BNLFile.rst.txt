@@ -29,9 +29,6 @@ Stoner.FileFormats.BNLFile
       ~Stoner.FileFormats.BNLFile.get_filename
       ~Stoner.FileFormats.BNLFile.insert_rows
       ~Stoner.FileFormats.BNLFile.items
-      ~Stoner.FileFormats.BNLFile.iteritems
-      ~Stoner.FileFormats.BNLFile.iterkeys
-      ~Stoner.FileFormats.BNLFile.itervalues
       ~Stoner.FileFormats.BNLFile.keys
       ~Stoner.FileFormats.BNLFile.load
       ~Stoner.FileFormats.BNLFile.pop
@@ -46,6 +43,7 @@ Stoner.FileFormats.BNLFile
       ~Stoner.FileFormats.BNLFile.select
       ~Stoner.FileFormats.BNLFile.setdefault
       ~Stoner.FileFormats.BNLFile.sort
+      ~Stoner.FileFormats.BNLFile.split
       ~Stoner.FileFormats.BNLFile.swap_column
       ~Stoner.FileFormats.BNLFile.unique
       ~Stoner.FileFormats.BNLFile.update
@@ -55,27 +53,5 @@ Stoner.FileFormats.BNLFile
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.FileFormats.BNLFile.T
-      ~Stoner.FileFormats.BNLFile.clone
-      ~Stoner.FileFormats.BNLFile.column_headers
-      ~Stoner.FileFormats.BNLFile.data
-      ~Stoner.FileFormats.BNLFile.dict_records
-      ~Stoner.FileFormats.BNLFile.dims
-      ~Stoner.FileFormats.BNLFile.dtype
-      ~Stoner.FileFormats.BNLFile.filename
-      ~Stoner.FileFormats.BNLFile.mask
-      ~Stoner.FileFormats.BNLFile.metadata
-      ~Stoner.FileFormats.BNLFile.mime_type
-      ~Stoner.FileFormats.BNLFile.patterns
-      ~Stoner.FileFormats.BNLFile.priority
-      ~Stoner.FileFormats.BNLFile.records
-      ~Stoner.FileFormats.BNLFile.setas
-      ~Stoner.FileFormats.BNLFile.shape
-      ~Stoner.FileFormats.BNLFile.subclasses
    
    

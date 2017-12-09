@@ -1,8 +1,0 @@
-
-
-XRDFile.iteritems
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.iteritems

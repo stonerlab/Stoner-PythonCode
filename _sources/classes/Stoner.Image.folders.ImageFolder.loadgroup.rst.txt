@@ -1,8 +1,0 @@
-
-
-ImageFolder.loadgroup
-==========================================
-
-.. currentmodule:: Stoner.Image.folders
-
-.. automethod:: ImageFolder.loadgroup

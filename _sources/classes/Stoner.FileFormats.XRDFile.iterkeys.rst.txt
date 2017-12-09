@@ -1,8 +1,0 @@
-
-
-XRDFile.iterkeys
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.iterkeys

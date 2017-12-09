@@ -1,0 +1,6 @@
+istuple
+=======
+
+.. currentmodule:: Stoner.tools
+
+.. autofunction:: istuple

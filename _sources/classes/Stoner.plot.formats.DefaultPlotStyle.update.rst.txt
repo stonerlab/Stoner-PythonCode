@@ -1,8 +1,0 @@
-
-
-DefaultPlotStyle.update
-===========================================
-
-.. currentmodule:: Stoner.plot.formats
-
-.. automethod:: DefaultPlotStyle.update

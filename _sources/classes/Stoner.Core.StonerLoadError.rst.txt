@@ -1,15 +1,6 @@
-Stoner.Core.StonerLoadError
-===========================
+StonerLoadError
+===============
 
 .. currentmodule:: Stoner.Core
 
-.. autoclass:: StonerLoadError
-
-   
-
-   
-   
-
-   
-   
-   
+.. autoexception:: StonerLoadError

@@ -1,8 +1,0 @@
-
-
-RasorFile.itervalues
-=======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RasorFile.itervalues

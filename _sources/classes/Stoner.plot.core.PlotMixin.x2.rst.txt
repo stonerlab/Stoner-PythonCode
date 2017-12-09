@@ -1,8 +1,0 @@
-
-
-PlotMixin.x2
-=============================
-
-.. currentmodule:: Stoner.plot.core
-
-.. automethod:: PlotMixin.x2

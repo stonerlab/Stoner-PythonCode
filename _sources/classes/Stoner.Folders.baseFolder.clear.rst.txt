@@ -1,8 +1,0 @@
-
-
-baseFolder.clear
-===============================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: baseFolder.clear

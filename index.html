@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Stoner-PythonCode &#8212; Stoner Pacakge API Documentation</title>
-    
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/better.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -24,27 +21,31 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="The Stoner Python Package User Guide" href="UserGuide/ugindex.html" /> 
+    <link rel="next" title="The Stoner Python Package User Guide" href="UserGuide/ugindex.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="UserGuide/ugindex.html" title="The Stoner Python Package User Guide"
-             accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">Stoner Package</a> &#187;</li> 
-      </ul>
-    </div>  
+  <body>
+    <header id="pageheader"><h1><a href="# ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          <a href="UserGuide/ugindex.html" title="Next document">The Stoner Python Package User Guide</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="#">Stoner Package</a></li> 
+    </ul>
+  </nav>
+  </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -55,58 +56,61 @@
 <h1>Stoner-PythonCode<a class="headerlink" href="#stoner-pythoncode" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
+<a class="reference external image-reference" href="https://travis-ci.org/gb119/Stoner-PythonCode"><img alt="https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master" src="https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master" /></a>
+<a class="reference external image-reference" href="https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master"><img alt="https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master" src="https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master" /></a>
+<a class="reference external image-reference" href="https://landscape.io/github/gb119/Stoner-PythonCode/master"><img alt="Code Health" src="https://landscape.io/github/gb119/Stoner-PythonCode/master/landscape.svg?style=flat" /></a>
+<a class="reference external image-reference" href="https://badge.fury.io/py/Stoner"><img alt="https://badge.fury.io/py/Stoner.svg" src="https://badge.fury.io/py/Stoner.svg" /></a>
+<a class="reference external image-reference" href="http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/stoner-pythoncode/badge/?version=latest" /></a>
+<a class="reference external image-reference" href="https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode"><img alt="https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg" src="https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg" /></a>
+<a class="reference external image-reference" href="http://depsy.org/package/python/Stoner"><img alt="http://depsy.org/api/package/pypi/Stoner/badge.svg" src="http://depsy.org/api/package/pypi/Stoner/badge.svg" /></a>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>The  <em>Stoner</em> Python package is a set of utility classes for writing data analysis code. It was written within
 the Condensed Matter Physics group at the University of Leeds as a shared resource for quickly writing simple
-programs to do things like fitting functions to data, extract curve parameters and churn through large numbers of
-small text data files.</p>
-<p>For a general introduction, users are referred to the Users Guide, which is part of the <a class="reference external" href="http://pythonhosted.org/Stoner/">online documentation</a> along with the
+programs to do things like fitting functions to data, extract curve parameters, churn through large numbers of
+small text data files and work with certain types of scientific image files.</p>
+<p>For a general introduction, users are referred to the Users Guide, which is part of the <a class="reference external" href="http://stoner-pythoncode.readthedocs.io/en/latest/">online documentation</a> along with the
 API Reference guide. The <a class="reference external" href="http://www.github.com/gb119/Stoner-PythonCode/">github repository</a> also contains some example scripts.</p>
 </div>
 <div class="section" id="getting-this-code">
 <h2>Getting this Code<a class="headerlink" href="#getting-this-code" title="Permalink to this headline">¶</a></h2>
-<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.5, h5py, lmfit, and has a number of optional dependencies on blist, filemagic, npTDMS and numba</p>
+<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.5, h5py, lmfit, and has a number of optional dependencies on blist, filemagic, npTDMS
+and numba.</p>
 <p>Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit.
 However, this can by installed with the usual tools such as <em>easy_install</em> or <em>pip</em>.</p>
-<div class="highlight-sh"><div class="highlight"><pre><span></span>easy_install lmfit
+<div class="highlight-sh"><div class="highlight"><pre><span></span>pip install lmfit
 </pre></div>
 </div>
-<p>The easiest way to install the Stoner package is via seuptools&#8217; easy_install</p>
-<div class="highlight-sh"><div class="highlight"><pre><span></span>easy_install Stoner
+<p>The easiest way to install the Stoner package is via seuptools’ easy_install</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>pip install Stoner
 </pre></div>
 </div>
 <p>This will install the Stoner package and any missing dependencies into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: <a class="reference external" href="https://github.com/gb119/Stoner-PythonCode">https://github.com/gb119/Stoner-PythonCode</a></p>
-<p>The codebase is largely compatible with Python 3.4, with the expception of the 3D vector map plots which make use of
-Enthought&#8217;s <em>mayavi</em> package which is still only Python 2 compatible due to the underlying Vtk toolkit. Other issues of
-broken 3.4 code are bugs to be squashed.</p>
+<p>The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 2.7 but test with 3.5 and 3.6 as well.</p>
 </div>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>The <strong>Stoner</strong> package provides two basic top-level classes that describe an individual file of experimental data and a
+<p>The main part of the <strong>Stoner</strong> package provides two basic top-level classes that describe an individual file of experimental data and a
 list (such as a directory tree on disc) of many experimental files. For our research, a typical single experimental data file
 is essentially a single 2D table of floating point numbers with associated metadata, usually saved in some
 ASCII text format. This seems to cover most experiments in the physical sciences, but it you need a more complex
 format with more dimensions of data, we suggest you look elsewhere.</p>
-<div class="section" id="datafile-and-friends">
-<h3>DataFile and Friends<a class="headerlink" href="#datafile-and-friends" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="data-and-friends">
+<h3>Data and Friends<a class="headerlink" href="#data-and-friends" title="Permalink to this headline">¶</a></h3>
 <p><strong>Stoner.Core.DataFile</strong> is the base class for representing individual experimental data sets.
 It provides basic methods to examine and manipulate data, manage metadata and load and save data files.
 It has a large number of sub classes - most of these are in Stoner.FileFormats and are used to handle the loading of specific
 file formats.</p>
 <p>There are also two mxin classes designed to work with DataFile to enable additional functionality for writing analysis programs.</p>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt><strong>Stoner.Analysis.AnalysisMixin</strong> provides additional methods for curve-fitting, differentiating, smoothing and carrying out</dt>
-<dd>basic calculations on data.</dd>
-</dl>
-</li>
+<li><strong>Stoner.Analysis.AnalysisMixin</strong> provides additional methods for curve-fitting, differentiating, smoothing and carrying out
+basic calculations on data.</li>
 <li><strong>Stoner.plot.PlotMixin</strong> provides additional routines for plotting data on 2D or 3D plots.</li>
 </ul>
 <p>For rapid development of small scripts, we would recommend the <strong>Stoner.Data</strong> class which is a superclass of the above,
-and provides a &#8216;kitchen-sink&#8217; one stop shop for most of the package&#8217;s functionality.</p>
+and provides a ‘kitchen-sink’ one stop shop for most of the package’s functionality.</p>
 </div>
 <div class="section" id="datafolder">
 <h3>DataFolder<a class="headerlink" href="#datafolder" title="Permalink to this headline">¶</a></h3>
@@ -116,20 +120,29 @@ a function on each file or group of files.</p>
 <p>The <strong>Stoner.HDF5</strong> module provides some experimental classes to manipulate <em>DataFile</em> and <em>DataFolder</em> objects within HDF5
 format files. These are not a way to handle arbitary HDF5 files - the format is much to complex and flexible to make that
 an easy task, rather it is a way to work with large numbers of experimental sets using just a single file which may be less
-brutal to your computer&#8217;s OS than having directory trees with millions of individual files.</p>
+brutal to your computer’s OS than having directory trees with millions of individual files. The module also provides some classes to
+support loading some other HDF5 flavoured files into a <strong>DataFile</strong>.</p>
+<p>The <strong>Stoner.Zip</strong> module provides a similar set of classes to <strong>Stoner.HDF5</strong> but working with the ubiquitous zip compressed file format.</p>
+</div>
+<div class="section" id="image-subpackage">
+<h3>Image Subpackage<a class="headerlink" href="#image-subpackage" title="Permalink to this headline">¶</a></h3>
+<p>The <strong>Stoner.Image</strong> package is a new feature of recent versions of the package and provides dedicated classes for working with image data,
+and in particular for analysing Kerr Microscope image files. It provides an <strong>ImageFile</strong> class that is functionally similar to <strong>DataFile</strong>
+except that the numerical data is understood to represent image data and additional methods are incorporated to facilitate processing.</p>
 </div>
 </div>
 <div class="section" id="resources">
 <h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h2>
 <p>Included in the <a class="reference external" href="http://www.github.com/gb119/Stoner-PythonCode/">github repository</a>  are a (small) collection of sample scripts
 for carrying out various operations and some sample data files for testing the loading and processing of data. There is also a
-<a class="reference internal" href="UserGuide/ugindex.html#user-guide"><span class="std std-ref">The Stoner Python Package User Guide</span></a> as part of this documentation, along with a <a class="reference internal" href="Stoner.html"><span class="doc">complete API reference</span></a></p>
+<a class="reference external" href="http://stoner-pythoncode.readthedocs.io/en/latest/UserGuide/ugindex.html">User_Guide</a> as part of this documentation, along with a <a class="reference internal" href="Stoner.html"><span class="doc">complete API reference</span></a></p>
 </div>
 <div class="section" id="contact-and-licensing">
 <h2>Contact and Licensing<a class="headerlink" href="#contact-and-licensing" title="Permalink to this headline">¶</a></h2>
-<p>The lead developer for this code is <a class="reference external" href="http://www.stoner.leeds.ac.uk/people/gb">Dr Gavin Burnell</a> &lt;<a class="reference external" href="mailto:g&#46;burnell&#37;&#52;&#48;leeds&#46;ac&#46;uk">g<span>&#46;</span>burnell<span>&#64;</span>leeds<span>&#46;</span>ac<span>&#46;</span>uk</a>&gt; .
-The User Guide gives the current list of other contributors to the project.</p>
-<p>This code and the sample data are all (C) The University of Leeds 2008-2015 unless otherwise indficated in the source file.
+<p>The lead developer for this code is <a class="reference external" href="http://www.stoner.leeds.ac.uk/people/gb">Dr Gavin Burnell</a> &lt;<a class="reference external" href="mailto:g&#46;burnell&#37;&#52;&#48;leeds&#46;ac&#46;uk">g<span>&#46;</span>burnell<span>&#64;</span>leeds<span>&#46;</span>ac<span>&#46;</span>uk</a>&gt;, but many current and former members of the CM Physics group have
+contributed code, ideas and bug testing.</p>
+<p>The User Guide gives the current list of other contributors to the project.</p>
+<p>This code and the sample data are all (C) The University of Leeds 2008-2017 unless otherwise indficated in the source file.
 The contents of this package are licensed under the terms of the GNU Public License v3</p>
 </div>
 <div class="section" id="recent-changes">
@@ -137,50 +150,56 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 <div class="section" id="current-pypi-version">
 <h3>Current PyPi Version<a class="headerlink" href="#current-pypi-version" title="Permalink to this headline">¶</a></h3>
 <p>The current version of the package on PyPi will be the stable branch until the development branch enters beta testing, when we start
-making beta packages available. The current version is:</p>
-<a class="reference external image-reference" href="https://badge.fury.io/py/Stoner"><img alt="https://badge.fury.io/py/Stoner.svg" src="https://badge.fury.io/py/Stoner.svg" /></a>
+making beta packages available.</p>
 </div>
 <div class="section" id="development-version">
 <h3>Development Version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h3>
-<p>The current development version is 0.7. Features of 0.7 include</p>
+<p>The development version will be on version 0.8. Presently nothing has been done on this.</p>
+<p>Online documentation for all versions can be found on the ReadTheDocs pages <a class="reference external" href="http://stoner-pythoncode.readthedocs.io/en/latest/">online documentation</a></p>
+<div class="section" id="build-status">
+<h4>Build Status<a class="headerlink" href="#build-status" title="Permalink to this headline">¶</a></h4>
+<p>Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls. We currently test against
+python 2.7 and 3.5 via Travis and internally test on Python 3.6. Overall code quality
+is measured by landscape.io. The current status is shown at the top of this readme.</p>
+</div>
+<div class="section" id="citing-the-stoner-package">
+<h4>Citing the Stoner Package<a class="headerlink" href="#citing-the-stoner-package" title="Permalink to this headline">¶</a></h4>
+<p>We maintain a digital object identifier (doi) for this package (linked to on the status bar at the top of this readme) and
+encourage any users to cite this package via that doi.</p>
+</div>
+</div>
+<div class="section" id="stable-versions">
+<h3>Stable Versions<a class="headerlink" href="#stable-versions" title="Permalink to this headline">¶</a></h3>
+<p>The current stable version is 0.7. Features of 0.7 include</p>
 <blockquote>
 <div><ul class="simple">
 <li>Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin</li>
 <li>Addition of Stoner.Image package to handle image analysis</li>
 <li>Refactor DataFolder to use Mixin classes</li>
-<li>DataFolder now defaults to using <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code></li>
+<li>DataFolder now defaults to using <a class="reference internal" href="classes/Stoner.Core.Data.html#Stoner.Core.Data" title="Stoner.Core.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code></a></li>
 <li>DataFolder has an options to skip iterating over empty Data files</li>
 <li>Further improvements to <a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> handline.</li>
 </ul>
 </div></blockquote>
-<p>Online documentation for the development version can be found on the <a class="reference external" href="http://gb119.github.io/Stoner-PythonCode">githib repository pages</a></p>
-<div class="section" id="build-status">
-<h4>Build Status<a class="headerlink" href="#build-status" title="Permalink to this headline">¶</a></h4>
-<p>Travis CI is used to test the development branch to see if it passes the current unit tests and coveralls.io handles the unit test coverage reporting.
-The current status is:</p>
-<a class="reference external image-reference" href="https://travis-ci.org/gb119/Stoner-PythonCode"><img alt="https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master" src="https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master" /></a>
-<a class="reference external image-reference" href="https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master"><img alt="https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master" src="https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master" /></a>
-<a class="reference external image-reference" href="https://landscape.io/github/gb119/Stoner-PythonCode/master"><img alt="Code Health" src="https://landscape.io/github/gb119/Stoner-PythonCode/master/landscape.svg?style=flat" /></a>
-</div>
-<div class="section" id="citing-the-stoner-package">
-<h4>Citing the Stoner Package<a class="headerlink" href="#citing-the-stoner-package" title="Permalink to this headline">¶</a></h4>
-<p>You can cite the Stoner package via its doi:</p>
-<a class="reference external image-reference" href="https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode"><img alt="https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg" src="https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg" /></a>
-</div>
-</div>
-<div class="section" id="stable-version">
-<h3>Stable Version<a class="headerlink" href="#stable-version" title="Permalink to this headline">¶</a></h3>
-<p>The current stable version is 0.6. This features some major changes in the architecture, switching from a numpy MaskedArray
-as the main data store to a custom sub-class that contains most of the logic for indexing data by column name and designation.
-The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.
-Other underlying changes are a switch to using properties rather than straight attribute access.</p>
+<p>0.7 will continue to have bug fix releases and back-ports of anything very useful.</p>
+<p>The old stable version was 0.6. This features</p>
+<blockquote>
+<div><ul class="simple">
+<li>Some major changes in the architecture,</li>
+<li>Switching from a numpy MaskedArray as the main data store to a custom sub-class that contains most of the logic
+for indexing data by column name and designation.</li>
+<li>The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.</li>
+<li>Other underlying changes are a switch to using properties rather than straight attribute access.</li>
+</ul>
+</div></blockquote>
 <p>0.6 now also makes use of filemagic to work out the mime type of files to be loaded to try and improve the resilience of the automatic
 file format detection on platforms where this is supported and adds some extra methods to AnalyseFile for extrapolation.</p>
-<p>0.6 should work on Python 2.7 and 3.5</p>
+<p>No further relases will be made to 0.6.</p>
+<p>0.6 and 0.7 should work on Python 2.7 and 3.5</p>
 </div>
 </div>
-<div class="section" id="user-guide">
-<h2>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h2>User Guide<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="UserGuide/ugindex.html">User Guide</a><ul>
@@ -203,16 +222,26 @@ file format detection on platforms where this is supported and adds some extra m
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Stoner.html">Module Api Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#core-module"><code class="docutils literal"><span class="pre">Core</span></code> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#analysis-module"><code class="docutils literal"><span class="pre">Analysis</span></code> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#plot-package"><code class="docutils literal"><span class="pre">plot</span></code> Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#folders-module"><code class="docutils literal"><span class="pre">Folders</span></code> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.FileFormats"><code class="docutils literal"><span class="pre">FileFormats</span></code> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#fit-module"><code class="docutils literal"><span class="pre">Fit</span></code> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#hdf5-module"><code class="docutils literal"><span class="pre">HDF5</span></code> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#zip-module"><code class="docutils literal"><span class="pre">Zip</span></code> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#util-module"><code class="docutils literal"><span class="pre">Util</span></code> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-core-module">Stoner.Core Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-analysis-module">Stoner.Analysis Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-plot-package">Stoner.plot Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-plot-formats-module">Stoner.plot.formats Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-plot-utils-module">Stoner.plot.utils Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-folders-module">Stoner.Folders Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#generic-fomats">Generic Fomats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#instrument-formats">Instrument Formats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#facility-outputs">Facility Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.Fit">Stoner.Fit Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-hdf5-module">Stoner.HDF5 Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-zip-module">Stoner.Zip Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-util-module">Stoner.Util Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-tools-module">Stoner.tools Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-image-package">Stoner.Image Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-image-folders-module">Stoner.Image.folders Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-image-stack-module">Stoner.Image.stack Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-image-kerr-module">Stoner.Image.kerr Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-image-imagefuncs-module">Stoner.Image.imagefuncs Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#stoner-image-util-module">Stoner.Image.util Module</a></li>
 </ul>
 </li>
 </ul>
@@ -227,7 +256,7 @@ file format detection on platforms where this is supported and adds some extra m
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="#">
-              <img class="logo" src="_static/StonerLogo.png" alt="Logo"/>
+              <img class="logo" src="_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
@@ -235,8 +264,9 @@ file format detection on platforms where this is supported and adds some extra m
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#getting-this-code">Getting this Code</a></li>
 <li><a class="reference internal" href="#overview">Overview</a><ul>
-<li><a class="reference internal" href="#datafile-and-friends">DataFile and Friends</a></li>
+<li><a class="reference internal" href="#data-and-friends">Data and Friends</a></li>
 <li><a class="reference internal" href="#datafolder">DataFolder</a></li>
+<li><a class="reference internal" href="#image-subpackage">Image Subpackage</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#resources">Resources</a></li>
@@ -248,10 +278,10 @@ file format detection on platforms where this is supported and adds some extra m
 <li><a class="reference internal" href="#citing-the-stoner-package">Citing the Stoner Package</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#stable-version">Stable Version</a></li>
+<li><a class="reference internal" href="#stable-versions">Stable Versions</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#user-guide">User Guide</a></li>
+<li><a class="reference internal" href="#id1">User Guide</a></li>
 <li><a class="reference internal" href="#package-documentatuion">Package Documentatuion</a></li>
 </ul>
 </li>
@@ -260,13 +290,11 @@ file format detection on platforms where this is supported and adds some extra m
   <h4>Next topic</h4>
   <p class="topless"><a href="UserGuide/ugindex.html"
                         title="next chapter">The Stoner Python Package User Guide</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+<div class="sourcelink">
+  <a href="_sources/index.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -277,29 +305,34 @@ file format detection on platforms where this is supported and adds some extra m
     </form>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="UserGuide/ugindex.html" title="The Stoner Python Package User Guide"
-             >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">Stoner Package</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 24, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
-    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          <a href="UserGuide/ugindex.html" title="Next document">The Stoner Python Package User Guide</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="#">Stoner Package</a></li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.6.5
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
   </body>
 </html>

@@ -1,0 +1,6 @@
+blochGrueneisen
+===============
+
+.. currentmodule:: Stoner.Fit
+
+.. autofunction:: blochGrueneisen

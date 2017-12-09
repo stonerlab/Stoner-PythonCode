@@ -1,8 +1,0 @@
-
-
-VSMFile.iteritems
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: VSMFile.iteritems

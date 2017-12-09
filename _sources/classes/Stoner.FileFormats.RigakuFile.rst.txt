@@ -29,9 +29,6 @@ Stoner.FileFormats.RigakuFile
       ~Stoner.FileFormats.RigakuFile.get_filename
       ~Stoner.FileFormats.RigakuFile.insert_rows
       ~Stoner.FileFormats.RigakuFile.items
-      ~Stoner.FileFormats.RigakuFile.iteritems
-      ~Stoner.FileFormats.RigakuFile.iterkeys
-      ~Stoner.FileFormats.RigakuFile.itervalues
       ~Stoner.FileFormats.RigakuFile.keys
       ~Stoner.FileFormats.RigakuFile.load
       ~Stoner.FileFormats.RigakuFile.pop
@@ -46,6 +43,7 @@ Stoner.FileFormats.RigakuFile
       ~Stoner.FileFormats.RigakuFile.select
       ~Stoner.FileFormats.RigakuFile.setdefault
       ~Stoner.FileFormats.RigakuFile.sort
+      ~Stoner.FileFormats.RigakuFile.split
       ~Stoner.FileFormats.RigakuFile.swap_column
       ~Stoner.FileFormats.RigakuFile.to_Q
       ~Stoner.FileFormats.RigakuFile.unique
@@ -56,27 +54,5 @@ Stoner.FileFormats.RigakuFile
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.FileFormats.RigakuFile.T
-      ~Stoner.FileFormats.RigakuFile.clone
-      ~Stoner.FileFormats.RigakuFile.column_headers
-      ~Stoner.FileFormats.RigakuFile.data
-      ~Stoner.FileFormats.RigakuFile.dict_records
-      ~Stoner.FileFormats.RigakuFile.dims
-      ~Stoner.FileFormats.RigakuFile.dtype
-      ~Stoner.FileFormats.RigakuFile.filename
-      ~Stoner.FileFormats.RigakuFile.mask
-      ~Stoner.FileFormats.RigakuFile.metadata
-      ~Stoner.FileFormats.RigakuFile.mime_type
-      ~Stoner.FileFormats.RigakuFile.patterns
-      ~Stoner.FileFormats.RigakuFile.priority
-      ~Stoner.FileFormats.RigakuFile.records
-      ~Stoner.FileFormats.RigakuFile.setas
-      ~Stoner.FileFormats.RigakuFile.shape
-      ~Stoner.FileFormats.RigakuFile.subclasses
    
    

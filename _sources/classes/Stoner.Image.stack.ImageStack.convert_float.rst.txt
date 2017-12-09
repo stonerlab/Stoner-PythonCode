@@ -1,8 +1,0 @@
-
-
-ImageStack.convert_float
-===========================================
-
-.. currentmodule:: Stoner.Image.stack
-
-.. automethod:: ImageStack.convert_float

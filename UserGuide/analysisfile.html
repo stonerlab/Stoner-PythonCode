@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Analysing Data Files &#8212; Stoner Pacakge API Documentation</title>
-    
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -24,32 +21,39 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Working with Lots of Files" href="datafolder.html" />
-    <link rel="prev" title="Plotting Data" href="plotfile.html" /> 
+    <link rel="prev" title="Plotting Data" href="plotfile.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="datafolder.html" title="Working with Lots of Files"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="plotfile.html" title="Plotting Data"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="ugindex.html" accesskey="U">The Stoner Python Package User Guide</a> &#187;</li> 
-      </ul>
-    </div>  
+  <body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="plotfile.html" title="Previous document">Plotting Data</a>
+        </li>
+        <li>
+          <a href="datafolder.html" title="Next document">Working with Lots of Files</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="ugindex.html">The Stoner Python Package User Guide</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -59,7 +63,7 @@
   <div class="section" id="analysing-data-files">
 <h1>Analysing Data Files<a class="headerlink" href="#analysing-data-files" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="normalising-and-basic-maths-operations">
-<h2>Normalising and Basic Maths Operations<a class="headerlink" href="#normalising-and-basic-maths-operations" title="Permalink to this headline">¶</a></h2>
+<span id="channel-maths-guide"></span><h2>Normalising and Basic Maths Operations<a class="headerlink" href="#normalising-and-basic-maths-operations" title="Permalink to this headline">¶</a></h2>
 <p>Several methods are provided to assist with common data fitting and preparation tasks, such as normalising columns,
 adding and subtracting columns.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="s1">&#39;reference&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;Normalised Data&#39;</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -68,8 +72,8 @@ adding and subtracting columns.:</p>
 <span class="n">a</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">a2</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.normalise.html#Stoner.Analysis.AnalysisMixin.normalise" title="Stoner.Analysis.AnalysisMixin.normalise"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.normalise()</span></code></a> method simply divides the data column by the reference column. By default the normalise method
-replaces the data column with the new (normalised) data and appends &#8216;(norm)&#8217; to the column header. The keyword arguments
+<p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.normalise" title="Stoner.Analysis.AnalysisMixin.normalise"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.normalise()</span></code></a> method simply divides the data column by the reference column. By default the normalise method
+replaces the data column with the new (normalised) data and appends ‘(norm)’ to the column header. The keyword arguments
 <em>header</em> and <em>replace</em> can override this behaviour. The third variant illustrates normalising to a constant
 (note, however, that if the second argument is an integer it is treated as a column index and not a constant).
 The final variant takes a 1D array with the same number of elements as rows and uses that to normalise to.
@@ -80,11 +84,11 @@ A typical example might be to have some baseline scan that one is normalising to
 <span class="n">a</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">a2</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>As one might expect form the name, the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.subtract.html#Stoner.Analysis.AnalysisMixin.subtract" title="Stoner.Analysis.AnalysisMixin.subtract"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.subtract()</span></code></a> method subtracts the second column form the first.
-Unlike <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.normalise.html#Stoner.Analysis.AnalysisMixin.normalise" title="Stoner.Analysis.AnalysisMixin.normalise"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.normalise()</span></code></a> the first data column will not be replaced but a new column inserted and a new header
-(defaulting to &#8216;column header 1 - column header 2&#8217;) will be created. This can be overridden with the <em>header</em> and <em>replace</em>
-keyword arguments. The next two variants of the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.subtract.html#Stoner.Analysis.AnalysisMixin.subtract" title="Stoner.Analysis.AnalysisMixin.subtract"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.subtract()</span></code></a> method work in an analogous manner to the
-<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.normalise.html#Stoner.Analysis.AnalysisMixin.normalise" title="Stoner.Analysis.AnalysisMixin.normalise"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.normalise()</span></code></a> methods. Finally the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.add.html#Stoner.Analysis.AnalysisMixin.add" title="Stoner.Analysis.AnalysisMixin.add"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.add()</span></code></a> method allows one to add two columns in a
+<p>As one might expect form the name, the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.subtract" title="Stoner.Analysis.AnalysisMixin.subtract"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.subtract()</span></code></a> method subtracts the second column form the first.
+Unlike <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.normalise" title="Stoner.Analysis.AnalysisMixin.normalise"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.normalise()</span></code></a> the first data column will not be replaced but a new column inserted and a new header
+(defaulting to ‘column header 1 - column header 2’) will be created. This can be overridden with the <em>header</em> and <em>replace</em>
+keyword arguments. The next two variants of the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.subtract" title="Stoner.Analysis.AnalysisMixin.subtract"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.subtract()</span></code></a> method work in an analogous manner to the
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.normalise" title="Stoner.Analysis.AnalysisMixin.normalise"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.normalise()</span></code></a> methods. Finally the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.add" title="Stoner.Analysis.AnalysisMixin.add"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.add()</span></code></a> method allows one to add two columns in a
 similar fashion:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;A plus B&#39;</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
@@ -98,16 +102,57 @@ similar fashion:</p>
 </pre></div>
 </div>
 <p>with variants that take either a 1D array of data or a constant instead of the B column index.</p>
+<p>The final variant for these channel operations is the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.diffsum" title="Stoner.Analysis.AnalysisMixin.diffsum"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.diffsum()</span></code></a> which takes the ratio of the difference over the sum of two channels.
+This is typically used to calculate asymmetry parameters.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">diffsum</span><span class="p">(</span><span class="s1">&#39;I+&#39;</span><span class="p">,</span><span class="s1">&#39;I-&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Of course, these elementary operations might look rather pointless given how easy it is to extract single columns of data and then add them to a
+<a class="reference internal" href="../classes/Stoner.Core.Data.html#Stoner.Core.Data" title="Stoner.Core.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code></a> object, however if the cahnnels are specified as a <strong>tuple</strong> of two elements, then it is taken as a channel of data and a
+second channel of uncertainities. The uncertainity calculation is then propagated correctly for the maths operations. This is particularly useful for the
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.diffsum" title="Stoner.Analysis.AnalysisMixin.diffsum"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.diffsum()</span></code></a> method where the error propagation is not entirely trivial.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Demonstrate Channel math operations.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">ones_like</span><span class="p">,</span><span class="n">sin</span><span class="p">,</span><span class="n">cos</span><span class="p">,</span><span class="n">pi</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
+<span class="kn">from</span> <span class="nn">Stoner.plot.utils</span> <span class="kn">import</span> <span class="n">errorfill</span>
+
+<span class="n">x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="o">*</span><span class="n">pi</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span>
+<span class="n">e</span><span class="o">=</span><span class="mf">0.01</span><span class="o">*</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">y</span><span class="o">=</span><span class="mf">0.1</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span><span class="o">+</span><span class="mf">0.1</span>
+<span class="n">e2</span><span class="o">=</span><span class="mf">0.01</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">y2</span><span class="o">=</span><span class="mf">0.1</span><span class="o">*</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">e2</span><span class="p">,</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;$X$&quot;</span><span class="p">,</span><span class="s2">&quot;$Y_+$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$\delta Y_+$&quot;</span><span class="p">,</span><span class="s2">&quot;$Y_-$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$\delta Y_-$&quot;</span><span class="p">],</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyeye&quot;</span><span class="p">)</span>
+
+<span class="n">a</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">b</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">diffsum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyeyeyeyeyeyeye&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">multiple</span><span class="o">=</span><span class="s2">&quot;panels&quot;</span><span class="p">,</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span><span class="n">alpha_fill</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/channel_math.png">png</a>, <a class="reference external" href="../samples/channel_math.hires.png">hires.png</a>, <a class="reference external" href="../samples/channel_math.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/channel_math.png" src="../_images/channel_math.png" />
+</div>
+</div>
+<div class="section" id="splitting-data-up">
+<h2>Splitting Data Up<a class="headerlink" href="#splitting-data-up" title="Permalink to this headline">¶</a></h2>
 <p>One might wish to split a single data file into several different data files each with the rows of the original
 that have a common unique value in one data column, or for which some function of the complete row determines which datafile
-each row belongs in. The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.split.html#Stoner.Analysis.AnalysisMixin.split" title="Stoner.Analysis.AnalysisMixin.split"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.split()</span></code></a> method is useful for this case.:</p>
+each row belongs in. The <code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.split()</span></code> method is useful for this case.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;Polarisation&#39;</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">([</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="s1">&#39;Polarisation&#39;</span><span class="p">],[</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">,</span><span class="kc">None</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>In these examples we assume the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a> has a data column &#8216;Polarisation&#8217; that takes two (or more) discrete values
-and a column &#8216;Temperature&#8217; that contains numbers above and below 100.</p>
+<p>In these examples we assume the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a> has a data column ‘Polarisation’ that takes two (or more) discrete values
+and a column ‘Temperature’ that contains numbers above and below 100.</p>
 <p>The first example would return a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> object  containing two separate isntances of <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>  which
 would each contain the rows from the original data that had each unique value of the polarisation data. The second example would
 produce a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> object containing two <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a> objects for the rows with temperature above and below 100.
@@ -119,7 +164,7 @@ The final example will result in a <a class="reference internal" href="../classe
 <div class="section" id="simple-polynomial-fits">
 <h3>Simple polynomial Fits<a class="headerlink" href="#simple-polynomial-fits" title="Permalink to this headline">¶</a></h3>
 <p>Simple least squares fitting of polynomial functions is handled by the
-<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.polyfit.html#Stoner.Analysis.AnalysisMixin.polyfit" title="Stoner.Analysis.AnalysisMixin.polyfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.polyfit()</span></code></a> method:</p>
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.polyfit" title="Stoner.Analysis.AnalysisMixin.polyfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.polyfit()</span></code></a> method:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">column_x</span><span class="p">,</span><span class="n">column_y</span><span class="p">,</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="s2">&quot;New Column&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -129,7 +174,7 @@ the Stoner package. The routine will fit multiple columns if <em>column_y</em>
 is a list or slice. The <em>polynomial_order</em> parameter should be a simple integer
 greater or equal to 1 to define the degree of polynomial to fit. The <em>bounds</em>
 function follows the same rules as the <em>bounds</em> function in
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.search()</span></code></a> to restrict the fitting to a limited range of rows. The
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.search()</span></code></a> to restrict the fitting to a limited range of rows. The
 method returns a list of coefficients with the highest power first. If
 <em>column_y</em> was a list, then a 2D array of coefficients is returned.</p>
 <p>If <em>result</em> is specified then a new column with the header given by the <em>result</em> parameter will be
@@ -137,7 +182,7 @@ created and the fitted polynomial evaluated at each point.</p>
 </div>
 <div class="section" id="simple-function-fitting">
 <h3>Simple function fitting<a class="headerlink" href="#simple-function-fitting" title="Permalink to this headline">¶</a></h3>
-<p>For more general curve fitting operations the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.curve_fit.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>
+<p>For more general curve fitting operations the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>
 method can be employed. Again, this is a pass through to the numpy routine of
 the same name.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>  <span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;New Column&quot;</span> <span class="p">)</span>
@@ -152,7 +197,7 @@ and y columns to fit. This method cannot handle multiple y columns.
 should also be an array of the same length as the x and y data. Fianlly, the
 <em>bounds</em> function can be used to restrict the fitting to only a subset of the rows
 of data.</p>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.curve_fit.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a> returns a list of two arrays <code class="docutils literal"><span class="pre">[popt,pcov]</span></code>:
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a> returns a list of two arrays <code class="docutils literal"><span class="pre">[popt,pcov]</span></code>:
 where <em>popt</em> is an array of the optimal fitting parameters and
 <em>pcov</em> is a 2D array of the co-variances between the parameters.</p>
 <p>If <em>result</em> is not <strong>None</strong> then the fitted data is added to the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>
@@ -160,8 +205,8 @@ object. Where it is added depends on the combination of the <em>result</em>, <em
 and <em>header</em> parameters. If <em>result</em> is a string or integer it is interpreted as a column
 index at which the fitted data will be inserted (<em>replace</em> <strong>False</strong>) or overwritten over the existing data (<em>replace</em> <strong>True</strong>).
 The fitted data will be given the column header <em>header</em> unless <em>header</em> is not a string, in which ase the column
-will be called &#8216;Fitted with &#8216; and the name of the function <em>func</em>.</p>
-<p>The utility method of the <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">Stoner.Util.Data.annotate_fit()</span></code> is useful
+will be called ‘Fitted with ‘ and the name of the function <em>func</em>.</p>
+<p>The utility method of the <a class="reference internal" href="../classes/Stoner.Core.Data.html#Stoner.Core.Data" title="Stoner.Core.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code></a>, <code class="xref py py-meth docutils literal"><span class="pre">Stoner.Util.Data.annotate_fit()</span></code> is useful
 for adding appropriately formatted details of the fit to the plot.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;USe curve_fit to fit a straight line.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
@@ -179,11 +224,11 @@ for adding appropriately formatted details of the fit to the plot.</p>
 <span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/curve_fit_line.py">Source code</a>, <a class="reference external" href="../samples/curve_fit_line.png">png</a>, <a class="reference external" href="../samples/curve_fit_line.hires.png">hires.png</a>, <a class="reference external" href="../samples/curve_fit_line.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/curve_fit_line.png">png</a>, <a class="reference external" href="../samples/curve_fit_line.hires.png">hires.png</a>, <a class="reference external" href="../samples/curve_fit_line.pdf">pdf</a>)</p>
 <div class="figure">
 <img alt="../_images/curve_fit_line.png" src="../_images/curve_fit_line.png" />
 </div>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.curve_fit.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a> can also be used to fit more complex problems. In the example below, a set of
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a> can also be used to fit more complex problems. In the example below, a set of
 points in x,y,z space are fitted to a plane.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Use curve_fit to fit a plane to some data.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
@@ -222,12 +267,8 @@ points in x,y,z space are fitted to a plane.</p>
 <span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/curve_fit_plane.py">Source code</a>, <a class="reference external" href="../samples/curve_fit_plane.png">png</a>, <a class="reference external" href="../samples/curve_fit_plane.hires.png">hires.png</a>, <a class="reference external" href="../samples/curve_fit_plane.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/curve_fit_plane.png" src="../_images/curve_fit_plane.png" />
-</div>
 <p>Finally, by you can sepcify the <em>y-data</em> to fit to as a numpy array. This can be used to fit functions that
-don&#8217;t themseleves return values that can be matched up to existing data. An example of doing this is fitting a
+don’t themseleves return values that can be matched up to existing data. An example of doing this is fitting a
 sphere to a set of <span class="math">\((x,y,z)\)</span> data points.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Fit a sphere with curve_fit.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
@@ -283,7 +324,7 @@ sphere to a set of <span class="math">\((x,y,z)\)</span> data points.</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/sphere_fit.py">Source code</a>, <a class="reference external" href="../samples/sphere_fit.png">png</a>, <a class="reference external" href="../samples/sphere_fit.hires.png">hires.png</a>, <a class="reference external" href="../samples/sphere_fit.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/sphere_fit.png">png</a>, <a class="reference external" href="../samples/sphere_fit.hires.png">hires.png</a>, <a class="reference external" href="../samples/sphere_fit.pdf">pdf</a>)</p>
 <div class="figure">
 <img alt="../_images/sphere_fit.png" src="../_images/sphere_fit.png" />
 </div>
@@ -292,33 +333,33 @@ sphere to a set of <span class="math">\((x,y,z)\)</span> data points.</p>
 <div class="section" id="fitting-with-limits">
 <span id="id1"></span><h3>Fitting with limits<a class="headerlink" href="#fitting-with-limits" title="Permalink to this headline">¶</a></h3>
 <p>The Stoner package has a number of alternative fitting mechanisms that supplement the standard
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v0.19.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.curve_fit()</span></code></a> function. New in version 0.2 onwards of the Package is an interface to the
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v1.0.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.curve_fit()</span></code></a> function. New in version 0.2 onwards of the Package is an interface to the
 <em>lmfit</em> module.</p>
 <div class="section" id="non-linear-curve-fitting-with-lmfit">
 <h4>Non-linear curve fitting with lmfit<a class="headerlink" href="#non-linear-curve-fitting-with-lmfit" title="Permalink to this headline">¶</a></h4>
 <p>lmfit provides a flexible way to fit complex models to experimental data in a pythonesque object-orientated fashion.
 A full description of the lmfit module is given in the <a class="reference external" href="href=http://lmfit.github.io/lmfit-py/">lmffit documentation</a>. . The
-<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.lmfit.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a> method is used to interact with lmfit.</p>
-<p>In order to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.lmfit.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a>, one requires a <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></code> instance. This describes a function
-and its independent and fittable parameters, whether they have limits and what the limits are. The <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></code> module contains
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a> method is used to interact with lmfit.</p>
+<p>In order to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a>, one requires a <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></code> instance. This describes a function
+and its independent and fittable parameters, whether they have limits and what the limits are. The <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></code></a> module contains
 a series of <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></code> subclasses that represent various models used in condensed matter physics.</p>
-<p>The operation of <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.lmfit.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a> is very similar to that of <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.curve_fit.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>:</p>
+<p>The operation of <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a> is very similar to that of <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="k">import</span> <span class="n">Arrehenius</span>
-<span class="n">model</span><span class="o">=</span><span class="n">Arrehenius</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="mi">1</span><span class="n">E7</span><span class="p">,</span><span class="n">DE</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">model</span><span class="o">=</span><span class="n">Arrehenius</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="mf">1E7</span><span class="p">,</span><span class="n">DE</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 <span class="n">fit</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;Temp&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;Cond&quot;</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">)</span>
 <span class="nb">print</span> <span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">()</span>
 <span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="s2">&quot;Arrehenius:A&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;Arrehenius:A err&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;chi^2&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;nfev&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>In this example we would be fitting an Arrehenius model to data contained inthe &#8216;Temp&#8217; and &#8216;Cond&#8217; columns. The resulting
+<p>In this example we would be fitting an Arrehenius model to data contained inthe ‘Temp’ and ‘Cond’ columns. The resulting
 fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</p>
-<p>The <em>model</em> argument to <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.lmfit.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a> can be either an instance of the model class, or just the class itself (in which case it will be
+<p>The <em>model</em> argument to <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a> can be either an instance of the model class, or just the class itself (in which case it will be
 instantiated as required), or just a bare callable, in which case a model class will be created around it. The latter is approximately equivalent to
-a simple call to <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.curve_fit.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>.</p>
-<p>The return value from <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.lmfit.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a> is controlled by the <em>output</em> keyword parameter. By default it is the <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.ModelFit</span></code>
+a simple call to <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>.</p>
+<p>The return value from <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a> is controlled by the <em>output</em> keyword parameter. By default it is the <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.ModelFit</span></code>
 instance. This contains all the information about the fit and fitting process.</p>
-<p>You can pass the model as a subclass of model, if you don&#8217;t pass initial values either via the <em>p0</em> parameter or as keyword arguements, then the model&#8217;s
-<em>guess</em> method is called (e.g. <a class="reference internal" href="../classes/Stoner.Fit.Arrhenius.guess.html#Stoner.Fit.Arrhenius.guess" title="Stoner.Fit.Arrhenius.guess"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Fit.Arrhenius.guess()</span></code></a>) to determine parameters fromt he data. For example:</p>
+<p>You can pass the model as a subclass of model, if you don’t pass initial values either via the <em>p0</em> parameter or as keyword arguements, then the model’s
+<em>guess</em> method is called (e.g. <a class="reference internal" href="../classes/Stoner.Fit.Arrhenius.html#Stoner.Fit.Arrhenius.guess" title="Stoner.Fit.Arrhenius.guess"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Fit.Arrhenius.guess()</span></code></a>) to determine parameters fromt he data. For example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example of using lmfit to do a bounded fit.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">StretchedExp</span>
@@ -333,14 +374,14 @@ instance. This contains all the information about the fit and fitting process.</
 
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="p">,</span><span class="s2">&quot;-&quot;</span><span class="p">])</span>
 <span class="c1"># Make apretty label using Stoner.Util methods</span>
-<span class="n">text</span><span class="o">=</span><span class="s2">&quot;$y=A</span><span class="se">\\</span><span class="s2">exp</span><span class="se">\\</span><span class="s2">left[</span><span class="se">\\</span><span class="s2">left(-</span><span class="se">\\</span><span class="s2">frac{x}{x_0}</span><span class="se">\\</span><span class="s2">right)^</span><span class="se">\\</span><span class="s2">beta</span><span class="se">\\</span><span class="s2">right]$</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="n">text</span><span class="o">+=</span><span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">StretchedExp</span><span class="p">,</span><span class="n">text_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">text</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$y=A e^{-\left(\frac{x}{x_0}\right)^\beta}$&quot;</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="n">text</span><span class="o">+=</span><span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">StretchedExp</span><span class="p">,</span><span class="n">text_only</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mf">4E4</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
 <span class="c1">#Adjust layout NB pass-through method to pyplot used here</span>
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/lmfit_example.py">Source code</a>, <a class="reference external" href="../samples/lmfit_example.png">png</a>, <a class="reference external" href="../samples/lmfit_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit_example.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/lmfit_example.png">png</a>, <a class="reference external" href="../samples/lmfit_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit_example.pdf">pdf</a>)</p>
 <div class="figure">
 <img alt="../_images/lmfit_example.png" src="../_images/lmfit_example.png" />
 </div>
@@ -348,7 +389,7 @@ instance. This contains all the information about the fit and fitting process.</
 <div class="section" id="non-linear-curve-fitting-with-initialisation-file">
 <h4>Non-linear curve fitting with initialisation file<a class="headerlink" href="#non-linear-curve-fitting-with-initialisation-file" title="Permalink to this headline">¶</a></h4>
 <p>For writing general purpose fitting codes, it can be useful to drive the fitting code from a separate intialisation file so that users do not have to
-edit the source code. <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.lmfit.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a> and <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></code> provide some mechanisms to enable this.</p>
+edit the source code. <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a> and <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></code></a> provide some mechanisms to enable this.</p>
 <p>Firstly, the initialisation file should take the form like so.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Options</span><span class="p">]</span>
 <span class="n">model</span><span class="p">:</span> <span class="n">Stoner</span><span class="o">.</span><span class="n">Fit</span><span class="o">.</span><span class="n">Strijkers</span>
@@ -439,37 +480,38 @@ edit the source code. <a class="reference internal" href="../classes/Stoner.Anal
 <span class="n">step</span><span class="p">:</span> <span class="mf">0.0</span>
 </pre></div>
 </div>
-<p>This initialisation file can be passed to <a class="reference internal" href="../functions/Stoner.Fit.cfg_data_from_ini.html#Stoner.Fit.cfg_data_from_ini" title="Stoner.Fit.cfg_data_from_ini"><code class="xref py py-func docutils literal"><span class="pre">Stoner.Fit.cfg_data_from_ini()</span></code></a> which will use the information in the [Data]
+<p>This initialisation file can be passed to <a class="reference internal" href="../classes/Stoner.Fit.cfg_data_from_ini.html#Stoner.Fit.cfg_data_from_ini" title="Stoner.Fit.cfg_data_from_ini"><code class="xref py py-func docutils literal"><span class="pre">Stoner.Fit.cfg_data_from_ini()</span></code></a> which will use the information in the [Data]
 section to read in the data file and identify the x and y columns.</p>
 <p>The initialisation file can then be passed to <code class="xref py py-func docutils literal"><span class="pre">Stoner.Fit.cfg_mode_from_ini()</span></code> which will use the configuration file to
 setup the model and parameter hints. The configuration file should have one section for eac parameter in the model. This function
-returns the configured model and also a 2D array of values to feed as the starting values to <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.lmfit.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a>. Depending
+returns the configured model and also a 2D array of values to feed as the starting values to <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a>. Depending
 on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe code will either perform a single fitting attempt, or do a mapping of the
 <span class="math">\(\\chi^2\)</span> goodeness of fit.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Demo of new Stoner.Analysis.AnalyseFile.lmfit</span>
-
-<span class="sd">Created on Thu Oct 02 21:17:41 2014</span>
-
-<span class="sd">@author: phygbu</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Demo of new Stoner.Analysis.AnalyseFile.lmfit</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
-
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">__home__</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
 <span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">cfg_data_from_ini</span><span class="p">,</span><span class="n">cfg_model_from_ini</span>
 
-<span class="n">d</span><span class="o">=</span><span class="n">cfg_data_from_ini</span><span class="p">(</span><span class="s2">&quot;PCAR-New.ini&quot;</span><span class="p">,</span><span class="s2">&quot;../sample-data/PCAR Co Data.csv&quot;</span><span class="p">,</span><span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">config</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="s2">&quot;scripts&quot;</span><span class="p">,</span><span class="s2">&quot;PCAR-New.ini&quot;</span><span class="p">)</span>
+<span class="n">datafile</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="s2">&quot;sample-data&quot;</span><span class="p">,</span><span class="s2">&quot;PCAR Co Data.csv&quot;</span><span class="p">)</span>
 
-<span class="n">model</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">cfg_model_from_ini</span><span class="p">(</span><span class="s2">&quot;PCAR-New.ini&quot;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">cfg_data_from_ini</span><span class="p">(</span><span class="n">config</span><span class="p">,</span><span class="n">datafile</span><span class="p">)</span>
+<span class="n">model</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">cfg_model_from_ini</span><span class="p">(</span><span class="n">config</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
 
 <span class="n">fit</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
 
 <span class="n">d</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="s2">&quot;r-&quot;</span><span class="p">,</span><span class="s2">&quot;bo&quot;</span><span class="p">])</span> <span class="c1"># plot the data</span>
-<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span><span class="n">xycoords</span><span class="o">=</span><span class="s2">&quot;axes fraction&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=-</span><span class="mi">25</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">1.02</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">())</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../../scripts/lmfit-demo.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/lmfit_demo.png">png</a>, <a class="reference external" href="../samples/lmfit_demo.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit_demo.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/lmfit_demo.png" src="../_images/lmfit_demo.png" />
+</div>
 </div>
 </div>
 </div>
@@ -477,7 +519,7 @@ on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe cod
 <h2>More AnalysisMixin Functions<a class="headerlink" href="#more-analysismixin-functions" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="applying-an-arbitary-function-through-the-data">
 <h3>Applying an arbitary function through the data<a class="headerlink" href="#applying-an-arbitary-function-through-the-data" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.apply.html#Stoner.Analysis.AnalysisMixin.apply" title="Stoner.Analysis.AnalysisMixin.apply"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.apply()</span></code></a>:</p>
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.apply" title="Stoner.Analysis.AnalysisMixin.apply"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.apply()</span></code></a>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">replace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -487,7 +529,7 @@ existing data (depending on the values of <em>replace</em> and <em>header</em>).
 </div>
 <div class="section" id="basic-data-inspection">
 <h3>Basic Data Inspection<a class="headerlink" href="#basic-data-inspection" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.max.html#Stoner.Analysis.AnalysisMixin.max" title="Stoner.Analysis.AnalysisMixin.max"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.max()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.min.html#Stoner.Analysis.AnalysisMixin.min" title="Stoner.Analysis.AnalysisMixin.min"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.min()</span></code></a>:</p>
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.max" title="Stoner.Analysis.AnalysisMixin.max"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.max()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.min" title="Stoner.Analysis.AnalysisMixin.min"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.min()</span></code></a>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">column</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="n">labda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">)</span>
@@ -505,12 +547,12 @@ minimum) and the row number where the maximum or minimum was found.</p>
 <span class="n">a</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">column</span><span class="p">,</span><span class="n">b</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="n">column</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.span.html#Stoner.Analysis.AnalysisMixin.span" title="Stoner.Analysis.AnalysisMixin.span"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.span()</span></code></a> method simply returns a tuple of minimum and maximum values within either the whole column or
-bounded data. Internally this is just calling the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.max.html#Stoner.Analysis.AnalysisMixin.max" title="Stoner.Analysis.AnalysisMixin.max"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.max()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.min.html#Stoner.Analysis.AnalysisMixin.min" title="Stoner.Analysis.AnalysisMixin.min"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.min()</span></code></a> methods.
-The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.clip.html#Stoner.Analysis.AnalysisMixin.clip" title="Stoner.Analysis.AnalysisMixin.clip"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.clip()</span></code></a> method deletes rows for which the specified column as a value that is either larger or
-smaller than the maximum or minimum value within the second argument. This allows one to specify either a tuple &#8211;
-eg the result of the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.span.html#Stoner.Analysis.AnalysisMixin.span" title="Stoner.Analysis.AnalysisMixin.span"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.span()</span></code></a> method, or a complete list as in the last example above. Specifying a single
-float would have the effect of removing all rows where the column didn&#8217;t equal the float value. This is probably not a good idea...</p>
+<p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.span" title="Stoner.Analysis.AnalysisMixin.span"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.span()</span></code></a> method simply returns a tuple of minimum and maximum values within either the whole column or
+bounded data. Internally this is just calling the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.max" title="Stoner.Analysis.AnalysisMixin.max"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.max()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.min" title="Stoner.Analysis.AnalysisMixin.min"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.min()</span></code></a> methods.
+The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.clip" title="Stoner.Analysis.AnalysisMixin.clip"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.clip()</span></code></a> method deletes rows for which the specified column as a value that is either larger or
+smaller than the maximum or minimum value within the second argument. This allows one to specify either a tuple –
+eg the result of the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.span" title="Stoner.Analysis.AnalysisMixin.span"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.span()</span></code></a> method, or a complete list as in the last example above. Specifying a single
+float would have the effect of removing all rows where the column didn’t equal the float value. This is probably not a good idea…</p>
 <p>It is worth pointing out that these functions will respect the existing mask on the data unless the bounds parameter is set,
 in which case the mask is temproarily discarded in favour of one generated from the bounds expression. This can be worked around,
 however, as the parameter passed to the bounds function is itself a masked array and thus one can include a test of the mask in the
@@ -525,9 +567,9 @@ bounds function:</p>
 <p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a> offers a number of methods to assist in data reduction and data processing.</p>
 <div class="section" id="re-binning-data">
 <span id="binning-guide"></span><h3>(Re)Binning Data<a class="headerlink" href="#re-binning-data" title="Permalink to this headline">¶</a></h3>
-<p>Data binning is the process of taking approximately continuous (x,y) data and grouping them into &#8220;bins&#8221; of specified x, and average y. Since
+<p>Data binning is the process of taking approximately continuous (x,y) data and grouping them into “bins” of specified x, and average y. Since
 this is a data averaging process, the statistical variation in y values is reduced, at the expense of a loss of resolution in x.</p>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a> provides a simple <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.bin.html#Stoner.Analysis.AnalysisMixin.bin" title="Stoner.Analysis.AnalysisMixin.bin"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.bin()</span></code></a> method that can re-bin data:</p>
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a> provides a simple <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.bin" title="Stoner.Analysis.AnalysisMixin.bin"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.bin()</span></code></a> method that can re-bin data:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">x_bin</span><span class="p">,</span><span class="n">y_bin</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;Q&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;Counts&quot;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">)</span>
 <span class="p">(</span><span class="n">x_bin</span><span class="p">,</span><span class="n">y_bin</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;Q&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;Counts&quot;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="s2">&quot;dCounts&quot;</span><span class="p">)</span>
 <span class="p">(</span><span class="n">x_bin</span><span class="p">,</span><span class="n">y_bin</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span><span class="n">bin_start</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span><span class="n">bin_stop</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
@@ -544,7 +586,7 @@ is the standard error in the y points in the bin and the y value is the simple m
 <p>If <strong>xcol</strong> and/or <strong>ycol</strong> are not specified, then they are looked up from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute. In this case, the <strong>yerr</strong>
 is also taken from this attribute if not specified spearately.</p>
 <p>IF the keyword <em>clone</em> is supplied and is False, four 1D numpy arrays are returned, representing the x, y and y-errors for the new bins and the number of
-points averaged into each bin.. If <em>clone</em> is True or not provided, <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.bin.html#Stoner.Analysis.AnalysisMixin.bin" title="Stoner.Analysis.AnalysisMixin.bin"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.bin()</span></code></a> returns a clone of the current data file with its data
+points averaged into each bin.. If <em>clone</em> is True or not provided, <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.bin" title="Stoner.Analysis.AnalysisMixin.bin"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.bin()</span></code></a> returns a clone of the current data file with its data
 (and column headers) replaced with the newly binned data.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Re-binning data example.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
@@ -554,23 +596,27 @@ points averaged into each bin.. If <em>clone</em> is True or not provided, <a cl
 
 <span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_height</span><span class="o">=</span><span class="mi">6</span>
 <span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_width</span><span class="o">=</span><span class="mi">8</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+<span class="n">d</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">411</span><span class="p">)</span>
 
 <span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">)</span>
 <span class="n">f</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">)</span>
+<span class="n">g</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">h</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
 
-<span class="n">e</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span>
-<span class="n">f</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">binned</span><span class="p">,</span><span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="n">e</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">],[</span><span class="s2">&quot;0.05 Linear&quot;</span><span class="p">,</span><span class="s2">&quot;0.25 Linear&quot;</span><span class="p">,</span><span class="s2">&quot;0.05 Log&quot;</span><span class="p">,</span><span class="s2">&quot;50 log&quot;</span><span class="p">])):</span>
+    <span class="n">binned</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">411</span><span class="o">+</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    <span class="n">binned</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span>
+    <span class="n">binned</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
 
-<span class="n">e</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;0.05 bins&quot;</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;0.25 bins&quot;</span><span class="p">)</span>
-
-<span class="n">d</span><span class="o">.</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Bin demo&quot;</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">)</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Bin demo&quot;</span> <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/bins.py">Source code</a>, <a class="reference external" href="../samples/bins.png">png</a>, <a class="reference external" href="../samples/bins.hires.png">hires.png</a>, <a class="reference external" href="../samples/bins.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/bins.png">png</a>, <a class="reference external" href="../samples/bins.hires.png">hires.png</a>, <a class="reference external" href="../samples/bins.pdf">pdf</a>)</p>
 <div class="figure">
 <img alt="../_images/bins.png" src="../_images/bins.png" />
 </div>
@@ -583,15 +629,15 @@ underlying trends. The Stoner package offers a  number of approaches to filterin
 <div><ul>
 <li><p class="first">Smoothing by convoluting with a window</p>
 <blockquote>
-<div><p>This is a powerful method of smoothing data by constructing an appropriate length and shape of &#8216;window function&#8217; that
+<div><p>This is a powerful method of smoothing data by constructing an appropriate length and shape of ‘window function’ that
 is then convulted with the data so that every point becomes some form of weighted average of surrounding points as
-defined by the window function. This is handled by the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.smooth.html#Stoner.Analysis.AnalysisMixin.smooth" title="Stoner.Analysis.AnalysisMixin.smooth"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.smooth()</span></code></a> method.:</p>
+defined by the window function. This is handled by the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.smooth" title="Stoner.Analysis.AnalysisMixin.smooth"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.smooth()</span></code></a> method.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="s2">&quot;boxcar&quot;</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">((</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span><span class="mf">1.5</span><span class="p">),</span><span class="n">size</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Smoothed data&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In both these examples, the data to be smoothed is determined from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.
-The first argument is passed to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v0.19.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
+The first argument is passed to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.0.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
 can either be an integer to sepcify the number of rows in the window, or a float to specify the size of the window in
 terms of the x data. In the latter case, the data is first reinterpolated to an evenly space set in terms of the x-column
 and then smoothed and then reinterpolated back to the original x data co-ordinates.</p>
@@ -600,7 +646,7 @@ and then smoothed and then reinterpolated back to the original x data co-ordinat
 <p class="last">This will fail for hysteretic data. In this case it would be better to use an integer size argument and to ensure
 the data is evenly spaced to start with.</p>
 </div>
-<p>The <em>result</em> and <em>replace</em> arguments are passed through to <a class="reference internal" href="../classes/Stoner.Core.DataFile.add_column.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.add_column()</span></code></a> unless <em>replace</em>
+<p>The <em>result</em> and <em>replace</em> arguments are passed through to <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.add_column()</span></code></a> unless <em>replace</em>
 is <strong>False</strong> in which case, the smoothed data is passed back as the return value and the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>
 is left unmodified.</p>
 </div></blockquote>
@@ -610,7 +656,7 @@ is left unmodified.</p>
 <div><p>This is a common filtering technique, particularly for spectroscopic data as it is good at keeping major peak locations
 and widths. In essence it is equivalent to least-squares fitting a low order polynomial to a window of the data and using
 the co-effienicents of the fitting polynomail to determine the smoothed (or differentiated) data. This is impletemented as
-<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.SG_Filter.html#Stoner.Analysis.AnalysisMixin.SG_Filter" title="Stoner.Analysis.AnalysisMixin.SG_Filter"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.SG_Filter()</span></code></a> method.</p>
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.SG_Filter" title="Stoner.Analysis.AnalysisMixin.SG_Filter"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.SG_Filter()</span></code></a> method.</p>
 </div></blockquote>
 </li>
 <li><p class="first">Spline</p>
@@ -618,7 +664,7 @@ the co-effienicents of the fitting polynomail to determine the smoothed (or diff
 <div><p>An alternative approach is to use a smoothing spline to fit the data locally. Depending on the spline smoothing setting
 this will create a function that is continuous in both value and derivative that approaches the data. Unlike Savotzky-
 Golay fitlering it cannot be used to calculate a derivative easily, but it can handle y data with uncertainities. It is
-implemented as the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.spline.html#Stoner.Analysis.AnalysisMixin.spline" title="Stoner.Analysis.AnalysisMixin.spline"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.spline()</span></code></a> method.</p>
+implemented as the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.spline" title="Stoner.Analysis.AnalysisMixin.spline"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.spline()</span></code></a> method.</p>
 </div></blockquote>
 </li>
 <li><p class="first">Rebinning</p>
@@ -662,7 +708,7 @@ and effective, but does reduce the length of the data !</p>
 <span class="n">d2</span><span class="o">.</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.4</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Smoothing_Data.py">Source code</a>, <a class="reference external" href="../samples/Smoothing_Data.png">png</a>, <a class="reference external" href="../samples/Smoothing_Data.hires.png">hires.png</a>, <a class="reference external" href="../samples/Smoothing_Data.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/Smoothing_Data.png">png</a>, <a class="reference external" href="../samples/Smoothing_Data.hires.png">hires.png</a>, <a class="reference external" href="../samples/Smoothing_Data.pdf">pdf</a>)</p>
 <div class="figure">
 <img alt="../_images/Smoothing_Data.png" src="../_images/Smoothing_Data.png" />
 </div>
@@ -675,7 +721,7 @@ combinaed scan. In the ideal world, these scans could simple be joing together (
 operator), in practise one often finds that there are systematic changes in scaling or offsets
 between individual scans. The task of stitching data sets together then becomes one of finding the
 best mapping between two sets of (x,y) points that are nominally the same. <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a> provides
-a <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.stitch.html#Stoner.Analysis.AnalysisMixin.stitch" title="Stoner.Analysis.AnalysisMixin.stitch"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.stitch()</span></code></a> method to facilitate this.</p>
+a <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.stitch" title="Stoner.Analysis.AnalysisMixin.stitch"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.stitch()</span></code></a> method to facilitate this.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Scale data to stitch it together.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 
@@ -697,14 +743,14 @@ a <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.s
 <span class="c1">#Tidy up the plot by adding annotation fo the stirching co-efficients</span>
 <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span><span class="s2">&quot;B&quot;</span><span class="p">,</span><span class="s2">&quot;C&quot;</span><span class="p">]</span>
 <span class="n">txt</span><span class="o">=</span><span class="p">[]</span>
-<span class="n">lead</span><span class="o">=</span><span class="s2">r&quot;$x&#39;\rightarrow x+A$&quot;</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="s2">r&quot;$y&#39;=\rightarrow By+C$&quot;</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="n">lead</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$x&#39;\rightarrow x+A$&quot;</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;$y&#39;=\rightarrow By+C$&quot;</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
 <span class="k">for</span> <span class="n">l</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">s2</span><span class="p">[</span><span class="s2">&quot;Stitching Coefficients&quot;</span><span class="p">],</span><span class="n">s2</span><span class="p">[</span><span class="s2">&quot;Stitching Coeffient Errors&quot;</span><span class="p">]):</span>
     <span class="n">txt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_error</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;=&quot;</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.65</span><span class="p">,</span><span class="n">lead</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">txt</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.65</span><span class="p">,</span><span class="n">lead</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">txt</span><span class="p">),</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/stitch.py">Source code</a>, <a class="reference external" href="../samples/stitch.png">png</a>, <a class="reference external" href="../samples/stitch.hires.png">hires.png</a>, <a class="reference external" href="../samples/stitch.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/stitch.png">png</a>, <a class="reference external" href="../samples/stitch.hires.png">hires.png</a>, <a class="reference external" href="../samples/stitch.pdf">pdf</a>)</p>
 <div class="figure">
 <img alt="../_images/stitch.png" src="../_images/stitch.png" />
 </div>
@@ -736,7 +782,7 @@ with the co-efficients used to modify the scan data.</p>
 <div class="section" id="thresholding-interpolating-and-extrapolation-of-data">
 <h3>Thresholding, Interpolating and Extrapolation of Data<a class="headerlink" href="#thresholding-interpolating-and-extrapolation-of-data" title="Permalink to this headline">¶</a></h3>
 <p>Thresholding data is the process of identifying points where y data values cross a given limit (equivalently, finding roots for
-<span class="math">\(y=f(x)-y_{threshold}\)</span>). This is carried out by the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.threshold.html#Stoner.Analysis.AnalysisMixin.threshold" title="Stoner.Analysis.AnalysisMixin.threshold"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.threshold()</span></code></a> method:</p>
+<span class="math">\(y=f(x)-y_{threshold}\)</span>). This is carried out by the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.threshold" title="Stoner.Analysis.AnalysisMixin.threshold"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.threshold()</span></code></a> method:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;Y-data&quot;</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">all_vals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;X-data&quot;</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
 </pre></div>
@@ -745,16 +791,16 @@ with the co-efficients used to modify the scan data.</p>
 parameters control whether the y values are rising or falling with row number as they pass the threshold and <strong>all_vals</strong> determines whether the method returns
 just the first threshold or all thresholds it can find. The values returned are mapped to the x-column data if it is specified. The thresholding uses just a simple
 two point linear fit to find the thresholds.</p>
-<p>Interpolating data finds values of y for points x that lie between data points. The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.interpolate.html#Stoner.Analysis.AnalysisMixin.interpolate" title="Stoner.Analysis.AnalysisMixin.interpolate"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.interpolate()</span></code></a> provides a simple pass-through to the
+<p>Interpolating data finds values of y for points x that lie between data points. The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.interpolate" title="Stoner.Analysis.AnalysisMixin.interpolate"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.interpolate()</span></code></a> provides a simple pass-through to the
 scipy routine <code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.interp1d()</span></code>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">newX</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;X-Data&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The new values of X are set from the mandetory first argument. <strong>kind</strong> can be either &#8220;linear&#8221; or &#8220;cubic&#8221; whilst the xcol data can be omitted in which case the
+<p>The new values of X are set from the mandetory first argument. <strong>kind</strong> can be either “linear” or “cubic” whilst the xcol data can be omitted in which case the
 <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute is used. The method will return a new set of data where all columns are interpolated against the new values of X.</p>
-<p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.interpolate.html#Stoner.Analysis.AnalysisMixin.interpolate" title="Stoner.Analysis.AnalysisMixin.interpolate"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.interpolate()</span></code></a> method will return values that are obtained from &#8216;joining the dots&#8217; - which is
+<p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.interpolate" title="Stoner.Analysis.AnalysisMixin.interpolate"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.interpolate()</span></code></a> method will return values that are obtained from ‘joining the dots’ - which is
 appropriate if the uncertainities (and hence scatter) in the data is small. With more scatter in the data, it is better to
-use some locally fitted spline function to interpolate with. The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.spline.html#Stoner.Analysis.AnalysisMixin.spline" title="Stoner.Analysis.AnalysisMixin.spline"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.spline()</span></code></a> function can be used for this.:</p>
+use some locally fitted spline function to interpolate with. The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.spline" title="Stoner.Analysis.AnalysisMixin.spline"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.spline()</span></code></a> function can be used for this.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="s2">&quot;X-Data&quot;</span><span class="p">,</span><span class="s2">&quot;Y-Data&quot;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Spline Data&quot;</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="s2">&quot;X-Data&quot;</span><span class="p">,</span><span class="s2">&quot;Y-Data&quot;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Spline Data&quot;</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="s2">&quot;Extra&quot;</span><span class="p">)</span>
 <span class="n">new_y</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="s2">&quot;X-Data&quot;</span><span class="p">,</span><span class="s2">&quot;Y-Data&quot;</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -763,13 +809,13 @@ use some locally fitted spline function to interpolate with. The <a class="refer
 </div>
 <p>The <em>order</em> keyword gives the polynomial order of the spline function being fitted. The <em>smoothing</em> factor determines how
 closely the spline follows the data points, with a <em>smoothing*=0.0 being a strict interpolation. The *repalce</em> argument
-controls what the return value from the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.spline.html#Stoner.Analysis.AnalysisMixin.spline" title="Stoner.Analysis.AnalysisMixin.spline"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.spline()</span></code></a> method reutrns. IF <em>replace</em> is True or a column
+controls what the return value from the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.spline" title="Stoner.Analysis.AnalysisMixin.spline"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.spline()</span></code></a> method reutrns. IF <em>replace</em> is True or a column
 index, then the new data is added as a column of the Data, possibly replacing the current y-data. If <em>replace</em> is False, then
 the new y-data is returned, but the existing data is unmodified. Finally, if <em>replace</em> is None, then the
-<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.spline.html#Stoner.Analysis.AnalysisMixin.spline" title="Stoner.Analysis.AnalysisMixin.spline"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.spline()</span></code></a> method returns a <code class="xref py py-class docutils literal"><span class="pre">scipy.interpolate.UnivararateSpline</span></code> object that can be used to
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.spline" title="Stoner.Analysis.AnalysisMixin.spline"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.spline()</span></code></a> method returns a <code class="xref py py-class docutils literal"><span class="pre">scipy.interpolate.UnivararateSpline</span></code> object that can be used to
 evaluate the spline at arbitary locations, including extrapolating outside the range of the original x data.</p>
-<p>Extrapolation is, of course, a dangerous, operation when applied to data as it is essentially &#8216;inventing&#8217; new data.
-Extrapolating fromt he spline function, whislt possible, is a little tricky and in many cases the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.extrapolate.html#Stoner.Analysis.AnalysisMixin.extrapolate" title="Stoner.Analysis.AnalysisMixin.extrapolate"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.extrapolate()</span></code></a>
+<p>Extrapolation is, of course, a dangerous, operation when applied to data as it is essentially ‘inventing’ new data.
+Extrapolating fromt he spline function, whislt possible, is a little tricky and in many cases the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.extrapolate" title="Stoner.Analysis.AnalysisMixin.extrapolate"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.extrapolate()</span></code></a>
 method is likely to be more successful. <code class="xref py py-meth docutils literal"><span class="pre">AbnalyseFile.extrapolate()</span></code> works by fitting a function over a window in the
 data and using the fit function to predict nearby values. Where the new values lie within the range of data, this is strictly
 a form of interpolation and the window of data fitted to the extrpolation function is centred around the new x-data point. As
@@ -778,29 +824,30 @@ runs up to and stops at the limit of the supplied data. Thus when extrapolating,
 as one moves further from the end of the data.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Extrapolate data example.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">ones_like</span><span class="p">,</span><span class="n">column_stack</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">Stoner.plot.utils</span> <span class="kn">import</span> <span class="n">errorfill</span>
 
-<span class="n">x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">91</span><span class="p">)</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,(</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">x</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">91</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">),</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">,</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">])</span>
+<span class="n">x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">([</span><span class="n">x</span><span class="p">,(</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">x</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">),</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">]),</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">,</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">])</span>
 
-<span class="n">extra_x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">17</span><span class="p">)</span>
+<span class="n">extra_x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">11</span><span class="p">)</span>
 
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">y3</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
+<span class="n">y2</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;quadratic&quot;</span><span class="p">)</span>
+<span class="n">y1</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;k.&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Extrapolation Demo&quot;</span>
 
-<span class="n">y3</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
-<span class="n">y2</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;quadratic&quot;</span><span class="p">)</span>
-<span class="n">y1</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Linear Extrapolation&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="s1">&#39;g o&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Quadratic Extrapolation&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">y3</span><span class="p">,</span><span class="s1">&#39;ro&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cubic Extrapolation&quot;</span><span class="p">)</span>
+<span class="n">errorfill</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">y2</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">y2</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Quadratic Extrapolation&quot;</span><span class="p">)</span>
+<span class="n">errorfill</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">y3</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">y3</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cubic Extrapolation&quot;</span><span class="p">)</span>
+<span class="n">errorfill</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">y1</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">y1</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Linear Extrapolation&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/extrapolate-demo.py">Source code</a>, <a class="reference external" href="../samples/extrapolate-demo.png">png</a>, <a class="reference external" href="../samples/extrapolate-demo.hires.png">hires.png</a>, <a class="reference external" href="../samples/extrapolate-demo.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/extrapolate-demo.png">png</a>, <a class="reference external" href="../samples/extrapolate-demo.hires.png">hires.png</a>, <a class="reference external" href="../samples/extrapolate-demo.pdf">pdf</a>)</p>
 <div class="figure">
 <img alt="../_images/extrapolate-demo.png" src="../_images/extrapolate-demo.png" />
 </div>
@@ -827,7 +874,7 @@ the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin
 <span id="id2"></span><h3>Peak Finding<a class="headerlink" href="#peak-finding" title="Permalink to this headline">¶</a></h3>
 <p>Peak finding is a tricky and often required task in experimental data analysis. When a functional form is known,
 it is possible to fit the data to this functional form. However, often a more numerical approach is required.
-The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.peaks.html#Stoner.Analysis.AnalysisMixin.peaks" title="Stoner.Analysis.AnalysisMixin.peaks"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.peaks()</span></code></a> provides a relatively simple and effective method for doing this:</p>
+The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.peaks" title="Stoner.Analysis.AnalysisMixin.peaks"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.peaks()</span></code></a> provides a relatively simple and effective method for doing this:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">peak_data</span><span class="o">=</span><span class="n">peaks</span><span class="p">()</span>
 <span class="n">peak_data</span><span class="o">=</span><span class="n">peaks</span><span class="p">(</span><span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;Y Data&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">significance</span><span class="o">=</span><span class="mf">0.001</span> <span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;X Data&quot;</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -844,7 +891,7 @@ by the supplied significance and used as the threshold on which peaks and trough
 Finally, if <em>sort</em> is True, the peaks are returned in order of their significance. <em>peaks</em> and <em>troughs</em> select whether to return peaks or troughs.</p>
 <p>The default values of width and saignificance are set on the assumption that a data set will have less than about 10 peaks of more or
 less equal significance. By default, only peaks are returned in order of x position.</p>
-<p>The example below shows how to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.peaks.html#Stoner.Analysis.AnalysisMixin.peaks" title="Stoner.Analysis.AnalysisMixin.peaks"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.peaks()</span></code></a> to filter out just the peak positions in a set of data.</p>
+<p>The example below shows how to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.peaks" title="Stoner.Analysis.AnalysisMixin.peaks"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.peaks()</span></code></a> to filter out just the peak positions in a set of data.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Detect peaks in a dataset.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
@@ -856,7 +903,7 @@ less equal significance. By default, only peaks are returned in order of x posit
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/peaks_example.py">Source code</a>, <a class="reference external" href="../samples/peaks_example.png">png</a>, <a class="reference external" href="../samples/peaks_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/peaks_example.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/peaks_example.png">png</a>, <a class="reference external" href="../samples/peaks_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/peaks_example.pdf">pdf</a>)</p>
 <div class="figure">
 <img alt="../_images/peaks_example.png" src="../_images/peaks_example.png" />
 </div>
@@ -871,12 +918,13 @@ less equal significance. By default, only peaks are returned in order of x posit
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Analysing Data Files</a><ul>
 <li><a class="reference internal" href="#normalising-and-basic-maths-operations">Normalising and Basic Maths Operations</a></li>
+<li><a class="reference internal" href="#splitting-data-up">Splitting Data Up</a></li>
 <li><a class="reference internal" href="#curve-fitting">Curve Fitting</a><ul>
 <li><a class="reference internal" href="#simple-polynomial-fits">Simple polynomial Fits</a></li>
 <li><a class="reference internal" href="#simple-function-fitting">Simple function fitting</a></li>
@@ -911,13 +959,11 @@ less equal significance. By default, only peaks are returned in order of x posit
   <h4>Next topic</h4>
   <p class="topless"><a href="datafolder.html"
                         title="next chapter">Working with Lots of Files</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/UserGuide/analysisfile.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+<div class="sourcelink">
+  <a href="../_sources/UserGuide/analysisfile.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -928,33 +974,41 @@ less equal significance. By default, only peaks are returned in order of x posit
     </form>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="datafolder.html" title="Working with Lots of Files"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="plotfile.html" title="Plotting Data"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="ugindex.html" >The Stoner Python Package User Guide</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 24, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
-    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="plotfile.html" title="Previous document">Plotting Data</a>
+        </li>
+        <li>
+          <a href="datafolder.html" title="Next document">Working with Lots of Files</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="ugindex.html">The Stoner Python Package User Guide</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.6.5
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
   </body>
 </html>

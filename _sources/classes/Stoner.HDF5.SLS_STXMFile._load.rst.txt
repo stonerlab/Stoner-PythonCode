@@ -1,8 +1,0 @@
-
-
-SLS_STXMFile._load
-==============================
-
-.. currentmodule:: Stoner.HDF5
-
-.. automethod:: SLS_STXMFile._load

@@ -1,65 +1,7 @@
-Stoner.Folders.baseFolder
-=========================
+baseFolder
+==========
 
 .. currentmodule:: Stoner.Folders
 
 .. autoclass:: baseFolder
-
-   
-
-   
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~Stoner.Folders.baseFolder.__init__
-      ~Stoner.Folders.baseFolder.add_group
-      ~Stoner.Folders.baseFolder.clear
-      ~Stoner.Folders.baseFolder.count
-      ~Stoner.Folders.baseFolder.filter
-      ~Stoner.Folders.baseFolder.filterout
-      ~Stoner.Folders.baseFolder.flatten
-      ~Stoner.Folders.baseFolder.get
-      ~Stoner.Folders.baseFolder.group
-      ~Stoner.Folders.baseFolder.index
-      ~Stoner.Folders.baseFolder.insert
-      ~Stoner.Folders.baseFolder.items
-      ~Stoner.Folders.baseFolder.keys
-      ~Stoner.Folders.baseFolder.make_name
-      ~Stoner.Folders.baseFolder.next
-      ~Stoner.Folders.baseFolder.pop
-      ~Stoner.Folders.baseFolder.popitem
-      ~Stoner.Folders.baseFolder.prune
-      ~Stoner.Folders.baseFolder.select
-      ~Stoner.Folders.baseFolder.setdefault
-      ~Stoner.Folders.baseFolder.slice_metadata
-      ~Stoner.Folders.baseFolder.sort
-      ~Stoner.Folders.baseFolder.unflatten
-      ~Stoner.Folders.baseFolder.update
-      ~Stoner.Folders.baseFolder.values
-      ~Stoner.Folders.baseFolder.walk_groups
-      ~Stoner.Folders.baseFolder.zip_groups
-
-   
-   
-
-   
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.Folders.baseFolder.depth
-      ~Stoner.Folders.baseFolder.files
-      ~Stoner.Folders.baseFolder.groups
-      ~Stoner.Folders.baseFolder.instance
-      ~Stoner.Folders.baseFolder.loaded
-      ~Stoner.Folders.baseFolder.ls
-      ~Stoner.Folders.baseFolder.lsgrp
-      ~Stoner.Folders.baseFolder.mindepth
-      ~Stoner.Folders.baseFolder.not_empty
-      ~Stoner.Folders.baseFolder.objects
-      ~Stoner.Folders.baseFolder.type
-   
-   
+   :show-inheritance:

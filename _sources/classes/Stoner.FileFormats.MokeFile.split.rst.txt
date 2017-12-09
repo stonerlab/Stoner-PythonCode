@@ -1,0 +1,8 @@
+
+
+MokeFile.split
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.split

@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.split
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.split

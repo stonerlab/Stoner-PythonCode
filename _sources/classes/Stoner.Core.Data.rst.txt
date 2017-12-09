@@ -1,0 +1,249 @@
+Data
+====
+
+.. currentmodule:: Stoner.Core
+
+.. autoclass:: Data
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Data.T
+      ~Data.ax
+      ~Data.axes
+      ~Data.basename
+      ~Data.clone
+      ~Data.column_headers
+      ~Data.data
+      ~Data.dict_records
+      ~Data.dims
+      ~Data.dtype
+      ~Data.fig
+      ~Data.fignum
+      ~Data.filename
+      ~Data.labels
+      ~Data.legend
+      ~Data.mask
+      ~Data.metadata
+      ~Data.mime_type
+      ~Data.multiple
+      ~Data.no_fmt
+      ~Data.patterns
+      ~Data.positional_fmt
+      ~Data.priority
+      ~Data.records
+      ~Data.setas
+      ~Data.shape
+      ~Data.showfig
+      ~Data.subclasses
+      ~Data.subplots
+      ~Data.template
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Data.SG_Filter
+      ~Data.__call__
+      ~Data.add
+      ~Data.add_column
+      ~Data.annotate_fit
+      ~Data.apply
+      ~Data.bin
+      ~Data.clear
+      ~Data.clip
+      ~Data.closest
+      ~Data.colormap_xyz
+      ~Data.column
+      ~Data.columns
+      ~Data.contour_xyz
+      ~Data.count
+      ~Data.curve_fit
+      ~Data.decompose
+      ~Data.del_column
+      ~Data.del_rows
+      ~Data.diffsum
+      ~Data.dir
+      ~Data.divide
+      ~Data.extrapolate
+      ~Data.figure
+      ~Data.filter
+      ~Data.find_col
+      ~Data.format
+      ~Data.get
+      ~Data.get_filename
+      ~Data.griddata
+      ~Data.image_plot
+      ~Data.insert_rows
+      ~Data.inset
+      ~Data.integrate
+      ~Data.interpolate
+      ~Data.items
+      ~Data.keys
+      ~Data.lmfit
+      ~Data.load
+      ~Data.make_bins
+      ~Data.max
+      ~Data.mean
+      ~Data.min
+      ~Data.multiply
+      ~Data.normalise
+      ~Data.odr
+      ~Data.outlier_detection
+      ~Data.peaks
+      ~Data.plot
+      ~Data.plot_matrix
+      ~Data.plot_xy
+      ~Data.plot_xyuv
+      ~Data.plot_xyz
+      ~Data.plot_xyzuvw
+      ~Data.polyfit
+      ~Data.pop
+      ~Data.popitem
+      ~Data.quiver_plot
+      ~Data.rename
+      ~Data.reorder_columns
+      ~Data.rolling_window
+      ~Data.rows
+      ~Data.save
+      ~Data.scale
+      ~Data.search
+      ~Data.section
+      ~Data.select
+      ~Data.setdefault
+      ~Data.smooth
+      ~Data.sort
+      ~Data.span
+      ~Data.spline
+      ~Data.split
+      ~Data.stitch
+      ~Data.subplot
+      ~Data.subtract
+      ~Data.swap_column
+      ~Data.threshold
+      ~Data.unique
+      ~Data.update
+      ~Data.values
+      ~Data.x2
+      ~Data.y2
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: T
+   .. autoattribute:: ax
+   .. autoattribute:: axes
+   .. autoattribute:: basename
+   .. autoattribute:: clone
+   .. autoattribute:: column_headers
+   .. autoattribute:: data
+   .. autoattribute:: dict_records
+   .. autoattribute:: dims
+   .. autoattribute:: dtype
+   .. autoattribute:: fig
+   .. autoattribute:: fignum
+   .. autoattribute:: filename
+   .. autoattribute:: labels
+   .. autoattribute:: legend
+   .. autoattribute:: mask
+   .. autoattribute:: metadata
+   .. autoattribute:: mime_type
+   .. autoattribute:: multiple
+   .. autoattribute:: no_fmt
+   .. autoattribute:: patterns
+   .. autoattribute:: positional_fmt
+   .. autoattribute:: priority
+   .. autoattribute:: records
+   .. autoattribute:: setas
+   .. autoattribute:: shape
+   .. autoattribute:: showfig
+   .. autoattribute:: subclasses
+   .. autoattribute:: subplots
+   .. autoattribute:: template
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: SG_Filter
+   .. automethod:: __call__
+   .. automethod:: add
+   .. automethod:: add_column
+   .. automethod:: annotate_fit
+   .. automethod:: apply
+   .. automethod:: bin
+   .. automethod:: clear
+   .. automethod:: clip
+   .. automethod:: closest
+   .. automethod:: colormap_xyz
+   .. automethod:: column
+   .. automethod:: columns
+   .. automethod:: contour_xyz
+   .. automethod:: count
+   .. automethod:: curve_fit
+   .. automethod:: decompose
+   .. automethod:: del_column
+   .. automethod:: del_rows
+   .. automethod:: diffsum
+   .. automethod:: dir
+   .. automethod:: divide
+   .. automethod:: extrapolate
+   .. automethod:: figure
+   .. automethod:: filter
+   .. automethod:: find_col
+   .. automethod:: format
+   .. automethod:: get
+   .. automethod:: get_filename
+   .. automethod:: griddata
+   .. automethod:: image_plot
+   .. automethod:: insert_rows
+   .. automethod:: inset
+   .. automethod:: integrate
+   .. automethod:: interpolate
+   .. automethod:: items
+   .. automethod:: keys
+   .. automethod:: lmfit
+   .. automethod:: load
+   .. automethod:: make_bins
+   .. automethod:: max
+   .. automethod:: mean
+   .. automethod:: min
+   .. automethod:: multiply
+   .. automethod:: normalise
+   .. automethod:: odr
+   .. automethod:: outlier_detection
+   .. automethod:: peaks
+   .. automethod:: plot
+   .. automethod:: plot_matrix
+   .. automethod:: plot_xy
+   .. automethod:: plot_xyuv
+   .. automethod:: plot_xyz
+   .. automethod:: plot_xyzuvw
+   .. automethod:: polyfit
+   .. automethod:: pop
+   .. automethod:: popitem
+   .. automethod:: quiver_plot
+   .. automethod:: rename
+   .. automethod:: reorder_columns
+   .. automethod:: rolling_window
+   .. automethod:: rows
+   .. automethod:: save
+   .. automethod:: scale
+   .. automethod:: search
+   .. automethod:: section
+   .. automethod:: select
+   .. automethod:: setdefault
+   .. automethod:: smooth
+   .. automethod:: sort
+   .. automethod:: span
+   .. automethod:: spline
+   .. automethod:: split
+   .. automethod:: stitch
+   .. automethod:: subplot
+   .. automethod:: subtract
+   .. automethod:: swap_column
+   .. automethod:: threshold
+   .. automethod:: unique
+   .. automethod:: update
+   .. automethod:: values
+   .. automethod:: x2
+   .. automethod:: y2

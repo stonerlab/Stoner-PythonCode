@@ -1,8 +1,0 @@
-
-
-DataFile.select
-===========================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: DataFile.select

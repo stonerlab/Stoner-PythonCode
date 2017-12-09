@@ -1,25 +1,19 @@
-Stoner.HDF5.HDF5Folder
-======================
+HDF5Folder
+==========
 
 .. currentmodule:: Stoner.HDF5
 
 .. autoclass:: HDF5Folder
+   :show-inheritance:
 
-   
-
-   
-   .. rubric:: Methods
+   .. rubric:: Methods Summary
 
    .. autosummary::
-    :toctree:
-   
-      ~Stoner.HDF5.HDF5Folder.__init__
-      ~Stoner.HDF5.HDF5Folder.getlist
-      ~Stoner.HDF5.HDF5Folder.save
 
-   
-   
+      ~HDF5Folder.getlist
+      ~HDF5Folder.save
 
-   
-   
-   
+   .. rubric:: Methods Documentation
+
+   .. automethod:: getlist
+   .. automethod:: save

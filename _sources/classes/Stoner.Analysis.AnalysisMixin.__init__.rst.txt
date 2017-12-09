@@ -1,8 +1,0 @@
-
-
-AnalysisMixin.__init__
-======================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalysisMixin.__init__

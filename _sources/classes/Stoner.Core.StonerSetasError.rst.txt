@@ -1,0 +1,6 @@
+StonerSetasError
+================
+
+.. currentmodule:: Stoner.Core
+
+.. autoexception:: StonerSetasError

@@ -1,23 +1,7 @@
-Stoner.HDF5.STXMImage
-=====================
+STXMImage
+=========
 
 .. currentmodule:: Stoner.HDF5
 
 .. autoclass:: STXMImage
-
-   
-
-   
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~Stoner.HDF5.STXMImage._load
-
-   
-   
-
-   
-   
-   
+   :show-inheritance:

@@ -1,8 +1,0 @@
-
-
-ImageStack.clip_intensity
-============================================
-
-.. currentmodule:: Stoner.Image.stack
-
-.. automethod:: ImageStack.clip_intensity

@@ -1,0 +1,7 @@
+KerrArray
+=========
+
+.. currentmodule:: Stoner.Image
+
+.. autoclass:: KerrArray
+   :show-inheritance:

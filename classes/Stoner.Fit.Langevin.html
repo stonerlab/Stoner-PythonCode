@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Stoner.Fit.Langevin &#8212; Stoner Pacakge API Documentation</title>
-    
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <title>Langevin &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -24,73 +21,140 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Langevin.__init__" href="Stoner.Fit.Langevin.__init__.html" />
-    <link rel="prev" title="KittelEquation.guess" href="Stoner.Fit.KittelEquation.guess.html" /> 
+    <link rel="prev" title="KittelEquation" href="Stoner.Fit.KittelEquation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Fit.Langevin.__init__.html" title="Langevin.__init__"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Fit.KittelEquation.guess.html" title="KittelEquation.guess"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &#187;</li> 
-      </ul>
-    </div>  
+  <body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Fit.KittelEquation.html" title="Previous document">KittelEquation</a>
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html">Stoner Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="stoner-fit-langevin">
-<h1>Stoner.Fit.Langevin<a class="headerlink" href="#stoner-fit-langevin" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="langevin">
+<h1>Langevin<a class="headerlink" href="#langevin" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Fit.Langevin">
 <em class="property">class </em><code class="descclassname">Stoner.Fit.</code><code class="descname">Langevin</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#Langevin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.Langevin" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#8220;The Langevin function for paramagnetic M-H loops/</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>Args:</dt>
-<dd>H (array): The applied magnetic field
-M_s (float): Saturation magnetisation
-m (float): is the moment of a single cluster
-T (float): Temperature</dd>
-<dt>Returns:</dt>
-<dd>Magnetic Momemnts (array).</dd>
-</dl>
-<p>The Langevin Function is :math:<a href="#id1"><span class="problematic" id="id2">`</span></a>coth(</p>
-</div></blockquote>
-<p>rac{mu_0HM_s}{k_BT})-
-rac{k_BT}{mu_0HM_s}`.</p>
-<p class="rubric">Methods</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></code></p>
+<p>“The Langevin function for paramagnetic M-H loops/</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>H</strong> (<em>array</em>) – The applied magnetic field</li>
+<li><strong>M_s</strong> (<em>float</em>) – Saturation magnetisation</li>
+<li><strong>m</strong> (<em>float</em>) – is the moment of a single cluster</li>
+<li><strong>T</strong> (<em>float</em>) – Temperature</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Magnetic Momemnts (array).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Langevin Function is <span class="math">\(\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}\)</span>.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Test Weak-localisation fitting.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">import</span> <span class="nn">Stoner.Fit</span> <span class="kn">as</span> <span class="nn">SF</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">ones_like</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+
+<span class="n">B</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">params</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mf">1.0E-11</span><span class="p">,</span><span class="mi">250</span><span class="p">]</span>
+<span class="n">G</span><span class="o">=</span><span class="n">SF</span><span class="o">.</span><span class="n">langevin</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">)</span><span class="o">+</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">),</span><span class="n">scale</span><span class="o">=</span><span class="mf">5E-3</span><span class="p">)</span>
+<span class="n">dG</span><span class="o">=</span><span class="n">ones_like</span><span class="p">(</span><span class="n">B</span><span class="p">)</span><span class="o">*</span><span class="mf">5E-3</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">dG</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">,</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Field $</span><span class="se">\\</span><span class="s2">mu_0H (T)$&quot;</span><span class="p">,</span><span class="s2">&quot;Moment&quot;</span><span class="p">,</span><span class="s2">&quot;dM&quot;</span><span class="p">])</span>
+
+<span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">H</span><span class="p">,</span><span class="n">M_s</span><span class="p">,</span><span class="n">m</span><span class="p">:</span><span class="n">SF</span><span class="o">.</span><span class="n">langevin</span><span class="p">(</span><span class="n">H</span><span class="p">,</span><span class="n">M_s</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="mi">250</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">copy</span><span class="p">(</span><span class="n">params</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;curve_fit&quot;</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span>
+<span class="n">fit</span><span class="o">=</span><span class="n">SF</span><span class="o">.</span><span class="n">Langevin</span><span class="p">()</span>
+<span class="n">p0</span><span class="o">=</span><span class="n">fit</span><span class="o">.</span><span class="n">guess</span><span class="p">(</span><span class="n">G</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="n">B</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">p</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+    <span class="n">p0</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">p0</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="o">=</span><span class="n">v</span><span class="o">*</span><span class="mi">5</span>
+    <span class="n">p0</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">p0</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">vary</span><span class="o">=</span><span class="n">p</span><span class="o">!=</span><span class="s2">&quot;T&quot;</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
+
+
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyeyy&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r.&quot;</span><span class="p">,</span><span class="s2">&quot;b-&quot;</span><span class="p">,</span><span class="s2">&quot;g-&quot;</span><span class="p">])</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">x</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">,</span><span class="n">y</span><span class="o">=-</span><span class="mf">0.75</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">},</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">SF</span><span class="o">.</span><span class="n">Langevin</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mf">0.00025</span><span class="p">,</span><span class="n">y</span><span class="o">=-</span><span class="mf">0.75</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">},</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;Langevin&quot;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;langevin Fit&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/Fitting/langevin.png">png</a>, <a class="reference external" href="../samples/Fitting/langevin.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/langevin.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/langevin.png" src="../_images/langevin.png" />
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Include-source:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Fit.Langevin.__init__.html#Stoner.Fit.Langevin.__init__" title="Stoner.Fit.Langevin.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(\*args,&nbsp;\*\*kwargs)</td>
-<td>Configure Initial fitting function.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Fit.Langevin.guess.html#Stoner.Fit.Langevin.guess" title="Stoner.Fit.Langevin.guess"><code class="xref py py-obj docutils literal"><span class="pre">guess</span></code></a>(data[,&nbsp;h])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.Langevin.guess" title="Stoner.Fit.Langevin.guess"><code class="xref py py-obj docutils literal"><span class="pre">guess</span></code></a>(data[,&nbsp;h])</td>
 <td>Guess some starting values.</td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.Fit.Langevin.guess">
+<code class="descname">guess</code><span class="sig-paren">(</span><em>data</em>, <em>h=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#Langevin.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.Langevin.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess some starting values.</p>
+<p>M_s is taken as half the difference of the range of thew M data,
+we can find m/T from the susceptibility chi= M_s mu_o m / kT,</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -102,21 +166,16 @@ rac{k_BT}{mu_0HM_s}`.</p>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.KittelEquation.guess.html"
-                        title="previous chapter">KittelEquation.guess</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Fit.Langevin.__init__.html"
-                        title="next chapter">Langevin.__init__</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.Fit.Langevin.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+  <p class="topless"><a href="Stoner.Fit.KittelEquation.html"
+                        title="previous chapter">KittelEquation</a></p>
+<div class="sourcelink">
+  <a href="../_sources/classes/Stoner.Fit.Langevin.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -127,33 +186,37 @@ rac{k_BT}{mu_0HM_s}`.</p>
     </form>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Fit.Langevin.__init__.html" title="Langevin.__init__"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Fit.KittelEquation.guess.html" title="KittelEquation.guess"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 24, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
-    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Fit.KittelEquation.html" title="Previous document">KittelEquation</a>
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html">Stoner Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.6.5
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
   </body>
 </html>

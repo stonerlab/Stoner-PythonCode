@@ -1,8 +1,0 @@
-
-
-ZipFile.__init__
-===========================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFile.__init__

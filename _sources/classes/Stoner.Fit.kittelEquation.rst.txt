@@ -1,0 +1,6 @@
+kittelEquation
+==============
+
+.. currentmodule:: Stoner.Fit
+
+.. autofunction:: kittelEquation

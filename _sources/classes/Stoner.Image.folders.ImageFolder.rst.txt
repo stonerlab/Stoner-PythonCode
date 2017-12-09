@@ -1,26 +1,7 @@
-Stoner.Image.folders.ImageFolder
-================================
+ImageFolder
+===========
 
 .. currentmodule:: Stoner.Image.folders
 
 .. autoclass:: ImageFolder
-
-   
-
-   
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~Stoner.Image.folders.ImageFolder.__init__
-      ~Stoner.Image.folders.ImageFolder.loadgroup
-      ~Stoner.Image.folders.ImageFolder.slice_metadata
-      ~Stoner.Image.folders.ImageFolder.stack
-
-   
-   
-
-   
-   
-   
+   :show-inheritance:

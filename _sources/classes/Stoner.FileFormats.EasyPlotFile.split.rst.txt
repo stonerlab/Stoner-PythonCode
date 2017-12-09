@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.split
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.split

@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Stoner.Image.stack.ImageStack &#8212; Stoner Pacakge API Documentation</title>
-    
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <title>ImageStack &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -24,159 +21,79 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="ImageStack.__init__" href="Stoner.Image.stack.ImageStack.__init__.html" />
-    <link rel="prev" title="ImageFolder.stack" href="Stoner.Image.folders.ImageFolder.stack.html" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Image.stack.ImageStack.__init__.html" title="ImageStack.__init__"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Image.folders.ImageFolder.stack.html" title="ImageFolder.stack"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &#187;</li> 
-      </ul>
-    </div>  
+  <body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html">Stoner Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="stoner-image-stack-imagestack">
-<h1>Stoner.Image.stack.ImageStack<a class="headerlink" href="#stoner-image-stack-imagestack" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="imagestack">
+<h1>ImageStack<a class="headerlink" href="#imagestack" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Image.stack.ImageStack">
 <em class="property">class </em><code class="descclassname">Stoner.Image.stack.</code><code class="descname">ImageStack</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/stack.html#ImageStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.stack.ImageStack" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="#Stoner.Image.stack.ImageStack" title="Stoner.Image.stack.ImageStack"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Image.stack.ImageStack</span></code></a> is a 3d numpy array stack of images.</p>
+<dd><p>Bases: <a class="reference internal" href="Stoner.Core.metadataObject.html#Stoner.Core.metadataObject" title="Stoner.Core.metadataObject"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.metadataObject</span></code></a></p>
+<p><a class="reference internal" href="#Stoner.Image.stack.ImageStack" title="Stoner.Image.stack.ImageStack"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Image.stack.ImageStack</span></code></a> is a 3d numpy array stack of images.</p>
 <p>This is used to deal with a stack of images with identical dimensions
 as a 3d numpy array - more efficient than the folder based methods in ImageFolder
 for iterating etc. The first axis is the number of images. Images are added
 and deleted through list type methods ImageStack.append, ImageStack.insert.</p>
 <p>Images can be accessed through ImageStack[i]
-Metadata through ImageStack[&#8216;key&#8217;]
+Metadata through ImageStack[‘key’]
 images should be added or removed using the list like methods append, insert, del</p>
 <dl class="attribute">
 <dt id="Stoner.Image.stack.ImageStack.imarray">
 <code class="descname">imarray</code><a class="headerlink" href="#Stoner.Image.stack.ImageStack.imarray" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>np.ndarray</em> &#8211; the 3d stack of images</p>
+<dd><p><em>np.ndarray</em> – the 3d stack of images</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Image.stack.ImageStack.allmeta">
 <code class="descname">allmeta</code><a class="headerlink" href="#Stoner.Image.stack.ImageStack.allmeta" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> &#8211; list of metadata stored for each image</p>
+<dd><p><em>list</em> – list of metadata stored for each image</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Image.stack.ImageStack.zipallmeta">
 <code class="descname">zipallmeta</code><a class="headerlink" href="#Stoner.Image.stack.ImageStack.zipallmeta" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> &#8211; a dictionary of all common metadata items zipped into lists</p>
+<dd><p><em>dict</em> – a dictionary of all common metadata items zipped into lists</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Image.stack.ImageStack.clone">
 <code class="descname">clone</code><a class="headerlink" href="#Stoner.Image.stack.ImageStack.clone" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ImageStack</em> &#8211; copy of self</p>
+<dd><p><em>ImageStack</em> – copy of self</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Image.stack.ImageStack.shape">
 <code class="descname">shape</code><a class="headerlink" href="#Stoner.Image.stack.ImageStack.shape" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple</em> &#8211; pass through to imarray.shape</p>
+<dd><p><em>tuple</em> – pass through to imarray.shape</p>
 </dd></dl>
 
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.__init__.html#Stoner.Image.stack.ImageStack.__init__" title="Stoner.Image.stack.ImageStack.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
-<td>Constructor for <a class="reference internal" href="#Stoner.Image.stack.ImageStack" title="Stoner.Image.stack.ImageStack"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Image.stack.ImageStack</span></code></a></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.append.html#Stoner.Image.stack.ImageStack.append" title="Stoner.Image.stack.ImageStack.append"><code class="xref py py-obj docutils literal"><span class="pre">append</span></code></a>(item)</td>
-<td>Append an image array</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.apply_all.html#Stoner.Image.stack.ImageStack.apply_all" title="Stoner.Image.stack.ImageStack.apply_all"><code class="xref py py-obj docutils literal"><span class="pre">apply_all</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
-<td>apply function to all images in the stack</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.average.html#Stoner.Image.stack.ImageStack.average" title="Stoner.Image.stack.ImageStack.average"><code class="xref py py-obj docutils literal"><span class="pre">average</span></code></a>([weights])</td>
-<td>Get an array of average pixel values for the stack.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.clip_intensity.html#Stoner.Image.stack.ImageStack.clip_intensity" title="Stoner.Image.stack.ImageStack.clip_intensity"><code class="xref py py-obj docutils literal"><span class="pre">clip_intensity</span></code></a>()</td>
-<td>Clip intensity that lies outside the range allowed by dtype.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.convert_float.html#Stoner.Image.stack.ImageStack.convert_float" title="Stoner.Image.stack.ImageStack.convert_float"><code class="xref py py-obj docutils literal"><span class="pre">convert_float</span></code></a>([clip_negative])</td>
-<td>Convert the imarray to floating point type normalised to -1 to 1.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.correct_drifts.html#Stoner.Image.stack.ImageStack.correct_drifts" title="Stoner.Image.stack.ImageStack.correct_drifts"><code class="xref py py-obj docutils literal"><span class="pre">correct_drifts</span></code></a>(refindex[,&nbsp;threshold,&nbsp;...])</td>
-<td>Align images to correct for image drift.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.crop_stack.html#Stoner.Image.stack.ImageStack.crop_stack" title="Stoner.Image.stack.ImageStack.crop_stack"><code class="xref py py-obj docutils literal"><span class="pre">crop_stack</span></code></a>(box)</td>
-<td>Crop the imagestack.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.dtype_limits.html#Stoner.Image.stack.ImageStack.dtype_limits" title="Stoner.Image.stack.ImageStack.dtype_limits"><code class="xref py py-obj docutils literal"><span class="pre">dtype_limits</span></code></a>([clip_negative])</td>
-<td>Return intensity limits, i.e.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.insert.html#Stoner.Image.stack.ImageStack.insert" title="Stoner.Image.stack.ImageStack.insert"><code class="xref py py-obj docutils literal"><span class="pre">insert</span></code></a>(index,&nbsp;item)</td>
-<td>Insert an image array at index</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.save.html#Stoner.Image.stack.ImageStack.save" title="Stoner.Image.stack.ImageStack.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>(fname)</td>
-<td>probably should save in hdf5 format</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.show.html#Stoner.Image.stack.ImageStack.show" title="Stoner.Image.stack.ImageStack.show"><code class="xref py py-obj docutils literal"><span class="pre">show</span></code></a>()</td>
-<td>Show the stack of images in a skimage CollectionViewer window</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.slice_metadata.html#Stoner.Image.stack.ImageStack.slice_metadata" title="Stoner.Image.stack.ImageStack.slice_metadata"><code class="xref py py-obj docutils literal"><span class="pre">slice_metadata</span></code></a>(key[,&nbsp;values_only])</td>
-<td>List of metadata values for each image given key.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.stddev.html#Stoner.Image.stack.ImageStack.stddev" title="Stoner.Image.stack.ImageStack.stddev"><code class="xref py py-obj docutils literal"><span class="pre">stddev</span></code></a>([weights])</td>
-<td>Calculate weighted standard deviation for stack</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.stderr.html#Stoner.Image.stack.ImageStack.stderr" title="Stoner.Image.stack.ImageStack.stderr"><code class="xref py py-obj docutils literal"><span class="pre">stderr</span></code></a>([weights])</td>
-<td>Standard error in the stack average</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.subtract.html#Stoner.Image.stack.ImageStack.subtract" title="Stoner.Image.stack.ImageStack.subtract"><code class="xref py py-obj docutils literal"><span class="pre">subtract</span></code></a>(background[,&nbsp;contrast,&nbsp;clip_intensity])</td>
-<td>Subtract a background image (or index) from all images in the stack.</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.stack.ImageStack.allmeta" title="Stoner.Image.stack.ImageStack.allmeta"><code class="xref py py-obj docutils literal"><span class="pre">allmeta</span></code></a></td>
-<td>List of complete metadata for each image in ImageStack</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.stack.ImageStack.clone" title="Stoner.Image.stack.ImageStack.clone"><code class="xref py py-obj docutils literal"><span class="pre">clone</span></code></a></td>
-<td>Return a copy of self</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.stack.ImageStack.imarray" title="Stoner.Image.stack.ImageStack.imarray"><code class="xref py py-obj docutils literal"><span class="pre">imarray</span></code></a></td>
-<td>The main array storing the images</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.stack.ImageStack.shape" title="Stoner.Image.stack.ImageStack.shape"><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></a></td>
-<td>call through to ndarray.shape</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 </div>
@@ -188,21 +105,13 @@ images should be added or removed using the list like methods append, insert, de
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Image.folders.ImageFolder.stack.html"
-                        title="previous chapter">ImageFolder.stack</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Image.stack.ImageStack.__init__.html"
-                        title="next chapter">ImageStack.__init__</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.Image.stack.ImageStack.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+<div class="sourcelink">
+  <a href="../_sources/classes/Stoner.Image.stack.ImageStack.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -213,33 +122,33 @@ images should be added or removed using the list like methods append, insert, de
     </form>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Image.stack.ImageStack.__init__.html" title="ImageStack.__init__"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Image.folders.ImageFolder.stack.html" title="ImageFolder.stack"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 24, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
-    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html">Stoner Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.6.5
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
   </body>
 </html>

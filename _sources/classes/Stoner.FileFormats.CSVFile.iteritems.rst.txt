@@ -1,8 +1,0 @@
-
-
-CSVFile.iteritems
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: CSVFile.iteritems

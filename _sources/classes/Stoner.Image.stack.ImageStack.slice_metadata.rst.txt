@@ -1,8 +1,0 @@
-
-
-ImageStack.slice_metadata
-============================================
-
-.. currentmodule:: Stoner.Image.stack
-
-.. automethod:: ImageStack.slice_metadata

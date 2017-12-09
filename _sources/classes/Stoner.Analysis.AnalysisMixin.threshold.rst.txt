@@ -1,8 +1,0 @@
-
-
-AnalysisMixin.threshold
-=======================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalysisMixin.threshold

@@ -1,8 +1,0 @@
-
-
-ImageArray.dtype_limits
-=========================================
-
-.. currentmodule:: Stoner.Image.core
-
-.. automethod:: ImageArray.dtype_limits

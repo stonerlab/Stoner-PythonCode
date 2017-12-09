@@ -1,8 +1,0 @@
-
-
-stretchedExp
-=======================
-
-.. currentmodule:: Stoner.Fit
-
-.. autofunction:: stretchedExp

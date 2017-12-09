@@ -1,8 +1,0 @@
-
-
-AnalysisMixin.subtract
-======================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalysisMixin.subtract

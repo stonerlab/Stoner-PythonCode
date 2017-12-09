@@ -1,0 +1,8 @@
+
+
+BigBlueFile.split
+====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BigBlueFile.split

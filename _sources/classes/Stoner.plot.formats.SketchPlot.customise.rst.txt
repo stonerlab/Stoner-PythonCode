@@ -1,8 +1,0 @@
-
-
-SketchPlot.customise
-========================================
-
-.. currentmodule:: Stoner.plot.formats
-
-.. automethod:: SketchPlot.customise

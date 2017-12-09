@@ -1,8 +1,0 @@
-
-
-ImageFolder.stack
-======================================
-
-.. currentmodule:: Stoner.Image.folders
-
-.. automethod:: ImageFolder.stack

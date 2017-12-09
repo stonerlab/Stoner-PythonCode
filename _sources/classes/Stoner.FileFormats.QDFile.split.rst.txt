@@ -1,0 +1,8 @@
+
+
+QDFile.split
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.split

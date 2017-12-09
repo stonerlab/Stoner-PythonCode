@@ -1,34 +1,7 @@
-Stoner.HDF5.SLS_STXMFile
-========================
+SLS_STXMFile
+============
 
 .. currentmodule:: Stoner.HDF5
 
 .. autoclass:: SLS_STXMFile
-
-   
-
-   
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~Stoner.HDF5.SLS_STXMFile._load
-      ~Stoner.HDF5.SLS_STXMFile.scan_meta
-
-   
-   
-
-   
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.HDF5.SLS_STXMFile.compression
-      ~Stoner.HDF5.SLS_STXMFile.compression_opts
-      ~Stoner.HDF5.SLS_STXMFile.mime_type
-      ~Stoner.HDF5.SLS_STXMFile.patterns
-      ~Stoner.HDF5.SLS_STXMFile.priority
-   
-   
+   :show-inheritance:

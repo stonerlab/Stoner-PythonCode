@@ -1,8 +1,0 @@
-
-
-ImageStack.apply_all
-=======================================
-
-.. currentmodule:: Stoner.Image.stack
-
-.. automethod:: ImageStack.apply_all

@@ -1,8 +1,0 @@
-
-
-DataFile.rolling_window
-===================================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: DataFile.rolling_window

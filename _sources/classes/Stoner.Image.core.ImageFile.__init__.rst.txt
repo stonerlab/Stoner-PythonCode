@@ -1,8 +1,0 @@
-
-
-ImageFile.__init__
-====================================
-
-.. currentmodule:: Stoner.Image.core
-
-.. automethod:: ImageFile.__init__

@@ -1,0 +1,8 @@
+
+
+TDMSFile.split
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.split

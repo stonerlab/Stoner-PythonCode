@@ -1,8 +1,0 @@
-
-
-SketchPlot.customise_axes
-=============================================
-
-.. currentmodule:: Stoner.plot.formats
-
-.. automethod:: SketchPlot.customise_axes

@@ -12,8 +12,8 @@ d.setas="xyy"
 
 d.plot(fmt=["+","-"])
 # Make apretty label using Stoner.Util methods
-text="$y=A\\exp\\left[\\left(-\\frac{x}{x_0}\\right)^\\beta\\right]$\n"
-text+=d.annotate_fit(StretchedExp,text_only=True)
+text=r"$y=A e^{-\left(\frac{x}{x_0}\right)^\beta}$"+"\n"
+text+=d.annotate_fit(StretchedExp,text_only=True,prefix="")
 d.text(6,4E4,text)
 #Adjust layout NB pass-through method to pyplot used here
 d.tight_layout()

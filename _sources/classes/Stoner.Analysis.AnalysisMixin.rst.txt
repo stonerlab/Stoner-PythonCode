@@ -1,53 +1,75 @@
-Stoner.Analysis.AnalysisMixin
-=============================
+AnalysisMixin
+=============
 
 .. currentmodule:: Stoner.Analysis
 
 .. autoclass:: AnalysisMixin
+   :show-inheritance:
 
-   
-
-   
-   .. rubric:: Methods
+   .. rubric:: Methods Summary
 
    .. autosummary::
-    :toctree:
-   
-      ~Stoner.Analysis.AnalysisMixin.SG_Filter
-      ~Stoner.Analysis.AnalysisMixin.__init__
-      ~Stoner.Analysis.AnalysisMixin.add
-      ~Stoner.Analysis.AnalysisMixin.apply
-      ~Stoner.Analysis.AnalysisMixin.bin
-      ~Stoner.Analysis.AnalysisMixin.clip
-      ~Stoner.Analysis.AnalysisMixin.curve_fit
-      ~Stoner.Analysis.AnalysisMixin.decompose
-      ~Stoner.Analysis.AnalysisMixin.diffsum
-      ~Stoner.Analysis.AnalysisMixin.divide
-      ~Stoner.Analysis.AnalysisMixin.extrapolate
-      ~Stoner.Analysis.AnalysisMixin.integrate
-      ~Stoner.Analysis.AnalysisMixin.interpolate
-      ~Stoner.Analysis.AnalysisMixin.lmfit
-      ~Stoner.Analysis.AnalysisMixin.make_bins
-      ~Stoner.Analysis.AnalysisMixin.max
-      ~Stoner.Analysis.AnalysisMixin.mean
-      ~Stoner.Analysis.AnalysisMixin.min
-      ~Stoner.Analysis.AnalysisMixin.multiply
-      ~Stoner.Analysis.AnalysisMixin.normalise
-      ~Stoner.Analysis.AnalysisMixin.outlier_detection
-      ~Stoner.Analysis.AnalysisMixin.peaks
-      ~Stoner.Analysis.AnalysisMixin.polyfit
-      ~Stoner.Analysis.AnalysisMixin.scale
-      ~Stoner.Analysis.AnalysisMixin.smooth
-      ~Stoner.Analysis.AnalysisMixin.span
-      ~Stoner.Analysis.AnalysisMixin.spline
-      ~Stoner.Analysis.AnalysisMixin.split
-      ~Stoner.Analysis.AnalysisMixin.stitch
-      ~Stoner.Analysis.AnalysisMixin.subtract
-      ~Stoner.Analysis.AnalysisMixin.threshold
 
-   
-   
+      ~AnalysisMixin.SG_Filter
+      ~AnalysisMixin.add
+      ~AnalysisMixin.apply
+      ~AnalysisMixin.bin
+      ~AnalysisMixin.clip
+      ~AnalysisMixin.curve_fit
+      ~AnalysisMixin.decompose
+      ~AnalysisMixin.diffsum
+      ~AnalysisMixin.divide
+      ~AnalysisMixin.extrapolate
+      ~AnalysisMixin.integrate
+      ~AnalysisMixin.interpolate
+      ~AnalysisMixin.lmfit
+      ~AnalysisMixin.make_bins
+      ~AnalysisMixin.max
+      ~AnalysisMixin.mean
+      ~AnalysisMixin.min
+      ~AnalysisMixin.multiply
+      ~AnalysisMixin.normalise
+      ~AnalysisMixin.odr
+      ~AnalysisMixin.outlier_detection
+      ~AnalysisMixin.peaks
+      ~AnalysisMixin.polyfit
+      ~AnalysisMixin.scale
+      ~AnalysisMixin.smooth
+      ~AnalysisMixin.span
+      ~AnalysisMixin.spline
+      ~AnalysisMixin.stitch
+      ~AnalysisMixin.subtract
+      ~AnalysisMixin.threshold
 
-   
-   
-   
+   .. rubric:: Methods Documentation
+
+   .. automethod:: SG_Filter
+   .. automethod:: add
+   .. automethod:: apply
+   .. automethod:: bin
+   .. automethod:: clip
+   .. automethod:: curve_fit
+   .. automethod:: decompose
+   .. automethod:: diffsum
+   .. automethod:: divide
+   .. automethod:: extrapolate
+   .. automethod:: integrate
+   .. automethod:: interpolate
+   .. automethod:: lmfit
+   .. automethod:: make_bins
+   .. automethod:: max
+   .. automethod:: mean
+   .. automethod:: min
+   .. automethod:: multiply
+   .. automethod:: normalise
+   .. automethod:: odr
+   .. automethod:: outlier_detection
+   .. automethod:: peaks
+   .. automethod:: polyfit
+   .. automethod:: scale
+   .. automethod:: smooth
+   .. automethod:: span
+   .. automethod:: spline
+   .. automethod:: stitch
+   .. automethod:: subtract
+   .. automethod:: threshold

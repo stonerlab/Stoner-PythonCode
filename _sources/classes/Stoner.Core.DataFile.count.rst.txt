@@ -1,8 +1,0 @@
-
-
-DataFile.count
-==========================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: DataFile.count

@@ -1,8 +1,0 @@
-
-
-baseFolder.setdefault
-====================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: baseFolder.setdefault

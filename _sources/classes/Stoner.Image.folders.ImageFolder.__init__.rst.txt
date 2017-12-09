@@ -1,8 +1,0 @@
-
-
-ImageFolder.__init__
-=========================================
-
-.. currentmodule:: Stoner.Image.folders
-
-.. automethod:: ImageFolder.__init__

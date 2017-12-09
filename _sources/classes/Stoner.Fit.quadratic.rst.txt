@@ -1,0 +1,6 @@
+quadratic
+=========
+
+.. currentmodule:: Stoner.Fit
+
+.. autofunction:: quadratic

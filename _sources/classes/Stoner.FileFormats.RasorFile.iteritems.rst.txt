@@ -1,8 +1,0 @@
-
-
-RasorFile.iteritems
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RasorFile.iteritems

@@ -29,9 +29,6 @@ Stoner.FileFormats.RasorFile
       ~Stoner.FileFormats.RasorFile.get_filename
       ~Stoner.FileFormats.RasorFile.insert_rows
       ~Stoner.FileFormats.RasorFile.items
-      ~Stoner.FileFormats.RasorFile.iteritems
-      ~Stoner.FileFormats.RasorFile.iterkeys
-      ~Stoner.FileFormats.RasorFile.itervalues
       ~Stoner.FileFormats.RasorFile.keys
       ~Stoner.FileFormats.RasorFile.load
       ~Stoner.FileFormats.RasorFile.pop
@@ -46,6 +43,7 @@ Stoner.FileFormats.RasorFile
       ~Stoner.FileFormats.RasorFile.select
       ~Stoner.FileFormats.RasorFile.setdefault
       ~Stoner.FileFormats.RasorFile.sort
+      ~Stoner.FileFormats.RasorFile.split
       ~Stoner.FileFormats.RasorFile.swap_column
       ~Stoner.FileFormats.RasorFile.unique
       ~Stoner.FileFormats.RasorFile.update
@@ -55,27 +53,5 @@ Stoner.FileFormats.RasorFile
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.FileFormats.RasorFile.T
-      ~Stoner.FileFormats.RasorFile.clone
-      ~Stoner.FileFormats.RasorFile.column_headers
-      ~Stoner.FileFormats.RasorFile.data
-      ~Stoner.FileFormats.RasorFile.dict_records
-      ~Stoner.FileFormats.RasorFile.dims
-      ~Stoner.FileFormats.RasorFile.dtype
-      ~Stoner.FileFormats.RasorFile.filename
-      ~Stoner.FileFormats.RasorFile.mask
-      ~Stoner.FileFormats.RasorFile.metadata
-      ~Stoner.FileFormats.RasorFile.mime_type
-      ~Stoner.FileFormats.RasorFile.patterns
-      ~Stoner.FileFormats.RasorFile.priority
-      ~Stoner.FileFormats.RasorFile.records
-      ~Stoner.FileFormats.RasorFile.setas
-      ~Stoner.FileFormats.RasorFile.shape
-      ~Stoner.FileFormats.RasorFile.subclasses
    
    

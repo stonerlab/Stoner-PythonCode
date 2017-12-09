@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>MDAASCIIFile.select &#8212; Stoner Pacakge API Documentation</title>
-    
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -24,33 +21,42 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="MDAASCIIFile.setdefault" href="Stoner.FileFormats.MDAASCIIFile.setdefault.html" />
-    <link rel="prev" title="MDAASCIIFile.section" href="Stoner.FileFormats.MDAASCIIFile.section.html" /> 
+    <link rel="prev" title="MDAASCIIFile.section" href="Stoner.FileFormats.MDAASCIIFile.section.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.MDAASCIIFile.setdefault.html" title="MDAASCIIFile.setdefault"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.MDAASCIIFile.section.html" title="MDAASCIIFile.section"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="Stoner.FileFormats.MDAASCIIFile.html" accesskey="U">Stoner.FileFormats.MDAASCIIFile</a> &#187;</li> 
-      </ul>
-    </div>  
+  <body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.FileFormats.MDAASCIIFile.section.html" title="Previous document">MDAASCIIFile.section</a>
+        </li>
+        <li>
+          <a href="Stoner.FileFormats.MDAASCIIFile.setdefault.html" title="Next document">MDAASCIIFile.setdefault</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html">Stoner Package</a>
+      </li>
+      <li>
+        <a href="Stoner.FileFormats.MDAASCIIFile.html">Stoner.FileFormats.MDAASCIIFile</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -68,18 +74,17 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>args</strong> (<em>various</em>) &#8211; A single positional argument if present is interpreted as follows:</li>
-<li><strong>* If a callable function is given, the entire row is presented to it.</strong> &#8211; If it evaluates True then that row is selected. This allows arbitary select operations</li>
+<li><strong>args</strong> (<em>various</em>) – A single positional argument if present is interpreted as follows:</li>
+<li><strong>* If a callable function is given, the entire row is presented to it.</strong> – If it evaluates True then that row is selected. This allows arbitary select operations</li>
 <li><strong>* If a dict is given, then it and the kargs dictionary are merged and used to select the rows</strong></li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
-<li><strong>kargs</strong> (<em>various</em>) &#8211; <p>Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first"><strong>kargs</strong> (<em>various</em>) – <p>Arbitary keyword arguments are interpreted as requestion matches against the corresponding
 columns. The keyword argument may have an additional <em>__operator*</em> appended to it which is interpreted
 as follows:</p>
-<ul>
+<ul class="simple">
 <li><em>eq</em>  value equals argument value (this is the default test for scalar argument)</li>
 <li><em>ne</em>  value doe not equal argument value</li>
 <li><em>gt</em>  value doe greater than argument value</li>
@@ -89,28 +94,27 @@ as follows:</p>
 <li><em>between</em>  value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)</li>
 <li><em>ibetween</em>,*ilbetween*,*iubetween* as above but include both,lower or upper values</li>
 </ul>
-</li>
-<li><strong>the operator is preceeded by __not__ then the sense of the test is negated.</strong> (<em>if</em>) &#8211; </li>
-<li><strong>syntax is inspired by the Django project for selecting</strong><strong>, </strong><strong>but is not quite as rich.</strong> (<em>The</em>) &#8211; </li>
-</ul>
+</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(DatFile)</em> &#8211; a copy the DataFile instance that contains just the matching rows.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(DatFile)</em> – a copy the DataFile instance that contains just the matching rows.</p>
 </td>
 </tr>
 </tbody>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
+<p>if the operator is preceeded by <em>__not__</em> then the sense of the test is negated.</p>
 <p>If any of the tests is True, then the row will be selected, so the effect is a logical OR. To
 achieve a logical AND, you can chain two selects together:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">temp__le</span><span class="o">=</span><span class="mf">4.2</span><span class="p">,</span><span class="n">vti_temp__lt</span><span class="o">=</span><span class="mf">4.2</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">field_gt</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>will select rows that have either temp or vti_temp metadata values below 4.2 AND field metadata values greater than 3.</p>
-<p class="last">If you need to select on a row value that ends in an operator word, then append
+<p>If you need to select on a row value that ends in an operator word, then append
 <em>__eq</em> in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
 then pass them via the first positional dictionary value.</p>
+<p class="last">There is a “magic” column name “_i” which is interpreted as the row numbers of the data.</p>
 </div>
 <dl class="docutils">
 <dt>Example</dt>
@@ -123,7 +127,7 @@ then pass them via the first positional dictionary value.</p>
 <span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__lt</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;g&lt;&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;portion 2&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/select_example.py">Source code</a>, <a class="reference external" href="../samples/select_example.png">png</a>, <a class="reference external" href="../samples/select_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/select_example.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/select_example.png">png</a>, <a class="reference external" href="../samples/select_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/select_example.pdf">pdf</a>)</p>
 <div class="last figure">
 <img alt="../_images/select_example.png" src="../_images/select_example.png" />
 </div>
@@ -140,7 +144,7 @@ then pass them via the first positional dictionary value.</p>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="Stoner.FileFormats.MDAASCIIFile.section.html"
@@ -148,13 +152,11 @@ then pass them via the first positional dictionary value.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.FileFormats.MDAASCIIFile.setdefault.html"
                         title="next chapter">MDAASCIIFile.setdefault</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.FileFormats.MDAASCIIFile.select.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+<div class="sourcelink">
+  <a href="../_sources/classes/Stoner.FileFormats.MDAASCIIFile.select.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -165,34 +167,44 @@ then pass them via the first positional dictionary value.</p>
     </form>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.MDAASCIIFile.setdefault.html" title="MDAASCIIFile.setdefault"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.MDAASCIIFile.section.html" title="MDAASCIIFile.section"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="Stoner.FileFormats.MDAASCIIFile.html" >Stoner.FileFormats.MDAASCIIFile</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 24, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
-    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.FileFormats.MDAASCIIFile.section.html" title="Previous document">MDAASCIIFile.section</a>
+        </li>
+        <li>
+          <a href="Stoner.FileFormats.MDAASCIIFile.setdefault.html" title="Next document">MDAASCIIFile.setdefault</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html">Stoner Package</a>
+      </li>
+      <li>
+        <a href="Stoner.FileFormats.MDAASCIIFile.html">Stoner.FileFormats.MDAASCIIFile</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.6.5
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
   </body>
 </html>

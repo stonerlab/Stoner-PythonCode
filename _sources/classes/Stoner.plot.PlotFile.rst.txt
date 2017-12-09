@@ -1,0 +1,6 @@
+PlotFile
+========
+
+.. currentmodule:: Stoner.plot
+
+.. autofunction:: PlotFile

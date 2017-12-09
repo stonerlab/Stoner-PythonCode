@@ -1,0 +1,6 @@
+lorentzian_diff
+===============
+
+.. currentmodule:: Stoner.Fit
+
+.. autofunction:: lorentzian_diff

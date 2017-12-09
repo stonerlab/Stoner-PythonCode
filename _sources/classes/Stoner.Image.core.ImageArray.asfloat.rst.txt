@@ -1,8 +1,0 @@
-
-
-ImageArray.asfloat
-====================================
-
-.. currentmodule:: Stoner.Image.core
-
-.. automethod:: ImageArray.asfloat

@@ -1,8 +1,0 @@
-
-
-ImageArray.save
-=================================
-
-.. currentmodule:: Stoner.Image.core
-
-.. automethod:: ImageArray.save

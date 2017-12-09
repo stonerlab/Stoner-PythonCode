@@ -1,34 +1,7 @@
-Stoner.HDF5.HDF5File
-====================
+HDF5File
+========
 
 .. currentmodule:: Stoner.HDF5
 
 .. autoclass:: HDF5File
-
-   
-
-   
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~Stoner.HDF5.HDF5File._load
-      ~Stoner.HDF5.HDF5File.save
-
-   
-   
-
-   
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.HDF5.HDF5File.compression
-      ~Stoner.HDF5.HDF5File.compression_opts
-      ~Stoner.HDF5.HDF5File.mime_type
-      ~Stoner.HDF5.HDF5File.patterns
-      ~Stoner.HDF5.HDF5File.priority
-   
-   
+   :show-inheritance:

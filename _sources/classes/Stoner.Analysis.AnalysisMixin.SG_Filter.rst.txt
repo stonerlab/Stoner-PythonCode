@@ -1,8 +1,0 @@
-
-
-AnalysisMixin.SG_Filter
-=======================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalysisMixin.SG_Filter

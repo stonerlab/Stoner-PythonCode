@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Stoner.FileFormats &#8212; Stoner Pacakge API Documentation</title>
-    
-    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
@@ -24,24 +21,29 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
-      </ul>
-    </div>  
+  <body>
+    <header id="pageheader"><h1><a href="../../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../index.html">Module code</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -51,11 +53,15 @@
   <h1>Source code for Stoner.FileFormats</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Provides extra classes that can load data from various instruments into DataFile type objects.</span>
 
-<span class="sd">Eacg class has a priority attribute that is used to determine the order in which</span>
-<span class="sd">they are tried by DataFile and friends where trying to load data. High priority</span>
-<span class="sd">is run last.</span>
+<span class="sd">You do not need to use these classes directly, they are made available to :py:class:`Stoner.Core.Data` which</span>
+<span class="sd">will load each of them in turn when asked to load an unknown data file.</span>
 
-<span class="sd">Eacg class should implement a load() method and optionally a save() method.</span>
+<span class="sd">Each class has a priority attribute that is used to determine the order in which</span>
+<span class="sd">they are tried by :py:class:`Stoner.Core.Data` and friends where trying to load data. </span>
+<span class="sd">High priority is run last (so is a bit of a misnomer!).</span>
+
+<span class="sd">Eacg class should implement a load() method and optionally a save() method. Classes should make every effort to</span>
+<span class="sd">positively identify that the file is one that they understand and throw a :py:exception:Stoner.Core.StonerLoadError` if not.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
@@ -115,7 +121,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="k">if</span> <span class="n">header_line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">header_string</span> <span class="o">=</span> <span class="n">linecache</span><span class="o">.</span><span class="n">getline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">header_line</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">header_string</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;[&quot;\n]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">header_string</span><span class="p">)</span>
+            <span class="n">header_string</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[&quot;\n]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">header_string</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">_</span> <span class="o">=</span> <span class="n">header_string</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">header_delim</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
@@ -456,7 +462,7 @@
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># Generate the X Data ourselves</span>
             <span class="n">first</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s1">&#39;ffirst&#39;</span><span class="p">]</span>
             <span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s1">&#39;flast&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="n">E6</span><span class="p">:</span>  <span class="c1"># Something not right here !</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts</span> <span class="o">&gt;</span> <span class="mf">1E6</span><span class="p">:</span>  <span class="c1"># Something not right here !</span>
                 <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;More than 1 million points requested. Bugging out now!&quot;</span><span class="p">)</span>
             <span class="n">xdata</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">xdata</span>
@@ -478,7 +484,7 @@
             <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;No good, going to read too much data!&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>  <span class="c1"># We have n sub-scans</span>
             <span class="c1"># Read the subheader and import into the main metadata dictionary as scan#:&lt;subheader item&gt;</span>
-            <span class="n">subhdr</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;BBHfffIIf4s&#39;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+            <span class="n">subhdr</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;BBHfffIIf4s&#39;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
             <span class="n">subheader</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;scan&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">subhdr_keys</span><span class="p">],</span> <span class="n">subhdr</span><span class="p">))</span>
 
             <span class="c1"># Now read the y-data</span>
@@ -496,7 +502,7 @@
     
     <span class="k">def</span> <span class="nf">_read_loginfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">f</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Read the log info section of the spc file.&quot;&quot;&quot;</span>
-        <span class="n">logstc</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;IIIII44s&#39;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">64</span><span class="p">))</span>
+        <span class="n">logstc</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;IIIII44s&#39;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">64</span><span class="p">))</span>
         <span class="n">logstc_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;logsizd&quot;</span><span class="p">,</span> <span class="s2">&quot;logsizm&quot;</span><span class="p">,</span> <span class="s2">&quot;logtxto&quot;</span><span class="p">,</span> <span class="s2">&quot;logbins&quot;</span><span class="p">,</span> <span class="s2">&quot;logdsks&quot;</span><span class="p">,</span> <span class="s2">&quot;logrsvr&quot;</span><span class="p">)</span>
         <span class="n">logheader</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">logstc_keys</span><span class="p">,</span> <span class="n">logstc</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_header</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">,</span> <span class="o">**</span><span class="n">logheader</span><span class="p">)</span>
@@ -511,9 +517,9 @@
         <span class="c1"># Now read the rest of the file as log text</span>
         <span class="n">logtext</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="c1"># We expect things to be single lines terminated with a CR-LF of the format key=value</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">split</span><span class="p">(</span><span class="n">b</span><span class="s2">&quot;[</span><span class="se">\r\n</span><span class="s2">]+&quot;</span><span class="p">,</span> <span class="n">logtext</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">b</span><span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-                <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;[</span><span class="se">\r\n</span><span class="s2">]+&quot;</span><span class="p">,</span> <span class="n">logtext</span><span class="p">):</span>
+            <span class="k">if</span> <span class="sa">b</span><span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
                 <span class="n">key</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
@@ -542,7 +548,7 @@
         <span class="c1"># Open the file and read the main file header and unpack into a dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_filesize</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">st_size</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">spchdr</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s&#39;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">512</span><span class="p">))</span>
+            <span class="n">spchdr</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s&#39;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">512</span><span class="p">))</span>
             <span class="n">keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ftflgs&quot;</span><span class="p">,</span> <span class="s2">&quot;fversn&quot;</span><span class="p">,</span> <span class="s2">&quot;fexper&quot;</span><span class="p">,</span> <span class="s2">&quot;fexp&quot;</span><span class="p">,</span> <span class="s2">&quot;fnpts&quot;</span><span class="p">,</span> <span class="s2">&quot;ffirst&quot;</span><span class="p">,</span> <span class="s2">&quot;flast&quot;</span><span class="p">,</span> <span class="s2">&quot;fnsub&quot;</span><span class="p">,</span> <span class="s2">&quot;fxtype&quot;</span><span class="p">,</span> <span class="s2">&quot;fytype&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;fztype&quot;</span><span class="p">,</span> <span class="s2">&quot;fpost&quot;</span><span class="p">,</span> <span class="s2">&quot;fres&quot;</span><span class="p">,</span> <span class="s2">&quot;fsource&quot;</span><span class="p">,</span> <span class="s2">&quot;fpeakpt&quot;</span><span class="p">,</span> <span class="s2">&quot;fspare1&quot;</span><span class="p">,</span> <span class="s2">&quot;fspare2&quot;</span><span class="p">,</span> <span class="s2">&quot;fspare3&quot;</span><span class="p">,</span> <span class="s2">&quot;fspare4&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;fspare5&quot;</span><span class="p">,</span> <span class="s2">&quot;fspare6&quot;</span><span class="p">,</span> <span class="s2">&quot;fspare7&quot;</span><span class="p">,</span> <span class="s2">&quot;fspare8&quot;</span><span class="p">,</span> <span class="s2">&quot;fcm&quot;</span><span class="p">,</span> <span class="s2">&quot;nt&quot;</span><span class="p">,</span> <span class="s2">&quot;fcatx&quot;</span><span class="p">,</span> <span class="s2">&quot;flogoff&quot;</span><span class="p">,</span> <span class="s2">&quot;fmods&quot;</span><span class="p">,</span> <span class="s2">&quot;fprocs&quot;</span><span class="p">,</span>
@@ -619,8 +625,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
-        <span class="n">sh</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;^\*([^\s]+)\s+(.*)$&#39;</span><span class="p">)</span>  <span class="c1"># Regexp to grab the keys</span>
-        <span class="n">ka</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;(.*)\-(\d+)$&#39;</span><span class="p">)</span>
+        <span class="n">sh</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^\*([^\s]+)\s+(.*)$&#39;</span><span class="p">)</span>  <span class="c1"># Regexp to grab the keys</span>
+        <span class="n">ka</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(.*)\-(\d+)$&#39;</span><span class="p">)</span>
         <span class="n">header</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -664,7 +670,7 @@
                         <span class="k">else</span><span class="p">:</span>
                             <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">newvalue</span><span class="p">])</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">],</span><span class="nb">list</span><span class="p">):</span>
                             <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newvalue</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">newvalue</span><span class="p">)</span>
@@ -710,7 +716,7 @@
 
 <div class="viewcode-block" id="XRDFile.__init__"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.XRDFile.__init__.html#Stoner.FileFormats.XRDFile.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a public attribute to XRD File.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">XRDFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">XRDFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;four_bounce&quot;</span><span class="p">:</span><span class="nb">bool</span><span class="p">}</span></div>
 
     <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
@@ -731,7 +737,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
-        <span class="n">sh</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;\[(.+)\]&#39;</span><span class="p">)</span>  <span class="c1"># Regexp to grab section name</span>
+        <span class="n">sh</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\[(.+)\]&#39;</span><span class="p">)</span>  <span class="c1"># Regexp to grab section name</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> <span class="c1"># Read filename linewise</span>
             <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;;RAW4.00&quot;</span><span class="p">:</span>  <span class="c1"># Check we have the corrrect fileformat</span>
                 <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;File Format Not Recognized !&quot;</span><span class="p">)</span>
@@ -810,7 +816,7 @@
 <span class="sd">        line_numbers is a list of important line numbers in the file.</span>
 <span class="sd">        I&#39;ve left it open for someone to add options for more args if they wish.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">BNLFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BNLFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">line_numbers</span> <span class="o">=</span> <span class="p">[]</span></div>
 
     <span class="k">def</span> <span class="nf">__find_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -840,11 +846,11 @@
         <span class="n">scanLine</span> <span class="o">=</span> <span class="n">linecache</span><span class="o">.</span><span class="n">getline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_numbers</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
         <span class="n">dateLine</span> <span class="o">=</span> <span class="n">linecache</span><span class="o">.</span><span class="n">getline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_numbers</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
         <span class="n">motorLine</span> <span class="o">=</span> <span class="n">linecache</span><span class="o">.</span><span class="n">getline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_numbers</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="s1">&#39;Snumber&#39;</span><span class="p">,</span> <span class="n">scanLine</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="s1">&#39;Snumber&#39;</span><span class="p">,</span> <span class="n">scanLine</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">scanLine</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">:])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="s1">&#39;Stype&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)))</span>  <span class="c1">#get rid of commas</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="s1">&#39;Sdatetime&#39;</span><span class="p">,</span> <span class="n">dateLine</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1">#don&#39;t want \n at end of line so use -1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="s1">&#39;Smotor&#39;</span><span class="p">,</span> <span class="n">motorLine</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="s1">&#39;Stype&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)))</span>  <span class="c1">#get rid of commas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="s1">&#39;Sdatetime&#39;</span><span class="p">,</span> <span class="n">dateLine</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1">#don&#39;t want \n at end of line so use -1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="s1">&#39;Smotor&#39;</span><span class="p">,</span> <span class="n">motorLine</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">3</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">__parse_BNL_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Internal function for parsing BNL data.</span>
@@ -855,8 +861,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__find_lines</span><span class="p">()</span>
         <span class="c1">#creates a list, line_numbers, formatted [header_line,data_line,scan_line,date_line,motor_line]</span>
         <span class="n">header_string</span> <span class="o">=</span> <span class="n">linecache</span><span class="o">.</span><span class="n">getline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_numbers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">header_string</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;[&quot;\n]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">header_string</span><span class="p">)</span>  <span class="c1">#get rid of new line character</span>
-        <span class="n">header_string</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;#L&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">header_string</span><span class="p">)</span>  <span class="c1">#get rid of line indicator character</span>
+        <span class="n">header_string</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[&quot;\n]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">header_string</span><span class="p">)</span>  <span class="c1">#get rid of new line character</span>
+        <span class="n">header_string</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#L&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">header_string</span><span class="p">)</span>  <span class="c1">#get rid of line indicator character</span>
         <span class="n">column_headers</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">header_string</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__get_metadata</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1002,8 +1008,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
-        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;# Dataset &quot;([^\&quot;]*)&quot; exported from GenX on (.*)$&#39;</span><span class="p">)</span>
-        <span class="n">pattern2</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;#\sFile\sexported\sfrom\sGenX\&#39;s\sReflectivity\splugin&quot;</span><span class="p">)</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;# Dataset &quot;([^\&quot;]*)&quot; exported from GenX on (.*)$&#39;</span><span class="p">)</span>
+        <span class="n">pattern2</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;#\sFile\sexported\sfrom\sGenX\&#39;s\sReflectivity\splugin&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">datafile</span><span class="p">:</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">datafile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
             <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
@@ -1175,7 +1181,7 @@
                     <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Cannot determine version of OOMMFF file&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># bug out oif we don&#39;t like the header</span>
                 <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not n OOMMF OVF File: opening line eas </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
-            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;#\s*([^\:]+)\:\s+(.*)$&quot;</span><span class="p">)</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;#\s*([^\:]+)\:\s+(.*)$&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ptr</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
                 <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -1191,7 +1197,7 @@
                         <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">string_to_type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Failed to understand metadata&quot;</span><span class="p">)</span>
-            <span class="n">fmt</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">r&quot;.*Data\s+(.*)&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;.*Data\s+(.*)&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;meshtype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;rectangular&quot;</span><span class="p">,</span> <span class="s2">&quot;Sorry only OVF files with rectnagular meshes are currently supported.&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;meshtype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;rectangular&quot;</span><span class="p">:</span>
@@ -1200,9 +1206,9 @@
                     <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;valuedim&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
             <span class="n">uvwdata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_read_uvwdata</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">fmt</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
 
-        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;xmin&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;xmax&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;xnode&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;xbase&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">1</span><span class="n">E9</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ymin&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ymax&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ynode&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ybase&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">1</span><span class="n">E9</span>
-        <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;zmin&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;zmax&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;znode&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;zbase&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">1</span><span class="n">E9</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;xmin&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;xmax&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;xnode&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;xbase&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1E9</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ymin&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ymax&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ynode&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ybase&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1E9</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;zmin&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;zmax&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;znode&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;zbase&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1E9</span>
         <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">_np_</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">uvwdata</span><span class="p">))</span>
         <span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;X (nm)&quot;</span><span class="p">,</span> <span class="s2">&quot;Y (nm)&quot;</span><span class="p">,</span> <span class="s2">&quot;Z (nm)&quot;</span><span class="p">,</span> <span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">]</span>
@@ -1243,13 +1249,13 @@
                 <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#  Extra PV:&quot;</span><span class="p">):</span>
                     <span class="c1"># Onto the next metadata bit</span>
                     <span class="k">break</span>
-            <span class="n">pvpat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;^#\s+Extra\s+PV\s\d+\:(.*)&#39;</span><span class="p">)</span>
+            <span class="n">pvpat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^#\s+Extra\s+PV\s\d+\:(.*)&#39;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                     <span class="k">continue</span>
                 <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;# Extra PV&quot;</span><span class="p">):</span>
                     <span class="n">res</span> <span class="o">=</span> <span class="n">pvpat</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                    <span class="n">bits</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">r&#39;&quot;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+                    <span class="n">bits</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
                     <span class="k">if</span> <span class="n">bits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                         <span class="n">key</span> <span class="o">=</span> <span class="n">bits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -1272,7 +1278,7 @@
                     <span class="bp">self</span><span class="p">[</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">string_to_type</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Overran end of scan header before column descriptions&quot;</span><span class="p">)</span>
-            <span class="n">colpat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;#\s+\d+\s+\[([^\]]*)\](.*)&quot;</span><span class="p">)</span>
+            <span class="n">colpat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;#\s+\d+\s+\[([^\]]*)\](.*)&quot;</span><span class="p">)</span>
             <span class="n">column_headers</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="n">colpat</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
@@ -1556,12 +1562,30 @@
     <span class="c1">#   .. note::</span>
     <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
     <span class="c1">#      file type before attempting to read data.</span>
-    <span class="n">priority</span><span class="o">=</span><span class="mi">32</span> <span class="c1"># reasonably generic format</span>
+    <span class="n">priority</span><span class="o">=</span><span class="mi">16</span> <span class="c1"># We&#39;re checking for a the specoific PNG signature</span>
     <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
     <span class="c1"># the file load/save dialog boxes.</span>
     <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*.png&quot;</span><span class="p">]</span> <span class="c1"># Recognised filename patterns</span>
 
     <span class="n">mime_type</span><span class="o">=</span><span class="s2">&quot;image/png&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_check_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check that this is a PNG file and raie a StonerLoadError if not.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test</span><span class="p">:</span>
+                <span class="n">sig</span><span class="o">=</span><span class="n">test</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">python_v3</span><span class="p">:</span>
+                <span class="n">sig</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sig</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sig</span><span class="o">=</span><span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">sig</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sig</span><span class="o">!=</span><span class="p">[</span><span class="mi">137</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">78</span><span class="p">,</span><span class="mi">71</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">26</span><span class="p">,</span><span class="mi">10</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Signature mismatrch&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">traceback</span> <span class="k">import</span> <span class="n">format_exc</span>
+            <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a PNG file!&gt;</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">format_exc</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;PNG file loader routine.</span>
@@ -1577,6 +1601,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_signature</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">img</span><span class="o">.</span><span class="n">info</span><span class="p">:</span>
@@ -1689,7 +1714,7 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../index.html">
-              <img class="logo" src="../../_static/StonerLogo.png" alt="Logo"/>
+              <img class="logo" src="../../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
@@ -1701,27 +1726,33 @@
     </form>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 24, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
-    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../index.html">Module code</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.6.5
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
   </body>
 </html>

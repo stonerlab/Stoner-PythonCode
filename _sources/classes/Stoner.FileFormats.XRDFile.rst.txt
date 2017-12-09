@@ -29,9 +29,6 @@ Stoner.FileFormats.XRDFile
       ~Stoner.FileFormats.XRDFile.get_filename
       ~Stoner.FileFormats.XRDFile.insert_rows
       ~Stoner.FileFormats.XRDFile.items
-      ~Stoner.FileFormats.XRDFile.iteritems
-      ~Stoner.FileFormats.XRDFile.iterkeys
-      ~Stoner.FileFormats.XRDFile.itervalues
       ~Stoner.FileFormats.XRDFile.keys
       ~Stoner.FileFormats.XRDFile.load
       ~Stoner.FileFormats.XRDFile.pop
@@ -46,6 +43,7 @@ Stoner.FileFormats.XRDFile
       ~Stoner.FileFormats.XRDFile.select
       ~Stoner.FileFormats.XRDFile.setdefault
       ~Stoner.FileFormats.XRDFile.sort
+      ~Stoner.FileFormats.XRDFile.split
       ~Stoner.FileFormats.XRDFile.swap_column
       ~Stoner.FileFormats.XRDFile.to_Q
       ~Stoner.FileFormats.XRDFile.unique
@@ -56,27 +54,5 @@ Stoner.FileFormats.XRDFile
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.FileFormats.XRDFile.T
-      ~Stoner.FileFormats.XRDFile.clone
-      ~Stoner.FileFormats.XRDFile.column_headers
-      ~Stoner.FileFormats.XRDFile.data
-      ~Stoner.FileFormats.XRDFile.dict_records
-      ~Stoner.FileFormats.XRDFile.dims
-      ~Stoner.FileFormats.XRDFile.dtype
-      ~Stoner.FileFormats.XRDFile.filename
-      ~Stoner.FileFormats.XRDFile.mask
-      ~Stoner.FileFormats.XRDFile.metadata
-      ~Stoner.FileFormats.XRDFile.mime_type
-      ~Stoner.FileFormats.XRDFile.patterns
-      ~Stoner.FileFormats.XRDFile.priority
-      ~Stoner.FileFormats.XRDFile.records
-      ~Stoner.FileFormats.XRDFile.setas
-      ~Stoner.FileFormats.XRDFile.shape
-      ~Stoner.FileFormats.XRDFile.subclasses
    
    

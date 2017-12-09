@@ -1,8 +1,0 @@
-
-
-ImageStack.crop_stack
-========================================
-
-.. currentmodule:: Stoner.Image.stack
-
-.. automethod:: ImageStack.crop_stack

@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Stoner.Folders.PlotFolder &#8212; Stoner Pacakge API Documentation</title>
-    
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <title>PlotFolder &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -24,56 +21,196 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="PlotFolder.plot" href="Stoner.Folders.PlotFolder.plot.html" />
-    <link rel="prev" title="DataFolder.gather" href="Stoner.Folders.DataFolder.gather.html" /> 
+    <link rel="next" title="Stoner.FileFormats.CSVFile" href="Stoner.FileFormats.CSVFile.html" />
+    <link rel="prev" title="DataFolder" href="Stoner.Folders.DataFolder.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Folders.PlotFolder.plot.html" title="PlotFolder.plot"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Folders.DataFolder.gather.html" title="DataFolder.gather"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &#187;</li> 
-      </ul>
-    </div>  
+  <body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Folders.DataFolder.html" title="Previous document">DataFolder</a>
+        </li>
+        <li>
+          <a href="Stoner.FileFormats.CSVFile.html" title="Next document">Stoner.FileFormats.CSVFile</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html">Stoner Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="stoner-folders-plotfolder">
-<h1>Stoner.Folders.PlotFolder<a class="headerlink" href="#stoner-folders-plotfolder" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="plotfolder">
+<h1>PlotFolder<a class="headerlink" href="#plotfolder" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Folders.PlotFolder">
 <em class="property">class </em><code class="descclassname">Stoner.Folders.</code><code class="descname">PlotFolder</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#PlotFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.PlotFolder" title="Permalink to this definition">¶</a></dt>
-<dd><p>A subclass of <code class="xref py py-class docutils literal"><span class="pre">objectFolder</span></code> with extra methods for plotting lots of files.</p>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.PlotFolder.plot.html#Stoner.Folders.PlotFolder.plot" title="Stoner.Folders.PlotFolder.plot"><code class="xref py py-obj docutils literal"><span class="pre">plot</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
-<td>Call the plot method for each metadataObject, but switching to a subplot each time.</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Bases: <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a></p>
+<p>A subclass of <code class="xref py py-class docutils literal"><span class="pre">objectFolder</span></code> with extra methods for plotting lots of files.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Fri Dec  1 17:37:39 2017</span>
+
+<span class="sd">@author: phygbu</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">where</span><span class="p">,</span><span class="n">append</span>
+<span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">mu_0</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gmean</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
+
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span><span class="n">__home__</span>
+<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">FMR_Power</span><span class="p">,</span><span class="n">Inverse_Kittel</span><span class="p">,</span><span class="n">Linear</span>
+<span class="kn">from</span> <span class="nn">Stoner.plot.formats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span><span class="p">,</span><span class="n">TexEngFormatter</span>
+<span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="kn">import</span> <span class="n">PlotFolder</span>
+
+<span class="c1">#Customise a plot template</span>
+<span class="n">template</span><span class="o">=</span><span class="n">DefaultPlotStyle</span><span class="p">()</span>
+<span class="n">template</span><span class="o">.</span><span class="n">xformatter</span><span class="o">=</span><span class="n">TexEngFormatter</span><span class="p">()</span>
+<span class="n">template</span><span class="o">.</span><span class="n">xformatter</span><span class="o">.</span><span class="n">unit</span><span class="o">=</span><span class="s2">&quot;T&quot;</span>
+<span class="n">template</span><span class="o">.</span><span class="n">yformatter</span><span class="o">=</span><span class="n">TexEngFormatter</span>
+
+<span class="c1">#Custom function for split</span>
+<span class="k">def</span> <span class="nf">field_sign</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+    <span class="n">pos</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;Field&quot;</span><span class="p">]</span><span class="o">&gt;=</span><span class="mi">0</span>
+    <span class="k">return</span> <span class="n">where</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1">#Function for customising each individual plot</span>
+<span class="k">def</span> <span class="nf">extra</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">d</span><span class="p">):</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">],</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\nu={:.1f}\,$GHz&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;Frequency&quot;</span><span class="p">)</span><span class="o">/</span><span class="mf">1E9</span><span class="p">))</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Field $\mu_0H\,$&quot;</span><span class="p">)</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Abs. (arb)&quot;</span><span class="p">)</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">plt_legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">FMR_Power</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="mi">8</span><span class="p">},</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">display_prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<span class="c1">#Load data</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="s2">&quot;sample-data&quot;</span><span class="p">,</span><span class="s2">&quot;FMR-data.txt&quot;</span><span class="p">))</span>
+<span class="c1">#Rename columns and reset plot labels</span>
+<span class="n">d</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;multi[1]:y&quot;</span><span class="p">,</span><span class="s2">&quot;Field&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;multi[0]:y&quot;</span><span class="p">,</span><span class="s2">&quot;Frequency&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;Absorption::X&quot;</span><span class="p">,</span><span class="s2">&quot;FMR&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">labels</span><span class="o">=</span><span class="bp">None</span>
+
+<span class="c1">#Deine x and y columns and normalise to a big number</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;FMR&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1E6</span><span class="p">,</span><span class="mf">1E6</span><span class="p">))</span>
+
+<span class="c1">#Split the data file into separate files by frequencies and sign of field</span>
+<span class="n">fldr</span><span class="o">=</span><span class="n">PlotFolder</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">field_sign</span><span class="p">,</span><span class="s2">&quot;Frequency&quot;</span><span class="p">))</span> <span class="c1"># Convert to a PlotFolder</span>
+<span class="n">fldr</span><span class="o">.</span><span class="n">template</span><span class="o">=</span><span class="n">template</span> <span class="c1"># Set my custom plot template</span>
+
+
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fldr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="c1"># Invert the negative field side</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">x</span><span class="o">=-</span><span class="n">f</span><span class="o">.</span><span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">y</span><span class="o">=-</span><span class="n">f</span><span class="o">.</span><span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">resfldr</span><span class="o">=</span><span class="n">PlotFolder</span><span class="p">()</span> <span class="c1"># Somewhere to keep the results from +ve and -ve fields</span>
+
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">fldr</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span><span class="c1"># Fit each FMR spectra</span>
+    <span class="n">subfldr</span><span class="o">=</span><span class="n">fldr</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+    <span class="n">result</span><span class="o">=</span><span class="n">Data</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fldr</span><span class="p">[</span><span class="n">s</span><span class="p">]):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">template</span><span class="o">=</span><span class="n">template</span>
+        <span class="n">f</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="mf">1.75E5</span><span class="p">,</span><span class="n">rising</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">falling</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">FMR_Power</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="n">x</span><span class="o">&lt;</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">],</span><span class="n">output</span><span class="o">=</span><span class="s2">&quot;row&quot;</span><span class="p">)</span>
+        <span class="n">ch</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">column_headers</span>
+        <span class="n">res</span><span class="o">=</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">,[</span><span class="n">f</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;Frequency&quot;</span><span class="p">),</span><span class="n">s</span><span class="p">])</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">ch</span><span class="o">+</span><span class="p">[</span><span class="s2">&quot;Frequency (Hz)&quot;</span><span class="p">,</span><span class="s2">&quot;Field Sign&quot;</span><span class="p">]</span>
+        <span class="n">result</span><span class="o">+=</span><span class="n">res</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;y&quot;</span>
+
+    <span class="c1">#Now plot all the fits</span>
+    <span class="n">subfldr</span><span class="o">.</span><span class="n">plots_per_page</span><span class="o">=</span><span class="mi">6</span> <span class="c1"># Plot results</span>
+    <span class="n">subfldr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span><span class="n">extra</span><span class="o">=</span><span class="n">extra</span><span class="p">)</span>
+
+    <span class="c1">#Work with the overall results</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;H_res&quot;</span><span class="p">,</span><span class="n">e</span><span class="o">=</span><span class="s2">&quot;H_res.stderr&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Freq&quot;</span><span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">y</span><span class="o">/</span><span class="n">mu_0</span> <span class="c1">#Convert to A/m</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">e</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">e</span><span class="o">/</span><span class="n">mu_0</span>
+
+    <span class="n">resfldr</span><span class="o">+=</span><span class="n">result</span><span class="c1">#Stash the results</span>
+
+<span class="c1"># Merge the two field signs into a single file, taking care of the error columns too</span>
+<span class="n">result</span><span class="o">=</span><span class="n">resfldr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">]:</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span><span class="n">c</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">resfldr</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span><span class="n">c</span><span class="p">]</span><span class="o">+</span><span class="n">resfldr</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span><span class="n">c</span><span class="p">])</span><span class="o">/</span><span class="mf">2.0</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">]:</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span><span class="n">c</span><span class="p">]</span><span class="o">=</span><span class="n">gmean</span><span class="p">((</span><span class="n">resfldr</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span><span class="n">c</span><span class="p">],</span><span class="n">resfldr</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span><span class="n">c</span><span class="p">]),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Doing the Kittel fit with an orthogonal distance regression as we have x errors not y errors</span>
+<span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mf">200E3</span><span class="p">,</span><span class="mf">10E3</span><span class="p">]</span><span class="c1"># Some sensible guesses</span>
+<span class="n">result</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">Inverse_Kittel</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Kittel Fit&quot;</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;y&quot;</span>
+
+<span class="n">result</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">yformatter</span><span class="o">=</span><span class="n">TexEngFormatter</span>
+<span class="n">result</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">xformatter</span><span class="o">=</span><span class="n">TexEngFormatter</span>
+<span class="n">result</span><span class="o">.</span><span class="n">labels</span><span class="o">=</span><span class="bp">None</span>
+<span class="n">result</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+<span class="n">result</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r.&quot;</span><span class="p">,</span><span class="s2">&quot;b-&quot;</span><span class="p">])</span>
+<span class="n">result</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">Inverse_Kittel</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mf">7E9</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">1E5</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="mi">8</span><span class="p">})</span>
+<span class="n">result</span><span class="o">.</span><span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;$H_{res} </span><span class="se">\\</span><span class="s2">mathrm{(Am^{-1})}$&quot;</span>
+<span class="n">result</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Inverse Kittel Fit&quot;</span>
+
+
+<span class="c1">#Get alpha</span>
+<span class="n">result</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Delta_H&quot;</span><span class="p">,</span><span class="n">e</span><span class="o">=</span><span class="s2">&quot;Delta_H.stderr&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Freq&quot;</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">y</span><span class="o">/=</span><span class="n">mu_0</span>
+<span class="n">result</span><span class="o">.</span><span class="n">e</span><span class="o">/=</span><span class="n">mu_0</span>
+<span class="n">result</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">Linear</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Width&quot;</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;y&quot;</span>
+<span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r.&quot;</span><span class="p">,</span><span class="s2">&quot;b-&quot;</span><span class="p">])</span>
+<span class="n">result</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">Linear</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mf">5.5E9</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">2.8E3</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="mi">8</span><span class="p">})</span>
+</pre></div>
+</div>
+<div class="figure" id="id1">
+<img alt="../_images/plot-folder-test_00.png" src="../_images/plot-folder-test_00.png" />
+<p class="caption"><span class="caption-text">(<a class="reference external" href="../samples/plot-folder-test_00.png">png</a>, <a class="reference external" href="../samples/plot-folder-test_00.hires.png">hires.png</a>, <a class="reference external" href="../samples/plot-folder-test_00.pdf">pdf</a>)</span></p>
+</div>
+<div class="figure" id="id2">
+<img alt="../_images/plot-folder-test_01.png" src="../_images/plot-folder-test_01.png" />
+<p class="caption"><span class="caption-text">(<a class="reference external" href="../samples/plot-folder-test_01.png">png</a>, <a class="reference external" href="../samples/plot-folder-test_01.hires.png">hires.png</a>, <a class="reference external" href="../samples/plot-folder-test_01.pdf">pdf</a>)</span></p>
+</div>
+<div class="figure" id="id3">
+<img alt="../_images/plot-folder-test_02.png" src="../_images/plot-folder-test_02.png" />
+<p class="caption"><span class="caption-text">(<a class="reference external" href="../samples/plot-folder-test_02.png">png</a>, <a class="reference external" href="../samples/plot-folder-test_02.hires.png">hires.png</a>, <a class="reference external" href="../samples/plot-folder-test_02.pdf">pdf</a>)</span></p>
+</div>
+<div class="figure" id="id4">
+<img alt="../_images/plot-folder-test_03.png" src="../_images/plot-folder-test_03.png" />
+<p class="caption"><span class="caption-text">(<a class="reference external" href="../samples/plot-folder-test_03.png">png</a>, <a class="reference external" href="../samples/plot-folder-test_03.hires.png">hires.png</a>, <a class="reference external" href="../samples/plot-folder-test_03.pdf">pdf</a>)</span></p>
+</div>
+<div class="figure" id="id5">
+<img alt="../_images/plot-folder-test_04.png" src="../_images/plot-folder-test_04.png" />
+<p class="caption"><span class="caption-text">(<a class="reference external" href="../samples/plot-folder-test_04.png">png</a>, <a class="reference external" href="../samples/plot-folder-test_04.hires.png">hires.png</a>, <a class="reference external" href="../samples/plot-folder-test_04.pdf">pdf</a>)</span></p>
+</div>
+<div class="figure" id="id6">
+<img alt="../_images/plot-folder-test_05.png" src="../_images/plot-folder-test_05.png" />
+<p class="caption"><span class="caption-text">(<a class="reference external" href="../samples/plot-folder-test_05.png">png</a>, <a class="reference external" href="../samples/plot-folder-test_05.hires.png">hires.png</a>, <a class="reference external" href="../samples/plot-folder-test_05.pdf">pdf</a>)</span></p>
+</div>
+<div class="figure" id="id7">
+<img alt="../_images/plot-folder-test_06.png" src="../_images/plot-folder-test_06.png" />
+<p class="caption"><span class="caption-text">(<a class="reference external" href="../samples/plot-folder-test_06.png">png</a>, <a class="reference external" href="../samples/plot-folder-test_06.hires.png">hires.png</a>, <a class="reference external" href="../samples/plot-folder-test_06.pdf">pdf</a>)</span></p>
+</div>
 </dd></dl>
 
 </div>
@@ -85,21 +222,19 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Folders.DataFolder.gather.html"
-                        title="previous chapter">DataFolder.gather</a></p>
+  <p class="topless"><a href="Stoner.Folders.DataFolder.html"
+                        title="previous chapter">DataFolder</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Folders.PlotFolder.plot.html"
-                        title="next chapter">PlotFolder.plot</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.Folders.PlotFolder.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+  <p class="topless"><a href="Stoner.FileFormats.CSVFile.html"
+                        title="next chapter">Stoner.FileFormats.CSVFile</a></p>
+<div class="sourcelink">
+  <a href="../_sources/classes/Stoner.Folders.PlotFolder.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -110,33 +245,41 @@
     </form>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Folders.PlotFolder.plot.html" title="PlotFolder.plot"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Folders.DataFolder.gather.html" title="DataFolder.gather"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 24, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
-    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Folders.DataFolder.html" title="Previous document">DataFolder</a>
+        </li>
+        <li>
+          <a href="Stoner.FileFormats.CSVFile.html" title="Next document">Stoner.FileFormats.CSVFile</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html">Stoner Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.6.5
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
   </body>
 </html>

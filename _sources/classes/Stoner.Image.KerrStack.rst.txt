@@ -1,0 +1,7 @@
+KerrStack
+=========
+
+.. currentmodule:: Stoner.Image
+
+.. autoclass:: KerrStack
+   :show-inheritance:

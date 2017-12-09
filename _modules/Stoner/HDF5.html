@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Stoner.HDF5 &#8212; Stoner Pacakge API Documentation</title>
-    
-    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
@@ -24,24 +21,29 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
-      </ul>
-    </div>  
+  <body>
+    <header id="pageheader"><h1><a href="../../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../index.html">Module code</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -56,15 +58,19 @@
 <span class="sd">* HDF5File - A :py:class:`Stoner.Code.DataFile` subclass that can save and load data from hdf5 files</span>
 <span class="sd">* HDF5Folder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single hdf5 file</span>
 
+<span class="sd">It is only necessary to import this module for the subclasses of :py:class:`Stoner.Core.DataFile` to become available</span>
+<span class="sd">to :py:class:`Stoner.Core.Data`.</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span><span class="n">bytes2str</span><span class="p">,</span><span class="n">get_filedialog</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
-<span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">StonerLoadError</span>
+<span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">StonerLoadError</span><span class="p">,</span> <span class="n">metadataObject</span>
 <span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">.Image.core</span> <span class="k">import</span> <span class="n">ImageArray</span>
+<span class="kn">from</span> <span class="nn">.Image.core</span> <span class="k">import</span> <span class="n">ImageFile</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
 
 
 <div class="viewcode-block" id="HDF5File"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HDF5File.html#Stoner.HDF5.HDF5File">[docs]</a><span class="k">class</span> <span class="nc">HDF5File</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
@@ -142,13 +148,13 @@
             <span class="n">size</span><span class="o">=</span><span class="n">sniff</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
             <span class="n">sniff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">blk</span><span class="o">=</span><span class="n">sniff</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">blk</span><span class="o">==</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">HDF</span><span class="se">\r\n\x1a\n</span><span class="s1">&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">blk</span><span class="o">==</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">HDF</span><span class="se">\r\n\x1a\n</span><span class="s1">&#39;</span><span class="p">:</span>
                 <span class="n">c</span><span class="o">=</span><span class="mi">0</span>
                 <span class="k">while</span> <span class="n">sniff</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span><span class="o">&lt;</span><span class="n">size</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">blk</span><span class="p">)</span><span class="o">==</span><span class="mi">8</span><span class="p">:</span>
                     <span class="n">sniff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">512</span><span class="o">*</span><span class="mi">2</span><span class="o">**</span><span class="n">c</span><span class="p">)</span>
                     <span class="n">c</span><span class="o">+=</span><span class="mi">1</span>
                     <span class="n">blk</span><span class="o">=</span><span class="n">sniff</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">blk</span><span class="o">==</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">HDF</span><span class="se">\r\n\x1a\n</span><span class="s1">&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">blk</span><span class="o">==</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">HDF</span><span class="se">\r\n\x1a\n</span><span class="s1">&#39;</span><span class="p">:</span>
                         <span class="k">break</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t find the HD5 format singature block&quot;</span><span class="p">)</span>
@@ -163,7 +169,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_raise_error</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Could not find group </span><span class="si">{}</span><span class="s2"> in file </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">group</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">f</span>
 
-<div class="viewcode-block" id="HDF5File._load"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HDF5File._load.html#Stoner.HDF5.HDF5File._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Loads data from a hdf5 file</span>
 
 <span class="sd">        Args:</span>
@@ -210,9 +216,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="n">f</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="HDF5File.save"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HDF5File.save.html#Stoner.HDF5.HDF5File.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h5file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h5file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Writes the current object into  an hdf5 file or group within a file in afashion that is compatible with being loaded in again.</span>
 
 <span class="sd">        Args:</span>
@@ -262,7 +268,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h5file</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="n">f</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="bp">self</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
 
 <div class="viewcode-block" id="HGXFile"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HGXFile.html#Stoner.HDF5.HGXFile">[docs]</a><span class="k">class</span> <span class="nc">HGXFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
@@ -277,7 +283,7 @@
     <span class="n">pattern</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*.hgx&quot;</span><span class="p">]</span>
     <span class="n">mime_type</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;application/x-hdf&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="HGXFile._load"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HGXFile._load.html#Stoner.HDF5.HGXFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;GenX HDF file loader routine.</span>
 
 <span class="sd">        Args:</span>
@@ -296,13 +302,13 @@
             <span class="n">sniff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
             <span class="n">sniff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">blk</span><span class="o">=</span><span class="n">sniff</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">blk</span><span class="o">==</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">HDF</span><span class="se">\r\n\x1a\n</span><span class="s1">&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">blk</span><span class="o">==</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">HDF</span><span class="se">\r\n\x1a\n</span><span class="s1">&#39;</span><span class="p">:</span>
                 <span class="n">c</span><span class="o">=</span><span class="mi">0</span>
                 <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">blk</span><span class="p">)</span><span class="o">==</span><span class="mi">8</span><span class="p">:</span>
                     <span class="n">sniff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">512</span><span class="o">*</span><span class="mi">2</span><span class="o">**</span><span class="n">c</span><span class="p">)</span>
                     <span class="n">c</span><span class="o">+=</span><span class="mi">1</span>
                     <span class="n">blk</span><span class="o">=</span><span class="n">sniff</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">blk</span><span class="o">==</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">HDF</span><span class="se">\r\n\x1a\n</span><span class="s1">&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">blk</span><span class="o">==</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">HDF</span><span class="se">\r\n\x1a\n</span><span class="s1">&#39;</span><span class="p">:</span>
                         <span class="k">break</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t find the HD5 format singature block&quot;</span><span class="p">)</span>
@@ -317,9 +323,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">main_data</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;current&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Looks like an unexpected HDF layout!.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="HGXFile.scan_group"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HGXFile.scan_group.html#Stoner.HDF5.HGXFile.scan_group">[docs]</a>    <span class="k">def</span> <span class="nf">scan_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">grp</span><span class="p">,</span><span class="n">pth</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">scan_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">grp</span><span class="p">,</span><span class="n">pth</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Recursively list HDF5 Groups.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">pth</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">seen</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -341,9 +347,9 @@
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">grp</span><span class="p">[</span><span class="n">x</span><span class="p">],</span><span class="n">h5py</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
                 <span class="n">y</span><span class="o">=</span><span class="n">grp</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
                 <span class="bp">self</span><span class="p">[</span><span class="n">new_pth</span><span class="p">]</span><span class="o">=</span><span class="n">y</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="k">return</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="HGXFile.main_data"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HGXFile.main_data.html#Stoner.HDF5.HGXFile.main_data">[docs]</a>    <span class="k">def</span> <span class="nf">main_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data_grp</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">main_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data_grp</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Work through the main data group and build something that looks like a numpy 2D array.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_grp</span><span class="p">,</span><span class="n">h5py</span><span class="o">.</span><span class="n">Group</span><span class="p">)</span> <span class="ow">or</span> <span class="n">data_grp</span><span class="o">.</span><span class="n">name</span><span class="o">!=</span><span class="s2">&quot;/current/data&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;HDF5 file not in expected format&quot;</span><span class="p">)</span>
@@ -358,10 +364,10 @@
             <span class="bp">self</span><span class="o">&amp;=</span><span class="n">x</span>
             <span class="bp">self</span><span class="o">&amp;=</span><span class="n">y</span>
             <span class="bp">self</span><span class="o">&amp;=</span><span class="n">e</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span><span class="o">=</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;x_command&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">=</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;y_command&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;error_command&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span> <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">]</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span><span class="o">=</span><span class="n">bytes2str</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;x_command&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">=</span><span class="n">bytes2str</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;y_command&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">bytes2str</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;error_command&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span> <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">]</span></div>
 
 
 
@@ -375,10 +381,10 @@
 <span class="sd">    or are themsleves HDF5Folder instances (with a type attribute that reads &#39;HDF5Folder&#39;).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="HDF5Folder.__init__"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HDF5Folder.__init__.html#Stoner.HDF5.HDF5Folder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor for the HDF5Folder Class.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">HDF5Folder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HDF5Folder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Select Folder&quot;</span><span class="p">,</span> <span class="n">new_directory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates a file dialog box for working with</span>
@@ -407,7 +413,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="HDF5Folder.getlist"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HDF5Folder.getlist.html#Stoner.HDF5.HDF5Folder.getlist">[docs]</a>    <span class="k">def</span> <span class="nf">getlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="HDF5Folder.getlist"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HDF5Folder.html#Stoner.HDF5.HDF5Folder.getlist">[docs]</a>    <span class="k">def</span> <span class="nf">getlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads the HDF5 File to construct a list of file HDF5File objects&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">recursive</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">recursive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recursive</span>
@@ -435,7 +441,7 @@
                 <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;HDF5File&quot;</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">obj</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;HDF5Folder&quot;</span> <span class="ow">and</span> <span class="n">recursive</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span>
                                                                                <span class="n">pattern</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span>
                                                                                <span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -445,7 +451,7 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="HDF5Folder.save"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HDF5Folder.save.html#Stoner.HDF5.HDF5Folder.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="HDF5Folder.save"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HDF5Folder.html#Stoner.HDF5.HDF5Folder.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves a load of files to a single HDF5 file, creating groups as it goes.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -504,7 +510,7 @@
     <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.hdf&quot;</span><span class="p">,]</span>
     <span class="n">mime_type</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;application/x-hdf&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="SLS_STXMFile._load"><a class="viewcode-back" href="../../classes/Stoner.HDF5.SLS_STXMFile._load.html#Stoner.HDF5.SLS_STXMFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Loads data from a hdf5 file</span>
 
 <span class="sd">        Args:</span>
@@ -527,9 +533,15 @@
             <span class="n">f</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t interpret </span><span class="si">{}</span><span class="s2"> as a valid HDF5 file or group or filename&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="o">!=</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">f</span><span class="o">.</span><span class="n">items</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">!=</span><span class="s2">&quot;entry1&quot;</span> <span class="ow">or</span>  <span class="s2">&quot;definition&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;entry1&quot;</span><span class="p">]</span> <span class="ow">or</span>  <span class="n">f</span><span class="p">[</span><span class="s2">&quot;entry1&quot;</span><span class="p">][</span><span class="s2">&quot;definition&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">!=</span><span class="s2">&quot;NXstxm&quot;</span><span class="p">):</span> <span class="c1">#Bad HDF5</span>
+        <span class="n">items</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;entry1&quot;</span><span class="p">:</span>
+            <span class="n">group1</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;entry1&quot;</span><span class="p">]]</span>
+            <span class="k">if</span>  <span class="s2">&quot;definition&quot;</span> <span class="ow">in</span> <span class="n">group1</span> <span class="ow">and</span>  <span class="n">bytes2str</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;entry1&quot;</span><span class="p">][</span><span class="s2">&quot;definition&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="s2">&quot;NXstxm&quot;</span><span class="p">:</span> <span class="c1">#Good HDF5</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;HDF5 file lacks single top level group called entry1&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;HDF5 file lacks single top level group called entry1&quot;</span><span class="p">)</span>
-
         <span class="n">root</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;entry1&quot;</span><span class="p">]</span>
         <span class="n">data</span><span class="o">=</span><span class="n">root</span><span class="p">[</span><span class="s2">&quot;counter0&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -538,18 +550,25 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[[]]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scan_meta</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;file_name&quot;</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;file_name&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;original filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;file_name&quot;</span><span class="p">]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;original filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">filename</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;original filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">filename</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="n">f</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Loaded from&quot;</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
         
-<div class="viewcode-block" id="SLS_STXMFile.scan_meta"><a class="viewcode-back" href="../../classes/Stoner.HDF5.SLS_STXMFile.scan_meta.html#Stoner.HDF5.SLS_STXMFile.scan_meta">[docs]</a>    <span class="k">def</span> <span class="nf">scan_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">group</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;instrument.sample_x.data&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;actual_x&quot;</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;instrument.sample_x.data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;instrument.sample_y.data&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;actual_y&quot;</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;instrument.sample_y.data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;sample_x&quot;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;sample_y&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;counter0.sample_x&quot;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;counter0.sample_y&quot;</span><span class="p">])</span>            
+        
+        <span class="k">return</span> <span class="bp">self</span>
+        
+    <span class="k">def</span> <span class="nf">scan_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">group</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Scan the HDF5 Group for atributes and datasets and sub groups and recursively add them to the metadata.&quot;&quot;&quot;</span>
         <span class="n">root</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">:])</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span><span class="n">thing</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -563,20 +582,51 @@
                 <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">thing</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">thing</span><span class="o">.</span><span class="n">value</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">thing</span><span class="p">[</span><span class="o">...</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="n">attr</span><span class="p">)]</span><span class="o">=</span><span class="n">group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="n">attr</span><span class="p">)]</span><span class="o">=</span><span class="n">group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span></div>
             
-<div class="viewcode-block" id="STXMImage"><a class="viewcode-back" href="../../classes/Stoner.HDF5.STXMImage.html#Stoner.HDF5.STXMImage">[docs]</a><span class="k">class</span> <span class="nc">STXMImage</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">):</span>
+<div class="viewcode-block" id="STXMImage"><a class="viewcode-back" href="../../classes/Stoner.HDF5.STXMImage.html#Stoner.HDF5.STXMImage">[docs]</a><span class="k">class</span> <span class="nc">STXMImage</span><span class="p">(</span><span class="n">ImageFile</span><span class="p">):</span>
     
     <span class="sd">&quot;&quot;&quot;An instance of KerrArray that will load itself from a Swiss Light Source STXM image&quot;&quot;&quot;</span>
 
     <span class="n">_reduce_metadata</span><span class="o">=</span><span class="kc">False</span>
 
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="STXMImage._load"><a class="viewcode-back" href="../../classes/Stoner.HDF5.STXMImage._load.html#Stoner.HDF5.STXMImage._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
-        <span class="n">d</span><span class="o">=</span><span class="n">SLS_STXMFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">d</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span></div></div>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct a STXMImage file.</span>
+<span class="sd">        </span>
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            regrid (bool): If set True, the gridimage() method is automatically called to re-grid the image to known co-ordinates.&quot;&quot;&quot;</span>
+        <span class="n">regrid</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;regrid&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="n">d</span><span class="o">=</span><span class="n">SLS_STXMFile</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">STXMImage</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">filename</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">regrid</span><span class="p">,</span><span class="nb">tuple</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gridimage</span><span class="p">(</span><span class="o">*</span><span class="n">regrid</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">regrid</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gridimage</span><span class="p">(</span><span class="o">**</span><span class="n">regrid</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">regrid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gridimage</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">__floordiv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">metadataObject</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;collection.polarization.value&quot;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">other</span><span class="p">[</span><span class="s2">&quot;collection.polarization.value&quot;</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">plus</span><span class="p">,</span><span class="n">minus</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;collection.polarization.value&quot;</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">other</span><span class="p">[</span><span class="s2">&quot;collection.polarization.value&quot;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">plus</span><span class="p">,</span><span class="n">minus</span><span class="o">=</span><span class="n">other</span><span class="p">,</span><span class="bp">self</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;XMCD Ratio can only be found from a positive and minus image&quot;</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">image</span><span class="o">=</span><span class="p">(</span><span class="n">plus</span><span class="o">.</span><span class="n">image</span><span class="o">-</span><span class="n">minus</span><span class="o">.</span><span class="n">image</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">plus</span><span class="o">.</span><span class="n">image</span><span class="o">+</span><span class="n">minus</span><span class="o">.</span><span class="n">image</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Can only do XMCD calculation with another STXMFile&quot;</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -585,7 +635,7 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../index.html">
-              <img class="logo" src="../../_static/StonerLogo.png" alt="Logo"/>
+              <img class="logo" src="../../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
@@ -597,27 +647,33 @@
     </form>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 24, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
-    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../index.html">Module code</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.6.5
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
   </body>
 </html>

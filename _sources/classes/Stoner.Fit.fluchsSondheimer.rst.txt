@@ -1,0 +1,6 @@
+fluchsSondheimer
+================
+
+.. currentmodule:: Stoner.Fit
+
+.. autofunction:: fluchsSondheimer

@@ -1,0 +1,7 @@
+typedList
+=========
+
+.. currentmodule:: Stoner.tools
+
+.. autoclass:: typedList
+   :show-inheritance:

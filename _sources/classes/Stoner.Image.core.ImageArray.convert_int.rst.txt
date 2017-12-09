@@ -1,8 +1,0 @@
-
-
-ImageArray.convert_int
-========================================
-
-.. currentmodule:: Stoner.Image.core
-
-.. automethod:: ImageArray.convert_int

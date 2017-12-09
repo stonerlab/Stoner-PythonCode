@@ -1,8 +1,0 @@
-
-
-GBPlotStyle.customise_axes
-==============================================
-
-.. currentmodule:: Stoner.plot.formats
-
-.. automethod:: GBPlotStyle.customise_axes

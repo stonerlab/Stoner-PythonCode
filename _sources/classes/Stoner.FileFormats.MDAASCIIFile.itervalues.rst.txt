@@ -1,8 +1,0 @@
-
-
-MDAASCIIFile.itervalues
-==========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MDAASCIIFile.itervalues

@@ -1,30 +1,29 @@
-Stoner.plot.formats.SketchPlot
-==============================
+SketchPlot
+==========
 
 .. currentmodule:: Stoner.plot.formats
 
 .. autoclass:: SketchPlot
+   :show-inheritance:
 
-   
-
-   
-   .. rubric:: Methods
+   .. rubric:: Attributes Summary
 
    .. autosummary::
-    :toctree:
-   
-      ~Stoner.plot.formats.SketchPlot.customise
-      ~Stoner.plot.formats.SketchPlot.customise_axes
 
-   
-   
+      ~SketchPlot.stylename
 
-   
-   
-   .. rubric:: Attributes
+   .. rubric:: Methods Summary
 
    .. autosummary::
-   
-      ~Stoner.plot.formats.SketchPlot.stylename
-   
-   
+
+      ~SketchPlot.customise
+      ~SketchPlot.customise_axes
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: stylename
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: customise
+   .. automethod:: customise_axes

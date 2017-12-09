@@ -1,0 +1,6 @@
+cfg_model_from_ini
+==================
+
+.. currentmodule:: Stoner.Fit
+
+.. autofunction:: cfg_model_from_ini

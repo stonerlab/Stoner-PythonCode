@@ -1,8 +1,0 @@
-
-
-AnalysisMixin.bin
-=================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalysisMixin.bin

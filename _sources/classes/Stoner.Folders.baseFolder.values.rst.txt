@@ -1,8 +1,0 @@
-
-
-baseFolder.values
-================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: baseFolder.values

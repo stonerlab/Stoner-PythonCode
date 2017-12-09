@@ -1,8 +1,0 @@
-
-
-PlotMixin.griddata
-===================================
-
-.. currentmodule:: Stoner.plot.core
-
-.. automethod:: PlotMixin.griddata

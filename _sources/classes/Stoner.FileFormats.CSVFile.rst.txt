@@ -29,9 +29,6 @@ Stoner.FileFormats.CSVFile
       ~Stoner.FileFormats.CSVFile.get_filename
       ~Stoner.FileFormats.CSVFile.insert_rows
       ~Stoner.FileFormats.CSVFile.items
-      ~Stoner.FileFormats.CSVFile.iteritems
-      ~Stoner.FileFormats.CSVFile.iterkeys
-      ~Stoner.FileFormats.CSVFile.itervalues
       ~Stoner.FileFormats.CSVFile.keys
       ~Stoner.FileFormats.CSVFile.load
       ~Stoner.FileFormats.CSVFile.pop
@@ -46,6 +43,7 @@ Stoner.FileFormats.CSVFile
       ~Stoner.FileFormats.CSVFile.select
       ~Stoner.FileFormats.CSVFile.setdefault
       ~Stoner.FileFormats.CSVFile.sort
+      ~Stoner.FileFormats.CSVFile.split
       ~Stoner.FileFormats.CSVFile.swap_column
       ~Stoner.FileFormats.CSVFile.unique
       ~Stoner.FileFormats.CSVFile.update
@@ -55,27 +53,5 @@ Stoner.FileFormats.CSVFile
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.FileFormats.CSVFile.T
-      ~Stoner.FileFormats.CSVFile.clone
-      ~Stoner.FileFormats.CSVFile.column_headers
-      ~Stoner.FileFormats.CSVFile.data
-      ~Stoner.FileFormats.CSVFile.dict_records
-      ~Stoner.FileFormats.CSVFile.dims
-      ~Stoner.FileFormats.CSVFile.dtype
-      ~Stoner.FileFormats.CSVFile.filename
-      ~Stoner.FileFormats.CSVFile.mask
-      ~Stoner.FileFormats.CSVFile.metadata
-      ~Stoner.FileFormats.CSVFile.mime_type
-      ~Stoner.FileFormats.CSVFile.patterns
-      ~Stoner.FileFormats.CSVFile.priority
-      ~Stoner.FileFormats.CSVFile.records
-      ~Stoner.FileFormats.CSVFile.setas
-      ~Stoner.FileFormats.CSVFile.shape
-      ~Stoner.FileFormats.CSVFile.subclasses
    
    

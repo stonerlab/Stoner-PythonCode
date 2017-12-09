@@ -1,30 +1,27 @@
-Stoner.Fit.VFTEquation
-======================
+VFTEquation
+===========
 
 .. currentmodule:: Stoner.Fit
 
 .. autoclass:: VFTEquation
+   :show-inheritance:
 
-   
-
-   
-   .. rubric:: Methods
+   .. rubric:: Attributes Summary
 
    .. autosummary::
-    :toctree:
-   
-      ~Stoner.Fit.VFTEquation.__init__
-      ~Stoner.Fit.VFTEquation.guess
 
-   
-   
+      ~VFTEquation.display_names
 
-   
-   
-   .. rubric:: Attributes
+   .. rubric:: Methods Summary
 
    .. autosummary::
-   
-      ~Stoner.Fit.VFTEquation.display_names
-   
-   
+
+      ~VFTEquation.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

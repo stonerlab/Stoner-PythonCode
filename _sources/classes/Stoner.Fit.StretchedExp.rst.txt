@@ -1,30 +1,27 @@
-Stoner.Fit.StretchedExp
-=======================
+StretchedExp
+============
 
 .. currentmodule:: Stoner.Fit
 
 .. autoclass:: StretchedExp
+   :show-inheritance:
 
-   
-
-   
-   .. rubric:: Methods
+   .. rubric:: Attributes Summary
 
    .. autosummary::
-    :toctree:
-   
-      ~Stoner.Fit.StretchedExp.__init__
-      ~Stoner.Fit.StretchedExp.guess
 
-   
-   
+      ~StretchedExp.display_names
 
-   
-   
-   .. rubric:: Attributes
+   .. rubric:: Methods Summary
 
    .. autosummary::
-   
-      ~Stoner.Fit.StretchedExp.display_names
-   
-   
+
+      ~StretchedExp.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

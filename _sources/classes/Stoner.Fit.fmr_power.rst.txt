@@ -1,0 +1,6 @@
+fmr_power
+=========
+
+.. currentmodule:: Stoner.Fit
+
+.. autofunction:: fmr_power

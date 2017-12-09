@@ -1,8 +1,0 @@
-
-
-DataFile.reorder_columns
-====================================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: DataFile.reorder_columns

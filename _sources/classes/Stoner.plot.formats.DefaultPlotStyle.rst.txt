@@ -1,43 +1,53 @@
-Stoner.plot.formats.DefaultPlotStyle
-====================================
+DefaultPlotStyle
+================
 
 .. currentmodule:: Stoner.plot.formats
 
 .. autoclass:: DefaultPlotStyle
+   :show-inheritance:
 
-   
-
-   
-   .. rubric:: Methods
+   .. rubric:: Attributes Summary
 
    .. autosummary::
-    :toctree:
-   
-      ~Stoner.plot.formats.DefaultPlotStyle.__call__
-      ~Stoner.plot.formats.DefaultPlotStyle.__init__
-      ~Stoner.plot.formats.DefaultPlotStyle.annotate
-      ~Stoner.plot.formats.DefaultPlotStyle.apply
-      ~Stoner.plot.formats.DefaultPlotStyle.customise
-      ~Stoner.plot.formats.DefaultPlotStyle.customise_axes
-      ~Stoner.plot.formats.DefaultPlotStyle.new_figure
-      ~Stoner.plot.formats.DefaultPlotStyle.update
 
-   
-   
+      ~DefaultPlotStyle.show_legend
+      ~DefaultPlotStyle.show_title
+      ~DefaultPlotStyle.show_xlabel
+      ~DefaultPlotStyle.show_ylabel
+      ~DefaultPlotStyle.show_zlabel
+      ~DefaultPlotStyle.stylename
+      ~DefaultPlotStyle.stylesheet
+      ~DefaultPlotStyle.subplot_settings
 
-   
-   
-   .. rubric:: Attributes
+   .. rubric:: Methods Summary
 
    .. autosummary::
-   
-      ~Stoner.plot.formats.DefaultPlotStyle.show_legend
-      ~Stoner.plot.formats.DefaultPlotStyle.show_title
-      ~Stoner.plot.formats.DefaultPlotStyle.show_xlabel
-      ~Stoner.plot.formats.DefaultPlotStyle.show_ylabel
-      ~Stoner.plot.formats.DefaultPlotStyle.show_zlabel
-      ~Stoner.plot.formats.DefaultPlotStyle.stylename
-      ~Stoner.plot.formats.DefaultPlotStyle.stylesheet
-      ~Stoner.plot.formats.DefaultPlotStyle.subplot_settings
-   
-   
+
+      ~DefaultPlotStyle.__call__
+      ~DefaultPlotStyle.annotate
+      ~DefaultPlotStyle.apply
+      ~DefaultPlotStyle.customise
+      ~DefaultPlotStyle.customise_axes
+      ~DefaultPlotStyle.new_figure
+      ~DefaultPlotStyle.update
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: show_legend
+   .. autoattribute:: show_title
+   .. autoattribute:: show_xlabel
+   .. autoattribute:: show_ylabel
+   .. autoattribute:: show_zlabel
+   .. autoattribute:: stylename
+   .. autoattribute:: stylesheet
+   .. autoattribute:: subplot_settings
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__
+   .. automethod:: annotate
+   .. automethod:: apply
+   .. automethod:: customise
+   .. automethod:: customise_axes
+   .. automethod:: new_figure
+   .. automethod:: update

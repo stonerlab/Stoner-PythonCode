@@ -1,36 +1,231 @@
-Stoner.Core.DataArray
-=====================
+DataArray
+=========
 
 .. currentmodule:: Stoner.Core
 
 .. autoclass:: DataArray
+   :show-inheritance:
 
-   
-
-   
-   .. rubric:: Methods
+   .. rubric:: Attributes Summary
 
    .. autosummary::
-    :toctree:
-   
-      ~Stoner.Core.DataArray.keys
-      ~Stoner.Core.DataArray.swap_column
 
-   
-   
+      ~DataArray.T
+      ~DataArray.base
+      ~DataArray.baseclass
+      ~DataArray.column_headers
+      ~DataArray.ctypes
+      ~DataArray.data
+      ~DataArray.dtype
+      ~DataArray.fill_value
+      ~DataArray.flags
+      ~DataArray.flat
+      ~DataArray.hardmask
+      ~DataArray.i
+      ~DataArray.imag
+      ~DataArray.isrow
+      ~DataArray.itemsize
+      ~DataArray.mask
+      ~DataArray.nbytes
+      ~DataArray.ndim
+      ~DataArray.p
+      ~DataArray.q
+      ~DataArray.r
+      ~DataArray.real
+      ~DataArray.recordmask
+      ~DataArray.setas
+      ~DataArray.shape
+      ~DataArray.sharedmask
+      ~DataArray.size
+      ~DataArray.strides
 
-   
-   
-   .. rubric:: Attributes
+   .. rubric:: Methods Summary
 
    .. autosummary::
-   
-      ~Stoner.Core.DataArray.column_headers
-      ~Stoner.Core.DataArray.i
-      ~Stoner.Core.DataArray.isrow
-      ~Stoner.Core.DataArray.p
-      ~Stoner.Core.DataArray.q
-      ~Stoner.Core.DataArray.r
-      ~Stoner.Core.DataArray.setas
-   
-   
+
+      ~DataArray.all
+      ~DataArray.anom
+      ~DataArray.any
+      ~DataArray.argmax
+      ~DataArray.argmin
+      ~DataArray.argpartition
+      ~DataArray.argsort
+      ~DataArray.astype
+      ~DataArray.byteswap
+      ~DataArray.choose
+      ~DataArray.clip
+      ~DataArray.compress
+      ~DataArray.compressed
+      ~DataArray.conj
+      ~DataArray.conjugate
+      ~DataArray.copy
+      ~DataArray.count
+      ~DataArray.cumprod
+      ~DataArray.cumsum
+      ~DataArray.diagonal
+      ~DataArray.dot
+      ~DataArray.dump
+      ~DataArray.dumps
+      ~DataArray.fill
+      ~DataArray.filled
+      ~DataArray.flatten
+      ~DataArray.get_fill_value
+      ~DataArray.get_imag
+      ~DataArray.get_real
+      ~DataArray.getfield
+      ~DataArray.harden_mask
+      ~DataArray.ids
+      ~DataArray.iscontiguous
+      ~DataArray.item
+      ~DataArray.itemset
+      ~DataArray.keys
+      ~DataArray.max
+      ~DataArray.mean
+      ~DataArray.min
+      ~DataArray.mini
+      ~DataArray.newbyteorder
+      ~DataArray.nonzero
+      ~DataArray.partition
+      ~DataArray.prod
+      ~DataArray.product
+      ~DataArray.ptp
+      ~DataArray.put
+      ~DataArray.ravel
+      ~DataArray.repeat
+      ~DataArray.reshape
+      ~DataArray.resize
+      ~DataArray.round
+      ~DataArray.searchsorted
+      ~DataArray.set_fill_value
+      ~DataArray.setfield
+      ~DataArray.setflags
+      ~DataArray.shrink_mask
+      ~DataArray.soften_mask
+      ~DataArray.sort
+      ~DataArray.squeeze
+      ~DataArray.std
+      ~DataArray.sum
+      ~DataArray.swap_column
+      ~DataArray.swapaxes
+      ~DataArray.take
+      ~DataArray.tobytes
+      ~DataArray.tofile
+      ~DataArray.toflex
+      ~DataArray.tolist
+      ~DataArray.torecords
+      ~DataArray.tostring
+      ~DataArray.trace
+      ~DataArray.transpose
+      ~DataArray.unshare_mask
+      ~DataArray.var
+      ~DataArray.view
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: T
+   .. autoattribute:: base
+   .. autoattribute:: baseclass
+   .. autoattribute:: column_headers
+   .. autoattribute:: ctypes
+   .. autoattribute:: data
+   .. autoattribute:: dtype
+   .. autoattribute:: fill_value
+   .. autoattribute:: flags
+   .. autoattribute:: flat
+   .. autoattribute:: hardmask
+   .. autoattribute:: i
+   .. autoattribute:: imag
+   .. autoattribute:: isrow
+   .. autoattribute:: itemsize
+   .. autoattribute:: mask
+   .. autoattribute:: nbytes
+   .. autoattribute:: ndim
+   .. autoattribute:: p
+   .. autoattribute:: q
+   .. autoattribute:: r
+   .. autoattribute:: real
+   .. autoattribute:: recordmask
+   .. autoattribute:: setas
+   .. autoattribute:: shape
+   .. autoattribute:: sharedmask
+   .. autoattribute:: size
+   .. autoattribute:: strides
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: all
+   .. automethod:: anom
+   .. automethod:: any
+   .. automethod:: argmax
+   .. automethod:: argmin
+   .. automethod:: argpartition
+   .. automethod:: argsort
+   .. automethod:: astype
+   .. automethod:: byteswap
+   .. automethod:: choose
+   .. automethod:: clip
+   .. automethod:: compress
+   .. automethod:: compressed
+   .. automethod:: conj
+   .. automethod:: conjugate
+   .. automethod:: copy
+   .. automethod:: count
+   .. automethod:: cumprod
+   .. automethod:: cumsum
+   .. automethod:: diagonal
+   .. automethod:: dot
+   .. automethod:: dump
+   .. automethod:: dumps
+   .. automethod:: fill
+   .. automethod:: filled
+   .. automethod:: flatten
+   .. automethod:: get_fill_value
+   .. automethod:: get_imag
+   .. automethod:: get_real
+   .. automethod:: getfield
+   .. automethod:: harden_mask
+   .. automethod:: ids
+   .. automethod:: iscontiguous
+   .. automethod:: item
+   .. automethod:: itemset
+   .. automethod:: keys
+   .. automethod:: max
+   .. automethod:: mean
+   .. automethod:: min
+   .. automethod:: mini
+   .. automethod:: newbyteorder
+   .. automethod:: nonzero
+   .. automethod:: partition
+   .. automethod:: prod
+   .. automethod:: product
+   .. automethod:: ptp
+   .. automethod:: put
+   .. automethod:: ravel
+   .. automethod:: repeat
+   .. automethod:: reshape
+   .. automethod:: resize
+   .. automethod:: round
+   .. automethod:: searchsorted
+   .. automethod:: set_fill_value
+   .. automethod:: setfield
+   .. automethod:: setflags
+   .. automethod:: shrink_mask
+   .. automethod:: soften_mask
+   .. automethod:: sort
+   .. automethod:: squeeze
+   .. automethod:: std
+   .. automethod:: sum
+   .. automethod:: swap_column
+   .. automethod:: swapaxes
+   .. automethod:: take
+   .. automethod:: tobytes
+   .. automethod:: tofile
+   .. automethod:: toflex
+   .. automethod:: tolist
+   .. automethod:: torecords
+   .. automethod:: tostring
+   .. automethod:: trace
+   .. automethod:: transpose
+   .. automethod:: unshare_mask
+   .. automethod:: var
+   .. automethod:: view

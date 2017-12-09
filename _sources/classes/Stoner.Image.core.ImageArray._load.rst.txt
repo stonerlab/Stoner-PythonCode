@@ -1,8 +1,0 @@
-
-
-ImageArray._load
-==================================
-
-.. currentmodule:: Stoner.Image.core
-
-.. automethod:: ImageArray._load

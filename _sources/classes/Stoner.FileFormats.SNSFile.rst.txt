@@ -29,9 +29,6 @@ Stoner.FileFormats.SNSFile
       ~Stoner.FileFormats.SNSFile.get_filename
       ~Stoner.FileFormats.SNSFile.insert_rows
       ~Stoner.FileFormats.SNSFile.items
-      ~Stoner.FileFormats.SNSFile.iteritems
-      ~Stoner.FileFormats.SNSFile.iterkeys
-      ~Stoner.FileFormats.SNSFile.itervalues
       ~Stoner.FileFormats.SNSFile.keys
       ~Stoner.FileFormats.SNSFile.load
       ~Stoner.FileFormats.SNSFile.pop
@@ -46,6 +43,7 @@ Stoner.FileFormats.SNSFile
       ~Stoner.FileFormats.SNSFile.select
       ~Stoner.FileFormats.SNSFile.setdefault
       ~Stoner.FileFormats.SNSFile.sort
+      ~Stoner.FileFormats.SNSFile.split
       ~Stoner.FileFormats.SNSFile.swap_column
       ~Stoner.FileFormats.SNSFile.unique
       ~Stoner.FileFormats.SNSFile.update
@@ -55,27 +53,5 @@ Stoner.FileFormats.SNSFile
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.FileFormats.SNSFile.T
-      ~Stoner.FileFormats.SNSFile.clone
-      ~Stoner.FileFormats.SNSFile.column_headers
-      ~Stoner.FileFormats.SNSFile.data
-      ~Stoner.FileFormats.SNSFile.dict_records
-      ~Stoner.FileFormats.SNSFile.dims
-      ~Stoner.FileFormats.SNSFile.dtype
-      ~Stoner.FileFormats.SNSFile.filename
-      ~Stoner.FileFormats.SNSFile.mask
-      ~Stoner.FileFormats.SNSFile.metadata
-      ~Stoner.FileFormats.SNSFile.mime_type
-      ~Stoner.FileFormats.SNSFile.patterns
-      ~Stoner.FileFormats.SNSFile.priority
-      ~Stoner.FileFormats.SNSFile.records
-      ~Stoner.FileFormats.SNSFile.setas
-      ~Stoner.FileFormats.SNSFile.shape
-      ~Stoner.FileFormats.SNSFile.subclasses
    
    

@@ -1,33 +1,7 @@
-Stoner.HDF5.HGXFile
-===================
+HGXFile
+=======
 
 .. currentmodule:: Stoner.HDF5
 
 .. autoclass:: HGXFile
-
-   
-
-   
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~Stoner.HDF5.HGXFile._load
-      ~Stoner.HDF5.HGXFile.main_data
-      ~Stoner.HDF5.HGXFile.scan_group
-
-   
-   
-
-   
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.HDF5.HGXFile.mime_type
-      ~Stoner.HDF5.HGXFile.pattern
-      ~Stoner.HDF5.HGXFile.priority
-   
-   
+   :show-inheritance:

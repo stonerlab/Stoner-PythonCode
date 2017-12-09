@@ -1,0 +1,7 @@
+ImageFile
+=========
+
+.. currentmodule:: Stoner.Image
+
+.. autoclass:: ImageFile
+   :show-inheritance:

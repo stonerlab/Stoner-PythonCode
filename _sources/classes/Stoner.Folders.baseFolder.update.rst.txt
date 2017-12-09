@@ -1,8 +1,0 @@
-
-
-baseFolder.update
-================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: baseFolder.update

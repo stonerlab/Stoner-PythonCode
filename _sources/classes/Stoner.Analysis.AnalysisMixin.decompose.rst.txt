@@ -1,8 +1,0 @@
-
-
-AnalysisMixin.decompose
-=======================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalysisMixin.decompose

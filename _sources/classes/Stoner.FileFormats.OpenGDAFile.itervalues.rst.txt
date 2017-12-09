@@ -1,8 +1,0 @@
-
-
-OpenGDAFile.itervalues
-=========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OpenGDAFile.itervalues

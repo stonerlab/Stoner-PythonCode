@@ -1,30 +1,27 @@
-Stoner.Fit.Arrhenius
-====================
+Arrhenius
+=========
 
 .. currentmodule:: Stoner.Fit
 
 .. autoclass:: Arrhenius
+   :show-inheritance:
 
-   
-
-   
-   .. rubric:: Methods
+   .. rubric:: Attributes Summary
 
    .. autosummary::
-    :toctree:
-   
-      ~Stoner.Fit.Arrhenius.__init__
-      ~Stoner.Fit.Arrhenius.guess
 
-   
-   
+      ~Arrhenius.display_names
 
-   
-   
-   .. rubric:: Attributes
+   .. rubric:: Methods Summary
 
    .. autosummary::
-   
-      ~Stoner.Fit.Arrhenius.display_names
-   
-   
+
+      ~Arrhenius.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

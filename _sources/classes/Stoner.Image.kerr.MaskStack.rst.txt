@@ -1,0 +1,7 @@
+MaskStack
+=========
+
+.. currentmodule:: Stoner.Image.kerr
+
+.. autoclass:: MaskStack
+   :show-inheritance:

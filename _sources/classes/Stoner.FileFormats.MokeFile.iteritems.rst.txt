@@ -1,8 +1,0 @@
-
-
-MokeFile.iteritems
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.iteritems

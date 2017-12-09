@@ -1,8 +1,0 @@
-
-
-PlotMixin.subplot
-==================================
-
-.. currentmodule:: Stoner.plot.core
-
-.. automethod:: PlotMixin.subplot

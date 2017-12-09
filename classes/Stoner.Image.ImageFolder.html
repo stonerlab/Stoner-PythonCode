@@ -1,0 +1,162 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ImageFolder &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ImageStack" href="Stoner.Image.ImageStack.html" />
+    <link rel="prev" title="ImageFile" href="Stoner.Image.ImageFile.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head>
+  <body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Image.ImageFile.html" title="Previous document">ImageFile</a>
+        </li>
+        <li>
+          <a href="Stoner.Image.ImageStack.html" title="Next document">ImageStack</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html">Stoner Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="imagefolder">
+<h1>ImageFolder<a class="headerlink" href="#imagefolder" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Image.ImageFolder">
+<em class="property">class </em><code class="descclassname">Stoner.Image.</code><code class="descname">ImageFolder</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/folders.html#ImageFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageFolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DiskBssedFolder</span></code>, <a class="reference internal" href="Stoner.Folders.baseFolder.html#Stoner.Folders.baseFolder" title="Stoner.Folders.baseFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.baseFolder</span></code></a></p>
+<p>Folder object for images.</p>
+<p>ImageFolder is designed to behave pretty much like DataFolder but with
+functions and loaders appropriate for image based files.</p>
+<blockquote>
+<div><p>Attributes:
+type (<a class="reference internal" href="Stoner.Image.ImageArray.html#Stoner.Image.ImageArray" title="Stoner.Image.core.ImageArray"><code class="docutils literal"><span class="pre">Stoner.Image.ImageArray</span></code></a>) the type ob object to sotre in the folder (defaults to <code class="xref py py-class docutils literal"><span class="pre">Stoner.Cire.Data</span></code>)</p>
+<p>extra_args (dict): Extra arguments to use when instantiatoing the contents of the folder from a file on disk.</p>
+<dl class="docutils">
+<dt>pattern (str or regexp): A filename globbing pattern that matches the contents of the folder. If a regular expression is provided then</dt>
+<dd>any named groups are used to construct additional metadata entryies from the filename. Default is <em>.</em> to match all files with an extension.</dd>
+<dt>read_means (bool): IF true, additional metatdata keys are added that return the mean value of each column of the data. This can hep in</dt>
+<dd>grouping files where one column of data contains a constant value for the experimental state. Default is False</dd>
+</dl>
+<p>recursive (bool): Specifies whether to search recurisvely in a whole directory tree. Default is True.</p>
+<dl class="docutils">
+<dt>flatten (bool): Specify where to present subdirectories as spearate groups in the folder (False) or as a single group (True). Default is False.</dt>
+<dd>The <code class="xref py py-meth docutils literal"><span class="pre">DiskBasedFolder.flatten()</span></code> method has the equivalent effect and <code class="xref py py-meth docutils literal"><span class="pre">DiskBasedFolder.unflatten()</span></code> reverses it.</dd>
+</dl>
+<p>directory (str): The root directory on disc for the folder - by default this is the current working directory.</p>
+<p>multifile (boo): Whether to select individual files manually that are not (necessarily) in  a common directory structure.</p>
+<p>readlist (bool): Whether to read the directory immediately on creation. Default is True</p>
+</div></blockquote>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Image.ImageFile.html"
+                        title="previous chapter">ImageFile</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Image.ImageStack.html"
+                        title="next chapter">ImageStack</a></p>
+<div class="sourcelink">
+  <a href="../_sources/classes/Stoner.Image.ImageFolder.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Image.ImageFile.html" title="Previous document">ImageFile</a>
+        </li>
+        <li>
+          <a href="Stoner.Image.ImageStack.html" title="Next document">ImageStack</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html">Stoner Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.6.5
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

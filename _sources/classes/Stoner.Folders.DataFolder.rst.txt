@@ -1,26 +1,7 @@
-Stoner.Folders.DataFolder
-=========================
+DataFolder
+==========
 
 .. currentmodule:: Stoner.Folders
 
 .. autoclass:: DataFolder
-
-   
-
-   
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~Stoner.Folders.DataFolder.__init__
-      ~Stoner.Folders.DataFolder.concatentate
-      ~Stoner.Folders.DataFolder.extract
-      ~Stoner.Folders.DataFolder.gather
-
-   
-   
-
-   
-   
-   
+   :show-inheritance:

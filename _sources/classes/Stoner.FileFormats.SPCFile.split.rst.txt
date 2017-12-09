@@ -1,0 +1,8 @@
+
+
+SPCFile.split
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.split

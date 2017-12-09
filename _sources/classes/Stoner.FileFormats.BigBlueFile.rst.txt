@@ -29,9 +29,6 @@ Stoner.FileFormats.BigBlueFile
       ~Stoner.FileFormats.BigBlueFile.get_filename
       ~Stoner.FileFormats.BigBlueFile.insert_rows
       ~Stoner.FileFormats.BigBlueFile.items
-      ~Stoner.FileFormats.BigBlueFile.iteritems
-      ~Stoner.FileFormats.BigBlueFile.iterkeys
-      ~Stoner.FileFormats.BigBlueFile.itervalues
       ~Stoner.FileFormats.BigBlueFile.keys
       ~Stoner.FileFormats.BigBlueFile.load
       ~Stoner.FileFormats.BigBlueFile.pop
@@ -46,6 +43,7 @@ Stoner.FileFormats.BigBlueFile
       ~Stoner.FileFormats.BigBlueFile.select
       ~Stoner.FileFormats.BigBlueFile.setdefault
       ~Stoner.FileFormats.BigBlueFile.sort
+      ~Stoner.FileFormats.BigBlueFile.split
       ~Stoner.FileFormats.BigBlueFile.swap_column
       ~Stoner.FileFormats.BigBlueFile.unique
       ~Stoner.FileFormats.BigBlueFile.update
@@ -55,27 +53,5 @@ Stoner.FileFormats.BigBlueFile
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.FileFormats.BigBlueFile.T
-      ~Stoner.FileFormats.BigBlueFile.clone
-      ~Stoner.FileFormats.BigBlueFile.column_headers
-      ~Stoner.FileFormats.BigBlueFile.data
-      ~Stoner.FileFormats.BigBlueFile.dict_records
-      ~Stoner.FileFormats.BigBlueFile.dims
-      ~Stoner.FileFormats.BigBlueFile.dtype
-      ~Stoner.FileFormats.BigBlueFile.filename
-      ~Stoner.FileFormats.BigBlueFile.mask
-      ~Stoner.FileFormats.BigBlueFile.metadata
-      ~Stoner.FileFormats.BigBlueFile.mime_type
-      ~Stoner.FileFormats.BigBlueFile.patterns
-      ~Stoner.FileFormats.BigBlueFile.priority
-      ~Stoner.FileFormats.BigBlueFile.records
-      ~Stoner.FileFormats.BigBlueFile.setas
-      ~Stoner.FileFormats.BigBlueFile.shape
-      ~Stoner.FileFormats.BigBlueFile.subclasses
    
    

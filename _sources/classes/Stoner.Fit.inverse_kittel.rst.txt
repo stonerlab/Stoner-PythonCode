@@ -1,0 +1,6 @@
+inverse_kittel
+==============
+
+.. currentmodule:: Stoner.Fit
+
+.. autofunction:: inverse_kittel

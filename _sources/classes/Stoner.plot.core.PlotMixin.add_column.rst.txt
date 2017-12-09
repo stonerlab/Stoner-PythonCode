@@ -1,8 +1,0 @@
-
-
-PlotMixin.add_column
-=====================================
-
-.. currentmodule:: Stoner.plot.core
-
-.. automethod:: PlotMixin.add_column

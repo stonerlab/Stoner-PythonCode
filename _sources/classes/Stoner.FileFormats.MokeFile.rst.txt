@@ -29,9 +29,6 @@ Stoner.FileFormats.MokeFile
       ~Stoner.FileFormats.MokeFile.get_filename
       ~Stoner.FileFormats.MokeFile.insert_rows
       ~Stoner.FileFormats.MokeFile.items
-      ~Stoner.FileFormats.MokeFile.iteritems
-      ~Stoner.FileFormats.MokeFile.iterkeys
-      ~Stoner.FileFormats.MokeFile.itervalues
       ~Stoner.FileFormats.MokeFile.keys
       ~Stoner.FileFormats.MokeFile.load
       ~Stoner.FileFormats.MokeFile.pop
@@ -46,6 +43,7 @@ Stoner.FileFormats.MokeFile
       ~Stoner.FileFormats.MokeFile.select
       ~Stoner.FileFormats.MokeFile.setdefault
       ~Stoner.FileFormats.MokeFile.sort
+      ~Stoner.FileFormats.MokeFile.split
       ~Stoner.FileFormats.MokeFile.swap_column
       ~Stoner.FileFormats.MokeFile.unique
       ~Stoner.FileFormats.MokeFile.update
@@ -55,28 +53,5 @@ Stoner.FileFormats.MokeFile
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.FileFormats.MokeFile.T
-      ~Stoner.FileFormats.MokeFile.clone
-      ~Stoner.FileFormats.MokeFile.column_headers
-      ~Stoner.FileFormats.MokeFile.data
-      ~Stoner.FileFormats.MokeFile.dict_records
-      ~Stoner.FileFormats.MokeFile.dims
-      ~Stoner.FileFormats.MokeFile.dtype
-      ~Stoner.FileFormats.MokeFile.filename
-      ~Stoner.FileFormats.MokeFile.mask
-      ~Stoner.FileFormats.MokeFile.metadata
-      ~Stoner.FileFormats.MokeFile.mime_type
-      ~Stoner.FileFormats.MokeFile.patterns
-      ~Stoner.FileFormats.MokeFile.priority
-      ~Stoner.FileFormats.MokeFile.priotity
-      ~Stoner.FileFormats.MokeFile.records
-      ~Stoner.FileFormats.MokeFile.setas
-      ~Stoner.FileFormats.MokeFile.shape
-      ~Stoner.FileFormats.MokeFile.subclasses
    
    

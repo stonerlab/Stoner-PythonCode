@@ -1,8 +1,0 @@
-
-
-ImageStack.subtract
-======================================
-
-.. currentmodule:: Stoner.Image.stack
-
-.. automethod:: ImageStack.subtract

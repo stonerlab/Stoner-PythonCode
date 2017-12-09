@@ -29,9 +29,6 @@ Stoner.FileFormats.SPCFile
       ~Stoner.FileFormats.SPCFile.get_filename
       ~Stoner.FileFormats.SPCFile.insert_rows
       ~Stoner.FileFormats.SPCFile.items
-      ~Stoner.FileFormats.SPCFile.iteritems
-      ~Stoner.FileFormats.SPCFile.iterkeys
-      ~Stoner.FileFormats.SPCFile.itervalues
       ~Stoner.FileFormats.SPCFile.keys
       ~Stoner.FileFormats.SPCFile.load
       ~Stoner.FileFormats.SPCFile.pop
@@ -46,6 +43,7 @@ Stoner.FileFormats.SPCFile
       ~Stoner.FileFormats.SPCFile.select
       ~Stoner.FileFormats.SPCFile.setdefault
       ~Stoner.FileFormats.SPCFile.sort
+      ~Stoner.FileFormats.SPCFile.split
       ~Stoner.FileFormats.SPCFile.swap_column
       ~Stoner.FileFormats.SPCFile.unique
       ~Stoner.FileFormats.SPCFile.update
@@ -55,27 +53,5 @@ Stoner.FileFormats.SPCFile
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.FileFormats.SPCFile.T
-      ~Stoner.FileFormats.SPCFile.clone
-      ~Stoner.FileFormats.SPCFile.column_headers
-      ~Stoner.FileFormats.SPCFile.data
-      ~Stoner.FileFormats.SPCFile.dict_records
-      ~Stoner.FileFormats.SPCFile.dims
-      ~Stoner.FileFormats.SPCFile.dtype
-      ~Stoner.FileFormats.SPCFile.filename
-      ~Stoner.FileFormats.SPCFile.mask
-      ~Stoner.FileFormats.SPCFile.metadata
-      ~Stoner.FileFormats.SPCFile.mime_type
-      ~Stoner.FileFormats.SPCFile.patterns
-      ~Stoner.FileFormats.SPCFile.priority
-      ~Stoner.FileFormats.SPCFile.records
-      ~Stoner.FileFormats.SPCFile.setas
-      ~Stoner.FileFormats.SPCFile.shape
-      ~Stoner.FileFormats.SPCFile.subclasses
    
    

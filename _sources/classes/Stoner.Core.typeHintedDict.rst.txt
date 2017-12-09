@@ -1,35 +1,65 @@
-Stoner.Core.typeHintedDict
-==========================
+typeHintedDict
+==============
 
 .. currentmodule:: Stoner.Core
 
 .. autoclass:: typeHintedDict
+   :show-inheritance:
 
-   
-
-   
-   .. rubric:: Methods
+   .. rubric:: Attributes Summary
 
    .. autosummary::
-    :toctree:
-   
-      ~Stoner.Core.typeHintedDict.__init__
-      ~Stoner.Core.typeHintedDict.copy
-      ~Stoner.Core.typeHintedDict.export
-      ~Stoner.Core.typeHintedDict.export_all
-      ~Stoner.Core.typeHintedDict.findtype
-      ~Stoner.Core.typeHintedDict.string_to_type
-      ~Stoner.Core.typeHintedDict.type
 
-   
-   
+      ~typeHintedDict.allowed_keys
+      ~typeHintedDict.types
 
-   
-   
-   .. rubric:: Attributes
+   .. rubric:: Methods Summary
 
    .. autosummary::
-   
-      ~Stoner.Core.typeHintedDict.types
-   
-   
+
+      ~typeHintedDict.clear
+      ~typeHintedDict.copy
+      ~typeHintedDict.export
+      ~typeHintedDict.export_all
+      ~typeHintedDict.filter
+      ~typeHintedDict.findtype
+      ~typeHintedDict.fromkeys
+      ~typeHintedDict.get
+      ~typeHintedDict.has_key
+      ~typeHintedDict.items
+      ~typeHintedDict.keys
+      ~typeHintedDict.move_to_end
+      ~typeHintedDict.pop
+      ~typeHintedDict.popitem
+      ~typeHintedDict.setdefault
+      ~typeHintedDict.string_to_type
+      ~typeHintedDict.type
+      ~typeHintedDict.update
+      ~typeHintedDict.values
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: allowed_keys
+   .. autoattribute:: types
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: clear
+   .. automethod:: copy
+   .. automethod:: export
+   .. automethod:: export_all
+   .. automethod:: filter
+   .. automethod:: findtype
+   .. automethod:: fromkeys
+   .. automethod:: get
+   .. automethod:: has_key
+   .. automethod:: items
+   .. automethod:: keys
+   .. automethod:: move_to_end
+   .. automethod:: pop
+   .. automethod:: popitem
+   .. automethod:: setdefault
+   .. automethod:: string_to_type
+   .. automethod:: type
+   .. automethod:: update
+   .. automethod:: values

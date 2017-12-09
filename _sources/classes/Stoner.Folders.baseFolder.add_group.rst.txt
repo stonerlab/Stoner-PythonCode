@@ -1,8 +1,0 @@
-
-
-baseFolder.add_group
-===================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: baseFolder.add_group

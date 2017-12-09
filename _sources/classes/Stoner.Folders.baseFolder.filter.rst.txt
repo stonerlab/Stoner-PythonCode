@@ -1,8 +1,0 @@
-
-
-baseFolder.filter
-================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: baseFolder.filter

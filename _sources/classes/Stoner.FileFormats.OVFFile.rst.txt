@@ -29,9 +29,6 @@ Stoner.FileFormats.OVFFile
       ~Stoner.FileFormats.OVFFile.get_filename
       ~Stoner.FileFormats.OVFFile.insert_rows
       ~Stoner.FileFormats.OVFFile.items
-      ~Stoner.FileFormats.OVFFile.iteritems
-      ~Stoner.FileFormats.OVFFile.iterkeys
-      ~Stoner.FileFormats.OVFFile.itervalues
       ~Stoner.FileFormats.OVFFile.keys
       ~Stoner.FileFormats.OVFFile.load
       ~Stoner.FileFormats.OVFFile.pop
@@ -46,6 +43,7 @@ Stoner.FileFormats.OVFFile
       ~Stoner.FileFormats.OVFFile.select
       ~Stoner.FileFormats.OVFFile.setdefault
       ~Stoner.FileFormats.OVFFile.sort
+      ~Stoner.FileFormats.OVFFile.split
       ~Stoner.FileFormats.OVFFile.swap_column
       ~Stoner.FileFormats.OVFFile.unique
       ~Stoner.FileFormats.OVFFile.update
@@ -55,27 +53,5 @@ Stoner.FileFormats.OVFFile
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.FileFormats.OVFFile.T
-      ~Stoner.FileFormats.OVFFile.clone
-      ~Stoner.FileFormats.OVFFile.column_headers
-      ~Stoner.FileFormats.OVFFile.data
-      ~Stoner.FileFormats.OVFFile.dict_records
-      ~Stoner.FileFormats.OVFFile.dims
-      ~Stoner.FileFormats.OVFFile.dtype
-      ~Stoner.FileFormats.OVFFile.filename
-      ~Stoner.FileFormats.OVFFile.mask
-      ~Stoner.FileFormats.OVFFile.metadata
-      ~Stoner.FileFormats.OVFFile.mime_type
-      ~Stoner.FileFormats.OVFFile.patterns
-      ~Stoner.FileFormats.OVFFile.priority
-      ~Stoner.FileFormats.OVFFile.records
-      ~Stoner.FileFormats.OVFFile.setas
-      ~Stoner.FileFormats.OVFFile.shape
-      ~Stoner.FileFormats.OVFFile.subclasses
    
    

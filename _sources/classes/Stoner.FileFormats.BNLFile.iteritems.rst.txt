@@ -1,8 +1,0 @@
-
-
-BNLFile.iteritems
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.iteritems

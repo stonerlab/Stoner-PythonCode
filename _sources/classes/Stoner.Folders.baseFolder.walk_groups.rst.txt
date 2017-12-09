@@ -1,8 +1,0 @@
-
-
-baseFolder.walk_groups
-=====================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: baseFolder.walk_groups

@@ -1,8 +1,0 @@
-
-
-baseFolder.make_name
-===================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: baseFolder.make_name

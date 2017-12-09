@@ -1,8 +1,0 @@
-
-
-SPCFile.iterkeys
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.iterkeys

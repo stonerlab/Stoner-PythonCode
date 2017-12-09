@@ -1,0 +1,7 @@
+ImageArray
+==========
+
+.. currentmodule:: Stoner.Image
+
+.. autoclass:: ImageArray
+   :show-inheritance:

@@ -1,8 +1,0 @@
-
-
-AnalysisMixin.max
-=================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalysisMixin.max

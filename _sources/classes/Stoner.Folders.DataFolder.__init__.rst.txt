@@ -1,8 +1,0 @@
-
-
-DataFolder.__init__
-==================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: DataFolder.__init__

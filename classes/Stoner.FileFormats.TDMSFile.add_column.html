@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>TDMSFile.add_column &#8212; Stoner Pacakge API Documentation</title>
-    
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -24,33 +21,42 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="TDMSFile.clear" href="Stoner.FileFormats.TDMSFile.clear.html" />
-    <link rel="prev" title="TDMSFile.__init__" href="Stoner.FileFormats.TDMSFile.__init__.html" /> 
+    <link rel="prev" title="TDMSFile.__init__" href="Stoner.FileFormats.TDMSFile.__init__.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.TDMSFile.clear.html" title="TDMSFile.clear"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.TDMSFile.__init__.html" title="TDMSFile.__init__"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="Stoner.FileFormats.TDMSFile.html" accesskey="U">Stoner.FileFormats.TDMSFile</a> &#187;</li> 
-      </ul>
-    </div>  
+  <body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.FileFormats.TDMSFile.__init__.html" title="Previous document">TDMSFile.__init__</a>
+        </li>
+        <li>
+          <a href="Stoner.FileFormats.TDMSFile.clear.html" title="Next document">TDMSFile.clear</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html">Stoner Package</a>
+      </li>
+      <li>
+        <a href="Stoner.FileFormats.TDMSFile.html">Stoner.FileFormats.TDMSFile</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -61,27 +67,28 @@
 <h1>TDMSFile.add_column<a class="headerlink" href="#tdmsfile-add-column" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.FileFormats.TDMSFile.add_column">
-<code class="descclassname">TDMSFile.</code><code class="descname">add_column</code><span class="sig-paren">(</span><em>column_data</em>, <em>header=None</em>, <em>index=None</em>, <em>func_args=None</em>, <em>replace=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.FileFormats.TDMSFile.add_column" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">TDMSFile.</code><code class="descname">add_column</code><span class="sig-paren">(</span><em>column_data</em>, <em>header=None</em>, <em>index=None</em>, <em>func_args=None</em>, <em>replace=False</em>, <em>setas=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.FileFormats.TDMSFile.add_column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Appends a column of data or inserts a column to a datafile instance.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>column_data</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code> or list or callable) &#8211; Data to append or insert or a callable function that will generate new data</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>column_data</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code> or list or callable) – Data to append or insert or a callable function that will generate new data</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; The text to set the column header to,
-if not supplied then defaults to &#8216;col#&#8217;</li>
-<li><strong>index</strong> (<em>index type</em>) &#8211; The  index (numeric or string) to insert (or replace) the data</li>
-<li><strong>func_args</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; If column_data is a callable object, then this argument
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) – The text to set the column header to,
+if not supplied then defaults to ‘col#’</li>
+<li><strong>index</strong> (<em>index type</em>) – The  index (numeric or string) to insert (or replace) the data</li>
+<li><strong>func_args</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – If column_data is a callable object, then this argument
 can be used to supply a dictionary of function arguments to the callable object.</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Replace the data or insert the data (default)</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Replace the data or insert the data (default)</li>
+<li><strong>setas</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Set the type of column (x,y,z data etc - see <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a>)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> &#8211; The <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> instance with the additonal column inserted.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> instance with the additonal column inserted.</p>
 </td>
 </tr>
 </tbody>
@@ -102,7 +109,7 @@ the original DataFile Instance as well as returning it.</p>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="Stoner.FileFormats.TDMSFile.__init__.html"
@@ -110,13 +117,11 @@ the original DataFile Instance as well as returning it.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.FileFormats.TDMSFile.clear.html"
                         title="next chapter">TDMSFile.clear</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.FileFormats.TDMSFile.add_column.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+<div class="sourcelink">
+  <a href="../_sources/classes/Stoner.FileFormats.TDMSFile.add_column.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -127,34 +132,44 @@ the original DataFile Instance as well as returning it.</p>
     </form>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.TDMSFile.clear.html" title="TDMSFile.clear"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.TDMSFile.__init__.html" title="TDMSFile.__init__"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="Stoner.FileFormats.TDMSFile.html" >Stoner.FileFormats.TDMSFile</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 24, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
-    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.FileFormats.TDMSFile.__init__.html" title="Previous document">TDMSFile.__init__</a>
+        </li>
+        <li>
+          <a href="Stoner.FileFormats.TDMSFile.clear.html" title="Next document">TDMSFile.clear</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html">Stoner Package</a>
+      </li>
+      <li>
+        <a href="Stoner.FileFormats.TDMSFile.html">Stoner.FileFormats.TDMSFile</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.6.5
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
   </body>
 </html>

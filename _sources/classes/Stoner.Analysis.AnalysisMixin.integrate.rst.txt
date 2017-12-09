@@ -1,8 +1,0 @@
-
-
-AnalysisMixin.integrate
-=======================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalysisMixin.integrate
