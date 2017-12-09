@@ -122,7 +122,7 @@ pygments_style = 'sphinx'
 #modindex_common_prefix = []
 
 autosummary_generate = True
-automodsumm_inherited_members = True
+automodsumm_inherited_members = False
 autodoc_default_flags =[] # 'members', 'undoc-members', 'private-members','show-inheritance']
 
 intersphinx_mapping = {

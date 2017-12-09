@@ -413,7 +413,7 @@ class ModArrhenius(Model):
 
 
 def powerLaw(x, A, k):
-    """Power Law Fitting Equation.
+    r"""Power Law Fitting Equation.
 
     Args:
         x (array): Input data
@@ -433,7 +433,7 @@ def powerLaw(x, A, k):
 
 
 def quadratic(x, a, b, c):
-    """A Simple quadratic fitting function.
+    r"""A Simple quadratic fitting function.
 
     Args:
         x (aray): Input data
@@ -1011,7 +1011,7 @@ class BlochGrueneisen(Model):
 
 
 def langevin(H, M_s, m, T):
-    """"The Langevin function for paramagnetic M-H loops/
+    r""""The Langevin function for paramagnetic M-H loops/
 
     Args:
         H (array): The applied magnetic field
@@ -1038,7 +1038,7 @@ def langevin(H, M_s, m, T):
 
 class Langevin(Model):
 
-    """"The Langevin function for paramagnetic M-H loops/
+    r""""The Langevin function for paramagnetic M-H loops/
 
     Args:
         H (array): The applied magnetic field
@@ -1097,7 +1097,7 @@ def vftEquation(x, A, DE, x_0):
     Return:
         Rates according the VFT equation.
 
-    The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
+    The VFT equation is defined as as rr`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
     a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
 
     Example:
@@ -1250,7 +1250,7 @@ def inverse_kittel(f,g,M_s,H_k):
 
 class KittelEquation(Model):
     
-    """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
+    r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
         H (array): Magnetic fields in A/m
@@ -1292,7 +1292,7 @@ class KittelEquation(Model):
 
 class Inverse_Kittel(Model):
     
-    """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
+    r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
         H (array): Magnetic fields in A/m
@@ -1329,7 +1329,7 @@ class Inverse_Kittel(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 def lorentzian_diff(x,A,sigma,mu):
-    """Implement a differential form of a Lorentzian peak.
+    r"""Implement a differential form of a Lorentzian peak.
     
     Args:
         x (array): x data
@@ -1343,7 +1343,7 @@ def lorentzian_diff(x,A,sigma,mu):
     return A*sigma*(2*mu - 2*x)/(pi*(sigma**2 + (-mu + x)**2)**2)
 
 class Lorentzian_diff(Model):
-    """lmfit Model rerprenting the differential form of a Lorentzian Peak.
+    r"""lmfit Model rerprenting the differential form of a Lorentzian Peak.
     
     Args:
         x (array): x data
