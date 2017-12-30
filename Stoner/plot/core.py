@@ -1463,9 +1463,9 @@ def hsl2rgb(h, s, l):
 def PlotFile(*args,**kargs):
     """Issue a warning and then create a class anyway."""
     warn("PlotFile is deprecated in favour of Stoner.Data or the PlotMixin",DeprecationWarning)
-    from Stoner.Core import DataFile    
+    import Stoner.Core as _SC_    
 
-    class PlotFile(PlotMixin,DataFile):
+    class PlotFile(PlotMixin,_SC_.DataFile):
         
         """Extends DataFile with plotting functions from :py:class:`Stoner.Plot.PlotMixin`"""
         

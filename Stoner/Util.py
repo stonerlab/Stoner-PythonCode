@@ -12,6 +12,7 @@ from .tools import format_error
 import Stoner.Core  as _SC_
 from .Folders import DataFolder as _SF_
 from .Fit import linear
+from . import Data
 from numpy import max, sqrt, diag, argmax, mean,array #pylint: disable=redefined-builtin
 from scipy.stats import sem
 
@@ -47,7 +48,7 @@ def split_up_down(data, col=None, folder=None):
     Returns:
         A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling
     """
-    a = _SC_.Data(data)
+    a = Data(data)
     if col is None:
         _=a._col_args()
         col=_.xcol
@@ -142,7 +143,7 @@ def hysteresis_correct(data, **kargs):
     if isinstance(data, _SC_.DataFile):
         cls = data.__class__
     else:
-        cls = _SC_.Data
+        cls = Data
     data = cls(data)
 
     if "setas" in kargs: # Allow us to override the setas variable

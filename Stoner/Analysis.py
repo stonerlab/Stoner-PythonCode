@@ -2519,9 +2519,9 @@ class AnalysisMixin(object):
 def AnalyseFile(*args,**kargs):
     """Issue a warning and then create a class anyway."""
     warn("AnalyseFile is deprecated in favour of Stoner.Data or the AnalysisMixin",DeprecationWarning)
-    from .Core import DataFile    
+    import Stoner.Core as _SC_    
     
-    class AnalyseFile(AnalysisMixin,DataFile):
+    class AnalyseFile(AnalysisMixin,_SC_.DataFile):
         
         """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
     

@@ -9,11 +9,11 @@ It is only necessary to import this module for the subclasses of :py:class:`Ston
 to :py:class:`Stoner.Core.Data`.
 
 """
-from Stoner.compat import string_types,bytes2str,get_filedialog
+from .compat import string_types,bytes2str,get_filedialog
 import h5py
 import numpy as _np_
 from .Core import DataFile, StonerLoadError, metadataObject
-from .Core import Data
+from . import Data
 from .Image.core import ImageFile
 import os.path as path
 import os

@@ -10,9 +10,9 @@ Please do keep documentation up to date, see other functions for documentation e
 All the functions here defined for scipy.optimize.curve\_fit to call themm
 i.e. the parameters are expanded to separate arguements.
 """
-
-from Stoner.compat import python_v3,string_types
-from Stoner.Core import DataFile
+import Stoner.Core as _SC_
+from .compat import python_v3,string_types
+from . import Data
 import numpy as _np_
 from io import IOBase
 from scipy.special import digamma
@@ -109,7 +109,6 @@ def cfg_data_from_ini(inifile,filename=None,**kargs):
     if ConfigParser is None:
         raise RuntimeError("Need to have ConfigParser module installed for this to work.")
     config = ConfigParser.SafeConfigParser()
-    from Stoner.Core import Data
     if isinstance(inifile,string_types):
         config.read(inifile)
     elif isinstance(inifile,IOBase):
@@ -208,7 +207,7 @@ def cfg_model_from_ini(inifile,model=None,data=None):
                     kargs[k]=config.getfloat(p,k)
                 elif keys[k]==str:
                     kargs[k]=config.get(p,k)
-        if isinstance(data,DataFile): # stuff the parameter hint data into metadata
+        if isinstance(data,_SC_.DataFile): # stuff the parameter hint data into metadata
             for k in keys: # remove keywords not needed
                 if k in kargs:
                     data["{}{} {}".format(prefix,p,k)]=kargs[k]
