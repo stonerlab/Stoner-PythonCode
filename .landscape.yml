@@ -13,3 +13,48 @@
 #pylint:
 #  disable:
 #    - protected-access
+autodetect: yes
+strictness: medium
+test-warnings: false
+doc-warnings: true
+
+ignore-paths:
+  - .git
+  - coverage
+  - doc
+
+ignore-patterns:
+  - ^.*doc\/conf\.py
+
+pep8:
+  run: true
+  enable:
+    - W601
+  options:
+    max-line-length: 160
+    single-line-if-stmt: n
+
+pylint:
+  run: true
+
+pep257:
+  disable:
+    - D203
+  run: true
+
+pyroma:
+  run: true
+
+mccabe:
+  run: true
+  options:
+    max-complexity: 10
+
+dodgy:
+  run: true
+
+pyflakes:
+  run: true
+
+frosted:
+  run: true
