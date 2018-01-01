@@ -12,6 +12,9 @@ clean:
 test:
 	$(PYTHON_SETUP) test
 
+check:
+	prospector --profile-path=. -P .landscape.yml Stoner > prospector-report.txt
+
 commit:
 	$(MAKE) -C doc readme
 	git commit -a
