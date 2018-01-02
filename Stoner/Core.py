@@ -2,22 +2,22 @@
 from __future__ import print_function
 __all__ = ["StonerLoadError", "StonerSetasError","regexpDict","typeHintedDict","metadataObject","DataArray","DataFile"]
 
-from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,_lmfit,Model
-from .tools import isNone,all_size,all_type,format_error,_attribute_store,operator,isiterable,typedList
-
 import re
 #import pdb # for debugging
 import os
-import csv
-import numpy as _np_
-from numpy import NaN
-import numpy.ma as _ma_
 import copy
 import os.path as path
 import inspect as _inspect_
-
 import itertools
 from collections import OrderedDict,MutableMapping
+
+import csv
+import numpy as _np_
+from numpy import NaN # pylint: disable=unused-import
+import numpy.ma as _ma_
+
+from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes
+from .tools import isNone,all_size,all_type,_attribute_store,operator,isiterable,typedList
 
 
 try:
@@ -55,6 +55,7 @@ def copy_into(source,dest):
     return dest
 
 class StonerLoadError(Exception):
+
     """An exception thrown by the file loading routines in the Stoner Package.
 
     This special exception is thrown when one of the subclasses of :py:class:`Stoner.Core.DataFile`
@@ -62,15 +63,20 @@ class StonerLoadError(Exception):
     error, but simply indicates that the file format is not recognised by that particular subclass,
     and thus another subclass should have a go instead.
     """
+
     pass
 
 class StonerSetasError(AttributeError):
+
     """An exception tjrown when we try to access a column in data without setas being set."""
+
     pass
 
 
 class _tab_delimited(csv.Dialect):
+
     """A customised csv dialect class for reading tab delimited text files."""
+
     delimiter = "\t"
     quoting = csv.QUOTE_NONE
     doublequote = False
@@ -78,6 +84,7 @@ class _tab_delimited(csv.Dialect):
 
 
 class _setas(object):
+
     """A Class that provides a mechanism for managing the column assignments in a DataFile like object."""
 
     def __init__(self, initial_val=None, **kargs):
@@ -98,7 +105,7 @@ class _setas(object):
 
         if initial_val is not None:
             self(initial_val)
-        elif len(kargs) > 0:
+        elif kargs:
             self(**kargs)
 
     @property
@@ -117,6 +124,7 @@ class _setas(object):
 
     @property
     def clone(self):
+        """Create an exact copy of the current object."""
         cls=self.__class__
         new = cls()
         for attr in self.__dict__:
@@ -126,18 +134,21 @@ class _setas(object):
 
     @property
     def cols(self):
-        if len(self._cols)==0:
+        """Get the current column assignments."""
+        if not self._cols:
             self._cols.update(self._get_cols())
         return self._cols
 
     @cols.setter
     def cols(self,value):
+        """Update the current column assignments."""
         if not isinstance(value,dict):
             raise AttributeError("cols attribute must be a dictionary")
         self._cols=_attribute_store(value)
 
     @property
     def column_headers(self):
+        """Get the current column headers."""
         c=self._size
         l=len(self._column_headers)
         if l<c: # Extend the column headers if necessary
@@ -146,6 +157,7 @@ class _setas(object):
 
     @column_headers.setter
     def column_headers(self,value):
+        """Set the colum headers."""
         self._column_headers=typedList(string_types,value)
 
     @property
@@ -165,10 +177,12 @@ class _setas(object):
 
     @property
     def shape(self):
+        """Return the shape of the array that we think we are."""
         return self._shape
 
     @shape.setter
     def shape(self,value):
+        """Update the note of our shape."""
         value=tuple(value)
         if 0<=len(value)<=2:
             self._shape=tuple(value)
@@ -180,18 +194,18 @@ class _setas(object):
     def __call__(self, *args, **kargs):
         """Treat the current instance as a callable object and assign columns accordingly.
 
-         Variois forms of this method are accepted::
+        Variois forms of this method are accepted::
 
-            setas("xyzuvw")
-            setas(["x"],["y"],["z"],["u"],["v"],["w"])
-            setas(x="column_1",y=3,column4="z")
+        setas("xyzuvw")
+        setas(["x"],["y"],["z"],["u"],["v"],["w"])
+        setas(x="column_1",y=3,column4="z")
         """
         try:
-            assert len(args) == 0 or len(args) == 1
-            if len(args) == 1:
-                assert isinstance(args[0], string_types) or isiterable(args[0]) or isinstance(args[0], _setas)
-            elif len(args) == 1:
-                assert len(kargs) > 0
+            assert len(args) <= 1
+            if args:
+                assert isinstance(args[0], string_types+(_setas,)) or isiterable(args[0])
+            else:
+                assert kargs
         except AssertionError:
             raise SyntaxError("setas must be called with a single argument - string or other iterable")
 
@@ -205,7 +219,7 @@ class _setas(object):
         if len(self.setas) < len(self.column_headers):
             self.setas.extend(list("." * (len(self.column_headers) - len(self.setas))))
 
-        if len(args) > 0:
+        if args:
             value = args[0]
             if isinstance(value, string_types):  # expand the number-code combos in value
                 pattern = re.compile("[^0-9]*(([0-9]+?)(x|y|z|d|e|f|u|v|w|\.|\-))")
@@ -271,8 +285,8 @@ class _setas(object):
         """Try to see if attribute name is a key in self.cols and return that instead."""
         if name in self.cols:
             return self.cols[name]
-        else:
-            return super(_setas,self).__getattr__(name)
+
+        return super(_setas,self).__getattr__(name)
 
     def __getitem__(self, name):
         """Permit the setas attribute to be treated like either a list or a dictionary.
@@ -398,7 +412,7 @@ class _setas(object):
             else:  # ok we'll try for a regular expression
                 test = re.compile(col)
                 possible = [x for x in self.column_headers if test.search(x)]
-                if len(possible) == 0:
+                if not possible:
                     try:
                         col = int(col)
                     except ValueError:
@@ -410,7 +424,7 @@ class _setas(object):
         elif isinstance(col, re._pattern_type):
             test = col
             possible = [x for x in self.column_headers if test.search(x)]
-            if len(possible) == 0:
+            if not possible:
                 raise KeyError('Unable to find any possible column matches for {}'.format(col.pattern))
             else:
                 col = self.find_col(possible)
@@ -436,7 +450,6 @@ class _setas(object):
         Returns:
             A single integer, a list of integers or a dictionary of all columns.
         """
-
         #Do the xcolumn and xerror first. If only one x column then special case to reset startx to get any
         #y columns
         if len(self.setas) < len(self.column_headers):
@@ -482,9 +495,9 @@ class _setas(object):
 
         if xcol is None:
             axes = 0
-        elif len(ycol) == 0:
+        elif not ycol:
             axes = 1
-        elif len(zcol) == 0:
+        elif not zcol:
             axes = 2
         else:
             axes = 3
@@ -509,10 +522,10 @@ class _setas(object):
             "axes": axes
         })
         for n in list(ret.keys()):
-            if ret[n] is None or (isinstance(ret[n],list) and len(ret[n])==0):
+            if ret[n] is None or (isinstance(ret[n],list) and  not ret[n]):
                 ret["has_{}".format(n)]=False
             else:
-                ret["has_{}".format(n)]=True                
+                ret["has_{}".format(n)]=True
         ret["has_uvw"] = ret["has_ucol"] & ret["has_vcol"] & ret["has_wcol"]
         if what == "xcol":
             ret = ret["xcol"]
@@ -523,23 +536,23 @@ class _setas(object):
         return ret
 
 class _evaluatable(object):
-    """A very simple class that is just a placeholder to indicate that special action
-    needs to be taken to convert a string representation to a valid Python type."""
+
+    """Just a placeholder to indicate that special action needs to be taken to convert a string representation to a valid Python type."""
+
     pass
 
 class regexpDict(sorteddict):
+
     """An ordered dictionary that permits looks up by regular expression."""
+
     allowed_keys=(object,)
-    
-    def __init__(self,*args,**kargs):
-        super(regexpDict,self).__init__(*args,**kargs)
 
     def __lookup__(self,name,multiple=False,exact=False):
         """Lookup name and find a matching key or raise KeyError.
 
         Parameters:
             name (str, re._pattern_type): The name to be searched for
-            
+
         Keyword Arguments:
             multiple (bool): Return a singl entry ()default, False) or multiple entries
 
@@ -558,7 +571,7 @@ class regexpDict(sorteddict):
                 name=repr(name)
             if exact:
                 raise KeyError("{} not a key and exact match requested.".format(name))
-            nm=name           
+            nm=name
             if isinstance(name,string_types):
                 try:
                     nm=re.compile(name)
@@ -570,7 +583,7 @@ class regexpDict(sorteddict):
                 nm=name
             if isinstance(nm,re._pattern_type):
                 ret=[n for n in self.keys() if isinstance(n,string_types) and nm.match(n)]
-        if ret is None or isiterable(ret) and len(ret)==0:
+        if ret is None or isiterable(ret) and not ret:
             raise KeyError("{} is not a match to any key.".format(name))
         else:
             if multiple: #sort out returing multiple entries or not
@@ -606,13 +619,14 @@ class regexpDict(sorteddict):
             return True
         except (KeyError,TypeError):
             return False
-        
+
     def has_key(self,name):
-        """"Key is definitely in dictionary as literal"""
+        """Key is definitely in dictionary as literal"""
         return super(regexpDict,self).__contains__(name)
 
 
 class typeHintedDict(regexpDict):
+
     """Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.
 
     The CM Physics Group at Leeds makes use of a standard file format that closely matches
@@ -640,6 +654,7 @@ class typeHintedDict(regexpDict):
         Rather than subclassing a plain dict, this is a subclass of a :py:class:`blist.sorteddict` which stores the entries in a binary list structure.
         This makes accessing the keys much faster and also ensures that keys are always returned in alphabetical order.
     """
+
     allowed_keys=string_types
     #Force metadata keys to be strings
     _typehints = sorteddict()
@@ -676,7 +691,7 @@ class typeHintedDict(regexpDict):
     # some string types
 
     def __init__(self, *args, **kargs):
-        """typeHintedDict constructor method.
+        """Construct the typeHintedDict.
 
         Args:
             *args, **kargs: Pass any parameters through to the dict() constructor.
@@ -688,7 +703,6 @@ class typeHintedDict(regexpDict):
         embedded string type from the keyname) or determines the likely
         type hint from the value of the dict element.
         """
-
         super(typeHintedDict, self).__init__(*args, **kargs)
         for key in list(self.keys()):  # Chekc through all the keys and see if they contain
             # type hints. If they do, move them to the
@@ -700,11 +714,11 @@ class typeHintedDict(regexpDict):
 
     @property
     def types(self):
+        """Return the dictrionary of value types."""
         return self._typehints
 
     def findtype(self, value):
-        """Determines the correct string type to return for common python
-        classes.
+        """Determines the correct string type to return for common python classes.
 
         Args:
             value (any): The data value to determine the type hint for.
@@ -725,7 +739,7 @@ class typeHintedDict(regexpDict):
                         for k in value:
                             elements.append(self.findtype(value[k]))
                     else:
-                        for i,v in enumerate(value):
+                        for v in value:
                             elements.append(self.findtype(v))
                     tt = ','
                     tt = tt.join(elements)
@@ -739,8 +753,7 @@ class typeHintedDict(regexpDict):
         return typ
 
     def __mungevalue(self, t, value):
-        """Based on a string type t, return value cast to an
-        appropriate python class.
+        """Based on a string type t, return value cast to an appropriate python class.
 
         Args:
             t (string): is a string representing the type
@@ -754,15 +767,16 @@ class typeHintedDict(regexpDict):
             expressions that will match type strings, a list of these has been
             constructed with instances of the matching Python classes. These
             are tested in turn and if the type string matches the constructor of
-            the associated python class is called with value as its argument."""
+            the associated python class is called with value as its argument.
+        """
         ret = None
         for (regexp, valuetype) in self.__tests:
             m = regexp.search(t)
             if m is not None:
                 if isinstance(valuetype, _evaluatable):
                     try:
-                        array=_np_.array
-                        ret = eval(repr(value), globals(), locals())
+                        array=_np_.array # pylint: disable=unused-variable
+                        ret = eval(repr(value), globals(), locals()) # pylint: disable=eval-used
                     except NameError:
                         ret = str(value)
                     except SyntaxError:
@@ -786,16 +800,17 @@ class typeHintedDict(regexpDict):
         Args:
             value (string): string representation of he value
         Returns:
-            A python object of the natural type for value"""
+            A python object of the natural type for value
+        """
         ret = None
         if not isinstance(value, string_types):
             raise TypeError("Value must be a string not a {}".format(type(value)))
         value = value.strip()
-        if len(value) != 0:
+        if value:
             tests = ['list(' + value + ')', 'dict(' + value + ')']
             try:
                 i = "[{".index(value[0])
-                ret = eval(tests[i])
+                ret = eval(tests[i]) # pylint: disable=eval-used
             except (SyntaxError, ValueError):
                 if value.lower() in ['true', 'ues', 'on', 'false', 'no', 'off']:
                     ret = value.lower() in ['true', 'yes', 'on']  #Booleab
@@ -835,14 +850,12 @@ class typeHintedDict(regexpDict):
             k = m.group(1)
             t = m.group(2)
             return k, t
-        else:
-            k = name
-            t = None
-            return k, None
+        k = name
+        t = None
+        return k, None
 
     def __getitem__(self, name):
-        """Provides a get item method that checks whether its been given a typehint in the
-        item name and deals with it appropriately.
+        """Provides a get item method that checks whether its been given a typehint in the item name and deals with it appropriately.
 
         Args:
             name (string): metadata key to retrieve
@@ -856,7 +869,7 @@ class typeHintedDict(regexpDict):
         value = [super(typeHintedDict, self).__getitem__(nm) for nm in name]
         if typehint is not None:
             value = [self.__mungevalue(typehint, v) for v in value]
-        if len(value)==0:
+        if not value:
             raise KeyError("{} is not a valid key even when interpreted as a sregular expression!".format(key))
         elif len(value)==1:
             return value[0]
@@ -864,8 +877,7 @@ class typeHintedDict(regexpDict):
             return {k:v for k,v in zip(name,value)}
 
     def __setitem__(self, name, value):
-        """Provides a method to set an item in the dict, checking the key for
-        an embedded type hint or inspecting the value as necessary.
+        """Provides a method to set an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
 
         Args:
             name (string): The metadata keyname
@@ -875,11 +887,12 @@ class typeHintedDict(regexpDict):
             If you provide an embedded type string it is your responsibility
             to make sure that it correctly describes the actual data
             typehintDict does not verify that your data and type string are
-            compatible."""
+            compatible.
+        """
         name, typehint = self._get_name_(name)
         if typehint is not None:
             self._typehints[name] = typehint
-            if len(str(value)) == 0:  # Empty data so reset to string and set empty
+            if str(value):  # Empty data so reset to string and set empty
                 super(typeHintedDict, self).__setitem__(name, "")
                 self._typehints[name] = "String"
             else:
@@ -895,7 +908,8 @@ class typeHintedDict(regexpDict):
         """Deletes the specified key.
 
         Args:
-            name (string): The keyname to be deleted"""
+            name (string): The keyname to be deleted
+        """
         name = self._get_name_(name)[0]
         name=self.__lookup__(name)
 
@@ -903,6 +917,7 @@ class typeHintedDict(regexpDict):
         super(typeHintedDict, self).__delitem__(name)
 
     def __repr__(self):
+        """Create a text representation of the dictionary with type data."""
         ret=["{}:{}:{}".format(repr(key),self.type(key),repr(self[key])) for key in self]
         return "\n".join(ret)
 
@@ -921,12 +936,12 @@ class typeHintedDict(regexpDict):
             ret._typehints[k]=t
             super(typeHintedDict,ret).__setitem__(k,copy.deepcopy(self[k]))
         return ret
-        
+
     def filter(self, name):
         """Filter the dictionary keys by name
-        
+
         Reduce the metadata dictionary leaving only keys satisfied by name.
-        
+
         Keyword Arguments:
             name(str or callable):
                 either a str to match or a callable function that takes metadata key-value
@@ -944,7 +959,7 @@ class typeHintedDict(regexpDict):
                 raise ValueError('name must be a string or a function')
         for k in rem:
             del(self[k])
-            
+
     def type(self, key):
         """Returns the typehint for the given k(s).
 
@@ -954,7 +969,8 @@ class typeHintedDict(regexpDict):
             key (string or sequence of strings): Either a single string key or a iterable type containing
                 keys
         Returns:
-            The string type hint (or a list of string type hints)"""
+            The string type hint (or a list of string type hints)
+        """
         if isinstance(key, string_types):
             return self._typehints[key]
         else:
@@ -964,8 +980,7 @@ class typeHintedDict(regexpDict):
                 return self._typehints[key]
 
     def export(self, key):
-        """Exports a single metadata value to a string representation with type
-        hint.
+        """Exports a single metadata value to a string representation with type hint.
 
         In the ASCII based file format, the type hinted metadata is represented
         in the first column of a tab delimited text file as a series of lines
@@ -974,7 +989,8 @@ class typeHintedDict(regexpDict):
         Args:
             key (string): The metadata key to export
         Returns:
-            A string of the format : key{type hint} = value"""
+            A string of the format : key{type hint} = value
+        """
         return "{}{{{}}}={}".format(key, self.type(key), repr(self[key]).encode('unicode_escape'))
 
     def export_all(self):
@@ -989,23 +1005,24 @@ class typeHintedDict(regexpDict):
         return [self.export(x) for x in self]
 
 class metadataObject(MutableMapping):
+
     """Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.
 
     Attributes:
-        metadata (typeHintedDict): of key-value metadata pairs. The dictionary
-                                   tries to retain information about the type of
-                                   data so as to aid import and export from CM group LabVIEw code.
-
-    """       
+        metadata (typeHintedDict): of key-value metadata pairs. The dictionary tries to retain information about the type of data so as to aid import and
+            export from CM group LabVIEW code.
+   """
 
     def __init__(self, *args, **kargs):
         """Initialises the current metadata attribute."""
         metadata=kargs.pop("metadata",None)
         if metadata is not None:
             self.metadata.update(metadata)
+        super(metadataObject,self).__init__(*args,**kargs)
 
     @property
     def metadata(self):
+        """Read the metadata dictionary."""
         try:
             return self._metadata
         except AttributeError: #Oops no metadata yet
@@ -1014,6 +1031,7 @@ class metadataObject(MutableMapping):
 
     @metadata.setter
     def metadata(self,value):
+        """Update the metadata object with type checking."""
         if not isinstance(value,typeHintedDict) and isiterable(value):
             self._metadata=typeHintedDict(value)
         elif isinstance(value,typeHintedDict):
@@ -1022,21 +1040,27 @@ class metadataObject(MutableMapping):
             raise TypeError("metadata must be something that can be turned into a dictionary, not a {}".format(type(value)))
 
     def __getitem__(self,name):
+        """Pass through to metadata dictionary."""
         return self.metadata[name]
 
     def __setitem__(self,name,value):
+        """Pass through to metadata dictionary."""
         self.metadata[name]=value
 
     def __delitem__(self,name):
+        """Pass through to metadata dictionary."""
         del self.metadata[name]
 
     def __len__(self):
+        """Pass through to metadata dictionary."""
         return len(self.metadata)
 
     def __iter__(self):
+        """Pass through to metadata dictionary."""
         return self.metadata.__iter__()
 
     def keys(self):
+        """Return the keys of the metadata dictionary."""
         return self.metadata.keys()
 
     def save(self,path):
@@ -1049,6 +1073,7 @@ class metadataObject(MutableMapping):
 
 
 class DataArray(_ma_.MaskedArray):
+
     """A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.
 
     Attributes:
@@ -1272,7 +1297,7 @@ class DataArray(_ma_.MaskedArray):
             ix=list(ix[1:])
             ix.append(self._setas.find_col(c))
             ix=tuple(ix)
-            
+
         if self.sharedmask: #We do not want to share a mask when we're about to change soimething here...
             self.unshare_mask()
 
@@ -1282,12 +1307,12 @@ class DataArray(_ma_.MaskedArray):
     def _(self):
         """Return the DataArray as a normal numpy array for those operations that need this"""
         return _ma_.getdata(self)
-     
+
     @property
     def isrow(self):
         """Defines whether this is a single row or a column if 1D."""
         return self._setas._row
-    
+
     @isrow.setter
     def isrow(self,value):
         """Set whether this object is a single row or not."""
@@ -1451,7 +1476,7 @@ class DataFile(metadataObject):
                            already saved to disc. This is the default filename used by the :py:meth:`Stoner.Core.DataFile.load`
                            and :py:meth:`Stoner.Core.DataFile.save`.
         mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask.
-        mime_type (list of str): The possible mime-types of data files represented by each matching filename pattern in :py:attr:`Datafile.pattern`. 
+        mime_type (list of str): The possible mime-types of data files represented by each matching filename pattern in :py:attr:`Datafile.pattern`.
         patterns (list): A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (*.txt and *.dat")
         priority (int): Used to indicathe order in which subclasses of :py:class:`DataFile` are tried when loading data. A higher number means a lower
                             priority (!)
@@ -1494,7 +1519,7 @@ class DataFile(metadataObject):
 
     _conv_string = _np_.vectorize(str)
     _conv_float = _np_.vectorize(float)
-    
+
     def __new__(cls, *args,**kargs):
         """Do some init stuff before the mixins kick in."""
         self=metadataObject.__new__(cls)
@@ -1506,7 +1531,7 @@ class DataFile(metadataObject):
         self.column_headers = list()
         self._baseclass = DataFile
         return self
-       
+
 
     def __init__(self, *args, **kargs):
         """Constructor method for :py:class:`DataFile`.
@@ -1647,7 +1672,7 @@ class DataFile(metadataObject):
     def _public_attrs(self):
         """Return a dictionary of attributes setable by keyword argument with thier types."""
         return self._public_attrs_real
-    
+
     @_public_attrs.setter
     def _public_attrs(self,value):
         """Privaye property to update the list of public attributes."""
@@ -1717,13 +1742,13 @@ class DataFile(metadataObject):
         """Return the _np_ dtype attribute of the data
         """
         return self.data.dtype
-    
+
     @property
     def filename(self):
         if self._filename is None:
             self.filename="Untitled"
         return self._filename
-    
+
     @filename.setter
     def filename(self,filename):
         self._filename=filename
@@ -2184,7 +2209,7 @@ class DataFile(metadataObject):
             try:
                 setattr(result, k, copy.deepcopy(v, memo))
             except Exception:
-                setattr(result, k, copy.copy(v))                
+                setattr(result, k, copy.copy(v))
         return result
 
     def __delitem__(self, item):
@@ -2610,7 +2635,7 @@ class DataFile(metadataObject):
         object andgenerate a reasonable textual representation of the data.shape
 
                 Returns:
-                    self in a textual format. 
+                    self in a textual format.
         """
         try:
             return self._repr_table_()
@@ -2626,7 +2651,7 @@ class DataFile(metadataObject):
         rows,cols=self._repr_limits
         r,c=self.shape
         interesting,col_assignments,cols=self._interesting_cols(cols)
-        c=min(c,cols)            
+        c=min(c,cols)
         c_w=max([len(self.column_headers[x]) for x in interesting if x>-1])
         wrapper=TextWrapper(subsequent_indent="\t",width=max(20,max(20,(80-c_w*c))))
         if r>rows:
@@ -2635,9 +2660,9 @@ class DataFile(metadataObject):
         else:
             shorten=[False,False]
 
-        shorten[1]=c>cols 
+        shorten[1]=c>cols
         r=max(len(self.metadata),r)
-        
+
         outp=_np_.zeros((r+1,c+1),dtype=object)
         outp[:,:]="..."
         ch=[self.column_headers[ix] if ix>=0 else "...." for ix in interesting]
@@ -2650,7 +2675,7 @@ class DataFile(metadataObject):
         outp[0,1:]=ch
         outp[1,1:]=col_assignments
         outp[1,0]
-        
+
         outp[0,0]="TDI Format 1.5{}index".format(lb)
         i=1
         for md in self.metadata.export_all():
@@ -2668,11 +2693,11 @@ class DataFile(metadataObject):
                 else:
                     outp[1:len(self.data)+1,ic+1]=self.data[:,c].astype(str)
         return tabulate(outp[1:],outp[0],tablefmt=fmt,numalign="decimal",stralign="left")
-              
+
     def _repr_html_(self):
-        """Version of repr_core that does and html output.        """        
+        """Version of repr_core that does and html output.        """
         return self._repr_table_("html")
-        
+
     def __repr_core__(self, shorten=1000):
         """Actuall do the repr work, but allow for a shorten parameter to
         save printing big files out to disc.
@@ -2740,7 +2765,7 @@ class DataFile(metadataObject):
         Args:
             name (string): Name of attribute to set. Details of possible attributes below:
 
-        - mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles the case where you pass a callable object 
+        - mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles the case where you pass a callable object
             to nask where we pass each row to the function and use the return reult as the mask
         - data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
         """
@@ -2846,10 +2871,10 @@ class DataFile(metadataObject):
 
     def _interesting_cols(self,cols):
         """Workout which columns the user might be interested in in the basis of the setas.
-        
+
         ArgsL
             cols (float): Maximum Number of columns to display
-        
+
         Returns
             list(ints): The indices of interesting columns with breaks in runs indicated by -1
         """
@@ -2882,7 +2907,7 @@ class DataFile(metadataObject):
             c=cols
         else:
             interesting=list(range(c))
-            
+
         col_assignments=[]
         for i in interesting:
             if i!=-1:
@@ -2945,7 +2970,7 @@ class DataFile(metadataObject):
                     ret[c]=list([ret[c]])
                 elif ret[c] is None:
                     ret[c]=[]
-            
+
         return ret
 
     def _pop_mask(self):
@@ -2957,7 +2982,7 @@ class DataFile(metadataObject):
         self.mask = self._masks.pop()
         if len(self._masks) == 0:
             self._masks = [False]
-            
+
     def _raise_type_error(self,k):
         """Raise a type error when setting an attribute k."""
         if isinstance(self._public_attrs[k], tuple):
@@ -2999,14 +3024,14 @@ class DataFile(metadataObject):
             index = self.find_col(index)
             if header is None:
                 header = self.column_headers[index]
-                
+
         if isinstance(setas,str) and len(setas)==1 and setas in "xyzdefuvw.-":
             pass
         elif setas is not None:
             raise TypeError("setas parameter should be a single letter in the set xyzdefuvw.-, not {}".format(setas))
         else:
             setas="."
-                
+
         if isinstance(column_data, list):
             column_data = _np_.array(column_data)
 
@@ -3041,13 +3066,13 @@ class DataFile(metadataObject):
             self.data[:, index] = _np__data
             if setas!="-":
                 self.setas[index]=setas
-                           
+
         else:
             if dc * dr == 0:
                 self.data = DataArray(_np_.transpose(_np_.atleast_2d(_np__data)),setas=self.data._setas)
                 self.column_headers=[header,]
                 self.setas=setas
-                
+
             else:
                 columns=copy.copy(self.column_headers)
                 old_setas=list(self.setas)
@@ -3721,9 +3746,9 @@ class DataFile(metadataObject):
         if "r" in kargs:
             func = lambda x, r: kargs.pop("r")(r[xcol], r[ycol], r[zcol])
             tmp.data = tmp.search(0, func, accuracy=accuracy)
-            
+
         if len(kargs)>0: # Fallback to working with select if nothing else.
-            tmp.select(**kargs)        
+            tmp.select(**kargs)
         return tmp
 
     def select(self,*args, **kargs):
@@ -3749,13 +3774,13 @@ class DataFile(metadataObject):
                 - *le*  value doe less than or equal to argument value
                 - *between*  value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)
                 - *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values
-                
+
         Returns:
             (DatFile): a copy the DataFile instance that contains just the matching rows.
 
         Note:
             if the operator is preceeded by *__not__* then the sense of the test is negated.
-            
+
             If any of the tests is True, then the row will be selected, so the effect is a logical OR. To
             achieve a logical AND, you can chain two selects together::
 
@@ -3766,9 +3791,9 @@ class DataFile(metadataObject):
             If you need to select on a row value that ends in an operator word, then append
             *__eq* in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
             then pass them via the first positional dictionary value.
-            
+
             There is a "magic" column name "_i" which is interpreted as the row numbers of the data.
-            
+
         Example
             .. plot:: samples/select_example.py
                 :include-source:
@@ -3861,7 +3886,7 @@ class DataFile(metadataObject):
 
         Args:
             *args (column index or function): Each argument is used in turn to find key values for the files in the DataFolder
-            
+
         Returns:
             Stoner.Folders.DataFolder: A :py:class:`Stoner.Folders.DataFolder` object containing the individual
             :py:class:`AnalysisMixin` objects
@@ -3870,14 +3895,14 @@ class DataFile(metadataObject):
             On each iteration the first argument is called. If it is a column type then rows which amtch each unique value are collated
             together and made into a separate file. If the argument is a callable, then it is called for each row, passing the row
             as a single 1D array and the return result is used to group lines together. The return value should be hashable.
-            
-            Once this is done and the :py:class:`Stoner.Folders.DataFolder` exists, if there are remaining argument, then the method is 
+
+            Once this is done and the :py:class:`Stoner.Folders.DataFolder` exists, if there are remaining argument, then the method is
             called recusivelyt for each file and the resulkting DataFolder added into the root DataFolder and the file is removed.
-            
+
             Thus, when all of the arguments are evaluated, the resulting DataFolder is a multi-level tree.
 
             .. warning::
-                
+
                 There has been a change in the arguments for the split function  from version 0.8 of the Stoner Package.
         """
         from Stoner.Folders import DataFolder
@@ -3900,7 +3925,7 @@ class DataFile(metadataObject):
                 if not isiterable(keys) or len(keys)!=len(self):
                     raise RuntimeError("Not returning an index of keys")
             except: #Ok try instead to do it row by row
-                keys=[xcol(r) for r in self]                
+                keys=[xcol(r) for r in self]
             keys=_np_.array(keys)
             for key in _np_.unique(keys):
                 data[key]=self.clone
@@ -3909,7 +3934,7 @@ class DataFile(metadataObject):
                 data[key].setas=self.setas
         else:
             raise NotImplementedError("Unable to split a file with an argument of type {}".format(type(xcol)))
-        out = DataFolder(nolist=True,setas=self.setas)        
+        out = DataFolder(nolist=True,setas=self.setas)
         for k,f in data.items():
             if len(args)>0:
                 out.add_group(k)
