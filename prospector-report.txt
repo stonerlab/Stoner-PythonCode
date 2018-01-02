@@ -1,201 +1,103 @@
 Messages
 ========
 
+..\C
+  Line: 5
+    frosted: E101 / 5: _lmfit imported but unused (col 1)
+  Line: 6
+    frosted: E101 / 6: format_error imported but unused (col 1)
+  Line: 12
+    frosted: E301 / 12: redefinition of 'ImageArray' from line 8 (col 1)
+  Line: 13
+    frosted: E101 / 13: NaN imported but unused (col 1)
+  Line: 15
+    frosted: E101 / 15: _SFF_ imported but unused (col 1)
+  Line: 20
+    frosted: E101 / 20: copy imported but unused (col 1)
+  Line: 30
+    frosted: E101 / 30: istuple imported but unused (col 1)
+  Line: 33
+    frosted: E101 / 33: exposure imported but unused (col 1)
+  Line: 34
+    frosted: E101 / 34: Axes3D imported but unused (col 5)
+  Line: 36
+    frosted: E101 / 36: host_subplot imported but unused (col 5)
+  Line: 37
+    frosted: E101 / 37: AA imported but unused (col 5)
+  Line: 72
+    frosted: E307 / 72: local variable '_' is assigned to but never used (col 17)
+  Line: 151
+    frosted: E307 / 151: local variable 'display_prefix' is assigned to but never used (col 9)
+  Line: 191
+    frosted: E307 / 191: local variable 'v' is assigned to but never used (col 17)
+  Line: 208
+    frosted: E307 / 208: local variable 'calframe' is assigned to but never used (col 13)
+  Line: 477
+    frosted: E307 / 477: local variable 'e' is assigned to but never used (col 9)
+  Line: 558
+    frosted: E307 / 558: local variable 'calframe' is assigned to but never used (col 13)
+  Line: 572
+    frosted: E301 / 572: redefinition of 'palette' from line 567 (col 9)
+  Line: 1342
+    frosted: E303 / 1342: undefined name 'pi' (col 34)
+  Line: 3902
+    frosted: W101 / 3902: bare except used: this is dangerous and should be avoided (col 13)
+
 Analysis.py
-  Line: 69
-    pylint: deprecated-method / Using deprecated method getfullargspec() (col 48)
-    pylint: deprecated-method / Using deprecated method getfullargspec() (col 48)
-  Line: 73
-    pylint: function-redefined / function already defined line 55 (col 12)
-  Line: 166
-    pylint: too-many-locals / Too many local variables (24/15)
+  Line: 76
+    pylint: function-redefined / function already defined line 58 (col 12)
+  Line: 169
+    pylint: too-many-locals / Too many local variables (24/20)
     mccabe: MC0001 / _twoD_fit is too complex (13)
-  Line: 295
-    pep257: D210 / No whitespaces allowed surrounding docstring text
-    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
-  Line: 320
-    pylint: import-error / Unable to import 'Stoner.Util' (col 8)
-  Line: 326
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 19)
-  Line: 376
-    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
-    pylint: too-many-locals / Too many local variables (16/15) (col 4)
-  Line: 399
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 34)
-  Line: 409
-    pep257: D300 / Use """triple double quotes""" (found """"-quotes)
-  Line: 443
-    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
-    pylint: too-many-locals / Too many local variables (21/15) (col 4)
-  Line: 509
-    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
-  Line: 511
-    pylint: undefined-variable / Undefined variable 'getargspec' (col 15)
-  Line: 534
-    pep257: D210 / No whitespaces allowed surrounding docstring text
-  Line: 584
-    pylint: too-many-locals / Too many local variables (16/15) (col 4)
-  Line: 614
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 41)
-  Line: 642
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 18)
-  Line: 660
-    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
-    pylint: too-many-locals / Too many local variables (25/15) (col 4)
+  Line: 446
+    pylint: too-many-locals / Too many local variables (21/20) (col 4)
+  Line: 663
+    pylint: too-many-locals / Too many local variables (25/20) (col 4)
     mccabe: MC0001 / AnalysisMixin.bin is too complex (13)
-  Line: 695
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 19)
-  Line: 771
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 18)
-  Line: 778
-    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
-    pylint: too-many-locals / Too many local variables (33/15) (col 4)
+  Line: 781
+    pylint: too-many-locals / Too many local variables (33/20) (col 4)
     mccabe: MC0001 / AnalysisMixin.curve_fit is too complex (12)
-  Line: 886
-    pylint: undefined-loop-variable / Using possibly undefined loop variable 'i' (col 11)
-  Line: 890
-    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
-  Line: 913
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 19)
-  Line: 939
-    pep257: D301 / Use r""" if any backslashes in a docstring
-    pylint: too-many-locals / Too many local variables (16/15) (col 4)
-  Line: 972
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 41)
-  Line: 985
-    pylint: too-many-locals / Too many local variables (16/15) (col 4)
-  Line: 1016
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 41)
-  Line: 1029
-    pylint: too-many-arguments / Too many arguments (7/5) (col 4)
-    pylint: too-many-locals / Too many local variables (30/15) (col 4)
+  Line: 1033
+    pylint: too-many-locals / Too many local variables (28/20) (col 4)
     mccabe: MC0001 / AnalysisMixin.extrapolate is too complex (15)
-  Line: 1056
-    pylint: unused-variable / Unused variable 'xl' (col 8)
-  Line: 1117
-    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
-  Line: 1140
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 19)
-  Line: 1197
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 19)
-  Line: 1210
-    pylint: missing-docstring / Missing function docstring (col 12)
-  Line: 1229
-    pep257: D301 / Use r""" if any backslashes in a docstring
-    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
-    pylint: too-many-locals / Too many local variables (30/15) (col 4)
+  Line: 1233
+    pylint: too-many-locals / Too many local variables (30/20) (col 4)
     pylint: too-many-statements / Too many statements (81/60) (col 4)
     mccabe: MC0001 / AnalysisMixin.lmfit is too complex (23)
-  Line: 1234
-    pylint: line-too-long / Line too long (161/159)
-  Line: 1235
-    pylint: line-too-long / Line too long (161/159)
-  Line: 1300
-    pylint: line-too-long / Line too long (199/159)
-  Line: 1370
+  Line: 1377
     pylint: redefined-argument-from-local / Redefining argument with the local name 'p0' (col 18)
-  Line: 1378
-    pylint: too-many-locals / Too many local variables (16/15) (col 4)
+  Line: 1385
     pylint: too-many-statements / Too many statements (63/60) (col 4)
     mccabe: MC0001 / AnalysisMixin.make_bins is too complex (17)
-  Line: 1460
-    pep257: D403 / First word of the first line should be properly capitalized ('Find', not 'FInd')
-  Line: 1478
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 18)
-  Line: 1489
-    pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D403 / First word of the first line should be properly capitalized ('Find', not 'FInd')
-  Line: 1535
-    pep257: D403 / First word of the first line should be properly capitalized ('Find', not 'FInd')
-  Line: 1553
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 18)
-  Line: 1564
-    pylint: too-many-locals / Too many local variables (16/15) (col 4)
-  Line: 1595
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 41)
-  Line: 1608
-    pep257: D202 / No blank lines allowed after function docstring (found 1)
-  Line: 1612
-    pylint: line-too-long / Line too long (169/159)
-  Line: 1653
-    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
-    pylint: too-many-locals / Too many local variables (39/15) (col 4)
+  Line: 1661
+    pylint: too-many-locals / Too many local variables (37/20) (col 4)
     pylint: too-many-statements / Too many statements (79/60) (col 4)
     mccabe: MC0001 / AnalysisMixin.odr is too complex (17)
-  Line: 1658
-    pylint: line-too-long / Line too long (161/159)
-  Line: 1659
-    pylint: line-too-long / Line too long (161/159)
-  Line: 1684
-    pylint: line-too-long / Line too long (171/159)
-  Line: 1708
-    pylint: unused-variable / Unused variable 'scale_covar' (col 8)
-  Line: 1730
-    pylint: unused-variable / Unused variable 'p0' (col 8)
-  Line: 1797
-    pylint: too-many-arguments / Too many arguments (7/5) (col 4)
-    pep257: D207 / Docstring is under-indented
+  Line: 1809
     mccabe: MC0001 / AnalysisMixin.outlier_detection is too complex (12)
-  Line: 1854
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 21)
-  Line: 1865
+  Line: 1877
     pylint: simplifiable-if-statement / The if statement can be replaced with 'var = bool(test)' (col 16)
-  Line: 1878
-    pylint: too-many-arguments / Too many arguments (11/5) (col 4)
-    pylint: too-many-locals / Too many local variables (22/15) (col 4)
-  Line: 1963
+  Line: 1890
+    pylint: too-many-locals / Too many local variables (23/20) (col 4)
+  Line: 1979
     pep257: D210 / No whitespaces allowed surrounding docstring text
     pep257: D214 / Section is over-indented ('Returns')
-    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
     pep257: D208 / Docstring is over-indented
-  Line: 1980
-    pylint: line-too-long / Line too long (161/159)
-  Line: 1990
-    pylint: import-error / Unable to import 'Stoner.Util' (col 8)
-  Line: 1997
+  Line: 1996
+    pylint: line-too-long / Line too long (161/160)
+  Line: 2013
     pylint: redefined-argument-from-local / Redefining argument with the local name 'ycol' (col 14)
-  Line: 2009
-    pylint: too-many-locals / Too many local variables (29/15) (col 4)
+  Line: 2025
+    pylint: too-many-locals / Too many local variables (29/20) (col 4)
     mccabe: MC0001 / AnalysisMixin.scale is too complex (13)
-  Line: 2069
-    pylint: line-too-long / Line too long (183/159)
-  Line: 2114
-    pylint: too-many-locals / Too many local variables (17/15) (col 4)
-  Line: 2183
-    pylint: line-too-long / Line too long (174/159)
-  Line: 2202
-    pylint: too-many-locals / Too many local variables (17/15) (col 4)
-  Line: 2227
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 48)
-  Line: 2262
-    pep257: D301 / Use r""" if any backslashes in a docstring
-    pylint: too-many-arguments / Too many arguments (9/5) (col 4)
-    pylint: too-many-locals / Too many local variables (36/15) (col 4)
-  Line: 2270
-    pylint: line-too-long / Line too long (180/159)
-  Line: 2271
-    pylint: line-too-long / Line too long (232/159)
-  Line: 2310
+  Line: 2279
+    pylint: too-many-locals / Too many local variables (36/20) (col 4)
+  Line: 2330
     pylint: invalid-unary-operand-type / bad operand type for unary -: NoneType (col 34)
-  Line: 2355
-    pylint: undefined-variable / Undefined variable 'getargspec' (col 50)
-    pylint: unused-variable / Unused variable 'varargs' (col 19)
-  Line: 2363
-    pylint: missing-docstring / Missing function docstring (col 8)
-  Line: 2381
-    pylint: too-many-locals / Too many local variables (16/15) (col 4)
-  Line: 2411
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 41)
-  Line: 2425
+  Line: 2375
+    pylint: unused-variable / Unused variable 'keywords' (col 23)
+  Line: 2446
     mccabe: MC0001 / AnalysisMixin.threshold is too complex (13)
-  Line: 2456
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 18)
-  Line: 2457
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 36)
-  Line: 2493
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 32)
-  Line: 2524
-    pylint: import-error / Unable to import 'Stoner.Core' (col 4)
 
 Core.py
   Line: 5
@@ -204,8 +106,6 @@ Core.py
     pylint: unused-import / Unused format_error imported from tools
   Line: 13
     pylint: unused-import / Unused NaN imported from numpy
-  Line: 48
-    pylint: protected-access / Access to a protected member _public_attrs of a client class (col 16)
   Line: 57
     pep257: D203 / 1 blank line required before class docstring (found 0)
     pep257: D204 / 1 blank line required after class docstring (found 0)
@@ -230,7 +130,6 @@ Core.py
   Line: 167
     pylint: missing-docstring / Missing method docstring (col 4)
   Line: 180
-    pylint: too-many-locals / Too many local variables (17/15) (col 4)
     pylint: too-many-statements / Too many statements (69/60) (col 4)
     pep257: D208 / Docstring is over-indented
     mccabe: MC0001 / _setas.__call__ is too complex (35)
@@ -252,13 +151,11 @@ Core.py
     mccabe: MC0001 / _setas.find_col is too complex (15)
   Line: 401
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 19)
-  Line: 410
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 29)
   Line: 413
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
   Line: 429
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pylint: too-many-locals / Too many local variables (22/15) (col 4)
+    pylint: too-many-locals / Too many local variables (22/20) (col 4)
     pylint: too-many-statements / Too many statements (62/60) (col 4)
     mccabe: MC0001 / _setas._get_cols is too complex (20)
   Line: 485
@@ -279,8 +176,6 @@ Core.py
     pylint: useless-super-delegation / Useless super delegation in method '__init__' (col 4)
   Line: 537
     mccabe: MC0001 / regexpDict.__lookup__ is too complex (14)
-  Line: 571
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 29)
   Line: 573
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 46)
   Line: 610
@@ -325,8 +220,6 @@ Core.py
     pep257: D208 / Docstring is over-indented
   Line: 905
     pep257: D105 / Missing docstring in magic method
-  Line: 921
-    pylint: protected-access / Access to a protected member _typehints of a client class (col 12)
   Line: 948
     pep257: D208 / Docstring is over-indented
   Line: 966
@@ -353,19 +246,8 @@ Core.py
     pep257: D301 / Use r""" if any backslashes in a docstring
   Line: 1081
     pylint: arguments-differ / Parameters differ from overridden '__new__' method (col 4)
-  Line: 1095
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
-  Line: 1102
-    pylint: protected-access / Access to a protected member _row of a client class (col 8)
   Line: 1108
     pep257: D105 / Missing docstring in magic method
-  Line: 1115
-    pylint: protected-access / Access to a protected member _row of a client class (col 12)
-  Line: 1122
-    pylint: protected-access / Access to a protected member _row of a client class (col 16)
-    pylint: protected-access / Access to a protected member _setas of a client class (col 41)
-  Line: 1126
-    pylint: protected-access / Access to a protected member _row of a client class (col 16)
   Line: 1129
     pylint: arguments-differ / Parameters differ from overridden '__array_wrap__' method (col 4)
   Line: 1174
@@ -382,10 +264,6 @@ Core.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 55)
   Line: 1262
     pep257: D105 / Missing docstring in magic method
-  Line: 1289
-    pylint: protected-access / Access to a protected member _row of a client class (col 15)
-  Line: 1294
-    pylint: protected-access / Access to a protected member _row of a client class (col 8)
   Line: 1297
     pep257: D301 / Use r""" if any backslashes in a docstring
   Line: 1311
@@ -403,40 +281,12 @@ Core.py
     pep257: D205 / 1 blank line required between summary line and description (found 0)
   Line: 1498
     pylint: unused-argument / Unused argument 'args'
-  Line: 1502
-    pylint: protected-access / Access to a protected member _masks of a client class (col 8)
-  Line: 1503
-    pylint: protected-access / Access to a protected member _filename of a client class (col 8)
-  Line: 1504
-    pylint: protected-access / Access to a protected member _public_attrs_real of a client class (col 8)
-  Line: 1507
-    pylint: protected-access / Access to a protected member _baseclass of a client class (col 8)
-  Line: 1571
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 8)
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
   Line: 1575
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 1600
-    pylint: protected-access / Access to a protected member _setas of a client class (col 61)
-  Line: 1622
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 37)
   Line: 1662
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
-  Line: 1672
-    pylint: protected-access / Access to a protected member _setas of a client class (col 15)
-  Line: 1677
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
   Line: 1688
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 1696
-    pylint: protected-access / Access to a protected member _setas of a client class (col 12)
-    pylint: protected-access / Access to a protected member _setas of a client class (col 22)
-  Line: 1699
-    pylint: protected-access / Access to a protected member _setas of a client class (col 12)
-    pylint: protected-access / Access to a protected member _setas of a client class (col 22)
-  Line: 1701
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
   Line: 1705
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
   Line: 1716
@@ -457,10 +307,6 @@ Core.py
     pylint: consider-using-enumerate / Consider using enumerate instead of iterating with range and len (col 8)
   Line: 1779
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
-  Line: 1787
-    pylint: protected-access / Access to a protected member _setas of a client class (col 15)
-  Line: 1792
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
   Line: 1795
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
   Line: 1806
@@ -476,47 +322,19 @@ Core.py
     mccabe: MC0001 / DataFile.__add_core__ is too complex (15)
   Line: 1881
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
-  Line: 1922
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
-    pylint: protected-access / Access to a protected member _data of a client class (col 8)
   Line: 1973
     pep257: D202 / No blank lines allowed after function docstring (found 1)
     mccabe: MC0001 / DataFile.__and_core__ is too complex (13)
-  Line: 2040
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
-    pylint: protected-access / Access to a protected member _data of a client class (col 8)
-  Line: 2041
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
-    pylint: protected-access / Access to a protected member _data of a client class (col 8)
-  Line: 2077
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
-    pylint: protected-access / Access to a protected member _data of a client class (col 8)
-  Line: 2112
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
-    pylint: protected-access / Access to a protected member _data of a client class (col 8)
-  Line: 2119
-    pylint: protected-access / Access to a protected member _cols of a client class (col 13)
-  Line: 2149
-    pylint: protected-access / Access to a protected member _init_single of a client class (col 25)
-    pylint: protected-access / Access to a protected member _init_double of a client class (col 45)
-    pylint: protected-access / Access to a protected member _init_many of a client class (col 65)
   Line: 2152
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 2153
-    pylint: protected-access / Access to a protected member _public_attrs of a client class (col 22)
   Line: 2168
     pep257: D208 / Docstring is over-indented
   Line: 2190
     pep257: D208 / Docstring is over-indented
   Line: 2200
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
-  Line: 2209
-    pylint: protected-access / Access to a protected member _setas of a client class (col 24)
-    pylint: protected-access / Access to a protected member _setas of a client class (col 51)
   Line: 2212
-    pylint: protected-access / Access to a protected member _setas of a client class (col 24)
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 51)
-    pylint: protected-access / Access to a protected member _setas of a client class (col 55)
   Line: 2216
     pep257: D208 / Docstring is over-indented
   Line: 2228
@@ -537,13 +355,10 @@ Core.py
     pep257: D212 / Multi-line docstring summary should start at the first line
     pep257: D207 / Docstring is under-indented
     mccabe: MC0001 / DataFile.__getattr__ is too complex (11)
-  Line: 2300
-    pylint: protected-access / Access to a protected member _setas of a client class (col 18)
   Line: 2316
     mccabe: MC0001 / DataFile.__getitem__ is too complex (12)
   Line: 2344
     pylint: consider-merging-isinstance / Consider merging these isinstance calls to isinstance(name, (re._pattern_type, string_types)) (col 11)
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 62)
   Line: 2368
     pep257: D105 / Missing docstring in magic method
   Line: 2372
@@ -552,27 +367,16 @@ Core.py
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
     pylint: arguments-differ / Parameters differ from overridden '_load' method (col 4)
-    pylint: too-many-locals / Too many local variables (16/15) (col 4)
     mccabe: MC0001 / DataFile._load is too complex (12)
   Line: 2458
     pep257: D208 / Docstring is over-indented
   Line: 2463
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
-  Line: 2486
-    pylint: protected-access / Access to a protected member __read_iterable of a client class (col 12)
-  Line: 2488
-    pylint: protected-access / Access to a protected member __read_iterable of a client class (col 12)
   Line: 2491
     pep257: D208 / Docstring is over-indented
-  Line: 2512
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 28)
   Line: 2534
     pep257: D202 / No blank lines allowed after function docstring (found 1)
     mccabe: MC0001 / DataFile.__read_iterable is too complex (15)
-  Line: 2554
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
-  Line: 2555
-    pylint: protected-access / Access to a protected member _setas of a client class (col 39)
   Line: 2577
     pylint: consider-using-enumerate / Consider using enumerate instead of iterating with range and len (col 8)
   Line: 2581
@@ -582,7 +386,7 @@ Core.py
   Line: 2606
     pep257: D214 / Section is over-indented ('Returns')
   Line: 2620
-    pylint: too-many-locals / Too many local variables (24/15) (col 4)
+    pylint: too-many-locals / Too many local variables (24/20) (col 4)
   Line: 2652
     pylint: pointless-statement / Statement seems to have no effect (col 8)
   Line: 2672
@@ -598,8 +402,6 @@ Core.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 56)
   Line: 2755
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-  Line: 2808
-    pylint: protected-access / Access to a protected member _setas of a client class (col 50)
   Line: 2814
     pep257: D202 / No blank lines allowed after function docstring (found 1)
     pep257: D208 / Docstring is over-indented
@@ -615,7 +417,7 @@ Core.py
     pep257: D208 / Docstring is over-indented
   Line: 2912
     pylint: unused-argument / Unused argument 'kargs'
-    pylint: too-many-arguments / Too many arguments (11/5) (col 4)
+    pylint: too-many-arguments / Too many arguments (11/10) (col 4)
     mccabe: MC0001 / DataFile._col_args is too complex (18)
   Line: 2936
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 23)
@@ -624,16 +426,11 @@ Core.py
   Line: 2958
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 2972
-    pylint: too-many-arguments / Too many arguments (7/5) (col 4)
     pylint: too-many-statements / Too many statements (62/60) (col 4)
     pep257: D208 / Docstring is over-indented
     mccabe: MC0001 / DataFile.add_column is too complex (20)
   Line: 3033
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 13)
-  Line: 3037
-    pylint: protected-access / Access to a protected member _setas of a client class (col 93)
-  Line: 3047
-    pylint: protected-access / Access to a protected member _setas of a client class (col 87)
   Line: 3059
     pylint: not-callable / self.setas is not callable (col 16)
   Line: 3064
@@ -656,21 +453,9 @@ Core.py
   Line: 3175
     pep257: D208 / Docstring is over-indented
     mccabe: MC0001 / DataFile.del_rows is too complex (16)
-  Line: 3231
-    pylint: protected-access / Access to a protected member _setas of a client class (col 26)
-  Line: 3234
-    pylint: protected-access / Access to a protected member _setas of a client class (col 16)
-  Line: 3251
-    pylint: protected-access / Access to a protected member _setas of a client class (col 26)
-  Line: 3254
-    pylint: protected-access / Access to a protected member _setas of a client class (col 16)
   Line: 3257
     pep257: D210 / No whitespaces allowed surrounding docstring text
     pep257: D208 / Docstring is over-indented
-  Line: 3268
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 35)
-  Line: 3322
-    pylint: protected-access / Access to a protected member _setas of a client class (col 15)
   Line: 3324
     pylint: arguments-differ / Parameters differ from overridden 'get' method (col 4)
     pep257: D208 / Docstring is over-indented
@@ -683,14 +468,6 @@ Core.py
     pylint: too-many-statements / Too many statements (69/60) (col 4)
     pep257: D208 / Docstring is over-indented
     mccabe: MC0001 / DataFile.load is too complex (23)
-  Line: 3428
-    pylint: protected-access / Access to a protected member _load of a client class (col 20)
-  Line: 3445
-    pylint: protected-access / Access to a protected member _load of a client class (col 16)
-  Line: 3452
-    pylint: protected-access / Access to a protected member _load of a client class (col 16)
-  Line: 3460
-    pylint: protected-access / Access to a protected member _load of a client class (col 16)
   Line: 3474
     pep257: D202 / No blank lines allowed after function docstring (found 1)
   Line: 3489
@@ -712,8 +489,6 @@ Core.py
     pylint: unsupported-membership-test / Value 'DataFile.patterns' doesn't support membership test (col 37)
   Line: 3620
     pylint: unsubscriptable-object / Value 'DataFile.patterns' is unsubscriptable (col 16)
-  Line: 3704
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 15)
   Line: 3725
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 3806
@@ -722,17 +497,11 @@ Core.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 3833
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 3854
-    pylint: protected-access / Access to a protected member _setas of a client class (col 8)
   Line: 3858
     pep257: D205 / 1 blank line required between summary line and description (found 0)
     mccabe: MC0001 / DataFile.split is too complex (11)
-  Line: 3883
-    pylint: import-error / Unable to import 'Stoner.Folders' (col 8)
   Line: 3884
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 3885
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 17)
   Line: 3902
     pylint: bare-except / No exception type(s) specified (col 12)
   Line: 3914
@@ -746,48 +515,29 @@ Core.py
 
 FileFormats.py
   Line: 32
-    pylint: import-error / Unable to import 'Stoner.Core'
     pylint: wrong-import-position / Import "import Stoner.Core as _SC_" should be placed at the top of the module
   Line: 47
-    pylint: unused-argument / Unused argument 'kargs'
-    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
+    pylint: arguments-differ / Parameters differ from overridden '_load' method (col 4)
   Line: 72
     pyflakes: F841 / local variable '_' is assigned to but never used (col 17)
-  Line: 78
-    pylint: access-member-before-definition / Access to member 'data' before its definition line 86 (col 74)
-  Line: 182
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
+  Line: 91
+    pylint: signature-differs / Signature differs from overridden 'save' method (col 4)
+  Line: 180
+    pylint: not-callable / self.setas is not callable (col 8)
   Line: 214
     pylint: arguments-differ / Parameters differ from overridden '_load' method (col 4)
   Line: 247
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
-    pylint: too-many-locals / Too many local variables (17/15) (col 4)
     pylint: too-many-statements / Too many statements (64/60) (col 4)
     mccabe: MC0001 / QDFile._load is too complex (20)
-  Line: 321
-    pylint: access-member-before-definition / Access to member 'setas' before its definition line 325 (col 10)
   Line: 341
     pep257: D403 / First word of the first line should be properly capitalized ('Opengda', not 'OpenGDA')
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
-  Line: 474
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
   Line: 559
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
-    pylint: too-many-locals / Too many local variables (18/15) (col 4)
     mccabe: MC0001 / RigakuFile._load is too complex (21)
   Line: 608
     pylint: consider-merging-isinstance / Consider merging these isinstance calls to isinstance(self[key], (_np_.ndarray, list)) (col 53)
   Line: 631
     pylint: undefined-loop-variable / Using possibly undefined loop variable 'i2' (col 52)
   Line: 668
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
-    pylint: too-many-locals / Too many local variables (17/15) (col 4)
     mccabe: MC0001 / XRDFile._load is too complex (11)
   Line: 727
     pep257: D202 / No blank lines allowed after function docstring (found 1)
@@ -797,65 +547,34 @@ FileFormats.py
     pep257: D212 / Multi-line docstring summary should start at the first line
   Line: 768
     pep257: D403 / First word of the first line should be properly capitalized ('Returns', not 'returns')
-  Line: 821
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
-  Line: 859
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
-  Line: 904
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
-  Line: 951
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
   Line: 987
     pep257: D404 / First word of the docstring should not be `This`
   Line: 1004
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
     mccabe: MC0001 / SNSFile._load is too complex (14)
   Line: 1109
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
-    pylint: too-many-locals / Too many local variables (17/15) (col 4)
     mccabe: MC0001 / OVFFile._load is too complex (11)
   Line: 1153
     pylint: undefined-loop-variable / Using possibly undefined loop variable 'i' (col 52)
   Line: 1180
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
     pylint: too-many-statements / Too many statements (65/60) (col 4)
     mccabe: MC0001 / MDAASCIIFile._load is too complex (23)
-  Line: 1276
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
   Line: 1311
+    pylint: arguments-differ / Parameters differ from overridden 'save' method (col 4)
     mccabe: MC0001 / LSTemperatureFile.save is too complex (11)
   Line: 1371
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
     mccabe: MC0001 / EasyPlotFile._load is too complex (16)
   Line: 1468
     pep257: D403 / First word of the first line should be properly capitalized ('Pinklib', not 'PinkLib')
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
-  Line: 1536
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
+  Line: 1499
+    pylint: not-callable / self.setas is not callable (col 12)
   Line: 1561
-    pylint: unused-argument / Unused argument 'kargs'
+    pylint: signature-differs / Signature differs from overridden 'save' method (col 4)
   Line: 1589
     mccabe: MC0001 / TryExcept 1589 is too complex (13)
-  Line: 1607
-    pylint: unused-argument / Unused argument 'args'
-    pylint: unused-argument / Unused argument 'kargs'
 
 Fit.py
   Line: 1
     pep257: D301 / Use r""" if any backslashes in a docstring
-  Line: 13
-    pylint: import-error / Unable to import 'Stoner.Core'
   Line: 88
     mccabe: MC0001 / cfg_data_from_ini is too complex (14)
   Line: 115
@@ -872,8 +591,6 @@ Fit.py
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
   Line: 508
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
-  Line: 514
-    pylint: too-many-arguments / Too many arguments (6/5)
   Line: 571
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
   Line: 619
@@ -894,7 +611,7 @@ Fit.py
   Line: 752
     pep257: D205 / 1 blank line required between summary line and description (found 0)
     pep257: D403 / First word of the first line should be properly capitalized ('Strijkers', not 'strijkers')
-    pylint: too-many-locals / Too many local variables (23/15)
+    pylint: too-many-locals / Too many local variables (23/20)
   Line: 817
     pylint: consider-using-enumerate / Consider using enumerate instead of iterating with range and len (col 4)
   Line: 824
@@ -916,7 +633,6 @@ Fit.py
   Line: 1063
     pep257: D301 / Use r""" if any backslashes in a docstring
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
-    pylint: too-many-locals / Too many local variables (19/15) (col 4)
   Line: 1139
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
   Line: 1190
@@ -944,38 +660,20 @@ Fit.py
   Line: 1385
     pep257: D301 / Use r""" if any backslashes in a docstring
   Line: 1397
-    pylint: line-too-long / Line too long (269/159)
+    pylint: line-too-long / Line too long (269/160)
   Line: 1401
     pep257: D203 / 1 blank line required before class docstring (found 0)
     pep257: D204 / 1 blank line required after class docstring (found 0)
     pep257: D301 / Use r""" if any backslashes in a docstring
   Line: 1413
-    pylint: line-too-long / Line too long (269/159)
+    pylint: line-too-long / Line too long (269/160)
   Line: 1421
     pep257: D202 / No blank lines allowed after function docstring (found 1)
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
 
 Folders.py
-  Line: 24
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 13)
   Line: 29
     pylint: no-else-return / Unnecessary "else" after "return" (col 4)
-  Line: 68
-    pylint: protected-access / Access to a protected member _object_attrs of a client class (col 8)
-  Line: 69
-    pylint: protected-access / Access to a protected member _last_name of a client class (col 8)
-  Line: 70
-    pylint: protected-access / Access to a protected member _groups of a client class (col 8)
-  Line: 71
-    pylint: protected-access / Access to a protected member _objects of a client class (col 8)
-  Line: 72
-    pylint: protected-access / Access to a protected member _instance of a client class (col 8)
-  Line: 73
-    pylint: protected-access / Access to a protected member _object_attrs of a client class (col 8)
-  Line: 75
-    pylint: protected-access / Access to a protected member _type of a client class (col 8)
-  Line: 76
-    pylint: protected-access / Access to a protected member _instance_attrs of a client class (col 8)
   Line: 120
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 178
@@ -1008,21 +706,15 @@ Folders.py
     pep257: D300 / Use """triple double quotes""" (found """"-quotes)
   Line: 852
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 12)
-  Line: 860
-    pylint: protected-access / Access to a protected member __walk_groups of a client class (col 20)
   Line: 868
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 13)
   Line: 906
     pylint: arguments-differ / Parameters differ from overridden 'count' method (col 4)
   Line: 920
     pylint: no-else-return / Unnecessary "else" after "return" (col 12)
-  Line: 924
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 27)
   Line: 931
     pep257: D301 / Use r""" if any backslashes in a docstring
     mccabe: MC0001 / baseFolder.filter is too complex (11)
-  Line: 954
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 32)
   Line: 968
     pep257: D301 / Use r""" if any backslashes in a docstring
   Line: 1015
@@ -1034,8 +726,6 @@ Folders.py
     mccabe: MC0001 / baseFolder.index is too complex (12)
   Line: 1071
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 19)
-  Line: 1077
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 27)
   Line: 1086
     pylint: arguments-differ / Parameters differ from overridden 'insert' method (col 4)
   Line: 1151
@@ -1046,28 +736,16 @@ Folders.py
     mccabe: MC0001 / baseFolder.select is too complex (15)
   Line: 1243
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 60)
-  Line: 1309
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 28)
-  Line: 1451
-    pylint: import-error / Unable to import 'Stoner' (col 8)
   Line: 1462
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 29)
   Line: 1491
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 1570
     mccabe: MC0001 / DiskBssedFolder.__getter__ is too complex (13)
-  Line: 1595
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 28)
   Line: 1600
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
-  Line: 1643
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 30)
   Line: 1651
     mccabe: MC0001 / DiskBssedFolder.getlist is too complex (27)
-  Line: 1686
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 28)
-  Line: 1705
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 28)
   Line: 1735
     pep257: D205 / 1 blank line required between summary line and description (found 0)
     pep257: D411 / Missing blank line before section ('Returns')
@@ -1075,14 +753,10 @@ Folders.py
     pylint: missing-docstring / Missing class docstring
   Line: 1765
     pep257: D107 / Missing docstring in __init__
-  Line: 1766
-    pylint: import-error / Unable to import 'Stoner' (col 8)
   Line: 1770
     mccabe: MC0001 / DataFolder.__read__ is too complex (12)
   Line: 1785
     pylint: not-callable / self.type is not callable (col 13)
-  Line: 1789
-    pylint: protected-access / Access to a protected member _pattern_type of a client class (col 28)
   Line: 1794
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
   Line: 1808
@@ -1094,25 +768,20 @@ Folders.py
   Line: 1891
     mccabe: MC0001 / DataFolder.gather is too complex (13)
   Line: 1902
-    pylint: too-many-arguments / Too many arguments (6/5) (col 8)
-    pylint: too-many-locals / Too many local variables (26/15) (col 8)
+    pylint: too-many-locals / Too many local variables (26/20) (col 8)
     pylint: unused-argument / Unused argument 'trail' (col 28)
-  Line: 1905
-    pylint: protected-access / Access to a protected member _col_args of a client class (col 17)
-  Line: 1927
-    pylint: protected-access / Access to a protected member _col_args of a client class (col 25)
   Line: 1942
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 23)
   Line: 1959
     pep257: D203 / 1 blank line required before class docstring (found 0)
   Line: 1975
-    pylint: too-many-locals / Too many local variables (21/15) (col 4)
-  Line: 2006
-    pylint: import-error / Unable to import 'Stoner' (col 12)
+    pylint: too-many-locals / Too many local variables (21/20) (col 4)
   Line: 2024
     pylint: not-a-mapping / Non-mapping value fig_args is used in a mapping context (col 37)
 
 HDF5.py
+  Line: 1
+    pylint: cyclic-import / Cyclic import (Image.core -> Image.imagefuncs)
   Line: 20
     pylint: unused-import / Unused copy imported from copy
   Line: 71
@@ -1155,24 +824,15 @@ HDF5.py
   Line: 564
     pep257: D105 / Missing docstring in magic method
 
-Image/__init__.py
+Image\__init__.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
 
-Image/core.py
+Image\core.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 27
-    pylint: import-error / Unable to import 'Stoner.Core'
-  Line: 28
-    pylint: import-error / Unable to import 'Stoner.Image.util'
-  Line: 29
-    pylint: import-error / Unable to import 'Stoner'
   Line: 30
-    pylint: import-error / Unable to import 'Stoner.tools'
     pylint: unused-import / Unused istuple imported from Stoner.tools
-  Line: 31
-    pylint: import-error / Unable to import 'Stoner.compat'
   Line: 37
     pylint: import-error / Unable to import 'cStringIO' (col 4)
   Line: 123
@@ -1192,6 +852,8 @@ Image/core.py
     pylint: arguments-differ / Parameters differ from overridden '__array_wrap__' method (col 4)
   Line: 228
     pylint: useless-super-delegation / Useless super delegation in method '__init__' (col 4)
+  Line: 279
+    pylint: arguments-differ / Parameters differ from overridden '_load' method (col 4)
   Line: 298
     pylint: unused-argument / Unused argument 'kargs'
   Line: 320
@@ -1234,6 +896,8 @@ Image/core.py
     pep257: D403 / First word of the first line should be properly capitalized ('Convert', not 'convert')
   Line: 720
     pep257: D403 / First word of the first line should be properly capitalized ('Back', not 'back')
+  Line: 724
+    pylint: arguments-differ / Parameters differ from overridden 'save' method (col 4)
   Line: 786
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
@@ -1249,8 +913,6 @@ Image/core.py
     pep257: D403 / First word of the first line should be properly capitalized ('Alias', not 'alias')
   Line: 900
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
-  Line: 923
-    pylint: protected-access / Access to a protected member _mask of a client class (col 18)
   Line: 969
     pep257: D300 / Use """triple double quotes""" (found """"-quotes)
   Line: 1074
@@ -1263,94 +925,56 @@ Image/core.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
   Line: 1113
     pylint: no-else-return / Unnecessary "else" after "return" (col 12)
+  Line: 1142
+    pylint: arguments-differ / Parameters differ from overridden 'save' method (col 4)
   Line: 1206
     pep257: D203 / 1 blank line required before class docstring (found 0)
   Line: 1209
     pylint: unused-argument / Unused argument 'kargs'
-  Line: 1229
-    pylint: too-many-arguments / Too many arguments (7/5) (col 4)
-  Line: 1265
-    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
-    pylint: too-many-locals / Too many local variables (18/15) (col 4)
-  Line: 1297
-    pylint: too-many-arguments / Too many arguments (7/5) (col 4)
   Line: 1315
     pylint: missing-docstring / Missing class docstring
   Line: 1327
     pylint: missing-docstring / Missing method docstring (col 4)
   Line: 1330
     pylint: unused-argument / Unused argument 'kargs'
-  Line: 1350
-    pylint: protected-access / Access to a protected member _funcs of a client class (col 41)
-  Line: 1352
-    pylint: protected-access / Access to a protected member _funcs of a client class (col 13)
   Line: 1363
     pep257: D105 / Missing docstring in magic method
   Line: 1366
     pep257: D105 / Missing docstring in magic method
   Line: 1369
     pep257: D105 / Missing docstring in magic method
-  Line: 1374
-    pylint: protected-access / Access to a protected member _funcs of a client class (col 12)
 
-Image/folders.py
+Image\folders.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 9
-    pylint: import-error / Unable to import 'Stoner.Folders'
-  Line: 10
-    pylint: import-error / Unable to import 'Stoner.compat'
-  Line: 11
-    pylint: import-error / Unable to import 'Stoner.tools'
   Line: 12
-    pylint: import-error / Unable to import 'Stoner.Image'
     pyflakes: F811 / redefinition of unused 'ImageArray' from line 8 (col 1)
   Line: 53
     pep257: D214 / Section is over-indented ('Attributes')
   Line: 83
     pep257: D403 / First word of the first line should be properly capitalized ('Nitialise', not 'nitialise')
-  Line: 144
-    pylint: import-error / Unable to import 'Stoner.Image' (col 8)
   Line: 166
     pep257: D200 / One-line docstring should fit on one line with quotes (found 3)
   Line: 174
     pylint: trailing-newlines / Trailing newlines
 
-Image/imagefuncs.py
+Image\imagefuncs.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
   Line: 30
     pylint: multiple-imports / Multiple imports on one line (numpy, matplotlib.pyplot, os)
-  Line: 31
-    pylint: import-error / Unable to import 'Stoner.tools'
   Line: 33
     pylint: unused-import / Unused exposure imported from skimage
-  Line: 51
-    pylint: import-error / Unable to import 'Stoner'
   Line: 79
     pep257: D403 / First word of the first line should be properly capitalized ('Rescale', not 'rescale')
-  Line: 107
-    pylint: too-many-locals / Too many local variables (20/15)
   Line: 142
     pylint: invalid-unary-operand-type / bad operand type for unary -: recarray (col 29)
-  Line: 187
-    pylint: too-many-arguments / Too many arguments (6/5)
   Line: 225
     pylint: unused-variable / Unused variable 'phase' (col 12)
   Line: 231
     pep257: D403 / First word of the first line should be properly capitalized ('Subtract', not 'subtract')
-  Line: 263
-    pylint: too-many-arguments / Too many arguments (6/5)
   Line: 312
     pep257: D403 / First word of the first line should be properly capitalized ('Quick', not 'quick')
-  Line: 357
-    pylint: too-many-arguments / Too many arguments (6/5)
-    pylint: too-many-locals / Too many local variables (18/15)
-  Line: 438
-    pylint: too-many-arguments / Too many arguments (8/5)
-    pylint: too-many-locals / Too many local variables (16/15)
-  Line: 483
-    pylint: protected-access / Access to a protected member _line_profile_coordinates of a client class (col 11)
   Line: 594
     pep257: D403 / First word of the first line should be properly capitalized ('Plot', not 'plot')
   Line: 603
@@ -1366,17 +990,9 @@ Image/imagefuncs.py
   Line: 688
     pep257: D403 / First word of the first line should be properly capitalized ('Just', not 'just')
 
-Image/kerr.py
-  Line: 9
-    pylint: import-error / Unable to import 'Stoner'
-  Line: 10
-    pylint: import-error / Unable to import 'Stoner.Core'
-  Line: 11
-    pylint: import-error / Unable to import 'Stoner.Image'
+Image\kerr.py
   Line: 13
     pylint: multiple-imports / Multiple imports on one line (subprocess, tempfile, os)
-  Line: 103
-    pylint: access-member-before-definition / Access to member 'metadata' before its definition line 116 (col 19)
   Line: 145
     pep257: D403 / First word of the first line should be properly capitalized ('Ocr', not 'ocr')
   Line: 181
@@ -1396,17 +1012,10 @@ Image/kerr.py
     pylint: unused-argument / Unused argument 'copy' (col 24)
   Line: 369
     pep257: D403 / First word of the first line should be properly capitalized ('Produce', not 'produce')
-    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
 
-Image/stack.py
+Image\stack.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 11
-    pylint: import-error / Unable to import 'Stoner.Core'
-  Line: 17
-    pylint: import-error / Unable to import 'Stoner.compat'
-  Line: 18
-    pylint: import-error / Unable to import 'Stoner.tools'
   Line: 27
     mccabe: MC0001 / _average_list is too complex (13)
   Line: 34
@@ -1441,15 +1050,16 @@ Image/stack.py
     pep257: D205 / 1 blank line required between summary line and description (found 0)
   Line: 473
     pep257: D403 / First word of the first line should be properly capitalized ('Probably', not 'probably')
+    pylint: arguments-differ / Parameters differ from overridden 'save' method (col 4)
   Line: 523
     pylint: trailing-newlines / Trailing newlines
 
-Image/util.py
+Image\util.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
   Line: 35
     pep257: D212 / Multi-line docstring summary should start at the first line
-    pylint: too-many-locals / Too many local variables (21/15)
+    pylint: too-many-locals / Too many local variables (21/20)
     pylint: too-many-statements / Too many statements (103/60)
     mccabe: MC0001 / convert is too complex (39)
   Line: 90
@@ -1468,15 +1078,6 @@ Image/util.py
 Util.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
-    pylint: cyclic-import / Cyclic import (Image.core -> Image.imagefuncs)
-  Line: 12
-    pylint: import-error / Unable to import 'Stoner.Core'
-  Line: 35
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 20)
-  Line: 39
-    pylint: too-many-locals / Too many local variables (16/15)
-  Line: 53
-    pylint: protected-access / Access to a protected member _col_args of a client class (col 10)
   Line: 63
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 7)
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 26)
@@ -1485,25 +1086,13 @@ Util.py
   Line: 67
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 9)
   Line: 121
-    pylint: too-many-locals / Too many local variables (37/15)
+    pylint: too-many-locals / Too many local variables (37/20)
     pylint: too-many-statements / Too many statements (85/60)
     mccabe: MC0001 / hysteresis_correct is too complex (15)
-  Line: 155
-    pylint: protected-access / Access to a protected member _col_args of a client class (col 6)
-  Line: 173
-    pylint: protected-access / Access to a protected member _push_mask of a client class (col 8)
-  Line: 175
-    pylint: protected-access / Access to a protected member _pop_mask of a client class (col 8)
-  Line: 178
-    pylint: protected-access / Access to a protected member _push_mask of a client class (col 8)
-  Line: 180
-    pylint: protected-access / Access to a protected member _pop_mask of a client class (col 8)
 
 Zip.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 15
-    pylint: import-error / Unable to import 'Stoner.compat'
   Line: 24
     pep257: D300 / Use """triple double quotes""" (found "-quotes)
   Line: 59
@@ -1541,23 +1130,15 @@ Zip.py
 __init__.py
   Line: 7
     pylint: undefined-all-variable / Undefined variable name 'Core' in __all__ (col 9)
-  Line: 14
-    pylint: import-error / Unable to import 'Stoner.Core'
   Line: 15
-    pylint: import-error / Unable to import 'Stoner.FileFormats'
     pyflakes: F401 / 'Stoner.FileFormats as _SFF_' imported but unused (col 1)
-  Line: 16
-    pylint: import-error / Unable to import 'Stoner.plot.core'
-  Line: 17
-    pylint: import-error / Unable to import 'Stoner.Analysis'
   Line: 18
     pylint: import-error / Unable to import '__init__.Folders'
   Line: 20
     pylint: import-error / Unable to import '__init__.compat'
   Line: 80
     pep257: D412 / No blank lines allowed between a section header and its content ('Returns')
-    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
-    pylint: too-many-locals / Too many local variables (21/15) (col 4)
+    pylint: too-many-locals / Too many local variables (21/20) (col 4)
     mccabe: MC0001 / Data.annotate_fit is too complex (18)
   Line: 111
     pylint: unnecessary-pass / Unnecessary pass statement (col 12)
@@ -1569,8 +1150,6 @@ __init__.py
     pylint: trailing-newlines / Trailing newlines
 
 compat.py
-  Line: 50
-    pylint: import-error / Unable to import 'Tkinter' (col 8)
   Line: 51
     pylint: import-error / Unable to import 'tkFileDialog' (col 8)
   Line: 76
@@ -1578,13 +1157,28 @@ compat.py
   Line: 139
     pylint: trailing-newlines / Trailing newlines
 
-plot/core.py
+contrib\__init__.py
+  Line: 1
+    pep257: D212 / Multi-line docstring summary should start at the first line
+  Line: 7
+    pylint: trailing-newlines / Trailing newlines
+
+contrib\formats.py
+  Line: 1
+    pep257: D212 / Multi-line docstring summary should start at the first line
+  Line: 12
+    pep257: D203 / 1 blank line required before class docstring (found 0)
+    pep257: D204 / 1 blank line required after class docstring (found 0)
+  Line: 18
+    pylint: missing-docstring / Missing method docstring (col 4)
+  Line: 22
+    pylint: arguments-differ / Parameters differ from overridden '_load' method (col 4)
+  Line: 31
+    pylint: trailing-newlines / Trailing newlines
+
+plot\core.py
   Line: 1
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-  Line: 11
-    pylint: import-error / Unable to import 'Stoner.compat'
-  Line: 12
-    pylint: import-error / Unable to import 'Stoner.tools'
   Line: 29
     pylint: wrong-import-position / Import "from matplotlib import pyplot as plt" should be placed at the top of the module
   Line: 30
@@ -1618,19 +1212,14 @@ plot/core.py
     pylint: unidiomatic-typecheck / Using type() instead of isinstance() for a typecheck. (col 11)
   Line: 211
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
   Line: 264
-    pylint: too-many-arguments / Too many arguments (7/5) (col 4)
     pep257: D208 / Docstring is over-indented
   Line: 292
-    pylint: too-many-arguments / Too many arguments (7/5) (col 4)
     pep257: D208 / Docstring is over-indented
   Line: 340
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
   Line: 341
     pylint: no-else-return / Unnecessary "else" after "return" (col 12)
-  Line: 366
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 12)
   Line: 372
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 69)
   Line: 397
@@ -1644,24 +1233,18 @@ plot/core.py
   Line: 551
     pep257: D208 / Docstring is over-indented
   Line: 585
-    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
     pep257: D208 / Docstring is over-indented
   Line: 611
     pep257: D301 / Use r""" if any backslashes in a docstring
   Line: 621
     pylint: unused-variable / Unused variable 'ax' (col 20)
   Line: 629
-    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
-    pylint: too-many-locals / Too many local variables (16/15) (col 4)
     pep257: D208 / Docstring is over-indented
     mccabe: MC0001 / PlotMixin.griddata is too complex (19)
-  Line: 652
-    pylint: protected-access / Access to a protected member _get_cols of a client class (col 19)
   Line: 658
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 19)
   Line: 701
-    pylint: too-many-arguments / Too many arguments (7/5) (col 4)
-    pylint: too-many-locals / Too many local variables (24/15) (col 4)
+    pylint: too-many-locals / Too many local variables (24/20) (col 4)
     pep257: D208 / Docstring is over-indented
   Line: 740
     pylint: unused-variable / Unused variable 'ax' (col 23)
@@ -1673,8 +1256,8 @@ plot/core.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 822
     pep257: D214 / Section is over-indented ('Returns')
-    pylint: too-many-arguments / Too many arguments (12/5) (col 4)
-    pylint: too-many-locals / Too many local variables (22/15) (col 4)
+    pylint: too-many-arguments / Too many arguments (12/10) (col 4)
+    pylint: too-many-locals / Too many local variables (22/20) (col 4)
     pylint: too-many-statements / Too many statements (85/60) (col 4)
     pep257: D208 / Docstring is over-indented
     mccabe: MC0001 / PlotMixin.plot_matrix is too complex (30)
@@ -1690,16 +1273,12 @@ plot/core.py
     pep8: E712 / comparison to True should be 'if cond is True:' or 'if cond:' (col 22)
     pylint: singleton-comparison / Comparison to True should be just 'expr' or 'expr is True' (col 11)
   Line: 956
-    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
-    pylint: too-many-locals / Too many local variables (26/15) (col 4)
+    pylint: too-many-locals / Too many local variables (26/20) (col 4)
     pylint: too-many-statements / Too many statements (73/60) (col 4)
     mccabe: MC0001 / PlotMixin.plot_xy is too complex (27)
-  Line: 1064
-    pylint: protected-access / Access to a protected member _get_lines of a client class (col 26)
   Line: 1095
     pep257: D214 / Section is over-indented ('Returns')
-    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
-    pylint: too-many-locals / Too many local variables (22/15) (col 4)
+    pylint: too-many-locals / Too many local variables (22/20) (col 4)
     pep257: D208 / Docstring is over-indented
   Line: 1104
     pep8: E501 / line too long (166 > 160 characters) (col 161)
@@ -1708,7 +1287,6 @@ plot/core.py
   Line: 1114
     pep8: E501 / line too long (180 > 160 characters) (col 161)
   Line: 1161
-    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
     pep257: D208 / Docstring is over-indented
   Line: 1176
     pep8: E501 / line too long (165 > 160 characters) (col 161)
@@ -1716,23 +1294,18 @@ plot/core.py
     pep8: E501 / line too long (180 > 160 characters) (col 161)
   Line: 1208
     pep257: D214 / Section is over-indented ('Returns')
-    pylint: too-many-arguments / Too many arguments (7/5) (col 4)
-    pylint: too-many-locals / Too many local variables (24/15) (col 4)
+    pylint: too-many-locals / Too many local variables (24/20) (col 4)
     pylint: too-many-statements / Too many statements (65/60) (col 4)
     pep257: D208 / Docstring is over-indented
     mccabe: MC0001 / PlotMixin.plot_xyzuvw is too complex (22)
-  Line: 1224
-    pylint: line-too-long / Line too long (160/159)
   Line: 1226
     pep8: E501 / line too long (176 > 160 characters) (col 161)
   Line: 1381
     pep257: D402 / First line should not be the function's "signature"
   Line: 1397
     pylint: unused-variable / Unused variable 'ax' (col 11)
-  Line: 1466
-    pylint: import-error / Unable to import 'Stoner.Core' (col 4)
 
-plot/formats.py
+plot\formats.py
   Line: 1
     pep257: D205 / 1 blank line required between summary line and description (found 0)
   Line: 25
@@ -1760,18 +1333,11 @@ plot/formats.py
   Line: 573
     pylint: function-redefined / method already defined line 568 (col 8)
 
-plot/utils.py
+plot\utils.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 42
-    pylint: import-error / Unable to import 'Stoner.compat'
   Line: 47
-    pylint: too-many-arguments / Too many arguments (12/5)
-    pylint: too-many-locals / Too many local variables (19/15)
-  Line: 80
-    pylint: protected-access / Access to a protected member _get_lines of a client class (col 25)
-  Line: 82
-    pylint: protected-access / Access to a protected member _get_lines of a client class (col 25)
+    pylint: too-many-arguments / Too many arguments (12/10)
 
 tools.py
   Line: 16
@@ -1798,7 +1364,6 @@ tools.py
     pep257: D205 / 1 blank line required between summary line and description (found 0)
     pep257: D301 / Use r""" if any backslashes in a docstring
     pep257: D404 / First word of the docstring should not be `This`
-    pylint: too-many-locals / Too many local variables (19/15)
     pylint: too-many-statements / Too many statements (68/60)
     mccabe: MC0001 / format_error is too complex (15)
   Line: 459
@@ -1844,13 +1409,13 @@ tools.py
 
 Check Information
 =================
-         Started: 2018-01-02 00:15:24.803394
-        Finished: 2018-01-02 00:17:13.728659
-      Time Taken: 108.93 seconds
+         Started: 2018-01-02 16:37:40.088871
+        Finished: 2018-01-02 16:39:06.030787
+      Time Taken: 85.94 seconds
        Formatter: grouped
         Profiles: .landscape.yml, doc_warnings, no_test_warnings, strictness_medium, strictness_high, strictness_veryhigh, no_member_warnings
       Strictness: from profile
   Libraries Used: 
        Tools Run: dodgy, frosted, mccabe, pep257, pep8, profile-validator, pyflakes, pylint, pyroma
-  Messages Found: 1016
+  Messages Found: 749
 

@@ -57,7 +57,7 @@ def split_up_down(data, col=None, folder=None):
         width += 1
     setas=a.setas.clone
     a.setas=""
-    peaks = list(a.peaks(col, width,xcol=None, peaks=True, troughs=False,full_data=False))
+    peaks = list(a.peaks(ycol=col, width=width))
     troughs = list(a.peaks(col, width, xcol=None, peaks=False, troughs=True,full_data=False))
     a.setas=setas
     if len(peaks) > 0 and len(troughs) > 0:  #Ok more than up down here

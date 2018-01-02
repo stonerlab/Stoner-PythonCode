@@ -38,7 +38,14 @@ pylint:
   run: true
   disable:
     - E0402
-  max-args: 10
+    - W021
+    - protected-access
+  options:
+    max-args: 10
+    max-locals: 20
+    max-line-length: 160
+    max-module-lines: 3000
+    ignore-long-lines: ^\s*((# )?<?https?://\S+>?)|(""".*)$
 
 pep257:
   enable:
