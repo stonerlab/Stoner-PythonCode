@@ -293,7 +293,7 @@ class AnalysisMixin(object):
         if self.debug: print("Done AnlaysisMixin init")
 
     def SG_Filter(self, col=None, points=15, poly=1, order=0, result=None, replace=False, header=None):
-        """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data.
+        """Implements Savitsky-Golay filtering of data for smoothing and differentiating data.
 
         Args:
             col (index): Column of Data to be filtered. if None, first y-column in setas is filtered.
