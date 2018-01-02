@@ -2,432 +2,221 @@ Messages
 ========
 
 Analysis.py
-  Line: 1
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 8
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 9
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 20
-    pylint: unused-import / Unused Iterable imported from collections
-  Line: 53
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 69
-    pylint: deprecated-method / Using deprecated method getargspec() (col 48)
-    pylint: deprecated-method / Using deprecated method getargspec() (col 48)
+    pylint: deprecated-method / Using deprecated method getfullargspec() (col 48)
+    pylint: deprecated-method / Using deprecated method getfullargspec() (col 48)
   Line: 73
-    pylint: unused-argument / Unused argument 'args'
     pylint: function-redefined / function already defined line 55 (col 12)
-    pylint: missing-docstring / Missing function docstring (col 12)
-  Line: 84
-    pylint: line-too-long / Line too long (174/159)
-  Line: 92
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 113
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 124
-    pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D210 / No whitespaces allowed surrounding docstring text
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 165
-    pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 166
     pylint: too-many-locals / Too many local variables (24/15)
     mccabe: MC0001 / _twoD_fit is too complex (13)
-  Line: 235
-    pylint: missing-docstring / Missing function docstring (col 4)
-  Line: 261
-    pylint: missing-docstring / Missing function docstring
-  Line: 267
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 284
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-  Line: 293
+  Line: 295
     pep257: D210 / No whitespaces allowed surrounding docstring text
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D407 / Missing dashed underline after section ('Notes')
-    pep257: D406 / Section name should end with a newline ('See Also', not 'See Also:')
-    pep257: D413 / Missing blank line after last section ('See Also')
-    pep257: D407 / Missing dashed underline after section ('See Also')
     pylint: too-many-arguments / Too many arguments (8/5) (col 4)
-  Line: 318
+  Line: 320
     pylint: import-error / Unable to import 'Stoner.Util' (col 8)
-  Line: 324
+  Line: 326
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 19)
-  Line: 347
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 374
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 376
     pylint: too-many-arguments / Too many arguments (8/5) (col 4)
     pylint: too-many-locals / Too many local variables (16/15) (col 4)
-  Line: 397
+  Line: 399
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 34)
-  Line: 407
+  Line: 409
     pep257: D300 / Use """triple double quotes""" (found """"-quotes)
-  Line: 441
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 443
     pylint: too-many-arguments / Too many arguments (8/5) (col 4)
     pylint: too-many-locals / Too many local variables (21/15) (col 4)
-  Line: 507
-    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
   Line: 509
-    pylint: deprecated-method / Using deprecated method getargspec() (col 15)
-    pylint: deprecated-method / Using deprecated method getargspec() (col 15)
-  Line: 532
+    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
+  Line: 511
+    pylint: undefined-variable / Undefined variable 'getargspec' (col 15)
+  Line: 534
     pep257: D210 / No whitespaces allowed surrounding docstring text
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 582
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 584
     pylint: too-many-locals / Too many local variables (16/15) (col 4)
-  Line: 612
+  Line: 614
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 41)
-  Line: 625
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 640
+  Line: 642
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 18)
-  Line: 658
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('See Also', not 'See Also:')
-    pep257: D413 / Missing blank line after last section ('See Also')
-    pep257: D407 / Missing dashed underline after section ('See Also')
+  Line: 660
     pylint: too-many-arguments / Too many arguments (6/5) (col 4)
     pylint: too-many-locals / Too many local variables (25/15) (col 4)
     mccabe: MC0001 / AnalysisMixin.bin is too complex (13)
-  Line: 693
+  Line: 695
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 19)
-  Line: 753
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 769
+  Line: 771
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 18)
-  Line: 776
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('See Also', not 'See Also:')
-    pep257: D413 / Missing blank line after last section ('See Also')
-    pep257: D407 / Missing dashed underline after section ('See Also')
+  Line: 778
     pylint: too-many-arguments / Too many arguments (6/5) (col 4)
     pylint: too-many-locals / Too many local variables (33/15) (col 4)
     mccabe: MC0001 / AnalysisMixin.curve_fit is too complex (12)
-  Line: 884
+  Line: 886
     pylint: undefined-loop-variable / Using possibly undefined loop variable 'i' (col 11)
-  Line: 888
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 890
     pylint: too-many-arguments / Too many arguments (6/5) (col 4)
-  Line: 911
+  Line: 913
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 19)
-  Line: 937
-    pep257: D213 / Multi-line docstring summary should start at the second line
+  Line: 939
     pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-locals / Too many local variables (16/15) (col 4)
-  Line: 970
+  Line: 972
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 41)
-  Line: 983
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 985
     pylint: too-many-locals / Too many local variables (16/15) (col 4)
-  Line: 1014
+  Line: 1016
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 41)
-  Line: 1027
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 1029
     pylint: too-many-arguments / Too many arguments (7/5) (col 4)
     pylint: too-many-locals / Too many local variables (30/15) (col 4)
     mccabe: MC0001 / AnalysisMixin.extrapolate is too complex (15)
-  Line: 1054
+  Line: 1056
     pylint: unused-variable / Unused variable 'xl' (col 8)
-  Line: 1115
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 1117
     pylint: too-many-arguments / Too many arguments (6/5) (col 4)
-  Line: 1138
+  Line: 1140
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 19)
-  Line: 1165
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 1195
+  Line: 1197
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 19)
-  Line: 1208
+  Line: 1210
     pylint: missing-docstring / Missing function docstring (col 12)
-  Line: 1227
-    pep257: D213 / Multi-line docstring summary should start at the second line
+  Line: 1229
     pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('See Also', not 'See Also:')
-    pep257: D413 / Missing blank line after last section ('See Also')
-    pep257: D407 / Missing dashed underline after section ('See Also')
     pylint: too-many-arguments / Too many arguments (6/5) (col 4)
     pylint: too-many-locals / Too many local variables (30/15) (col 4)
     pylint: too-many-statements / Too many statements (81/60) (col 4)
     mccabe: MC0001 / AnalysisMixin.lmfit is too complex (23)
-  Line: 1232
+  Line: 1234
     pylint: line-too-long / Line too long (161/159)
-  Line: 1233
+  Line: 1235
     pylint: line-too-long / Line too long (161/159)
-  Line: 1298
+  Line: 1300
     pylint: line-too-long / Line too long (199/159)
-  Line: 1368
+  Line: 1370
     pylint: redefined-argument-from-local / Redefining argument with the local name 'p0' (col 18)
-  Line: 1376
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 1378
     pylint: too-many-locals / Too many local variables (16/15) (col 4)
     pylint: too-many-statements / Too many statements (63/60) (col 4)
     mccabe: MC0001 / AnalysisMixin.make_bins is too complex (17)
-  Line: 1458
-    pep257: D213 / Multi-line docstring summary should start at the second line
+  Line: 1460
     pep257: D403 / First word of the first line should be properly capitalized ('Find', not 'FInd')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 1476
+  Line: 1478
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 18)
-  Line: 1487
-    pep257: D213 / Multi-line docstring summary should start at the second line
+  Line: 1489
     pep257: D301 / Use r""" if any backslashes in a docstring
     pep257: D403 / First word of the first line should be properly capitalized ('Find', not 'FInd')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 1533
-    pep257: D213 / Multi-line docstring summary should start at the second line
+  Line: 1535
     pep257: D403 / First word of the first line should be properly capitalized ('Find', not 'FInd')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 1551
+  Line: 1553
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 18)
-  Line: 1562
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 1564
     pylint: too-many-locals / Too many local variables (16/15) (col 4)
-  Line: 1593
+  Line: 1595
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 41)
-  Line: 1606
+  Line: 1608
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 1610
+  Line: 1612
     pylint: line-too-long / Line too long (169/159)
-  Line: 1651
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D407 / Missing dashed underline after section ('Notes')
-    pep257: D406 / Section name should end with a newline ('See Also', not 'See Also:')
-    pep257: D407 / Missing dashed underline after section ('See Also')
+  Line: 1653
     pylint: too-many-arguments / Too many arguments (6/5) (col 4)
     pylint: too-many-locals / Too many local variables (39/15) (col 4)
     pylint: too-many-statements / Too many statements (79/60) (col 4)
     mccabe: MC0001 / AnalysisMixin.odr is too complex (17)
-  Line: 1656
+  Line: 1658
     pylint: line-too-long / Line too long (161/159)
-  Line: 1657
+  Line: 1659
     pylint: line-too-long / Line too long (161/159)
-  Line: 1682
+  Line: 1684
     pylint: line-too-long / Line too long (171/159)
-  Line: 1706
+  Line: 1708
     pylint: unused-variable / Unused variable 'scale_covar' (col 8)
-  Line: 1728
+  Line: 1730
     pylint: unused-variable / Unused variable 'p0' (col 8)
-  Line: 1795
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 1797
     pylint: too-many-arguments / Too many arguments (7/5) (col 4)
     pep257: D207 / Docstring is under-indented
     mccabe: MC0001 / AnalysisMixin.outlier_detection is too complex (12)
-  Line: 1852
+  Line: 1854
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 21)
-  Line: 1863
+  Line: 1865
     pylint: simplifiable-if-statement / The if statement can be replaced with 'var = bool(test)' (col 16)
-  Line: 1876
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('See Also', not 'See Also:')
-    pep257: D413 / Missing blank line after last section ('See Also')
-    pep257: D407 / Missing dashed underline after section ('See Also')
+  Line: 1878
     pylint: too-many-arguments / Too many arguments (11/5) (col 4)
     pylint: too-many-locals / Too many local variables (22/15) (col 4)
-  Line: 1961
+  Line: 1963
     pep257: D210 / No whitespaces allowed surrounding docstring text
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D214 / Section is over-indented ('Returns')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (8/5) (col 4)
     pep257: D208 / Docstring is over-indented
-  Line: 1978
+  Line: 1980
     pylint: line-too-long / Line too long (161/159)
-  Line: 1988
+  Line: 1990
     pylint: import-error / Unable to import 'Stoner.Util' (col 8)
-  Line: 1995
+  Line: 1997
     pylint: redefined-argument-from-local / Redefining argument with the local name 'ycol' (col 14)
-  Line: 2007
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 2009
     pylint: too-many-locals / Too many local variables (29/15) (col 4)
     mccabe: MC0001 / AnalysisMixin.scale is too complex (13)
-  Line: 2067
+  Line: 2069
     pylint: line-too-long / Line too long (183/159)
-  Line: 2112
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
+  Line: 2114
     pylint: too-many-locals / Too many local variables (17/15) (col 4)
-  Line: 2180
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 2181
+  Line: 2183
     pylint: line-too-long / Line too long (174/159)
-  Line: 2200
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 2202
     pylint: too-many-locals / Too many local variables (17/15) (col 4)
-  Line: 2225
+  Line: 2227
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 48)
-  Line: 2260
-    pep257: D213 / Multi-line docstring summary should start at the second line
+  Line: 2262
     pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('See Also', not 'See Also:')
-    pep257: D413 / Missing blank line after last section ('See Also')
-    pep257: D407 / Missing dashed underline after section ('See Also')
     pylint: too-many-arguments / Too many arguments (9/5) (col 4)
     pylint: too-many-locals / Too many local variables (36/15) (col 4)
-  Line: 2268
+  Line: 2270
     pylint: line-too-long / Line too long (180/159)
-  Line: 2269
+  Line: 2271
     pylint: line-too-long / Line too long (232/159)
-  Line: 2308
+  Line: 2310
     pylint: invalid-unary-operand-type / bad operand type for unary -: NoneType (col 34)
-  Line: 2353
-    pylint: deprecated-method / Using deprecated method getargspec() (col 50)
-    pylint: deprecated-method / Using deprecated method getargspec() (col 50)
+  Line: 2355
+    pylint: undefined-variable / Undefined variable 'getargspec' (col 50)
     pylint: unused-variable / Unused variable 'varargs' (col 19)
-  Line: 2361
+  Line: 2363
     pylint: missing-docstring / Missing function docstring (col 8)
-  Line: 2379
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 2381
     pylint: too-many-locals / Too many local variables (16/15) (col 4)
-  Line: 2409
+  Line: 2411
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 41)
-  Line: 2423
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
+  Line: 2425
     mccabe: MC0001 / AnalysisMixin.threshold is too complex (13)
-  Line: 2454
+  Line: 2456
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 18)
-  Line: 2455
+  Line: 2457
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 36)
-  Line: 2491
+  Line: 2493
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 32)
-  Line: 2522
-    pylint: import-error / Unable to import 'Stoner.Core' (col 4)
   Line: 2524
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
+    pylint: import-error / Unable to import 'Stoner.Core' (col 4)
 
 Core.py
   Line: 5
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
     pylint: unused-import / Unused _lmfit imported from compat
   Line: 6
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
     pylint: unused-import / Unused format_error imported from tools
   Line: 13
     pylint: unused-import / Unused NaN imported from numpy
-  Line: 33
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 48
     pylint: protected-access / Access to a protected member _public_attrs of a client class (col 16)
   Line: 57
+    pep257: D203 / 1 blank line required before class docstring (found 0)
     pep257: D204 / 1 blank line required after class docstring (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 67
+    pep257: D203 / 1 blank line required before class docstring (found 0)
     pep257: D204 / 1 blank line required after class docstring (found 0)
   Line: 72
+    pep257: D203 / 1 blank line required before class docstring (found 0)
     pep257: D204 / 1 blank line required after class docstring (found 0)
-  Line: 83
-    pep257: D213 / Multi-line docstring summary should start at the second line
+  Line: 80
+    pep257: D203 / 1 blank line required before class docstring (found 0)
   Line: 101
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 13)
   Line: 119
@@ -441,7 +230,6 @@ Core.py
   Line: 167
     pylint: missing-docstring / Missing method docstring (col 4)
   Line: 180
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pylint: too-many-locals / Too many local variables (17/15) (col 4)
     pylint: too-many-statements / Too many statements (69/60) (col 4)
     pep257: D208 / Docstring is over-indented
@@ -459,18 +247,8 @@ Core.py
   Line: 272
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
   Line: 277
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / _setas.__getitem__ is too complex (12)
-  Line: 325
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 364
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / _setas.find_col is too complex (15)
   Line: 401
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 19)
@@ -480,10 +258,6 @@ Core.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
   Line: 429
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-locals / Too many local variables (22/15) (col 4)
     pylint: too-many-statements / Too many statements (62/60) (col 4)
     mccabe: MC0001 / _setas._get_cols is too complex (20)
@@ -494,24 +268,16 @@ Core.py
   Line: 512
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 62)
   Line: 525
+    pep257: D203 / 1 blank line required before class docstring (found 0)
     pep257: D204 / 1 blank line required after class docstring (found 0)
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 530
+    pep257: D203 / 1 blank line required before class docstring (found 0)
     pep257: D204 / 1 blank line required after class docstring (found 0)
   Line: 534
     pep257: D107 / Missing docstring in __init__
     pylint: useless-super-delegation / Useless super delegation in method '__init__' (col 4)
   Line: 537
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Parameters', not 'Parameters:')
-    pep257: D407 / Missing dashed underline after section ('Parameters')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Raises', not 'Raises:')
-    pep257: D413 / Missing blank line after last section ('Raises')
-    pep257: D407 / Missing dashed underline after section ('Raises')
     mccabe: MC0001 / regexpDict.__lookup__ is too complex (14)
   Line: 571
     pylint: protected-access / Access to a protected member _pattern_type of a client class (col 29)
@@ -520,98 +286,54 @@ Core.py
   Line: 610
     pep257: D300 / Use """triple double quotes""" (found """"-quotes)
   Line: 615
+    pep257: D203 / 1 blank line required before class docstring (found 0)
     pep257: D204 / 1 blank line required after class docstring (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
   Line: 678
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Typehinteddict', not 'typeHintedDict')
   Line: 702
     pylint: missing-docstring / Missing method docstring (col 4)
   Line: 705
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 728
     pylint: unused-variable / Unused variable 'i' (col 28)
   Line: 741
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D208 / Docstring is over-indented
   Line: 764
     pylint: unused-variable / Unused variable 'array' (col 24)
   Line: 765
     pylint: eval-used / Use of eval (col 30)
   Line: 778
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D208 / Docstring is over-indented
   Line: 794
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 798
     pylint: eval-used / Use of eval (col 22)
-  Line: 823
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 834
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
   Line: 843
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 859
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 866
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D208 / Docstring is over-indented
   Line: 882
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
   Line: 894
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D208 / Docstring is over-indented
   Line: 905
     pep257: D105 / Missing docstring in magic method
-  Line: 909
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 921
     pylint: protected-access / Access to a protected member _typehints of a client class (col 12)
-  Line: 925
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 948
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D208 / Docstring is over-indented
   Line: 966
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D208 / Docstring is over-indented
-  Line: 980
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
   Line: 991
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
+    pep257: D203 / 1 blank line required before class docstring (found 0)
   Line: 1001
     pylint: unused-argument / Unused argument 'args'
   Line: 1008
@@ -627,11 +349,8 @@ Core.py
   Line: 1036
     pep257: D105 / Missing docstring in magic method
   Line: 1051
-    pep257: D213 / Multi-line docstring summary should start at the second line
+    pep257: D203 / 1 blank line required before class docstring (found 0)
     pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D413 / Missing blank line after last section ('Attributes')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
   Line: 1081
     pylint: arguments-differ / Parameters differ from overridden '__new__' method (col 4)
   Line: 1095
@@ -650,12 +369,6 @@ Core.py
   Line: 1129
     pylint: arguments-differ / Parameters differ from overridden '__array_wrap__' method (col 4)
   Line: 1174
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
     mccabe: MC0001 / DataArray.__getitem__ is too complex (19)
   Line: 1203
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 38)
@@ -685,16 +398,9 @@ Core.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 37)
   Line: 1399
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1441
+    pep257: D203 / 1 blank line required before class docstring (found 0)
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D413 / Missing blank line after last section ('Attributes')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
   Line: 1498
     pylint: unused-argument / Unused argument 'args'
   Line: 1502
@@ -705,8 +411,6 @@ Core.py
     pylint: protected-access / Access to a protected member _public_attrs_real of a client class (col 8)
   Line: 1507
     pylint: protected-access / Access to a protected member _baseclass of a client class (col 8)
-  Line: 1511
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1571
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 8)
     pylint: protected-access / Access to a protected member _setas of a client class (col 8)
@@ -719,7 +423,6 @@ Core.py
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 37)
   Line: 1662
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1672
     pylint: protected-access / Access to a protected member _setas of a client class (col 15)
   Line: 1677
@@ -736,15 +439,12 @@ Core.py
     pylint: protected-access / Access to a protected member _setas of a client class (col 8)
   Line: 1705
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1716
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1722
     pylint: missing-docstring / Missing method docstring (col 4)
   Line: 1732
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1747
     pylint: missing-docstring / Missing method docstring (col 4)
   Line: 1749
@@ -753,37 +453,25 @@ Core.py
     pylint: unsubscriptable-object / Value 'self.subclasses' is unsubscriptable (col 18)
   Line: 1757
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1767
     pylint: consider-using-enumerate / Consider using enumerate instead of iterating with range and len (col 8)
   Line: 1779
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1787
     pylint: protected-access / Access to a protected member _setas of a client class (col 15)
   Line: 1792
     pylint: protected-access / Access to a protected member _setas of a client class (col 8)
   Line: 1795
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1806
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1822
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
     pep257: D210 / No whitespaces allowed surrounding docstring text
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D208 / Docstring is over-indented
   Line: 1846
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
     pep257: D210 / No whitespaces allowed surrounding docstring text
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D208 / Docstring is over-indented
   Line: 1870
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
     mccabe: MC0001 / DataFile.__add_core__ is too complex (15)
   Line: 1881
@@ -791,22 +479,8 @@ Core.py
   Line: 1922
     pylint: protected-access / Access to a protected member _setas of a client class (col 8)
     pylint: protected-access / Access to a protected member _data of a client class (col 8)
-  Line: 1928
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 1951
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1973
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / DataFile.__and_core__ is too complex (13)
   Line: 2040
     pylint: protected-access / Access to a protected member _setas of a client class (col 8)
@@ -814,30 +488,14 @@ Core.py
   Line: 2041
     pylint: protected-access / Access to a protected member _setas of a client class (col 8)
     pylint: protected-access / Access to a protected member _data of a client class (col 8)
-  Line: 2047
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 2059
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 2077
     pylint: protected-access / Access to a protected member _setas of a client class (col 8)
     pylint: protected-access / Access to a protected member _data of a client class (col 8)
-  Line: 2080
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 2092
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 2112
     pylint: protected-access / Access to a protected member _setas of a client class (col 8)
     pylint: protected-access / Access to a protected member _data of a client class (col 8)
   Line: 2119
     pylint: protected-access / Access to a protected member _cols of a client class (col 13)
-  Line: 2142
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 2149
     pylint: protected-access / Access to a protected member _init_single of a client class (col 25)
     pylint: protected-access / Access to a protected member _init_double of a client class (col 45)
@@ -847,19 +505,11 @@ Core.py
   Line: 2153
     pylint: protected-access / Access to a protected member _public_attrs of a client class (col 22)
   Line: 2168
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 2190
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D208 / Docstring is over-indented
   Line: 2200
     pep257: D200 / One-line docstring should fit on one line with quotes (found 2)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 2209
     pylint: protected-access / Access to a protected member _setas of a client class (col 24)
     pylint: protected-access / Access to a protected member _setas of a client class (col 51)
@@ -868,11 +518,6 @@ Core.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 51)
     pylint: protected-access / Access to a protected member _setas of a client class (col 55)
   Line: 2216
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 2228
     pylint: not-an-iterable / Non-iterable value patterns is used in an iterating context (col 17)
@@ -890,20 +535,11 @@ Core.py
   Line: 2265
     pep257: D202 / No blank lines allowed after function docstring (found 1)
     pep257: D212 / Multi-line docstring summary should start at the first line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D207 / Docstring is under-indented
     mccabe: MC0001 / DataFile.__getattr__ is too complex (11)
   Line: 2300
     pylint: protected-access / Access to a protected member _setas of a client class (col 18)
   Line: 2316
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Examples', not 'Examples:')
-    pep257: D413 / Missing blank line after last section ('Examples')
-    pep257: D407 / Missing dashed underline after section ('Examples')
     mccabe: MC0001 / DataFile.__getitem__ is too complex (12)
   Line: 2344
     pylint: consider-merging-isinstance / Consider merging these isinstance calls to isinstance(name, (re._pattern_type, string_types)) (col 11)
@@ -911,49 +547,25 @@ Core.py
   Line: 2368
     pep257: D105 / Missing docstring in magic method
   Line: 2372
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 2382
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
     pylint: arguments-differ / Parameters differ from overridden '_load' method (col 4)
     pylint: too-many-locals / Too many local variables (16/15) (col 4)
     mccabe: MC0001 / DataFile._load is too complex (12)
   Line: 2458
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns: Returns the number of rows of data')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 2463
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
-  Line: 2468
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 2486
     pylint: protected-access / Access to a protected member __read_iterable of a client class (col 12)
   Line: 2488
     pylint: protected-access / Access to a protected member __read_iterable of a client class (col 12)
   Line: 2491
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 2512
     pylint: protected-access / Access to a protected member _pattern_type of a client class (col 28)
-  Line: 2518
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 2534
     pep257: D202 / No blank lines allowed after function docstring (found 1)
     mccabe: MC0001 / DataFile.__read_iterable is too complex (15)
@@ -965,19 +577,10 @@ Core.py
     pylint: consider-using-enumerate / Consider using enumerate instead of iterating with range and len (col 8)
   Line: 2581
     pep257: D105 / Missing docstring in magic method
-  Line: 2585
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 2595
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 2606
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D214 / Section is over-indented ('Returns')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 2620
     pylint: too-many-locals / Too many local variables (24/15) (col 4)
   Line: 2652
@@ -986,47 +589,29 @@ Core.py
     pep257: D210 / No whitespaces allowed surrounding docstring text
   Line: 2676
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     mccabe: MC0001 / DataFile.__repr_core__ is too complex (13)
   Line: 2730
     pylint: no-value-for-parameter / No value for argument 'accuracy' in method call (col 41)
   Line: 2737
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 2750
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 56)
   Line: 2755
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 2778
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
   Line: 2808
     pylint: protected-access / Access to a protected member _setas of a client class (col 50)
   Line: 2814
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D208 / Docstring is over-indented
   Line: 2830
     pylint: consider-merging-isinstance / Consider merging these isinstance calls to isinstance(t, (_np_.bool_, bool)) (col 15)
   Line: 2847
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / DataFile._interesting_cols is too complex (12)
   Line: 2867
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
   Line: 2869
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
   Line: 2897
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 2912
     pylint: unused-argument / Unused argument 'kargs'
@@ -1035,20 +620,10 @@ Core.py
   Line: 2936
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 23)
   Line: 2951
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 2958
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 2972
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (7/5) (col 4)
     pylint: too-many-statements / Too many statements (62/60) (col 4)
     pep257: D208 / Docstring is over-indented
@@ -1063,40 +638,15 @@ Core.py
     pylint: not-callable / self.setas is not callable (col 16)
   Line: 3064
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes: To find which row it is that has been returned, use the :py:attr:`Stoner.Core.DataArray.i` index attribute.')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
   Line: 3086
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 3096
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Yields', not 'Yields:')
-    pep257: D413 / Missing blank line after last section ('Yields')
-    pep257: D407 / Missing dashed underline after section ('Yields')
     pylint: unused-argument / Unused argument 'not_masked' (col 21)
     pep257: D208 / Docstring is over-indented
   Line: 3107
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 3117
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
     mccabe: MC0001 / DataFile.del_column is too complex (11)
   Line: 3142
@@ -1104,10 +654,6 @@ Core.py
   Line: 3170
     pylint: redefined-argument-from-local / Redefining argument with the local name 'col' (col 20)
   Line: 3175
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
     mccabe: MC0001 / DataFile.del_rows is too complex (16)
   Line: 3231
@@ -1119,59 +665,21 @@ Core.py
   Line: 3254
     pylint: protected-access / Access to a protected member _setas of a client class (col 16)
   Line: 3257
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
     pep257: D210 / No whitespaces allowed surrounding docstring text
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 3268
     pylint: protected-access / Access to a protected member _pattern_type of a client class (col 35)
-  Line: 3275
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 3297
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 3322
     pylint: protected-access / Access to a protected member _setas of a client class (col 15)
   Line: 3324
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: arguments-differ / Parameters differ from overridden 'get' method (col 4)
     pep257: D208 / Docstring is over-indented
-  Line: 3342
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 3358
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 3370
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 3377
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-statements / Too many statements (69/60) (col 4)
     pep257: D208 / Docstring is over-indented
     mccabe: MC0001 / DataFile.load is too complex (23)
@@ -1185,36 +693,14 @@ Core.py
     pylint: protected-access / Access to a protected member _load of a client class (col 16)
   Line: 3474
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 3489
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 3519
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Yields', not 'Yields:')
-    pep257: D413 / Missing blank line after last section ('Yields')
-    pep257: D407 / Missing dashed underline after section ('Yields')
     mccabe: MC0001 / DataFile.rolling_window is too complex (11)
   Line: 3572
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Yields', not 'Yields:')
-    pep257: D413 / Missing blank line after last section ('Yields')
-    pep257: D407 / Missing dashed underline after section ('Yields')
     pep257: D208 / Docstring is over-indented
   Line: 3586
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: arguments-differ / Parameters differ from overridden 'save' method (col 4)
   Line: 3609
     pylint: unsubscriptable-object / Value 'self.subclasses' is unsubscriptable (col 20)
@@ -1226,29 +712,12 @@ Core.py
     pylint: unsupported-membership-test / Value 'DataFile.patterns' doesn't support membership test (col 37)
   Line: 3620
     pylint: unsubscriptable-object / Value 'DataFile.patterns' is unsubscriptable (col 16)
-  Line: 3644
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 3682
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 3704
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 15)
   Line: 3725
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 3729
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 3806
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 3828
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 3833
@@ -1257,10 +726,6 @@ Core.py
     pylint: protected-access / Access to a protected member _setas of a client class (col 8)
   Line: 3858
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / DataFile.split is too complex (11)
   Line: 3883
     pylint: import-error / Unable to import 'Stoner.Folders' (col 8)
@@ -1274,72 +739,28 @@ Core.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
   Line: 3921
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 3946
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 3960
     pep257: D202 / No blank lines allowed after function docstring (found 1)
     pep257: D212 / Multi-line docstring summary should start at the first line
     pep257: D402 / First line should not be the function's "signature"
 
 FileFormats.py
-  Line: 1
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 15
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
   Line: 32
     pylint: import-error / Unable to import 'Stoner.Core'
     pylint: wrong-import-position / Import "import Stoner.Core as _SC_" should be placed at the top of the module
-  Line: 34
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 47
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'kargs'
     pylint: too-many-arguments / Too many arguments (6/5) (col 4)
   Line: 72
     pyflakes: F841 / local variable '_' is assigned to but never used (col 17)
   Line: 78
     pylint: access-member-before-definition / Access to member 'data' before its definition line 86 (col 74)
-  Line: 91
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 118
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-  Line: 132
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 182
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
-  Line: 200
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 214
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: arguments-differ / Parameters differ from overridden '_load' method (col 4)
-  Line: 234
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 247
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
     pylint: too-many-locals / Too many local variables (17/15) (col 4)
@@ -1347,36 +768,14 @@ FileFormats.py
     mccabe: MC0001 / QDFile._load is too complex (20)
   Line: 321
     pylint: access-member-before-definition / Access to member 'setas' before its definition line 325 (col 10)
-  Line: 328
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 341
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Opengda', not 'OpenGDA')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
-  Line: 378
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-  Line: 385
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 474
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
-  Line: 545
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 559
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
     pylint: too-many-locals / Too many local variables (18/15) (col 4)
@@ -1385,84 +784,37 @@ FileFormats.py
     pylint: consider-merging-isinstance / Consider merging these isinstance calls to isinstance(self[key], (_np_.ndarray, list)) (col 53)
   Line: 631
     pylint: undefined-loop-variable / Using possibly undefined loop variable 'i2' (col 52)
-  Line: 641
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 650
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 668
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
     pylint: too-many-locals / Too many local variables (17/15) (col 4)
     mccabe: MC0001 / XRDFile._load is too complex (11)
   Line: 727
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 735
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
     pep257: D204 / 1 blank line required after class docstring (found 2)
     pep257: D205 / 1 blank line required between summary line and description (found 0)
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 758
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 768
     pep257: D403 / First word of the first line should be properly capitalized ('Returns', not 'returns')
-  Line: 786
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 801
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 821
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
-  Line: 845
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 859
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
-  Line: 891
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 904
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
-  Line: 937
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 951
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
   Line: 987
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D404 / First word of the docstring should not be `This`
   Line: 1004
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
     mccabe: MC0001 / SNSFile._load is too complex (14)
-  Line: 1055
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1109
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
@@ -1470,154 +822,64 @@ FileFormats.py
     mccabe: MC0001 / OVFFile._load is too complex (11)
   Line: 1153
     pylint: undefined-loop-variable / Using possibly undefined loop variable 'i' (col 52)
-  Line: 1166
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 1180
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
     pylint: too-many-statements / Too many statements (65/60) (col 4)
     mccabe: MC0001 / MDAASCIIFile._load is too complex (23)
-  Line: 1257
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1276
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
   Line: 1311
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / LSTemperatureFile.save is too complex (11)
-  Line: 1361
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 1371
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
     mccabe: MC0001 / EasyPlotFile._load is too complex (16)
-  Line: 1454
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 1468
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Pinklib', not 'PinkLib')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
-  Line: 1503
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 1536
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
   Line: 1561
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'kargs'
   Line: 1589
     mccabe: MC0001 / TryExcept 1589 is too complex (13)
-  Line: 1592
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 1607
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
 
 Fit.py
   Line: 1
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
   Line: 13
     pylint: import-error / Unable to import 'Stoner.Core'
-  Line: 14
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 15
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 50
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 88
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / cfg_data_from_ini is too complex (14)
   Line: 115
     pylint: deprecated-method / Using deprecated method readfp() (col 8)
   Line: 152
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / cfg_model_from_ini is too complex (20)
   Line: 183
     pylint: deprecated-method / Using deprecated method readfp() (col 8)
-  Line: 233
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 256
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 283
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
-  Line: 294
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 316
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 343
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
-  Line: 354
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 376
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 403
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
-  Line: 414
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 434
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 455
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 480
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 508
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
   Line: 514
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pylint: too-many-arguments / Too many arguments (6/5)
-  Line: 543
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 571
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
-  Line: 577
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 597
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 619
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
   Line: 625
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Tersoffhamman', not 'TersoffHamman')
-  Line: 639
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 655
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
   Line: 661
@@ -1626,136 +888,67 @@ Fit.py
   Line: 692
     pylint: consider-using-enumerate / Consider using enumerate instead of iterating with range and len (col 4)
   Line: 709
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
     pep257: D212 / Multi-line docstring summary should start at the first line
   Line: 739
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
   Line: 752
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Strijkers', not 'strijkers')
     pylint: too-many-locals / Too many local variables (23/15)
   Line: 817
     pylint: consider-using-enumerate / Consider using enumerate instead of iterating with range and len (col 4)
   Line: 824
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Strijkers', not 'strijkers')
-  Line: 850
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 881
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
-  Line: 887
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 911
     pylint: consider-using-enumerate / Consider using enumerate instead of iterating with range and len (col 4)
-  Line: 919
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 946
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
   Line: 957
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Blochgrueneiseen', not 'BlochGrueneiseen')
-  Line: 981
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1006
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
   Line: 1012
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D300 / Use """triple double quotes""" (found """"-quotes)
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1038
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D300 / Use """triple double quotes""" (found """"-quotes)
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1063
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
     pylint: too-many-locals / Too many local variables (19/15) (col 4)
-  Line: 1087
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 1110
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1139
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
-  Line: 1151
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 1168
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 1190
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
   Line: 1206
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1227
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
-  Line: 1250
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1276
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
-  Line: 1292
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1315
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
   Line: 1330
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D214 / Section is over-indented ('Returns')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 1342
     pylint: undefined-variable / Undefined variable 'pi' (col 33)
   Line: 1344
+    pep257: D203 / 1 blank line required before class docstring (found 0)
     pep257: D204 / 1 blank line required after class docstring (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D214 / Section is over-indented ('Returns')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1362
     pep257: D202 / No blank lines allowed after function docstring (found 1)
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
   Line: 1385
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1397
     pylint: line-too-long / Line too long (269/159)
   Line: 1401
+    pep257: D203 / 1 blank line required before class docstring (found 0)
     pep257: D204 / 1 blank line required after class docstring (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1413
     pylint: line-too-long / Line too long (269/159)
   Line: 1421
@@ -1763,26 +956,10 @@ Fit.py
     pylint: arguments-differ / Parameters differ from overridden 'guess' method (col 4)
 
 Folders.py
-  Line: 1
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 7
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 8
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 21
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
   Line: 24
     pylint: protected-access / Access to a protected member _pattern_type of a client class (col 13)
   Line: 29
     pylint: no-else-return / Unnecessary "else" after "return" (col 4)
-  Line: 36
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D413 / Missing blank line after last section ('Attributes')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
-  Line: 58
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 68
     pylint: protected-access / Access to a protected member _object_attrs of a client class (col 8)
   Line: 69
@@ -1799,163 +976,60 @@ Folders.py
     pylint: protected-access / Access to a protected member _type of a client class (col 8)
   Line: 76
     pylint: protected-access / Access to a protected member _instance_attrs of a client class (col 8)
-  Line: 80
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
   Line: 120
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 178
     pylint: consider-iterating-dictionary / Consider iterating the dictionary directly instead of calling .keys() (col 17)
   Line: 184
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 193
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 203
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
-  Line: 244
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Parameters', not 'Parameters:')
-    pep257: D407 / Missing dashed underline after section ('Parameters')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 262
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 270
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Parameters', not 'Parameters:')
-    pep257: D407 / Missing dashed underline after section ('Parameters')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 301
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Parameters', not 'Parameters:')
-    pep257: D413 / Missing blank line after last section ('Parameters')
-    pep257: D407 / Missing dashed underline after section ('Parameters')
-  Line: 315
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Parameters', not 'Parameters:')
-    pep257: D407 / Missing dashed underline after section ('Parameters')
   Line: 327
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D300 / Use """triple double quotes""" (found """"-quotes)
-  Line: 337
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 364
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Parameters', not 'Parameters:')
-    pep257: D407 / Missing dashed underline after section ('Parameters')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / baseFolder.__getitem__ is too complex (11)
   Line: 392
     pylint: no-else-return / Unnecessary "else" after "return" (col 12)
   Line: 411
     pylint: no-else-return / Unnecessary "else" after "return" (col 12)
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
-  Line: 423
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Parameters', not 'Parameters:')
-    pep257: D413 / Missing blank line after last section ('Parameters')
-    pep257: D407 / Missing dashed underline after section ('Parameters')
-  Line: 444
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Parameters', not 'Parameters:')
-    pep257: D413 / Missing blank line after last section ('Parameters')
-    pep257: D407 / Missing dashed underline after section ('Parameters')
-  Line: 474
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 517
     pep257: D300 / Use """triple double quotes""" (found """"-quotes)
-  Line: 553
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 613
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 620
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 653
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 676
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 25)
-  Line: 686
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 697
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 712
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
-  Line: 733
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 820
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 27)
   Line: 827
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D300 / Use """triple double quotes""" (found """"-quotes)
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
   Line: 852
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 12)
   Line: 860
     pylint: protected-access / Access to a protected member __walk_groups of a client class (col 20)
   Line: 868
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 13)
-  Line: 879
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 906
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: arguments-differ / Parameters differ from overridden 'count' method (col 4)
   Line: 920
     pylint: no-else-return / Unnecessary "else" after "return" (col 12)
   Line: 924
     pylint: protected-access / Access to a protected member _pattern_type of a client class (col 27)
   Line: 931
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / baseFolder.filter is too complex (11)
   Line: 954
     pylint: protected-access / Access to a protected member _pattern_type of a client class (col 32)
   Line: 968
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 983
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1015
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
     pep257: D411 / Missing blank line before section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1042
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 1047
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: arguments-differ / Parameters differ from overridden 'index' method (col 4)
     mccabe: MC0001 / baseFolder.index is too complex (12)
   Line: 1071
@@ -1964,81 +1038,23 @@ Folders.py
     pylint: protected-access / Access to a protected member _pattern_type of a client class (col 27)
   Line: 1086
     pylint: arguments-differ / Parameters differ from overridden 'insert' method (col 4)
-  Line: 1143
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1151
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 14)
   Line: 1155
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 19)
   Line: 1164
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / baseFolder.select is too complex (15)
   Line: 1243
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 60)
-  Line: 1263
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 1287
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1309
     pylint: protected-access / Access to a protected member _pattern_type of a client class (col 28)
-  Line: 1327
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 1365
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
-  Line: 1391
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 1406
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D413 / Missing blank line after last section ('Attributes')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
   Line: 1451
     pylint: import-error / Unable to import 'Stoner' (col 8)
   Line: 1462
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 29)
-  Line: 1475
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1491
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 1503
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 1516
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1570
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Parameters', not 'Parameters:')
-    pep257: D407 / Missing dashed underline after section ('Parameters')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / DiskBssedFolder.__getter__ is too complex (13)
   Line: 1595
     pylint: protected-access / Access to a protected member _pattern_type of a client class (col 28)
@@ -2047,10 +1063,6 @@ Folders.py
   Line: 1643
     pylint: protected-access / Access to a protected member _pattern_type of a client class (col 30)
   Line: 1651
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / DiskBssedFolder.getlist is too complex (27)
   Line: 1686
     pylint: protected-access / Access to a protected member _pattern_type of a client class (col 28)
@@ -2058,16 +1070,7 @@ Folders.py
     pylint: protected-access / Access to a protected member _pattern_type of a client class (col 28)
   Line: 1735
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
     pep257: D411 / Missing blank line before section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 1747
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1762
     pylint: missing-docstring / Missing class docstring
   Line: 1765
@@ -2075,10 +1078,6 @@ Folders.py
   Line: 1766
     pylint: import-error / Unable to import 'Stoner' (col 8)
   Line: 1770
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / DataFolder.__read__ is too complex (12)
   Line: 1785
     pylint: not-callable / self.type is not callable (col 13)
@@ -2087,23 +1086,12 @@ Folders.py
   Line: 1794
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
   Line: 1808
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'reverse' (col 36)
   Line: 1831
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / DataFolder.extract is too complex (12)
   Line: 1855
     pylint: unused-argument / Unused argument 'trail' (col 29)
   Line: 1891
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D407 / Missing dashed underline after section ('Notes')
     mccabe: MC0001 / DataFolder.gather is too complex (13)
   Line: 1902
     pylint: too-many-arguments / Too many arguments (6/5) (col 8)
@@ -2116,14 +1104,8 @@ Folders.py
   Line: 1942
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 23)
   Line: 1959
-    pep257: D213 / Multi-line docstring summary should start at the second line
+    pep257: D203 / 1 blank line required before class docstring (found 0)
   Line: 1975
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
     pylint: too-many-locals / Too many local variables (21/15) (col 4)
   Line: 2006
     pylint: import-error / Unable to import 'Stoner' (col 12)
@@ -2131,36 +1113,13 @@ Folders.py
     pylint: not-a-mapping / Non-mapping value fig_args is used in a mapping context (col 37)
 
 HDF5.py
-  Line: 1
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 12
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 15
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 16
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 17
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
   Line: 20
     pylint: unused-import / Unused copy imported from copy
-  Line: 23
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 71
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Raises', not 'Raises:')
-    pep257: D413 / Missing blank line after last section ('Raises')
-    pep257: D407 / Missing dashed underline after section ('Raises')
     mccabe: MC0001 / HDF5File._open_filename is too complex (11)
   Line: 86
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 14)
   Line: 119
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'kargs'
     mccabe: MC0001 / HDF5File._load is too complex (12)
   Line: 135
@@ -2168,31 +1127,13 @@ HDF5.py
   Line: 149
     pylint: not-an-iterable / Non-iterable value f.attrs['column_headers'] is used in an iterating context (col 61)
   Line: 168
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / HDF5File.save is too complex (14)
   Line: 186
     pylint: consider-merging-isinstance / Consider merging these isinstance calls to isinstance(h5file, (h5py.File, h5py.Group)) (col 13)
-  Line: 221
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 233
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Genx', not 'GenX')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
-  Line: 321
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 336
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 355
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
@@ -2200,31 +1141,14 @@ HDF5.py
     mccabe: MC0001 / HDF5Folder.getlist is too complex (13)
   Line: 381
     pylint: consider-merging-isinstance / Consider merging these isinstance calls to isinstance(directory, (h5py.File, h5py.Group)) (col 13)
-  Line: 401
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 420
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 450
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 460
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'kargs'
     mccabe: MC0001 / SLS_STXMFile._load is too complex (14)
   Line: 471
     pylint: access-member-before-definition / Access to member 'filename' before its definition line 473 (col 23)
   Line: 479
     pylint: consider-merging-isinstance / Consider merging these isinstance calls to isinstance(filename, (h5py.File, h5py.Group)) (col 13)
-  Line: 536
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 542
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D208 / Docstring is over-indented
   Line: 548
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
@@ -2251,32 +1175,22 @@ Image/core.py
     pylint: import-error / Unable to import 'Stoner.compat'
   Line: 37
     pylint: import-error / Unable to import 'cStringIO' (col 4)
-  Line: 57
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
   Line: 123
     pep257: D202 / No blank lines allowed after function docstring (found 2)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pylint: arguments-differ / Parameters differ from overridden '__new__' method (col 4)
     mccabe: MC0001 / ImageArray.__new__ is too complex (17)
   Line: 142
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 164
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 19)
-  Line: 196
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 208
     pylint: unused-variable / Unused variable 'calframe' (col 12)
   Line: 216
     pep257: D105 / Missing docstring in magic method
     pylint: useless-super-delegation / Useless super delegation in method '__array_prepare__' (col 4)
   Line: 219
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pylint: arguments-differ / Parameters differ from overridden '__array_wrap__' method (col 4)
   Line: 228
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pylint: useless-super-delegation / Useless super delegation in method '__init__' (col 4)
   Line: 298
     pylint: unused-argument / Unused argument 'kargs'
@@ -2290,19 +1204,10 @@ Image/core.py
     pep257: D403 / First word of the first line should be properly capitalized ('Return', not 'return')
   Line: 402
     mccabe: MC0001 / ImageArray._funcs is too complex (13)
-  Line: 403
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 456
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 477
     pylint: unused-variable / Unused variable 'e' (col 8)
   Line: 478
     pep8: E115 / expected an indented block (comment) (col 9)
-  Line: 489
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 507
     pylint: missing-docstring / Missing function docstring (col 8)
   Line: 533
@@ -2316,45 +1221,22 @@ Image/core.py
   Line: 592
     pep257: D403 / First word of the first line should be properly capitalized ('Back', not 'back')
   Line: 596
-    pep257: D213 / Multi-line docstring summary should start at the second line
     mccabe: MC0001 / ImageArray.crop is too complex (11)
   Line: 623
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 651
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
     pep257: D411 / Missing blank line before section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 671
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 690
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Prefer', not 'prefer')
   Line: 698
     pep257: D403 / First word of the first line should be properly capitalized ('Back', not 'back')
-  Line: 702
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 710
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Convert', not 'convert')
   Line: 720
     pep257: D403 / First word of the first line should be properly capitalized ('Back', not 'back')
-  Line: 724
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 762
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 786
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 794
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 828
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 835
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 837
@@ -2374,7 +1256,6 @@ Image/core.py
   Line: 1074
     pylint: unused-variable / Unused variable 'l' (col 12)
   Line: 1095
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Imagefile', not 'ImageFile')
   Line: 1103
     pylint: missing-docstring / Missing function docstring (col 8)
@@ -2382,28 +1263,16 @@ Image/core.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
   Line: 1113
     pylint: no-else-return / Unnecessary "else" after "return" (col 12)
-  Line: 1142
-    pep257: D213 / Multi-line docstring summary should start at the second line
+  Line: 1206
+    pep257: D203 / 1 blank line required before class docstring (found 0)
   Line: 1209
     pylint: unused-argument / Unused argument 'kargs'
   Line: 1229
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
     pylint: too-many-arguments / Too many arguments (7/5) (col 4)
   Line: 1265
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (8/5) (col 4)
     pylint: too-many-locals / Too many local variables (18/15) (col 4)
   Line: 1297
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (7/5) (col 4)
   Line: 1315
     pylint: missing-docstring / Missing class docstring
@@ -2436,25 +1305,14 @@ Image/folders.py
   Line: 12
     pylint: import-error / Unable to import 'Stoner.Image'
     pyflakes: F811 / redefinition of unused 'ImageArray' from line 8 (col 1)
-  Line: 22
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 53
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D214 / Section is over-indented ('Attributes')
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D413 / Missing blank line after last section ('Attributes')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
   Line: 83
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Nitialise', not 'nitialise')
-  Line: 104
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 144
     pylint: import-error / Unable to import 'Stoner.Image' (col 8)
   Line: 166
     pep257: D200 / One-line docstring should fit on one line with quotes (found 3)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 174
     pylint: trailing-newlines / Trailing newlines
 
@@ -2469,111 +1327,46 @@ Image/imagefuncs.py
     pylint: unused-import / Unused exposure imported from skimage
   Line: 51
     pylint: import-error / Unable to import 'Stoner'
-  Line: 53
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 79
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Rescale', not 'rescale')
-    pep257: D413 / Missing blank line after last section ('Returns')
   Line: 107
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
     pylint: too-many-locals / Too many local variables (20/15)
   Line: 142
     pylint: invalid-unary-operand-type / bad operand type for unary -: recarray (col 29)
   Line: 187
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (6/5)
   Line: 225
     pylint: unused-variable / Unused variable 'phase' (col 12)
   Line: 231
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Subtract', not 'subtract')
   Line: 263
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
     pylint: too-many-arguments / Too many arguments (6/5)
   Line: 312
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Quick', not 'quick')
   Line: 357
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (6/5)
     pylint: too-many-locals / Too many local variables (18/15)
-  Line: 417
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 438
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Parameters', not 'Parameters:')
-    pep257: D407 / Missing dashed underline after section ('Parameters')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (8/5)
     pylint: too-many-locals / Too many local variables (16/15)
   Line: 483
     pylint: protected-access / Access to a protected member _line_profile_coordinates of a client class (col 11)
-  Line: 494
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 524
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 542
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 567
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 594
     pep257: D403 / First word of the first line should be properly capitalized ('Plot', not 'plot')
   Line: 603
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Returns', not 'returns')
-  Line: 611
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D413 / Missing blank line after last section ('Returns')
   Line: 655
     pep257: D202 / No blank lines allowed after function docstring (found 1)
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D413 / Missing blank line after last section ('Returns')
   Line: 675
     pep257: D403 / First word of the first line should be properly capitalized ('Exactly', not 'exactly')
   Line: 680
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Convert', not 'convert')
   Line: 688
     pep257: D403 / First word of the first line should be properly capitalized ('Just', not 'just')
 
 Image/kerr.py
-  Line: 1
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 9
     pylint: import-error / Unable to import 'Stoner'
   Line: 10
@@ -2582,79 +1375,28 @@ Image/kerr.py
     pylint: import-error / Unable to import 'Stoner.Image'
   Line: 13
     pylint: multiple-imports / Multiple imports on one line (subprocess, tempfile, os)
-  Line: 21
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-  Line: 32
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 80
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 95
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 103
     pylint: access-member-before-definition / Access to member 'metadata' before its definition line 116 (col 19)
-  Line: 119
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 145
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Ocr', not 'ocr')
   Line: 181
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 200
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 241
     pylint: consider-iterating-dictionary / Consider iterating the dictionary directly instead of calling .keys() (col 23)
   Line: 245
     pylint: unidiomatic-typecheck / Using type() instead of isinstance() for a typecheck. (col 15)
-  Line: 255
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D413 / Missing blank line after last section ('Attributes')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
-  Line: 274
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D413 / Missing blank line after last section ('Returns')
   Line: 289
     pylint: consider-using-enumerate / Consider using enumerate instead of iterating with range and len (col 8)
   Line: 313
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Apply', not 'apply')
     pylint: unused-argument / Unused argument 'denoise_weight' (col 29)
-  Line: 329
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 346
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pylint: unused-argument / Unused argument 'comparison' (col 42)
   Line: 357
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'copy' (col 24)
   Line: 369
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Produce', not 'produce')
     pylint: too-many-arguments / Too many arguments (8/5) (col 4)
-  Line: 412
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 436
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-  Line: 445
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
 
 Image/stack.py
   Line: 1
@@ -2666,18 +1408,10 @@ Image/stack.py
   Line: 18
     pylint: import-error / Unable to import 'Stoner.tools'
   Line: 27
-    pep257: D213 / Multi-line docstring summary should start at the second line
     mccabe: MC0001 / _average_list is too complex (13)
   Line: 34
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 7)
-  Line: 65
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D413 / Missing blank line after last section ('Attributes')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
   Line: 91
-    pep257: D213 / Multi-line docstring summary should start at the second line
     mccabe: MC0001 / ImageStack.__init__ is too complex (17)
   Line: 120
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
@@ -2693,47 +1427,20 @@ Image/stack.py
     pep257: D403 / First word of the first line should be properly capitalized ('List', not 'list')
   Line: 212
     pep257: D403 / First word of the first line should be properly capitalized ('Update', not 'update')
-  Line: 283
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 315
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 325
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 330
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 335
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 348
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 355
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
     pep257: D411 / Missing blank line before section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 371
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 380
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 399
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D403 / First word of the first line should be properly capitalized ('Apply', not 'apply')
-  Line: 426
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 452
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 473
     pep257: D403 / First word of the first line should be properly capitalized ('Probably', not 'probably')
-  Line: 477
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 493
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 504
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 523
     pylint: trailing-newlines / Trailing newlines
 
@@ -2761,30 +1468,12 @@ Image/util.py
 Util.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 10
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 11
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
+    pylint: cyclic-import / Cyclic import (Image.core -> Image.imagefuncs)
   Line: 12
     pylint: import-error / Unable to import 'Stoner.Core'
-  Line: 13
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 14
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 15
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 19
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 35
     pylint: protected-access / Access to a protected member _get_cols of a client class (col 20)
   Line: 39
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-locals / Too many local variables (16/15)
   Line: 53
     pylint: protected-access / Access to a protected member _col_args of a client class (col 10)
@@ -2795,13 +1484,7 @@ Util.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 9)
   Line: 67
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 9)
-  Line: 100
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 121
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-locals / Too many local variables (37/15)
     pylint: too-many-statements / Too many statements (85/60)
     mccabe: MC0001 / hysteresis_correct is too complex (15)
@@ -2821,31 +1504,18 @@ Zip.py
     pep257: D212 / Multi-line docstring summary should start at the first line
   Line: 15
     pylint: import-error / Unable to import 'Stoner.compat'
-  Line: 17
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
-  Line: 18
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
   Line: 24
     pep257: D300 / Use """triple double quotes""" (found "-quotes)
-  Line: 43
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 59
     pep257: D300 / Use """triple double quotes""" (found "-quotes)
   Line: 61
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 83
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 100
     pep257: D300 / Use """triple double quotes""" (found "-quotes)
     pylint: unused-argument / Unused argument 'args'
     pylint: unused-argument / Unused argument 'kargs'
     mccabe: MC0001 / ZipFile._load is too complex (13)
   Line: 145
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / ZipFile.save is too complex (17)
   Line: 174
     pylint: undefined-loop-variable / Using possibly undefined loop variable 'i' (col 59)
@@ -2853,16 +1523,9 @@ Zip.py
     pylint: undefined-loop-variable / Using possibly undefined loop variable 'i' (col 50)
   Line: 187
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 19)
-  Line: 206
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 213
     pep257: D300 / Use """triple double quotes""" (found "-quotes)
   Line: 229
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: unused-argument / Unused argument 'message' (col 22)
     pylint: unused-argument / Unused argument 'new_directory' (col 47)
   Line: 253
@@ -2874,16 +1537,8 @@ Zip.py
     pep257: D300 / Use """triple double quotes""" (found "-quotes)
   Line: 318
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
-  Line: 329
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 348
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
 
 __init__.py
-  Line: 1
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 7
     pylint: undefined-all-variable / Undefined variable name 'Core' in __all__ (col 9)
   Line: 14
@@ -2899,18 +1554,7 @@ __init__.py
     pylint: import-error / Unable to import '__init__.Folders'
   Line: 20
     pylint: import-error / Unable to import '__init__.compat'
-  Line: 28
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 37
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 80
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D412 / No blank lines allowed between a section header and its content ('Returns')
     pylint: too-many-arguments / Too many arguments (6/5) (col 4)
     pylint: too-many-locals / Too many local variables (21/15) (col 4)
@@ -2925,34 +1569,18 @@ __init__.py
     pylint: trailing-newlines / Trailing newlines
 
 compat.py
-  Line: 1
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pylint: cyclic-import / Cyclic import (Image.core -> Image.imagefuncs)
-  Line: 40
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 50
     pylint: import-error / Unable to import 'Tkinter' (col 8)
   Line: 51
     pylint: import-error / Unable to import 'tkFileDialog' (col 8)
   Line: 76
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
-  Line: 81
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 118
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
   Line: 139
     pylint: trailing-newlines / Trailing newlines
 
 plot/core.py
   Line: 1
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 11
     pylint: import-error / Unable to import 'Stoner.compat'
   Line: 12
@@ -2972,13 +1600,8 @@ plot/core.py
   Line: 44
     pylint: deprecated-method / Using deprecated method getfullargspec() (col 24)
   Line: 49
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
     pep257: D214 / Section is over-indented ('Attributes')
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D413 / Missing blank line after last section ('Attributes')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
     pep257: D208 / Docstring is over-indented
   Line: 64
     pep8: E501 / line too long (175 > 160 characters) (col 161)
@@ -2986,7 +1609,6 @@ plot/core.py
     pep8: E501 / line too long (177 > 160 characters) (col 161)
   Line: 74
     pep257: D200 / One-line docstring should fit on one line with quotes (found 3)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
   Line: 133
     pylint: unused-variable / Unused variable 'ax' (col 27)
@@ -2996,28 +1618,13 @@ plot/core.py
     pylint: unidiomatic-typecheck / Using type() instead of isinstance() for a typecheck. (col 11)
   Line: 211
     pep257: D202 / No blank lines allowed after function docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pylint: too-many-arguments / Too many arguments (6/5) (col 4)
-  Line: 242
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 264
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pylint: too-many-arguments / Too many arguments (7/5) (col 4)
     pep257: D208 / Docstring is over-indented
   Line: 292
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (7/5) (col 4)
     pep257: D208 / Docstring is over-indented
-  Line: 330
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 340
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
   Line: 341
@@ -3027,49 +1634,23 @@ plot/core.py
   Line: 372
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 69)
   Line: 397
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
     mccabe: MC0001 / PlotMixin._fix_kargs is too complex (12)
   Line: 428
     pylint: deprecated-method / Using deprecated method getargspec() (col 38)
     pylint: unused-variable / Unused variable 'vargs' (col 15)
   Line: 449
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D208 / Docstring is over-indented
-  Line: 480
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 516
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 551
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pep257: D208 / Docstring is over-indented
   Line: 585
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (8/5) (col 4)
     pep257: D208 / Docstring is over-indented
   Line: 611
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 621
     pylint: unused-variable / Unused variable 'ax' (col 20)
   Line: 629
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pylint: too-many-arguments / Too many arguments (8/5) (col 4)
     pylint: too-many-locals / Too many local variables (16/15) (col 4)
     pep257: D208 / Docstring is over-indented
@@ -3079,33 +1660,19 @@ plot/core.py
   Line: 658
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 19)
   Line: 701
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (7/5) (col 4)
     pylint: too-many-locals / Too many local variables (24/15) (col 4)
     pep257: D208 / Docstring is over-indented
   Line: 740
     pylint: unused-variable / Unused variable 'ax' (col 23)
   Line: 759
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / PlotMixin.inset is too complex (11)
   Line: 765
     pep8: E501 / line too long (175 > 160 characters) (col 161)
-  Line: 798
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 805
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
   Line: 822
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D214 / Section is over-indented ('Returns')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (12/5) (col 4)
     pylint: too-many-locals / Too many local variables (22/15) (col 4)
     pylint: too-many-statements / Too many statements (85/60) (col 4)
@@ -3123,10 +1690,6 @@ plot/core.py
     pep8: E712 / comparison to True should be 'if cond is True:' or 'if cond:' (col 22)
     pylint: singleton-comparison / Comparison to True should be just 'expr' or 'expr is True' (col 11)
   Line: 956
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (6/5) (col 4)
     pylint: too-many-locals / Too many local variables (26/15) (col 4)
     pylint: too-many-statements / Too many statements (73/60) (col 4)
@@ -3134,11 +1697,7 @@ plot/core.py
   Line: 1064
     pylint: protected-access / Access to a protected member _get_lines of a client class (col 26)
   Line: 1095
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D214 / Section is over-indented ('Returns')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (8/5) (col 4)
     pylint: too-many-locals / Too many local variables (22/15) (col 4)
     pep257: D208 / Docstring is over-indented
@@ -3149,7 +1708,6 @@ plot/core.py
   Line: 1114
     pep8: E501 / line too long (180 > 160 characters) (col 161)
   Line: 1161
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pylint: too-many-arguments / Too many arguments (6/5) (col 4)
     pep257: D208 / Docstring is over-indented
   Line: 1176
@@ -3157,11 +1715,7 @@ plot/core.py
   Line: 1178
     pep8: E501 / line too long (180 > 160 characters) (col 161)
   Line: 1208
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D214 / Section is over-indented ('Returns')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-arguments / Too many arguments (7/5) (col 4)
     pylint: too-many-locals / Too many local variables (24/15) (col 4)
     pylint: too-many-statements / Too many statements (65/60) (col 4)
@@ -3171,104 +1725,36 @@ plot/core.py
     pylint: line-too-long / Line too long (160/159)
   Line: 1226
     pep8: E501 / line too long (176 > 160 characters) (col 161)
-  Line: 1323
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1381
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D402 / First line should not be the function's "signature"
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1397
     pylint: unused-variable / Unused variable 'ax' (col 11)
-  Line: 1412
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 1423
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 1436
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 1466
     pylint: import-error / Unable to import 'Stoner.Core' (col 4)
-  Line: 1468
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
 
 plot/formats.py
   Line: 1
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 25
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
-  Line: 62
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 114
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
-  Line: 183
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 262
     pylint: unused-argument / Unused argument 'value' (col 24)
-  Line: 267
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 279
     pep257: D404 / First word of the docstring should not be `This`
     mccabe: MC0001 / DefaultPlotStyle.new_figure is too complex (15)
   Line: 309
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
-  Line: 338
-    pep257: D209 / Multi-line docstring closing quotes should be on a separate line
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 346
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D404 / First word of the docstring should not be `This`
     pylint: unused-argument / Unused argument 'plot' (col 33)
   Line: 376
-    pep257: D213 / Multi-line docstring summary should start at the second line
     mccabe: MC0001 / DefaultPlotStyle.annotate is too complex (11)
-  Line: 408
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 435
     pylint: pointless-statement / Statement seems to have no effect (col 8)
-  Line: 438
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 456
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-  Line: 468
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-  Line: 476
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 493
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
   Line: 532
     pylint: pointless-statement / Statement seems to have no effect (col 8)
   Line: 534
     mccabe: MC0001 / If 534 is too complex (13)
-  Line: 536
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Attributes', not 'Attributes:')
-    pep257: D413 / Missing blank line after last section ('Attributes')
-    pep257: D407 / Missing dashed underline after section ('Attributes')
   Line: 572
     pyflakes: F811 / redefinition of unused 'palette' from line 567 (col 9)
   Line: 573
@@ -3280,7 +1766,6 @@ plot/utils.py
   Line: 42
     pylint: import-error / Unable to import 'Stoner.compat'
   Line: 47
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pylint: too-many-arguments / Too many arguments (12/5)
     pylint: too-many-locals / Too many local variables (19/15)
   Line: 80
@@ -3289,51 +1774,15 @@ plot/utils.py
     pylint: protected-access / Access to a protected member _get_lines of a client class (col 25)
 
 tools.py
-  Line: 1
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 12
-    pylint: relative-beyond-top-level / Attempted relative import beyond top-level package
   Line: 16
     pylint: redefined-builtin / Redefining built-in 'abs'
     pylint: redefined-builtin / Redefining built-in 'round'
-  Line: 56
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 68
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 81
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 96
     pylint: unnecessary-lambda / Lambda may not be necessary (col 14)
   Line: 113
     pylint: useless-else-on-loop / Else clause on loop without a break statement (col 4)
-  Line: 116
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-    pep257: D406 / Section name should end with a newline ('Notes', not 'Notes:')
-    pep257: D413 / Missing blank line after last section ('Notes')
-    pep257: D407 / Missing dashed underline after section ('Notes')
-  Line: 139
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 150
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
-  Line: 166
-    pep257: D213 / Multi-line docstring summary should start at the second line
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 182
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 7)
   Line: 191
@@ -3341,34 +1790,19 @@ tools.py
   Line: 200
     pep257: D212 / Multi-line docstring summary should start at the first line
     pep257: D214 / Section is over-indented ('Parameters')
-    pep257: D406 / Section name should end with a newline ('Parameters', not 'Parameters:')
-    pep257: D407 / Missing dashed underline after section ('Parameters')
     pep257: D214 / Section is over-indented ('Returns')
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D407 / Missing dashed underline after section ('Returns')
   Line: 231
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     mccabe: MC0001 / format_val is too complex (12)
   Line: 310
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D213 / Multi-line docstring summary should start at the second line
     pep257: D301 / Use r""" if any backslashes in a docstring
     pep257: D404 / First word of the docstring should not be `This`
-    pep257: D406 / Section name should end with a newline ('Returns', not 'Returns:')
-    pep257: D413 / Missing blank line after last section ('Returns')
-    pep257: D407 / Missing dashed underline after section ('Returns')
     pylint: too-many-locals / Too many local variables (19/15)
     pylint: too-many-statements / Too many statements (68/60)
     mccabe: MC0001 / format_error is too complex (15)
-  Line: 423
-    pep257: D211 / No blank lines allowed before class docstring (found 1)
-    pep257: D213 / Multi-line docstring summary should start at the second line
-  Line: 448
-    pep257: D213 / Multi-line docstring summary should start at the second line
+  Line: 459
+    pep257: D203 / 1 blank line required before class docstring (found 0)
   Line: 462
     pep257: D107 / Missing docstring in __init__
   Line: 463
@@ -3410,13 +1844,13 @@ tools.py
 
 Check Information
 =================
-         Started: 2018-01-01 22:47:01.043329
-        Finished: 2018-01-01 22:48:43.643563
-      Time Taken: 102.60 seconds
+         Started: 2018-01-02 00:15:24.803394
+        Finished: 2018-01-02 00:17:13.728659
+      Time Taken: 108.93 seconds
        Formatter: grouped
         Profiles: .landscape.yml, doc_warnings, no_test_warnings, strictness_medium, strictness_high, strictness_veryhigh, no_member_warnings
       Strictness: from profile
   Libraries Used: 
        Tools Run: dodgy, frosted, mccabe, pep257, pep8, profile-validator, pyflakes, pylint, pyroma
-  Messages Found: 2340
+  Messages Found: 1016
 

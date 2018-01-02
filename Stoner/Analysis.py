@@ -17,7 +17,6 @@ from scipy.interpolate import interp1d,  UnivariateSpline
 from scipy.optimize import curve_fit,newton
 from scipy.signal import savgol_filter
 from inspect import isclass
-from collections import Iterable
 from warnings import warn
 try:  #Allow lmfit to be optional
     import lmfit
@@ -33,10 +32,10 @@ except ImportError:
     _lmfit=False
 from copy import deepcopy as copy
 #from matplotlib.pylab import * #Surely not?
-if python_v3:
-    from inspect import getfullargspec as getargspec
+if not python_v3:
+    from inspect import getargspec as getfullargspec
 else:
-    from inspect import getargspec
+    from inspect import getfullargspec
 
 
 #==========================================================================================================================================
@@ -45,12 +44,13 @@ else:
 
 
 class _odr_Model(odrModel):
+    
     """A wrapper for converting lmfit models to odr models."""
     
     def __init__(self,*args,**kargs):
         """Initialise with lmfit.models.Model or callable."""
         meta=kargs.pop("meta",dict())
-        if len(args)>0:
+        if args:
             args=list(args)
             model=args.pop(0)
         else:
@@ -66,11 +66,12 @@ class _odr_Model(odrModel):
         elif callable(model):
             self.model=None
             meta["name"]=model.__name__
-            arguments,carargs,jeywords,defaults=getargspec(model)[0:4]
+            arguments,carargs,jeywords,defaults=getfullargspec(model)[0:4]
             meta["param_names"]=list(arguments[1:])
             print(arguments,carargs,jeywords,defaults)
             func=model
-            def model(beta,x,**args):
+            def model(beta,x,**_):
+                """Warapper for model function."""
                 return func(x,*beta)
         p0=kargs.pop("p0",kargs.pop("estimate",None))
         if p0 is None or len(p0)!=len(meta["param_names"]):
@@ -81,7 +82,8 @@ class _odr_Model(odrModel):
                 elif hasattr(self.model,"param_hints") and k in self.model.param_hints:
                     p0.append(self.model.param_hints[k]["value"])
                 else:                    
-                    raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function".format(len(meta["param_names"]),k))
+                    raise RuntimeError(("You must either supply a p0 of length {} or supply a value for keyword "+
+                                       "{} for your model function").format(len(meta["param_names"]),k))
         kargs["estimate"]=p0
         
         kargs["meta"]=meta
@@ -122,7 +124,7 @@ def _outlier(row, column, window, metric):
 
 
 def _threshold(threshold, data, rising=True, falling=False):
-    """ Internal function that implements the threshold method - also used in peak-finder
+    """Internal function that implements the threshold method - also used in peak-finder
 
     Args:
         threshold (float): Threshold valuye in data to look for
@@ -133,7 +135,6 @@ def _threshold(threshold, data, rising=True, falling=False):
         A numpy array of fractional indices where the data has crossed the threshold assuming a
         straight line interpolation between two points.
     """
-
     # First we find all points where we cross zero in the correct direction
     current = data
     previous = _np_.roll(current, 1)
@@ -163,7 +164,7 @@ def _threshold(threshold, data, rising=True, falling=False):
     return _np_.array(roots)
 
 def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
-    """Calculae an optimal transformation of points :math:`(x_1,y_1)\\rightarrow(x_2,y_2)`.
+    r"""Calculae an optimal transformation of points :math:`(x_1,y_1)\rightarrow(x_2,y_2)`.
 
     Arguments:
         xy1 ( (n,2) array of float): Set of points to be mapped from.
@@ -187,7 +188,6 @@ def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
         balues of the free parameters. Which elelemnts of *m0* that are free parameters and which are fixed is determined by the *xmode*
         and *ymode* parameters. IF *xmode* and *ymode* are both fixed, however, no scaling is done at all.
     """
-
     if xy1.shape!=xy2.shape or xy1.shape[1]!=2:
         raise RuntimeError("co-ordinate arrays must be equal length with two columns, not {} and {}".format(xy1.shape,xy2.shape))
     xvarp={"affine":[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]],
@@ -233,6 +233,7 @@ def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
     result=_np_.zeros(len(xy1))
 
     def transform(xy,*p):#Construct the fitting function
+        """Fitting function to find the transfoprm."""
         xy1=_np_.column_stack((xy[:2,:].T,_np_.ones(xy.shape[1]))).T
         xy2=xy[2:,:]
         for pi,(u,v) in zip(p,mapping):
@@ -259,6 +260,7 @@ def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
 
 
 def ApplyAffineTransform(xy,transform):
+    """Apply a given afffine transform to a set of xy data points."""
     xyt=_np_.row_stack((xy.T,_np_.ones(len(xy))))
     xyt=_np_.dot(transform,xyt)
     return xyt.T

@@ -36,10 +36,22 @@ pep8:
 
 pylint:
   run: true
+  disable:
+    - E0402
+  max-args: 10
 
 pep257:
-  disable:
+  enable:
     - D203
+    - D212
+    - D404
+  disable:
+    - D211
+    - D213
+    - D209
+    - D406
+    - D407
+    - D413
   run: true
 
 pyroma:
