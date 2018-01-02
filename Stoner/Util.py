@@ -57,14 +57,14 @@ def split_up_down(data, col=None, folder=None):
         width += 1
     setas=a.setas.clone
     a.setas=""
-    peaks = list(a.peaks(ycol=col, width=width))
-    troughs = list(a.peaks(col, width, xcol=None, peaks=False, troughs=True,full_data=False))
+    peaks = list(a.peaks(ycol=col, width=width,full_data=False))
+    troughs = list(a.peaks(ycol=col, width=width, peaks=False, troughs=True,full_data=False))
     a.setas=setas
-    if len(peaks) > 0 and len(troughs) > 0:  #Ok more than up down here
+    if peaks and troughs:  #Ok more than up down here
         order = peaks[0] < troughs[0]
-    elif len(peaks) > 0:  #Rise then fall
+    elif peaks:  #Rise then fall
         order = True
-    elif len(troughs) > 0:  # Fall then rise
+    elif troughs:  # Fall then rise
         order = False
     else:  #No peaks or troughs so just return a single rising
         ret=_SF_(readlist=False)
