@@ -66,11 +66,11 @@ class CSVFile(_SC_.DataFile):
         else:
             self.filename = filename
         if header_line is not None:
-            header_string = linecache.getline(self.filename, header_line+1)
-            header_string = re.sub(r'["\n]', '', header_string)
             try:
+                header_string = linecache.getline(self.filename, header_line+1)
+                header_string = re.sub(r'["\n]', '', header_string)
                 _ = header_string.index(header_delim)
-            except ValueError:
+            except (ValueError,SyntaxError):
                 linecache.clearcache()
                 raise _SC_.StonerLoadError("No Delimiters in header line")
             column_headers = [x.strip() for x in header_string.split(header_delim)]

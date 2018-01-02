@@ -13,7 +13,7 @@ test:
 	$(PYTHON_SETUP) test
 
 check:
-	prospector --profile-path=. -P .landscape.yml Stoner > prospector-report.txt
+	prospector -E -0 --profile-path=. -P .landscape.yml Stoner > prospector-report.txt
 
 commit:
 	$(MAKE) -C doc readme
