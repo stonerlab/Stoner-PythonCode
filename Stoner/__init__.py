@@ -20,7 +20,7 @@ import Stoner.Folders as Folders
 from .Folders import DataFolder
 
 from .compat import _lmfit,Model
-from tools import format_error
+from .tools import format_error
 
 from os import path as _path_
 __version_info__ = ('0', '8', 'a1')

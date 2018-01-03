@@ -1225,15 +1225,15 @@ class DataArray(_ma_.MaskedArray):
                 ix=(self._setas.find_col(ix),)
         if isinstance(ix,(int_types,slice)):
             ix=(ix,)
-        elif isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[-1],string_types): # index still has a string type in it
+        elif isinstance(ix,tuple) and ix and isinstance(ix[-1],string_types): # index still has a string type in it
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
-        elif isinstance(ix,tuple) and len(ix)>0 and isiterable(ix[-1]): # indexing with a list of columns
+        elif isinstance(ix,tuple) and ix and isiterable(ix[-1]): # indexing with a list of columns
             ix=list(ix)
             ix[-1]=[self._setas.find_col(c) for c in ix[-1]]
             ix=tuple(ix)
-        elif isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[0],string_types): # oops! backwards indexing
+        elif isinstance(ix,tuple) and ix and isinstance(ix[0],string_types): # oops! backwards indexing
             c=ix[0]
             ix=list(ix[1:])
             ix.append(self._setas.find_col(c))
@@ -1255,10 +1255,10 @@ class DataArray(_ma_.MaskedArray):
                 ret.isrow=single_row
                 ret.setas=self.setas.clone
                 ret.column_headers=copy.copy(self.column_headers)
-                if len(ix)>0 and isiterable(ix[-1]):
+                if ix and isiterable(ix[-1]):
                     ret.column_headers=list(_np_.array(ret.column_headers)[ix[-1]])
                 # Sort out whether we need an array of row labels
-                if isinstance(self.i,_np_.ndarray) and len(ix)>0:
+                if isinstance(self.i,_np_.ndarray) and ix:
                     if isiterable(ix[0]) or isinstance(ix[0],int_types):
                         ret.i=self.i[ix[0]]
                     else:
@@ -1285,7 +1285,7 @@ class DataArray(_ma_.MaskedArray):
         return ret
 
     def __setitem__(self,ix,val):
-        # Override __getitem__ to handle string indexing
+        """Override __setitem__ to handle string indexing."""
         if isinstance(ix,string_types):
             ix=self._setas.find_col(ix)
         elif isinstance(ix,tuple) and isinstance(ix[-1],string_types):
@@ -1320,7 +1320,7 @@ class DataArray(_ma_.MaskedArray):
 
     @property
     def r(self):
-        """Calculate the radius :math:`\\rho` co-ordinate if using spherical or polar co-ordinate systems."""
+        r"""Calculate the radius :math:`\rho` co-ordinate if using spherical or polar co-ordinate systems."""
         axes = int(self._setas.cols["axes"])
         m = [lambda d: None, lambda d: None, lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2),
              lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
@@ -1334,7 +1334,7 @@ class DataArray(_ma_.MaskedArray):
 
     @property
     def q(self):
-        """Calculate the azimuthal :math:`\\theta` co-ordinate if using spherical or polar co-ordinates."""
+        r"""Calculate the azimuthal :math:`\theta` co-ordinate if using spherical or polar co-ordinates."""
         axes = int(self._setas.cols["axes"])
         m = [lambda d: None, lambda d: None, lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.x, d.y),
              lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.u, d.v),
@@ -1347,7 +1347,7 @@ class DataArray(_ma_.MaskedArray):
 
     @property
     def p(self):
-        """Calculate the inclination :math:`\\phi` co-ordinate for spherical co-ordinate systems."""
+        r"""Calculate the inclination :math:`\phi` co-ordinate for spherical co-ordinate systems."""
         axes = int(self._setas.cols["axes"])
         m = [lambda d: None, lambda d: None, lambda d: None, lambda d: _np_.arcsin(d.z),
              lambda d: _np_.arsin(d.z), lambda d: _np_.arcsin(d.w), lambda d: _np_.arcsin(d.w)]
@@ -1360,7 +1360,6 @@ class DataArray(_ma_.MaskedArray):
     @property
     def i(self):
         """Return the row indices of the DataArray or sets the base index - the row number of the first row."""
-
         if not hasattr(self,"_ibase"):
             self._ibase=[]
         if len(self._ibase)==1 and self.isrow:
