@@ -32,7 +32,7 @@ def extra(i,j,d):
     d.xlabel(r"Field $\mu_0H\,$")
     d.ylabel("Abs. (arb)")
     d.plt_legend(loc=3)
-    d.annotate_fit(FMR_Power,fontdict={"size":8},x=0,y=1000,display_prefix="")
+    d.annotate_fit(FMR_Power,fontdict={"size":8},x=0,y=1000)
 
 #Load data    
 d=Data(join(__home__,"..","sample-data","FMR-data.txt"))

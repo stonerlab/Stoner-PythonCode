@@ -1310,9 +1310,9 @@ class AnalysisMixin(object):
         else:
             raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
 
-        prefix = str(kargs.pop("prefix",  model.__class__.__name__))+":"
-
-
+        prefix = str(kargs.pop("prefix",  model.__class__.__name__))
+        if prefix!="":
+            prefix+=":"
 
         _=self._col_args(xcol=xcol,ycol=ycol)
         working = self.search(_.xcol, bounds)

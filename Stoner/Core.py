@@ -869,7 +869,7 @@ class typeHintedDict(regexpDict):
         value = [super(typeHintedDict, self).__getitem__(nm) for nm in name]
         if typehint is not None:
             value = [self.__mungevalue(typehint, v) for v in value]
-        if not value:
+        if len(value)==0:
             raise KeyError("{} is not a valid key even when interpreted as a sregular expression!".format(key))
         elif len(value)==1:
             return value[0]
@@ -1255,10 +1255,10 @@ class DataArray(_ma_.MaskedArray):
                 ret.isrow=single_row
                 ret.setas=self.setas.clone
                 ret.column_headers=copy.copy(self.column_headers)
-                if ix and isiterable(ix[-1]):
+                if len(ix)>0 and isiterable(ix[-1]):
                     ret.column_headers=list(_np_.array(ret.column_headers)[ix[-1]])
                 # Sort out whether we need an array of row labels
-                if isinstance(self.i,_np_.ndarray) and ix:
+                if isinstance(self.i,_np_.ndarray) and len(ix)>0:
                     if isiterable(ix[0]) or isinstance(ix[0],int_types):
                         ret.i=self.i[ix[0]]
                     else:
@@ -1373,7 +1373,7 @@ class DataArray(_ma_.MaskedArray):
         if self.ndim==0:
             pass
         elif self.ndim==1 and self.isrow:
-            if isiterable(value) and len(value)>0:
+            if isiterable(value) and value:
                 self._ibase=_np_.array([min(value)])
             else:
                 self._ibase=_np_.array([value])
@@ -1441,7 +1441,6 @@ class DataArray(_ma_.MaskedArray):
             element of the list. Thus in principle the @swp could contain
             lists of lists of tuples
         """
-
         headers_too=kargs.pop("headers_too",True)
         setas_too=kargs.pop("setas_too",True)
 
@@ -1463,8 +1462,8 @@ class DataArray(_ma_.MaskedArray):
             list of tuples")
 
 class DataFile(metadataObject):
-    """:py:class:`Stoner.Core.DataFile` is the base class object that represents
-    a matrix of data, associated metadata and column headers.
+    
+    """:py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers.
 
     Attributes:
         column_headers (list): of strings of the column names of the data.
@@ -1596,7 +1595,7 @@ class DataFile(metadataObject):
         if handler is not None:
             handler(*args, **kargs)
         self.metadata["Stoner.class"] = self.__class__.__name__
-        if len(kargs) > 0:  # set public attributes from keywords
+        if kargs:  # set public attributes from keywords
             to_go=[]
             for k in kargs:
                 if k in self._public_attrs:
@@ -1684,8 +1683,7 @@ class DataFile(metadataObject):
 
     @property
     def clone(self):
-        """Gets a deep copy of the current DataFile.
-        """
+        """Gets a deep copy of the current DataFile."""
         c = self.__class__()
         if self.debug: print("Cloning in DataFile")
         return copy_into(self,c)
@@ -1709,7 +1707,7 @@ class DataFile(metadataObject):
     def data(self, value):
         """Set the data attribute, but force it through numpy.ma.masked_array first."""
         nv=value
-        if len(nv.shape) == 0: #nv is a scalar - make it a 2D array
+        if not nv.shape: #nv is a scalar - make it a 2D array
             nv = _ma_.atleast_2d(nv)
         elif len(nv.shape) == 1: #nv is a vector - make it a 2D array
             nv = _ma_.atleast_2d(nv).T
@@ -1727,8 +1725,7 @@ class DataFile(metadataObject):
 
     @property
     def dict_records(self):
-        """Return the data as a dictionary of single columns with column headers for the keys.
-        """
+        """Return the data as a dictionary of single columns with column headers for the keys."""
         return _np_.array([dict(zip(self.column_headers, r)) for r in self.rows()])
 
     @property
@@ -1738,24 +1735,24 @@ class DataFile(metadataObject):
 
     @property
     def dtype(self):
-        """Return the _np_ dtype attribute of the data
-        """
+        """Return the _np_ dtype attribute of the data"""
         return self.data.dtype
 
     @property
     def filename(self):
+        """Return DataFile filename, or make one up."""
         if self._filename is None:
             self.filename="Untitled"
         return self._filename
 
     @filename.setter
     def filename(self,filename):
+        """Store the DataFile filename."""
         self._filename=filename
 
     @property
     def mask(self):
-        """Returns the mask of the data array.
-        """
+        """Returns the mask of the data array."""
         self.data.mask = _ma_.getmaskarray(self.data)
         return self.data.mask
 
@@ -1769,9 +1766,10 @@ class DataFile(metadataObject):
 
     @classproperty
     def patterns(self):
+        """Return the possible filename patterns for use in dialog boxes."""
         patterns=self._patterns
-        for cls in self.subclasses:
-            klass=self.subclasses[cls]
+        for cls in self.subclasses:  # pylint: disable=not-an-iterable
+            klass=self.subclasses[cls] # pylint: disable=unsubscriptable-objec
             if klass is DataFile or "patterns" not in klass.__dict__:
                 continue
             patterns.extend([p for p in klass.patterns if p not in patterns])
@@ -1779,17 +1777,14 @@ class DataFile(metadataObject):
 
     @property
     def records(self):
-        """Returns the data as a _np_ structured data array. If columns names are duplicated then they
-        are made unique.
-        """
+        """Returns the data as a _np_ structured data array. If columns names are duplicated then they are made unique."""
         ch = copy.copy(self.column_headers)  # renoved duplicated column headers for structured record
         ch_bak=copy.copy(ch)
         setas=self.setas.clone #We'll need these later !
         f = self.data.flags
         if not f["C_CONTIGUOUS"] and not f["F_CONTIGUOUS"]:  # We need our data to be contiguous before we try a records view
             self.data = self.data.copy()
-        for i in range(len(ch)):
-            header = ch[i]
+        for i,header in enumerate(ch):
             j = 0
             while ch[i] in ch[i + 1:] or ch[i] in ch[0:i]:
                 j = j + 1

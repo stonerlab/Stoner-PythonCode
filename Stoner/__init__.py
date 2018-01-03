@@ -94,7 +94,6 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
             text_only (bool): If False (default), add the text to the plot and return the current object, otherwise, 
                 return just the text and don't add to a plot.
             prefix(str): If given  overridges the prefix from the model to determine a prefix to the parameter names in the metadata
-            display_prefix (str,None): if given, overrides the prefix when  labelling the parameter values in the text.
 
         Returns:
             
@@ -151,9 +150,7 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
         except (AttributeError,KeyError):
             pass
         
-        display_prefix=kargs.pop("display_prefix",prefix)
-
-        text= "\n".join([self.format("{}{}".format(display_prefix,k),fmt="latex",mode=mode,) for k in model.param_names])
+        text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex",mode=mode) for k in model.param_names])
         if not text_only:
             ax=self.fig.gca()
             if "zlim" in ax.properties():
