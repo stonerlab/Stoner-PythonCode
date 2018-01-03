@@ -1018,7 +1018,7 @@ class metadataObject(MutableMapping):
         metadata=kargs.pop("metadata",None)
         if metadata is not None:
             self.metadata.update(metadata)
-        super(metadataObject,self).__init__(*args,**kargs)
+        super(metadataObject,self).__init__()
 
     @property
     def metadata(self):
