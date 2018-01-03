@@ -11,13 +11,16 @@ from sys import float_info
 import inspect as _inspect_
 
 
-import Stoner.Core as _SC_
-import Stoner.FileFormats as _SFF_
-import Stoner.plot.core as _SP_
-import Stoner.Analysis as _SA_
+import Stoner.Core as Core
+import Stoner.FileFormats as FileFormats
+import Stoner.plot.core as plot
+import Stoner.Analysis as Analysis
+import Stoner.tools as tools
+import Stoner.Folders as Folders
 from .Folders import DataFolder
 
 from .compat import _lmfit,Model
+from tools import format_error
 
 from os import path as _path_
 __version_info__ = ('0', '8', 'a1')
@@ -25,7 +28,7 @@ __version__ = '.'.join(__version_info__)
 
 __home__=_path_.realpath(_path_.dirname(__file__))
 
-class Data(_SA_.AnalysisMixin,_SP_.PlotMixin,_SC_.DataFile):
+class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
     
     """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`
     
@@ -75,7 +78,7 @@ class Data(_SA_.AnalysisMixin,_SP_.PlotMixin,_SC_.DataFile):
             error=float(self[key+" err"])
         except KeyError:
             error=float_info.epsilon
-        return _SC_.format_error(value,error,fmt=fmt,mode=mode,units=units,prefix=prefix,scape=escape)
+        return format_error(value,error,fmt=fmt,mode=mode,units=units,prefix=prefix,scape=escape)
 
     def annotate_fit(self,model,x=None,y=None,z=None,text_only=False,**kargs):
         """Annotate a plot with some information about a fit.
@@ -150,7 +153,7 @@ class Data(_SA_.AnalysisMixin,_SP_.PlotMixin,_SC_.DataFile):
         
         display_prefix=kargs.pop("display_prefix",prefix)
 
-        text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex",mode=mode,) for k in model.param_names])
+        text= "\n".join([self.format("{}{}".format(display_prefix,k),fmt="latex",mode=mode,) for k in model.param_names])
         if not text_only:
             ax=self.fig.gca()
             if "zlim" in ax.properties():
