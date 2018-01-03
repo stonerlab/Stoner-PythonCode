@@ -4,12 +4,13 @@ You do not need to use these classes directly, they are made available to :py:cl
 will load each of them in turn when asked to load an unknown data file.
 
 Each class has a priority attribute that is used to determine the order in which
-they are tried by :py:class:`Stoner.Core.Data` and friends where trying to load data. 
+they are tried by :py:class:`Stoner.Core.Data` and friends where trying to load data.
 High priority is run last (so is a bit of a misnomer!).
 
 Eacg class should implement a load() method and optionally a save() method. Classes should make every effort to
 positively identify that the file is one that they understand and throw a :py:exception:Stoner.Core._SC_.StonerLoadError` if not.
 """
+# pylint: disable=unused-argument
 
 from __future__ import print_function
 from .compat import python_v3,str2bytes,bytes2str
@@ -32,7 +33,7 @@ png.MAX_TEXT_MEMORY=2**28
 import Stoner.Core as _SC_
 
 class CSVFile(_SC_.DataFile):
-    
+
     """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -116,9 +117,9 @@ class CSVFile(_SC_.DataFile):
 
 
 class VSMFile(_SC_.DataFile):
-    
+
     """Extends _SC_.DataFile to open VSM Files"""
-    
+
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
@@ -198,7 +199,7 @@ class VSMFile(_SC_.DataFile):
 
 
 class BigBlueFile(CSVFile):
-    
+
     """Extends CSVFile to load files from Nick Porter's old BigBlue code"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -232,7 +233,7 @@ class BigBlueFile(CSVFile):
         return self
 
 class QDFile(_SC_.DataFile):
-    
+
     """Extends _SC_.DataFile to load files from Quantum Design Systems - including PPMS, MPMS and SQUID-VSM"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -258,7 +259,7 @@ class QDFile(_SC_.DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-            
+
         extra={"encoding":'iso-8859-1'} if python_v3 else dict() #Fix encoding for Python 3
         setas={}
         i=0
@@ -274,7 +275,7 @@ class QDFile(_SC_.DataFile):
                 elif "," not in line:
                     raise _SC_.StonerLoadError("No data in file!")
                 parts = [x.strip() for x in line.split(',')]
-                if parts[1].split(":")[0]=="SEQUENCE FILE":                
+                if parts[1].split(":")[0]=="SEQUENCE FILE":
                     key = parts[1].split(":")[0].title()
                     value = parts[1].split(":")[1]
                 elif parts[0] == "INFO":
@@ -306,7 +307,7 @@ class QDFile(_SC_.DataFile):
                 raise _SC_.StonerLoadError("No data in file!")
             if "Byapp" not in self:
                 raise _SC_.StonerLoadError("Not a Quantum Design File !")
-                
+
             if python_v3:
                 column_headers = f.readline().strip().split(',')
                 if ',' not in f.readline():
@@ -326,7 +327,7 @@ class QDFile(_SC_.DataFile):
         return self
 
 class OpenGDAFile(_SC_.DataFile):
-    
+
     """Extends _SC_.DataFile to load files from RASOR"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -376,14 +377,14 @@ class OpenGDAFile(_SC_.DataFile):
 
 
 class RasorFile(OpenGDAFile):
-    
+
     """Just an alias for OpenGDAFile"""
-    
+
     pass
 
 
 class SPCFile(_SC_.DataFile):
-    
+
     """Extends _SC_.DataFile to load SPC files from Raman"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -396,7 +397,7 @@ class SPCFile(_SC_.DataFile):
     patterns=["*.spc"] # Recognised filename patterns
 
     mime_type=["application/octet-stream"]
-    
+
     def _read_xdata(self,f):
         """Read the xdata from the spc file."""
         self._pts = self._header['fnpts']
@@ -445,7 +446,7 @@ class SPCFile(_SC_.DataFile):
             column_headers.append("Scan" + str(j) + ":" + self._yvars[self._header['fytype']])
 
         return data
-    
+
     def _read_loginfo(self,f):
         """Read the log info section of the spc file."""
         logstc = struct.unpack(b'IIIII44s', f.read(64))
@@ -533,7 +534,7 @@ class SPCFile(_SC_.DataFile):
                     self._read_loginfo(f)
             # Ok now build the Stoner._SC_.DataFile instance to return
             self.data = data
-            # The next bit generates the metadata. We don't just copy the metadata because we need to figure out the typehints first - hence the loop 
+            # The next bit generates the metadata. We don't just copy the metadata because we need to figure out the typehints first - hence the loop
             # here to call _SC_.DataFile.__setitem()
             for x in self._header:
                 self[x] = self._header[x]
@@ -543,7 +544,7 @@ class SPCFile(_SC_.DataFile):
             return self
 
 class RigakuFile(_SC_.DataFile):
-    
+
     """Loads a .ras file as produced by Rigaku X-ray diffractormeters"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -648,7 +649,7 @@ class RigakuFile(_SC_.DataFile):
 
 
 class XRDFile(_SC_.DataFile):
-    
+
     """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -715,9 +716,9 @@ class XRDFile(_SC_.DataFile):
                             key=parts[0].strip()
                             data=parts[1].strip()
                             # Keynames in main metadata are section:key - use the_SC_.DataFile magic to do type determination
-                            self[section+":"+key]=self.metadata.string_to_type(data) 
+                            self[section+":"+key]=self.metadata.string_to_type(data)
             column_headers=['Angle', 'Counts'] # Assume the columns were Angles and Counts
-    
+
         self.data=_np_.reshape(self.data, (-1, 2))
         self.setas="xy"
         self.four_bounce=self["HardwareConfiguration:Monochromator"]==1
@@ -733,7 +734,7 @@ class XRDFile(_SC_.DataFile):
 
 
 class BNLFile(_SC_.DataFile):
-    
+
     """
     Creates BNLFile a subclass of _SC_.DataFile that caters for files in the SPEC format given
     by BNL (specifically u4b beamline but hopefully generalisable).
@@ -744,7 +745,7 @@ class BNLFile(_SC_.DataFile):
     them, a separate python script has been written for this and should be found
     in data/Python/PythonCode/scripts.
     """
-    
+
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
@@ -785,7 +786,7 @@ class BNLFile(_SC_.DataFile):
 
     def __get_metadata(self):
         """Load metadta from file.
-        
+
         Metadata found is scan number 'Snumber', scan type and parameters 'Stype',
         scan date/time 'Sdatetime' and z motor position 'Smotor'.
         """
@@ -800,7 +801,7 @@ class BNLFile(_SC_.DataFile):
 
     def __parse_BNL_data(self):
         """Internal function for parsing BNL data.
-        
+
          The meta data is labelled by #L type tags
         so easy to find but #L must be excluded from the result.
         """
@@ -843,7 +844,7 @@ class BNLFile(_SC_.DataFile):
 
 
 class MokeFile(_SC_.DataFile):
-    
+
     """Class that extgends _SC_.DataFile to load files from the Leeds MOKE system."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -889,7 +890,7 @@ class MokeFile(_SC_.DataFile):
 
 
 class FmokeFile(_SC_.DataFile):
-    
+
     """Extends _SC_.DataFile to open Fmoke Files"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -935,7 +936,7 @@ class FmokeFile(_SC_.DataFile):
 
 
 class GenXFile(_SC_.DataFile):
-    
+
     """Extends _SC_.DataFile for GenX Exported data."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -985,7 +986,7 @@ class GenXFile(_SC_.DataFile):
 
 
 class SNSFile(_SC_.DataFile):
-    
+
     """This reads the ASCII exported Poalrised Neutron Rfeflectivity reduced files from BL-4A line at the Spallation Neutron Source at Oak Ridge National Lab.
 
     File has a large header marked up with # prefixes which include several section is []
@@ -1053,7 +1054,7 @@ class SNSFile(_SC_.DataFile):
 
 
 class OVFFile(_SC_.DataFile):
-    
+
     """A class that reads OOMMF vector format files and constructs x,y,z,u,v,w data.
 
     OVF 1 and OVF 2 files with text or binary data and only files with a meshtype rectangular are supported
@@ -1164,7 +1165,7 @@ class OVFFile(_SC_.DataFile):
 
 
 class MDAASCIIFile(_SC_.DataFile):
-    
+
     """Reads files generated from the APS."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -1255,7 +1256,7 @@ class MDAASCIIFile(_SC_.DataFile):
 
 
 class LSTemperatureFile(_SC_.DataFile):
-    
+
     """A class that reads and writes Lakeshore Temperature Calibration Curves.
 
     .. warning::
@@ -1359,7 +1360,7 @@ class LSTemperatureFile(_SC_.DataFile):
 
 
 class EasyPlotFile(_SC_.DataFile):
-    
+
     """A class that will extract as much as it can from an EasyPlot save File."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -1452,7 +1453,7 @@ class EasyPlotFile(_SC_.DataFile):
             self.column_headers[col] = parts[1]
 
 class PinkLibFile(_SC_.DataFile):
-    
+
     """Extends _SC_.DataFile to load files from MdV's PINK library - as used by the GMR anneal rig."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -1501,7 +1502,7 @@ class PinkLibFile(_SC_.DataFile):
         return self
 
 class KermitPNGFile(_SC_.DataFile):
-    
+
     """Loads PNG files with additional metadata embedded in them and extracts as metadata"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -1588,11 +1589,11 @@ class KermitPNGFile(_SC_.DataFile):
 
 try: #Optional tdms support
     from nptdms import TdmsFile
-    
+
     class TDMSFile(_SC_.DataFile):
-        
+
         """A first stab at writing a file that will import TDMS files"""
-    
+
         #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
         #   .. note::
         #      Subclasses with priority<=32 should make some positive identification that they have the right
@@ -1601,16 +1602,16 @@ try: #Optional tdms support
         #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
         # the file load/save dialog boxes.
         patterns=["*.tdms"] # Recognised filename patterns
-    
+
         mime_type="application/octet-stream"
-    
+
         def _load(self, filename=None, *args, **kargs):
             """TDMS file loader routine.
-    
+
             Args:
                 filename (string or bool): File to load. If None then the existing filename is used,
                     if False, then a file dialog will be used.
-    
+
             Returns:
                 A copy of the itself after loading the data.
             """
@@ -1621,11 +1622,11 @@ try: #Optional tdms support
             # Open the file and read the main file header and unpack into a dict
             try:
                 f=TdmsFile(self.filename)
-                       
+
                 column_headers=[]
                 data=_np_.array([])
-                        
-                
+
+
                 for grp in f.objects.keys():
                     if grp=="/":
                         pass #skip the rooot group
@@ -1643,11 +1644,11 @@ try: #Optional tdms support
                             else:
                                 data=_np_.column_stack([data,f.objects[grp].data])
                 self.data=data
-                self.column_headers=column_headers                       
+                self.column_headers=column_headers
             except Exception:
                 from traceback import format_exc
                 raise _SC_.StonerLoadError('Not a TDMS File \n{}'.format(format_exc()))
-            
+
             return self
 
 except ImportError:
