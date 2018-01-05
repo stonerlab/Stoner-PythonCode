@@ -3,7 +3,7 @@
 See http://github.com/~gb119/Stoner-PythonCode for more details.
 
 """
-
+# pylint: disable=import-error
 __all__=['Core', 'Analysis', 'plot', 'tools','FileFormats','Folders','Data','DataFolder']
 
 # These fake the old namespace if you do an import Stoner
@@ -29,9 +29,9 @@ __version__ = '.'.join(__version_info__)
 __home__=_path_.realpath(_path_.dirname(__file__))
 
 class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
-    
+
     """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`
-    
+
     Also has the :py:mod:`Stoner.FielFormats` loaded redy for use.
     This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
     analysis on data files.
@@ -91,12 +91,11 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
             y (float): y co-ordinate of the label
             z (float): z co-ordinbate of the label if the current axes are 3D
             prefix (str): The prefix placed ahead of the model parameters in the metadata.
-            text_only (bool): If False (default), add the text to the plot and return the current object, otherwise, 
+            text_only (bool): If False (default), add the text to the plot and return the current object, otherwise,
                 return just the text and don't add to a plot.
             prefix(str): If given  overridges the prefix from the model to determine a prefix to the parameter names in the metadata
 
         Returns:
-            
             (Datam, str): A copy of the current Data instance if text_only is False, otherwise returns the text.
 
         If *prefix* is not given, then the first prefix in the metadata lmfit.prefix is used if present,
@@ -109,8 +108,6 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
             model=model()
         elif _lmfit and isinstance(model,Model):
             prefix=kargs.pop("prefix",self.get("lmfit.prefix",model.__class__.__name__))
-            
-            pass
         elif callable(model):
             prefix=kargs.pop("prefix",model.__name__)
             model=Model(model)
@@ -121,7 +118,7 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
 
             if isinstance(prefix,(list,tuple)):
                 prefix=prefix[0]
-                
+
             prefix=prefix.strip(" :")
             prefix="" if prefix == "" else prefix+":"
 
@@ -143,13 +140,13 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
 
         try: # if the model has an attribute display params then use these as the parameter anmes
             for k,display_name in zip(model.param_names,model.display_names):
-                if prefix is not None and prefix is not "":
+                if prefix:
                     self["{}{} label".format(prefix,k)]=display_name
                 else:
                     self[k+" label"]=display_name
         except (AttributeError,KeyError):
             pass
-        
+
         text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex",mode=mode) for k in model.param_names])
         if not text_only:
             ax=self.fig.gca()
@@ -167,5 +164,3 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
         else:
             ret=text
         return ret
-
-

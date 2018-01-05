@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Stoner.Utils - a module of some slightly experimental routines that use the Stoner classes
+"""Stoner.Utils - a module of some slightly experimental routines that use the Stoner classes
 
 Created on Tue Oct 08 20:14:34 2013
 
@@ -9,7 +8,7 @@ Created on Tue Oct 08 20:14:34 2013
 
 from .compat import int_types
 from .tools import format_error
-import Stoner.Core  as _SC_
+import Stoner.Core  as _SC_  # pylint: disable=import-error
 from .Folders import DataFolder as _SF_
 from .Fit import linear
 from . import Data

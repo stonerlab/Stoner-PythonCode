@@ -147,11 +147,8 @@ Core.py
     pylint: import-error / Unable to import 'Stoner' (col 8)
 
 FileFormats.py
-  Line: 33
+  Line: 15
     pylint: import-error / Unable to import 'Stoner.Core'
-    pylint: wrong-import-position / Import "import Stoner.Core as _SC_" should be placed at the top of the module
-  Line: 73
-    pyflakes: F841 / local variable '_' is assigned to but never used (col 17)
   Line: 79
     pylint: access-member-before-definition / Access to member 'data' before its definition line 87 (col 74)
   Line: 215
@@ -161,32 +158,17 @@ FileFormats.py
     mccabe: MC0001 / QDFile._load is too complex (20)
   Line: 322
     pylint: access-member-before-definition / Access to member 'setas' before its definition line 326 (col 10)
-  Line: 342
-    pep257: D403 / First word of the first line should be properly capitalized ('Opengda', not 'OpenGDA')
   Line: 560
+    pylint: too-many-statements / Too many statements (61/60) (col 4)
     mccabe: MC0001 / RigakuFile._load is too complex (21)
-  Line: 609
-    pylint: consider-merging-isinstance / Consider merging these isinstance calls to isinstance(self[key], (_np_.ndarray, list)) (col 53)
-  Line: 632
-    pylint: undefined-loop-variable / Using possibly undefined loop variable 'i2' (col 52)
-  Line: 669
+  Line: 670
     mccabe: MC0001 / XRDFile._load is too complex (11)
-  Line: 728
-    pep257: D202 / No blank lines allowed after function docstring (found 1)
-  Line: 736
-    pep257: D204 / 1 blank line required after class docstring (found 2)
-    pep257: D205 / 1 blank line required between summary line and description (found 0)
+  Line: 737
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 769
-    pep257: D403 / First word of the first line should be properly capitalized ('Returns', not 'returns')
-  Line: 988
-    pep257: D404 / First word of the docstring should not be `This`
-  Line: 1005
+  Line: 1004
     mccabe: MC0001 / SNSFile._load is too complex (14)
-  Line: 1110
+  Line: 1109
     mccabe: MC0001 / OVFFile._load is too complex (11)
-  Line: 1154
-    pylint: undefined-loop-variable / Using possibly undefined loop variable 'i' (col 52)
   Line: 1181
     pylint: too-many-statements / Too many statements (65/60) (col 4)
     mccabe: MC0001 / MDAASCIIFile._load is too complex (23)
@@ -194,8 +176,6 @@ FileFormats.py
     mccabe: MC0001 / LSTemperatureFile.save is too complex (11)
   Line: 1372
     mccabe: MC0001 / EasyPlotFile._load is too complex (16)
-  Line: 1469
-    pep257: D403 / First word of the first line should be properly capitalized ('Pinklib', not 'PinkLib')
   Line: 1590
     mccabe: MC0001 / TryExcept 1590 is too complex (13)
 
@@ -742,11 +722,7 @@ Image/util.py
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
 
 Util.py
-  Line: 1
-    pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 12
-    pylint: import-error / Unable to import 'Stoner.Core'
-  Line: 121
+  Line: 120
     pylint: too-many-locals / Too many local variables (37/20)
     pylint: too-many-statements / Too many statements (85/60)
     mccabe: MC0001 / hysteresis_correct is too complex (15)
@@ -791,45 +767,16 @@ Zip.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
 
 __init__.py
-  Line: 1
-    pylint: cyclic-import / Cyclic import (Image.core -> Image.imagefuncs)
-  Line: 14
-    pylint: import-error / Unable to import 'Stoner.Core'
-  Line: 15
-    pylint: import-error / Unable to import 'Stoner.FileFormats'
-  Line: 16
-    pylint: import-error / Unable to import 'Stoner.plot.core'
-  Line: 17
-    pylint: import-error / Unable to import 'Stoner.Analysis'
-  Line: 18
-    pylint: import-error / Unable to import 'Stoner.tools'
-  Line: 19
-    pylint: import-error / Unable to import 'Stoner.Folders'
-  Line: 20
-    pylint: import-error / Unable to import '__init__.Folders'
-  Line: 22
-    pylint: import-error / Unable to import '__init__.compat'
-  Line: 23
-    pylint: import-error / Unable to import '__init__.tools'
   Line: 83
-    pep257: D412 / No blank lines allowed between a section header and its content ('Returns')
     mccabe: MC0001 / Data.annotate_fit is too complex (18)
-  Line: 113
-    pylint: unnecessary-pass / Unnecessary pass statement (col 12)
-  Line: 146
-    pylint: literal-comparison / Comparison to literal (col 42)
-  Line: 171
-    pylint: trailing-newlines / Trailing newlines
 
 compat.py
+  Line: 1
+    pylint: cyclic-import / Cyclic import (Image.core -> Image.imagefuncs)
   Line: 50
     pylint: import-error / Unable to import 'Tkinter' (col 8)
   Line: 51
     pylint: import-error / Unable to import 'tkFileDialog' (col 8)
-  Line: 76
-    pylint: no-else-return / Unnecessary "else" after "return" (col 8)
-  Line: 139
-    pylint: trailing-newlines / Trailing newlines
 
 plot/core.py
   Line: 1
@@ -1007,81 +954,32 @@ plot/utils.py
 
 tools.py
   Line: 16
-    pylint: redefined-builtin / Redefining built-in 'abs'
-    pylint: redefined-builtin / Redefining built-in 'round'
-  Line: 68
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 96
-    pylint: unnecessary-lambda / Lambda may not be necessary (col 14)
-  Line: 113
-    pylint: useless-else-on-loop / Else clause on loop without a break statement (col 4)
-  Line: 182
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 7)
-  Line: 191
-    pylint: unused-variable / Unused variable 'v' (col 16)
-  Line: 200
-    pep257: D212 / Multi-line docstring summary should start at the first line
-    pep257: D214 / Section is over-indented ('Parameters')
-    pep257: D214 / Section is over-indented ('Returns')
-  Line: 231
-    pep257: D301 / Use r""" if any backslashes in a docstring
+    pylint: unused-import / Unused ndarray imported from numpy
+  Line: 190
+    pyflakes: F841 / local variable '_' is assigned to but never used (col 17)
+  Line: 228
     mccabe: MC0001 / format_val is too complex (12)
-  Line: 310
-    pep257: D205 / 1 blank line required between summary line and description (found 0)
-    pep257: D301 / Use r""" if any backslashes in a docstring
-    pep257: D404 / First word of the docstring should not be `This`
+  Line: 307
     pylint: too-many-statements / Too many statements (68/60)
     mccabe: MC0001 / format_error is too complex (15)
-  Line: 459
-    pep257: D203 / 1 blank line required before class docstring (found 0)
-  Line: 462
-    pep257: D107 / Missing docstring in __init__
-  Line: 463
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 468
-    pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
-  Line: 478
-    pep257: D105 / Missing docstring in magic method
-  Line: 479
-    pylint: no-else-return / Unnecessary "else" after "return" (col 8)
-  Line: 486
-    pep257: D105 / Missing docstring in magic method
-  Line: 487
-    pylint: no-else-return / Unnecessary "else" after "return" (col 8)
-  Line: 493
-    pep257: D105 / Missing docstring in magic method
-  Line: 494
-    pylint: no-else-return / Unnecessary "else" after "return" (col 8)
-  Line: 499
-    pep257: D105 / Missing docstring in magic method
-  Line: 502
-    pep257: D105 / Missing docstring in magic method
-  Line: 505
-    pep257: D105 / Missing docstring in magic method
-  Line: 508
-    pep257: D105 / Missing docstring in magic method
-  Line: 511
-    pep257: D105 / Missing docstring in magic method
-  Line: 514
-    pep257: D105 / Missing docstring in magic method
-  Line: 522
+  Line: 526
     pylint: arguments-differ / Parameters differ from overridden 'extend' method (col 4)
-  Line: 528
+  Line: 533
     pylint: arguments-differ / Parameters differ from overridden 'index' method (col 4)
-  Line: 531
+  Line: 537
     pylint: arguments-differ / Parameters differ from overridden 'insert' method (col 4)
 
 
 
 Check Information
 =================
-         Started: 2018-01-03 20:48:51.788731
-        Finished: 2018-01-03 20:50:30.228829
-      Time Taken: 98.44 seconds
+         Started: 2018-01-05 00:02:47.078115
+        Finished: 2018-01-05 00:04:30.200923
+      Time Taken: 103.12 seconds
        Formatter: grouped
         Profiles: .landscape.yml, doc_warnings, no_test_warnings, strictness_medium, strictness_high, strictness_veryhigh, no_member_warnings
       Strictness: from profile
   Libraries Used: 
        Tools Run: dodgy, frosted, mccabe, pep257, pep8, profile-validator, pyflakes, pylint, pyroma
-  Messages Found: 565
+  Messages Found: 509
 

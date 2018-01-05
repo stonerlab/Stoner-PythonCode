@@ -11,9 +11,8 @@ Eacg class should implement a load() method and optionally a save() method. Clas
 positively identify that the file is one that they understand and throw a :py:exception:Stoner.Core._SC_.StonerLoadError` if not.
 """
 # pylint: disable=unused-argument
-
 from __future__ import print_function
-from .compat import python_v3,str2bytes,bytes2str
+import Stoner.Core as _SC_
 import linecache
 import re
 import numpy as _np_
@@ -26,11 +25,12 @@ import numpy.ma as ma
 
 import PIL
 import PIL.PngImagePlugin as png
+from .compat import python_v3,str2bytes,bytes2str
+
 #Expand png size limits as we have big text blocks full of metadata
 png.MAX_TEXT_CHUNK=2**22
 png.MAX_TEXT_MEMORY=2**28
 
-import Stoner.Core as _SC_
 
 class CSVFile(_SC_.DataFile):
 
@@ -70,7 +70,7 @@ class CSVFile(_SC_.DataFile):
             try:
                 header_string = linecache.getline(self.filename, header_line+1)
                 header_string = re.sub(r'["\n]', '', header_string)
-                _ = header_string.index(header_delim)
+                header_string.index(header_delim)
             except (ValueError,SyntaxError):
                 linecache.clearcache()
                 raise _SC_.StonerLoadError("No Delimiters in header line")
@@ -340,7 +340,7 @@ class OpenGDAFile(_SC_.DataFile):
     patterns=["*.dat"] # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
-        """OpenGDA file loader routine.
+        """Load an OpenGDA file.
 
         Args:
             filename (string or bool): File to load. If None then the existing filename is used,
@@ -583,6 +583,7 @@ class RigakuFile(_SC_.DataFile):
                     raise _SC_.StonerLoadError("Not a Rigaku file!")
                 if line == "*RAS_HEADER_START":
                     break
+            i2=None
             for i2, line in enumerate(f):
                 line = bytes2str(line).strip()
                 m = sh.match(line)
@@ -606,7 +607,7 @@ class RigakuFile(_SC_.DataFile):
                     newvalue = literal_eval(value)
                 if m:
                     key = m.groups()[0]
-                    if key in self.metadata and not (isinstance(self[key], _np_.ndarray) or isinstance(self[key], list)):
+                    if key in self.metadata and not (isinstance(self[key], (_np_.ndarray,list))):
                         if isinstance(self[key], str):
                             self[key] = list([self[key]])
                         else:
@@ -728,16 +729,15 @@ class XRDFile(_SC_.DataFile):
     def to_Q(self, l=1.540593):
         """Adds an additional function to covert an angualr scale to momentum transfer
 
-        returns a copy of itself."""
-
+        returns a copy of itself.
+        """
         self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA$)")
 
 
 class BNLFile(_SC_.DataFile):
 
     """
-    Creates BNLFile a subclass of _SC_.DataFile that caters for files in the SPEC format given
-    by BNL (specifically u4b beamline but hopefully generalisable).
+    Creates BNLFile a subclass of _SC_.DataFile that caters for files in the SPEC format given by BNL (specifically u4b beamline but hopefully generalisable).
 
     Author Rowan 12/2011
 
@@ -745,7 +745,6 @@ class BNLFile(_SC_.DataFile):
     them, a separate python script has been written for this and should be found
     in data/Python/PythonCode/scripts.
     """
-
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
@@ -757,7 +756,7 @@ class BNLFile(_SC_.DataFile):
     patterns=["*.txt"] # Recognised filename patterns
 
     def __init__(self, *params):
-        """Constructor modification
+        """Constructor modification.
 
         Do a normal initiation using the parent class 'self' followed by adding an extra attribute line_numbers,
         line_numbers is a list of important line numbers in the file.
@@ -767,7 +766,7 @@ class BNLFile(_SC_.DataFile):
         self.line_numbers = []
 
     def __find_lines(self):
-        """returns an array of ints [header_line,data_line,scan_line,date_line,motor_line]"""
+        """Returns an array of ints [header_line,data_line,scan_line,date_line,motor_line]."""
         with open(self.filename, 'r') as fp:
             self.line_numbers = [0, 0, 0, 0, 0]
             counter = 0
@@ -987,7 +986,7 @@ class GenXFile(_SC_.DataFile):
 
 class SNSFile(_SC_.DataFile):
 
-    """This reads the ASCII exported Poalrised Neutron Rfeflectivity reduced files from BL-4A line at the Spallation Neutron Source at Oak Ridge National Lab.
+    """Reads the ASCII exported Poalrised Neutron Rfeflectivity reduced files from BL-4A line at the Spallation Neutron Source at Oak Ridge National Lab.
 
     File has a large header marked up with # prefixes which include several section is []
     Each section seems to have a slightly different format
@@ -1129,6 +1128,7 @@ class OVFFile(_SC_.DataFile):
             else:  # bug out oif we don't like the header
                 raise _SC_.StonerLoadError("Not n OOMMF OVF File: opening line eas {}".format(line))
             pattern = re.compile(r"#\s*([^\:]+)\:\s+(.*)$")
+            i = None
             for i, line in enumerate(data):
                 self._ptr += len(line)
                 line.strip()
@@ -1467,7 +1467,7 @@ class PinkLibFile(_SC_.DataFile):
 
 
     def _load(self, filename=None, *args, **kargs):
-        """PinkLib file loader routine.
+        """File loader for PinkLib.
 
         Args:
             filename (string or bool): File to load. If None then the existing filename is used,
