@@ -20,7 +20,7 @@ def yield_sphinx_only_markup(lines):
         (r':dfn:`([^`]+)`',         r'**\1**'),
         (r':(samp|guilabel|menuselection):`([^`]+)`',        r'``\2``'),
         (r':py:[a-z]+:`([^`]+)`',        r'\1'),
-        
+
 
 
         ## Sphinx-only roles:
@@ -77,10 +77,7 @@ setup(
     version = str(Stoner.__version__),
     author = "Gavin Burnell",
     author_email = "g.burnell@leeds.ac.uk",
-    description = ("""The Stoner Python package is a set of utility classes for writing data analysis code. It was written within the 
-                   Condensed Matter Physics group at the University of Leeds as a shared resource for quickly writing simple programs 
-                   to do things like fitting functions to data, extract curve parameters, churn through large numbers of small text 
-                   data files and work with certain types of scientific image files"""),
+    description = "Library to help write data analysis tools for experimental condensed matter physics.",
     license = "GPLv3",
     keywords = "Data-Analysis Physics",
     url = "http://github.com/~gb119/Stoner-PythonCode",
