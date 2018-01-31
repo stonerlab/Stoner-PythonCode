@@ -3,7 +3,7 @@
 
 .. image:: https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master
    :target: https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master
-    
+
 .. image:: https://landscape.io/github/gb119/Stoner-PythonCode/master/landscape.svg?style=flat
    :target: https://landscape.io/github/gb119/Stoner-PythonCode/master
    :alt: Code Health
@@ -36,27 +36,28 @@ API Reference guide. The `github repository`_ also contains some example scripts
 Getting this Code
 ==================
 
-The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, lmfit, and has a number of optional dependencies on blist, filemagic, npTDMS 
+The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies on blist, filemagic, npTDMS, imreg_dft
 and numba.
 
-Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit.
-However, this can by installed with the usual tools such as *easy_install* or *pip*.
+Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining dependencies are collected together
+in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner package is, therefore, to install the most recent Anaconda Python distribution (Python 3.6,
+3.5 or 2.7 should work) and then to install the Stoner package via:
 
 .. code-block:: sh
 
-   pip install lmfit
+    conda install -c phygbu Stoner
 
-The easiest way to install the Stoner package is via seuptools' easy_install
+If you are not using Anaconda python, then pip should also work:
 
 .. code-block:: sh
 
-   pip install Stoner
+    pip install Stoner
 
 This will install the Stoner package and any missing dependencies into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: https://github.com/gb119/Stoner-PythonCode
 
-The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 2.7 but test with 3.5 and 3.6 as well.
+The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 3.6 but test with 2.7 as well.
 
 Overview
 ========
@@ -72,7 +73,7 @@ Data and Friends
 **Stoner.Core.DataFile** is the base class for representing individual experimental data sets.
 It provides basic methods to examine and manipulate data, manage metadata and load and save data files.
 It has a large number of sub classes - most of these are in Stoner.FileFormats and are used to handle the loading of specific
-file formats. 
+file formats.
 
 There are also two mxin classes designed to work with DataFile to enable additional functionality for writing analysis programs.
 
@@ -145,7 +146,7 @@ Build Status
 ~~~~~~~~~~~~
 
 Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls. We currently test against
-python 2.7 and 3.5 via Travis and internally test on Python 3.6. Overall code quality 
+python 2.7 and 3.5 via Travis and internally test on Python 3.6. Overall code quality
 is measured by landscape.io. The current status is shown at the top of this readme.
 
 Citing the Stoner Package
@@ -168,10 +169,10 @@ The current stable version is 0.7. Features of 0.7 include
 
 0.7 will continue to have bug fix releases and back-ports of anything very useful.
 
-The old stable version was 0.6. This features 
+The old stable version was 0.6. This features
 
-    *   Some major changes in the architecture, 
-    *   Switching from a numpy MaskedArray as the main data store to a custom sub-class that contains most of the logic 
+    *   Some major changes in the architecture,
+    *   Switching from a numpy MaskedArray as the main data store to a custom sub-class that contains most of the logic
         for indexing data by column name and designation.
     *   The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.
     *   Other underlying changes are a switch to using properties rather than straight attribute access.
