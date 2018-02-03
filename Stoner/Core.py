@@ -2665,7 +2665,8 @@ class DataFile(metadataObject):
             spaces1=" "*((c_w-len(h))//2)
             spaces2=" "*((c_w-len(i))//2)
             ch[ix]="{}{}{}{}{}".format(spaces1,h,lb,spaces2,i)
-            print(len(spaces1),len(spaces2))
+            if self.debug:
+                print(len(spaces1),len(spaces2))
         outp[0,1:]=ch
         outp[1,1:]=col_assignments
         outp[0,0]="TDI Format 1.5{}index".format(lb)
