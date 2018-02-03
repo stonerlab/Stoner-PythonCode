@@ -71,8 +71,7 @@ class _odr_Model(odrModel):
             meta["name"]=model.__name__
             arguments,carargs,jeywords,defaults=getfullargspec(model)[0:4] # pylint: disable=W1505
             meta["param_names"]=list(arguments[1:])
-            if self.debug:
-                print(arguments,carargs,jeywords,defaults)
+            #print(arguments,carargs,jeywords,defaults)
             func=model
             def model(beta,x,**_):
                 """Warapper for model function."""
