@@ -73,7 +73,7 @@ class _odr_Model(odrModel):
             meta["param_names"]=list(arguments[1:])
             print(arguments,carargs,jeywords,defaults)
             func=model
-            def model(beta,x,**_):
+            def model(beta,x,**_): # pylint: disable=E0102
                 """Warapper for model function."""
                 return func(x,*beta)
         p0=kargs.pop("p0",kargs.pop("estimate",None))
@@ -114,6 +114,80 @@ def _lmfit_p0_dict(p0,model):
         raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
     #p0={p0[k] for k in model.param_names}
     return p0
+
+def _prep_lmfit_model(model,p0,kargs):
+    """Prepare an lmfit model instance.
+    
+    Arguments:
+        model (lmfit Model class or instance, or callable): the model to be fitted to the data.
+        p0 (iterable or floats): The initial values of the fitting parameters.
+        kargs (dict):Other keyword arguments passed to the fitting function
+        
+    Returns:
+        model,p0, prefix (lmfit.Model instance, iterable, str)
+        
+    Converts the model parameter into an instance of lmfit.Model - either by instantiating the class or wrapping a
+    callable into an lmfit.Model class. If the latter, then determines the p0 starting parameter vector and finally
+    establishes a prefix string from the model if not provided in the keyword arguments.
+    """
+    if Model is None:  #Will be the case if lmfit is not imported.
+        raise RuntimeError(
+            "To use the lmfit function you need to be able to import the lmfit module\n Try pip install lmfit\nat a command prompt.")
+
+    if isinstance(model, Model):
+        pass
+    elif isclass(model) and issubclass(model,Model):
+        model=model()
+    elif callable(model):
+        model=Model(model)
+        if p0 is None or len(p0)!=len(model.param_names):
+            p0=dict()
+            for k in model.param_names:
+                if k not in kargs:
+                    raise RuntimeError(("You must either supply a p0 of length {} or supply a value for keyword {} for your model"+
+                                        "function {}").format(len(model.param_names),k,model.func.__name__))
+                else:
+                    p0[k] = kargs[k]
+    else:
+        raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
+
+    prefix = str(kargs.pop("prefix",  model.__class__.__name__))
+    if prefix!="":
+        prefix+=":"
+
+    return model,p0,prefix
+
+def _prep_lmfit_p0(model,ydata,xdata,p0,kargs):
+    """Prepare the initial start vector for an lmfit.
+    
+    Arguments:
+        model (lmfit.Model instance): model to fit with
+        ydata,xdata (array): y and x data ppoints for fitting
+        p0 (iterable of float): Existing p0 vector if defined
+        kargs (dict): Other keyword arguments for the lmfit method.
+        
+    Returns:
+        p0,single_fit (iterable of floats, bool): The revised initial starting vector and whether this is a single fit operation.
+    """
+    if p0 is not None:
+        if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
+            if p0.shape[0]==1: # Actually a single fit
+                p0=_lmfit_p0_dict(p0[0],model)
+                single_fit=True
+            else: # Is chi^2 mapping
+                single_fit=False
+        else:
+            p0=_lmfit_p0_dict(p0,model)
+            single_fit=True
+    else: #Do we already have parameter hints ?
+        check=True
+        single_fit = True
+        for p in model.param_names:
+            check&=p in model.param_hints and "value" in model.param_hints[p]
+        if not check: # Ok, param_hints didn't have all the parameter values setup.
+            p0=model.guess(ydata,x=xdata)
+            p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
+    return p0,single_fit
 
 def _outlier(row, column, window, metric):
     """Internal function for outlier detector.
@@ -1277,11 +1351,6 @@ class AnalysisMixin(object):
             .. plot:: samples/lmfit_simple.py
                 :include-source:
         """
-        if Model is None:  #Will be the case if lmfit is not imported.
-            raise RuntimeError(
-                "To use the lmfit function you need to be able to import the lmfit module\n Try pip install lmfit\nat a command prompt.")
-
-
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
@@ -1292,55 +1361,18 @@ class AnalysisMixin(object):
         #Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
-
-        if isinstance(model, Model):
-            pass
-        elif isclass(model) and issubclass(model,Model):
-            model=model()
-        elif callable(model):
-            model=Model(model)
-            if p0 is None or len(p0)!=len(model.param_names):
-                p0=dict()
-                for k in model.param_names:
-                    if k not in kargs:
-                        raise RuntimeError(("You must either supply a p0 of length {} or supply a value for keyword {} for your model"+
-                                            "function {}").format(len(model.param_names),k,model.func.__name__))
-                    else:
-                        p0[k] = kargs[k]
-        else:
-            raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
-
-        prefix = str(kargs.pop("prefix",  model.__class__.__name__))
-        if prefix!="":
-            prefix+=":"
+        
+        model,p0,prefix=_prep_lmfit_model(model,p0,kargs)
 
         _=self._col_args(xcol=xcol,ycol=ycol)
         working = self.search(_.xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
 
-
         xdata = working[:, self.find_col(_.xcol)]
         ydata = working[:, self.find_col(_.ycol)]
-        if p0 is not None:
-            if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
-                if p0.shape[0]==1: # Actually a single fit
-                    p0=_lmfit_p0_dict(p0[0],model)
-                    single_fit=True
-                else: # Is chi^2 mapping
-                    single_fit=False
-            else:
-                p0=_lmfit_p0_dict(p0,model)
-                single_fit=True
-        else: #Do we already have parameter hints ?
-            check=True
-            single_fit = True
-            for p in model.param_names:
-                check&=p in model.param_hints and "value" in model.param_hints[p]
-            if not check: # Ok, param_hints didn't have all the parameter values setup.
-                p0=model.guess(ydata,x=xdata)
-                p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
 
-
+        p0,single_fit = _prep_lmfit_p0(model,ydata,xdata,p0,kargs)
+        
         if sigma is not None:
             if isinstance(sigma, index_types):
                 sigma = working[:, self.find_col(sigma)]
@@ -1374,10 +1406,10 @@ class AnalysisMixin(object):
         else: # chi^2 mode
             pn=p0
             ret_val=_np_.zeros((pn.shape[0],pn.shape[1]*2+1))
-            for i,p0 in enumerate(pn): # iterate over every row in the supplied p0 values
-                p0=_lmfit_p0_dict(p0,model)
-                p0[xvar] = xdata
-                ret_val[i,:]=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix)
+            for i,pn_i in enumerate(pn): # iterate over every row in the supplied p0 values
+                pn_i=_lmfit_p0_dict(pn_i,model)
+                pn_i[xvar] = xdata
+                ret_val[i,:]=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,pn_i,prefix)
                 
         return ret_val
 

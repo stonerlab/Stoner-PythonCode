@@ -1,67 +1,86 @@
 Messages
 ========
 
+..\C
+  Line: 12
+    frosted: E301 / 12: redefinition of 'ImageArray' from line 8 (col 1)
+  Line: 16
+    frosted: E101 / 16: NaN imported but unused (col 1)
+  Line: 20
+    frosted: E101 / 20: copy imported but unused (col 1)
+  Line: 30
+    frosted: E101 / 30: istuple imported but unused (col 1)
+  Line: 33
+    frosted: E101 / 33: exposure imported but unused (col 1)
+  Line: 34
+    frosted: E101 / 34: Axes3D imported but unused (col 5)
+  Line: 36
+    frosted: E101 / 36: host_subplot imported but unused (col 5)
+  Line: 37
+    frosted: E101 / 37: AA imported but unused (col 5)
+  Line: 190
+    frosted: E307 / 190: local variable '_' is assigned to but never used (col 17)
+  Line: 208
+    frosted: E307 / 208: local variable 'calframe' is assigned to but never used (col 13)
+  Line: 477
+    frosted: E307 / 477: local variable 'e' is assigned to but never used (col 9)
+  Line: 558
+    frosted: E307 / 558: local variable 'calframe' is assigned to but never used (col 13)
+  Line: 572
+    frosted: E301 / 572: redefinition of 'palette' from line 567 (col 9)
+  Line: 1342
+    frosted: E303 / 1342: undefined name 'pi' (col 34)
+
 Analysis.py
-  Line: 76
-    pylint: function-redefined / function already defined line 58 (col 12)
-  Line: 169
+  Line: 243
     pylint: too-many-locals / Too many local variables (24/20)
     mccabe: MC0001 / _twoD_fit is too complex (13)
-  Line: 323
-    pylint: import-error / Unable to import 'Stoner.Util' (col 8)
-  Line: 446
+  Line: 520
     pylint: too-many-locals / Too many local variables (21/20) (col 4)
-  Line: 663
+  Line: 737
     pylint: too-many-locals / Too many local variables (25/20) (col 4)
     mccabe: MC0001 / AnalysisMixin.bin is too complex (13)
-  Line: 781
+  Line: 855
     pylint: too-many-locals / Too many local variables (33/20) (col 4)
     mccabe: MC0001 / AnalysisMixin.curve_fit is too complex (12)
-  Line: 1033
+  Line: 1107
     pylint: too-many-locals / Too many local variables (28/20) (col 4)
     mccabe: MC0001 / AnalysisMixin.extrapolate is too complex (15)
-  Line: 1233
-    pylint: too-many-locals / Too many local variables (30/20) (col 4)
-    pylint: too-many-statements / Too many statements (83/60) (col 4)
-    mccabe: MC0001 / AnalysisMixin.lmfit is too complex (24)
-  Line: 1377
-    pylint: redefined-argument-from-local / Redefining argument with the local name 'p0' (col 18)
-  Line: 1385
+  Line: 1307
+    pylint: too-many-locals / Too many local variables (29/20) (col 4)
+    mccabe: MC0001 / AnalysisMixin.lmfit is too complex (11)
+  Line: 1417
     pylint: too-many-statements / Too many statements (63/60) (col 4)
     mccabe: MC0001 / AnalysisMixin.make_bins is too complex (17)
-  Line: 1661
+  Line: 1693
     pylint: too-many-locals / Too many local variables (37/20) (col 4)
     pylint: too-many-statements / Too many statements (79/60) (col 4)
     mccabe: MC0001 / AnalysisMixin.odr is too complex (17)
-  Line: 1809
+  Line: 1841
     mccabe: MC0001 / AnalysisMixin.outlier_detection is too complex (12)
-  Line: 1877
+  Line: 1909
     pylint: simplifiable-if-statement / The if statement can be replaced with 'var = bool(test)' (col 16)
-  Line: 1890
+  Line: 1922
     pylint: too-many-locals / Too many local variables (23/20) (col 4)
-  Line: 1979
+  Line: 2011
     pep257: D210 / No whitespaces allowed surrounding docstring text
     pep257: D214 / Section is over-indented ('Returns')
     pep257: D208 / Docstring is over-indented
-  Line: 1996
+  Line: 2028
     pylint: line-too-long / Line too long (161/160)
-  Line: 2006
-    pylint: import-error / Unable to import 'Stoner.Util' (col 8)
-  Line: 2013
+  Line: 2045
     pylint: redefined-argument-from-local / Redefining argument with the local name 'ycol' (col 14)
-  Line: 2025
+  Line: 2057
     pylint: too-many-locals / Too many local variables (29/20) (col 4)
     mccabe: MC0001 / AnalysisMixin.scale is too complex (13)
-  Line: 2279
+  Line: 2311
     pylint: too-many-locals / Too many local variables (36/20) (col 4)
-  Line: 2330
+  Line: 2362
     pylint: invalid-unary-operand-type / bad operand type for unary -: NoneType (col 34)
-  Line: 2375
+  Line: 2407
     pylint: unused-variable / Unused variable 'keywords' (col 23)
-  Line: 2446
+  Line: 2478
     mccabe: MC0001 / AnalysisMixin.threshold is too complex (13)
-  Line: 2545
-    pylint: import-error / Unable to import 'Stoner.Core' (col 4)
 
 Core.py
   Line: 16
@@ -143,21 +162,19 @@ Core.py
     pylint: arguments-differ / Parameters differ from overridden 'save' method (col 4)
   Line: 3873
     mccabe: MC0001 / DataFile.split is too complex (11)
-  Line: 3897
-    pylint: import-error / Unable to import 'Stoner' (col 8)
 
 FileFormats.py
-  Line: 15
-    pylint: import-error / Unable to import 'Stoner.Core'
-  Line: 79
-    pylint: access-member-before-definition / Access to member 'data' before its definition line 87 (col 74)
+  Line: 48
+    pylint: arguments-differ / Parameters differ from overridden '_load' method (col 4)
+  Line: 92
+    pylint: signature-differs / Signature differs from overridden 'save' method (col 4)
+  Line: 181
+    pylint: not-callable / self.setas is not callable (col 8)
   Line: 215
     pylint: arguments-differ / Parameters differ from overridden '_load' method (col 4)
   Line: 248
     pylint: too-many-statements / Too many statements (64/60) (col 4)
     mccabe: MC0001 / QDFile._load is too complex (20)
-  Line: 322
-    pylint: access-member-before-definition / Access to member 'setas' before its definition line 326 (col 10)
   Line: 560
     pylint: too-many-statements / Too many statements (61/60) (col 4)
     mccabe: MC0001 / RigakuFile._load is too complex (21)
@@ -173,17 +190,20 @@ FileFormats.py
     pylint: too-many-statements / Too many statements (65/60) (col 4)
     mccabe: MC0001 / MDAASCIIFile._load is too complex (23)
   Line: 1312
+    pylint: arguments-differ / Parameters differ from overridden 'save' method (col 4)
     mccabe: MC0001 / LSTemperatureFile.save is too complex (11)
   Line: 1372
     mccabe: MC0001 / EasyPlotFile._load is too complex (16)
+  Line: 1500
+    pylint: not-callable / self.setas is not callable (col 12)
+  Line: 1562
+    pylint: signature-differs / Signature differs from overridden 'save' method (col 4)
   Line: 1590
     mccabe: MC0001 / TryExcept 1590 is too complex (13)
 
 Fit.py
   Line: 1
     pep257: D301 / Use r""" if any backslashes in a docstring
-  Line: 13
-    pylint: import-error / Unable to import 'Stoner.Core'
   Line: 88
     mccabe: MC0001 / cfg_data_from_ini is too complex (14)
   Line: 115
@@ -345,8 +365,6 @@ Folders.py
     mccabe: MC0001 / baseFolder.select is too complex (15)
   Line: 1243
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 60)
-  Line: 1451
-    pylint: import-error / Unable to import 'Stoner' (col 8)
   Line: 1462
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 29)
   Line: 1491
@@ -364,8 +382,6 @@ Folders.py
     pylint: missing-docstring / Missing class docstring
   Line: 1765
     pep257: D107 / Missing docstring in __init__
-  Line: 1766
-    pylint: import-error / Unable to import 'Stoner' (col 8)
   Line: 1770
     mccabe: MC0001 / DataFolder.__read__ is too complex (12)
   Line: 1785
@@ -389,8 +405,6 @@ Folders.py
     pep257: D203 / 1 blank line required before class docstring (found 0)
   Line: 1975
     pylint: too-many-locals / Too many local variables (21/20) (col 4)
-  Line: 2006
-    pylint: import-error / Unable to import 'Stoner' (col 12)
   Line: 2024
     pylint: not-a-mapping / Non-mapping value fig_args is used in a mapping context (col 37)
 
@@ -437,24 +451,15 @@ HDF5.py
   Line: 564
     pep257: D105 / Missing docstring in magic method
 
-Image/__init__.py
+Image\__init__.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
 
-Image/core.py
+Image\core.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 27
-    pylint: import-error / Unable to import 'Stoner.Core'
-  Line: 28
-    pylint: import-error / Unable to import 'Stoner.Image.util'
-  Line: 29
-    pylint: import-error / Unable to import 'Stoner'
   Line: 30
-    pylint: import-error / Unable to import 'Stoner.tools'
     pylint: unused-import / Unused istuple imported from Stoner.tools
-  Line: 31
-    pylint: import-error / Unable to import 'Stoner.compat'
   Line: 37
     pylint: import-error / Unable to import 'cStringIO' (col 4)
   Line: 123
@@ -474,6 +479,8 @@ Image/core.py
     pylint: arguments-differ / Parameters differ from overridden '__array_wrap__' method (col 4)
   Line: 228
     pylint: useless-super-delegation / Useless super delegation in method '__init__' (col 4)
+  Line: 279
+    pylint: arguments-differ / Parameters differ from overridden '_load' method (col 4)
   Line: 298
     pylint: unused-argument / Unused argument 'kargs'
   Line: 320
@@ -516,6 +523,8 @@ Image/core.py
     pep257: D403 / First word of the first line should be properly capitalized ('Convert', not 'convert')
   Line: 720
     pep257: D403 / First word of the first line should be properly capitalized ('Back', not 'back')
+  Line: 724
+    pylint: arguments-differ / Parameters differ from overridden 'save' method (col 4)
   Line: 786
     pylint: no-else-return / Unnecessary "else" after "return" (col 8)
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 11)
@@ -543,6 +552,8 @@ Image/core.py
     pylint: len-as-condition / Do not use `len(SEQUENCE)` as condition value (col 15)
   Line: 1113
     pylint: no-else-return / Unnecessary "else" after "return" (col 12)
+  Line: 1142
+    pylint: arguments-differ / Parameters differ from overridden 'save' method (col 4)
   Line: 1206
     pep257: D203 / 1 blank line required before class docstring (found 0)
   Line: 1209
@@ -564,40 +575,27 @@ Image/core.py
   Line: 1369
     pep257: D105 / Missing docstring in magic method
 
-Image/folders.py
+Image\folders.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 9
-    pylint: import-error / Unable to import 'Stoner.Folders'
-  Line: 10
-    pylint: import-error / Unable to import 'Stoner.compat'
-  Line: 11
-    pylint: import-error / Unable to import 'Stoner.tools'
   Line: 12
-    pylint: import-error / Unable to import 'Stoner.Image'
     pyflakes: F811 / redefinition of unused 'ImageArray' from line 8 (col 1)
   Line: 53
     pep257: D214 / Section is over-indented ('Attributes')
   Line: 83
     pep257: D403 / First word of the first line should be properly capitalized ('Nitialise', not 'nitialise')
-  Line: 144
-    pylint: import-error / Unable to import 'Stoner.Image' (col 8)
   Line: 166
     pep257: D200 / One-line docstring should fit on one line with quotes (found 3)
   Line: 174
     pylint: trailing-newlines / Trailing newlines
 
-Image/imagefuncs.py
+Image\imagefuncs.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
   Line: 30
     pylint: multiple-imports / Multiple imports on one line (numpy, matplotlib.pyplot, os)
-  Line: 31
-    pylint: import-error / Unable to import 'Stoner.tools'
   Line: 33
     pylint: unused-import / Unused exposure imported from skimage
-  Line: 51
-    pylint: import-error / Unable to import 'Stoner'
   Line: 79
     pep257: D403 / First word of the first line should be properly capitalized ('Rescale', not 'rescale')
   Line: 142
@@ -623,17 +621,9 @@ Image/imagefuncs.py
   Line: 688
     pep257: D403 / First word of the first line should be properly capitalized ('Just', not 'just')
 
-Image/kerr.py
-  Line: 9
-    pylint: import-error / Unable to import 'Stoner'
-  Line: 10
-    pylint: import-error / Unable to import 'Stoner.Core'
-  Line: 11
-    pylint: import-error / Unable to import 'Stoner.Image'
+Image\kerr.py
   Line: 13
     pylint: multiple-imports / Multiple imports on one line (subprocess, tempfile, os)
-  Line: 103
-    pylint: access-member-before-definition / Access to member 'metadata' before its definition line 116 (col 19)
   Line: 145
     pep257: D403 / First word of the first line should be properly capitalized ('Ocr', not 'ocr')
   Line: 181
@@ -654,15 +644,9 @@ Image/kerr.py
   Line: 369
     pep257: D403 / First word of the first line should be properly capitalized ('Produce', not 'produce')
 
-Image/stack.py
+Image\stack.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 11
-    pylint: import-error / Unable to import 'Stoner.Core'
-  Line: 17
-    pylint: import-error / Unable to import 'Stoner.compat'
-  Line: 18
-    pylint: import-error / Unable to import 'Stoner.tools'
   Line: 27
     mccabe: MC0001 / _average_list is too complex (13)
   Line: 34
@@ -697,12 +681,14 @@ Image/stack.py
     pep257: D205 / 1 blank line required between summary line and description (found 0)
   Line: 473
     pep257: D403 / First word of the first line should be properly capitalized ('Probably', not 'probably')
+    pylint: arguments-differ / Parameters differ from overridden 'save' method (col 4)
   Line: 523
     pylint: trailing-newlines / Trailing newlines
 
-Image/util.py
+Image\util.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
+    pylint: cyclic-import / Cyclic import (Image.core -> Image.imagefuncs)
   Line: 35
     pep257: D212 / Multi-line docstring summary should start at the first line
     pylint: too-many-locals / Too many local variables (21/20)
@@ -730,8 +716,6 @@ Util.py
 Zip.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 15
-    pylint: import-error / Unable to import 'Stoner.compat'
   Line: 24
     pep257: D300 / Use """triple double quotes""" (found "-quotes)
   Line: 59
@@ -771,20 +755,31 @@ __init__.py
     mccabe: MC0001 / Data.annotate_fit is too complex (18)
 
 compat.py
-  Line: 1
-    pylint: cyclic-import / Cyclic import (Image.core -> Image.imagefuncs)
-  Line: 50
-    pylint: import-error / Unable to import 'Tkinter' (col 8)
   Line: 51
     pylint: import-error / Unable to import 'tkFileDialog' (col 8)
 
-plot/core.py
+contrib\__init__.py
+  Line: 1
+    pep257: D212 / Multi-line docstring summary should start at the first line
+  Line: 7
+    pylint: trailing-newlines / Trailing newlines
+
+contrib\formats.py
+  Line: 1
+    pep257: D212 / Multi-line docstring summary should start at the first line
+  Line: 12
+    pep257: D203 / 1 blank line required before class docstring (found 0)
+    pep257: D204 / 1 blank line required after class docstring (found 0)
+  Line: 18
+    pylint: missing-docstring / Missing method docstring (col 4)
+  Line: 22
+    pylint: arguments-differ / Parameters differ from overridden '_load' method (col 4)
+  Line: 31
+    pylint: trailing-newlines / Trailing newlines
+
+plot\core.py
   Line: 1
     pep257: D205 / 1 blank line required between summary line and description (found 0)
-  Line: 11
-    pylint: import-error / Unable to import 'Stoner.compat'
-  Line: 12
-    pylint: import-error / Unable to import 'Stoner.tools'
   Line: 29
     pylint: wrong-import-position / Import "from matplotlib import pyplot as plt" should be placed at the top of the module
   Line: 30
@@ -912,10 +907,8 @@ plot/core.py
     pylint: unused-variable / Unused variable 'ax' (col 11)
   Line: 1452
     pep8: E741 / ambiguous variable name 'l' (col 9)
-  Line: 1466
-    pylint: import-error / Unable to import 'Stoner.Core' (col 4)
 
-plot/formats.py
+plot\formats.py
   Line: 1
     pep257: D205 / 1 blank line required between summary line and description (found 0)
   Line: 25
@@ -944,11 +937,9 @@ plot/formats.py
   Line: 573
     pylint: function-redefined / method already defined line 568 (col 8)
 
-plot/utils.py
+plot\utils.py
   Line: 1
     pep257: D212 / Multi-line docstring summary should start at the first line
-  Line: 42
-    pylint: import-error / Unable to import 'Stoner.compat'
   Line: 47
     pylint: too-many-arguments / Too many arguments (12/10)
 
@@ -973,13 +964,13 @@ tools.py
 
 Check Information
 =================
-         Started: 2018-01-05 00:02:47.078115
-        Finished: 2018-01-05 00:04:30.200923
-      Time Taken: 103.12 seconds
+         Started: 2018-02-06 15:21:24.078440
+        Finished: 2018-02-06 15:22:56.754706
+      Time Taken: 92.68 seconds
        Formatter: grouped
         Profiles: .landscape.yml, doc_warnings, no_test_warnings, strictness_medium, strictness_high, strictness_veryhigh, no_member_warnings
       Strictness: from profile
   Libraries Used: 
        Tools Run: dodgy, frosted, mccabe, pep257, pep8, profile-validator, pyflakes, pylint, pyroma
-  Messages Found: 509
+  Messages Found: 502
 
