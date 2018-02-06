@@ -22,7 +22,7 @@ commit:
 
 wheel: clean test
 	$(MAKE) -C doc readme
-	$(PYTHON_SETUP) bdist_wheel --universal
+	$(PYTHON_SETUP) sdist bdist_wheel --universal
 	twine upload dist/*
 
 docbuild: FORCE
