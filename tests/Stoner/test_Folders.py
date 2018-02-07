@@ -36,7 +36,7 @@ class Folders_test(unittest.TestCase):
     datadir=path.join(pth,"sample-data")
 
     def setUp(self):
-        self.fldr=SF.DataFolder(self.datadir)
+        self.fldr=SF.DataFolder(self.datadir,debug=True)
 
     def test_Folders(self):
         self.setUp()
@@ -49,7 +49,7 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(fldr.count(fldr[-1].filename),1,"Failed to count filename with string")
         self.assertEqual(fldr.count("*.dat"),len(datfiles),"Count with a glob pattern failed")
         self.assertEqual(len(fldr[::2]),ceil(len(fldr)/2.0),"Failed to get the correct number of elements in a folder slice")
-        
+
     def test_Operators(self):
         self.setUp()
         fldr=self.fldr
@@ -68,7 +68,7 @@ class Folders_test(unittest.TestCase):
         fldr/="Loaded as"
         self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
         fldr.flatten()
-        
+
     def test_Properties(self):
         self.setUp()
         fldr=self.fldr
@@ -82,7 +82,7 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(list(fldr.loaded)),1,"loaded attribute failed {}".format(len(list(fldr.loaded))))
         self.assertEqual(len(list(fldr.not_empty)),len(fldr)-1,"not_empty attribute failed.")
         fldr-="Untitled"
-        
+
     def test_methods(self):
         sliced=np.array(['MDAASCIIFile', 'BNLFile', 'DataFile', 'DataFile', 'DataFile',
        'DataFile', 'MokeFile', 'EasyPlotFile', 'DataFile', 'DataFile',
@@ -90,7 +90,7 @@ class Folders_test(unittest.TestCase):
         self.fldr=SF.DataFolder(self.datadir, pattern='*.txt').sort()
         self.assertTrue(np.all(self.fldr.slice_metadata("Loaded as")==sliced),"Slicing metadata failed to work.")
 
-                
+
     def test_clone(self):
          self.fldr=SF.DataFolder(self.datadir, pattern='*.txt')
          self.fldr.abc = 123 #add an attribute
@@ -98,7 +98,7 @@ class Folders_test(unittest.TestCase):
          self.assertTrue(t.pattern==['*.txt'], 'pattern didnt copy over')
          self.assertTrue(hasattr(t, "abc") and t.abc==123, 'user attribute didnt copy over')
          self.assertTrue(isinstance(t['recursivefoldertest'],SF.DataFolder), 'groups didnt copy over')
-         
+
     def test_grouping(self):
         self.fldr4=SF.DataFolder()
         x=np.linspace(-np.pi,np.pi,181)
@@ -145,9 +145,9 @@ class Folders_test(unittest.TestCase):
         p.plot()
         self.assertEqual(len(plt.get_fignums()),1,"Failed to generate a single plot for PlotFolder.")
         plt.close("all")
-        
-        
-        
+
+
+
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
