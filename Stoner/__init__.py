@@ -1,4 +1,4 @@
-"""Stoner Python Package: Utility classes for simple data analysis scripts.
+"""Stoner Python Package: Utility classes for simple data analysis scripts. 
 
 See http://github.com/~gb119/Stoner-PythonCode for more details.
 
