@@ -10,7 +10,7 @@ import os.path as path
 import inspect as _inspect_
 import itertools
 from collections import OrderedDict,MutableMapping
-
+from traceback import format_exc
 import csv
 import numpy as _np_
 from numpy import NaN # pylint: disable=unused-import
@@ -3453,8 +3453,11 @@ class DataFile(metadataObject):
                     if (self.debug): print("Self matadata: {}".format(self.metadata))
 
                     break
-                except (StonerLoadError, UnicodeDecodeError) as e:
+                except StonerLoadError as e:
                     if self.debug: print("Failed Load: {}".format(e))
+                    continue
+                except UnicodeDecodeError as e:
+                    print("Failed with a uncicode decode error\n{}".format(format_exc(e)))
                     continue
             else:
                 raise IOError("Ran out of subclasses to try and load {} as. Recognised filetype are:{}".format(filename,list(self.subclasses.keys())))

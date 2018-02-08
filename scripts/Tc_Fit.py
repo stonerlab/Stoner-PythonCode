@@ -6,26 +6,37 @@ Created on Wed Feb  7 16:53:40 2018
 """
 
 from Stoner import Data,DataFolder
-from Stoner.Fit import linear
 from Stoner.Util import format_error
 
-#Adjust these to match expected columns - a unique partial match is sufficient
-t_col="T2"
-r_col=":R"
+t_col=": T2" # Temperature column label
+r_col="Nb::R" #Resistance Column Label
+iterator="iterator" #Temperature ramp iteration coolumn label
+threshold=0.95 #Fraction of transition to fit to
+
+def cubic(x,d,c,a):
+    return a*x**3+c*x+d
 
 data=Data(False)  #Get a dialog box to the file containing Tc data
 
 #Define my working x and y axes
 data.setas(x=t_col,y=r_col)
 
-#Normalise data on y axis between +/- 1
-data.normalise(base=(-1.,1.),replace=True)
+#Split one file into a folder of two files by the iterator column
+fldr=data.split(iterator)
 
-#Swap x and y axes around so that R is x and T is y
-data=~data
+for data in fldr: #For each iteration ramp in the Tc data
 
-#Curve fit a straight line, using only the central 90% of the resistance transition
-data.curve_fit(linear,bounds=lambda x,r:-0.9<x<0.9,result=True) #result=True to record fit into metadata
+    #Normalise data on y axis between +/- 1
+    data.normalise(base=(-1.,1.),replace=True)
+    
+    #Swap x and y axes around so that R is x and T is y
+    data=~data
+    
+    #Curve fit a straight line, using only the central 90% of the resistance transition
+    data.curve_fit(cubic,bounds=lambda x,r:-threshold<x<threshold,result=True) #result=True to record fit into metadata
 
-# Just print and format nicely
-print("Tc={}K".format(format_error(data["linear:intercept"],data["linear:intercept err"])))
+    #Plot the results
+    data.setas[-1]="y"
+    data.plot(fmt=["k.","r-"])
+    data.annotate_fit(cubic)   
+    # Just print and format nicely
