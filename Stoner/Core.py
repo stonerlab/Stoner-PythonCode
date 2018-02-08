@@ -3457,7 +3457,7 @@ class DataFile(metadataObject):
                     if self.debug: print("Failed Load: {}".format(e))
                     continue
                 except UnicodeDecodeError as e:
-                    print("Failed with a uncicode decode error\n{}".format(format_exc(e)))
+                    print("Failed with a uncicode decode error\n{}".format(format_exc()))
                     continue
             else:
                 raise IOError("Ran out of subclasses to try and load {} as. Recognised filetype are:{}".format(filename,list(self.subclasses.keys())))
