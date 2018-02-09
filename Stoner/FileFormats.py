@@ -18,6 +18,7 @@ import re
 import numpy as _np_
 import csv
 import os
+from io import open
 import struct
 from re import split
 from datetime import datetime
@@ -260,7 +261,7 @@ class QDFile(_SC_.DataFile):
         else:
             self.filename = filename
 
-        extra={"encoding":'iso-8859-1'} if python_v3 else dict() #Fix encoding for Python 3
+        extra={"encoding":'iso-8859-1','errors':'replace'} if python_v3 else dict() #Fix encoding for Python 3
         setas={}
         i=0
         with open(self.filename, "r",**extra) as f:  # Read filename linewise

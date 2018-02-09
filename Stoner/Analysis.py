@@ -117,15 +117,15 @@ def _lmfit_p0_dict(p0,model):
 
 def _prep_lmfit_model(model,p0,kargs):
     """Prepare an lmfit model instance.
-    
+
     Arguments:
         model (lmfit Model class or instance, or callable): the model to be fitted to the data.
         p0 (iterable or floats): The initial values of the fitting parameters.
         kargs (dict):Other keyword arguments passed to the fitting function
-        
+
     Returns:
         model,p0, prefix (lmfit.Model instance, iterable, str)
-        
+
     Converts the model parameter into an instance of lmfit.Model - either by instantiating the class or wrapping a
     callable into an lmfit.Model class. If the latter, then determines the p0 starting parameter vector and finally
     establishes a prefix string from the model if not provided in the keyword arguments.
@@ -159,13 +159,13 @@ def _prep_lmfit_model(model,p0,kargs):
 
 def _prep_lmfit_p0(model,ydata,xdata,p0,kargs):
     """Prepare the initial start vector for an lmfit.
-    
+
     Arguments:
         model (lmfit.Model instance): model to fit with
         ydata,xdata (array): y and x data ppoints for fitting
         p0 (iterable of float): Existing p0 vector if defined
         kargs (dict): Other keyword arguments for the lmfit method.
-        
+
     Returns:
         p0,single_fit (iterable of floats, bool): The revised initial starting vector and whether this is a single fit operation.
     """
@@ -908,21 +908,25 @@ class AnalysisMixin(object):
             :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit`
             User guide section :ref:`curve_fit_guide`
         """
+
+        _=self._col_args(scalar=False,xcol=xcol,ycol=ycol,yerr=sigma)
+        xcol,ycol,sigma=_.xcol,_.ycol,_.yerr
+
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
         header = kargs.pop("header", None)
+
         #Support either scale_covar or absolute_sigma, the latter wins if both supplied
-        scale_covar = kargs.pop("scale_covar", False)
+        #If neither are specified, then if sigma is not given, absolute sigma will be False.
+
+        scale_covar = kargs.pop("scale_covar", sigma is None)
         absolute_sigma = kargs.pop("absolute_sigma", not scale_covar)
         #Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
         if output == "full":
             kargs["full_output"] = True
-
-        _=self._col_args(scalar=False,xcol=xcol,ycol=ycol,yerr=sigma)
-        xcol,ycol,sigma=_.xcol,_.ycol,_.yerr
 
         if not isinstance(ycol,list):
             ycol=[ycol,]
@@ -1361,7 +1365,7 @@ class AnalysisMixin(object):
         #Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
-        
+
         model,p0,prefix=_prep_lmfit_model(model,p0,kargs)
 
         _=self._col_args(xcol=xcol,ycol=ycol)
@@ -1372,7 +1376,7 @@ class AnalysisMixin(object):
         ydata = working[:, self.find_col(_.ycol)]
 
         p0,single_fit = _prep_lmfit_p0(model,ydata,xdata,p0,kargs)
-        
+
         if sigma is not None:
             if isinstance(sigma, index_types):
                 sigma = working[:, self.find_col(sigma)]
@@ -1409,7 +1413,7 @@ class AnalysisMixin(object):
             for i,pn_i in enumerate(pn): # iterate over every row in the supplied p0 values
                 pn_i=_lmfit_p0_dict(pn_i,model)
                 pn_i[xvar] = xdata
-                ret_val[i,:]=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,pn_i,prefix)                
+                ret_val[i,:]=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,pn_i,prefix)
         return ret_val
 
 
@@ -1650,7 +1654,7 @@ class AnalysisMixin(object):
             target (index): One or more target columns to normalise can be a string, integer or list of strings or integers.
                 If None then the default 'y' column is used.
             base (index): The column to normalise to, can be an integer or string. If None then the target column is normalised
-                to the range (-1,+1) of (0,1)
+                to the range (-1,+1) or (0,1) depending on whether the input is bipolar or not.
 
         Keyword Arguments:
             replace (bool): Set True(default) to overwrite  the target data columns
@@ -1676,7 +1680,7 @@ class AnalysisMixin(object):
             if not istuple(base,float,float) and base is not None:
                 self.divide(t, base, header=header, replace=replace)
             else:
-                i_range=(_np_.min(self[:,t]),_np_.max(self[:,t]))
+                i_range=(_np_.nanmin(self[:,t]),_np_.nanmax(self[:,t]))
                 if istuple(base,float,float):
                     o_range=base
                 elif i_range[0]<0 and i_range[1]>0: #range (-1,1)
