@@ -2421,7 +2421,7 @@ class DataFile(metadataObject):
             self.get_filename('r')
         else:
             self.filename = filename
-        with open(self.filename, "r") as datafile:
+        with open(self.filename, "r",encoding="utf-8",errors="ignore") as datafile:
             try:
                 reader = csv.reader(datafile, dialect=_tab_delimited())
                 row = next(reader)

@@ -107,7 +107,7 @@ class CSVFile(_SC_.DataFile):
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
             filename = self.__file_dialog('w')
-        spamWriter = csv.writer(open(filename, 'w'), delimiter=delimiter, quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        spamWriter = csv.writer(open(filename, 'w',errors="ignore",encoding="utf-8"), delimiter=delimiter, quotechar='"', quoting=csv.QUOTE_MINIMAL)
         i = 0
         spamWriter.writerow(self.column_headers)
         while i < self.data.shape[0]:
@@ -147,7 +147,7 @@ class VSMFile(_SC_.DataFile):
             The default values are configured fir read VSM data files
         """
         try:
-            with open(self.filename) as f:
+            with open(self.filename,errors="ignore",encoding="utf-8") as f:
                 for i, line in enumerate(f):
                     if i == 0:
                         self["Timestamp"] = line.strip()
@@ -261,7 +261,7 @@ class QDFile(_SC_.DataFile):
         else:
             self.filename = filename
 
-        extra={"encoding":'iso-8859-1','errors':'replace'} if python_v3 else dict() #Fix encoding for Python 3
+        extra={'errors':'replace'} if python_v3 else dict() #Fix encoding for Python 3
         setas={}
         i=0
         with open(self.filename, "r",**extra) as f:  # Read filename linewise
@@ -355,7 +355,7 @@ class OpenGDAFile(_SC_.DataFile):
         else:
             self.filename = filename
         i=0
-        with open(self.filename, "r") as f:
+        with open(self.filename, "r",errors="ignore",encoding="utf-8") as f:
             for i, line in enumerate(f):
                 line = line.strip()
                 if i == 0 and line != "&SRS":
@@ -687,7 +687,7 @@ class XRDFile(_SC_.DataFile):
         else:
             self.filename = filename
         sh = re.compile(r'\[(.+)\]')  # Regexp to grab section name
-        with open(self.filename) as f: # Read filename linewise
+        with open(self.filename,errors="ignore",encoding="utf-8") as f: # Read filename linewise
             if f.readline().strip() != ";RAW4.00":  # Check we have the corrrect fileformat
                 raise _SC_.StonerLoadError("File Format Not Recognized !")
             drive = 0
@@ -768,7 +768,7 @@ class BNLFile(_SC_.DataFile):
 
     def __find_lines(self):
         """Returns an array of ints [header_line,data_line,scan_line,date_line,motor_line]."""
-        with open(self.filename, 'r') as fp:
+        with open(self.filename, 'r',errors="ignore",encoding="utf-8") as fp:
             self.line_numbers = [0, 0, 0, 0, 0]
             counter = 0
             for line in fp:
@@ -957,7 +957,7 @@ class GenXFile(_SC_.DataFile):
             self.filename = filename
         pattern = re.compile(r'# Dataset "([^\"]*)" exported from GenX on (.*)$')
         pattern2 = re.compile(r"#\sFile\sexported\sfrom\sGenX\'s\sReflectivity\splugin")
-        with open(self.filename, "r") as datafile:
+        with open(self.filename, "r",errors="ignore",encoding="utf-8") as datafile:
             line = datafile.readline()
             match = pattern.match(line)
             match2 = pattern2.match(line)
@@ -1009,7 +1009,7 @@ class SNSFile(_SC_.DataFile):
         else:
             self.filename = filename
 
-        with open(self.filename, "r") as data:  # Slightly ugly text handling
+        with open(self.filename, "r",errors="ignore",encoding="utf-8") as data:  # Slightly ugly text handling
             line = data.readline()
             if line.strip() != "# datafile created by QuickNXS 0.9.39":  # bug out oif we don't like the header
                 raise _SC_.StonerLoadError("Not a file from the SNS BL4A line")
@@ -1115,7 +1115,7 @@ class OVFFile(_SC_.DataFile):
             self.filename = filename
 
         self._ptr = 0
-        with open(self.filename, "r") as data:  # Slightly ugly text handling
+        with open(self.filename, "r",errors="ignore",encoding="utf-8") as data:  # Slightly ugly text handling
             line = next(data)
             self._ptr += len(line)
             line = line.strip()
@@ -1186,7 +1186,7 @@ class MDAASCIIFile(_SC_.DataFile):
         else:
             self.filename = filename
         i=[0,0,0,0]
-        with open(self.filename, "r") as data:  # Slightly ugly text handling
+        with open(self.filename, "r",errors="ignore",encoding="utf-8") as data:  # Slightly ugly text handling
             for i[0], line in enumerate(data):
                 if i[0] == 0 and line.strip() != "## mda2ascii 1.2 generated output":  # bug out oif we don't like the header
                     raise _SC_.StonerLoadError("Not a file mda2ascii")
@@ -1326,7 +1326,7 @@ class LSTemperatureFile(_SC_.DataFile):
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
             filename = self.__file_dialog('w')
-        with open(filename, "w") as f:
+        with open(filename, "w",errors="ignore",encoding="utf-8") as f:
             for k in ["Sensor Model", "Serial Number", "Data Format", "SetPoint Limit", "Temperature coefficient",
                       "Number of Breakpoints"]:
                 if k in ["Sensor Model", "Serial Number", "Data Format", "SetPoint Limit"]:
@@ -1381,7 +1381,7 @@ class EasyPlotFile(_SC_.DataFile):
         dataend = -1
 
         i=0
-        with open(self.filename, "r") as data:
+        with open(self.filename, "r",errors="ignore",encoding="utf-8") as data:
             if "******** EasyPlot save file ********" not in data.read(1024):
                 raise _SC_.StonerLoadError("Not an EasyPlot Save file?")
             else:
@@ -1481,7 +1481,7 @@ class PinkLibFile(_SC_.DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        with open(self.filename, "r") as f:  # Read filename linewise
+        with open(self.filename, "r",errors="ignore",encoding="utf-8") as f:  # Read filename linewise
             if "PINKlibrary" not in f.readline():
                 raise _SC_.StonerLoadError("Not a PINK file")
             f=f.readlines()
