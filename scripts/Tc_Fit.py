@@ -52,7 +52,7 @@ for data in fldr: #For each iteration ramp in the Tc data
         data.setas[-1]="y"
         data.subplot(1,len(r_cols),i+1)
         data.plot(fmt=["k.","r-"])
-        data.annotate_fit(linear,xycoords="axes fraction",x=0.05,y=0.7,fontsize="small")
+        data.annotate_fit(linear,x=-1.,y=7.3c,fontsize="small")
         data.title="Ramp {}".format(data[iterator][0])
         row.extend([data["linear:intercept"],data["linear:intercept err"]])
     data.tight_layout()

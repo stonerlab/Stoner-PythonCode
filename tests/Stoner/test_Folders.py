@@ -84,9 +84,10 @@ class Folders_test(unittest.TestCase):
         fldr-="Untitled"
 
     def test_methods(self):
-        sliced=np.array(['MDAASCIIFile', 'BNLFile', 'DataFile', 'DataFile', 'DataFile',
-       'DataFile', 'MokeFile', 'EasyPlotFile', 'DataFile', 'DataFile',
-       'DataFile'],dtype='<U12')
+        sliced=np.array(['DataFile', 'MDAASCIIFile', 'BNLFile', 'DataFile', 'DataFile',
+       'DataFile', 'DataFile', 'MokeFile', 'EasyPlotFile', 'DataFile',
+       'DataFile', 'DataFile'],
+      dtype='<U12')
         self.fldr=SF.DataFolder(self.datadir, pattern='*.txt').sort()
         self.assertTrue(np.all(self.fldr.slice_metadata("Loaded as")==sliced),"Slicing metadata failed to work.")
 

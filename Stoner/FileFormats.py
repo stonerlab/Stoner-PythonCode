@@ -318,7 +318,7 @@ class QDFile(_SC_.DataFile):
                 column_headers = f.next().strip().split(',')
                 if ',' not in f.next():
                     raise _SC_.StonerLoadError("No data in file!")
-            self.data = _np_.genfromtxt(f.read().encode(encoding="ascii",errors="replace"),
+            self.data = _np_.genfromtxt([str2bytes(l) for l in f],
                                         dtype='float', delimiter=',',
                                         invalid_raise=False)
         self.column_headers=column_headers
@@ -374,7 +374,7 @@ class OpenGDAFile(_SC_.DataFile):
                 column_headers = f.readline().strip().split("\t")
             else:
                 column_headers = f.next().strip().split("\t")
-            self.data = _np_.genfromtxt(f.read().encode(encoding="ascii",errors="replace"), dtype='float', invalid_raise=False)
+            self.data = _np_.genfromtxt([str2bytes(l) for l in f], dtype='float', invalid_raise=False)
         self.column_headers=column_headers
         return self
 

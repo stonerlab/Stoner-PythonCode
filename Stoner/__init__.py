@@ -159,7 +159,7 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
             elif "arrowprops" in kargs:
                 ax.annotate(text, xy=(x,y), **kargs)
             else:
-                ax.annotate(text,xy=(x,y),  **kargs)
+                ax.text(x,y,text,  **kargs)
             ret=self
         else:
             ret=text
