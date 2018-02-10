@@ -15,6 +15,7 @@ from distutils.version import LooseVersion
 from os import walk
 from os.path import join
 import fnmatch
+import numpy as np
 
 try:
     from lmfit import Model  # pylint: disable=unused-import
@@ -101,6 +102,8 @@ elif __vi__[0] == 3:
         else:
             return funcs[what](**opts)
 
+
+int_types+=(np.int,np.int0,np.int8,np.int16,np.int32,np.int64,)
 
 index_types = string_types + int_types +(_pattern_type,)
 

@@ -920,7 +920,7 @@ class AnalysisMixin(object):
         #Support either scale_covar or absolute_sigma, the latter wins if both supplied
         #If neither are specified, then if sigma is not given, absolute sigma will be False.
 
-        scale_covar = kargs.pop("scale_covar", sigma is None)
+        scale_covar = kargs.pop("scale_covar", sigma is not None)
         absolute_sigma = kargs.pop("absolute_sigma", not scale_covar)
         #Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)

@@ -13,7 +13,7 @@ from .compat import string_types,bytes2str
 import re
 import inspect
 
-from numpy import log10,floor,abs,logical_and,isnan,round,ndarray #pylint: disable=redefined-builtin
+from numpy import log10,floor,abs,logical_and,isnan,round,ndarray,dtype #pylint: disable=redefined-builtin
 from cgi import escape as html_escape
 from copy import deepcopy
 
@@ -127,6 +127,11 @@ def all_type(iterator,typ):
         the search type *typ*.
     """
     ret=False
+    if isinstance(iterator,ndarray): #Try to short circuit for arrays
+        try:
+            return iterator.dtype==dtype(typ)
+        except TypeError:
+            pass
     if isiterable(iterator):
         for i in iterator:
             if not isinstance(i,typ):
