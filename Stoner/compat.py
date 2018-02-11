@@ -15,6 +15,7 @@ from distutils.version import LooseVersion
 from os import walk
 from os.path import join
 import fnmatch
+import numpy as np
 
 try:
     from lmfit import Model  # pylint: disable=unused-import
@@ -45,7 +46,7 @@ if __vi__[0] == 2:
             **opts (dict): Arguments to pass through to the underlying dialog function.
 
         Returns:
-            A file name or directory or list of files. 
+            A file name or directory or list of files.
         """
         from Tkinter import Tk
         import tkFileDialog as filedialog
@@ -61,7 +62,7 @@ if __vi__[0] == 2:
             raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
         else:
             return funcs[what](**opts)
-        
+
 elif __vi__[0] == 3:
     string_types = (str, )
     int_types=(int,)
@@ -75,8 +76,7 @@ elif __vi__[0] == 3:
         """Decode byte string back to univcode."""
         if isinstance(b, bytes):
             return b.decode("utf-8", "ignore")
-        else:
-            return b
+        return b
 
     def get_filedialog(what="file", **opts):
         """Wrapper around Tk file dialog to mange creating file dialogs in a cross platform way.
@@ -86,7 +86,7 @@ elif __vi__[0] == 3:
             **opts (dict): Arguments to pass through to the underlying dialog function.
 
         Returns:
-            A file name or directory or list of files. 
+            A file name or directory or list of files.
         """
         from tkinter import Tk, filedialog
         r = Tk()
@@ -103,6 +103,8 @@ elif __vi__[0] == 3:
             return funcs[what](**opts)
 
 
+int_types+=(np.int,np.int0,np.int8,np.int16,np.int32,np.int64,)
+
 index_types = string_types + int_types +(_pattern_type,)
 
 def listdir_recursive(dirname,glob=None):
@@ -116,7 +118,7 @@ def listdir_recursive(dirname,glob=None):
             yield ret
 
 class ClassPropertyDescriptor(object):
-    
+
     """Supports adding class properties."""
 
     def __init__(self, fget, fset=None):
@@ -136,4 +138,3 @@ def classproperty(func):
         func = classmethod(func)
 
     return ClassPropertyDescriptor(func)
-

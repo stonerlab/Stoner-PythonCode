@@ -11,7 +11,9 @@ Created on Wed Apr 19 19:47:50 2017
 from collections import Iterable,MutableSequence
 from .compat import string_types,bytes2str
 import re
-from numpy import log10,floor,abs,logical_and,isnan,round
+import inspect
+
+from numpy import log10,floor,abs,logical_and,isnan,round,ndarray,dtype #pylint: disable=redefined-builtin
 from cgi import escape as html_escape
 from copy import deepcopy
 
@@ -63,7 +65,7 @@ def isNone(iterator):
     if iterator is None:
         ret=True
     elif isiterable(iterator) and not isinstance(iterator,string_types):
-        if len(iterator)==0:
+        if len(iterator)==0: # pylint: disable=len-as-condition
             ret=True
         else:
             for i in iterator:
@@ -91,7 +93,7 @@ def all_size(iterator,size=None):
     if hasattr(iterator[0],"shape"):
         sizer=lambda x:x.shape
     else:
-        sizer=lambda x:len(x)
+        sizer=len
 
     if size is None:
         size=sizer(iterator[0])
@@ -103,6 +105,12 @@ def all_size(iterator,size=None):
         ret=True
     return ret
 
+def isAnyNone(*args):
+    """Intelligently check whether any of the inputs are None."""
+    for arg in args:
+        if arg is None:
+            return True
+    return False
 
 def all_type(iterator,typ):
     """Determines if an interable omnly contains a common type.
@@ -119,6 +127,11 @@ def all_type(iterator,typ):
         the search type *typ*.
     """
     ret=False
+    if isinstance(iterator,ndarray): #Try to short circuit for arrays
+        try:
+            return iterator.dtype==dtype(typ)
+        except TypeError:
+            pass
     if isiterable(iterator):
         for i in iterator:
             if not isinstance(i,typ):
@@ -129,10 +142,10 @@ def all_type(iterator,typ):
 
 def isiterable(value):
     """Chack to see if a value is iterable.
-    
+
     Args:
         value (object): Entitiy to check if it is iterable
-        
+
     Returns:
         (bool): True if value is an instance of collections.Iterable.
     """
@@ -140,11 +153,11 @@ def isiterable(value):
 
 def isproperty(obj,name):
     """Check whether an attribute of an object or class is a property.
-    
+
     Args:
         obj (instance or class): Thing that has the attribute to check
         name (str): Name of the attrbiute that might be a property
-        
+
     Returns:
         (bool): Whether the name is a property or not.
     """
@@ -154,18 +167,50 @@ def isproperty(obj,name):
         raise TypeError("Can only check for property status on attributes of an object or a class not a {}".format(type(obj)))
     return hasattr(obj,name) and isinstance(getattr(obj,name),property)
 
-def tex_escape(text):
+def istuple(obj,*args,**kargs):
+    """Determine if obj is a tuple of a certain signature.
+
+    Args:
+        obj(object): The object to check
+        *args(type): Each of the suceeding arguments are used to determine the expected type of each element.
+
+    Keywoprd Arguments:
+        strict(bool): Whether the elements of the tuple have to be exactly the type specified or just castable as the type
+
+    Returns:
+        (bool): True if obj is a matching tuple.
     """
-        Escapes spacecial text charcters in a string.
+    strict=kargs.pop("strict",True)
+    if not isinstance(obj,tuple):
+        return False
+    if args and len(obj)!=len(args):
+        return False
+    for t,e in zip(args,obj):
+        if strict:
+            if not isinstance(e,t):
+                bad=True
+                break
+        else:
+            try:
+                _ = t(e)
+            except ValueError:
+                bad=True
+                break
+    else:
+        bad=False
+    return not bad
 
-        Parameters:
-            text (str): a plain text message
 
-        Returns:
-            the message escaped to appear correctly in LaTeX
+def tex_escape(text):
+    """Escapes spacecial text charcters in a string.
+
+    Parameters:
+        text (str): a plain text message
+
+    Returns:
+        the message escaped to appear correctly in LaTeX
 
     From `Stackoverflow <http://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates>`
-
     """
     conv = {
         '&': r'\&',
@@ -186,8 +231,8 @@ def tex_escape(text):
 
 
 def format_val(value,**kargs):
-    """Format a number as an SI quantity
-    
+    r"""Format a number as an SI quantity
+
     Args:
         value(float): Value to format
 
@@ -201,9 +246,9 @@ def format_val(value,**kargs):
             to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
             i.e. mantissa and exponent format is used.
         units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
-            prepended to the units string. In LaTeX mode, the units string is embedded in \\mathrm
+            prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm
         prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
-            inside the math-mode markers, but not embedded in \\mathrm.
+            inside the math-mode markers, but not embedded in \mathrm.
 
     Returns:
         (str): The formatted value.
@@ -263,10 +308,9 @@ def format_val(value,**kargs):
         suffix_fmt = units
     fmt_str = val_fmt_str + suffix_val + suffix_fmt
     return fmt_str.format(value)
-        
+
 def format_error(value, error=None, **kargs):
-    """This handles the printing out of the answer with the uncertaintly to 1sf and the
-    value to no more sf's than the uncertainty.
+    r"""Handles the printing out of the answer with the uncertaintly to 1sf and the value to no more sf's than the uncertainty.
 
     Args:
         value (float): The value to be formated
@@ -280,9 +324,9 @@ def format_error(value, error=None, **kargs):
             to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
             i.e. mantissa and exponent format is used.
         units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
-            prepended to the units string. In LaTeX mode, the units string is embedded in \\mathrm
+            prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm
         prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
-            inside the math-mode markers, but not embedded in \\mathrm.
+            inside the math-mode markers, but not embedded in \mathrm.
 
     Returns:
         String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.
@@ -365,8 +409,20 @@ def format_error(value, error=None, **kargs):
         value = int(value)
     return fmt_str.format(value, error)
 
+def fix_signature(proxy_func,wrapped_func):
+    """Tries to update proxy_func to have a signature that matches the wrapped func."""
+    try:
+        proxy_func.__wrapped__.__signature__=inspect.signature(wrapped_func)
+    except AttributeError: #Non-critical error
+        try:
+            proxy_func.__signature__= inspect.signature(wrapped_func)
+        except AttributeError:
+            pass
+    return proxy_func
+
+
 class _attribute_store(dict):
-    
+
     """A dictionary=like class that provides attributes that work like indices.
 
     Used to implement the mapping of column types to indices in the setas attriobutes.
@@ -389,10 +445,10 @@ class _attribute_store(dict):
             return self[name]
         except KeyError:
             raise AttributeError
-            
+
 def quantize(number,quantum):
     """Round a number to the nearest multiple of a quantum.
-    
+
     Args:
         number (float,array): Number(s) to be rounded to the nearest qyuantum
         quantum (float): Quantum to round to
@@ -402,15 +458,17 @@ def quantize(number,quantum):
     return round(number/quantum)*quantum
 
 class typedList(MutableSequence):
+
     """Subclass list to make setitem enforce  strict typing of members of the list."""
-    
+
     def __init__(self,*args,**kargs):
-        if len(args)==0 or not (isinstance(args[0],type) or (isinstance(args[0],tuple) and all_type(args[0],type))):
+        """Construct the typedList."""
+        if (not args) or not (isinstance(args[0],type) or (isinstance(args[0],tuple) and all_type(args[0],type))):
             self._type=str # Default list type is a string
         else:
             args=list(args)
             self._type=args.pop(0)
-        if len(args)==0:
+        if not args:
             self._store=list(*args,**kargs)
         elif len(args)==1 and all_type(args[0],self._type):
             self._store=list(*args,**kargs)
@@ -421,61 +479,69 @@ class typedList(MutableSequence):
                 raise TypeError("List should be initialised with elements that are all of type {}".format(self._type))
 
     def __add__(self,other):
+        """Add operator works like ordinary lists."""
         if isiterable(other):
             new=deepcopy(self)
             new.extend(other)
             return new
-        else:
-            return NotImplemented
-        
+        return NotImplemented
+
     def __iadd__(self,other):
+        """Inplace-add works like a list."""
         if isiterable(other):
             self.extend(other)
             return self
-        else:
-            return NotImplemented
-        
+        return NotImplemented
+
     def __radd__(self,other):
+        """Support add on the right like a list."""
         if isinstance(other,list):
             return other+self._store
-        else:
-            return NotImplemented
-        
+        return NotImplemented
+
     def __eq__(self,other):
+        """Equality test."""
         return self._store==other
-                        
+
     def __delitem__(self,index):
+        """Remove an item like in a list."""
         del self._store[index]
-        
+
     def __getitem__(self,index):
+        """Get an item like in a list."""
         return self._store[index]
-    
+
     def __len__(self):
+        """Implement the len function like a list."""
         return len(self._store)
 
     def __repr__(self):
+        """Textual representation like a list."""
         return repr(self._store)
 
     def __setitem__(self,name,value):
+        """Setting an item requires some type checks."""
         if isiterable(name) or isinstance(name,slice):
             if not isiterable(value) or not all_type(value,self._type):
                 raise TypeError("Elelements of this list should be of type {} and must set the correct number of elements".format(self._type))
         elif not isinstance(value,self._type):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         self._store[name]=value
-        
+
     def extend(self,other):
+        """Extending a list also requires some type checking."""
         if not isiterable(other) or  not all_type(other,self._type):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         else:
             self._store.extend(other)
-            
+
     def index(self,search,start=0):
+        """Index works like a list."""
         return self._store[start:].index(search)
-    
+
     def insert(self,index,obj):
+        """Inserting an element also requires some type checking."""
         if not isinstance(obj,self._type):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         else:
             self._store.insert(index,obj)
-            

@@ -10,9 +10,9 @@ Please do keep documentation up to date, see other functions for documentation e
 All the functions here defined for scipy.optimize.curve\_fit to call themm
 i.e. the parameters are expanded to separate arguements.
 """
-
-from Stoner.compat import python_v3,string_types
-from Stoner.Core import DataFile
+import Stoner.Core as _SC_
+from .compat import python_v3,string_types
+from . import Data
 import numpy as _np_
 from io import IOBase
 from scipy.special import digamma
@@ -109,7 +109,6 @@ def cfg_data_from_ini(inifile,filename=None,**kargs):
     if ConfigParser is None:
         raise RuntimeError("Need to have ConfigParser module installed for this to work.")
     config = ConfigParser.SafeConfigParser()
-    from Stoner.Core import Data
     if isinstance(inifile,string_types):
         config.read(inifile)
     elif isinstance(inifile,IOBase):
@@ -208,7 +207,7 @@ def cfg_model_from_ini(inifile,model=None,data=None):
                     kargs[k]=config.getfloat(p,k)
                 elif keys[k]==str:
                     kargs[k]=config.get(p,k)
-        if isinstance(data,DataFile): # stuff the parameter hint data into metadata
+        if isinstance(data,_SC_.DataFile): # stuff the parameter hint data into metadata
             for k in keys: # remove keywords not needed
                 if k in kargs:
                     data["{}{} {}".format(prefix,p,k)]=kargs[k]
@@ -413,7 +412,7 @@ class ModArrhenius(Model):
 
 
 def powerLaw(x, A, k):
-    """Power Law Fitting Equation.
+    r"""Power Law Fitting Equation.
 
     Args:
         x (array): Input data
@@ -433,7 +432,7 @@ def powerLaw(x, A, k):
 
 
 def quadratic(x, a, b, c):
-    """A Simple quadratic fitting function.
+    r"""A Simple quadratic fitting function.
 
     Args:
         x (aray): Input data
@@ -1011,7 +1010,7 @@ class BlochGrueneisen(Model):
 
 
 def langevin(H, M_s, m, T):
-    """"The Langevin function for paramagnetic M-H loops/
+    r""""The Langevin function for paramagnetic M-H loops/
 
     Args:
         H (array): The applied magnetic field
@@ -1038,7 +1037,7 @@ def langevin(H, M_s, m, T):
 
 class Langevin(Model):
 
-    """"The Langevin function for paramagnetic M-H loops/
+    r""""The Langevin function for paramagnetic M-H loops/
 
     Args:
         H (array): The applied magnetic field
@@ -1097,7 +1096,7 @@ def vftEquation(x, A, DE, x_0):
     Return:
         Rates according the VFT equation.
 
-    The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
+    The VFT equation is defined as as rr`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
     a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
 
     Example:
@@ -1209,12 +1208,14 @@ def kittelEquation(H,g,M_s,H_k):
 
     Args:
         H (array): Magnetic fields in A/m
-        g (float): h g factor for the gyromagnetic radius
+        g (float): g factor for the gyromagnetic radius
         M_s (float): Magnetisation of sample in A/m
         H_k (float): Anisotropy field term (including demagnetising factors) in A/m
 
     Returns:
         Reesonance peak frequencies in Hz
+        
+    :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
 
     Example:
         .. plot:: samples/Fitting/kittel.py
@@ -1223,9 +1224,32 @@ def kittelEquation(H,g,M_s,H_k):
     gamma=g*cnst.e/(2*cnst.m_e)
     return (consts.mu0*gamma/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
 
+def inverse_kittel(f,g,M_s,H_k):
+    """Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency
+    
+    Args:
+        f (array): Resonance Frequency in Hz
+        g (float): g factor for the gyromagnetic radius
+        M_s (float): Magnetisation of sample in A/m
+        H_k (float): Anisotropy field term (including demagnetising factors) in A/m
+
+    Returns:
+        Reesonance peak frequencies in Hz
+    
+    Notes:
+        In practice one often measures FMR by sweepign field for constant frequency and then locates the
+        peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a :math:`H_{res}\\pm \\Delta H_{res}`
+        In order to make use of this data with :py:math:`Stoner.Analysis.AnalysisMixin.lmfit` or :py:math:`Stoner.Analysis.AnalysisMixin.curve_fit`
+        it makes more sense to fit the Kittel Equation written in terms of H than frequency.
+        
+       :math:`H_{res}=- H_{k} - \\frac{M_{s}}{2} + \\frac{1}{2 \\gamma \\mu_{0}} \\sqrt{M_{s}^{2} \\gamma^{2} \\mu_{0}^{2} + 16 \\pi^{2} f^{2}}` 
+    """            
+    gamma=g*cnst.e/(2*cnst.m_e)
+    return -H_k - M_s/2 + _np_.sqrt(M_s**2*gamma**2*cnst.mu_0**2 + 16*_np_.pi**2*f**2)/(2*gamma*cnst.mu_0)
+
 class KittelEquation(Model):
     
-    """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
+    r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
         H (array): Magnetic fields in A/m
@@ -1236,12 +1260,14 @@ class KittelEquation(Model):
     Returns:
         Reesonance peak frequencies in Hz
 
+    :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
+
     Example:
         .. plot:: samples/Fitting/kittel.py
         :include-source:                
     """
 
-    display_names=[r"\g","M_s","H_k"]
+    display_names=["g","M_s","H_k"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1249,12 +1275,13 @@ class KittelEquation(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
-    
-        M_s=(_np_.pi*data/consts.mu0)/x-x
-        M_s=_np_.mean(M_s[1:])
         g=2
+        H_k=100
+        gamma=g*cnst.e/(2*cnst.m_e)    
+        M_s=(4*_np_.pi**2*data**2 - gamma**2*cnst.mu_0**2*(x**2 + 2*x*H_k + H_k**2))/(gamma**2*cnst.mu_0**2*(x + H_k))
+        M_s=_np_.mean(M_s)
 
-        pars = self.make_params(g=g, M_s=M_s, H_k=100.0)
+        pars = self.make_params(g=g, M_s=M_s, H_k=H_k)
         pars["M_s"].min=0
         pars["g"].min=g/100
         pars["H_k"].min=0
@@ -1262,3 +1289,157 @@ class KittelEquation(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
+class Inverse_Kittel(Model):
+    
+    r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
+
+    Args:
+        H (array): Magnetic fields in A/m
+        g (float): h g factor for the gyromagnetic radius
+        M_s (float): Magnetisation of sample in A/m
+        H_k (float): Anisotropy field term (including demagnetising factors) in A/m
+
+    Returns:
+        Reesonance peak frequencies in Hz
+
+    :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
+
+    """
+
+    display_names=["g","M_s","H_k"]
+
+    def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
+        super(Inverse_Kittel, self).__init__(inverse_kittel, *args, **kwargs)
+
+    def guess(self, data, x=None, **kwargs):
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+        g=2
+        H_k=100
+        gamma=g*cnst.e/(2*cnst.m_e)    
+        M_s=(4*_np_.pi**2*x**2 - gamma**2*cnst.mu_0**2*(data**2 + 2*data*H_k + H_k**2))/(gamma**2*cnst.mu_0**2*(data + H_k))
+        M_s=_np_.mean(M_s)
+
+        pars = self.make_params(g=g, M_s=M_s, H_k=H_k)
+        pars["M_s"].min=0
+        pars["g"].min=g/100
+        pars["H_k"].min=0
+        pars["H_k"].max=M_s.max()
+        return update_param_vals(pars, self.prefix, **kwargs)
+
+def lorentzian_diff(x,A,sigma,mu):
+    r"""Implement a differential form of a Lorentzian peak.
+    
+    Args:
+        x (array): x data
+        A (flaot): Peak amplitude
+        sigma (float): peak wideth
+        mu (float): peak location in x
+        
+        Returns 
+            :math:`\\frac{A \\sigma \\left(2 \\mu - 2 x\\right)}{\\pi \\left(\\sigma^{2} + \\left(- \\mu + x\\right)^{2}\\right)^{2}}`
+        """
+    return A*sigma*(2*mu - 2*x)/(pi*(sigma**2 + (-mu + x)**2)**2)
+
+class Lorentzian_diff(Model):
+    r"""lmfit Model rerprenting the differential form of a Lorentzian Peak.
+    
+    Args:
+        x (array): x data
+        A (flaot): Peak amplitude
+        sigma (float): peak wideth
+        mu (float): peak location in x
+        
+        Returns 
+            :math:`\\frac{A \\sigma \\left(2 \\mu - 2 x\\right)}{\\pi \\left(\\sigma^{2} + \\left(- \\mu + x\\right)^{2}\\right)^{2}}`
+    """
+    display_names=["A",r"\sigma",r"\mu"]
+
+    def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
+        super(Lorentzian_diff, self).__init__(lorentzian_diff, *args, **kwargs)
+    
+    def guess(self, data, x=None, **kwargs):
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+    
+        if x is None:
+            x=_np_.linspace(1,len(data),len(data)+1)
+            
+        x1=x[_np_.argmax(data)]
+        x2=x[_np_.argmin(data)]
+        sigma=abs(x1-x2)
+        mu=(x1+x2)/2.0
+        y1=_np_.max(data)
+        y2=_np_.min(data)
+        dy=y1-y2
+        A=dy*(4*_np_.pi*sigma**2)/(3*_np_.sqrt(3))
+
+        pars = self.make_params(A=A,sigma=sigma,mu=mu)
+        pars["A"].min=0
+        pars["sigma"].min=0
+        pars["mu"].min=_np_.min(x)
+        pars["mu"].max=_np_.max(x)
+        return update_param_vals(pars, self.prefix, **kwargs)
+    
+    
+def fmr_power(H,H_res,Delta_H,K_1,K_2):
+    """A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
+    
+    Args:
+        H (array) magnetic field data
+        H_res (float): Resonance field of peak
+        Delta_H (float): Preak wideth
+        K_1, K_2 (float): Relative weighting of each component.
+    
+    Returns:
+        Array of model absorption values.
+        
+    math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
+    """
+    return 4*Delta_H*K_1*(H - H_res)/(Delta_H**2 + 4*(H - H_res)**2)**2 - K_2*(Delta_H**2 - 4*(H - H_res)**2)/(Delta_H**2 + 4*(H - H_res)**2)**2
+
+class FMR_Power(Model):
+    """A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
+    
+    Args:
+        H (array) magnetic field data
+        H_res (float): Resonance field of peak
+        Delta_H (float): Preak wideth
+        K_1, K_2 (float): Relative weighting of each component.
+    
+    Returns:
+        Array of model absorption values.
+        
+    math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
+    """
+    display_names=["H_{res}",r"\Delta_H","K_1","K_2"]
+
+    def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
+        super(FMR_Power, self).__init__(fmr_power, *args, **kwargs)
+    
+    def guess(self, data, x=None, **kwargs):
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+    
+        if x is None:
+            x=_np_.linspace(1,len(data),len(data)+1)
+            
+        x1=x[_np_.argmax(data)]
+        x2=x[_np_.argmin(data)]
+        Delta_H=abs(x1-x2)
+        H_res=(x1+x2)/2.0
+        y1=_np_.max(data)
+        y2=_np_.min(data)
+        dy=y1-y2
+        K_2=dy*(4*_np_.pi*Delta_H**2)/(3*_np_.sqrt(3))
+        ay=(y1+y2)/2
+        K_1=ay*_np_.pi/Delta_H
+               
+
+        pars = self.make_params(Delta_H=Delta_H,H_res=H_res,K_1=K_1,K_2=K_2)
+        pars["K_1"].min=0
+        pars["K_2"].min=0
+        pars["Delta_H"].min=0
+        pars["H_res"].min=_np_.min(x)
+        pars["H_res"].max=_np_.max(x)
+        return update_param_vals(pars, self.prefix, **kwargs)

@@ -2,11 +2,11 @@ notifications:
   email:
     on_success: change # default: change
     on_failure: change # default: always
-    
+
 language: python
 python:
   - "2.7"
-  - "3.5"
+  - "3.6"
 # command to install dependencies
 
 # Setup anaconda
@@ -23,6 +23,7 @@ install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
+  - conda config --append channels phygbu
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
@@ -30,15 +31,12 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
-  - conda install --yes numpy numpy scipy matplotlib h5py seaborn
-  - conda install --yes blist pillow numba scikit-image
-  - conda install --yes -c neutronpy lmfit
-  - conda install --yes -c conda-forge tabulate
-  - pip install filemagic
-  - pip install tabulate
+  # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
+  - conda install --yes stoner
+  # Now we unistall the stable stoner
+  - conda remove --yes stoner
   - pip install opencv_python
   - pip install coveralls
-  - pip install npTDMS
   - pip install .
 
 before_script:

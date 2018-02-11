@@ -20,19 +20,21 @@ import os
 from copy import copy, deepcopy
 from skimage import color,exposure,feature,io,measure,\
                     filters,graph,util,restoration,morphology,\
-                    segmentation,transform,viewer
+                    segmentation,transform,viewer, draw
 from PIL import Image
 from PIL import PngImagePlugin #for saving metadata
 import matplotlib.pyplot as plt
-from Stoner.Core import typeHintedDict,metadataObject
+from Stoner.Core import typeHintedDict,metadataObject,regexpDict
 from Stoner.Image.util import convert
 from Stoner import Data
+from Stoner.tools import istuple,fix_signature
 from Stoner.compat import python_v3,string_types,get_filedialog # Some things to help with Python2 and Python3 compatibility
 import inspect
+from functools import wraps
 if python_v3:
-    from io import StringIO
+    from io import BytesIO as StreamIO
 else:
-    from cStringIO import StringIO
+    from cStringIO import StringIO as StreamIO
 
 
 
@@ -52,7 +54,7 @@ dtype_range = {np.bool_: (False, True),
 
 
     
-class ImageArray(np.ndarray,metadataObject):
+class ImageArray(np.ma.MaskedArray,metadataObject):
     
     """:py:class:`Stoner.Image.core.ImageArray` is a numpy array like class with a metadata parameter and pass through to skimage methods. 
     
@@ -104,13 +106,19 @@ class ImageArray(np.ndarray,metadataObject):
     """
 
     #Proxy attributess for storing imported functions. Only do the import when needed
-    _ski_funcs_proxy=None
-    _kfuncs_proxy=None
+    _func_proxy=None
+
     #extra attributes for class beyond standard numpy ones
     _extra_attributes_default = {'metadata': typeHintedDict({}),
                                  'filename': ''}
+    
+    #Default values for when we can't find the attribute already
+    _defaults={"debug":False, "_hardmask":False}
 
     #now initialise class
+    
+    if not python_v3: # Ugh what a horrible hack!
+        _mask = np.ma.MaskedArray([]).mask
 
     def __new__(cls, *args, **kargs):
         """Construct an ImageArray object.
@@ -124,7 +132,7 @@ class ImageArray(np.ndarray,metadataObject):
             raise ValueError('ImageArray expects 0 or 1 arguments, {} given'.format(len(args)))
             
         ### Deal with kwargs
-        array_arg_keys = ['dtype','copy','order','subok','ndmin'] #kwargs for array setup
+        array_arg_keys = ['dtype','copy','order','subok','ndmin',"mask"] #kwargs for array setup
         array_args = {k:kargs.pop(k) for k in array_arg_keys if k in kargs.keys()}
         user_metadata = kargs.pop('metadata',{})
         asfloat = kargs.pop('asfloat', False) or kargs.pop('convert_float',False) #convert_float for back compatability
@@ -193,18 +201,20 @@ class ImageArray(np.ndarray,metadataObject):
         Defaults below are only set when constructing an array using view
         eg np.arange(10).view(ImageArray). Otherwise filename and metadata
         attributes are just copied over (plus any other attributes set in 
-        _extra_attributes).
+        _optinfo).
         """
         if getattr(self, 'debug',False):
-            print(type(self), type(obj))
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 2)
-            print('caller name:', calframe[1][3])
-        _extra_attributes = getattr(obj, '_extra_attributes', 
+        _extra_attributes = getattr(obj, '_optinfo', 
                                 deepcopy(ImageArray._extra_attributes_default))
-        setattr(self, '_extra_attributes', copy(_extra_attributes))
+        setattr(self, '_optinfo', copy(_extra_attributes))
         for k,v in _extra_attributes.items():
-            setattr(self, k, getattr(obj, k, v))       
+            setattr(self, k, getattr(obj, k, v))
+        super(ImageArray,self).__array_finalize__(obj)
+
+    def __array_prepare__(self,arr, context=None):
+        return super(ImageArray,self).__array_prepare__(arr,context)
 
     def __array_wrap__(self, out_arr, context=None):
         """Part of the numpy array machinery.
@@ -212,7 +222,7 @@ class ImageArray(np.ndarray,metadataObject):
         see __array_finalize__ for info. This is for if ImageArray is called 
         via ufuncs. array_finalize is called after.
         """
-        ret=np.ndarray.__array_wrap__(self, out_arr, context)
+        ret=super(ImageArray,self).__array_wrap__(out_arr, context)
         return ret
 
     def __init__(self, *args, **kwargs):
@@ -347,17 +357,26 @@ class ImageArray(np.ndarray,metadataObject):
     def aspect(self):
         """Return the aspect ratio (width/height) of the image."""
         return float(self.shape[1])/self.shape[0]
+    
+    @property
+    def centre(self):
+        return tuple(np.array(self.shape)/2.0)
 
     @property
     def clone(self):
         """return a copy of the instance"""
         ret = ImageArray(np.copy(self))
-        for k,v in self._extra_attributes.items():
+        for k,v in self._optinfo.items():
             try:
                 setattr(ret, k, deepcopy(v))
             except Exception:
                 setattr(ret,k,copy(v))
-        return ret        
+        return ret
+
+    @property
+    def flat(self):
+        """MaskedArray.flat doesn't work the same as array.flat."""
+        return np.asarray(self).flat        
 
     @property
     def max_box(self):
@@ -365,10 +384,10 @@ class ImageArray(np.ndarray,metadataObject):
         box=(0,self.shape[1],0,self.shape[0])
         return box
 
-    @property
-    def data(self):
-        """alias for image[:]. Equivalence to Stoner.data behaviour"""
-        return self[:]
+#    @property
+#    def data(self):
+#        """alias for image[:]. Equivalence to Stoner.data behaviour"""
+#        return self[:]
     
     @property
     def CW(self):
@@ -379,132 +398,166 @@ class ImageArray(np.ndarray,metadataObject):
     def CCW(self):
         """Rotate counter-clockwise by 90 deg."""
         return self.T[::-1,:]
-    
-    @property
-    def _kfuncs(self):
-        """Provide an attribtute that caches the imported ImageArray functions."""
-        if self._kfuncs_proxy is None:
-            from . import imagefuncs
-            self._kfuncs_proxy=imagefuncs
-        return self._kfuncs_proxy
 
     @property
-    def _ski_funcs(self):
-        """Provide an attribute that cahces the import sckit-image function names."""
-        if self._ski_funcs_proxy is None:
+    def _funcs(self):
+        """Return an index of possible callable functions in other modules, caching result if not alreadty there.
+        
+        Look in Stoner.Image.imagefuncs, scipy.ndimage.* an d scikit.* for functions. We assume that each function
+        takes a first argument that is an ndarray of image data, so with __getattrr__ and _func_generator we
+        can make a bound method through duck typing."""
+        if self._func_proxy is None: #Buyild the cache
+            func_proxy=regexpDict() # Cache is a regular expression dictionary - keys matched directly and then by regular expression
+            
+            # Get the Stoner.Image.imagefuncs mopdule first
+            from .import imagefuncs
+            for d in dir(imagefuncs):
+                if not d.startswith("_"):
+                    func=getattr(imagefuncs,d)
+                    if callable(func) and func.__module__==imagefuncs.__name__:
+                        name="{}__{}".format(func.__module__,d).replace(".","__")
+                        func_proxy[name]=func
+                        
+            #Add scipy.ndimage functions
+            import scipy.ndimage as ndi
+            _sp_mods=[ndi.interpolation,ndi.filters,ndi.measurements,ndi.morphology,ndi.fourier]
+            for mod in _sp_mods:
+                for d in dir(mod):
+                    if not d.startswith("_"):
+                        func=getattr(mod,d)
+                        if callable(func) and func.__module__==mod.__name__:
+                            func.transpose=True
+                            name="{}__{}".format(func.__module__,d).replace(".","__")
+                            func_proxy[name]=func
+            #Add the scikit images modules
             _ski_modules=[color,exposure,feature,io,measure,filters,filters.rank, graph,
                     util, restoration, morphology, segmentation, transform,
                     viewer]
-            self._ski_funcs_proxy={}
             for mod in _ski_modules:
-                self._ski_funcs_proxy[mod.__name__] = (mod, dir(mod))
-        return self._ski_funcs_proxy
-        
-
+                for d in dir(mod):
+                    if not d.startswith("_"):
+                        func=getattr(mod,d)
+                        if callable(func):
+                            name="{}__{}".format(func.__module__,d).replace(".","__")
+                            func_proxy[name]=func
+            self._func_proxy=func_proxy # Store the cache
+        return self._func_proxy
 
 #==============================================================
 #function generator
 #==============================================================
     def __dir__(self):
         """Implement code for dir()"""
-        kfuncs=set(dir(self._kfuncs))
-        skimage=set()
-        mods=list(self._ski_funcs.keys())
-        mods.reverse()
-        for k in mods:
-            skimage|=set(self._ski_funcs[k][1])
+        proxy=set(list(self._funcs.keys()))
         parent=set(dir(super(ImageArray,self)))
         mine=set(dir(ImageArray))
-        return list(skimage|kfuncs|parent|mine)
+        return sorted(list(proxy|parent|mine))
     
     def __getattr__(self,name):
-        """run when asking for an attribute that doesn't exist yet. 
+        """Magic attribute access method. 
         
-        It looks first in imagefuncs.py then in skimage functions for a match. If
-        it finds it it returns a copy of the function that automatically adds
-        the image as the first argument.
-        skimage functions can be called by module_func notation
-        with the underscore sep eg im.exposure_rescale_intensity, or it can simply
-        be the function with no module given in which case the entire directory
-        is searched and the first hit is returned im.rescale_intensity.
-        Note that numpy is already subclassed so numpy funcs are highest on the
-        heirarchy, followed by imagefuncs, followed by skimage funcs
-        Also note that the function named must take image array as the
-        first argument
+        Tries first to get the attribute via a superclass call, if this fails
+        checks for some well known attribute names and supplies missing defaults.
+        
+        To handle magic calls into other modules, we have a regular expression dicitonary
+        that stores and index of callables by full name where the . are changed to __
+        If we can get a match to __<name> then we get that callable from our index.
+        
+        The callable is then passed to self._func_generator for wrapping into a
+        'on the fly' method of this class.
 
-
-        An alternative nested attribute system could be something like
-        http://stackoverflow.com/questions/31174295/getattr-and-setattr-on-nested-objects
-        might be cool sometime.
+        TODO:
+            An alternative nested attribute system could be something like
+            http://stackoverflow.com/questions/31174295/getattr-and-setattr-on-nested-objects
+            might be cool sometime.
         """
         ret=None
         try:
-            ret=super(ImageArray,self).__getattr__(name)
-        except AttributeError:
+            ret=getattr(super(ImageArray,self),name)
+        except AttributeError as e:
         #first check kermit funcs
-            if name.startswith('_'):
-                pass
-            elif name in dir(self._kfuncs):
-                workingfunc=getattr(self._kfuncs,name)
-                ret=self._func_generator(workingfunc)
-            elif '_' in name: #ok we might have a skimage module_function request
-                t=name.split('_')
-                t[1]='_'.join(t[1:]) #eg rescale_intensity needs stitching back together
-                t = ['skimage.'+t[0],t[1]]
-                if t[0] in self._ski_funcs.keys():
-                    if t[1] in self._ski_funcs[t[0]][1]:
-                        workingfunc=getattr(self._ski_funcs[t[0]][0],t[1])
-                        ret=self._func_generator(workingfunc)        
-            if ret is None: #Ok maybe just a request for an skimage func, no module
-                for key in self._ski_funcs.keys(): #now look in skimage funcs
-                    if name in self._ski_funcs[key][1]:
-                        workingfunc=getattr(self._ski_funcs[key][0],name)
-                        ret=self._func_generator(workingfunc)
-                        break
-
-        if ret is None:
-            raise AttributeError('No attribute found of name {}'.format(name))
+            if name.startswith('_') or name in ["debug"]:
+                if name=="_hardmask":
+                    ret=False
+            elif ".*__{}$".format(name) in self._funcs:
+                ret=self._funcs[".*__{}$".format(name)]
+                ret=self._func_generator(ret)
+            if ret is None:
+                raise AttributeError('No attribute found of name {}'.format(name))
         return ret
     
     def _func_generator(self,workingfunc):
-        """generate a function that adds self as the first argument"""
-
+        """Used by __getattr__ to wrap an arbitary callbable to make it a bound method of this class.
+        
+        Args:
+            workingfunc (callable): The callable object to be wrapped.
+            
+        Returns:
+            (function): A function with enclosure that holds additional information about this object.
+            
+        The function returned from here will call workingfunc with the first argument being a clone of this
+        ImageArray. If the meothd returns an ndarray, it is wrapped back to our own class and the metadata dictionary
+        is updated. If the function returns a :py:class:`Stoner.Data` object then this is also updated with our metadata.
+        
+        This method also updates the name and documentation strings for the wrapper to match the wrapped function - 
+        thus ensuring that Spyder's help window can generate useful information.
+        
+        """
+        @wraps(workingfunc)
         def gen_func(*args, **kwargs):
-            r=workingfunc(self.clone, *args, **kwargs) #send copy of self as the first arg
+            transpose = getattr(workingfunc,"transpose",False)
+            if transpose:
+                change=self.clone.T
+            else:
+                change=self.clone
+            r=workingfunc(change, *args, **kwargs) #send copy of self as the first arg
             if isinstance(r,Data):
                 pass #Data return is ok
             elif isinstance(r,np.ndarray) and np.prod(r.shape)==np.max(r.shape): #1D Array
                 r=Data(r)
                 r.metadata=self.metadata.copy()
                 r.column_headers[0]=workingfunc.__name__
-            elif isinstance(r,np.ndarray) and not isinstance(r,ImageArray): #make sure we return a ImageArray
-                r=r.view(type=ImageArray)
-                r.metadata=self.metadata.copy()
+            elif isinstance(r,np.ndarray): #make sure we return a ImageArray
+                if transpose:
+                    r=r.view(type=self.__class__).T
+                else:
+                    r=r.view(type=self.__class__)
+                sm=self.metadata.copy() #Copy the currenty metadata
+                sm.update(r.metadata) # merge in any new metadata from the call
+                r.metadata=sm  # and put the returned metadata as the merged data
             #NB we might not be returning an ndarray at all here !
             return r
-        gen_func.__doc__=workingfunc.__doc__
-        gen_func.__name__=workingfunc.__name__
-        return gen_func 
+        return fix_signature(gen_func,workingfunc)
+
+    @property
+    def draw(self):
+        """DrawProxy is an opbject for accessing the skimage draw sub module."""
+        return DrawProxy(self)
+
+#==============================================================================
+# OTHER SPECIAL METHODS
+#==============================================================================
     
     def __setattr__(self, name, value):
         """Set an attribute on the object."""
         super(ImageArray, self).__setattr__(name, value)
         #add attribute to those for copying in array_finalize. use value as
         #defualt.
-        circ = ['_extra_attributes'] #circular references
-        proxy = ['_kfuncs_proxy', '_ski_funcs_proxy'] #can be reloaded for cloned arrays
+        circ = ['_optinfo'] #circular references
+        proxy = ['_funcs'] #can be reloaded for cloned arrays
         if name in circ + proxy: 
             #Ignore these in clone
             pass
         else:
-            self._extra_attributes.update({name:value})
+            self._optinfo.update({name:value})
         
     def __getitem__(self,index):
         """Patch indexing of strings to metadata."""
         if getattr(self,"debug",False):
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 2)
-            print('caller name:', calframe[1][3])
+        if isinstance(index,ImageFile) and index.image.dtype==bool:
+            index=index.image
         if isinstance(index,string_types):
             return self.metadata[index]
         else:
@@ -513,6 +566,8 @@ class ImageArray(np.ndarray,metadataObject):
 
     def __setitem__(self,index,value):
         """Patch string index through to metadata."""
+        if isinstance(index,ImageFile) and index.dtype==bool:
+            index=index.image
         if isinstance(index,string_types):
             self.metadata[index]=value
         else:
@@ -576,6 +631,11 @@ class ImageArray(np.ndarray,metadataObject):
                 box = self.draw_rectangle(box)
             elif isinstance(box, (tuple,list)) and len(box)==4:
                 pass
+            elif isinstance(box,int):
+                box=(box,self.shape[1]-box,box,self.shape[0]-box)
+            elif isinstance(box,float):
+                box=[round(self.shape[1]*box/2),round(self.shape[1]*(1-box/2)),round(self.shape[1]*box/2),round(self.shape[1]*(1-box/2))]
+                box=tuple([int(x) for x in box])
             else:
                 raise ValueError('crop accepts tuple of length 4, {} given.'.format(len(box)))
         else:
@@ -627,19 +687,6 @@ class ImageArray(np.ndarray,metadataObject):
             ret = ret.clip_negative()
         return ret
     
-    def normalise(self):
-        """Normalise the image to -1,1.
-        """
-        if self.dtype.kind != 'f':
-            ret  = self.asfloat(normalise=False) #bit dodgy here having normalise in asfloat
-        else:
-            ret = self
-        norm=np.linalg.norm(ret)
-        if norm==0: 
-            raise RuntimeError('Attempting to normalise an array with only 0 values')
-        ret = ret / norm
-        return ret
-
     def clip_intensity(self):
         """prefer ImageArray.normalise 
         
@@ -816,6 +863,11 @@ class ImageFile(metadataObject):
         """alias for image[:]. Equivalence to Stoner.data behaviour"""
         return self.image
     
+    @data.setter
+    def data(self,value):
+        """Simple minded pass through."""
+        self.image=value
+    
     @property
     def CW(self):
         """Rotate clockwise by 90 deg."""
@@ -858,6 +910,20 @@ class ImageFile(metadataObject):
         self.image.filename=value
         
     @property
+    def mask(self):
+        """Get the mask of the underlying IamgeArray."""
+        return MaskProxy(self)
+    
+    @mask.setter
+    def mask(self,value):
+        """Set the underlying ImageArray's mask."""
+        if isinstance(value,ImageFile):
+            value=value.image
+        if isinstance(value,MaskProxy):
+            value=value._mask
+        self.image.mask=value
+        
+    @property
     def metadata(self):
         """Intercept metadata and redirect to image.metadata."""
         return self.image.metadata
@@ -868,6 +934,14 @@ class ImageFile(metadataObject):
 
     #####################################################################################################################################
     ############################# Special methods #######################################################################################            
+
+    def __dir__(self):
+        """Implement code for dir()"""
+        proxy=set(dir(self.image))
+        parent=set(dir(super(ImageFile,self)))
+        mine=set(dir(ImageFile))
+        return sorted(list(proxy|parent|mine))
+
     
     def __getitem__(self, n):
         """A pass through to ImageArray."""
@@ -898,7 +972,7 @@ class ImageFile(metadataObject):
             ret=super(ImageFile,self).__getattr__(n)
         except AttributeError:
             ret = getattr(self.image, n)
-            if hasattr(ret, '__call__'): #we have a method
+            if callable(ret): #we have a method
                 ret = self._func_generator(ret) #modiy so that we can change image in place
         return ret
 
@@ -908,6 +982,90 @@ class ImageFile(metadataObject):
             setattr(self._image,n,v)
         else:
             super(ImageFile,self).__setattr__(n, v)
+
+    def __add__(self,other):
+        """Implement the subtract operator"""
+        result=self.clone
+        result=self.__add_core__(result,other)
+        return result
+
+    def __iadd__(self,other):
+        """Implement the inplace subtract operator"""
+        result=self
+        result=self.__add_core__(result,other)
+        return result
+    
+    def __add_core__(self,result,other):
+        """Actually do result=result-other."""
+        if isinstance(other,result.__class__) and result.shape==other.shape:
+            result.image+=other.image
+        elif isinstance(other,np.ndarray) and other.shape==result.shape:
+            result.image+=other            
+        elif isinstance(other,(int,float)):
+            result.image+=other
+        else:
+            return NotImplemented
+        return result
+    
+    if python_v3:        
+        def __truediv__(self,other):
+            """Implement the divide operator"""
+            result=self.clone
+            result=self.__div_core__(result,other)
+            return result
+    
+        def __itruediv__(self,other):
+            """Implement the inplace divide operator"""
+            result=self
+            result=self.__div_core__(result,other)
+            return result
+    else:
+        def __div__(self,other):
+            """Implement the divide operator"""
+            result=self.clone
+            result=self.__div_core__(result,other)
+            return result
+    
+        def __idiv__(self,other):
+            """Implement the inplace divide operator"""
+            result=self
+            result=self.__div_core__(result,other)
+            return result
+        
+
+    def __div_core__(self,result,other):
+        """Actually do result=result/other."""
+        #Cheat and pass through to ImageArray
+        
+        if isinstance(other,ImageFile):
+            other=other.image
+        
+        result.image=result.image/other
+        return result
+
+    def __sub__(self,other):
+        """Implement the subtract operator"""
+        result=self.clone
+        result=self.__sub_core__(result,other)
+        return result
+
+    def __isub__(self,other):
+        """Implement the inplace subtract operator"""
+        result=self
+        result=self.__sub_core__(result,other)
+        return result
+    
+    def __sub_core__(self,result,other):
+        """Actually do result=result-other."""
+        if isinstance(other,result.__class__) and result.shape==other.shape:
+            result.image-=other.image
+        elif isinstance(other,np.ndarray) and other.shape==result.shape:
+            result.image-=other            
+        elif isinstance(other,(int,float)):
+            result.image-=other
+        else:
+            return NotImplemented
+        return result
             
     def __neg__(self):
         """Intelliegent negate function that handles unsigned integers."""
@@ -941,9 +1099,18 @@ class ImageFile(metadataObject):
         of the same shape as our current image then
         use that to update image attribute, otherwise return given output.
         """
+        @wraps(workingfunc)
         def gen_func(*args, **kargs):
+
+            if len(args)>0:
+                args=list(args)
+                for ix,a in enumerate(args):
+                    if isinstance(a,ImageFile):
+                        args[ix]=a.image
+
+            force=kargs.pop("_",False)
             r = workingfunc(*args, **kargs)
-            if isinstance(r,ImageArray) and r.shape==self.image.shape:
+            if isinstance(r,ImageArray) and (force or r.shape==self.image.shape):
                 #Enure that we've captured any metadata added inside the working function
                 self.metadata.update(r.metadata)
                 #Now swap the iamge in, but keep the metadata
@@ -955,16 +1122,13 @@ class ImageFile(metadataObject):
                 return self
             else:
                 return r
-        
-        gen_func.__doc__=workingfunc.__doc__
-        gen_func.__name__=workingfunc.__name__
-        return gen_func            
+        return fix_signature(gen_func,workingfunc)
                 
     def _repr_png_(self):
         """Provide a display function for iPython/Jupyter."""
         fig=self.image.imshow()
         plt.title(self.filename)
-        data=StringIO()
+        data=StreamIO()
         fig.savefig(data,format="png")
         plt.close(fig)
         data.seek(0)
@@ -1039,3 +1203,192 @@ class ImageFile(metadataObject):
         tiffname = os.path.splitext(filename)[0] + '.tiff'
         im.save(tiffname,tiffinfo=ifd)
             
+class DrawProxy(object):
+    """Provides a wrapper around scikit-image.draw to allow easy drawing of objects onto images."""
+    
+    def __init__(self,*args,**kargs):
+        """Grab the parent image from the constructor."""
+        self.img = args[0]
+        
+    def __getattr__(self,name):
+        """Retiurn a callable function that will carry out the draw operation requested."""
+        func=getattr(draw,name)
+        @wraps(func)
+        def _proxy(*args,**kargs):
+            value=kargs.pop("value",np.ones(1,dtype=self.img.dtype)[0])
+            coords=func(*args,**kargs)
+            self.img[coords]=value
+            return self.img
+        
+        return fix_signature(_proxy,func)
+    
+    def __dir__(self):
+        """Pass through to the dir of skimage.draw."""
+        return draw.__dir__()
+    
+    def annulus(self,r,c,radius1,radius2,shape=None,value=1.0):
+        """Use a combination of two circles to draw and annulus.
+        
+        Args:
+            r,c (float): Centre co-ordinates
+            radius1,radius2 (float): Inner and outer radius.
+            
+        Keyword Arguments:
+            shape (2-tuple, None): Confine the co-ordinates to staywith shape
+            value (float): value to draw with
+        Returns:
+            A copy of the image with the annulus drawn on it.
+        
+        Notes:
+            If radius2<radius1 then the sense of the whole shape is inverted
+            so that the annulus is left clear and the filed is filled. 
+        """
+        if shape is None:
+            shape=self.img.shape
+        invert=radius2<radius1
+        if invert:
+            buf=np.ones(shape)
+            fill=0.0
+            bg=1.0
+        else:
+            buf=np.zeros(shape)
+            fill=1.0
+            bg=2.0
+        radius1,radius2=min(radius1,radius2),max(radius1,radius2)
+        rr,cc=draw.circle(r,c,radius2,shape=shape)
+        buf[rr,cc]=fill
+        rr,cc=draw.circle(r,c,radius1,shape=shape)
+        buf[rr,cc]=bg
+        self.img=np.where(buf==1,value,self.img)
+        return self.img
+    
+    def rectangle(self,r,c,w,h,angle=0.0,shape=None,value=1.0):
+        """Draw a rectangle on an image.
+        
+        Args:
+            r,c (float): Centre co-ordinates
+            w,h (float): Lengths of the two sides of the rectangle
+            
+        Keyword Arguments:
+            angle (float): Angle to rotate the rectangle about
+            shape (2-tuple or None): Confine the co-ordinates to this shape.
+            value (float): The value to draw with.
+            
+        Returns:
+            A copy of the current image with a rectangle drawn on.
+        """
+        if shape is None:
+            shape=self.img.shape
+
+        x1=r-h/2
+        x2=r+h/2
+        y1=c-w/2
+        y2=c+w/2
+        co_ords=np.array([[x1,y1],[x2,y1],[x2,y2],[x1,y2]])
+        if angle!=0:
+            centre=np.array([r,c])
+            c,s,m=np.cos,np.sin,np.matmul
+            r=np.array([[c(angle),-s(angle)],[s(angle),c(angle)]])
+            co_ords=np.array([centre+m(r,xy-centre) for xy in co_ords])
+        rr,cc=draw.polygon(co_ords[:,0],co_ords[:,1],shape=shape)
+        self.img[rr,cc]=value
+        return self.img
+
+    def square(self,r,c,w,angle=0.0,shape=None,value=1.0):
+        """Draw a square on an image.
+        
+        Args:
+            r,c (float): Centre co-ordinates
+            w (float): Length of the side of the square
+            
+        Keyword Arguments:
+            angle (float): Angle to rotate the rectangle about
+            shape (2-tuple or None): Confine the co-ordinates to this shape.
+            value (float): The value to draw with.
+            
+        Returns:
+            A copy of the current image with a rectangle drawn on.
+        """
+        return self.rectangle(r,c,w,w,angle=angle,shape=shape,value=value)
+
+
+class MaskProxy(object):
+    
+    @property
+    def _IA(self):
+        return self._IF.image
+    
+    @property
+    def _mask(self):
+        self._IA.mask=np.ma.getmaskarray(self._IA)
+        return self._IA.mask   
+    
+    @property
+    def draw(self):
+        return DrawProxy(self._mask)
+    
+    def __init__(self,*args,**kargs):
+        """Keep track of the underlying objects."""
+        self._IF=args[0]
+        
+    def __getitem__(self,index):
+        """Proxy through to mask index."""
+        return self._mask.__getitem__(index)
+    
+    def __setitem__(self,index,value):
+        """Proxy through to underlying mask."""
+        self._IA.mask.__setitem__(index,value)
+        
+    def __delitem__(self,index):
+        """Proxy through to underyling mask."""
+        self._IA.mask.__delitem__(index)
+        
+    def __getattr__(self,name):
+        """Checks name against self._IA._funcs and constructs a method to edit the mask as an image."""
+        if hasattr(self._IA.mask,name):
+            return getattr(self._IA.mask,name)
+        if not ".*__{}$".format(name) in self._IA._funcs:
+            raise AttributeError("{} not a callable mask method.".format(name))
+        func=self._IA._funcs[".*__{}$".format(name)]
+        @wraps(func)
+        def _proxy_call(*args,**kargs):
+            r=func(self._mask.astype(int),*args,**kargs)
+            if isinstance(r,np.ndarray) and r.shape==self._IA.shape:
+                self._IA.mask=r
+            return r
+        _proxy_call.__doc__=func.__doc__
+        _proxy_call.__name__=func.__name__
+        return fix_signature(_proxy_call,func)
+    
+    def __rep__(self):
+        return repr(self._mask)
+    
+    def __str__(self):
+        return repr(self._mask)
+    
+    def __neg__(self):
+        return -self._mask
+    
+    def _repr_png_(self):
+        """Provide a display function for iPython/Jupyter."""
+        fig=self._IA._funcs[".*imshow"](self._mask.astype(int))
+        data=StreamIO()
+        fig.savefig(data,format="png")
+        plt.close(fig)
+        data.seek(0)
+        ret=data.read()
+        data.close()
+        return ret
+    
+    def clear(self):
+        """Clear a mask."""
+        self._IA.mask=np.zeros_like(self._IA)
+        
+    def invert(self):
+        """Invert the mask."""
+        self._IA.mask=-self._IA.mask
+        
+        
+        
+        
+        

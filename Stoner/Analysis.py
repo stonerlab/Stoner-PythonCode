@@ -4,19 +4,23 @@ Provides  :py:class:`AnalysisMixin` - DataFile with extra bells and whistles.
 """
 
 __all__ = ["AnalysisMixin"]
+from inspect import isclass
+from warnings import warn
 
-from .compat import python_v3,string_types,int_types,index_types,LooseVersion
-from .tools import isNone,isiterable,all_type
 import numpy as _np_
 import numpy.ma as ma
+
+import scipy as _sp_
+from scipy.odr import Model as odrModel
 from scipy.integrate import cumtrapz
-from scipy.signal import get_window,convolve
-from scipy.interpolate import interp1d,  UnivariateSpline
+from scipy.signal import get_window, convolve
+from scipy.interpolate import interp1d, UnivariateSpline
 from scipy.optimize import curve_fit,newton
 from scipy.signal import savgol_filter
-from inspect import isclass
-from collections import Iterable
-from warnings import warn
+
+from .compat import python_v3, string_types, int_types, index_types, LooseVersion
+from .tools import isNone, isiterable, all_type, istuple
+
 try:  #Allow lmfit to be optional
     import lmfit
     if LooseVersion(lmfit.__version__)<LooseVersion("0.9.0"):
@@ -32,15 +36,62 @@ except ImportError:
 from copy import deepcopy as copy
 #from matplotlib.pylab import * #Surely not?
 if python_v3:
-    from inspect import getfullargspec as getargspec
+    from inspect import getfullargspec
 else:
-    from inspect import getargspec
+    from inspect import getargspec as getfullargspec
 
 
 #==========================================================================================================================================
 # Module Private Functions
 #==========================================================================================================================================
 
+
+class _odr_Model(odrModel):
+
+    """A wrapper for converting lmfit models to odr models."""
+
+    def __init__(self,*args,**kargs):
+        """Initialise with lmfit.models.Model or callable."""
+        meta=kargs.pop("meta",dict())
+        if args:
+            args=list(args)
+            model=args.pop(0)
+        else:
+            raise RuntimeError("Need at least one argument to make a fitting model.""")
+
+        if isclass(model) and issubclass(model,Model): #Instantiate if only a class passed in
+            model=model()
+        if isinstance(model,Model):
+            self.model=model
+            model=lambda beta,x,**kargs: self.model.func(x,*beta,**kargs)
+            meta["param_names"]=self.model.param_names
+            meta["name"]=self.model.__class__.__name__
+        elif callable(model):
+            self.model=None
+            meta["name"]=model.__name__
+            arguments,carargs,jeywords,defaults=getfullargspec(model)[0:4] # pylint: disable=W1505
+            meta["param_names"]=list(arguments[1:])
+            #print(arguments,carargs,jeywords,defaults)
+            func=model
+            def model(beta,x,**_): # pylint: disable=E0102
+                """Warapper for model function."""
+                return func(x,*beta)
+        p0=kargs.pop("p0",kargs.pop("estimate",None))
+        if p0 is None or len(p0)!=len(meta["param_names"]):
+            p0=list()
+            for k in meta["param_names"]:
+                if k in kargs:
+                    p0.append(kargs.pop(k))
+                elif hasattr(self.model,"param_hints") and k in self.model.param_hints:
+                    p0.append(self.model.param_hints[k]["value"])
+                else:
+                    raise RuntimeError(("You must either supply a p0 of length {} or supply a value for keyword "+
+                                       "{} for your model function").format(len(meta["param_names"]),k))
+        kargs["estimate"]=p0
+
+        kargs["meta"]=meta
+
+        super(_odr_Model,self).__init__(model,*args,**kargs)
 
 
 def _lmfit_p0_dict(p0,model):
@@ -64,6 +115,80 @@ def _lmfit_p0_dict(p0,model):
     #p0={p0[k] for k in model.param_names}
     return p0
 
+def _prep_lmfit_model(model,p0,kargs):
+    """Prepare an lmfit model instance.
+
+    Arguments:
+        model (lmfit Model class or instance, or callable): the model to be fitted to the data.
+        p0 (iterable or floats): The initial values of the fitting parameters.
+        kargs (dict):Other keyword arguments passed to the fitting function
+
+    Returns:
+        model,p0, prefix (lmfit.Model instance, iterable, str)
+
+    Converts the model parameter into an instance of lmfit.Model - either by instantiating the class or wrapping a
+    callable into an lmfit.Model class. If the latter, then determines the p0 starting parameter vector and finally
+    establishes a prefix string from the model if not provided in the keyword arguments.
+    """
+    if Model is None:  #Will be the case if lmfit is not imported.
+        raise RuntimeError(
+            "To use the lmfit function you need to be able to import the lmfit module\n Try pip install lmfit\nat a command prompt.")
+
+    if isinstance(model, Model):
+        pass
+    elif isclass(model) and issubclass(model,Model):
+        model=model()
+    elif callable(model):
+        model=Model(model)
+        if p0 is None or len(p0)!=len(model.param_names):
+            p0=dict()
+            for k in model.param_names:
+                if k not in kargs:
+                    raise RuntimeError(("You must either supply a p0 of length {} or supply a value for keyword {} for your model"+
+                                        "function {}").format(len(model.param_names),k,model.func.__name__))
+                else:
+                    p0[k] = kargs[k]
+    else:
+        raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
+
+    prefix = str(kargs.pop("prefix",  model.__class__.__name__))
+    if prefix!="":
+        prefix+=":"
+
+    return model,p0,prefix
+
+def _prep_lmfit_p0(model,ydata,xdata,p0,kargs):
+    """Prepare the initial start vector for an lmfit.
+
+    Arguments:
+        model (lmfit.Model instance): model to fit with
+        ydata,xdata (array): y and x data ppoints for fitting
+        p0 (iterable of float): Existing p0 vector if defined
+        kargs (dict): Other keyword arguments for the lmfit method.
+
+    Returns:
+        p0,single_fit (iterable of floats, bool): The revised initial starting vector and whether this is a single fit operation.
+    """
+    if p0 is not None:
+        if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
+            if p0.shape[0]==1: # Actually a single fit
+                p0=_lmfit_p0_dict(p0[0],model)
+                single_fit=True
+            else: # Is chi^2 mapping
+                single_fit=False
+        else:
+            p0=_lmfit_p0_dict(p0,model)
+            single_fit=True
+    else: #Do we already have parameter hints ?
+        check=True
+        single_fit = True
+        for p in model.param_names:
+            check&=p in model.param_hints and "value" in model.param_hints[p]
+        if not check: # Ok, param_hints didn't have all the parameter values setup.
+            p0=model.guess(ydata,x=xdata)
+            p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
+    return p0,single_fit
+
 def _outlier(row, column, window, metric):
     """Internal function for outlier detector.
 
@@ -75,23 +200,18 @@ def _outlier(row, column, window, metric):
     return abs(row[column] - av) > metric * std
 
 
-def _threshold(threshold, data, rising=True, falling=False, interpolate=True):
-    """ Internal function that implements the threshold method - also used in peak-finder
+def _threshold(threshold, data, rising=True, falling=False):
+    """Internal function that implements the threshold method - also used in peak-finder
 
     Args:
         threshold (float): Threshold valuye in data to look for
         rising (bool): Find points where data is rising up past threshold
         falling (bool): Find points where data is falling below the threshold
-        interpolate (bool): if interpolate find fractional indicies of crossing 
-                           (slower but more precise), otherwise integer indices
-                           are returned.
 
     Returns:
-        A numpy array of fractional (or integer if interpolate is False) indices 
-        where the data has crossed the threshold assuming a
+        A numpy array of fractional indices where the data has crossed the threshold assuming a
         straight line interpolation between two points.
     """
-
     # First we find all points where we cross zero in the correct direction
     current = data
     previous = _np_.roll(current, 1)
@@ -108,26 +228,20 @@ def _threshold(threshold, data, rising=True, falling=False, interpolate=True):
 
     # Now we refine the estimate of zero crossing with a cubic interpolation
     # and use Newton's root finding method to locate the zero in the interpolated data
-    
-    if interpolate:
-        intr=interp1d(index,data.ravel()-threshold,kind="cubic")
-        roots=[]
-        for ix in range(sdat.shape[0]):
-            x=sdat[ix]
-            if expr(x): # There's a root somewhere here !
-                try:
-                    roots.append(newton(intr,ix))
-                except ValueError: # fell off the end here
-                    pass
-    else:
-        roots=[]
-        for i in range(1,len(index)): #first point cannot be a thresh
-            if expr(sdat[i]):
-                roots.append(i)
+
+    intr=interp1d(index,data.ravel()-threshold,kind="cubic")
+    roots=[]
+    for ix in range(sdat.shape[0]):
+        x=sdat[ix]
+        if expr(x): # There's a root somewhere here !
+            try:
+                roots.append(newton(intr,ix))
+            except ValueError: # fell off the end here
+                pass
     return _np_.array(roots)
 
 def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
-    """Calculae an optimal transformation of points :math:`(x_1,y_1)\\rightarrow(x_2,y_2)`.
+    r"""Calculae an optimal transformation of points :math:`(x_1,y_1)\rightarrow(x_2,y_2)`.
 
     Arguments:
         xy1 ( (n,2) array of float): Set of points to be mapped from.
@@ -151,7 +265,6 @@ def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
         balues of the free parameters. Which elelemnts of *m0* that are free parameters and which are fixed is determined by the *xmode*
         and *ymode* parameters. IF *xmode* and *ymode* are both fixed, however, no scaling is done at all.
     """
-
     if xy1.shape!=xy2.shape or xy1.shape[1]!=2:
         raise RuntimeError("co-ordinate arrays must be equal length with two columns, not {} and {}".format(xy1.shape,xy2.shape))
     xvarp={"affine":[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]],
@@ -197,6 +310,7 @@ def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
     result=_np_.zeros(len(xy1))
 
     def transform(xy,*p):#Construct the fitting function
+        """Fitting function to find the transfoprm."""
         xy1=_np_.column_stack((xy[:2,:].T,_np_.ones(xy.shape[1]))).T
         xy2=xy[2:,:]
         for pi,(u,v) in zip(p,mapping):
@@ -223,6 +337,7 @@ def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
 
 
 def ApplyAffineTransform(xy,transform):
+    """Apply a given afffine transform to a set of xy data points."""
     xyt=_np_.row_stack((xy.T,_np_.ones(len(xy))))
     xyt=_np_.dot(transform,xyt)
     return xyt.T
@@ -246,7 +361,7 @@ def GetAffineTransform(p, pd):
     return  transform.T
 
 class AnalysisMixin(object):
-    
+
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods."""
 
     def __init__(self,*args,**kargs):
@@ -255,7 +370,7 @@ class AnalysisMixin(object):
         if self.debug: print("Done AnlaysisMixin init")
 
     def SG_Filter(self, col=None, points=15, poly=1, order=0, result=None, replace=False, header=None):
-        """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data.
+        """Implements Savitsky-Golay filtering of data for smoothing and differentiating data.
 
         Args:
             col (index): Column of Data to be filtered. if None, first y-column in setas is filtered.
@@ -355,21 +470,21 @@ class AnalysisMixin(object):
             raise ValueError("order should be smaller than the window length.")
         _=self._col_args(xcol=xcol,ycol=column,yerr=yerr)
 
-           
+
         x=window[:,_.xcol]-row[_.xcol]
         y=window[:,_.ycol]
-        if _.yerr is not None and len(_.yerr)>0:
+        if _.yerr:
             w=1.0/window[:,_.yerr]
         else:
             w=None
-            
+
         popt, pcov = _np_.polyfit(x,y, w=w,deg=order, cov=True)
         pval = _np_.polyval(popt, 0.0)
         perr = _np_.sqrt(_np_.diag(pcov))[-1]
         return abs(pval-row[_.ycol]) > metric * perr
 
     def _get_curve_fit_data(self,xcol,ycol,bounds,sigma):
-        """"Gather up the xdata and sigma columns for curve_fit."""
+        """Gather up the xdata and sigma columns for curve_fit."""
         working = self.search(xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
         if not isNone(sigma):
@@ -386,7 +501,7 @@ class AnalysisMixin(object):
             xdat = working[:, self.find_col(xcol)]
 
         for i,yc in enumerate(ycol):
-            
+
             if isinstance(yc,index_types):
                 ydat = working[:, self.find_col(yc)]
             elif isinstance(yc,_np_.ndarray) and len(yc.shape)==1 and len(yc)==len(self):
@@ -413,7 +528,7 @@ class AnalysisMixin(object):
             sigma (array): Uncertainties of ydata.
             p0 (dict): Dictionary of parameters including independent data
             prefix (str): Prefix for labels in metadata
-            
+
         Keyword Arguments:
             result (bool,str): Where the result goes
             header (str): Name of new data column if used
@@ -432,7 +547,9 @@ class AnalysisMixin(object):
         output=kargs.pop("output","row")
         fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
         if fit.success:
+            DataArray=self.data.__class__
             row = []
+            ch=[]
             # Store our current mask, calculate new column's mask and turn off mask
             tmp_mask=self.mask
             col_mask=_np_.any(tmp_mask,axis=1)
@@ -453,10 +570,12 @@ class AnalysisMixin(object):
                 self["{}{}".format(prefix, p)] = fit.params[p].value
                 self["{}{} err".format(prefix, p)] = fit.params[p].stderr
                 row.extend([fit.params[p].value, fit.params[p].stderr])
+                ch.extend([p,"{}.stderr".format(p)])
             self["{}chi^2".format(prefix)] = fit.chisqr
+            ch.append("$\\chi^2$")
             row.append(fit.chisqr)
             self["{}nfev".format(prefix)] = fit.nfev
-            retval = {"fit": fit, "row": row, "full": (fit, row),"data":self}
+            retval = {"fit": fit, "row": DataArray(row,column_headers=ch), "full": (fit, row),"data":self}
             if output not in retval:
                 raise RuntimeError("Failed to recognise output format:{}".format(output))
             else:
@@ -466,7 +585,7 @@ class AnalysisMixin(object):
 
     def _record_curve_fit_result(self,func,popt,perr,xcol,header,result,replace):
         """Annotate the DataFile object with the curve_fit result."""
-        args = getargspec(func)[0]
+        args = getfullargspec(func)[0] # pylint: disable=W1505
         for val,err,name in zip(popt,perr,args[1:]):
             self['{}:{}'.format(func.__name__,name)] = val
             self['{}:{} err'.format(func.__name__,name)] = err
@@ -490,7 +609,7 @@ class AnalysisMixin(object):
         self.mask=tmp_mask
 
     def __threshold(self, threshold, data, rising=True, falling=False):
-        """ Internal function that implements the threshold method - also used in peak-finder
+        """Internal function that implements the threshold method - also used in peak-finder
 
         Args:
             threshold (float): Threshold valuye in data to look for
@@ -521,7 +640,7 @@ class AnalysisMixin(object):
         # Now we refine the estimate of zero crossing with a cubic interpolation
         # and use Newton's root finding method to locate the zero in the interpolated data
 
-        intr=interp1d(index,data-threshold,kind="linear")
+        intr=interp1d(index,data-threshold,kind="cubic")
         roots=[]
         for ix,x in enumerate(sdat):
             if expr(x) and ix>0 and ix<len(data)-1: # There's a root somewhere here !
@@ -569,7 +688,7 @@ class AnalysisMixin(object):
             err_calc = None
         adata, aname = self.__get_math_val(a)
         bdata, bname = self.__get_math_val(b)
-        if isinstance(header, tuple) and len(header) == 0:
+        if isinstance(header, tuple) and not header:
             header, err_header = header
         if header is None:
             header = "{}+{}".format(aname, bname)
@@ -621,7 +740,7 @@ class AnalysisMixin(object):
         Args:
             xcol (index): Index of column of data with X values
             ycol (index): Index of column of data with Y values
-            bins (int or float): Number of bins (if integer) or size of bins (if float)
+            bins (int, float or 1d array): Number of bins (if integer) or size of bins (if float), or bin edges (if array)
             mode (string): "log" or "lin" for logarithmic or linear binning
 
         Keyword Arguments:
@@ -639,6 +758,7 @@ class AnalysisMixin(object):
         Note:
             Algorithm inspired by MatLab code wbin,    Copyright (c) 2012:
             Michael Lindholm Nielsen
+
 
         See Also:
             User Guide section :ref:`binning_guide`
@@ -788,12 +908,19 @@ class AnalysisMixin(object):
             :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit`
             User guide section :ref:`curve_fit_guide`
         """
+
+        _=self._col_args(scalar=False,xcol=xcol,ycol=ycol,yerr=sigma)
+        xcol,ycol,sigma=_.xcol,_.ycol,_.yerr
+
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
         header = kargs.pop("header", None)
+
         #Support either scale_covar or absolute_sigma, the latter wins if both supplied
-        scale_covar = kargs.pop("scale_covar", False)
+        #If neither are specified, then if sigma is not given, absolute sigma will be False.
+
+        scale_covar = kargs.pop("scale_covar", sigma is not None)
         absolute_sigma = kargs.pop("absolute_sigma", not scale_covar)
         #Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)
@@ -801,16 +928,14 @@ class AnalysisMixin(object):
         if output == "full":
             kargs["full_output"] = True
 
-        _=self._col_args(scalar=False,xcol=xcol,ycol=ycol,yerr=sigma)
-        xcol,ycol,sigma=_.xcol,_.ycol,_.yerr
-
         if not isinstance(ycol,list):
             ycol=[ycol,]
 
         xdat,ydata,sigma = self._get_curve_fit_data(xcol,ycol, bounds,sigma)
-        
+
 
         retvals=[]
+        i=None
         for i,ydat in enumerate(ydata):
 
             if isinstance(sigma,_np_.ndarray) and sigma.shape[0]>1:
@@ -856,7 +981,7 @@ class AnalysisMixin(object):
 
         Returns:
             self: The newly modified :py:class:`AnalysisMixin`.
-            
+
         Example:
             .. plot:: samples/decompose.py
                :include-source:
@@ -894,7 +1019,7 @@ class AnalysisMixin(object):
         return self
 
     def diffsum(self, a, b, replace=False, header=None):
-        """Calculate :math:`\\frac{a-b}{a+b}` for the two columns *a* and *b*.
+        r"""Calculate :math:`\frac{a-b}{a+b}` for the two columns *a* and *b*.
 
         Args:
             a (index): First column to work with
@@ -926,7 +1051,7 @@ class AnalysisMixin(object):
             err_calc = None
         adata, aname = self.__get_math_val(a)
         bdata, bname = self.__get_math_val(b)
-        if isinstance(header, tuple) and len(header) == 0:
+        if isinstance(header, tuple) and not header:
             header, err_header = header
         if header is None:
             header = "({}-{})/({}+{})".format(aname, bname, aname, bname)
@@ -970,7 +1095,7 @@ class AnalysisMixin(object):
             err_calc = None
         adata, aname = self.__get_math_val(a)
         bdata, bname = self.__get_math_val(b)
-        if isinstance(header, tuple) and len(header) == 0:
+        if isinstance(header, tuple) and not header:
             header, err_header = header
         if header is None:
             header = "{}/{}".format(aname, bname)
@@ -1010,14 +1135,13 @@ class AnalysisMixin(object):
             parameters (i.e. as with :py:meth:`AnalysisMixin.curve_fit`).
         """
         _=self._col_args(xcol=xcol,ycol=ycol,yerr=yerr,scalar=False)
-        xl,xh=self.span(_.xcol)
         kinds={"linear":lambda x,m,c:m*x+c,
                "quadratic":lambda x,a,b,c:a*x**2+b*x+c,
                "cubic":lambda x,a,b,c,d: a*x**3+b*x**2+c*x+d}
         errs={"linear":lambda x,me,ce:_np_.sqrt((me*x)**2+ce**2),
               "quadratic":lambda x,ae,be,ce:_np_.sqrt((2*x**2*ae)**2+(x*be)**2+ce**2),
               "cubic":lambda x,ae,be,ce,de:_np_.sqrt((3*ae*x**3)**2+(2*x**2*be)**2+(x*ce)**2+de**2)}
-        
+
         if callable(kind):
             pass
         elif kind in kinds:
@@ -1165,6 +1289,7 @@ class AnalysisMixin(object):
 
         if newX is None: #Ok, we're going to return an interpolation function
             def wrapper(newX):
+                """Wrapper for interpolation function."""
                 if isinstance(newX,ma.MaskedArray):
                     newX=newX.compressed()
                 else:
@@ -1184,12 +1309,14 @@ class AnalysisMixin(object):
         return ret
 
     def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None,**kargs):
-        """Wrapper around lmfit module fitting.
+        r"""Wrapper around lmfit module fitting.
 
         Args:
             model (lmfit.Model): An instance of an lmfit.Model that represents the model to be fitted to the data
-            xcol (index or None): Columns to be used for the x  data for the fitting. If not givem defaults to the :py:attr:`Stoner.Core.DataFile.setas` x column
-            ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the :py:attr:`Stoner.Core.DataFile.setas` y column
+            xcol (index or None): Columns to be used for the x  data for the fitting. If not givem defaults to the
+            :py:attr:`Stoner.Core.DataFile.setas` x column
+            ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the
+            :py:attr:`Stoner.Core.DataFile.setas` y column
 
         Keyword Arguments:
             p0 (list, tuple or array): A vector of initial parameter values to try.
@@ -1219,20 +1346,15 @@ class AnalysisMixin(object):
 
         .. note::
 
-           If *p0* is fed a 2D array, then it assumed that you want to calculate :math:`\\chi^2` for different starting parameters
+           If *p0* is fed a 2D array, then it assumed that you want to calculate :math:`\chi^2` for different starting parameters
            with some variables fixed. In this mode, fitting is carried out repeatedly with each row representing one attempt with different
            values of the parameters. In this mode the return value is a 2D array whose rows correspond to the inputs to the rows of p0, the
-           columns are the fitted values of the parameters with an additional column for :math:`\\chi^2`.
+           columns are the fitted values of the parameters with an additional column for :math:`\chi^2`.
 
-          Example:
-              .. plot:: samples/lmfit_simple.py
-                 :include-source:
+        Example:
+            .. plot:: samples/lmfit_simple.py
+                :include-source:
         """
-        if Model is None:  #Will be the case if lmfit is not imported.
-            raise RuntimeError(
-                "To use the lmfit function you need to be able to import the lmfit module\n Try pip install lmfit\nat a command prompt.")
-
-
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
@@ -1244,53 +1366,16 @@ class AnalysisMixin(object):
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
 
-        if isinstance(model, Model):
-            pass
-        elif isclass(model) and issubclass(model,Model):
-            model=model()
-        elif callable(model):
-            model=Model(model)
-            if p0 is None or len(p0)!=len(model.param_names):
-                p0=dict()
-                for k in model.param_names:
-                    if k not in kargs:
-                        raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function {}".format(len(model.param_names),k,model.func.__name__))
-                    else:
-                        p0[k] = kargs[k]
-        else:
-            raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
-
-
-        prefix = str(kargs.pop("prefix",  model.__class__.__name__))+":"
-
-
+        model,p0,prefix=_prep_lmfit_model(model,p0,kargs)
 
         _=self._col_args(xcol=xcol,ycol=ycol)
         working = self.search(_.xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
 
-
         xdata = working[:, self.find_col(_.xcol)]
         ydata = working[:, self.find_col(_.ycol)]
-        if p0 is not None:
-            if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
-                if p0.shape[0]==1: # Actually a single fit
-                    p0=_lmfit_p0_dict(p0[0],model)
-                    single_fit=True
-                else: # Is chi^2 mapping
-                    single_fit=False
-            else:
-                p0=_lmfit_p0_dict(p0,model)
-                single_fit=True
-        else: #Do we already have parameter hints ?
-            check=True
-            single_fit = True
-            for p in model.param_names:
-                check&=p in model.param_hints and "value" in model.param_hints[p]
-            if not check: # Ok, param_hints didn't have all the parameter values setup.
-                p0=model.guess(ydata,xdata)
-                p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
 
+        p0,single_fit = _prep_lmfit_p0(model,ydata,xdata,p0,kargs)
 
         if sigma is not None:
             if isinstance(sigma, index_types):
@@ -1308,7 +1393,7 @@ class AnalysisMixin(object):
             scale_covar = True
         mask=_np_.invert(ydata.mask)
         sigma = sigma[mask]
-        ydata = ydata[mask] 
+        ydata = ydata[mask]
         xdata = xdata[mask] #lmfit doesn't seem to work well with masked data - here we just delete masked points
         xvar = model.independent_vars[0]
         if isinstance(p0,Parameters):
@@ -1325,11 +1410,10 @@ class AnalysisMixin(object):
         else: # chi^2 mode
             pn=p0
             ret_val=_np_.zeros((pn.shape[0],pn.shape[1]*2+1))
-            for i,p0 in enumerate(pn): # iterate over every row in the supplied p0 values
-                p0=_lmfit_p0_dict(p0,model)
-                p0[xvar] = xdata
-                ret_val[i,:]=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix)
-                
+            for i,pn_i in enumerate(pn): # iterate over every row in the supplied p0 values
+                pn_i=_lmfit_p0_dict(pn_i,model)
+                pn_i[xvar] = xdata
+                ret_val[i,:]=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,pn_i,prefix)
         return ret_val
 
 
@@ -1373,6 +1457,8 @@ class AnalysisMixin(object):
                 bin_start = _np_.exp(bin_start)
                 bin_stop = _np_.exp(bin_stop)
                 bin_centres = _np_.exp(bin_centres)
+            else:
+                raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
         elif isinstance(bins, float):  # Given a bin with as a flot
             if mode.lower().startswith("lin"):
                 bin_width = bins
@@ -1396,10 +1482,17 @@ class AnalysisMixin(object):
                 bin_start = _np_.array(splits[:-1])
                 bin_stop = _np_.array(splits[1:])
                 bin_centres = _np_.array(centers)
+            else:
+                raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
         elif isinstance(bins,_np_.ndarray) and bins.ndim==1: # Yser provided manuals bins
             bin_start=bins[:-1]
             bin_stop=bins[1:]
-            bin_centres=(bin_start+bin_stop)/2.0
+            if mode.lower().startwith("lin"):
+                bin_centres=(bin_start+bin_stop)/2.0
+            elif mode.lower().startswith("log"):
+                bin_centres=_np_.exp(_np_.log(bin_start)+_np_.log(bin_stop)/2.0)
+            else:
+                raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
         else:
             raise TypeError("bins must be either an integer or a float, not a {}".format(type(bins)))
         if len(bin_start) > len(self):
@@ -1407,7 +1500,7 @@ class AnalysisMixin(object):
         return bin_start, bin_stop, bin_centres
 
     def max(self, column=None, bounds=None):
-        """FInd maximum value and index in a column of data.
+        """Find maximum value and index in a column of data.
 
         Args:
             column (index): Column to look for the maximum in
@@ -1436,7 +1529,7 @@ class AnalysisMixin(object):
         return result
 
     def mean(self, column=None,sigma=None, bounds=None):
-        """FInd mean value of a data column.
+        """Find mean value of a data column.
 
         Args:
             column (index): Column to look for the maximum in
@@ -1454,7 +1547,7 @@ class AnalysisMixin(object):
             assignments are used.
 
         .. todo::
-            Fix the row index when the bounds function is used - see note of \b max
+            Fix the row index when the bounds function is used - see note of :py:meth:`AnalysisMixin.max`
         """
         _=self._col_args(scalar=True,ycol=column,yerr=sigma)
 
@@ -1476,13 +1569,13 @@ class AnalysisMixin(object):
             w=1/(sigma**2+1E-8)
             norm=w.sum(axis=0)
             error=_np_.sqrt((sigma**2).sum(axis=0))/len(sigma)
-            result=(ydata*w).mean(axis=0)/norm,error            
+            result=(ydata*w).mean(axis=0)/norm,error
         if bounds is not None:
             self._pop_mask()
         return result
 
     def min(self, column=None, bounds=None):
-        """FInd minimum value and index in a column of data.
+        """Find minimum value and index in a column of data.
 
         Args:
             column (index): Column to look for the maximum in
@@ -1541,7 +1634,7 @@ class AnalysisMixin(object):
             err_calc = None
         adata, aname = self.__get_math_val(a)
         bdata, bname = self.__get_math_val(b)
-        if isinstance(header, tuple) and len(header) == 0:
+        if isinstance(header, tuple) and not header:
             header, err_header = header
         if header is None:
             header = "{}*{}".format(aname, bname)
@@ -1554,12 +1647,14 @@ class AnalysisMixin(object):
             self.add_column(err_data, header=err_header, index=a + 1, replace=False)
         return self
 
-    def normalise(self, target, base, replace=True, header=None):
+    def normalise(self, target=None, base=None, replace=True, header=None):
         """Normalise data columns by dividing through by a base column value.
 
         Args:
             target (index): One or more target columns to normalise can be a string, integer or list of strings or integers.
-            base (index): The column to normalise to, can be an integer or string
+                If None then the default 'y' column is used.
+            base (index): The column to normalise to, can be an integer or string. If None then the target column is normalised
+                to the range (-1,+1) or (0,1) depending on whether the input is bipolar or not.
 
         Keyword Arguments:
             replace (bool): Set True(default) to overwrite  the target data columns
@@ -1572,7 +1667,9 @@ class AnalysisMixin(object):
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
+        _=self._col_args(scalar=True,ycol=target)
 
+        target=_.ycol
         if not isinstance(target, list):
             target = [self.find_col(target)]
         for t in target:
@@ -1580,8 +1677,169 @@ class AnalysisMixin(object):
                 header = self.column_headers[self.find_col(t)] + "(norm)"
             else:
                 header = str(header)
-            self.divide(t, base, header=header, replace=replace)
+            if not istuple(base,float,float) and base is not None:
+                self.divide(t, base, header=header, replace=replace)
+            else:
+                i_range=(_np_.nanmin(self[:,t]),_np_.nanmax(self[:,t]))
+                if istuple(base,float,float):
+                    o_range=base
+                elif i_range[0]<0 and i_range[1]>0: #range (-1,1)
+                    o_range=(-1,1)
+                else:
+                    o_range=(0,1)
+                col=(((self[:,t]-i_range[0])/(i_range[1]-i_range[0]))*(o_range[1]-o_range[0])+o_range[0])
+                setas=self.setas.clone
+                self.add_column(col,index=t,replace=replace,header=header)
+                self.setas=setas
         return self
+
+    def odr(self, model, xcol=None, ycol=None, sigma_x=None,sigma_y=None,**kargs):
+        """Wrapper around scipy.odr orthogonal distance regression fitting.
+
+        Args:
+            model (scipy.odr.Model, lmfit.models.Model or callable): Tje model that describes the data. See below for more details.
+            xcol (index or None): Columns to be used for the x  data for the fitting. If not givem defaults to the
+                :py:attr:`Stoner.Core.DataFile.setas` x column
+            ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the
+                :py:attr:`Stoner.Core.DataFile.setas` y column
+
+        Keyword Arguments:
+            p0 (list, tuple or array): A vector of initial parameter values to try.
+            sigma_x (index): The index of the column with the x-error bars
+            sigma_y (index): The index of the column with the x-error bars
+            bounds (callable): A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+            result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
+                the last column will be used. If result is a string or an integer then it is used as a column index.
+                Default to None for not adding fitted data
+            replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
+            header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
+            output (str, default "fit"): Specifiy what to return.
+
+        Returns:
+            The return value is determined by the *output* parameter. Options are
+                - "fit"    just the :py:class:`scipy.odr.Output` instance (default)
+                - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+                - "full"    a tuple of the fit instance and the row.
+                - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally
+                    as a column of data.
+
+        Notes:
+            The function tries to make use of whatever model you give it. Specifically, it accepts:
+
+                -   A subclass or an instance of :py:class:`scipy.odr.Model` : this is the native model type for the underlying scipy
+                    odr package.
+                -   A subclass or instance of an lmfit.models.Model: the :py:mod:`Stoner.Fit` module has a number of useful prebuilt
+                    lmfit models that can be used directly
+                    by this function.
+                -   A callable function which should have a signature f(x,parameter1,parameter2...) and *not* the scip.odr stadnard f(beta,x)
+
+            This function ois designed to be as compatible as possible with :py:meth:`AnalysisMixin.curve_fit` and
+                :py:meth:`AnalysisMixin.lmfit` to facilitate easy of switching between them.
+
+        Example:
+            .. plot:: samples/lmfit_simple.py
+                 :include-source:
+
+
+        See Also:
+            :py:meth:`AnalysisMixin.curve_fit`
+            :py:meth:`AnalysisMixin.lmfit`
+            User guide section :ref:`fitting_with_limits`
+        """
+        bounds = kargs.pop("bounds", lambda x, y: not _np_.any(y.mask))
+        result = kargs.pop("result", None)
+        replace = kargs.pop("replace", False)
+        header = kargs.pop("header", None)
+        # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
+        absolute_sigma = kargs.pop("absolute_sigma", True)
+        kargs.pop("scale_covar", not absolute_sigma)
+        #Support both asrow and output, the latter wins if both supplied
+        asrow = kargs.pop("asrow", False)
+        output = kargs.pop("output", "row" if asrow else "fit")
+        prefix = kargs.pop("prefix",None)
+
+        if isinstance(model, _sp_.odr.Model):
+            model.name=model.__class__.__name__
+        elif isclass(model) and issubclass(model,_sp_.odr.Model):
+            model=model()
+            model.name=model.__class__.__name__
+        elif (isclass(model) and issubclass(model,Model)) or isinstance(model,Model) or callable(model):
+            model=_odr_Model(model,**kargs)
+        else:
+            raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
+
+        if prefix is None:
+            prefix=str(model.name)
+        else:
+            prefix=str(prefix)
+        prefix="{}:".format(prefix)
+        #Get the inital guess if possible
+        kargs.pop("p0",getattr(model,"p0",None))
+
+        _=self._col_args(xcol=xcol,ycol=ycol,xerr=sigma_x,yerr=sigma_y)
+        working = self.search(_.xcol, bounds)
+        working = ma.mask_rowcols(working, axis=0)
+
+        xdata = working[:, self.find_col(_.xcol)]
+        ydata = working[:, self.find_col(_.ycol)]
+        if not _.has_xerr:
+            sx=_np_.ones_like(xdata)
+        else:
+            sx=working[:, self.find_col(_.xerr)]
+        if not _.has_yerr:
+            sy=_np_.ones_like(ydata)
+        else:
+            sy=working[:, self.find_col(_.yerr)]
+
+        if not absolute_sigma:
+            data=_sp_.odr.Data(xdata,ydata,wd=1/sx**2,we=1/sy**2)
+        else:
+            data=_sp_.odr.RealData(xdata,ydata,sx=sx,sy=sy)
+
+        fit=_sp_.odr.ODR(data,model,beta0=model.estimate)
+        try:
+            fit_result=fit.run()
+        except _sp_.odr.OdrError as err:
+            print(err)
+            return None
+        except _sp_.odr.OdrStop as err:
+            print(err)
+            return None
+        popt,perr=fit_result.beta,fit_result.sd_beta
+        delta,eps=fit_result.delta,fit_result.eps
+        chi_square=_np_.sum(delta**2/_np_.abs(fit_result.xplus))+_np_.sum(eps**2/_np_.abs(fit_result.y))
+
+        row = []
+        # Store our current mask, calculate new column's mask and turn off mask
+        tmp_mask=self.mask
+        col_mask=_np_.any(tmp_mask,axis=1)
+        self.mask=False
+
+        if (isinstance(result, bool) and result): # Appending data and mask
+            self.add_column(model.fcn(popt,self.column(_.xcol)), header=header, index=None)
+            tmp_mask=_np_.column_stack((tmp_mask,col_mask))
+        elif isinstance(result, index_types): # Inserting data and mask
+            self.add_column(model.fcn(popt,self.column(_.xcol)), header=header, index=result, replace=replace)
+            tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
+        elif result is not None: # Oops restore mask and bail
+            self.mask=tmp_mask
+            raise RuntimeError("Didn't recognize result as an index type or True")
+        self.mask=tmp_mask #Restore mask
+
+        param_names=getattr(model,"param_names",None)
+        if param_names is None:
+            param_names=["Parameter {}".format(i+1) for i in range(len(popt))]
+        for i,p in enumerate(param_names):
+            self["{}{}".format(prefix, p)] = popt[i]
+            self["{}{} err".format(prefix, p)] = perr[i]
+            row.extend([popt[i],perr[i]])
+        self["{}chi^2".format(prefix)]=chi_square
+        row.append(chi_square)
+        retval = {"fit": fit_result, "row": row, "full": (fit_result, row),"data":self}
+        if output not in retval:
+            raise RuntimeError("Failed to recognise output format:{}".format(output))
+        else:
+            return retval[output]
 
     def outlier_detection(self, column=None, window=7, certainty=3.0, action='mask', width=1, func=None, **kargs):
         """Function to detect outliers in a column of data.
@@ -1631,10 +1889,10 @@ class AnalysisMixin(object):
         and *row* is the data for the row.
 
         In all cases the indices of the outlier rows are added to the ;outlier' metadata.
-        
-    Example
-        .. plot:: samples/outlier.py
-            :include-source:
+
+        Example
+            .. plot:: samples/outlier.py
+                :include-source:
         """
         if func is None:
             func = _outlier
@@ -1664,7 +1922,7 @@ class AnalysisMixin(object):
                 action(i, column, self.data[i])
         return self
 
-    def peaks(self, ycol=None, width=None, significance=None, xcol=None, peaks=True, troughs=False, poly=2, sort=False,modify=False,full_data=True):
+    def peaks(self, **kargs):
         """Locates peaks and/or troughs in a column of data by using SG-differentiation.
 
         Args:
@@ -1695,12 +1953,17 @@ class AnalysisMixin(object):
         See Also:
             User guide section :ref:`peak_finding`
         """
-        _=self._col_args(scalar=False,xcol=xcol,ycol=ycol)
+        width=kargs.pop("width",len(self) / 20)
+        peaks=kargs.pop("peaks",True)
+        troughs=kargs.pop("troughs",False)
+        poly=kargs.pop("poly",2)
+        sort=kargs.pop("sort",False)
+        modify=kargs.pop("modify",False)
+        full_data=kargs.pop("full_data",True)
+        _=self._col_args(scalar=False,xcol=kargs.pop("xcol",None),ycol=kargs.pop("ycol",None))
         xcol,ycol=_.xcol,_.ycol
         if isiterable(ycol):
             ycol=ycol[0]
-        if width is None:  # Set Width to be length of data/20
-            width = len(self) / 20
         assert poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or trough"
         setas=self.setas.clone
         self.setas=""
@@ -1713,9 +1976,8 @@ class AnalysisMixin(object):
         d2=d2[index_offset:-index_offset]
 
         #Set the significance from the 2nd ifferential if not already set
-        if significance is None:  # Guess the significance based on the range of y and width settings
-            significance = _np_.max(_np_.abs(d2))/20.0 # Base an apriori significance on max d2y/dx2 / 20
-        elif isinstance(significance, int): # integer significance is inverse to floating
+        significance = kargs.pop("significance",_np_.max(_np_.abs(d2))/20.0) # Base an apriori significance on max d2y/dx2 / 20
+        if isinstance(significance, int): # integer significance is inverse to floating
             significance = _np_.max(_np_.abs(d2))/significance # Base an apriori significance on max d2y/dx2 / 20
 
         d2_interp = interp1d(_np_.arange(len(d2)), d2,kind='cubic')
@@ -1735,7 +1997,7 @@ class AnalysisMixin(object):
         # Sort in order of significance
         if sort:
             possible_peaks = _np_.take(possible_peaks, _np_.argsort(_np_.abs(d2_interp(possible_peaks))))
-        
+
         xdat=xdata(possible_peaks+index_offset)
 
         if modify:
@@ -1783,7 +2045,7 @@ class AnalysisMixin(object):
         if not isiterable(_.ycol):
             _.ycol=[_.ycol]
         p=_np_.zeros((len(_.ycol),polynomial_order+1))
-        for i,ycol in enumerate(_.ycol):    
+        for i,ycol in enumerate(_.ycol):
             p[i,:] = _np_.polyfit(working[:, self.find_col(_.xcol)], working[:, self.find_col(ycol)], polynomial_order)
             if result is not None:
                 if header is None:
@@ -1821,7 +2083,7 @@ class AnalysisMixin(object):
 
         Example:
             .. plot:: samples/scale_curves.py
-               :include-source:        
+               :include-source:
         """
         _=self._col_args(xcol=xcol,ycol=ycol)
         #
@@ -1855,7 +2117,8 @@ class AnalysisMixin(object):
             if len(other.shape)==1:
                 other=_np_.atleast_2d(other).T
             if other.shape[0]!=len(xdat) or not 1<=other.shape[1]<=2:
-                raise RuntimeError("If other is a numpy array it must be the same length as the number of points to match to and 1 or 2 columns. (other shape={})".format(other.shape))
+                raise RuntimeError(("If other is a numpy array it must be the same length as the number of points to match "+
+                                    "to and 1 or 2 columns. (other shape={})").format(other.shape))
             if other.shape[1]==1:
                 xdat2=xdat
                 ydat2=other[:,0]
@@ -2013,7 +2276,7 @@ class AnalysisMixin(object):
         function.
         """
         _=self._col_args(xcol=xcol,ycol=ycol)
-        if sigma is None and (isNone(_.yerr) or len(_.yerr)>0):
+        if sigma is None and (isNone(_.yerr) or _.yerr):
             if not isNone(_.yerr) and _.yerr[0] is not None:
                 sigma=1.0/(self//_.yerr[0])
             else:
@@ -2048,81 +2311,21 @@ class AnalysisMixin(object):
 
         return ret
 
-    def split(self, xcol=None, func=None):
-        """Splits the current :py:class:`AnalysisMixin` object into multiple :py:class:`AnalysisMixin` objects where each one contains the rows
-        from the original object which had the same value of a given column.
-
-        Args:
-            xcol (index): The index of the column to look for values in.
-                This can be a list in which case a :py:class:`Stoner.Folders.DataFolder` with groups
-                with subfiles is built up by applying each item in the xcol list recursively.
-            func (callable):  Function that can be evaluated to find the value to determine which output object
-                each row belongs in. If this is left as the default None then the column value is converted
-                to a string and that is used.
-
-        Returns:
-            Stoner.Folders.DataFolder: A :py:class:`Stoner.Folders.DataFolder` object containing the individual
-            :py:class:`AnalysisMixin` objects
-
-        Note:
-            The function to be of the form f(x,r) where x is a single float value and r is a list of floats representing
-            the complete row. The return value should be a hashable value. func can also be a list if xcol is a list,
-            in which the func values are used along with the @a xcol values.
-        """
-        from Stoner.Folders import DataFolder
-        if xcol is None:
-            xcol = self.setas._get_cols("xcol")
-        else:
-            xcol = self.find_col(xcol)
-        out = DataFolder(nolist=True)
-        files = dict()
-        morecols = []
-        morefuncs = None
-        if isinstance(xcol, list) and len(xcol) <= 1:
-            xcol = xcol[0]
-        elif isinstance(xcol, list):
-            morecols = xcol[1:]
-            xcol = xcol[0]
-        if isinstance(func, list) and len(func) <= 1:
-            func = func[0]
-        elif isinstance(func, list):
-            morefuncs = func[1:]
-            func = func[0]
-        if func is None:
-            for val in _np_.unique(self.column(xcol)):
-                files[str(val)] = self.clone
-                files[str(val)].data = self.search(xcol, val)
-        else:
-            xcol = self.find_col(xcol)
-            for r in self.rows():
-                x = r[xcol]
-                key = func(x, r)
-                if key not in files:
-                    files[key] = self.clone
-                    files[key].data = _np_.array([r])
-                else:
-                    files[key] = files[key] + r
-        for k in files:
-            files[k].filename = "{}:{}={}".format(files[k].filename,self.column_headers[xcol], k)
-        if len(morecols) > 0:
-            for k in sorted(list(files.keys())):
-                out.groups[k] = files[k].split(morecols, morefuncs)
-        else:
-            out.files = [files[k] for k in sorted(list(files.keys()))]
-        return out
-
     def stitch(self, other, xcol=None, ycol=None, overlap=None, min_overlap=0.0, mode="All", func=None, p0=None):
-        """Apply a scaling to this data set to make it stich to another dataset.
+        r"""Apply a scaling to this data set to make it stich to another dataset.
 
         Args:
             other (DataFile): Another data set that is used as the base to stitch this one on to
             xcol,ycol (index or None): The x and y data columns. If left as None then the current setas attribute is used.
 
         Keyword Arguments:
-            overlap (tuple of (lower,higher) or None): The band of x values that are used in both data sets to match, if left as None, thenthe common overlap of the x data is used.
-            min_overlap (float): If you know that overlap must be bigger than a certain amount, the bounds between the two data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.
+            overlap (tuple of (lower,higher) or None): The band of x values that are used in both data sets to match,
+                if left as None, thenthe common overlap of the x data is used.
+            min_overlap (float): If you know that overlap must be bigger than a certain amount, the bounds between the two
+                data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.
             mode (str): Unless *func* is specified, controls which parameters are actually variable, defaults to all of them.
-            func (callable): a stitching function that transforms :math:`(x,y)\\rightarrow(x',y')`. Default is to use functions defined by *mode*
+            func (callable): a stitching function that transforms :math:`(x,y)\rightarrow(x',y')`. Default is to use
+                functions defined by *mode*
             p0 (iterable): if func is not None then p0 should be the starting values for the stitching function parameters
 
         Returns:
@@ -2204,7 +2407,7 @@ class AnalysisMixin(object):
             p0 = p[defaults[mode]]
         else:
             assert callable(func), "Keyword func should be callable if given"
-            (args, varargs, keywords, defaults) = getargspec(func)
+            (args, __, keywords, defaults) = getfullargspec(func) # pylint: disable=W1505
             assert isiterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given"
             assert len(p0) == len(args) - 2, "Keyword p0 should be the same length as the optional arguments to func"
         # This is a bit of a hack, we turn (x,y) points into a 1D array of x and then y data
@@ -2213,6 +2416,7 @@ class AnalysisMixin(object):
         assert len(set1) == len(set2), "The number of points in the overlap are different in the two data sets"
 
         def transform(set1, *p):
+            """Wrapper function to fit for transform."""
             m = int(len(set1) / 2)
             x = set1[:m]
             y = set1[m:]
@@ -2260,7 +2464,7 @@ class AnalysisMixin(object):
             err_calc = None
         adata, aname = self.__get_math_val(a)
         bdata, bname = self.__get_math_val(b)
-        if isinstance(header, tuple) and len(header) == 0:
+        if isinstance(header, tuple) and not header:
             header, err_header = header
         if header is None:
             header = "{}-{}".format(aname, bname)
@@ -2290,9 +2494,7 @@ class AnalysisMixin(object):
             transpose (bbool): Swap the x and y columns around - this is most useful when the column assignments
                 have been done via the setas attribute
             all_vals (bool): Return all values that match the criteria, or just the first in the file.
-            interpolate (bool): whether to interpolate the return value between data points or to 
-                        simply return the index or x value immediately after the threshold condition 
-                        is satisfied (faster but less precise). Default True
+
         Returns:
             float: Either a sing;le fractional row index, or an in terpolated x value
 
@@ -2315,7 +2517,6 @@ class AnalysisMixin(object):
         rising=kargs.pop("rising",True)
         falling=kargs.pop("falling",False)
         all_vals=kargs.pop("all_vals",False)
-        interpolate=kargs.pop("interpolate",True)
 
         current = self.column(col)
 
@@ -2323,7 +2524,7 @@ class AnalysisMixin(object):
         if isiterable(threshold):
             ret = []
             for th in threshold:
-                ret.append(self.threshold(th,col=col,xcol=xcol,rising=rising,falling=falling,all_vals=all_vals,interpolate=interpolate))
+                ret.append(self.threshold(th,col=col,xcol=xcol,rising=rising,falling=falling,all_vals=all_vals))
             #Now we have to clean up the  retujrn list into a DataArray
             retval=DataArray(ret)
             if isinstance(ret[0],DataArray): # if xcol was False we got a complete row back
@@ -2343,9 +2544,9 @@ class AnalysisMixin(object):
                     retval.isrow=False
             return retval
         else:
-            ret = _threshold(threshold, current, rising=rising, falling=falling, interpolate=interpolate)
+            ret = _threshold(threshold, current, rising=rising, falling=falling)
             if not all_vals:
-                ret=[ret[0]] if len(ret)>0 else []
+                ret=[ret[0]] if _np_.any(ret) else []
 
         if isinstance(xcol,bool) and not xcol:
             retval = self.interpolate(ret, xcol=False)
@@ -2376,17 +2577,17 @@ class AnalysisMixin(object):
 def AnalyseFile(*args,**kargs):
     """Issue a warning and then create a class anyway."""
     warn("AnalyseFile is deprecated in favour of Stoner.Data or the AnalysisMixin",DeprecationWarning)
-    from .Core import DataFile    
-    
-    class AnalyseFile(AnalysisMixin,DataFile):
-        
+    import Stoner.Core as _SC_
+
+    class AnalyseFile(AnalysisMixin,_SC_.DataFile):
+
         """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
-    
+
         Note:
             There is no separate constructor for this class - it inherits from DataFile
-    
+
         """
-        
+
         pass
-    
+
     return AnalyseFile(*args,**kargs)

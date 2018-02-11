@@ -1,25 +1,23 @@
 """Stoner.Core provides the core classes for the Stoner package."""
 from __future__ import print_function
-__all__ = ["StonerLoadError", "StonerSetasError","regexpDict","typeHintedDict","metadataObject","DataArray","DataFile","Data"]
+__all__ = ["StonerLoadError", "StonerSetasError","regexpDict","typeHintedDict","metadataObject","DataArray","DataFile"]
 
-from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,_lmfit,Model
-from .tools import isNone,all_size,all_type,format_error,_attribute_store,operator,isiterable,typedList
-from .plot.core import PlotMixin
-from .Analysis import AnalysisMixin
 import re
 #import pdb # for debugging
 import os
-import csv
-from sys import float_info
-import numpy as _np_
-from numpy import NaN
-import numpy.ma as _ma_
 import copy
 import os.path as path
 import inspect as _inspect_
-
 import itertools
 from collections import OrderedDict,MutableMapping
+from traceback import format_exc
+import csv
+import numpy as _np_
+from numpy import NaN # pylint: disable=unused-import
+import numpy.ma as _ma_
+
+from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes
+from .tools import isNone,all_size,all_type,_attribute_store,operator,isiterable,typedList
 
 
 try:
@@ -57,6 +55,7 @@ def copy_into(source,dest):
     return dest
 
 class StonerLoadError(Exception):
+
     """An exception thrown by the file loading routines in the Stoner Package.
 
     This special exception is thrown when one of the subclasses of :py:class:`Stoner.Core.DataFile`
@@ -64,15 +63,20 @@ class StonerLoadError(Exception):
     error, but simply indicates that the file format is not recognised by that particular subclass,
     and thus another subclass should have a go instead.
     """
+
     pass
 
 class StonerSetasError(AttributeError):
+
     """An exception tjrown when we try to access a column in data without setas being set."""
+
     pass
 
 
 class _tab_delimited(csv.Dialect):
+
     """A customised csv dialect class for reading tab delimited text files."""
+
     delimiter = "\t"
     quoting = csv.QUOTE_NONE
     doublequote = False
@@ -80,6 +84,7 @@ class _tab_delimited(csv.Dialect):
 
 
 class _setas(object):
+
     """A Class that provides a mechanism for managing the column assignments in a DataFile like object."""
 
     def __init__(self, initial_val=None, **kargs):
@@ -100,7 +105,7 @@ class _setas(object):
 
         if initial_val is not None:
             self(initial_val)
-        elif len(kargs) > 0:
+        elif kargs:
             self(**kargs)
 
     @property
@@ -119,6 +124,7 @@ class _setas(object):
 
     @property
     def clone(self):
+        """Create an exact copy of the current object."""
         cls=self.__class__
         new = cls()
         for attr in self.__dict__:
@@ -128,18 +134,21 @@ class _setas(object):
 
     @property
     def cols(self):
-        if len(self._cols)==0:
+        """Get the current column assignments."""
+        if not self._cols:
             self._cols.update(self._get_cols())
         return self._cols
 
     @cols.setter
     def cols(self,value):
+        """Update the current column assignments."""
         if not isinstance(value,dict):
             raise AttributeError("cols attribute must be a dictionary")
         self._cols=_attribute_store(value)
 
     @property
     def column_headers(self):
+        """Get the current column headers."""
         c=self._size
         l=len(self._column_headers)
         if l<c: # Extend the column headers if necessary
@@ -148,6 +157,7 @@ class _setas(object):
 
     @column_headers.setter
     def column_headers(self,value):
+        """Set the colum headers."""
         self._column_headers=typedList(string_types,value)
 
     @property
@@ -167,10 +177,12 @@ class _setas(object):
 
     @property
     def shape(self):
+        """Return the shape of the array that we think we are."""
         return self._shape
 
     @shape.setter
     def shape(self,value):
+        """Update the note of our shape."""
         value=tuple(value)
         if 0<=len(value)<=2:
             self._shape=tuple(value)
@@ -182,18 +194,18 @@ class _setas(object):
     def __call__(self, *args, **kargs):
         """Treat the current instance as a callable object and assign columns accordingly.
 
-         Variois forms of this method are accepted::
+        Variois forms of this method are accepted::
 
-            setas("xyzuvw")
-            setas(["x"],["y"],["z"],["u"],["v"],["w"])
-            setas(x="column_1",y=3,column4="z")
+        setas("xyzuvw")
+        setas(["x"],["y"],["z"],["u"],["v"],["w"])
+        setas(x="column_1",y=3,column4="z")
         """
         try:
-            assert len(args) == 0 or len(args) == 1
-            if len(args) == 1:
-                assert isinstance(args[0], string_types) or isiterable(args[0]) or isinstance(args[0], _setas)
-            elif len(args) == 1:
-                assert len(kargs) > 0
+            assert len(args) <= 1
+            if args:
+                assert isinstance(args[0], string_types+(_setas,)) or isiterable(args[0])
+            else:
+                assert kargs
         except AssertionError:
             raise SyntaxError("setas must be called with a single argument - string or other iterable")
 
@@ -207,7 +219,7 @@ class _setas(object):
         if len(self.setas) < len(self.column_headers):
             self.setas.extend(list("." * (len(self.column_headers) - len(self.setas))))
 
-        if len(args) > 0:
+        if args:
             value = args[0]
             if isinstance(value, string_types):  # expand the number-code combos in value
                 pattern = re.compile("[^0-9]*(([0-9]+?)(x|y|z|d|e|f|u|v|w|\.|\-))")
@@ -273,8 +285,8 @@ class _setas(object):
         """Try to see if attribute name is a key in self.cols and return that instead."""
         if name in self.cols:
             return self.cols[name]
-        else:
-            return super(_setas,self).__getattr__(name)
+
+        return super(_setas,self).__getattr__(name)
 
     def __getitem__(self, name):
         """Permit the setas attribute to be treated like either a list or a dictionary.
@@ -400,7 +412,7 @@ class _setas(object):
             else:  # ok we'll try for a regular expression
                 test = re.compile(col)
                 possible = [x for x in self.column_headers if test.search(x)]
-                if len(possible) == 0:
+                if not possible:
                     try:
                         col = int(col)
                     except ValueError:
@@ -412,7 +424,7 @@ class _setas(object):
         elif isinstance(col, re._pattern_type):
             test = col
             possible = [x for x in self.column_headers if test.search(x)]
-            if len(possible) == 0:
+            if not possible:
                 raise KeyError('Unable to find any possible column matches for {}'.format(col.pattern))
             else:
                 col = self.find_col(possible)
@@ -438,7 +450,6 @@ class _setas(object):
         Returns:
             A single integer, a list of integers or a dictionary of all columns.
         """
-
         #Do the xcolumn and xerror first. If only one x column then special case to reset startx to get any
         #y columns
         if len(self.setas) < len(self.column_headers):
@@ -484,9 +495,9 @@ class _setas(object):
 
         if xcol is None:
             axes = 0
-        elif len(ycol) == 0:
+        elif not ycol:
             axes = 1
-        elif len(zcol) == 0:
+        elif not zcol:
             axes = 2
         else:
             axes = 3
@@ -510,10 +521,12 @@ class _setas(object):
             "wcol": wcol,
             "axes": axes
         })
-        ret["has_xerr"] = xerr is not None
-        ret["has_yerr"] = len(yerr)>0
-        ret["has_zerr"] = len(zerr)>0
-        ret["has_uvw"] = len(ucol) >0
+        for n in list(ret.keys()):
+            if ret[n] is None or (isinstance(ret[n],list) and  not ret[n]):
+                ret["has_{}".format(n)]=False
+            else:
+                ret["has_{}".format(n)]=True
+        ret["has_uvw"] = ret["has_ucol"] & ret["has_vcol"] & ret["has_wcol"]
         if what == "xcol":
             ret = ret["xcol"]
         elif what in ("ycol", "zcol", "ucol", "vcol", "wcol", "yerr", "zerr"):
@@ -523,24 +536,23 @@ class _setas(object):
         return ret
 
 class _evaluatable(object):
-    """A very simple class that is just a placeholder to indicate that special action
-    needs to be taken to convert a string representation to a valid Python type."""
+
+    """Just a placeholder to indicate that special action needs to be taken to convert a string representation to a valid Python type."""
+
     pass
 
-
 class regexpDict(sorteddict):
+
     """An ordered dictionary that permits looks up by regular expression."""
+
     allowed_keys=(object,)
-    
-    def __init__(self,*args,**kargs):
-        super(regexpDict,self).__init__(*args,**kargs)
 
     def __lookup__(self,name,multiple=False,exact=False):
         """Lookup name and find a matching key or raise KeyError.
 
         Parameters:
             name (str, re._pattern_type): The name to be searched for
-            
+
         Keyword Arguments:
             multiple (bool): Return a singl entry ()default, False) or multiple entries
 
@@ -559,7 +571,7 @@ class regexpDict(sorteddict):
                 name=repr(name)
             if exact:
                 raise KeyError("{} not a key and exact match requested.".format(name))
-            nm=name           
+            nm=name
             if isinstance(name,string_types):
                 try:
                     nm=re.compile(name)
@@ -571,7 +583,7 @@ class regexpDict(sorteddict):
                 nm=name
             if isinstance(nm,re._pattern_type):
                 ret=[n for n in self.keys() if isinstance(n,string_types) and nm.match(n)]
-        if ret is None or isiterable(ret) and len(ret)==0:
+        if ret is None or isiterable(ret) and not ret:
             raise KeyError("{} is not a match to any key.".format(name))
         else:
             if multiple: #sort out returing multiple entries or not
@@ -607,13 +619,14 @@ class regexpDict(sorteddict):
             return True
         except (KeyError,TypeError):
             return False
-        
+
     def has_key(self,name):
-        """"Key is definitely in dictionary as literal"""
+        """Key is definitely in dictionary as literal"""
         return super(regexpDict,self).__contains__(name)
 
 
 class typeHintedDict(regexpDict):
+
     """Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.
 
     The CM Physics Group at Leeds makes use of a standard file format that closely matches
@@ -641,6 +654,7 @@ class typeHintedDict(regexpDict):
         Rather than subclassing a plain dict, this is a subclass of a :py:class:`blist.sorteddict` which stores the entries in a binary list structure.
         This makes accessing the keys much faster and also ensures that keys are always returned in alphabetical order.
     """
+
     allowed_keys=string_types
     #Force metadata keys to be strings
     _typehints = sorteddict()
@@ -655,7 +669,7 @@ class typeHintedDict(regexpDict):
     # Match floating point types
     __regexBoolean = re.compile(r'^Boolean')
     __regexString = re.compile(r'^(String|Path|Enum)')
-    __regexEvaluatable = re.compile(r'^(Cluster|\dD Array|List)')
+    __regexEvaluatable = re.compile(r'^(Cluster||\d+D Array|List)')
 
     __types = {
         'Boolean': bool,
@@ -671,13 +685,13 @@ class typeHintedDict(regexpDict):
     # the string type for standard Python classes
 
     __tests = [(__regexSignedInt, int), (__regexUnsignedInt, int), (__regexFloat, float), (__regexBoolean, bool),
-               (__regexString, str), (__regexEvaluatable, _evaluatable())]
+               (__regexString, str),  (__regexEvaluatable, _evaluatable())]
 
     # This is used to work out the correct python class for
     # some string types
 
     def __init__(self, *args, **kargs):
-        """typeHintedDict constructor method.
+        """Construct the typeHintedDict.
 
         Args:
             *args, **kargs: Pass any parameters through to the dict() constructor.
@@ -689,7 +703,6 @@ class typeHintedDict(regexpDict):
         embedded string type from the keyname) or determines the likely
         type hint from the value of the dict element.
         """
-
         super(typeHintedDict, self).__init__(*args, **kargs)
         for key in list(self.keys()):  # Chekc through all the keys and see if they contain
             # type hints. If they do, move them to the
@@ -701,11 +714,11 @@ class typeHintedDict(regexpDict):
 
     @property
     def types(self):
+        """Return the dictrionary of value types."""
         return self._typehints
 
     def findtype(self, value):
-        """Determines the correct string type to return for common python
-        classes.
+        """Determines the correct string type to return for common python classes.
 
         Args:
             value (any): The data value to determine the type hint for.
@@ -726,7 +739,7 @@ class typeHintedDict(regexpDict):
                         for k in value:
                             elements.append(self.findtype(value[k]))
                     else:
-                        for i,v in enumerate(value):
+                        for v in value:
                             elements.append(self.findtype(v))
                     tt = ','
                     tt = tt.join(elements)
@@ -740,8 +753,7 @@ class typeHintedDict(regexpDict):
         return typ
 
     def __mungevalue(self, t, value):
-        """Based on a string type t, return value cast to an
-        appropriate python class.
+        """Based on a string type t, return value cast to an appropriate python class.
 
         Args:
             t (string): is a string representing the type
@@ -755,15 +767,16 @@ class typeHintedDict(regexpDict):
             expressions that will match type strings, a list of these has been
             constructed with instances of the matching Python classes. These
             are tested in turn and if the type string matches the constructor of
-            the associated python class is called with value as its argument."""
+            the associated python class is called with value as its argument.
+        """
         ret = None
         for (regexp, valuetype) in self.__tests:
             m = regexp.search(t)
             if m is not None:
                 if isinstance(valuetype, _evaluatable):
                     try:
-                        array=_np_.array
-                        ret = eval(repr(value), globals(), locals())
+                        array=_np_.array # pylint: disable=unused-variable
+                        ret = eval(repr(value), globals(), locals()) # pylint: disable=eval-used
                     except NameError:
                         ret = str(value)
                     except SyntaxError:
@@ -787,16 +800,17 @@ class typeHintedDict(regexpDict):
         Args:
             value (string): string representation of he value
         Returns:
-            A python object of the natural type for value"""
+            A python object of the natural type for value
+        """
         ret = None
         if not isinstance(value, string_types):
             raise TypeError("Value must be a string not a {}".format(type(value)))
         value = value.strip()
-        if len(value) != 0:
+        if value:
             tests = ['list(' + value + ')', 'dict(' + value + ')']
             try:
                 i = "[{".index(value[0])
-                ret = eval(tests[i])
+                ret = eval(tests[i]) # pylint: disable=eval-used
             except (SyntaxError, ValueError):
                 if value.lower() in ['true', 'ues', 'on', 'false', 'no', 'off']:
                     ret = value.lower() in ['true', 'yes', 'on']  #Booleab
@@ -836,14 +850,12 @@ class typeHintedDict(regexpDict):
             k = m.group(1)
             t = m.group(2)
             return k, t
-        else:
-            k = name
-            t = None
-            return k, None
+        k = name
+        t = None
+        return k, None
 
     def __getitem__(self, name):
-        """Provides a get item method that checks whether its been given a typehint in the
-        item name and deals with it appropriately.
+        """Provides a get item method that checks whether its been given a typehint in the item name and deals with it appropriately.
 
         Args:
             name (string): metadata key to retrieve
@@ -857,7 +869,7 @@ class typeHintedDict(regexpDict):
         value = [super(typeHintedDict, self).__getitem__(nm) for nm in name]
         if typehint is not None:
             value = [self.__mungevalue(typehint, v) for v in value]
-        if len(value)==0:
+        if len(value)==0:  # pylint: disable=len-as-condition
             raise KeyError("{} is not a valid key even when interpreted as a sregular expression!".format(key))
         elif len(value)==1:
             return value[0]
@@ -865,8 +877,7 @@ class typeHintedDict(regexpDict):
             return {k:v for k,v in zip(name,value)}
 
     def __setitem__(self, name, value):
-        """Provides a method to set an item in the dict, checking the key for
-        an embedded type hint or inspecting the value as necessary.
+        """Provides a method to set an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
 
         Args:
             name (string): The metadata keyname
@@ -876,11 +887,12 @@ class typeHintedDict(regexpDict):
             If you provide an embedded type string it is your responsibility
             to make sure that it correctly describes the actual data
             typehintDict does not verify that your data and type string are
-            compatible."""
+            compatible.
+        """
         name, typehint = self._get_name_(name)
         if typehint is not None:
             self._typehints[name] = typehint
-            if len(str(value)) == 0:  # Empty data so reset to string and set empty
+            if str(value):  # Empty data so reset to string and set empty
                 super(typeHintedDict, self).__setitem__(name, "")
                 self._typehints[name] = "String"
             else:
@@ -890,13 +902,14 @@ class typeHintedDict(regexpDict):
                     pass # Silently fail
         else:
             self._typehints[name] = self.findtype(value)
-            super(typeHintedDict, self).__setitem__(name, self.__mungevalue(self._typehints[name], value))
+            super(typeHintedDict, self).__setitem__(name,  value)
 
     def __delitem__(self, name):
         """Deletes the specified key.
 
         Args:
-            name (string): The keyname to be deleted"""
+            name (string): The keyname to be deleted
+        """
         name = self._get_name_(name)[0]
         name=self.__lookup__(name)
 
@@ -904,6 +917,7 @@ class typeHintedDict(regexpDict):
         super(typeHintedDict, self).__delitem__(name)
 
     def __repr__(self):
+        """Create a text representation of the dictionary with type data."""
         ret=["{}:{}:{}".format(repr(key),self.type(key),repr(self[key])) for key in self]
         return "\n".join(ret)
 
@@ -919,15 +933,15 @@ class typeHintedDict(regexpDict):
         ret = cls()
         for k in self.keys():
             t = self._typehints[k]
-            nk = k + "{" + t + "}"
-            ret[nk] = copy.deepcopy(self[k])
+            ret._typehints[k]=t
+            super(typeHintedDict,ret).__setitem__(k,copy.deepcopy(self[k]))
         return ret
-        
+
     def filter(self, name):
         """Filter the dictionary keys by name
-        
+
         Reduce the metadata dictionary leaving only keys satisfied by name.
-        
+
         Keyword Arguments:
             name(str or callable):
                 either a str to match or a callable function that takes metadata key-value
@@ -945,7 +959,7 @@ class typeHintedDict(regexpDict):
                 raise ValueError('name must be a string or a function')
         for k in rem:
             del(self[k])
-            
+
     def type(self, key):
         """Returns the typehint for the given k(s).
 
@@ -955,7 +969,8 @@ class typeHintedDict(regexpDict):
             key (string or sequence of strings): Either a single string key or a iterable type containing
                 keys
         Returns:
-            The string type hint (or a list of string type hints)"""
+            The string type hint (or a list of string type hints)
+        """
         if isinstance(key, string_types):
             return self._typehints[key]
         else:
@@ -965,8 +980,7 @@ class typeHintedDict(regexpDict):
                 return self._typehints[key]
 
     def export(self, key):
-        """Exports a single metadata value to a string representation with type
-        hint.
+        """Exports a single metadata value to a string representation with type hint.
 
         In the ASCII based file format, the type hinted metadata is represented
         in the first column of a tab delimited text file as a series of lines
@@ -975,7 +989,8 @@ class typeHintedDict(regexpDict):
         Args:
             key (string): The metadata key to export
         Returns:
-            A string of the format : key{type hint} = value"""
+            A string of the format : key{type hint} = value
+        """
         return "{}{{{}}}={}".format(key, self.type(key), repr(self[key]).encode('unicode_escape'))
 
     def export_all(self):
@@ -990,23 +1005,24 @@ class typeHintedDict(regexpDict):
         return [self.export(x) for x in self]
 
 class metadataObject(MutableMapping):
+
     """Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.
 
     Attributes:
-        metadata (typeHintedDict): of key-value metadata pairs. The dictionary
-                                   tries to retain information about the type of
-                                   data so as to aid import and export from CM group LabVIEw code.
-
-    """       
+        metadata (typeHintedDict): of key-value metadata pairs. The dictionary tries to retain information about the type of data so as to aid import and
+            export from CM group LabVIEW code.
+   """
 
     def __init__(self, *args, **kargs):
         """Initialises the current metadata attribute."""
         metadata=kargs.pop("metadata",None)
         if metadata is not None:
             self.metadata.update(metadata)
+        super(metadataObject,self).__init__()
 
     @property
     def metadata(self):
+        """Read the metadata dictionary."""
         try:
             return self._metadata
         except AttributeError: #Oops no metadata yet
@@ -1015,6 +1031,7 @@ class metadataObject(MutableMapping):
 
     @metadata.setter
     def metadata(self,value):
+        """Update the metadata object with type checking."""
         if not isinstance(value,typeHintedDict) and isiterable(value):
             self._metadata=typeHintedDict(value)
         elif isinstance(value,typeHintedDict):
@@ -1023,21 +1040,27 @@ class metadataObject(MutableMapping):
             raise TypeError("metadata must be something that can be turned into a dictionary, not a {}".format(type(value)))
 
     def __getitem__(self,name):
+        """Pass through to metadata dictionary."""
         return self.metadata[name]
 
     def __setitem__(self,name,value):
+        """Pass through to metadata dictionary."""
         self.metadata[name]=value
 
     def __delitem__(self,name):
+        """Pass through to metadata dictionary."""
         del self.metadata[name]
 
     def __len__(self):
+        """Pass through to metadata dictionary."""
         return len(self.metadata)
 
     def __iter__(self):
+        """Pass through to metadata dictionary."""
         return self.metadata.__iter__()
 
     def keys(self):
+        """Return the keys of the metadata dictionary."""
         return self.metadata.keys()
 
     def save(self,path):
@@ -1050,7 +1073,8 @@ class metadataObject(MutableMapping):
 
 
 class DataArray(_ma_.MaskedArray):
-    """A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.
+
+    r"""A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.
 
     Attributes:
         column_headers (list): of strings of the column names of the data.
@@ -1064,7 +1088,7 @@ class DataArray(_ma_.MaskedArray):
             access to them, assuming that they are defined as cartesian co-ordinates. When written to, the attributes
             overwrite the existing column's data.
         p,q,r (1D DataArray): These attributes access calculated columns that convert :math:`(x,y,z)` data or :math:`(u,v,w)`
-            into :math:`(\\phi,\\theta,r)` polar co-ordinates. If on *x* and *y* columns are defined, then 2D polar
+            into :math:`(\phi,\theta,r)` polar co-ordinates. If on *x* and *y* columns are defined, then 2D polar
             co-ordinates are returned for *q* and *r*.
         setas (list or string): Actually a proxy to a magic class that handles the assignment of columns to different axes and
             also tracks the names of columns (so that columns may be accessed as named items).
@@ -1080,10 +1104,12 @@ class DataArray(_ma_.MaskedArray):
     """
 
     def __new__(cls, input_array, *args,**kargs):
+        """Create the new instance of the DataArray."""
         # Input array is an already formed ndarray instance
         # We first cast to be our class type
         setas=kargs.pop("setas",_setas())
         mask=kargs.pop("mask",None)
+        column_headers=kargs.pop("column_headers",[])
         _row=kargs.pop("isrow",False)
         if isinstance(input_array,DataArray):
             i=input_array.i
@@ -1101,10 +1127,12 @@ class DataArray(_ma_.MaskedArray):
         obj.i=i
         obj.setas._row=_row and len(obj.shape)==1
         #Set shared mask - stops some deprication warnings
-        obj._shared_mask=True
+        obj.unshare_mask()
+        obj.column_headers=column_headers
         return obj
 
     def __array_finalize__(self, obj):
+        """Numpy ndarray magic method."""
         # see InfoArray.__array_finalize__ for comments
         super(DataArray,self).__array_finalize__(obj)
         if obj is None:
@@ -1133,8 +1161,8 @@ class DataArray(_ma_.MaskedArray):
 
 
     def __getattr__(self,name):
-        #Overrides __getattr__ to allow access as row.x etc.
         """Get a column using the setas attribute."""
+        #Overrides __getattr__ to allow access as row.x etc.
         col_check = {
             "x": "xcol",
             "d": "xerr",
@@ -1199,15 +1227,15 @@ class DataArray(_ma_.MaskedArray):
                 ix=(self._setas.find_col(ix),)
         if isinstance(ix,(int_types,slice)):
             ix=(ix,)
-        elif isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[-1],string_types): # index still has a string type in it
+        elif isinstance(ix,tuple) and ix and isinstance(ix[-1],string_types): # index still has a string type in it
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
-        elif isinstance(ix,tuple) and len(ix)>0 and isiterable(ix[-1]): # indexing with a list of columns
+        elif isinstance(ix,tuple) and ix and isiterable(ix[-1]): # indexing with a list of columns
             ix=list(ix)
             ix[-1]=[self._setas.find_col(c) for c in ix[-1]]
             ix=tuple(ix)
-        elif isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[0],string_types): # oops! backwards indexing
+        elif isinstance(ix,tuple) and ix and isinstance(ix[0],string_types): # oops! backwards indexing
             c=ix[0]
             ix=list(ix[1:])
             ix.append(self._setas.find_col(c))
@@ -1229,10 +1257,10 @@ class DataArray(_ma_.MaskedArray):
                 ret.isrow=single_row
                 ret.setas=self.setas.clone
                 ret.column_headers=copy.copy(self.column_headers)
-                if len(ix)>0 and isiterable(ix[-1]):
+                if len(ix)>0 and isiterable(ix[-1]):  # pylint: disable=len-as-condition
                     ret.column_headers=list(_np_.array(ret.column_headers)[ix[-1]])
                 # Sort out whether we need an array of row labels
-                if isinstance(self.i,_np_.ndarray) and len(ix)>0:
+                if isinstance(self.i,_np_.ndarray) and len(ix)>0:  # pylint: disable=len-as-condition
                     if isiterable(ix[0]) or isinstance(ix[0],int_types):
                         ret.i=self.i[ix[0]]
                     else:
@@ -1259,7 +1287,7 @@ class DataArray(_ma_.MaskedArray):
         return ret
 
     def __setitem__(self,ix,val):
-        # Override __getitem__ to handle string indexing
+        """Override __setitem__ to handle string indexing."""
         if isinstance(ix,string_types):
             ix=self._setas.find_col(ix)
         elif isinstance(ix,tuple) and isinstance(ix[-1],string_types):
@@ -1272,18 +1300,21 @@ class DataArray(_ma_.MaskedArray):
             ix.append(self._setas.find_col(c))
             ix=tuple(ix)
 
+        if self.sharedmask: #We do not want to share a mask when we're about to change soimething here...
+            self.unshare_mask()
+
         super(DataArray,self).__setitem__(ix,val)
 
     @property
     def _(self):
         """Return the DataArray as a normal numpy array for those operations that need this"""
         return _ma_.getdata(self)
-     
+
     @property
     def isrow(self):
         """Defines whether this is a single row or a column if 1D."""
         return self._setas._row
-    
+
     @isrow.setter
     def isrow(self,value):
         """Set whether this object is a single row or not."""
@@ -1291,7 +1322,7 @@ class DataArray(_ma_.MaskedArray):
 
     @property
     def r(self):
-        """Calculate the radius :math:`\\rho` co-ordinate if using spherical or polar co-ordinate systems."""
+        r"""Calculate the radius :math:`\rho` co-ordinate if using spherical or polar co-ordinate systems."""
         axes = int(self._setas.cols["axes"])
         m = [lambda d: None, lambda d: None, lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2),
              lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
@@ -1305,7 +1336,7 @@ class DataArray(_ma_.MaskedArray):
 
     @property
     def q(self):
-        """Calculate the azimuthal :math:`\\theta` co-ordinate if using spherical or polar co-ordinates."""
+        r"""Calculate the azimuthal :math:`\theta` co-ordinate if using spherical or polar co-ordinates."""
         axes = int(self._setas.cols["axes"])
         m = [lambda d: None, lambda d: None, lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.x, d.y),
              lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.u, d.v),
@@ -1318,7 +1349,7 @@ class DataArray(_ma_.MaskedArray):
 
     @property
     def p(self):
-        """Calculate the inclination :math:`\\phi` co-ordinate for spherical co-ordinate systems."""
+        r"""Calculate the inclination :math:`\phi` co-ordinate for spherical co-ordinate systems."""
         axes = int(self._setas.cols["axes"])
         m = [lambda d: None, lambda d: None, lambda d: None, lambda d: _np_.arcsin(d.z),
              lambda d: _np_.arsin(d.z), lambda d: _np_.arcsin(d.w), lambda d: _np_.arcsin(d.w)]
@@ -1331,7 +1362,6 @@ class DataArray(_ma_.MaskedArray):
     @property
     def i(self):
         """Return the row indices of the DataArray or sets the base index - the row number of the first row."""
-
         if not hasattr(self,"_ibase"):
             self._ibase=[]
         if len(self._ibase)==1 and self.isrow:
@@ -1345,7 +1375,7 @@ class DataArray(_ma_.MaskedArray):
         if self.ndim==0:
             pass
         elif self.ndim==1 and self.isrow:
-            if isiterable(value) and len(value)>0:
+            if isiterable(value) and value:
                 self._ibase=_np_.array([min(value)])
             else:
                 self._ibase=_np_.array([value])
@@ -1413,7 +1443,6 @@ class DataArray(_ma_.MaskedArray):
             element of the list. Thus in principle the @swp could contain
             lists of lists of tuples
         """
-
         headers_too=kargs.pop("headers_too",True)
         setas_too=kargs.pop("setas_too",True)
 
@@ -1435,8 +1464,8 @@ class DataArray(_ma_.MaskedArray):
             list of tuples")
 
 class DataFile(metadataObject):
-    """:py:class:`Stoner.Core.DataFile` is the base class object that represents
-    a matrix of data, associated metadata and column headers.
+
+    """:py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers.
 
     Attributes:
         column_headers (list): of strings of the column names of the data.
@@ -1447,7 +1476,7 @@ class DataFile(metadataObject):
                            already saved to disc. This is the default filename used by the :py:meth:`Stoner.Core.DataFile.load`
                            and :py:meth:`Stoner.Core.DataFile.save`.
         mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask.
-        mime_type (list of str): The possible mime-types of data files represented by each matching filename pattern in :py:attr:`Datafile.pattern`. 
+        mime_type (list of str): The possible mime-types of data files represented by each matching filename pattern in :py:attr:`Datafile.pattern`.
         patterns (list): A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (*.txt and *.dat")
         priority (int): Used to indicathe order in which subclasses of :py:class:`DataFile` are tried when loading data. A higher number means a lower
                             priority (!)
@@ -1490,7 +1519,7 @@ class DataFile(metadataObject):
 
     _conv_string = _np_.vectorize(str)
     _conv_float = _np_.vectorize(float)
-    
+
     def __new__(cls, *args,**kargs):
         """Do some init stuff before the mixins kick in."""
         self=metadataObject.__new__(cls)
@@ -1502,7 +1531,7 @@ class DataFile(metadataObject):
         self.column_headers = list()
         self._baseclass = DataFile
         return self
-       
+
 
     def __init__(self, *args, **kargs):
         """Constructor method for :py:class:`DataFile`.
@@ -1568,7 +1597,7 @@ class DataFile(metadataObject):
         if handler is not None:
             handler(*args, **kargs)
         self.metadata["Stoner.class"] = self.__class__.__name__
-        if len(kargs) > 0:  # set public attributes from keywords
+        if kargs:  # set public attributes from keywords
             to_go=[]
             for k in kargs:
                 if k in self._public_attrs:
@@ -1643,16 +1672,20 @@ class DataFile(metadataObject):
     def _public_attrs(self):
         """Return a dictionary of attributes setable by keyword argument with thier types."""
         return self._public_attrs_real
-    
+
     @_public_attrs.setter
     def _public_attrs(self,value):
         """Privaye property to update the list of public attributes."""
         self._public_attrs_real.update(dict(value))
 
     @property
+    def basename(self):
+        """Returns the basename of the current filename."""
+        return os.path.basename(self.filename)
+
+    @property
     def clone(self):
-        """Gets a deep copy of the current DataFile.
-        """
+        """Gets a deep copy of the current DataFile."""
         c = self.__class__()
         if self.debug: print("Cloning in DataFile")
         return copy_into(self,c)
@@ -1676,22 +1709,25 @@ class DataFile(metadataObject):
     def data(self, value):
         """Set the data attribute, but force it through numpy.ma.masked_array first."""
         nv=value
-        if len(nv.shape) == 0:
+        if not nv.shape: #nv is a scalar - make it a 2D array
             nv = _ma_.atleast_2d(nv)
-        elif len(nv.shape) == 1:
+        elif len(nv.shape) == 1: #nv is a vector - make it a 2D array
             nv = _ma_.atleast_2d(nv).T
-        elif len(nv.shape) > 2:
+        elif len(nv.shape) > 2: #nv has more than 2D - raise an error # TODO 0.9? Support 3D arrays in DataFile?
             raise ValueError("DataFile.data should be no more than 2 dimensional not shape {}", format(nv.shape))
-        if not isinstance(nv,DataArray):
+        if not isinstance(nv,DataArray): # nv isn't a DataArray, so preserve setas (does this preserve column_headers too?)
             nv = DataArray(nv)
             nv._setas=getattr(self,"_data")._setas.clone
+        elif nv.shape[1]==self.shape[1]: # nv is a DataArray with the same number of columns - preserve column_headers and setas
+            ch=getattr(self,"_data").column_headers
+            nv._setas=getattr(self,"_data")._setas.clone
+            nv.column_headers=ch
         nv._setas.shape=nv.shape
         self._data=nv
 
     @property
     def dict_records(self):
-        """Return the data as a dictionary of single columns with column headers for the keys.
-        """
+        """Return the data as a dictionary of single columns with column headers for the keys."""
         return _np_.array([dict(zip(self.column_headers, r)) for r in self.rows()])
 
     @property
@@ -1701,24 +1737,24 @@ class DataFile(metadataObject):
 
     @property
     def dtype(self):
-        """Return the _np_ dtype attribute of the data
-        """
+        """Return the _np_ dtype attribute of the data"""
         return self.data.dtype
-    
+
     @property
     def filename(self):
+        """Return DataFile filename, or make one up."""
         if self._filename is None:
             self.filename="Untitled"
         return self._filename
-    
+
     @filename.setter
     def filename(self,filename):
+        """Store the DataFile filename."""
         self._filename=filename
 
     @property
     def mask(self):
-        """Returns the mask of the data array.
-        """
+        """Returns the mask of the data array."""
         self.data.mask = _ma_.getmaskarray(self.data)
         return self.data.mask
 
@@ -1732,9 +1768,10 @@ class DataFile(metadataObject):
 
     @classproperty
     def patterns(self):
+        """Return the possible filename patterns for use in dialog boxes."""
         patterns=self._patterns
-        for cls in self.subclasses:
-            klass=self.subclasses[cls]
+        for cls in self.subclasses:  # pylint: disable=not-an-iterable
+            klass=self.subclasses[cls] # pylint: disable=unsubscriptable-object
             if klass is DataFile or "patterns" not in klass.__dict__:
                 continue
             patterns.extend([p for p in klass.patterns if p not in patterns])
@@ -1742,17 +1779,14 @@ class DataFile(metadataObject):
 
     @property
     def records(self):
-        """Returns the data as a _np_ structured data array. If columns names are duplicated then they
-        are made unique.
-        """
+        """Returns the data as a _np_ structured data array. If columns names are duplicated then they are made unique."""
         ch = copy.copy(self.column_headers)  # renoved duplicated column headers for structured record
         ch_bak=copy.copy(ch)
         setas=self.setas.clone #We'll need these later !
         f = self.data.flags
         if not f["C_CONTIGUOUS"] and not f["F_CONTIGUOUS"]:  # We need our data to be contiguous before we try a records view
             self.data = self.data.copy()
-        for i in range(len(ch)):
-            header = ch[i]
+        for i,header in enumerate(ch):
             j = 0
             while ch[i] in ch[i + 1:] or ch[i] in ch[0:i]:
                 j = j + 1
@@ -1764,8 +1798,7 @@ class DataFile(metadataObject):
 
     @property
     def shape(self):
-        """Pass through the numpy shape attribute of the data.
-        """
+        """Pass through the numpy shape attribute of the data."""
         return self.data.shape
 
     @property
@@ -1780,8 +1813,7 @@ class DataFile(metadataObject):
 
     @classproperty
     def subclasses(self):
-        """Return a list of all in memory subclasses of this DataFile.
-        """
+        """Return a list of all in memory subclasses of this DataFile."""
         subclasses = {x: (x.priority,x.__name__) for x in itersubclasses(DataFile)}
         ret = OrderedDict()
         ret["DataFile"] = DataFile
@@ -1791,8 +1823,7 @@ class DataFile(metadataObject):
 
     @property
     def T(self):
-        """Gets the current data transposed.
-        """
+        """Gets the current data transposed."""
         return self.data.T
 
     @T.setter
@@ -1807,7 +1838,7 @@ class DataFile(metadataObject):
 
 
     def __add__(self, other):
-        """ Implements a + operator to concatenate rows of data.
+        """Implements a + operator to concatenate rows of data.
 
         Args:
             other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
@@ -1826,12 +1857,13 @@ class DataFile(metadataObject):
             elements as their are columns in @a self.data then the numpy
             array is treated as a new row of data If @a ither is a 2D numpy
             array then it is appended if it has the same number of
-            columns and @a self.data."""
+            columns and @a self.data.
+        """
         newdata = self.clone
         return self.__add_core__(other, newdata)
 
     def __iadd__(self, other):
-        """ Implements a += operator to concatenate rows of data inplace.
+        """Implements a += operator to concatenate rows of data inplace.
 
         Args:
             other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
@@ -1850,7 +1882,8 @@ class DataFile(metadataObject):
             elements as their are columns in @a self.data then the numpy
             array is treated as a new row of data If @a ither is a 2D numpy
             array then it is appended if it has the same number of
-            columns and @a self.data."""
+            columns and @a self.data.
+        """
         newdata = self
         return self.__add_core__(other, newdata)
 
@@ -1863,14 +1896,18 @@ class DataFile(metadataObject):
 
         Returns:
             newdata: A modified newdata
-            """
+        """
         if isinstance(other, _np_.ndarray):
-            if len(self) == 0:
+            if len(self) == 0:  # pylint: disable=len-as-condition
+                ch=getattr(other,"column_headers",[])
+                setas=getattr(other,"setas","")
                 t = _np_.atleast_2d(other)
                 c = t.shape[1]
                 if len(self.column_headers) < c:
                     newdata.column_headers.extend(["Column_{}".format(x) for x in range(c - len(self.column_headers))])
                 newdata.data = t
+                newdata.setas=setas
+                newdata.column_headers=ch
                 ret = newdata
             elif len(_np_.shape(other)) == 1:
                 # 1D array, so assume a single row of data
@@ -1964,7 +2001,6 @@ class DataFile(metadataObject):
             newdata: The modified DataFile (may be self or a clone of self depending
             on the operator's inplaceness)
         """
-
         if len(newdata.data.shape) < 2:
             newdata.data = _np_.atleast_2d(newdata.data)
 
@@ -2132,7 +2168,7 @@ class DataFile(metadataObject):
         handler = [None, new_d._init_single, new_d._init_double, new_d._init_many][i]
         if handler is not None:
             handler(*args, **kargs)
-        if len(kargs) > 0:  # set public attributes from keywords
+        if kargs:  # set public attributes from keywords
             myattrs = new_d._public_attrs
             for k in kargs:
                 if k in myattrs:
@@ -2155,7 +2191,8 @@ class DataFile(metadataObject):
             item(string): name of metadata key
 
         Returns:
-            bool: True if item in self.metadata"""
+            bool: True if item in self.metadata
+        """
         return item in self.metadata
 
     def __deepcopy__(self, memo):
@@ -2167,22 +2204,22 @@ class DataFile(metadataObject):
             try:
                 setattr(result, k, copy.deepcopy(v, memo))
             except Exception:
-                setattr(result, k, copy.copy(v))                
+                setattr(result, k, copy.copy(v))
         return result
 
     def __delitem__(self, item):
         """Implements row or metadata deletion.
 
         Args:
-            item (ingteger or string):  row index or name of metadata to delete"""
+            item (ingteger or string):  row index or name of metadata to delete
+        """
         if isinstance(item, string_types):
             del (self.metadata[item])
         else:
             self.del_rows(item)
 
     def __dir__(self):
-        """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle.
-        """
+        """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle."""
         attr = dir(type(self))
         col_check = {"xcol": "x", "xerr": "d", "ycol": "y", "yerr": "e", "zcol": "z", "zerr": "f"}
         for k in col_check:
@@ -2192,7 +2229,7 @@ class DataFile(metadataObject):
                 if k in self._data._setas.cols and self._data._setas.cols[k] is not None:
                     attr.append(col_check[k])
             else:
-                if k in self._data._setas.cols and len(self._data._setas.cols[k]) > 0:
+                if k in self._data._setas.cols and self._data._setas.cols[k]:
                     attr.append(col_check[k])
         return sorted(set(attr))
 
@@ -2203,19 +2240,20 @@ class DataFile(metadataObject):
             mode (string): The mode of the file operation  'r' or 'w'
 
         Returns:
-            A filename to be used for the file operation."""
+            A filename to be used for the file operation.
+        """
         # Wildcard pattern to be used in file dialogs.
 
         descs = {}
         patterns = self.patterns
-        for p in patterns:
+        for p in patterns:  # pylint: disable=not-an-iterable
             descs[p] = self.__class__.__name__ + " file"
-        for c in self.subclasses:
-            for p in (self.subclasses[c].patterns):
+        for c in self.subclasses:  # pylint: disable=not-an-iterable
+            for p in (self.subclasses[c].patterns):  # pylint: disable=unsubscriptable-object
                 if p in descs:
-                    descs[p] += ", " + self.subclasses[c].__name__ + " file"
+                    descs[p] += ", " + self.subclasses[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
                 else:
-                    descs[p] = self.subclasses[c].__name__ + " file"
+                    descs[p] = self.subclasses[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
 
         patterns = [(descs[p], p) for p in sorted(descs.keys())]
         patterns.insert(0,("All File", "*.*"))
@@ -2233,11 +2271,10 @@ class DataFile(metadataObject):
         else:
             mode = "directory"
         dlg = get_filedialog(what=mode, initialdir=dirname, initialfile=filename, filetypes=patterns)
-        if len(dlg) != 0:
+        if dlg:
             self.filename = dlg
             return self.filename
-        else:
-            return None
+        return None
 
     def __floordiv__(self, other):
         """Just aslias for self.column(other)."""
@@ -2246,8 +2283,7 @@ class DataFile(metadataObject):
         return self.column(other)
 
     def __getattr__(self, name):
-        """
-        Called for :py:class:`DataFile`.x to handle some special pseudo attributes and otherwise to act as a shortcut for :py:meth:`column`.
+        """Called for :py:class:`DataFile`.x to handle some special pseudo attributes and otherwise to act as a shortcut for :py:meth:`column`.
 
         Args:
             name (string): The name of the attribute to be returned.
@@ -2256,16 +2292,15 @@ class DataFile(metadataObject):
             Various: the DataFile object in various forms
 
         Supported attributes:
-        - records - return the DataFile data as a numpy structured
-        array - i.e. rows of elements whose keys are column headings
-        - clone - returns a deep copy of the current DataFile instance
+            - records - return the DataFile data as a numpy structured
+            array - i.e. rows of elements whose keys are column headings
+            - clone - returns a deep copy of the current DataFile instance
 
         Otherwise the name parameter is tried as an argument to
         :py:meth:`DataFile.column` and the resultant column isreturned. If
         DataFile.column raises a KeyError this is remapped as an
         AttributeError.
        """
-
         setas_cols = ("x", "y", "z", "d", "e", "f", "u", "v", "w", "r", "q", "p")
         if name!="debug" and self.debug: print(name)
         try:
@@ -2324,7 +2359,7 @@ class DataFile(metadataObject):
             and DataFile[5,3] would return the 6th element of the
             4th column.
         """
-        if isinstance(name, string_types) or isinstance(name, re._pattern_type):
+        if isinstance(name, string_types+(re._pattern_type,)):
             try:
                 ret = self.__meta__(name)
             except KeyError:
@@ -2349,6 +2384,7 @@ class DataFile(metadataObject):
         return ret
 
     def __getstate__(self):
+        """Get ready for picking this object - used for deepcopy."""
         return {"data": self.data, "column_headers": self.column_headers, "metadata": self.metadata,"filename":self.filename}
 
 
@@ -2358,7 +2394,8 @@ class DataFile(metadataObject):
         Pass through to :py:meth:`DataFile.rows` for the actual work.
 
         Returns:
-            Next row"""
+            Next row
+        """
         for r in self.rows(False):
             yield r
 
@@ -2384,7 +2421,7 @@ class DataFile(metadataObject):
             self.get_filename('r')
         else:
             self.filename = filename
-        with open(self.filename, "r") as datafile:
+        with open(self.filename, "r",encoding="utf-8",errors="ignore") as datafile:
             try:
                 reader = csv.reader(datafile, dialect=_tab_delimited())
                 row = next(reader)
@@ -2442,11 +2479,10 @@ class DataFile(metadataObject):
         """Return the length of the data.
 
         Returns: Returns the number of rows of data
-                """
+        """
         if _np_.prod(self.data.shape)>0:
             return _np_.shape(self.data)[0]
-        else:
-            return 0
+        return 0
 
     def __lshift__(self, other):
         """Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__read_iterable` function.
@@ -2485,7 +2521,7 @@ class DataFile(metadataObject):
         Note:
            If key is not an exact match for an item of metadata,
             then a regular expression match is carried out.
-            """
+        """
         if isinstance(ky, string_types):  # Ok we go at it with a string
             if str(ky) in self.metadata:
                 ret = self.metadata[str(ky)]
@@ -2516,7 +2552,6 @@ class DataFile(metadataObject):
 
     def __read_iterable(self, reader):
         """Internal method to read a string representation of py:class:`DataFile` in line by line."""
-
         if "next" in dir(reader): # Python v2 iterator
             readline = reader.next
         elif "readline" in dir(reader): #Filelike iterator
@@ -2557,11 +2592,12 @@ class DataFile(metadataObject):
             self.data = _np_.append(self.data, self._conv_float(row[1:]))
         self.data = _np_.reshape(self.data, (-1, cols))
         self.column_headers = ["Column {}".format(i) for i in range(cols)]
-        for i in range(len(col_headers_tmp)):
-            self.column_headers[i] = col_headers_tmp[i]
+        for i,head_temp in enumerate(col_headers_tmp):
+            self.column_headers[i] = head_temp
         self["TDI Format"]=fmt
 
     def __reduce_ex__(self, p):
+        """Machinery used for deepcopy."""
         cls=self.__class__
         return (cls, (), self.__getstate__())
 
@@ -2575,7 +2611,7 @@ class DataFile(metadataObject):
             Either a single metadata item or a dictionary of metadata items
         """
         possible = [x for x in self.metadata if test.search(x)]
-        if len(possible) == 0:
+        if not possible:
             raise KeyError("No metadata with keyname: {}".format(test))
         elif len(possible) == 1:
             ret = self.metadata[possible[0]]
@@ -2592,41 +2628,47 @@ class DataFile(metadataObject):
         This allows one to print any :py:class:`DataFile` to a stream based
         object andgenerate a reasonable textual representation of the data.shape
 
-                Returns:
-                    self in a textual format. 
+        Returns:
+            self in a textual format.
         """
         try:
             return self._repr_table_()
         except Exception:
             return self.__repr_core__(256)
 
-    def _repr_table_(self):
+    def _repr_table_(self,fmt="rst"):
         """Convert the DataFile to a 2D array and then feed to tabulate."""
         from tabulate import tabulate
+        tabulate.PRESERVE_WHITESPACE = True
         from textwrap import TextWrapper
+        lb="<br/>" if fmt=="html" else "\n"
         rows,cols=self._repr_limits
-        c_w=max([len(x) for x in self.column_headers])
-        wrapper=TextWrapper(subsequent_indent="\t",width=max(20,80-c_w*min(cols,self.shape[1])))
         r,c=self.shape
+        interesting,col_assignments,cols=self._interesting_cols(cols)
+        c=min(c,cols)
+        c_w=max([len(self.column_headers[x]) for x in interesting if x>-1])
+        wrapper=TextWrapper(subsequent_indent="\t",width=max(20,max(20,(80-c_w*c))))
         if r>rows:
             shorten=[True,False]
             r=rows+rows%2
         else:
             shorten=[False,False]
-            
-        if c>cols:
-            shorten[1]=True
-            c=cols
-            
+
+        shorten[1]=c>cols
         r=max(len(self.metadata),r)
+
         outp=_np_.zeros((r+1,c+1),dtype=object)
-        outp[:,:]=""
-        if shorten[1]:
-            ch=self.column_headers[:c-2]+["...", self.column_headers[-1]]
-        else:
-            ch=self.column_headers
+        outp[:,:]="..."
+        ch=[self.column_headers[ix] if ix>=0 else "...." for ix in interesting]
+
+        for ix,(h,i) in enumerate(zip(ch,col_assignments)):
+            spaces1=" "*((c_w-len(h))//2)
+            spaces2=" "*((c_w-len(i))//2)
+            ch[ix]="{}{}{}{}{}".format(spaces1,h,lb,spaces2,i)
+            if self.debug: print(len(spaces1),len(spaces2))
         outp[0,1:]=ch
-        outp[0,0]="TDI Format 1.5"
+        outp[1,1:]=col_assignments
+        outp[0,0]="TDI Format 1.5{}index".format(lb)
         i=1
         for md in self.metadata.export_all():
             md=md.replace("=","= ")
@@ -2635,73 +2677,21 @@ class DataFile(metadataObject):
                     outp=_np_.append(outp,[[""]*outp.shape[1]],axis=0)
                 outp[i,0]=line
                 i+=1
-        if shorten==[True,True]:
-            outp[1:r/2,1:c-1]=self.data[0:r/2-1,0:c-2].astype(str)
-            outp[r/2+1:,1:c-1]=self.data[-r/2:,0:c-2].astype(str)
-            outp[1:r/2,-1]=self.data[0:r/2-1,-1].astype(str)
-            outp[r/2+1:,-1]=self.data[-r/2:,-1].astype(str)
-            outp[r/2]="..."
-            outp[:,c-1]="..."
-        elif shorten==[True,False]:
-            outp[1:r/2,1:]=self.data[0:r/2-1,:].astype(str)
-            outp[r/2+1:,1:]=self.data[-r/2:,:].astype(str)
-            outp[r/2]="..."
-        elif shorten==[False,True]:
-            outp[1:,1:c-1]=self.data[:,0:c-2].astype(str)
-            outp[1:,-1]=self.data[:,-1].astype(str)
-            outp[:,c-1]="..."
-        else:
-            outp[1:self.shape[0]+1,1:self.shape[1]+1]=self.data.astype(str)
-        return tabulate(outp[1:],outp[0],tablefmt="rst")
-              
-             
-        
-    
+        for ic,c in enumerate(interesting):
+            if c>=0:
+                if shorten[0]:
+                    outp[1:r//2,ic+1]=self.data[:r//2-1,c].astype(str)
+                    outp[r//2+1:r+1,ic+1]=self.data[-r//2:,c].astype(str)
+                else:
+                    outp[1:len(self.data)+1,ic+1]=self.data[:,c].astype(str)
+        return tabulate(outp[1:],outp[0],tablefmt=fmt,numalign="decimal",stralign="left")
+
     def _repr_html_(self):
-        """Version of repr_core that does and html output.
-        
-        """
-        shorten=256
-        outp = "<table><tr><th>TDI Format 1.5</th><th>" + "</th><th>".join(self.column_headers) + "</th></tr>\n"
-        m = len(self.metadata)
-        self.data = _np_.atleast_2d(self.data)
-        r = _np_.shape(self.data)[0]
-        md = self.metadata.export_all()
-        for x in range(min(r, m)):
-            if self.data.ndim!=2 or self.shape[1]==1:
-                outp = outp + "<tr><td>"+md[x] + "</td><td>{}</td></tr>\n".format(self.data[x])
-            else:
-                outp = outp + "<tr><td>"+md[x] + "</td><td>"+"</td><td>".join([str(y) for y in self.data[x].filled()]) + "</td></tr>\n"
-        if m > r:  # More metadata
-            for x in range(r, m):
-                outp = outp + "</tr><td>"+md[x] + "<td colspan={}></tr>\n".format(self.shape[1])
-        elif r > m:  # More data than metadata
-            if shorten is not None and shorten and r - m > shorten:
-                for x in range(m, m + shorten - 100):
-                    if self.data.ndim!=2 or self.shape[1]==1:
-                        outp += "<tr><td>&nbsp;" + "</td><td>{}</td></tr>\n".format(self.data[x])
-                    else:
-                        outp += "<tr><td>&nbsp;</td><td>" + "</td><td>".join([str(y) for y in self.data[x].filled()]) + "</td></tr>\n"
-                outp += "<tr><td colspan={}>... {} lines skipped...</td></tr>\n".format(self.shape[1]+1,r - m - shorten + 100)
-                for x in range(-100, -1):
-                    if self.data.ndim!=2 or self.shape[1]==1:
-                        outp += "<tr><td>&nbsp;" + "</td><td>{}</td></tr>\n".format(self.data[x])
-                    else:
-                        outp += "<tr><td>&nbsp;</td><td>" + "</td><td>".join([str(y) for y in self.data[x].filled()]) + "</td></tr>\n"
-            else:
-                for x in range(m, r):
-                    if self.data.ndim!=2 or self.shape[1]==1:
-                        outp += "<tr><td>&nbsp;" + "</td><td>{}</td></tr>\n".format(self.data[x])
-                    else:
-                        outp += "<tr><td>&nbsp;</td><td>" + "</td><td>".join([str(y) for y in self.data[x].filled()]) + "</td></tr>\n"
-        outp+="</table>\n"
-        return outp
-        
+        """Version of repr_core that does and html output."""
+        return self._repr_table_("html")
 
     def __repr_core__(self, shorten=1000):
-        """Actuall do the repr work, but allow for a shorten parameter to
-        save printing big files out to disc.
-        """
+        """Actuall do the repr work, but allow for a shorten parameter to save printing big files out to disc."""
         outp = "TDI Format 1.5\t" + "\t".join(self.column_headers) + "\n"
         m = len(self.metadata)
         self.data = _np_.atleast_2d(self.data)
@@ -2765,14 +2755,13 @@ class DataFile(metadataObject):
         Args:
             name (string): Name of attribute to set. Details of possible attributes below:
 
-        - mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles the case where you pass a callable object 
+        - mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles the case where you pass a callable object
             to nask where we pass each row to the function and use the return reult as the mask
         - data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
         """
-
         if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
             object.__setattr__(self,name, value)
-        elif len(name) == 1 and name in "xyzuvwdef" and len(self.setas[name]) != 0:
+        elif len(name) == 1 and name in "xyzuvwdef" and self.setas[name]:
             self.__setattr_col(name, value)
         else:
             super(DataFile, self).__setattr__(name, value)
@@ -2786,7 +2775,6 @@ class DataFile(metadataObject):
                 then overwrite the column(s) of data with this new data. If an index type, then set the corresponding setas
                 assignment to these columns.
         """
-
         if isinstance(value, _np_.ndarray):
             value = _np_.atleast_2d(value)
             if value.shape[0] == self.data.shape[0]:
@@ -2842,8 +2830,8 @@ class DataFile(metadataObject):
         Args:
             func (callable): A Callable object of the form lambda x:True where x is a row of data (numpy
             invert (bool): Optionally invert te reult of the func test so that it unmasks data instead
-            cumulative (bool): if tru, then an unmask value doesn't unmask the data, it just leaves it as it is."""
-
+            cumulative (bool): if tru, then an unmask value doesn't unmask the data, it just leaves it as it is.
+        """
         i = -1
         args = len(_inspect_.getargs(func.__code__)[0])
         for r in self.rows():
@@ -2852,7 +2840,7 @@ class DataFile(metadataObject):
                 t = func(r[col], r)
             else:
                 t = func(r)
-            if isinstance(t, bool) or isinstance(t, _np_.bool_):
+            if isinstance(t, (bool, _np_.bool_)):
                 if t ^ invert:
                     self.data[i] = _ma_.masked
                 elif not cumulative:
@@ -2868,6 +2856,57 @@ class DataFile(metadataObject):
         """Provides an implementation for str(DataFile) that does not shorten the output."""
         return self.__repr_core__(False)
 
+
+    def _interesting_cols(self,cols):
+        """Workout which columns the user might be interested in in the basis of the setas.
+
+        ArgsL
+            cols (float): Maximum Number of columns to display
+
+        Returns
+            list(ints): The indices of interesting columns with breaks in runs indicated by -1
+        """
+        c=self.shape[1]
+        if c>cols:
+            interesting=[]
+            last=-1
+            for ix,typ in enumerate(self.setas):
+                if last!=-1 and last!=ix-1:
+                    interesting.append(-1)
+                    last=-1
+                if typ!=".":
+                    interesting.append(ix)
+                    last=ix
+            if interesting and interesting[-1]==-1:
+                interesting=interesting[:-1]
+            if interesting:
+                c_start=max(interesting)+1
+            else:
+                c_start=0
+            interesting.extend(range(c_start,c))
+            if len(interesting)<cols:
+                cols=len(interesting)
+            if interesting[cols-3]!=-1:
+                interesting[cols-2]=-1
+            else:
+                interesting[cols-2]=c-2
+            interesting[cols-1]=c-1
+            interesting=interesting[:cols]
+            c=cols
+        else:
+            interesting=list(range(c))
+
+        col_assignments=[]
+        for i in interesting:
+            if i!=-1:
+                if self.setas[i]!=".":
+                    col_assignments.append("{} ({})".format(i,self.setas[i]))
+                else:
+                    col_assignments.append("{}".format(i))
+            else:
+                col_assignments.append("")
+        return interesting,col_assignments,cols
+
     def _push_mask(self, mask=None):
         """Copy the current data mask to a temporary store and replace it with a new mask if supplied.
 
@@ -2876,7 +2915,8 @@ class DataFile(metadataObject):
                 The new data mask to apply (defaults to None = unmask the data
 
         Returns:
-            Nothing"""
+            Nothing
+        """
         self._masks.append(self.mask)
         if mask is None:
             self.data.mask = False
@@ -2907,7 +2947,7 @@ class DataFile(metadataObject):
         if scalar:
             for c in ret:
                 if isinstance(ret[c],list):
-                    if len(ret[c])>0:
+                    if ret[c]:
                         ret[c]=ret[c][0]
                     else:
                         ret[c]=None
@@ -2919,19 +2959,20 @@ class DataFile(metadataObject):
                     ret[c]=list([ret[c]])
                 elif ret[c] is None:
                     ret[c]=[]
-            
+
         return ret
 
     def _pop_mask(self):
         """Replaces the mask on the data with the last one stored by _push_mask().
 
         Returns:
-            Nothing"""
+            Nothing
+        """
         self.mask = False
         self.mask = self._masks.pop()
-        if len(self._masks) == 0:
+        if not self._masks:
             self._masks = [False]
-            
+
     def _raise_type_error(self,k):
         """Raise a type error when setting an attribute k."""
         if isinstance(self._public_attrs[k], tuple):
@@ -2963,7 +3004,8 @@ class DataFile(metadataObject):
 
         Note:
             Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
-            the original DataFile Instance as well as returning it."""
+            the original DataFile Instance as well as returning it.
+        """
         if index is None or isinstance(index,bool) and index:
             index = self.shape[1]
             replace = False
@@ -2973,14 +3015,14 @@ class DataFile(metadataObject):
             index = self.find_col(index)
             if header is None:
                 header = self.column_headers[index]
-                
+
         if isinstance(setas,str) and len(setas)==1 and setas in "xyzdefuvw.-":
             pass
         elif setas is not None:
             raise TypeError("setas parameter should be a single letter in the set xyzdefuvw.-, not {}".format(setas))
         else:
             setas="."
-                
+
         if isinstance(column_data, list):
             column_data = _np_.array(column_data)
 
@@ -3004,7 +3046,7 @@ class DataFile(metadataObject):
         elif len(self.data.shape) == 1:
             self.data = _np_.atleast_2d(self.data).T
             (dr, dc) = self.data.shape
-        elif len(self.data.shape) == 0:
+        elif not self.data.shape:
             self.data = _np_.array([[]])
             (dr, dc) = (0, 0)
         if cl > dr and dc * dr > 0:
@@ -3015,13 +3057,13 @@ class DataFile(metadataObject):
             self.data[:, index] = _np__data
             if setas!="-":
                 self.setas[index]=setas
-                           
+
         else:
             if dc * dr == 0:
                 self.data = DataArray(_np_.transpose(_np_.atleast_2d(_np__data)),setas=self.data._setas)
                 self.column_headers=[header,]
                 self.setas=setas
-                
+
             else:
                 columns=copy.copy(self.column_headers)
                 old_setas=list(self.setas)
@@ -3030,7 +3072,7 @@ class DataFile(metadataObject):
                 else:
                     old_setas.insert(index,old_setas[index])
                 self.data = DataArray(_np_.insert(self.data, index, _np__data, 1))
-                self.setas(old_setas)
+                self.setas(old_setas)  # [ylint: disable=not-callable]
                 columns.insert(index,header)
                 self.column_headers=columns
         return self
@@ -3049,7 +3091,6 @@ class DataFile(metadataObject):
 
         Notes: To find which row it is that has been returned, use the :py:attr:`Stoner.Core.DataArray.i` index attribute.
         """
-
         _=self._col_args(xcol=xcol)
         xdata=_np_.abs(self//_.xcol-value)
         i=int(xdata.argmin())
@@ -3064,14 +3105,16 @@ class DataFile(metadataObject):
             col (int, string, list or re): is the column index as defined for :py:meth:`DataFile.find_col`
 
         Returns:
-            ndarray: One or more columns of data as a :py:class:`numpy.ndarray`."""
+            ndarray: One or more columns of data as a :py:class:`numpy.ndarray`.
+        """
         return self.data[:, self.find_col(col)]
 
     def columns(self,not_masked=False):
         """Generator method that will iterate over the columns of data int he datafile.
 
         Yields:
-            1D array: Returns the next column of data."""
+            1D array: Returns the next column of data.
+        """
         for ix,col in enumerate(self.data.T):
             if _ma_.is_masked(col):
                 continue
@@ -3085,7 +3128,8 @@ class DataFile(metadataObject):
             axis (int): Which axis to count the unmasked elements along.
 
         Returns:
-            (int): Number of unmasked elements."""
+            (int): Number of unmasked elements.
+        """
         return self.data.count(axis)
 
     def del_column(self, col=None, duplicates=False):
@@ -3107,15 +3151,14 @@ class DataFile(metadataObject):
             - If col is a list (duplicates should not be None) then the all the matching columns are found.
             - If col is None and duplicates is None, then all columns with at least one elelemtn masked
                     will be deleted
-            """
-
+        """
         if duplicates:
             ch = self.column_headers
             dups = []
             if col is None:
-                for i in range(len(ch)):
-                    if ch[i] in ch[i + 1:]:
-                        dups.append(ch.index(ch[i], i + 1))
+                for i,chi in enumerate(ch):
+                    if chi in ch[i + 1:]:
+                        dups.append(ch.index(chi, i + 1))
             else:
                 col = ch[self.find_col(col)]
                 i = ch.index(col)
@@ -3141,8 +3184,8 @@ class DataFile(metadataObject):
                     c.sort(reverse=True)
                 else:
                     c = [c]
-                for col in c:
-                    del ch[col]
+                for cl in c:
+                    del ch[cl]
                 self.column_headers=ch
             return self
 
@@ -3178,7 +3221,7 @@ class DataFile(metadataObject):
 
         TODO:
             Implement val is a tuple for deletinging in a range of values.
-            """
+        """
         if col is None:
             self.data = _ma_.mask_rows(self.data)
             self.data = _ma_.compress_rows(self.data)
@@ -3229,13 +3272,14 @@ class DataFile(metadataObject):
         return self
 
     def dir(self, pattern=None):
-        """ Return a list of keys in the metadata, filtering wiht a regular expression if necessary.
+        """Return a list of keys in the metadata, filtering wiht a regular expression if necessary.
 
         Keyword Arguments:
             pattern (string or re): is a regular expression or None to list all keys
 
         Returns:
-            list: A list of metadata keys."""
+            list: A list of metadata keys.
+        """
         if pattern is None:
             return list(self.metadata.keys())
         else:
@@ -3307,7 +3351,8 @@ class DataFile(metadataObject):
             default (any): Default value to return if key not found
 
         Returns:
-            mixed: self.metadata[item] or None if item not in self.metadata"""
+            mixed: self.metadata[item] or None if item not in self.metadata
+        """
         try:
             return self[item]
         except KeyError:
@@ -3324,7 +3369,6 @@ class DataFile(metadataObject):
 
         Note:
             The filename attribute of the current instance is updated by this method as well.
-
         """
         self.filename = self.__file_dialog(mode)
         return self.filename
@@ -3337,7 +3381,8 @@ class DataFile(metadataObject):
             new_data (numpy array): An array with an equal number of columns as the main data array containing the new row(s) of data to insert
 
         Returns:
-            self: A copy of the modified :py:class:`DataFile` object"""
+            self: A copy of the modified :py:class:`DataFile` object
+        """
         self.data = _np_.insert(self.data, row, new_data, 0)
         return self
 
@@ -3345,7 +3390,8 @@ class DataFile(metadataObject):
         """An alias for :py:meth:`DataFile.dir(None)` .
 
         Returns:
-            a list of all the keys in the metadata dictionary"""
+            a list of all the keys in the metadata dictionary
+        """
         return self.dir(None)
 
     def load(self, filename=None, auto_load=True, filetype=None, *args, **kargs):
@@ -3371,8 +3417,7 @@ class DataFile(metadataObject):
             a suitable expcetion if they fail to load the file.
 
             If not class can load a file successfully then a RunttimeError exception is raised.
-            """
-
+        """
         if filename is None or (isinstance(filename, bool) and not filename):
             filename = self.__file_dialog('r')
         else:
@@ -3408,11 +3453,14 @@ class DataFile(metadataObject):
                     if (self.debug): print("Self matadata: {}".format(self.metadata))
 
                     break
-                except (StonerLoadError, UnicodeDecodeError) as e:
+                except StonerLoadError as e:
                     if self.debug: print("Failed Load: {}".format(e))
                     continue
+                except UnicodeDecodeError as e:
+                    print("{} Failed with a uncicode decode error for {}\n{}".format(cls,filename,format_exc()))
+                    continue
             else:
-                raise IOError("Ran out of subclasses to try and load {} as.".format(filename))
+                raise IOError("Ran out of subclasses to try and load {} as. Recognised filetype are:{}".format(filename,list(self.subclasses.keys())))
         else:
             if filetype is None:
                 test = cls()
@@ -3440,6 +3488,9 @@ class DataFile(metadataObject):
 
         if failed:
             raise SyntaxError("Failed to load file")
+        for k,i in kargs.items():
+            if not callable(getattr(self,k,lambda x:False)):
+                setattr(self,k,i)
         return self
 
     def rename(self, old_col, new_col):
@@ -3452,7 +3503,6 @@ class DataFile(metadataObject):
         Returns:
             self: A copy of the modified :py:class:`DataFile` instance
         """
-
         old_col = self.find_col(old_col)
         self.column_headers[old_col] = new_col
         return self
@@ -3469,7 +3519,8 @@ class DataFile(metadataObject):
                 way as the data (defaults to True)
 
         Returns:
-            self: A copy of the modified :py:class:`DataFile` object"""
+            self: A copy of the modified :py:class:`DataFile` object
+        """
         if headers_too:
             column_headers = [self.column_headers[self.find_col(x)] for x in cols]
         else:
@@ -3499,7 +3550,6 @@ class DataFile(metadataObject):
             ndarray: Yields with a section of data that is window rows long, each iteration moves the marker
             one row further on.
         """
-
         if isinstance(exclude_centre, bool) and exclude_centre:
             exclude_centre = 1
         if isinstance(exclude_centre, int_types) and not isinstance(exclude_centre, bool):
@@ -3547,7 +3597,8 @@ class DataFile(metadataObject):
             not_masked(bool): If a row is masked and this is true, then don't return this row.
 
         Yields:
-            1D array: Returns the next row of data"""
+            1D array: Returns the next row of data
+        """
         for row in self.data:
             if _ma_.is_masked(row) and not_masked:
                 continue
@@ -3577,9 +3628,9 @@ class DataFile(metadataObject):
             filename = self.__file_dialog('w')
         if as_loaded:
             if isinstance(as_loaded,bool) and "Loaded as" in self: # Use the Loaded as key to find a different save routine
-                cls=self.subclasses[self["Loaded as"]]
-            elif isinstance(as_loaded,string_types) and as_loaded in self.subclasses:
-                cls=self.subclasses[as_loaded]
+                cls=self.subclasses[self["Loaded as"]]  # pylint: disable=unsubscriptable-object
+            elif isinstance(as_loaded,string_types) and as_loaded in self.subclasses:  # pylint: disable=unsupported-membership-test
+                cls=self.subclasses[as_loaded]  # pylint: disable=unsubscriptable-object
             else:
                 raise ValueError("{} cannot be interpreted as a valid sub class of {} so cannot be used to save this data".format(as_loaded,type(self)))
             ret=cls(self).save(filename)
@@ -3587,8 +3638,8 @@ class DataFile(metadataObject):
             return self
         # Normalise the extension to ensure it's something we like...
         filename,ext=os.path.splitext(filename)
-        if "*.{}".format(ext) not in DataFile.patterns:
-            ext=DataFile.patterns[0][2:]
+        if "*.{}".format(ext) not in DataFile.patterns:  # pylint: disable=unsupported-membership-test
+            ext=DataFile.patterns[0][2:]  # pylint: disable=unsubscriptable-object
         filename="{}.{}".format(filename,ext)
         header = ["TDI Format 1.5"]
         header.extend(self.column_headers[:self.data.shape[1]])
@@ -3634,8 +3685,6 @@ class DataFile(metadataObject):
             - a tuple should contain a (min,max) value.
             - A callable object should have accept a float and an array representing the value of
               the search col for the the current row and the entire row.
-
-
         """
         ix = self.__search_index(xcol, value, accuracy)
         if columns is None:  #Get the whole slice
@@ -3674,9 +3723,9 @@ class DataFile(metadataObject):
         """
         cols = self.setas._get_cols()
         tmp = self.clone
-        xcol = cols["xcol"]
-        ycol = cols["ycol"][0]
-        zcol = cols["zcol"][0]
+        xcol = cols["xcol"] if cols.has_xcol else None
+        ycol = cols["ycol"][0] if cols.has_ucol else None
+        zcol = cols["zcol"][0] if cols.has_zcol else None
 
         if "accuracy" in kargs:
             accuracy = kargs["accuracy"]
@@ -3684,14 +3733,17 @@ class DataFile(metadataObject):
             accuracy = 0.0
 
         if "x" in kargs:
-            tmp.data = tmp.search(xcol, kargs["x"], accuracy=accuracy)
+            tmp.data = tmp.search(xcol, kargs.pop("x"), accuracy=accuracy)
         if "y" in kargs:
-            tmp.data = tmp.search(ycol, kargs["y"], accuracy=accuracy)
+            tmp.data = tmp.search(ycol, kargs.pop("y"), accuracy=accuracy)
         if "z" in kargs:
-            tmp.data = tmp.search(zcol, kargs["z"], accuracy=accuracy)
+            tmp.data = tmp.search(zcol, kargs.pop("z"), accuracy=accuracy)
         if "r" in kargs:
-            func = lambda x, r: kargs["r"](r[xcol], r[ycol], r[zcol])
+            func = lambda x, r: kargs.pop("r")(r[xcol], r[ycol], r[zcol])
             tmp.data = tmp.search(0, func, accuracy=accuracy)
+
+        if kargs: # Fallback to working with select if nothing else.
+            tmp.select(**kargs)
         return tmp
 
     def select(self,*args, **kargs):
@@ -3717,13 +3769,13 @@ class DataFile(metadataObject):
                 - *le*  value doe less than or equal to argument value
                 - *between*  value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)
                 - *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values
-                
+
         Returns:
             (DatFile): a copy the DataFile instance that contains just the matching rows.
 
         Note:
             if the operator is preceeded by *__not__* then the sense of the test is negated.
-            
+
             If any of the tests is True, then the row will be selected, so the effect is a logical OR. To
             achieve a logical AND, you can chain two selects together::
 
@@ -3734,13 +3786,12 @@ class DataFile(metadataObject):
             If you need to select on a row value that ends in an operator word, then append
             *__eq* in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
             then pass them via the first positional dictionary value.
-            
+
             There is a "magic" column name "_i" which is interpreted as the row numbers of the data.
-            
+
         Example
             .. plot:: samples/select_example.py
                 :include-source:
-
         """
         if len(args)==1:
             if callable(args[0]):
@@ -3788,17 +3839,16 @@ class DataFile(metadataObject):
         Returns:
             self: A copy of the :py:class:`DataFile` sorted object
         """
-
         reverse=kargs.pop("reverse",False)
         order=list(order)
         setas=self.setas.clone
         ch=copy.copy(self.column_headers)
-        if len(order)==0:
+        if not order:
             if self.setas.cols["xcol"] is not None:
                 order=[self.setas.cols["xcol"]]
             order.extend(self.setas.cols["ycol"])
             order.extend(self.setas.cols["zcol"])
-        if len(order)==0: # Ok, no setas here then
+        if not order: # Ok, no setas here then
             order=None
         elif len(order)==1:
             order=order[0]
@@ -3823,6 +3873,68 @@ class DataFile(metadataObject):
         self.column_headers=ch
         return self
 
+    def split(self, *args):
+        """Recursively splits the current :py:class:`DataFile` object into a :py:class:`Stoner.Forlders.DataFolder` objects where each one contains the rows from the original object which had the same value of a given column(s) or function.
+
+        Args:
+            *args (column index or function): Each argument is used in turn to find key values for the files in the DataFolder
+
+        Returns:
+            Stoner.Folders.DataFolder: A :py:class:`Stoner.Folders.DataFolder` object containing the individual
+            :py:class:`AnalysisMixin` objects
+
+        Note:
+            On each iteration the first argument is called. If it is a column type then rows which amtch each unique value are collated
+            together and made into a separate file. If the argument is a callable, then it is called for each row, passing the row
+            as a single 1D array and the return result is used to group lines together. The return value should be hashable.
+
+            Once this is done and the :py:class:`Stoner.Folders.DataFolder` exists, if there are remaining argument, then the method is
+            called recusivelyt for each file and the resulkting DataFolder added into the root DataFolder and the file is removed.
+
+            Thus, when all of the arguments are evaluated, the resulting DataFolder is a multi-level tree.
+
+            .. warning::
+
+                There has been a change in the arguments for the split function  from version 0.8 of the Stoner Package.
+        """
+        from Stoner import DataFolder
+        if not args:
+            xcol=self.setas._get_cols("xcol")
+        else:
+            args=list(args)
+            xcol=args.pop(0)
+        data=OrderedDict()
+
+        if isinstance(xcol,index_types):
+            for val in _np_.unique(self.column(xcol)):
+                newfile=self.clone
+                newfile.filename="{}={} {}".format(self.column_headers[self.find_col(xcol)],val,self.filename)
+                newfile.data=self.search(xcol, val)
+                data[val]=newfile
+        elif callable(xcol):
+            try: # Try to call function with all data in one go
+                keys=xcol(self.data)
+                if not isiterable(keys) or len(keys)!=len(self):
+                    raise RuntimeError("Not returning an index of keys")
+            except Exception: #Ok try instead to do it row by row
+                keys=[xcol(r) for r in self]
+            keys=_np_.array(keys)
+            for key in _np_.unique(keys):
+                data[key]=self.clone
+                data[key].data=self.data[keys==key,:]
+                data[key].filename="{}={} {}".format(xcol.__name__,key,self.filename)
+                data[key].setas=self.setas
+        else:
+            raise NotImplementedError("Unable to split a file with an argument of type {}".format(type(xcol)))
+        out = DataFolder(nolist=True,setas=self.setas)
+        for k,f in data.items():
+            if args:
+                out.add_group(k)
+                out.groups[k]=f.split(*args)
+            else:
+                out+=f
+        return out
+
     def swap_column(self, *swp,**kargs):
         """Swaps pairs of columns in the data.
 
@@ -3844,7 +3956,6 @@ class DataFile(metadataObject):
             element of the list. Thus in principle the @swp could contain
             lists of lists of tuples
         """
-
         self.data.swap_column(*swp,**kargs)
         return self
 
@@ -3859,144 +3970,11 @@ class DataFile(metadataObject):
         """
         return _np_.unique(self.column(col), return_index, return_inverse)
 
-class Data(AnalysisMixin,PlotMixin,DataFile):
-    
-    """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`
-    
-    Also has the :py:mod:`Stoner.FielFormats` loaded redy for use.
-    This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
-    analysis on data files.
-    """
-
-    def __new__(cls, *args,**kargs):
-        """Just do rthe import of Stoner.FileFormats."""
-        import Stoner.FileFormats as SFF
-        return DataFile.__new__(cls,*args,**kargs)
-
-    def format(self,key,**kargs):
-        r"""Return the contents of key pretty formatted using :py:func:`format_error`.
-
-        Args:
-            fmt (str): Specify the output format, opyions are:
-
-                *  "text" - plain text output
-                * "latex" - latex output
-                * "html" - html entities
-
-            escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)
-            mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
-                to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
-                i.e. mantissa and exponent format is used.
-            units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
-                prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm
-            prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
-                inside the math-mode markers, but not embedded in \mathrm.
-
-        Returns:
-            A pretty string representation.
-
-        The if key="key", then the value is self["key"], the error is self["key err"], the default prefix is self["key label"]+"=" or "key=",
-        the units are self["key units"] or "".
-
-        """
-        mode=kargs.pop("mode","float")
-        units=kargs.pop("units",self.get(key+" units","")	)
-        prefix=kargs.pop("prefix","{} = ".format(self.get(key+" label","{}".format(key))))
-        latex=kargs.pop("latex",False)
-        fmt=kargs.pop("fmt","latex" if latex else "text")
-        escape=kargs.pop("escape",False)
-
-        try:
-            value=float(self[key])
-        except (ValueError, TypeError):
-            raise KeyError("{} should be a floating point value of the metadata not a {}.".format(key,type(self[key])))
-        try:
-            error=float(self[key+" err"])
-        except KeyError:
-            error=float_info.epsilon
-        return format_error(value,error,fmt=fmt,mode=mode,units=units,prefix=prefix,scape=escape)
-
-    def annotate_fit(self,model,x=None,y=None,z=None,prefix=None,text_only=False,**kargs):
-        """Annotate a plot with some information about a fit.
-
-        Args:
-            mode (callable or lmfit.Model): The function/model used to describe the fit to be annotated.
-
-        Keyword Parameters:
-            x (float): x co-ordinate of the label
-            y (float): y co-ordinate of the label
-            z (float): z co-ordinbate of the label if the current axes are 3D
-            prefix (str): The prefix placed ahead of the model parameters in the metadata.
-            text_only (bool): If False (default), add the text to the plot and return the current object, otherwise, 
-                return just the text and don't add to a plot.
-
-        Returns:
-            
-            (Datam, str): A copy of the current Data instance if text_only is False, otherwise returns the text.
-
-        If *prefix* is not given, then the first prefix in the metadata lmfit.prefix is used if present,
-        otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
-        are set to be 0.75 * maximum x and y limit of the plot.
-        """
-        mode=kargs.pop("mode","float")
-        if _lmfit and _inspect_.isclass(model) and issubclass(model,Model):
-            model=model()
-        elif _lmfit and isinstance(model,Model):
-            pass
-        elif callable(model):
-            prefix=model.__name__
-            model=Model(model)
-        else:
-            raise RuntimeError("model should be either an lmfit.Model or a callable function, not a {}".format(type(model)))
-
-        if prefix is not None:
-            prefix="" if prefix == "" else prefix+":"
-        elif "lmfit.prefix" in self:
-            prefix=self["lmfit.prefix"][0]
-        else:
-            if model.prefix=="":
-                prefix=""
-            else:
-                prefix=model.prefix+":"
-
-        if x is None:
-            xl,xr=self.xlim() # pylint: disable=not-callable
-            x=(xr-xl)*0.75+xl
-        if y is None:
-            yb,yt=self.ylim() # pylint: disable=not-callable
-            y=0.5*(yt-yb)+yb
-
-        try: # if the model has an attribute display params then use these as the parameter anmes
-            for k,display_name in zip(model.param_names,model.display_names):
-                self[k+" label"]=display_name
-        except (AttributeError,KeyError):
-            pass
-
-        text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex",mode=mode) for k in model.param_names])
-        if not text_only:
-            ax=self.fig.gca()
-            if "zlim" in ax.properties():
-                #3D plot then
-                if z is None:
-                    zb,zt=ax.properties()["zlim"]
-                    z=0.5*(zt-zb)+zb
-                ax.text3D(x,y,z,text)
-            elif "arrowprops" in kargs:
-                ax.annotate(text, xy=(x,y), **kargs)
-            else:
-                ax.text(x,y,text,  **kargs)
-            ret=self
-        else:
-            ret=text
-        return ret
-
-
 # Module level functions
 
 
 def itersubclasses(cls, _seen=None):
-    """
-    itersubclasses(cls).
+    """Iterate over subclasses of a given class
 
     Generator over all subclasses of a given class, in depth first order.
 
@@ -4018,7 +3996,6 @@ def itersubclasses(cls, _seen=None):
     >>> [cls.__name__ for cls in itersubclasses(object)] #doctest: +ELLIPSIS
     ['type', ...'tuple', ...]
     """
-
     if not isinstance(cls, type):
         raise TypeError('itersubclasses must be called with ' 'new-style classes, not %.100r' % cls)
     if _seen is None: _seen = set()

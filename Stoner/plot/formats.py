@@ -36,9 +36,9 @@ class TexFormatter(Formatter):
         elif value != 0.0:
             power = _np_.floor(_np_.log10(_np_.abs(value)))
             if _np_.abs(power) < 4:
-                ret = "${}$".format(value)
+                ret = "${}$".format(self._round(value))
             else:
-                v = value / (10 ** power)
+                v = self._round(value / (10 ** power))
                 ret = "${}\\times 10^{{{:.0f}}}$".format(v, power)
         else:
             ret = "$0.0$"
@@ -49,6 +49,14 @@ class TexFormatter(Formatter):
 
     def format_data_short(self, value):
         return "{:g}".format(value)
+    
+    def _round(self,value):
+        for i in range(5):
+            vt=_np_.round(value,i)
+            if _np_.abs(value-vt)<10**(-i-2):
+                value=vt
+                break
+        return value
 
 
 class TexEngFormatter(EngFormatter):
@@ -79,9 +87,9 @@ class TexEngFormatter(EngFormatter):
             pre=_np_.ceil(power/3.0)*3
             power = power % 3
             if pre==0:
-                ret = "${}$".format(value)
+                ret = "${}\\,\\mathrm{{{}}}$".format(self._round(value), self.unit)
             else:
-                v = value / (10 ** pre)
+                v = self._round(value / (10 ** pre))
                 ret = "${}\\mathrm{{{} {}}}$".format(v, self.prefix[int(pre)], self.unit)
         else:
             ret = "$0.0$"
@@ -92,6 +100,15 @@ class TexEngFormatter(EngFormatter):
 
     def format_data_short(self, value):
         return "{:g}".format(value)
+
+    def _round(self,value):
+        for i in range(5):
+            vt=_np_.round(value,i)
+            if _np_.abs(value-vt)<10**(-i-4):
+                value=vt
+                break
+        return value
+
 
 
 class DefaultPlotStyle(object):
@@ -281,6 +298,10 @@ class DefaultPlotStyle(object):
         plt.rcParams.update(params)  # Apply these parameters
         projection=kargs.pop("projection","rectilinear")
         self.template_figure_figsize=kargs.pop("figsize",self.template_figure_figsize)
+        if "ax" in kargs: # Giving an axis instance in kargs means we can use that as out figure
+            ax=kargs.get("ax")
+            plt.sca(ax)
+            figure=plt.gcf().number
         if isinstance(figure, bool) and not figure:
             ret = None
         elif figure is not None:
@@ -294,7 +315,11 @@ class DefaultPlotStyle(object):
                 else:
                     ax = fig.add_axes(rect)
             else:
-                ax = kargs.pop("ax",fig.gca(projection=projection))
+                if projection == "3d":                
+                    ax = kargs.pop("ax",fig.gca(projection="3d"))
+                else:
+                    ax = kargs.pop("ax",fig.gca())
+                    
             ret = fig
         else:
             if projection == "3d":

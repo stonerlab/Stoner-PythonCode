@@ -20,7 +20,7 @@ def yield_sphinx_only_markup(lines):
         (r':dfn:`([^`]+)`',         r'**\1**'),
         (r':(samp|guilabel|menuselection):`([^`]+)`',        r'``\2``'),
         (r':py:[a-z]+:`([^`]+)`',        r'\1'),
-        
+
 
 
         ## Sphinx-only roles:
@@ -65,15 +65,19 @@ def read(fname):
     with io.open(os.path.join(mydir, fname)) as fd:
         return fd.readlines()
 
+def requires(fname):
+    mydir=os.path.dirname(__file__)
+    with io.open(os.path.join(mydir, fname)) as fd:
+        entries=fd.readlines()
+        entries=[entry for entry in entries if entry[0] not in " #\n\t"]
+        return entries
+
 setup(
     name = "Stoner",
     version = str(Stoner.__version__),
     author = "Gavin Burnell",
     author_email = "g.burnell@leeds.ac.uk",
-    description = ("""The Stoner Python package is a set of utility classes for writing data analysis code. It was written within the 
-                   Condensed Matter Physics group at the University of Leeds as a shared resource for quickly writing simple programs 
-                   to do things like fitting functions to data, extract curve parameters, churn through large numbers of small text 
-                   data files and work with certain types of scientific image files"""),
+    description = "Library to help write data analysis tools for experimental condensed matter physics.",
     license = "GPLv3",
     keywords = "Data-Analysis Physics",
     url = "http://github.com/~gb119/Stoner-PythonCode",
@@ -81,7 +85,13 @@ setup(
     package_dir={'Stoner': 'Stoner'},
     package_data={'Stoner':['stylelib/*.mplstyle']},
     test_suite="tests",
-    install_requires=["numpy>=1.7","scipy>=0.14","matplotlib>=1.5","h5py","lmfit","filemagic","pillow","scikit-image"],
+    install_requires=requires("requirements.txt"),
+    extras_require = { "PrettyPrint":["tabulate>=0.7.5"],
+                       "mimetype_detection":["magic"],
+                       "TDMS":["nptdms"],
+                       "numba":["numba"],
+                       "cv2":["cv2"],
+                       "image_alignment":["imreg_dft","image_registration"]},
     long_description= ''.join(yield_sphinx_only_markup(read('doc/readme.rst'))),
     classifiers=[
         "Development Status :: 4 - Beta",

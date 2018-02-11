@@ -12,6 +12,9 @@ clean:
 test:
 	$(PYTHON_SETUP) test
 
+check:
+	prospector -E -0 --profile-path=. -P .landscape.yml Stoner > prospector-report.txt
+
 commit:
 	$(MAKE) -C doc readme
 	git commit -a
@@ -19,7 +22,7 @@ commit:
 
 wheel: clean test
 	$(MAKE) -C doc readme
-	$(PYTHON_SETUP) bdist_wheel --universal
+	$(PYTHON_SETUP) sdist bdist_wheel --universal
 	twine upload dist/*
 
 docbuild: FORCE

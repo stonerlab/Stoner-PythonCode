@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Stoner.Utils - a module of some slightly experimental routines that use the Stoner classes
+"""Stoner.Utils - a module of some slightly experimental routines that use the Stoner classes
 
 Created on Tue Oct 08 20:14:34 2013
 
@@ -9,9 +8,10 @@ Created on Tue Oct 08 20:14:34 2013
 
 from .compat import int_types
 from .tools import format_error
-import Stoner.Core  as _SC_
+import Stoner.Core  as _SC_  # pylint: disable=import-error
 from .Folders import DataFolder as _SF_
 from .Fit import linear
+from . import Data
 from numpy import max, sqrt, diag, argmax, mean,array #pylint: disable=redefined-builtin
 from scipy.stats import sem
 
@@ -35,61 +35,6 @@ def _up_down(data):
         ret[i].setas=f["rising"][0].setas.clone #hack due to bug in sort wiping the setas info
     return ret
 
-
-
-
-def split(data, col=None, folder=None, spliton=0, rising=True, falling=False, skip=0):
-    """Splits the DataFile data into several files where the column *col* is either rising or falling
-
-    Args:
-        data (:py:class:`Stoner.Core.DataFile`): object containign the data to be sorted
-        col (index): is something that :py:meth:`Stoner.Core.DataFile.find_col` can use
-        folder (:py:class:`Stoner.Folders.DataFolder` or None): if this is an instance of :py:class:`Stoner.Folders.DataFolder` then add
-            rising and falling files to groups of this DataFolder, otherwise create a new one
-        spliton (str or float): Define where to split the data, 'peak' to split on peaks, 'trough' to split
-            on troughs, 'both' to split on peaks and troughs or number to split at that number
-        rising (bool): whether to split on threshold crossing when data is rising
-        falling (bool): whether to split on threshold crossing when data is falling
-        skip (int): skip this number of splitons each time. eg skip=1 picks out odd crossings
-    Returns:
-        A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling
-    """
-    if col is None:
-        col = data.setas["x"]
-    d=_SC_.Data(data)
-    if not isinstance(folder, _SF_):  # Create a new DataFolder object
-        output = _SF_()
-    else:
-        output = folder
-
-    if isinstance(spliton, int_types+(float,)):
-        spl=d.threshold(threshold=float(spliton),col=col,rising=rising,falling=falling,all_vals=True, interpolate=False)
-
-    elif spliton in ['peaks','troughs','both']:
-        width = len(d) / 10
-        if width % 2 == 0:  # Ensure the window for Satvisky Golay filter is odd
-            width += 1
-        if spliton=='peaks':
-            spl = list(d.peaks(col, width, xcol=False, peaks=True, troughs=False))
-        elif spliton=='troughs':
-            spl = list(d.peaks(col, width, xcol=False, peaks=False, troughs=True))
-        else:
-            spl = list(d.peaks(col, width, xcol=False, peaks=True, troughs=True))
-
-    else:
-        raise ValueError('Did not recognise spliton')
-
-    spl = [spl[i] for i in range(len(spl)) if i%(skip+1)==0]
-    spl.extend([0,len(d)])
-    spl.sort()
-    for i in range(len(spl)-1):
-        tmp=d.clone
-        tmp.data=tmp[spl[i]:spl[i+1]]
-        output.files.append(tmp)
-    return output
-
-
-
 def split_up_down(data, col=None, folder=None):
     """Splits the DataFile data into several files where the column *col* is either rising or falling
 
@@ -102,7 +47,7 @@ def split_up_down(data, col=None, folder=None):
     Returns:
         A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling
     """
-    a = _SC_.Data(data)
+    a = Data(data)
     if col is None:
         _=a._col_args()
         col=_.xcol
@@ -111,14 +56,14 @@ def split_up_down(data, col=None, folder=None):
         width += 1
     setas=a.setas.clone
     a.setas=""
-    peaks = list(a.peaks(col, width,xcol=None, peaks=True, troughs=False,full_data=False))
-    troughs = list(a.peaks(col, width, xcol=None, peaks=False, troughs=True,full_data=False))
+    peaks = list(a.peaks(ycol=col, width=width,full_data=False))
+    troughs = list(a.peaks(ycol=col, width=width, peaks=False, troughs=True,full_data=False))
     a.setas=setas
-    if len(peaks) > 0 and len(troughs) > 0:  #Ok more than up down here
+    if peaks and troughs:  #Ok more than up down here
         order = peaks[0] < troughs[0]
-    elif len(peaks) > 0:  #Rise then fall
+    elif peaks:  #Rise then fall
         order = True
-    elif len(troughs) > 0:  # Fall then rise
+    elif troughs:  # Fall then rise
         order = False
     else:  #No peaks or troughs so just return a single rising
         ret=_SF_(readlist=False)
@@ -197,7 +142,7 @@ def hysteresis_correct(data, **kargs):
     if isinstance(data, _SC_.DataFile):
         cls = data.__class__
     else:
-        cls = _SC_.Data
+        cls = Data
     data = cls(data)
 
     if "setas" in kargs: # Allow us to override the setas variable

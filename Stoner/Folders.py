@@ -13,6 +13,7 @@ import fnmatch
 import numpy as _np_
 from copy import copy,deepcopy
 import unicodedata
+from inspect import ismethod
 import string
 from collections import Iterable,MutableSequence
 from itertools import islice
@@ -32,8 +33,6 @@ def _pathsplit(pth):
         rest.append(fpart)
         return rest
     
-
-
 class baseFolder(MutableSequence):
     
     """A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.
@@ -669,7 +668,7 @@ class baseFolder(MutableSequence):
                 
             try:
                 instance=super(baseFolder,self).__getattribute__("instance")
-                if callable(getattr(instance,item,None)): # It's a method
+                if ismethod(getattr(instance,item,None)): # It's a method
                     ret=self.__getattr_proxy(item)
                 else: # It's a static attribute
                     if item in self._object_attrs:
@@ -740,8 +739,9 @@ class baseFolder(MutableSequence):
         cls=self.__class__.__name__
         pth=getattr(self,"key")
         if pth is None:
-            pth=self.directory
-        s="{}({}) with pattern {} has {} files and {} groups\n".format(cls,pth,self.pattern,len(self),len(self.groups))
+            pth=getattr(self,"directory","")
+        pattern=getattr(self,"pattern","")
+        s="{}({}) with pattern {} has {} files and {} groups\n".format(cls,pth,pattern,len(self),len(self.groups))
         for g in self.groups: # iterate over groups
             r=self.groups[g].__repr__()
             for l in r.split("\n"): # indent each line by one tab
@@ -773,7 +773,7 @@ class baseFolder(MutableSequence):
         """Pass through to set the sample attributes."""
         if name.startswith("_") or name in ["debug","groups","args","kargs","objects","key","multifile"]: # pass ddirectly through for private attributes
             super(baseFolder,self).__setattr__(name,value)
-        elif hasattr(self,name) and (isproperty(self,name) or not callable(getattr(self,name,None))): #If we recognise this our own attribute, then just set it
+        elif name in dir(self) and (isproperty(self,name) or not callable(getattr(self,name,None))): #If we recognise this our own attribute, then just set it
             super(baseFolder,self).__setattr__(name,value)
         elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type) and not callable(getattr(self._type,name)):
             #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
@@ -1109,7 +1109,13 @@ class baseFolder(MutableSequence):
     def make_name(self,value=None):
         """Construct a name from the value object if possible."""
         if isinstance(value,self.type):
-            return value.filename
+            name=getattr(value,"filename","")
+            if name=="":
+                name="Untitled-{}".format(self._last_name)
+                while name in self:
+                    self._last_name+=1
+                    name="Untitled-{}".format(self._last_name)                
+            return name
         elif isinstance(value,string_types):
             return value
         else:
@@ -1293,7 +1299,7 @@ class baseFolder(MutableSequence):
             A copy of the current objectFolder object
         """
         if isinstance(key, string_types):
-            k=[(x.get(key),i) for x,i in enumerate(self)]
+            k=[(x.get(key),i) for i,x in enumerate(self)]
             k=sorted(k,reverse=reverse)
             new_order=[self[i] for x,i in k]
         elif key is None:
@@ -1951,7 +1957,20 @@ class DataFolder(DiskBssedFolder,baseFolder):
 objectFolder=DataFolder # Just a backwards compatibility shim
 
 class PlotFolder(DataFolder):
-    """A subclass of :py:class:`objectFolder` with extra methods for plotting lots of files."""
+    """A subclass of :py:class:`objectFolder` with extra methods for plotting lots of files.
+    
+    Example:
+
+        .. plot:: samples/plot-folder-test.py
+            :include-source:                
+    """
+    
+    def figure(self,*args,**kargs):
+        """Pass through for :py:func:`matplotlib.pyplot.figure` but alos takes a note of the arguments for later."""
+        self._fig_args=args
+        self._fig_kargs=kargs
+        self.__figure=plt.figure(*args,**kargs)
+        return self.__fiogure
 
     def plot(self,*args,**kargs):
         """Call the plot method for each metadataObject, but switching to a subplot each time.
@@ -1959,6 +1978,16 @@ class PlotFolder(DataFolder):
         Args:
             args: Positional arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
             kargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
+
+        Keyword Arguments:
+            extra (callable(i,j,d)): A callable that can carry out additional processing per plot after the plot is done
+            figsize(tuple(x,y)): Size of the figure to create
+            dpi(float): dots per inch on the figure
+            edgecolor,facecolor(matplotlib colour): figure edge and frame colours.
+            frameon (bool): Turns figure frames on or off
+            FigureClass(class): Passed to matplotlib figure call.
+            plots_per_page(int): maximum number of plots per figure.
+            tight_layout(dict or False): If not False, arguments to pass to a call of :py:func:`matplotlib.pyplot.tight_layout`. Defaults to {}
 
         Returns:
             A list of :py:class:`matplotlib.pyplot.Axes` instances.
@@ -1970,20 +1999,27 @@ class PlotFolder(DataFolder):
             Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
             from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.
         """
-        plts=len(self)
+        plts=kargs.pop("plots_per_page",getattr(self,"plots_per_page",len(self)))
+        plts=min(plts,len(self))
 
         if not hasattr(self.type,"plot"): # switch the objects to being Stoner.Data instances
             from Stoner import Data
             for i,d in enumerate(self):
                 self[i]=Data(d)
+                
+        extra=kargs.pop("extra",lambda i,j,d:None)
+        tight_layout=kargs.pop("tight_layout",{})
 
-        fig_num=kargs.pop("figure",None)
-        fig_args={}
+        fig_num=kargs.pop("figure",getattr(self,"__figure",None))
+        if isinstance(fig_num,plt.Figure):
+            fig_num=fig_num.number
+        fig_args=getattr(self,"_fig_args",[])
+        fig_kargs=getattr(self,"_fig_kargs",{})
         for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
             if arg in kargs:
-                fig_args[arg]=kargs.pop(arg)
+                fig_kargs[arg]=kargs.pop(arg)
         if fig_num is None:
-            fig=plt.figure(**fig_args)
+            fig=plt.figure(*fig_args,**fig_kargs)
         else:
             fig=plt.figure(fig_num,**fig_args)
         w,h=fig.get_size_inches()
@@ -1992,8 +2028,19 @@ class PlotFolder(DataFolder):
 
         kargs["figure"]=fig
         ret=[]
+        j=0
         for i,d in enumerate(self):
-            ax=plt.subplot(plt_y,plt_x,i+1)
+            if i%plts==0 and i!=0:
+                if isinstance(tight_layout,dict):
+                    plt.tight_layout(**tight_layout)
+                fig=plt.figure(*fig_args,**fig_kargs)
+                j=1
+            else:
+                j+=1
+            ax=plt.subplot(plt_y,plt_x,j)
+            kargs["fig"]=fig
+            kargs["ax"]=ax
             ret.append(d.plot(*args,**kargs))
+            extra(i,j,d)
         plt.tight_layout()
         return ret

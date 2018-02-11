@@ -9,11 +9,11 @@ It is only necessary to import this module for the subclasses of :py:class:`Ston
 to :py:class:`Stoner.Core.Data`.
 
 """
-from Stoner.compat import string_types,bytes2str,get_filedialog
+from .compat import string_types,bytes2str,get_filedialog
 import h5py
 import numpy as _np_
 from .Core import DataFile, StonerLoadError, metadataObject
-from .Core import Data
+from . import Data
 from .Image.core import ImageFile
 import os.path as path
 import os
@@ -506,6 +506,13 @@ class SLS_STXMFile(DataFile):
         if isinstance(filename, string_types):
             f.file.close()
         self["Loaded from"]=self.filename
+        
+        if "instrument.sample_x.data" in self.metadata:
+            self.metadata["actual_x"]=self.metadata["instrument.sample_x.data"].reshape(self.shape)
+        if "instrument.sample_y.data" in self.metadata:
+            self.metadata["actual_y"]=self.metadata["instrument.sample_y.data"].reshape(self.shape)
+        self.metadata["sample_x"],self.metadata["sample_y"]=_np_.meshgrid(self.metadata["counter0.sample_x"],self.metadata["counter0.sample_y"])            
+        
         return self
         
     def scan_meta(self,group):
@@ -522,7 +529,7 @@ class SLS_STXMFile(DataFile):
                 if _np_.product(thing.shape)==1:
                     self.metadata[name]=thing.value[0]
                 else:
-                    self.metadata[name]=thing.value
+                    self.metadata[name]=thing[...]
         for attr in group.attrs:
             self.metadata["{}.{}".format(root,attr)]=group.attrs[attr]
             
@@ -533,6 +540,11 @@ class STXMImage(ImageFile):
     _reduce_metadata=False
 
     def __init__(self,*args,**kargs):
+        """Construct a STXMImage file.
+        
+        Keyword Args:
+            regrid (bool): If set True, the gridimage() method is automatically called to re-grid the image to known co-ordinates."""
+        regrid=kargs.pop("regrid",False)
         if len(args)>0 and isinstance(args[0],string_types):
             d=SLS_STXMFile(args[0])
             args=args[1:]
@@ -542,6 +554,12 @@ class STXMImage(ImageFile):
         self.image=d.data
         self.metadata.update(d.metadata)
         self.filename=d.filename
+        if isinstance(regrid,tuple):
+            self.gridimage(*regrid)
+        elif isinstance(regrid,dict):
+            self.gridimage(**regrid)
+        elif regrid:
+            self.gridimage()
         
     def __floordiv__(self,other):
         if isinstance(other,metadataObject):
