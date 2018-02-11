@@ -114,6 +114,8 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
     
     #Default values for when we can't find the attribute already
     _defaults={"debug":False, "_hardmask":False}
+    
+    fmts=["png","npy","tiff","tif"]
 
     #now initialise class
     
@@ -181,9 +183,9 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                 except ValueError: #ok couldn't load from iterable, we're done
                     raise ValueError("No constructor for {}".format(type(arg)))
             if asfloat and ret.dtype.kind!='f': #convert to float type in place
-                dl = dtype_range[ret.dtype.type]
-                ret = np.array(ret, dtype=np.float64).view(cls)
-                ret = ret / float(dl[1])
+                meta = ret.metadata #preserve any metadata we may already have
+                ret = convert(ret, np.float64).view(ImageArray)
+                ret.metadata.update(meta)
                 
         #all constructors call array_finalise so metadata is now initialised
         if 'Loaded from' not in ret.metadata.keys():
@@ -680,7 +682,8 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
             clip_negative(bool):
                 clip negative intensity to 0
         """
-        ret = ImageArray(convert(self, dtype=np.float64))
+        ret = self
+        ret[:] = convert(self, dtype=np.float64) #preserve metadata
         if normalise:
             ret = ret.normalise()
         if clip_negative:
@@ -720,45 +723,81 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
     def convert_int(self):
         """back compatability. asuint preferred"""
         self.asint()
-
-    def save(self, filename, **kargs):
+    
+    def save(self, filename=None, **kargs):
         """Saves the image into the file 'filename'. 
         
-        Metadata will be preserved in .png format.
-        fmt can be 'png' or 'npy' or 'both' which will save the file in that format.
-        metadata is lost in .npy format but data is converted to integer format
-        for png so that definition can be lost and negative values are clipped.
+        Metadata will be preserved in .png and .tif format.
+        
+        fmt can be 'png', 'npy', 'tif', 'tiff'  or a list of more than one of those.
+        tif is recommended since metadata is lost in .npy format but data is 
+        converted to integer format for png so that definition cannot be 
+        saved.
 
         Args:
             filename (string, bool or None): Filename to save data as, if this is
                 None then the current filename for the object is used
                 If this is not set, then then a file dialog is used. If 
                 filename is False then a file dialog is forced.
-            
+        Keyword args:
+            fmt (string or list): format to save data as. 'tif', 'png' or 'npy'
+            or a list of them. If not included will guess from filename.            
         """
-        fmt=kargs.pop("fmt","png")
-        self.filename=getattr(self,"filename","")
-        if fmt not in ['png','npy','both']:
-            raise ValueError('fmt must be "png" or "npy" or "both"')
+        #Standard filename block
         if filename is None:
             filename = self.filename
-        if filename in (None, '') or (isinstance(filename, bool) and not filename):
+        if filename is None or (isinstance(filename, bool) and not filename):
             # now go and ask for one
             filename = self.__file_dialog('w')
-        if fmt in ['png', 'both']:
-            pngname = os.path.splitext(filename)[0] + '.png'
-            meta=PngImagePlugin.PngInfo()
-            info=self.metadata.export_all()
-            info=[i.split('=') for i in info]
-            for k,v in info:        
-                meta.add_text(k,v)
-            s=self.asint(dtype=np.uint16)
-            im=Image.fromarray(s.astype('uint32'),mode='I')
-            im.save(pngname,pnginfo=meta)
-        if fmt in ['npy', 'both']:
-            npyname = os.path.splitext(filename)[0] + '.npy'
-            np.save(npyname, self)
-    
+            
+        
+        def_fmt=os.path.splitext(filename)[1][1:] # Get a default format from the filename
+        if def_fmt not in self.fmts: # Default to png if nothing else
+            def_fmt="png"
+        fmt=kargs.pop("fmt",[def_fmt])
+        
+        if not isinstance(fmt,list):
+            fmt=[fmt]
+        if set(fmt)&set(self.fmts)==set([]):
+            raise ValueError('fmt must be {}'.format(",".join(self.fmts)))
+        fmt = ['tiff' if f=='tif' else f for f in fmt]
+        self.filename=filename
+        for fm in fmt:
+            saver=getattr(self,"save_{}".format(fm),"save_png")
+            saver(filename)
+        
+    def save_png(self,filename):
+        """Save the ImageFile with metadata in a png file."""
+        pngname = os.path.splitext(filename)[0] + '.png'
+        meta=PngImagePlugin.PngInfo()
+        info=self.metadata.export_all()
+        info=[(i.split('=')[0],"=".join(i.split('=')[1:])) for i in info]
+        for k,v in info:        
+            meta.add_text(k,v)
+        s=(self-self.min())*256/(self.max()-self.min())
+        im=Image.fromarray(s.astype('uint8'),mode='L')
+        im.save(pngname,pnginfo=meta)
+
+    def save_npy(self,filename):
+        """Save the ImageFile as a numpy array."""
+        npyname = os.path.splitext(filename)[0] + '.npy'
+        np.save(npyname, self)
+
+    def save_tiff(self,filename):
+        """Save the ImageFile as a tiff image with metadata."""
+        from PIL.TiffImagePlugin import ImageFileDirectory_v2
+        import json
+        im=Image.fromarray(self.asint( np.uint32),mode="I")
+        ifd = ImageFileDirectory_v2()
+        ifd[270]=json.dumps(self.metadata.export_all())
+        ext = os.path.splitext(filename)[1]
+        if ext in ['.tif', '.tiff']: #ensure extension is preserved in save
+            pass
+        else:  #default to tiff
+            ext = '.tiff'
+        tiffname = os.path.splitext(filename)[0] + ext
+        im.save(tiffname,tiffinfo=ifd)
+        
     def __file_dialog(self, mode):
         """Creates a file dialog box for loading or saving ~b ImageFile objects.
 
@@ -823,7 +862,6 @@ class ImageFile(metadataObject):
     
     _image = None
     
-    fmts=["png","npy","tiff"]
     
     def __init__(self, *args, **kargs):
         """Mostly a pass through to ImageArray constructor.
@@ -1139,69 +1177,7 @@ class ImageFile(metadataObject):
     #####################################################################################################################################
     ############################## Public methods #######################################################################################            
 
-    def save(self, filename=None, **kargs):
-        """Saves the image into the file 'filename'. 
-        
-        Metadata will be preserved in .png format.
-        fmt can be 'png' or 'npy' or 'both' which will save the file in that format.
-        metadata is lost in .npy format but data is converted to integer format
-        for png so that definition can be lost and negative values are clipped.
 
-        Args:
-            filename (string, bool or None): Filename to save data as, if this is
-                None then the current filename for the object is used
-                If this is not set, then then a file dialog is used. If 
-                filename is False then a file dialog is forced.
-            
-        """
-        #Standard filename block
-        if filename is None:
-            filename = self.filename
-        if filename is None or (isinstance(filename, bool) and not filename):
-            # now go and ask for one
-            filename = self.__file_dialog('w')
-            
-        
-        def_fmt=os.path.splitext(filename)[1][1:] # Get a default format from the filename
-        if def_fmt not in self.fmts: # Default to png if nothing else
-            def_fmt="png"
-        fmt=kargs.pop("fmt",[def_fmt])
-        
-        if not isinstance(fmt,list):
-            fmt=[fmt]
-        if set(fmt)&set(self.fmts)==set([]):
-            raise ValueError('fmt must be {}'.format(",".join(self.fmts)))
-        self.filename=filename
-        for fm in fmt:
-            saver=getattr(self,"save_{}".format(fm),"save_png")
-            saver(filename)
-        
-    def save_png(self,filename):
-        """Save the ImageFile with metadata in a png file."""
-        pngname = os.path.splitext(filename)[0] + '.png'
-        meta=PngImagePlugin.PngInfo()
-        info=self.metadata.export_all()
-        info=[(i.split('=')[0],"=".join(i.split('=')[1:])) for i in info]
-        for k,v in info:        
-            meta.add_text(k,v)
-        s=(self.image-self.image.min())*256/(self.image.max()-self.image.min())
-        im=Image.fromarray(s.astype('uint8'),mode='L')
-        im.save(pngname,pnginfo=meta)
-
-    def save_npy(self,filename):
-        """Save the ImageFile as a numpy array."""
-        npyname = os.path.splitext(filename)[0] + '.npy'
-        np.save(npyname, self)
-
-    def save_tiff(self,filename):
-        """Save the ImageFile as a tiff image with metadata."""
-        from PIL.TiffImagePlugin import ImageFileDirectory_v2
-        import json
-        im=Image.fromarray(self.image.asint( np.uint32),mode="I")
-        ifd = ImageFileDirectory_v2()
-        ifd[270]=json.dumps(self.metadata.export_all())
-        tiffname = os.path.splitext(filename)[0] + '.tiff'
-        im.save(tiffname,tiffinfo=ifd)
             
 class DrawProxy(object):
     """Provides a wrapper around scikit-image.draw to allow easy drawing of objects onto images."""
