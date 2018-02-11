@@ -733,6 +733,16 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         tif is recommended since metadata is lost in .npy format but data is 
         converted to integer format for png so that definition cannot be 
         saved.
+        
+        Keyword arguments
+            
+        Since Stoner.Image is meant to be a general 2d array often with negative
+        and floating point data this poses a problem for saving images. Images 
+        are naturally saved as 8 or more bit unsigned integer values representing colour.
+        The only obvious way to save an image and preserve negative data
+        is to save as a float32 tif. This has the advantage over the npy
+        data type which cannot be opened by external programs and will not
+        save metadata.
 
         Args:
             filename (string, bool or None): Filename to save data as, if this is
@@ -741,7 +751,10 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                 filename is False then a file dialog is forced.
         Keyword args:
             fmt (string or list): format to save data as. 'tif', 'png' or 'npy'
-            or a list of them. If not included will guess from filename.            
+            or a list of them. If not included will guess from filename. 
+            forcetype (bool): integer data will be converted to np.float32 type
+            for saving. if forcetype then preserve and save as int type (will 
+            be unsigned).
         """
         #Standard filename block
         if filename is None:
@@ -763,11 +776,17 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         fmt = ['tiff' if f=='tif' else f for f in fmt]
         self.filename=filename
         for fm in fmt:
-            saver=getattr(self,"save_{}".format(fm),"save_png")
-            saver(filename)
+            saver=getattr(self,"save_{}".format(fm),"save_tif")
+            if fm=='tif':
+                forcetype = kargs.pop("forcetype", False)
+                saver(filename, forcetype)
+            else:
+                saver(filename)
         
     def save_png(self,filename):
-        """Save the ImageFile with metadata in a png file."""
+        """Save the ImageArray with metadata in a png file.
+        This can only save as 8bit unsigned integer so there is likely
+        to be a loss of precision on floating point data"""
         pngname = os.path.splitext(filename)[0] + '.png'
         meta=PngImagePlugin.PngInfo()
         info=self.metadata.export_all()
@@ -779,15 +798,26 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         im.save(pngname,pnginfo=meta)
 
     def save_npy(self,filename):
-        """Save the ImageFile as a numpy array."""
+        """Save the ImageArray as a numpy array."""
         npyname = os.path.splitext(filename)[0] + '.npy'
         np.save(npyname, self)
-
-    def save_tiff(self,filename):
-        """Save the ImageFile as a tiff image with metadata."""
+    
+    def save_tiff(self,filename, forcetype=False):
+        """Save the ImageArray as a tiff image with metadata
+        Keyword arguments
+            forcetype(bool): if forcetype then preserve and save as int type (will 
+            be unsigned). Otherwise integer data will be converted to np.float32 type
+            for saving. 
+        """
         from PIL.TiffImagePlugin import ImageFileDirectory_v2
         import json
-        im=Image.fromarray(self.asint( np.uint32),mode="I")
+        if self.dtype.kind in ['i','u'] and forcetype:
+            im=Image.fromarray(self, mode="I")
+        elif self.dtype.kind == 'b': #boolean might as well leave as int, no precision loss
+            im=Image.fromarray(self.astype(np.int32), mode="I")
+        else: #try to convert everything else to float32
+            im=Image.fromarray(self.astype(np.float32),mode="F")
+            
         ifd = ImageFileDirectory_v2()
         ifd[270]=json.dumps(self.metadata.export_all())
         ext = os.path.splitext(filename)[1]
@@ -1006,7 +1036,7 @@ class ImageFile(metadataObject):
     
     def __getattr__(self, n):
         """"Handles attriobute access."""
-        try:
+        try: 
             ret=super(ImageFile,self).__getattr__(n)
         except AttributeError:
             ret = getattr(self.image, n)
@@ -1174,9 +1204,27 @@ class ImageFile(metadataObject):
         data.close()
         return ret
         
-    #####################################################################################################################################
-    ############################## Public methods #######################################################################################            
+    def save(self, filename=None, **kwargs):
+        """Saves the image into the file 'filename'. 
+        
+        Metadata will be preserved in .png and .tif format.
+        
+        fmt can be 'png', 'npy', 'tif', 'tiff'  or a list of more than one of those.
+        tif is recommended since metadata is lost in .npy format but data is 
+        converted to integer format for png so that definition cannot be 
+        saved.
 
+        Args:
+            filename (string, bool or None): Filename to save data as, if this is
+                None then the current filename for the object is used
+                If this is not set, then then a file dialog is used. If 
+                filename is False then a file dialog is forced.
+        Keyword args:
+            fmt (string or list): format to save data as. 'tif', 'png' or 'npy'
+            or a list of them. If not included will guess from filename.            
+        """
+        #catch before metadataObject tries to take over.
+        self.image.save(filename, **kwargs)
 
             
 class DrawProxy(object):
