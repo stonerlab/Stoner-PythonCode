@@ -777,7 +777,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         self.filename=filename
         for fm in fmt:
             saver=getattr(self,"save_{}".format(fm),"save_tif")
-            if fm=='tif':
+            if fm=='tiff':
                 forcetype = kargs.pop("forcetype", False)
                 saver(filename, forcetype)
             else:
@@ -804,20 +804,34 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
     
     def save_tiff(self,filename, forcetype=False):
         """Save the ImageArray as a tiff image with metadata
+        PIL can save in modes "L" (8bit unsigned int), "I" (32bit signed int),
+        or "F" (32bit signed float). In general max info is preserved for "F" 
+        type so if forcetype is not specified then this is the default. For
+        boolean type data mode "L" will suffice and this is chosen in all cases.
+        The type name is added as a string to the metadata before saving.
         Keyword arguments
-            forcetype(bool): if forcetype then preserve and save as int type (will 
-            be unsigned). Otherwise integer data will be converted to np.float32 type
-            for saving. 
+            forcetype(bool): if forcetype then preserve data type as best as 
+            possible on save. 
+            Otherwise integer data will be converted to np.float32 type
+            for saving. (bool will remain as int since there's no danger of 
+            loss of information)
         """
         from PIL.TiffImagePlugin import ImageFileDirectory_v2
         import json
-        if self.dtype.kind in ['i','u'] and forcetype:
-            im=Image.fromarray(self, mode="I")
-        elif self.dtype.kind == 'b': #boolean might as well leave as int, no precision loss
-            im=Image.fromarray(self.astype(np.int32), mode="I")
-        else: #try to convert everything else to float32
-            im=Image.fromarray(self.astype(np.float32),mode="F")
-            
+        dtype = np.dtype(self.dtype).name #string representation of dtype we can save
+        self['ImageArray.dtype'] = dtype #add the dtype to the metadata for saving.
+        if forcetype: #PIL supports uint8, int32 and float32, try to find the best match
+            if self.dtype==np.uint8 or self.dtype.kind=="b": #uint8 or boolean
+                im=Image.fromarray(self, mode="L")
+            elif self.dtype.kind in ["i","u"]:
+                im=Image.fromarray(self, mode="I")
+            else: #default to float32
+                im=Image.fromarray(self.astype(np.float32),mode="F")
+        else: 
+            if self.dtype.kind=="b": #boolean we're not going to lose data by saving as unsigned int
+                im=Image.fromarray(self, mode="L")
+            else: #try to convert everything else to float32 which can has maximum preservation of info
+                im=Image.fromarray(self.astype(np.float32),mode="F")
         ifd = ImageFileDirectory_v2()
         ifd[270]=json.dumps(self.metadata.export_all())
         ext = os.path.splitext(filename)[1]
