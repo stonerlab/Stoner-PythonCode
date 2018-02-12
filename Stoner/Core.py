@@ -159,6 +159,8 @@ class _setas(object):
     @column_headers.setter
     def column_headers(self,value):
         """Set the colum headers."""
+        if isinstance(value,_np_.ndarray): #Convert ndarray to list of strings
+            value=value.astype(str).tolist()
         self._column_headers=typedList(string_types,value)
 
     @property
