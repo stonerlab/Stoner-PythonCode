@@ -109,7 +109,7 @@ class CSVFile(_SC_.DataFile):
             filename = self.__file_dialog('w')
         spamWriter = csv.writer(io.open(filename, 'w',errors="ignore",encoding="utf-8"), delimiter=delimiter, quotechar='"', quoting=csv.QUOTE_MINIMAL)
         i = 0
-        spamWriter.writerow(self.column_headers)
+        spamWriter.writerow([unicode(x) for x in self.column_headers])
         while i < self.data.shape[0]:
             spamWriter.writerow(self.data[i,:])
             i += 1
