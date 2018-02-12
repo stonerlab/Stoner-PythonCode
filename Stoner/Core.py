@@ -1794,7 +1794,7 @@ class DataFile(metadataObject):
             while ch[i] in ch[i + 1:] or ch[i] in ch[0:i]:
                 j = j + 1
                 ch[i] = "{}_{}".format(header, j)
-        dtype = [(x, self.dtype) for x in ch]
+        dtype = [(str(x), self.dtype) for x in ch]
         self.setas=setas
         self.column_headers=ch_bak
         try:
