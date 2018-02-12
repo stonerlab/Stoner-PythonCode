@@ -5,6 +5,7 @@ __all__ = ["StonerLoadError", "StonerSetasError","regexpDict","typeHintedDict","
 import re
 #import pdb # for debugging
 import os
+import io
 import copy
 import os.path as path
 import inspect as _inspect_
@@ -2421,7 +2422,7 @@ class DataFile(metadataObject):
             self.get_filename('r')
         else:
             self.filename = filename
-        with open(self.filename, "r",encoding="utf-8",errors="ignore") as datafile:
+        with io.open(self.filename, "r",encoding="utf-8",errors="ignore") as datafile:
             try:
                 reader = csv.reader(datafile, dialect=_tab_delimited())
                 row = next(reader)
@@ -3655,7 +3656,7 @@ class DataFile(metadataObject):
             mdtext = _np_.append(mdtext, _np_.zeros(len(self) - len(mdtext), dtype=str))
         data_out = _np_.column_stack([mdtext, self.data])
         fmt = ["%s"] * data_out.shape[1]
-        with open(filename, 'wb') as f:
+        with io.open(filename, 'wb') as f:
             _np_.savetxt(f, data_out, fmt=fmt, header=header, delimiter="\t", comments="")
             for k in mdremains:
                 f.write(str2bytes(self.metadata.export(k) + "\n"))
