@@ -260,11 +260,9 @@ class QDFile(_SC_.DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-
-        extra={'errors':'replace'} if python_v3 else dict() #Fix encoding for Python 3
         setas={}
         i=0
-        with io.open(self.filename, "r",**extra) as f:  # Read filename linewise
+        with io.open(self.filename, "r",encoding="utf-8",errors="ignore") as f:  # Read filename linewise
             for i, line in enumerate(f):
                 line = line.strip()
                 if i == 0 and line != "[Header]":
