@@ -23,7 +23,7 @@ from .compat import _lmfit,Model
 from .tools import format_error
 
 from os import path as _path_
-__version_info__ = ('0', '8', 'a1')
+__version_info__ = ('0', '8', 'a2')
 __version__ = '.'.join(__version_info__)
 
 __home__=_path_.realpath(_path_.dirname(__file__))
