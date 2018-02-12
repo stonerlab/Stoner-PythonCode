@@ -1346,7 +1346,7 @@ class LSTemperatureFile(_SC_.DataFile):
                 else:
                     vstr = str(v)
                 f.write(u"{}{}\r\n".format(kstr, vstr))
-            f.write("\r\n")
+            f.write(u"\r\n")
             f.write(u"No.   ")
             for h in self.column_headers:
                 f.write(u"{:11s}".format(h))
