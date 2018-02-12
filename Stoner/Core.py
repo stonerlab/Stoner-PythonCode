@@ -1794,7 +1794,10 @@ class DataFile(metadataObject):
         dtype = [(x, self.dtype) for x in ch]
         self.setas=setas
         self.column_headers=ch_bak
-        return self.data.view(dtype=dtype).reshape(len(self))
+        try:
+            return self.data.view(dtype=dtype).reshape(len(self))
+        except TypeError as e:
+            raise TypeError("Failed to get record view. Dtype was {}".format(dtype))
 
     @property
     def shape(self):
