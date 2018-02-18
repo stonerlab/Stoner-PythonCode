@@ -14,8 +14,10 @@ import copy
 import numbers
 
 from skimage.viewer import CollectionViewer
-from Stoner.compat import  string_types
+from Stoner.compat import  string_types,int_types
 from Stoner.tools import all_type
+from Stoner.Core import regexpDict
+from Stoner.Folders import DiskBssedFolder, baseFolder
 
 IM_SIZE=(512,672) #Standard Kerr image size
 AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
@@ -26,7 +28,7 @@ def _load_ImageArray(f, **kargs):
 
 def _average_list(listob):
     """Average a list of items picking an appropriate average given the type.
-    
+
     If no appropriate average is found None will be returned.
     if listob contains nested lists or dicts of numbers then try to average
     individual items within the lists/keys.
@@ -60,37 +62,187 @@ def _average_list(listob):
     else:
         return None
     return ret
-    
+
+class ImageStackMixin(object):
+
+    """Implement an interface for a baseFolder to store images in a 3D numpy array for faster access."""
+
+    _objects=np.atleast_3d(np.ma.MaskedArray([]))
+    _metadata=regexpDict()
+
+    def __lookup__(self,name):
+        """Stub for other classes to implement.
+
+        Parameters:
+            name(str): Name of an object
+
+        Returns:
+            A key in whatever form the :py:meth:`baseFolder.__getter__` will accept.
+
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+        """
+        if isinstance(name,int_types):
+            try:
+                _=self._objects[::,name]
+            except IndexError:
+                raise KeyError("{} is out of range for accessing the ImageStack.".format(name))
+            return name
+        elif name not in self.__names__():
+            name=self._metadata.__lookup__(name)
+        return list(self._metadata.keus()).index(name) #return the matching index of the name
+
+    def __names__(self):
+        """Stub method to return a list of names of all objects that can be indexed for __getter__.
+
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+        """
+        return list(self._metadata.keys())
+
+    def __getter__(self,name,instantiate=True):
+        """Stub method to do whatever is needed to transform a key to a metadataObject.
+
+        Parameters:
+            name (key type): The canonical mapping key to get the dataObject. By default
+                the baseFolder class uses a :py:class:`regexpDict` to store objects in.
+
+        Keyword Arguments:
+            instatiate (bool): If True (default) then always return a metadataObject. If False,
+                the __getter__ method may return a key that can be used by it later to actually get the
+                metadataObject. If None, then will return whatever is helf in the object cache, either instance or name.
+
+        Returns:
+            (metadataObject): The metadataObject
+
+            Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+
+
+        """
+        try:
+            idx=self.__lookup__(name)
+        except KeyError: # If we don't seem to have the name then see if we can fall back to something else like a DiskBasedFolder
+            return super(ImageStackMixin,self).__getter__(name,instantiate)
+        if isinstance(instantiate,bool) and not instantiate:
+            return self.__names__()[idx]
+        else:
+            instance= self._instantiate(idx)
+            return self._update_from_object_attrs(instance)
+
+    def __setter__(self,name,value):
+        """Stub to setting routine to store a metadataObject.
+
+        Parameters:
+            name (string) the named object to write - may be an existing or new name
+            value (metadataObject) the value to store.
+
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+        """
+        if name is None:
+            name=self.make_name()
+        try:
+            idx=self.__lookup__(name)
+        except KeyError: #Ok we're appending here
+            self._metadata[name]=value.metadata
+            current_shape=self._objects.shape
+            if np.product(current_shape)==0: # ok we're just adding the first elemtn here
+                self._objects=np.atleast_3d(value.data)
+            else:
+                if current_shape[:2]==value.dxata.shape: # easy to append
+                    self._objects=np.append(self._objects,value.data,axis=2)
+                else: # Full resize needed
+                    mrows=max(current_shape[0],value.data[0])
+                    mcols=max(current_shape[1],value.data[1])
+                    tmp=np.ma.MaskedArray((mrows,mcols,current_shape[2]+1))
+                    tmp[:current_shape[0],:current_shape[1],:current_shape[2]]=self._objects
+                    tmp[:value.data.shape[0],:value.data.shape[1],-1]=value.data
+                    self._objects=tmp
+        else: # Doing an insert here
+            self._metadata[name]=value.metadata
+            current_shape=self._objects.shape
+            if current_shape[:2]==value.dxata.shape: # easy to append
+                self._objects[:,:,idx]=value.data
+            else: # Full resize needed
+                mrows=max(current_shape[0],value.data[0])
+                mcols=max(current_shape[1],value.data[1])
+                tmp=np.ma.MaskedArray((mrows,mcols,current_shape[2]))
+                tmp[:current_shape[0],:current_shape[1],:current_shape[2]]=self._objects
+                tmp[:value.data.shape[0],:value.data.shape[1],idx]=value.data
+                self._objects=tmp
+
+    def __deleter__(self,ix):
+        """Deletes an object from the baseFolder.
+
+        Parameters:
+            ix(str): Index to delete, should be within +- the lengthe length of the folder.
+
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+
+        """
+        idx=self.__lookup__(ix)
+        name=list(self.__names__())[idx]
+        del self._metadata[name]
+        self._objects=np.delte(self._objects,idx,axis=2)
+
+    def __clear__(self):
+        """"Clears all stored :py:class:`Stoner.Core.metadataObject` instances stored.
+
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+
+        """
+        self._metadata=regexpDict()
+        self._objects=np.atleast_3d(np.ma.MaskedArray([]))
+
+    def __clone__(self,other=None,attrs_only=False):
+        """Do whatever is necessary to copy attributes from self to other.
+
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+        """
+        if other is None:
+            return copy.deepcopy(self)
+        other=super(ImageStackMixin,self).__clone__(other,attrs_only)
+        return other
+
+class ImageStack2(ImageStackMixin,DiskBssedFolder,baseFolder):
+
+    """An akternative implementation of an image stack based on baseFolder."""
+
+    pass
 
 class ImageStack(metadataObject):
-    
+
     """:py:class:`Stoner.Image.stack.ImageStack` is a 3d numpy array stack of images.
 
     This is used to deal with a stack of images with identical dimensions
     as a 3d numpy array - more efficient than the folder based methods in ImageFolder
     for iterating etc. The first axis is the number of images. Images are added
     and deleted through list type methods ImageStack.append, ImageStack.insert.
-    
+
     Images can be accessed through ImageStack[i]
     Metadata through ImageStack['key']
     images should be added or removed using the list like methods append, insert, del
-    
+
     Attributes:
-        imarray(np.ndarray): 
+        imarray(np.ndarray):
             the 3d stack of images
-        allmeta(list): 
+        allmeta(list):
             list of metadata stored for each image
-        zipallmeta(dict): 
+        zipallmeta(dict):
             a dictionary of all common metadata items zipped into lists
-        clone(ImageStack): 
+        clone(ImageStack):
             copy of self
-        shape(tuple): 
+        shape(tuple):
             pass through to imarray.shape
     """
-        
+
     def __init__(self, *args, **kargs):
         """Constructor for :py:class:`Stoner.Image.stack.ImageStack`
-        
+
         Args:
             (str, ndarray (3d or 2d), ImageFolder, ImageStack, list of array type):
                 Various forms recognised. Will try to create as expected!
@@ -101,7 +253,7 @@ class ImageStack(metadataObject):
                       'list': lists the metadata for each of the common keys
                       'average': attempts to save the average value of each meta key
             copyarray: whether to copy the image given in args[0]
-                              
+
         """
         super(ImageStack, self).__init__(  \
                     metadata=kargs.pop('metadata',None)) #initialise metadata
@@ -110,12 +262,12 @@ class ImageStack(metadataObject):
         self.metadata_info = kargs.pop('metadata_info', 'list')
         self.allmeta = [] #A list of metadata dicts extracted from the input images,
         #                  if just a 3d numpy array is given this will be empty.
-        #                  this is for easy reconstruction if we want to get images 
+        #                  this is for easy reconstruction if we want to get images
         #                  back out of ImageStack
-        self.zipallmeta = {} #dict of allmeta in list form (only keys that 
+        self.zipallmeta = {} #dict of allmeta in list form (only keys that
         #                       are common to all images are retained)
         copyarray = kargs.pop('copyarray', False)
-        self._commonkeys = [] #metadata fields that are common to all images        
+        self._commonkeys = [] #metadata fields that are common to all images
         self['metadata_info'] = self.metadata_info
         if len(args)!=0:
             images=args[0]
@@ -143,24 +295,24 @@ class ImageStack(metadataObject):
                 if isinstance(images, ImageFolder):
                     images=[i for i in images] #take the images from the top group
                 types = [isinstance(i, np.ndarray) for i in images] #this covers ImageArray too
-                if all(types):        
+                if all(types):
                     for i in images:
-                        self.append(i.view(type=ImageArray)) #new memory space used for array 
+                        self.append(i.view(type=ImageArray)) #new memory space used for array
                 else:
                     raise ValueError('Bad input for ImageStack {}'.format(type(images)))
             else:
-                raise ValueError('Bad input for ImageStack {}'.format(type(images)))         
-             
+                raise ValueError('Bad input for ImageStack {}'.format(type(images)))
+
     @property
     def shape(self):
         """call through to ndarray.shape"""
         return self.imarray.shape
-    
+
     @property
     def imarray(self):
         """The main array storing the images"""
         return self._imarray
-    
+
     @imarray.setter
     def imarray(self, arr):
         """Set the main array for the image."""
@@ -169,31 +321,31 @@ class ImageStack(metadataObject):
         if arr.shape[0] != self._len:
             raise ValueError('Update imarray using append and insert methods')
         self._imarray = arr
-    
+
     @property
     def allmeta(self):
         """List of complete metadata for each image in ImageStack"""
         return self._allmeta
-    
+
     @allmeta.setter
     def allmeta(self, value):
         self._allmeta=value
         self._update_metadata()
-        
+
     @property
     def clone(self):
         """Return a copy of self"""
         return copy.deepcopy(self)
-    
+
     def __iter__(self):
         """Iterating method."""
         return self.__next__()
-    
+
     def __next__(self):
         """Python 3 style iterator interface."""
         for i in range(len(self)):
             yield self[i]
-    
+
     def _update_commonkeys(self):
         """update self._commonkeys common keys in self.allmeta"""
         if len(self._allmeta)>0:
@@ -202,14 +354,14 @@ class ImageStack(metadataObject):
                 self._commonkeys = keys & set(m.keys()) #intersection
         else:
             self._commonkeys = set()
-    
+
     def _update_zipallmeta(self):
         """list of metadata items for each common key"""
         self._update_commonkeys()
         for k in self._commonkeys:
             self.zipallmeta[k] = [i[k] for i in self.allmeta]
-        
-    def _update_metadata(self):     
+
+    def _update_metadata(self):
         """update the metadata from allmeta according to the specifications in  metadata_info"""
         self._update_zipallmeta()
         mi = self.metadata_info
@@ -225,7 +377,7 @@ class ImageStack(metadataObject):
                     pass
             else:
                 raise NotImplementedError("metadata_info can't take all keywords yet")
-        
+
     def __getitem__(self,index):
         """Patch indexing of strings to metadata and an index to a single ImageArray"""
         if isinstance(index,string_types):
@@ -238,7 +390,7 @@ class ImageStack(metadataObject):
             ret = [self[i] for i in range(index.start, index.stop)]
             return ret
         return super(ImageStack,self).__getitem__(index)
-        
+
     def __setitem__(self,index,value):
         """Patch string index through to metadata. All other set operations to be handled by insert, append and del."""
         if isinstance(index,string_types):
@@ -266,7 +418,7 @@ class ImageStack(metadataObject):
                 del(self[i])
         else:
             super(ImageStack,self).__delitem__(index)
-            
+
     def __len__(self):
         """Define a length for the array."""
         return self.imarray.shape[0]
@@ -279,13 +431,13 @@ class ImageStack(metadataObject):
         for k,v in self.__dict__.items():
             setattr(ret, k, copy.deepcopy(v, memo))
         return ret
-        
+
     def slice_metadata(self, key, values_only=True):
         """List of metadata values for each image given key.
-        
-        Return a list of metadata from each image given the key or a list of 
+
+        Return a list of metadata from each image given the key or a list of
         keys. If values_only then return a list of values, else return a dictionary entry
-        
+
         Arg:
             key(str, list, tuple):
                 the key or list of keys to return values for
@@ -311,15 +463,15 @@ class ImageStack(metadataObject):
         else:
             raise ValueError('slice_metadata does not except input of type {}'.format(type(key)))
         return ret
-    
+
     def append(self, item):
         """Append an image array
-        
+
         Append an image to the end of the stack and update allmeta
         Arg:
             item(ndarray or ImageArray):
                 array of same shape as other images in stack
-        """                
+        """
         if not isinstance(item, np.ndarray):
             raise ValueError('append expects array type, {} given.'.format(type(item)))
         if len(self)>0 and item.shape!=self[0].shape:
@@ -328,21 +480,21 @@ class ImageStack(metadataObject):
         self._update_metadata()
         self._len += 1
         if len(self)==0: #array empty so far
-            self.imarray = np.array([item])  
+            self.imarray = np.array([item])
         else:
-            self.imarray = np.append(self.imarray, np.array([item]), axis=0)                
-    
+            self.imarray = np.append(self.imarray, np.array([item]), axis=0)
+
     def insert(self, index, item):
         """Insert an image array at index
-        
+
         Insert an image into the stack at index and update allmeta.
-        
+
         Args:
             index(int):
                 index for insertion
             item(ndarray or ImageArray):
                 array of same shape as other images in stack
-        """        
+        """
         if not isinstance(item, np.ndarray):
             raise ValueError('append expects array type, {} given.'.format(type(item)))
         if len(self)>0 and item.shape!=self[0].shape:
@@ -354,7 +506,7 @@ class ImageStack(metadataObject):
 
     def dtype_limits(self, clip_negative=True):
         """Return intensity limits, i.e. (min, max) tuple, of imarray dtype.
-        
+
         Keyword Arguments:
             clip_negative(bool):
                 If True, clip the negative range (i.e. return 0 for min intensity)
@@ -367,21 +519,21 @@ class ImageStack(metadataObject):
         if clip_negative:
             imin = 0
         return imin, imax
-    
+
     def clip_intensity(self):
         """Clip intensity that lies outside the range allowed by dtype.
-        
+
         Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
         are changed to 0. (Numpy should limit the range on arrays of int dtypes.
         """
         dl=self.dtype_limits(clip_negative=True)
         np.clip(self.imarray, dl[0], dl[1], out=self.imarray)
-    
+
     def convert_float(self, clip_negative=True):
-        """Convert the imarray to floating point type normalised to -1 to 1. 
-        
+        """Convert the imarray to floating point type normalised to -1 to 1.
+
         If clip_negative then clip intensities below 0 to 0.
-        
+
         Keyword Arguments:
             clip_negative(bool):
                 whether to clip intensities
@@ -398,13 +550,13 @@ class ImageStack(metadataObject):
 
     def apply_all(self, *args, **kargs):
         """apply function to all images in the stack
-        
+
         Args:
             func(string or callable):
                 if string it must be a function reachable by ImageArray
             quiet(bool):
                 if False print '.' for every iteration
-        
+
         Note:
             Further args, kargs are passed through to the function
         """
@@ -422,14 +574,14 @@ class ImageStack(metadataObject):
                 self[i]=func(im, *args, **kargs)
             if not quiet:
                 print('.')
-    
+
     def subtract(self, background, contrast=16, clip_intensity=True):
         """Subtract a background image (or index) from all images in the stack.
-        
+
         The formula used is new = (ImageArray - background) * contrast + 0.5
         If clip_intensity then clip negative intensities to 0. Array is always
         converted to float for this method.
-        
+
         Arg:
             background(int or 2d np.ndarray):
                 the background image to subtract. If int is given this is used
@@ -448,7 +600,7 @@ class ImageStack(metadataObject):
         self.imarray = contrast * (self.imarray - bg) + 0.5
         if clip_intensity:
             self.clip_intensity()
-    
+
     def crop_stack(self, box):
         """Crop the imagestack.
         Crops to the box given
@@ -462,29 +614,29 @@ class ImageStack(metadataObject):
                 cropped images
         """
         self.imarray = self.imarray[:,box[2]:box[3],box[0]:box[1]]
-        
+
     def show(self):
         """Show the stack of images in a skimage CollectionViewer window"""
         #stackims=[self[i] for i in range(len(self))]
         cv=CollectionViewer(self)
         cv.show()
-        return cv  
+        return cv
 
     def save(self, fname):
         """probably should save in hdf5 format"""
         raise NotImplementedError
-        
+
     def stddev(self, weights=None):
         """Calculate weighted standard deviation for stack
-        
+
         This is a biased standard deviation, may not be appropriate for small sample sizes
         """
         avs = self.stack_average(weights=weights)
         avs = np.tile(avs, (len(self),1,1)) #make it the same size as imarray
         sumsqrdev = np.sum(weights*(self.imarray - avs)**2,axis=0)
-        result = np.sqrt(sumsqrdev/(np.sum(weights, axis=0))) 
+        result = np.sqrt(sumsqrdev/(np.sum(weights, axis=0)))
         return result.view(ImageArray)
-    
+
     def stderr(self, weights=None):
         """Standard error in the stack average"""
         serr = self.stddev(weights=weights)/np.sqrt(self.shape[0])
@@ -492,20 +644,20 @@ class ImageStack(metadataObject):
 
     def average(self, weights=None):
         """Get an array of average pixel values for the stack.
-        
-        Pass through to numpy average        
+
+        Pass through to numpy average
         Returns:
             average(ImageArray):
                 average values
-        """                   
+        """
         average = np.average(self.imarray, axis=0, weights=weights)
         return average.view(ImageArray)
 
     def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50, box=None):
         """Align images to correct for image drift.
-        
+
         Pass through to ImageArray.corret_drift.
-        
+
         Arg:
             refindex: int or str
                 index or name of the reference image to use for zero drift
@@ -513,11 +665,11 @@ class ImageStack(metadataObject):
             threshold(float): see ImageArray.correct_drift
             upsample_factor(int): see ImageArray.correct_drift
             box: see ImageArray.correct_drift
-            
+
         """
         ref=self[refindex]
         self.apply_all('correct_drift', ref, threshold=threshold,
-                     upsample_factor=upsample_factor, box=box)        
+                     upsample_factor=upsample_factor, box=box)
 
 
 
