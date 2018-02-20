@@ -292,7 +292,7 @@ class baseFolder(MutableSequence):
         Keyword Arguments:
             instatiate (bool): If True (default) then always return a metadataObject. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
-                metadataObject. If None, then will return whatever is helf in the object cache, either instance or name.
+                metadataObject. If None, then will return whatever is held in the object cache, either instance or name.
 
         Returns:
             (metadataObject): The metadataObject
@@ -326,6 +326,25 @@ class baseFolder(MutableSequence):
         if name is None:
             name=self.make_name()
         self.objects[name]=value
+
+    def __inserter__(self,ix,name,value):
+        """Insert the element into a specific place in our data folder.
+
+        Parameters:
+            ix (int): the index value to insert at, must be 0 to len(self)-1
+            name (str): the string name to add as a key
+            value (self.type): the value to be inserted.
+
+        Note:
+            This is written in a way to be generic, but might be better implemented if storage is customised.
+        """
+        names=list(self.__names__())
+        values=[self.__getter__(n,instantiate=None) for n in names]
+        names.insert(ix,name)
+        values.insert(ix,value)
+        self.__clear__()
+        for n,v in zip(names,values):
+            self.__setter__(n,v)
 
     def __deleter__(self,ix):
         """Deletes an object from the baseFolder.
@@ -1100,17 +1119,19 @@ class baseFolder(MutableSequence):
 
     def insert(self,ix,value):
         """Implements the insert method with the option to append as well."""
+        name= self.make_name(value)
+        names=self.__names__()
+        i=1
+        while name in names: # Since we're adding a new entry, make sure we have a unique name !
+            name,ext=os.path.splitext(name)
+            name="{}({}).{}".format(name,i,ext)
+            i+=1
         if -len(self)<ix<len(self):
+            ix=ix%len(self)
+            self.__inserter__(ix,name,value)
             name=self.__names__()[ix]
             self.__setter__(self.__lookup__(name),value)
         elif ix>=len(self):
-            name= self.make_name(value)
-            i=1
-            names=self.__names__()
-            while name in names: # Since we're adding a new entry, make sure we have a unique name !
-                name,ext=os.path.splitext(name)
-                name="{}({}).{}".format(name,i,ext)
-                i+=1
             self.__setter__(name,value)
 
     def items(self):
