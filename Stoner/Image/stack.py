@@ -5,10 +5,6 @@ Created on Mon May 23 12:05:59 2016
 @author: phyrct
 """
 
-from .core import ImageArray
-from .core import dtype_range
-from .folders import ImageFolder
-from Stoner.Core import metadataObject
 import numpy as np
 import copy
 import numbers
@@ -16,7 +12,9 @@ import numbers
 from skimage.viewer import CollectionViewer
 from Stoner.compat import  string_types,int_types
 from Stoner.tools import all_type
-from Stoner.Core import regexpDict
+from .core import ImageArray,dtype_range, ImageFile
+from .folders import ImageFolder,ImageFolderMixin
+from Stoner.Core import regexpDict,metadataObject
 from Stoner.Folders import DiskBssedFolder, baseFolder
 
 IM_SIZE=(512,672) #Standard Kerr image size
@@ -67,8 +65,15 @@ class ImageStackMixin(object):
 
     """Implement an interface for a baseFolder to store images in a 3D numpy array for faster access."""
 
-    _objects=np.atleast_3d(np.ma.MaskedArray([]))
-    _metadata=regexpDict()
+
+    def __init__(self,*args,**kargs):
+        """Initialise an ImageStack's pricate data and provide a type argument."""
+        self._stack=np.atleast_3d(np.ma.MaskedArray([]))
+        self._metadata=regexpDict()
+        self._names=list()
+
+        kargs["type"]=ImageFile
+        super(ImageStackMixin,self).__init__(*args,**kargs)
 
     def __lookup__(self,name):
         """Stub for other classes to implement.
@@ -84,13 +89,13 @@ class ImageStackMixin(object):
         """
         if isinstance(name,int_types):
             try:
-                _=self._objects[::,name]
+                _=self._stack[::,name]
             except IndexError:
                 raise KeyError("{} is out of range for accessing the ImageStack.".format(name))
             return name
         elif name not in self.__names__():
             name=self._metadata.__lookup__(name)
-        return list(self._metadata.keus()).index(name) #return the matching index of the name
+        return list(self._metadata.keys()).index(name) #return the matching index of the name
 
     def __names__(self):
         """Stub method to return a list of names of all objects that can be indexed for __getter__.
@@ -98,7 +103,7 @@ class ImageStackMixin(object):
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
-        return list(self._metadata.keys())
+        return self._names
 
     def __getter__(self,name,instantiate=True):
         """Stub method to do whatever is needed to transform a key to a metadataObject.
@@ -140,37 +145,53 @@ class ImageStackMixin(object):
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
+        if isinstance(name,int_types):
+            try:
+                name=self.__names__()[name]
+            except IndexError:
+                name=self.make_name(value)
         if name is None:
-            name=self.make_name()
+            name=self.make_name(value)
         try:
             idx=self.__lookup__(name)
         except KeyError: #Ok we're appending here
             self._metadata[name]=value.metadata
-            current_shape=self._objects.shape
+            self._names.append(name)
+            current_shape=self._stack.shape
             if np.product(current_shape)==0: # ok we're just adding the first elemtn here
-                self._objects=np.atleast_3d(value.data)
+                self._stack=np.atleast_3d(value.data)
             else:
-                if current_shape[:2]==value.dxata.shape: # easy to append
-                    self._objects=np.append(self._objects,value.data,axis=2)
+                if current_shape[:2]==value.data.shape: # easy to append
+                    self._stack=np.append(self._stack,np.atleast_3d(value.data),axis=2)
                 else: # Full resize needed
                     mrows=max(current_shape[0],value.data[0])
                     mcols=max(current_shape[1],value.data[1])
                     tmp=np.ma.MaskedArray((mrows,mcols,current_shape[2]+1))
-                    tmp[:current_shape[0],:current_shape[1],:current_shape[2]]=self._objects
+                    tmp[:current_shape[0],:current_shape[1],:current_shape[2]]=self._stack
                     tmp[:value.data.shape[0],:value.data.shape[1],-1]=value.data
-                    self._objects=tmp
+                    self._stack=tmp
         else: # Doing an insert here
             self._metadata[name]=value.metadata
-            current_shape=self._objects.shape
-            if current_shape[:2]==value.dxata.shape: # easy to append
-                self._objects[:,:,idx]=value.data
+            current_shape=self._stack.shape
+            if current_shape[:2]==value.data.shape: # easy to append
+                self._stack[:,:,idx]=value.data
             else: # Full resize needed
                 mrows=max(current_shape[0],value.data[0])
                 mcols=max(current_shape[1],value.data[1])
                 tmp=np.ma.MaskedArray((mrows,mcols,current_shape[2]))
-                tmp[:current_shape[0],:current_shape[1],:current_shape[2]]=self._objects
+                tmp[:current_shape[0],:current_shape[1],:current_shape[2]]=self._stack
                 tmp[:value.data.shape[0],:value.data.shape[1],idx]=value.data
-                self._objects=tmp
+                self._stack=tmp
+
+    def __inserter__(self,ix,name,value):
+        """Provide an efficient insert into the stack.
+
+        The default implementation is rather slow about inserting since it has to clear the data folder and then rebuild it entry by entry. This does
+        a simple insert."""
+        self._names.insert(ix,name)
+        self._metadata[name]=value.metadata
+        self._stack=np.insert(self._stack,ix,value.data,axis=2)
+
 
     def __deleter__(self,ix):
         """Deletes an object from the baseFolder.
@@ -185,7 +206,7 @@ class ImageStackMixin(object):
         idx=self.__lookup__(ix)
         name=list(self.__names__())[idx]
         del self._metadata[name]
-        self._objects=np.delte(self._objects,idx,axis=2)
+        self._stack=np.delte(self._stack,idx,axis=2)
 
     def __clear__(self):
         """"Clears all stored :py:class:`Stoner.Core.metadataObject` instances stored.
@@ -195,7 +216,7 @@ class ImageStackMixin(object):
 
         """
         self._metadata=regexpDict()
-        self._objects=np.atleast_3d(np.ma.MaskedArray([]))
+        self._stack=np.atleast_3d(np.ma.MaskedArray([]))
 
     def __clone__(self,other=None,attrs_only=False):
         """Do whatever is necessary to copy attributes from self to other.
@@ -208,7 +229,31 @@ class ImageStackMixin(object):
         other=super(ImageStackMixin,self).__clone__(other,attrs_only)
         return other
 
-class ImageStack2(ImageStackMixin,DiskBssedFolder,baseFolder):
+    def _instantiate(self,idx):
+        """Reconstructs the data type."""
+        tmp=self.type()
+        tmp.data=self._stack[:,:,idx]
+        tmp.metadata=self._metadata[self.__names__()[idx]]
+        return tmp
+
+    ###########################################################################
+    ################### Properties of ImageStack ##############################
+
+    @property
+    def imarray(self):
+        return self._stack
+
+    @imarray.setter
+    def imarray(self,value):
+        value=np.ma.MaskedArray(np.atleast_3d(value))
+        self._stack=value
+
+    @property
+    def shape(self):
+        return self._stack.shape
+
+
+class ImageStack2(ImageStackMixin,ImageFolderMixin,DiskBssedFolder,baseFolder):
 
     """An akternative implementation of an image stack based on baseFolder."""
 
