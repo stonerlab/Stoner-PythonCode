@@ -6,9 +6,10 @@ Created on Mon May 23 12:05:59 2016
 """
 
 from .core import ImageArray
+from Stoner import Data
 from Stoner.Folders import DiskBssedFolder, baseFolder
 from Stoner.compat import string_types
-from Stoner.tools import isiterable
+from Stoner.tools import isiterable,islike_list
 from Stoner.Image import ImageFile,ImageArray
 
 from skimage.viewer import CollectionViewer
@@ -101,15 +102,23 @@ class ImageFolderMixin(object):
         for _ in self:
             pass
 
-    def slice_metadata(self, key=None, values_only=False):  # pylint: disable=arguments-differ
+    def slice_metadata(self, key=None, values_only=False,output=None):  # pylint: disable=arguments-differ
         """Return a list of the metadata dictionaries for each item/file in the top level group
 
         Keyword Arguments:
             key(string or list of strings):
                 if given then only return the item(s) requested from the metadata
             values_only(bool):
-                if given only return tuples of the dictionary values. Mostly useful
+                if given amd *output* not set only return tuples of the dictionary values. Mostly useful
                 when given a single key string
+            output (str or type):
+                Controls the output format from slice_metadata. Possible values are
+
+                - "dict" or dict - return a list of dictionary subsets of the metadata from each image
+                - "list" or list - return a list of values of each item pf the metadata
+                - "array" or np.array - return a single array - like list above, but returns as a numpy array. This can create a 2D array from multiple keys
+                - "Data" or Stoner.Data - returns the metadata in a Stoner.Data object where the column headers are the metadata keys.
+
         Returns:
             ret(list of dict, tuple or values):
                 depending on values_only returns the sliced dictionaries or tuples/
@@ -120,23 +129,47 @@ class ImageFolderMixin(object):
             recursive options (build a dictionary of metadata values). And probably
             options to extract other parts of objects (first row or whatever).
         """
+        if output is None:
+            output="dict" if not values_only else "list"
+        if output not in ["dict","list","array","Data",dict,list,np.ndarray,Data]:
+            raise SyntaxError("output of slice metadata must be either dict, list, or array not {}".format(output))
         metadata=[k.metadata for k in self] #this can take some time if it's loading in the images
         if isinstance(key, string_types):
             key=metadata[0].__lookup__(key,multiple=True)
         elif isiterable(key):
             newkey=[]
             for k in key:
-                newkey.extnd(metadata[0].__lookup__(k,multiple=True))
+                newkey.extend(metadata[0].__lookup__(k,multiple=True))
             key=newkey
         if isinstance(key, list):
             for i,met in enumerate(metadata):
                 assert all([k in met for k in key]), 'key requested not in item {}'.format(i)
                 metadata[i]={k:v for k,v in metadata[i].items() if k in key}
-        if values_only:
+        if output in ["list","array","Data",list,np.ndarray,Data]:
+            cols=[]
+            for k in metadata[0]:
+                if islike_list(metadata[0][k]):
+                    for i,_ in enumerate(metadata[0][k]):
+                        cols.append("{}_{}".format(k,i))
+                else:
+                    cols.append(k)
+
             for i,met in enumerate(metadata):
-                metadata[i]=[v for k,v in met.items()]
+                metadata[i]=[]
+                for k,v in met.items():
+                    if islike_list(v):
+                        metadata[i].extend(v)
+                    else:
+                        metadata[i].append(v)
             if len(metadata[0])==1: #single key
                 metadata=[m[0] for m in metadata]
+            if output in ["array",np.ndarray]:
+                metadata=np.array(metadata)
+            if output in ["Data",Data]:
+                tmp=Data()
+                tmp.data=np.array(metadata)
+                tmp.column_headers=cols
+                metadata=tmp
         return metadata
 
     def as_stack(self):

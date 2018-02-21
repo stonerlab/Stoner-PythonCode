@@ -151,6 +151,10 @@ def isiterable(value):
     """
     return isinstance(value,Iterable)
 
+def islike_list(value):
+    """Returns True if value is an iterable but not a string."""
+    return isiterable(value) and not isinstance(value,string_types)
+
 def isproperty(obj,name):
     """Check whether an attribute of an object or class is a property.
 
