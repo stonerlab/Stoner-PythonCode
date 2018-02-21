@@ -159,7 +159,7 @@ class ImageStackMixin(object):
             self._names.append(name)
             current_shape=self._stack.shape
             if np.product(current_shape)==0: # ok we're just adding the first elemtn here
-                self._stack=np.atleast_3d(value.data)
+                self._stack=np.atleast_3d(value.data.view(type=np.ma.MaskedArray))
             else:
                 if current_shape[:2]==value.data.shape: # easy to append
                     self._stack=np.append(self._stack,np.atleast_3d(value.data),axis=2)

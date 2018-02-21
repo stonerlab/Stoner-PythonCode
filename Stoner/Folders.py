@@ -702,7 +702,7 @@ class baseFolder(MutableSequence):
 
             try:
                 instance=super(baseFolder,self).__getattribute__("instance")
-                if ismethod(getattr(instance,item,None)): # It's a method
+                if callable(getattr(instance,item,None)): # It's a method
                     ret=self.__getattr_proxy(item)
                 else: # It's a static attribute
                     if item in self._object_attrs:
