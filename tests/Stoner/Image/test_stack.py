@@ -51,7 +51,7 @@ class ImageStackTest(unittest.TestCase):
         self.istack2.align(i,method="imreg_dft")
         data=self.istack2.slice_metadata(["tvec","angle","scale"],output="Data")
         self.assertTrue(data.shape==(91,4),"Slice metadata went a bit funny")
-        self.assertTrue(data.column_headers==['tvec_0', 'tvec_1', 'angle', 'scale'],"slice metadata column headers wrong at {}".format(data.column_headers))
+        self.assertTrue(sorted(data.column_headers)==['angle','scale','tvec_0', 'tvec_1'],"slice metadata column headers wrong at {}".format(data.column_headers))
 
 
 if __name__=="__main__":
