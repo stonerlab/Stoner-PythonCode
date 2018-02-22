@@ -64,3 +64,4 @@ if __name__=="__main__":
     unittest.main()
     test.test_ImageStack2()
     st=test.istack2
+    del st[4]["scale"]
