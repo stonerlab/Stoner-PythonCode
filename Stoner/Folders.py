@@ -150,8 +150,9 @@ class _combined_metadata_proxy(object):
         metadata=[k.metadata for k in self._folder] #this can take some time if it's loading in the contents of the folder
         if isinstance(key, string_types): # Single key given
             key=metadata[0].__lookup__(key,multiple=True)
-            keys=[key]
-        elif isiterable(key): #Otherwise must be a list of similar of keys
+            key=[key] if not islike_list(key) else key
+            keys=key
+        if islike_list(key): #Otherwise must be a list of similar of keys
             newkey=[]
             for k in key:
                 newkey.extend(metadata[0].__lookup__(k,multiple=True))

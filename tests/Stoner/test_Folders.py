@@ -36,7 +36,7 @@ class Folders_test(unittest.TestCase):
     datadir=path.join(pth,"sample-data")
 
     def setUp(self):
-        self.fldr=SF.DataFolder(self.datadir,debug=True)
+        self.fldr=SF.DataFolder(self.datadir,debug=False)
 
     def test_Folders(self):
         self.setUp()
@@ -154,9 +154,4 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-    test.test_Folders()
-    #test.test_Operators()
-    #test.test_Properties()
-    test.test_clone()
-    test.test_methods()
-    test.test_grouping()
+    unittest.main()
