@@ -895,7 +895,7 @@ class typeHintedDict(regexpDict):
         name, typehint = self._get_name_(name)
         if typehint is not None:
             self._typehints[name] = typehint
-            if str(value):  # Empty data so reset to string and set empty
+            if value is None:  # Empty data so reset to string and set empty #RCT don't think this a great test for empty data but there was an issue with if str(value) which always returns True
                 super(typeHintedDict, self).__setitem__(name, "")
                 self._typehints[name] = "String"
             else:
@@ -981,7 +981,7 @@ class typeHintedDict(regexpDict):
                 return [self._typehints[x] for x in key]
             except TypeError:
                 return self._typehints[key]
-
+    
     def export(self, key):
         """Exports a single metadata value to a string representation with type hint.
 
