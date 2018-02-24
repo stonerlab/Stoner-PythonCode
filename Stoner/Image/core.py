@@ -320,18 +320,9 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
 
     @classmethod
     def _load_tiff(cls,filename,**kargs):
+        metadict = typeHintedDict({})
         with Image.open(filename,'r') as img:
-            image=np.asarray(img).view(cls)
-            # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
-            # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
-            if np.issubdtype(image.dtype,np.integer):
-                bits=np.ceil(np.log2(image.max()))
-                if bits<=8:
-                    image=image.astype("uint8")
-                elif bits<=16:
-                    image=image.astype("uint16")
-                elif bits<=32:
-                    image=image.astype("uint32")
+            image=np.asarray(img)
             tags=img.tag_v2
             if 270 in tags:
                 from json import loads
@@ -343,10 +334,37 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
             else:
                 metadata=[]
             for line in metadata:
+                #All this bit to reimport exported typeHintedDict data, should
+                #prob make this a function in typeHintedDict (metadict.import_all())
+                #also pretty sure this won't work in python 2.7, needs fettling
                 parts=line.split("=")
                 k=parts[0]
-                v="=".join(parts[1:])
-                image.metadata[k]=v
+                v="=".join(parts[1:]) #rejoin any = in the value string
+                v=bytes(v[2:-1], "utf-8")  #change the bytes representation back to actual bytes type
+                v=v.decode("unicode_escape")  #opposite process to the export func in typeHintedDict
+                v = metadict.string_to_type(v) #convert back to a value type
+                if isinstance(v, str): #if it was string type it will still have the string markers at the beginning and end so need to change this bit
+                    v = v[1:-1]
+                metadict[k] = v
+        #OK now try and sort out the datatype before loading
+        dtype = metadict.get("ImageArray.dtype", None) #if tif was previously saved by Stoner then dtype should have been added to the metadata
+        # If we convert to float, it's important to make
+        # sure that we're not using too many bits to store the image in. 
+        #This is a bit of a hack to reduce the bit-depth...
+        if dtype is None:
+            if np.issubdtype(image.dtype,np.integer):
+                bits=np.ceil(np.log2(image.max()))
+                if bits<=8:
+                    dtype="uint8"
+                elif bits<=16:
+                    dtype = "uint16"
+                elif bits<=32:
+                    dtype = "uint32"
+            else:
+                dtype = np.dtype(image.dtype).name #retain the loaded datatype
+        image = image.astype(dtype)
+        image = image.view(cls)
+        image.update(metadict)
         image.metadata["Loaded from"]=os.path.realpath(filename)
         image.filename=os.path.realpath(filename)
         return image
@@ -819,6 +837,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         from PIL.TiffImagePlugin import ImageFileDirectory_v2
         import json
         dtype = np.dtype(self.dtype).name #string representation of dtype we can save
+        print('savetype', dtype)
         self['ImageArray.dtype'] = dtype #add the dtype to the metadata for saving.
         if forcetype: #PIL supports uint8, int32 and float32, try to find the best match
             if self.dtype==np.uint8 or self.dtype.kind=="b": #uint8 or boolean
