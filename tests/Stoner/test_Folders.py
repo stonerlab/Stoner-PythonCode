@@ -36,7 +36,7 @@ class Folders_test(unittest.TestCase):
     datadir=path.join(pth,"sample-data")
 
     def setUp(self):
-        self.fldr=SF.DataFolder(self.datadir,debug=True)
+        self.fldr=SF.DataFolder(self.datadir,debug=False)
 
     def test_Folders(self):
         self.setUp()
@@ -89,7 +89,9 @@ class Folders_test(unittest.TestCase):
        'DataFile', 'DataFile'],
       dtype='<U12')
         self.fldr=SF.DataFolder(self.datadir, pattern='*.txt').sort()
-        self.assertTrue(np.all(self.fldr.slice_metadata("Loaded as")==sliced),"Slicing metadata failed to work.")
+        test_sliced=self.fldr.slice_metadata("Loaded as")
+        self.assertEqual(len(sliced),len(test_sliced),"Test slice not equal length - sample-data changed? {}".format(test_sliced))
+        self.assertTrue(np.all(test_sliced==sliced),"Slicing metadata failed to work.")
 
 
     def test_clone(self):
@@ -152,9 +154,4 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-    test.test_Folders()
-    #test.test_Operators()
-    #test.test_Properties()
-    test.test_clone()
-    test.test_methods()
-    test.test_grouping()
+    unittest.main()

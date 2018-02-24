@@ -151,6 +151,10 @@ def isiterable(value):
     """
     return isinstance(value,Iterable)
 
+def islike_list(value):
+    """Returns True if value is an iterable but not a string."""
+    return isiterable(value) and not isinstance(value,string_types)
+
 def isproperty(obj,name):
     """Check whether an attribute of an object or class is a property.
 
@@ -476,7 +480,7 @@ class typedList(MutableSequence):
             if len(args)>1:
                 raise SyntaxError("List should be constructed with at most two arguments, a type and an iterable")
             else:
-                raise TypeError("List should be initialised with elements that are all of type {}".format(self._type))
+                raise TypeError("List should be initialised with elements that are all of type {} not {}".format(self._type,args[0].dtype))
 
     def __add__(self,other):
         """Add operator works like ordinary lists."""

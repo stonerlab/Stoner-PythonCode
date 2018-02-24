@@ -26,6 +26,7 @@ If you want to add new functions that's great. There's a few important points:
           or numpy array, it should all behave the same.
 
 """
+import copy
 
 import numpy as np,matplotlib.pyplot as plt, os
 from Stoner.tools import istuple,isiterable
@@ -35,31 +36,31 @@ try: #Make OpenCV an optional import
     import cv2
 except ImportError:
     cv2=None
-    
+
 try: #Make imreg_dfft2 optional
     import imreg_dft
 except ImportError:
     imreg_dft=None
-    
+
 try: #image_registration module
     from image_registration import chi2_shift
     from image_registration import fft_tools
 except ImportError:
     chi2_shift=None
-    
+
 from .core import ImageArray
 from Stoner import Data
 
 def _scale(coord,scale=1.0,to_pixel=True):
     """Convert pixel cordinates to scaled co-ordinates or visa versa.
-    
+
     Args:
         coord(int,float or iterable): Coordinates to be scaled
-    
+
     Keyword Arguments:
         scale(float): Microns per Pixel scale of image
         to_pixel(bool): Force the conversion to be to pixels
-        
+
     Returns:
         scaled co-ordinates.
     """
@@ -74,11 +75,11 @@ def _scale(coord,scale=1.0,to_pixel=True):
     else:
         raise ValueError("coord should be an integer or a float or an iterable of integers and floats")
     return coord
-        
-        
+
+
 def adjust_contrast(im, lims=(0.1,0.9), percent=True):
-    """rescale the intensity of the image. 
-    
+    """rescale the intensity of the image.
+
     Mostly a call through to skimage.exposure.rescale_intensity. The absolute limits of contrast are
     added to the metadata as 'adjust_contrast'
 
@@ -106,18 +107,18 @@ def adjust_contrast(im, lims=(0.1,0.9), percent=True):
 
 def align(im, ref, method=None,**kargs):
     """Use one of a variety of algroithms to align two images.
-    
+
     Args:
         im (ndarray) image to align
         ref (ndarray) reference array
-        
+
     Keyword Args:
-        method (str or None): If given specifies which module to try and use. 
+        method (str or None): If given specifies which module to try and use.
         **kargs (various): All other keyword arguments are passed to the specific algorithm.
-    
+
     Returns
         (ImageArray or ndarray) aligned image
-        
+
     Notes:
         Currently three algorithms are supported:
             - image_registration module's chi^2 shift: This uses a dft with an automatic
@@ -126,7 +127,7 @@ def align(im, ref, method=None,**kargs):
             - imreg_dft module's similarity function. This implements a full scale, rotation, translation
               algorithm (by default cosntrained for just translation). It's unclear how much sub-pixel translation
               is accomodated.
-            - cv2 module based affine transform on a gray scale image.       
+            - cv2 module based affine transform on a gray scale image.
               from: http://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
     """
     #To be consistent with x-y co-ordinate systems
@@ -156,30 +157,30 @@ def align(im, ref, method=None,**kargs):
     elif (method is None and cv2 is not None) or method=="cv2":
         im1_gray = cv2.cvtColor(ref,cv2.COLOR_BGR2GRAY)
         im2_gray = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
-     
+
         # Find size of image1
         sz = im.shape
-     
+
         # Define the motion model
         warp_mode = cv2.MOTION_TRANSLATION
         warp_matrix = np.eye(2, 3, dtype=np.float32)
-     
+
         # Specify the number of iterations.
         number_of_iterations = 5000;
-     
+
         # Specify the threshold of the increment
         # in the correlation coefficient between two iterations
         termination_eps = 1e-10;
-     
+
         # Define termination criteria
         criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, number_of_iterations,  termination_eps)
-     
+
         # Run the ECC algorithm. The results are stored in warp_matrix.
         (_, warp_matrix) = cv2.findTransformECC (im1_gray,im2_gray,warp_matrix, warp_mode, criteria)
-     
+
         # Use warpAffine for Translation, Euclidean and Affine
         new_im = cv2.warpAffine(im, warp_matrix, (sz[1],sz[0]), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
-     
+
     else: # No cv2 available so don't do anything.
         raise RuntimeError("Couldn't find an image alignment algorithm to use")
     return new_im.T
@@ -189,7 +190,7 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None,do_shift
 
     Args:
         ref (ImageArray): Reference image with assumed zero drift
-        
+
     Keyword Arguments:
         threshold (float): threshold for detecting imperfections in images
             (see skimage.feature.corner_fast for details)
@@ -199,7 +200,7 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None,do_shift
             defaults to the whol image. Use this to avoid drift calculations being confused by
             the scale bar/annotation region.
         do_shift (bool): Shift the image, or just calculate the drift and store in metadata (default True, shit)
-    
+
     Returns:
         A shifted iamge with the image shift added to the metadata as 'correct drift'.
 
@@ -230,7 +231,7 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None,do_shift
 
 def subtract_image(im, background, contrast=16, clip=True):
     """subtract a background image from the ImageArray
-    
+
     Multiply the contrast by the contrast parameter.
     If clip is on then clip the intensity after for the maximum allowed data range.
     """
@@ -243,7 +244,7 @@ def subtract_image(im, background, contrast=16, clip=True):
 def fft(im,shift=True,phase=False):
     """Perform a 2d fft of the image and shift the result to get zero frequency in the centre."""
     r=np.fft.fft2(im)
-    
+
     if shift:
         r=np.fft.fftshift(r)
 
@@ -262,37 +263,37 @@ def filter_image(im, sigma=2):
 
 def gridimage(im,points=None,xi=None,method="linear",fill_value=1.0,rescale=False):
     """Use :py:func:`scipy.interpolate.griddata` to shift the image to a regular grid of co-ordinates.
-    
+
     Args:
         points (tuple of (x-co-ords,yco-ordsa)): The actual sampled data co-ordinates
         xi (tupe of (2D array,2D array)): The regular grid co-ordinates (as generated by e.g. :py:func:`np.meshgrid`)
-    
+
     Keyword Arguments:
         method ("linear","cubic","nearest"): how to interpolate, default is linear
         fill_value (folat): What to put when the co-ordinates go out of range (default is 1.0). May be a callable in which
             case the initial image is presented as the only argument
         rescale (bool): If the x and y co-ordinates are very different in scale, set this to True.
-        
+
     Returns:
         A copy of the modified image. The image data is interpolated and metadata kets "actual_x","actual_y","sample_x","samp[le_y" are
         set to give co-ordinates of new grid.
-        
+
     Notes:
         If points and or xi are missed out then we try to construct them from the metadata. For points, the metadata keys
         "actual-x" and "actual_y" are looked for and for xi, the metadata keys "sample_x" and "sample_y" are used. These are set
         , for example, by the :py:class:`Stoner.HDF5.SXTMImage` loader if the interformeter stage data was found in the file.
-        
+
         The metadata used in this case is then adjusted as well to ensure that repeated application of this method doesn't change the image
         after it has been corrected once.
-    """    
+    """
     if points is None:
         points=np.column_stack((im["actual_x"].ravel(),im["actual_y"].ravel()))
     if xi is None:
         xi=xi=(im["sample_x"],im["sample_y"])
-        
+
     if callable(fill_value):
         fill_value=fill_value(im)
-        
+
     im2=griddata(points,im.ravel(),xi,method,fill_value,rescale)
     im2=im.__class__(im2)
     im2.metadata=im.metadata
@@ -311,14 +312,14 @@ def hist(im,*args,**kargs):
 
 def imshow(im, **kwargs):
     """quick plot of image
-    
+
     Keyword Arguments:
-        figure (int, str or matplotlib.figure): if int then use figure number given, 
-            if figure is 'new' then create a new figure, if None then use whatever default 
+        figure (int, str or matplotlib.figure): if int then use figure number given,
+            if figure is 'new' then create a new figure, if None then use whatever default
             figure is available
         title (str,None,False): Title for plot - defaults to False (no title). None will take the title from the filename if present
         cmap (str,matplotlib.cmap): Colour scheme for plot, defaults to gray
-    
+
     Any masked areas are set to NaN which stops them being plotted at all.
     """
     figure=kwargs.pop("figure","new")
@@ -416,10 +417,10 @@ def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None,mode="clip"):
 
 def normalise(im,scale=None):
     """Norm alise the data to a fixed scale.
-    
+
     Keyword Arguements:
         scale (2-tuple): The range to scale the image to, defaults to -1 to 1.
-        
+
     Returns:
         A scaled version of the data. The ndarray min and max methods are used to allow masked images
         to be operated on only on the unmasked areas.
@@ -460,7 +461,7 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode='constant',
             dst=(kargs["x"],r)
         if "y" in kargs:
             src=(0,kargs["y"])
-            dst=(c,kargs["y"])            
+            dst=(c,kargs["y"])
     if isinstance(src,float):
         src=(src,src)
     if isinstance(dst,float):
@@ -471,13 +472,13 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode='constant',
         raise ValueError("src co-ordinates are not a 2-tuple of ints.")
     if not istuple(dst,int,int):
         raise ValueError("dst co-ordinates are not a 2-tuple of ints.")
-       
+
     if constrain:
         fix=lambda x,mx: sorted([0,x,mx])[1]
         r,c=img.shape
         src=list(src)
         src=(fix(src[0],r),fix(src[1],c))
-        dst=(fix(dst[0],r),fix(dst[1],c))  
+        dst=(fix(dst[0],r),fix(dst[1],c))
 
     result=measure.profile_line(img,src,dst,linewidth,order,mode,cval)
     points=measure.profile._line_profile_coordinates(src, dst, linewidth)[:,:,0]
@@ -493,13 +494,13 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode='constant',
 
 def quantize(im,output,levels=None):
     """Quantise the image data into fixed levels given by a mapping
-    
+
     Args:
         output (list,array,tuple): Output levels to return.
-        
+
     Keyword Arguments:
         levels (list, array or None): The input band markers. If None is constructed from the data.
-        
+
     The number of levels should be one less than the number of output levels given.
     """
     if levels is None:
@@ -514,7 +515,7 @@ def quantize(im,output,levels=None):
         levels=lvl
     else:
         raise RuntimeError("{} output levels and {} input levels".format(len(output),len(levels)))
-        
+
     ret=im.clone
     for lvl,lvh,val in zip(levels[:-1],levels[1:],output):
         select=np.logical_and(np.less_equal(im,lvh),np.greater(im,lvl))
@@ -523,7 +524,7 @@ def quantize(im,output,levels=None):
 
 def rotate(im, angle):
     """Rotates the image.
-    
+
     Areas lost by move are cropped, and areas gained are made black (0)
 
     Args:
@@ -541,17 +542,17 @@ def rotate(im, angle):
 
 def translate(im, translation, add_metadata=False,order=3,mode="wrap"):
     """Translates the image.
-    
+
     Areas lost by move are cropped, and areas gained are made black (0)
     The area not lost or cropped is added as a metadata parameter
     'translation_limits'
 
     Args:
         translate (2-tuple): translation (x,y)
-        
+
     Keyword Arguments:
         add_metadata (bool): Record the shift in the image metadata
-        order (int): Interpolation order (default, 3, bi-cubic) 
+        order (int): Interpolation order (default, 3, bi-cubic)
 
     Returns:
         im (ImageArray): translated image
@@ -566,7 +567,7 @@ def translate(im, translation, add_metadata=False,order=3,mode="wrap"):
 
 def translate_limits(im, translation):
     """Find the limits of an image after a translation
-    
+
     After using ImageArray.translate some areas will be black,
     this finds the max area that still has original pixels in
 
@@ -599,36 +600,36 @@ def plot_histogram(im):
     plt.figure()
     plt.plot(bins,hist,'k-')
     plt.plot(bins,cum,'r-')
-    
+
 def threshold_minmax(im,threshmin=0.1,threshmax=0.9):
-    """returns a boolean array which is thresholded between threshmin and  threshmax. 
-    
+    """returns a boolean array which is thresholded between threshmin and  threshmax.
+
     (ie True if value is between threshmin and threshmax)
     """
     im=im.convert_float()
     return np.logical_and(im>threshmin, im<threshmax)
-    
+
 def defect_mask(im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=False):
-    """Tries to create a boolean array which is a mask for typical defects found in Image images. 
-    
+    """Tries to create a boolean array which is a mask for typical defects found in Image images.
+
     Best for unprocessed raw images. (for subtract images
     see defect_mask_subtract_image)
     Looks for big bright things by thresholding and small and dark defects using
     skimage's corner_fast algorithm
-    
+
     Parameters
-    ----------    
+    ----------
     thresh float
         brighter stuff than this gets removed (after image levelling)
     corner_thresh float
         see corner_fast skimage
     radius:
         radius of pixels around corners that are added to mask
-        
+
     return_extra dict
-        this returns a dictionary with some of the intermediate steps of the 
+        this returns a dictionary with some of the intermediate steps of the
         calculation
-    
+
     Returns
     -------
     totmask ndarray of bool
@@ -655,8 +656,8 @@ def defect_mask(im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=False
 def defect_mask_subtract_image(im,threshmin=0.25, threshmax=0.9,
                                denoise_weight=0.1, return_extra=False):
     """Create a mask array for a typical subtract Image image
-    Uses a denoise algorithm followed by simple thresholding.    
-    
+    Uses a denoise algorithm followed by simple thresholding.
+
     Returns
     -------
     totmask: ndarray of bool
@@ -664,7 +665,7 @@ def defect_mask_subtract_image(im,threshmin=0.25, threshmax=0.9,
     info (optional) dict:
         the intermediate denoised image
     """
-                             
+
     p=im.denoise_tv_chambolle(weight=denoise_weight)
     submask=p.threshold_minmax(threshmin,threshmax)
     if return_extra:
@@ -675,16 +676,16 @@ def defect_mask_subtract_image(im,threshmin=0.25, threshmax=0.9,
 def do_nothing(im):
     """exactly what it says on the tin"""
     return im
-    
+
 
 def float_and_croptext(im):
     """convert image to float and crop_text
     Just to group typical functions together
-    """ 
+    """
     k=im.convert_float()
     k=k.crop_text()
     return k
-    
+
 def denoise(im, weight=0.1):
     """just a rename of the skimage restore function"""
     return im.denoise_tv_chambolle(weight=weight)
