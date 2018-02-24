@@ -1326,14 +1326,20 @@ class LSTemperatureFile(_SC_.DataFile):
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
             filename = self.__file_dialog('w')
-        with io.open(filename, "w",errors="ignore",encoding="utf-8") as f:
-            for k in ["Sensor Model", "Serial Number", "Data Format", "SetPoint Limit", "Temperature coefficient",
-                      "Number of Breakpoints"]:
+        if self.shape[1]==2: #2 columns, let's hope they're the right way round!
+            cols=[0,1]
+        elif self.setas.has_xcol and self.setas.has_ycol: #Use ycol, x col but assume x is real temperature and y is resistance
+            cols=[self.setas.ycol[0],self.setas.xcol]
+        else:
+            cols=range(self.shape[1])
+        with io.open(filename, "w",errors="ignore",encoding="utf-8", newline="\r\n") as f:
+            for k,v in (("Sensor Model","CX-1070-SD"), ("Serial Number","Unknown"), ("Data Format",4), ("SetPoint Limit",300.0), ("Temperature coefficient",1),
+                      ("Number of Breakpoints",len(self))):
                 if k in ["Sensor Model", "Serial Number", "Data Format", "SetPoint Limit"]:
                     kstr = "{:16s}".format(k + ":")
                 else:
                     kstr = "{}:   ".format(k)
-                v = self[k]
+                v = self.get(k,v)
                 if k == "Data Format":
                     units = ["()", "()", "()", "()", "(Log Ohms/Kelvin)", "(Log Ohms/Log Kelvin)"]
                     vstr = "{}      {}".format(v, units[int(v)])
@@ -1345,17 +1351,17 @@ class LSTemperatureFile(_SC_.DataFile):
                     vstr = str(len(self))
                 else:
                     vstr = str(v)
-                f.write(u"{}{}\r\n".format(kstr, vstr))
-            f.write(u"\r\n")
+                f.write(u"{}{}\n".format(kstr, vstr))
+            f.write(u"\n")
             f.write(u"No.   ")
-            for h in self.column_headers:
-                f.write(u"{:11s}".format(h))
-            f.write(u"\r\n\r\n")
+            for i in cols:
+                f.write(u"{:11s}".format(self.column_headers[i]))
+            f.write(u"\n\n")
             for i in range(
                 len(self.data)):  # This is a slow way to write the data, but there should only ever be 200 lines
-                line = "\t".join(["{:<10.8f}".format(n) for n in self.data[i]])
+                line = "\t".join(["{:<10.8f}".format(n) for n in self.data[i,cols]])
                 f.write(u"{}\t".format(i))
-                f.write(u"{}\r\n".format(line))
+                f.write(u"{}\n".format(line))
         self.filename=filename
         return self
 

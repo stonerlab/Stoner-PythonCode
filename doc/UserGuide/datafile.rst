@@ -346,6 +346,13 @@ has been assigned as 'x', 'y' etc. by treating the :py:attr:`DataFile.setas` as 
 Note that the :py:attr:`DataFile.setas` attribute supports reading keys that are either the single letter t get the name of the column or the letter
 preceded by a # character to get the number of the column.
 
+Alternatively, and equivalently, you can access the column indexes via attributes of :py:attr:`DataFile.setas`:
+
+    d.setas.has_xcol # True
+    d.setas.has_ucol # False
+    d.setas.ycol # [1]
+    d.setas.xcol # 0
+
 Swapping and Rotating Column Assignments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -641,7 +648,7 @@ This offers a simple way to query which rows have columns matching some criteria
  d.select(Temp=250)
  d.select(Temp__ge=150)
  d.select(T1__lt=4,T2__lt=5).select(Res__between=(100,200))
- 
+
 The general form is to provide keyword arguments that are something that can be used to index a column, followed by a double
 underscore, followed by and operator. Where more than one keyword argument is supplied, the results of testing each row are logically
 ORed. The result of chaining together two separate calls to select will, however, logically AND the two tests. So, in the examples above,
