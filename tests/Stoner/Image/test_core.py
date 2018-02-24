@@ -159,15 +159,42 @@ class ImageArrayTest(unittest.TestCase):
 
     #####  test functionality  ##
     def test_save(self):
-        testfile=path.join(thisdir,'coretestdata','testsave.png')
+        testfile=path.join(thisdir,'coretestdata','testsave')
+        ext = ['.png', '.npy']
         keys=self.imarr.keys()
-        self.imarr.save(filename=testfile)
-        load=ImageArray(testfile, asfloat=True)
-        #del load["Loaded from"]
-        self.assertTrue(all([k in keys for k in load.keys()]), 'problem saving metadata')
-        self.assertTrue(np.allclose(self.imarr, load, atol=0.001))
-        os.remove(testfile) #tidy up
-
+        for e in ext:
+            self.imarr.save(filename=testfile+e)
+            load=ImageArray(testfile+e)
+            self.assertTrue(all([k in keys for k in load.keys()]), 'problem saving metadata')
+            if e=='.npy':
+                #tolerance is really poor for png whcih savees in 8bit format 
+                self.assertTrue(np.allclose(self.imarr, load), 
+                                'data not the same for extension {}'.format(e)) 
+            os.remove(testfile+e) #tidy up
+    
+    def test_savetiff(self):
+        testfile=path.join(thisdir,'coretestdata','testsave.tiff')
+        #create a few different data types
+        testb = ImageArray(np.zeros((4,5), dtype=bool))  #bool
+        testb[0,:]=True
+        testui = ImageArray(np.arange(20).reshape(4,5)) #int32
+        testi = ImageArray(np.copy(testui)-10)
+        testf = ImageArray(np.linspace(-1,1,20).reshape(4,5)) #float64
+        for im in [testb, testui, testi, testf]:
+            im['a']=[1,2,3]
+            im['b']='abc' #add some test metadata
+            im.filename=testfile
+            im.save()
+            n = ImageArray(testfile)
+            self.assertTrue(all([n['a'][i]==im['a'][i] for i in range(len(n['a']))]))
+            self.assertTrue(n['b']==im['b'])
+            self.assertTrue('ImageArray.dtype' in n.metadata.keys()) #check the dtype metdata got added
+            self.assertTrue(im.dtype==n.dtype) #check the datatype
+            self.assertTrue(np.allclose(im, n))  #check the data
+            
+            
+            
+        
     def test_max_box(self):
         s=self.imarr.shape
         self.assertTrue(self.imarr.max_box==(0,s[1],0,s[0]))
@@ -234,8 +261,13 @@ class ImageFileTest(unittest.TestCase):
         
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=ImageArrayTest("test_filename")
-    test2=ImageFileTest("test_methods")
-    test2.setUp()
-    test2.test_attrs()
-    unittest.main()
+    test.setUp()
+    test.test_save()
+    test.test_savetiff()
+    
+#    test2=ImageFileTest("test_methods")
+#    test2.setUp()
+#    test2.test_methods()
+    
+    #unittest.main()
 
