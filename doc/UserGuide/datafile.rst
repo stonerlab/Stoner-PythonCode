@@ -367,6 +367,50 @@ swapped around by the **invert** operator **~**. This either swaps *x* and *y* w
     print e.setas
     >>> ['y','x','d']
 
+Printing the Complete :py:class:`DataFile`
+------------------------------------------
+
+If the optional *tabulate* package is installed, then a pretty formatted representation of the :py:class:`DataFile` can be generated using:
+
+    print(repr(d))
+
+This will give something like::
+
+    ================================  =============  ============  ===========
+    TDI Format 1.5                    Temperature    Resistance     Column 2
+    index                                  0              1             2
+    ================================  =============  ============  ===========
+    Stoner.class{String}= b"'Data'"   291.6          4.7878        0.04687595
+    Measurement Title{String}= b"''"  291.6          4.78736       1.125022
+    Timestamp{String}= b"''"          291.6          4.78788       2.187542
+    User{String}= b"''"               291.6          4.78758       3.250062
+    TDI Format{Double Float}= b'1.5'  291.6          4.78782       4.312583
+    Loaded as{String}= b"'DataFile'"  291.6          4.7878        5.375103
+                                      291.6          4.78748       6.453249
+                                      291.6          4.7878        7.515769
+                                      291.6          4.78789       8.57829
+
+If more columns exist in the :py:class:`DataFile` then the *repr* method attempts to pick 'interesting' columns. Thealgorithm will prioritise showing columns
+that have been assigned a meaning with the :py:attr:`DataFile.setas` attribute. If there are space for further columns, then the last column will be shown
+and other columns that follow from any that are marked in :py:attr:`DataFile.setas`. If no columns are marked as interesting, then the first n-2 columns and
+the last column will be shown.::
+
+    ====================  =====================  =====================  ====================  ===================  =============  ==============
+    TDI Format 1.5        Magnetic Field (Oe)       Moment (emu)        M. Std. Err. (emu)     Transport Action           ....          Map 16
+    index                        3 (x)                  4 (y)                    5                     6                                  71
+    ====================  =====================  =====================  ====================  ===================  =============  ==============
+    Stoner.class{String}  0.990880310535431      -5.83640043200129e-06  8.83351337362955e-09  1.0                                 nan
+    = b"'Data'"           0.965473115444183      -5.82915649064088e-06  1.23199616933718e-08  1.0                  ...            nan
+    Title,{String}=       1.16873073577881       -5.82160118818014e-06  8.92093033864879e-09  1.0                  ...            nan
+    b'None'               1.13061988353729       -5.8201045325249e-06   1.07142611311115e-08  1.0                  ...            nan
+    Fileopentime{String}  1.33387744426727       -5.83922456812945e-06  1.02539653165381e-08  1.0                  ...            nan
+    = b"'3540392668.062   1.49902403354645       -5.81961870971478e-06  1.04490646832536e-08  1.0                  ...            nan
+
+The table header lists the column titles, numerical indices for each column and the assignment in the :py:attr:`DataFile.setas` attribute.
+
+If the file has more than 256 rowns, then the first 128 rows and last 128 rows will be shown with a row of *...* to show the split.
+
+
 Working with columns of data
 -----------------------------
 
@@ -387,7 +431,7 @@ order that they appear in the list (ie not the order that they are in the data
 file). For completeness, the :py:meth:`DataFile.column` method also allows one to
 pass slices to select columns and should do the expected thing.
 
-There are a couple of convenient short cuts/ Firstly the *floormod* operator //
+There are a couple of convenient short cuts. Firstly the *floormod* operator //
 is an alias for the :py:meth:`DataFile.column` method and secondly for working
 with cases where the column headers are not the same as the names of any of the attributes
 of the :py:class:`DataFile` object::
