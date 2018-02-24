@@ -186,6 +186,7 @@ class ImageArrayTest(unittest.TestCase):
             im.filename=testfile
             im.save()
             n = ImageArray(testfile)
+            self.n=n
             self.assertTrue(all([n['a'][i]==im['a'][i] for i in range(len(n['a']))]))
             self.assertTrue(n['b']==im['b'])
             self.assertTrue('ImageArray.dtype' in n.metadata.keys()) #check the dtype metdata got added

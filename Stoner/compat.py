@@ -38,6 +38,9 @@ if __vi__[0] == 2:
     str2bytes = str
     bytes2str = str
 
+    def bytes(arg,*args,**kargs):
+        return str(arg)
+
     def get_filedialog(what="file", **opts):
         """Wrapper around Tk file dialog to mange creating file dialogs in a cross platform way.
 
@@ -64,6 +67,10 @@ if __vi__[0] == 2:
             return funcs[what](**opts)
 
 elif __vi__[0] == 3:
+
+    from builtins import bytes as _bytes
+
+
     string_types = (str, )
     int_types=(int,)
     python_v3 = True
@@ -77,6 +84,8 @@ elif __vi__[0] == 3:
         if isinstance(b, bytes):
             return b.decode("utf-8", "ignore")
         return b
+
+    bytes=_bytes
 
     def get_filedialog(what="file", **opts):
         """Wrapper around Tk file dialog to mange creating file dialogs in a cross platform way.

@@ -260,12 +260,4 @@ class typeHintedDictTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Datatest("test_operators")
     test.setUp()
-    test.test_indexing()
-    test.test_constructor()
-    test.test_attributes()
-    test.test_operators()
-    test.test_methods()
-    test.test_setas_metadata()
-    test.test_filter()
-    test2=typeHintedDictTest("test_filter")
-    test2.test_filter()
+    unittest.main()
