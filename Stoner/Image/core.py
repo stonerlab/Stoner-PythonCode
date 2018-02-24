@@ -700,8 +700,11 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
             clip_negative(bool):
                 clip negative intensity to 0
         """
-        ret = self
-        ret[:] = convert(self, dtype=np.float64) #preserve metadata
+        ret = convert(self, dtype=np.float64) #preserve metadata
+        ret = ImageArray(ret)
+        c = self.clone #copy formatting and apply to new array
+        for k,v in c._optinfo.items():
+            setattr(ret, k, v)
         if normalise:
             ret = ret.normalise()
         if clip_negative:
@@ -818,7 +821,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
     def save_npy(self,filename):
         """Save the ImageArray as a numpy array."""
         npyname = os.path.splitext(filename)[0] + '.npy'
-        np.save(npyname, self)
+        np.save(npyname, np.array(self))
     
     def save_tiff(self,filename, forcetype=False):
         """Save the ImageArray as a tiff image with metadata
@@ -837,7 +840,6 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         from PIL.TiffImagePlugin import ImageFileDirectory_v2
         import json
         dtype = np.dtype(self.dtype).name #string representation of dtype we can save
-        print('savetype', dtype)
         self['ImageArray.dtype'] = dtype #add the dtype to the metadata for saving.
         if forcetype: #PIL supports uint8, int32 and float32, try to find the best match
             if self.dtype==np.uint8 or self.dtype.kind=="b": #uint8 or boolean
