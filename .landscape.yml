@@ -2,7 +2,7 @@
 #test-warnings: false
 #strictness: medium
 #max-line-length: 160
-#uses:	
+#uses:
 #autodetect: true
 #requirements:
 #ignore-patterns:
@@ -70,7 +70,7 @@ mccabe:
     max-complexity: 10
 
 dodgy:
-  run: true
+  run: false
 
 pyflakes:
   run: true
