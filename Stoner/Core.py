@@ -982,7 +982,7 @@ class typeHintedDict(regexpDict):
                 return [self._typehints[x] for x in key]
             except TypeError:
                 return self._typehints[key]
-    
+
     def export(self, key):
         """Exports a single metadata value to a string representation with type hint.
 
@@ -996,7 +996,7 @@ class typeHintedDict(regexpDict):
             A string of the format : key{type hint} = value
         """
         return "{}{{{}}}={}".format(key, self.type(key), repr(self[key]).encode('unicode_escape'))
-    
+
     def export_all(self):
         """Return all the entries in the typeHintedDict as a list of exported lines.
 
@@ -1007,10 +1007,10 @@ class typeHintedDict(regexpDict):
             The keys are returned in sorted order as a result of the underlying blist.sorteddict meothd.
         """
         return [self.export(x) for x in self]
-    
+
     def import_all(self,lines):
         """Reads multiple lines of strings and tries to import keys from them.
-        
+
         Args:
             lines(list of str): The lines of metadata values to import.
         """
@@ -1019,24 +1019,21 @@ class typeHintedDict(regexpDict):
 
     def import_key(self,line):
         """Import a single key from a string like key{type hint} = value.
-        
+
         This is the inverse of the :py:meth:`typeHintedDict.export` method.
-        
+
         Args:
             line(str): The string line to be interpreted as a key-value pair.
-            
+
         """
         parts=line.split("=")
         k=parts[0]
         v="=".join(parts[1:]) #rejoin any = in the value string
-        bv=v
         v=literal_eval(v) #In python v3 this can result in a bytes string of te literal value
         if python_v3 and isinstance(v,bytes): #Try again to unwrap the bytes object in python 3
             v=bytes2str(v)
             v=literal_eval(v) #Now we should be good
 
-        print(bv,v)
-            
         if isinstance(v,string_types):
             v = self.string_to_type(v) #convert back to a value type
         self[k] = v
@@ -3833,6 +3830,7 @@ class DataFile(metadataObject):
         Example
             .. plot:: samples/select_example.py
                 :include-source:
+                :outname: select
         """
         if len(args)==1:
             if callable(args[0]):

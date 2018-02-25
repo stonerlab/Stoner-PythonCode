@@ -2165,6 +2165,7 @@ class PlotFolder(DataFolder):
 
         .. plot:: samples/plot-folder-test.py
             :include-source:
+                :outname:  plotfolder
     """
 
     def figure(self,*args,**kargs):

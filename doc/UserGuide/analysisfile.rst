@@ -46,12 +46,12 @@ For completeness we also have::
    a.multiply('A','B',header='A*B', replace=True)
 
 with variants that take either a 1D array of data or a constant instead of the B column index.
-   
+
 The final variant for these channel operations is the :py:meth:`AnalysisMixin.diffsum` which takes the ratio of the difference over the sum of two channels.
 This is typically used to calculate asymmetry parameters.::
 
     a.diffsum('I+','I-')
-    
+
 Of course, these elementary operations might look rather pointless given how easy it is to extract single columns of data and then add them to a
 :py:class:`Stoner.Core.Data` object, however if the cahnnels are specified as a **tuple** of two elements, then it is taken as a channel of data and a
 second channel of uncertainities. The uncertainity calculation is then propagated correctly for the maths operations. This is particularly useful for the
@@ -59,10 +59,11 @@ second channel of uncertainities. The uncertainity calculation is then propagate
 
 .. plot:: samples/channel_math.py
    :include-source:
+   :outname: channel_math
 
 Splitting Data Up
 =================
-   
+
 One might wish to split a single data file into several different data files each with the rows of the original
 that have a common unique value in one data column, or for which some function of the complete row determines which datafile
 each row belongs in. The :py:meth:`AnalysisMixin.split` method is useful for this case.::
@@ -141,12 +142,14 @@ for adding appropriately formatted details of the fit to the plot.
 
 .. plot:: samples/curve_fit_line.py
     :include-source:
+    :outname:curve_fit_line
 
 :py:meth:`AnalysisMixin.curve_fit` can also be used to fit more complex problems. In the example below, a set of
 points in x,y,z space are fitted to a plane.
 
 .. plot:: samples/curve_fit_plane.py
     :include-source:
+    :outname: curvefit_plane
 
 Finally, by you can sepcify the *y-data* to fit to as a numpy array. This can be used to fit functions that
 don't themseleves return values that can be matched up to existing data. An example of doing this is fitting a
@@ -154,6 +157,7 @@ sphere to a set of :math:`(x,y,z)` data points.
 
 .. plot:: samples/sphere_fit.py
     :include-source:
+    :outname: curvefit_sphere
 
 See also :ref:`Fitting_tricks`
 
@@ -201,6 +205,7 @@ You can pass the model as a subclass of model, if you don't pass initial values 
 
 .. plot:: samples/lmfit_example.py
    :include-source:
+   :outname: lmfit_example
 
 Non-linear curve fitting with initialisation file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -224,6 +229,7 @@ on the presence and values of the *vary* and *step* keys, tnhe code will either 
 
 .. plot:: samples/lmfit_demo.py
     :include-source:
+    :outname: lmfit_demo
 
 
 More AnalysisMixin Functions
@@ -314,6 +320,7 @@ points averaged into each bin.. If *clone* is True or not provided, :py:meth:`An
 
 .. plot:: samples/bins.py
    :include-source:
+   :outname: bins
 
 
 .. _smoothing_guide:
@@ -371,6 +378,7 @@ All three approaches are illustrated in the excample below:
 
 .. plot:: samples/Smoothing_Data.py
     :include-source:
+    :outname: smooth
 
 .. _stitch_guide:
 
@@ -387,6 +395,7 @@ a :py:meth:`AnalysisMixin.stitch` method to facilitate this.
 
 .. plot:: samples/stitch.py
    :include-source:
+   :outname:  stitch
 
 The stitch method can be fine tuned by specifying the possible scaling and shifting operations, overlap
 region to use or even a custom stiching transofmration function::
@@ -464,6 +473,7 @@ as one moves further from the end of the data.
 
 .. plot:: samples/extrapolate-demo.py
     :include-source:
+    :outname: extrapolate
 
 
 Extrapolation is of course most succesful if one has a physical model that should describe the data.
@@ -519,3 +529,4 @@ The example below shows how to use :py:meth:`AnalysisMixin.peaks` to filter out 
 
 .. plot:: samples/peaks_example.py
     :include-source:
+    :outname: peaks

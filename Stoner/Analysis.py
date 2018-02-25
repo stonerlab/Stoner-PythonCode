@@ -985,6 +985,7 @@ class AnalysisMixin(object):
         Example:
             .. plot:: samples/decompose.py
                :include-source:
+               :outname: decompose
         """
         if xcol is None and ycol is None:
             if "_startx" in kwords:
@@ -1354,6 +1355,7 @@ class AnalysisMixin(object):
         Example:
             .. plot:: samples/lmfit_simple.py
                 :include-source:
+                :outname: lmfit2
         """
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
@@ -1739,6 +1741,7 @@ class AnalysisMixin(object):
         Example:
             .. plot:: samples/lmfit_simple.py
                  :include-source:
+                 :outname: lmfit3
 
 
         See Also:
@@ -1893,6 +1896,7 @@ class AnalysisMixin(object):
         Example
             .. plot:: samples/outlier.py
                 :include-source:
+                :outname: outlier
         """
         if func is None:
             func = _outlier
@@ -2084,6 +2088,7 @@ class AnalysisMixin(object):
         Example:
             .. plot:: samples/scale_curves.py
                :include-source:
+               :outname: scale
         """
         _=self._col_args(xcol=xcol,ycol=ycol)
         #

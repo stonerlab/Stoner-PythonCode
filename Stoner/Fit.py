@@ -243,18 +243,19 @@ def arrhenius(x, A, DE):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
-    
+
     Example:
         .. plot:: samples/Fitting/Arrhenius.py
-        :include-source:
-            
+            :include-source:
+            :outname: arrhenius
+
     """
     _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
     return A * _np_.exp(-DE / (_kb * x))
 
 
 class Arrhenius(Model):
-    
+
     r"""Arrhenius Equation without T dependendent prefactor.
 
     Args:
@@ -267,12 +268,13 @@ class Arrhenius(Model):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
-    
+
     Example:
         .. plot:: samples/Fitting/Arrhenius.py
-        :include-source:
+            :include-source:
+            :outname: Arrhenius
     """
-    
+
     display_names=["A",r"\Delta E"]
 
 
@@ -308,13 +310,14 @@ def nDimArrhenius(x, A, DE, n):
 
     Example:
         .. plot:: samples/Fitting/nDimArrhenius.py
-        :include-source:
+            :include-source:
+            :outname: nDimarrehenius
     """
     return arrhenius(x ** n, A, DE)
 
 
 class NDimArrhenius(Model):
-    
+
     r"""Arrhenius Equation without T dependendent prefactor for various dimensions.
 
     Args:
@@ -331,9 +334,10 @@ class NDimArrhenius(Model):
 
     Example:
         .. plot:: samples/Fitting/nDimArrhenius.py
-        :include-source:
+            :include-source:
+            :outname: nDimArrhenius
     """
-    
+
     display_names=["A",r"\Delta E","n"]
 
     def __init__(self, *args, **kwargs):
@@ -368,13 +372,14 @@ def modArrhenius(x, A, DE, n):
 
     Example:
         .. plot:: samples/Fitting/modArrhenius.py
-        :include-source:
+            :include-source:
+            :outname: modarrhenius
     """
     return (x ** n) * arrhenius(x, A, DE)
 
 
 class ModArrhenius(Model):
-    
+
     r"""Arrhenius Equation with a variable T power dependent prefactor.
 
     Args:
@@ -391,7 +396,8 @@ class ModArrhenius(Model):
 
     Example:
         .. plot:: samples/Fitting/modArrhenius.py
-        :include-source:
+            :include-source:
+            :outname: modArrhenius
     """
 
     display_names=["A",r"\Delta E","n"]
@@ -426,7 +432,8 @@ def powerLaw(x, A, k):
 
     Example:
         .. plot:: samples/Fitting/Powerlaw.py
-        :include-source:
+            :include-source:
+            :outname: powerlaw
     """
     return A * x ** k
 
@@ -447,7 +454,8 @@ def quadratic(x, a, b, c):
 
     Example:
         .. plot:: samples/Fitting/Quadratic.py
-        :include-source:
+            :include-source:
+            :outname: Powerlaw
     """
     return a * x ** 2 + b * x + c
 
@@ -470,7 +478,8 @@ def simmons(V, A, phi, d):
 
     Example:
         .. plot:: samples/Fitting/Simmons.py
-        :include-source:
+            :include-source:
+            :outname: simmons
     """
     I = 6.2e6 * A / d ** 2 * ((phi - V / 2) * _np_.exp(-1.025 * d * _np_.sqrt(phi - V / 2)) -
                               (phi + V / 2) * _np_.exp(-1.025 * d * _np_.sqrt(phi + V / 2)))
@@ -496,7 +505,8 @@ class Simmons(Model):
 
     Example:
         .. plot:: samples/Fitting/Simmons.py
-        :include-source:
+            :include-source:
+            :outname: Simmons
     """
 
     display_names=["A",r"\phi","d"]
@@ -530,7 +540,8 @@ def bdr(V, A, phi, dphi, d, mass):
 
     Example:
         .. plot:: samples/Fitting/BDR.py
-        :include-source:
+            :include-source:
+            :outname: bdr
     """
     mass=abs(mass)
     phi=abs(phi)
@@ -541,7 +552,7 @@ def bdr(V, A, phi, dphi, d, mass):
 
 
 class BDR(Model):
-    
+
     """BDR model tunnelling.
 
     Args:
@@ -561,7 +572,8 @@ class BDR(Model):
 
     Example:
         .. plot:: samples/Fitting/BDR.py
-        :include-source:
+            :include-source:
+            :outname: BDR
     """
 
     def __init__(self, *args, **kwargs):
@@ -588,8 +600,9 @@ def fowlerNordheim(V, A, phi, d):
 
     Example:
         .. plot:: samples/Fitting/FowlerNordheim.py
-        :include-source:
-    """
+            :include-source:
+            :outname: fowlernordheim
+        """
     I = V / _np_.abs(V) * 3.38e6 * A * V ** 2 / (d ** 2 * phi) * _np_.exp(-0.689 * phi ** 1.5 * d / _np_.abs(V))
     return I
 
@@ -609,7 +622,8 @@ class FowlerNordheim(Model):
 
     Example:
         .. plot:: samples/Fitting/FowlerNordheim.py
-        :include-source:
+            :include-source:
+            :outname: FowlerNordheim
     """
 
     def __init__(self, *args, **kwargs):
@@ -678,7 +692,8 @@ def wlfit(B, s0, DS, B1, B2):
 
     Example:
         .. plot:: samples/Fitting/weak_localisation.py
-        :include-source:
+            :include-source:
+            :outname: wlfit
     """
 
     e = 1.6e-19  #C
@@ -727,7 +742,8 @@ class WLfit(Model):
 
     Example:
         .. plot:: samples/Fitting/weak_localisation.py
-        :include-source:
+            :include-source:
+            :outname: WLfit
     """
 
     display_names=[r"\sigma_0","D_S","B_1","B_2"]
@@ -842,7 +858,8 @@ def strijkers(V, omega, delta, P, Z):
 
     Example:
         .. plot:: samples/lmfit_demo.py
-        :include-source:
+            :include-source:
+            :outname: strijkers
     """
     return _strijkers_core(V, omega, delta, P, Z)
 
@@ -869,7 +886,8 @@ class Strijkers(Model):
 
     Example:
         .. plot:: samples/lmfit_demo.py
-        :include-source:
+            :include-source:
+            :outname: Strijkers
     """
 
     display_names=[r"\omega",r"\Delta","P","Z"]
@@ -901,8 +919,9 @@ def fluchsSondheimer(t, l, p, sigma_0):
 
     Example:
         .. plot:: samples/Fitting/f_s.py
-        :include-source:
-    """
+            :include-source:
+            :outname: fluchssondheimer
+        """
     k = t / l
 
     kernel = lambda x, k: (x - x ** 3) * _np_.exp(-k * x) / (1 - _np_.exp(-k * x))
@@ -934,7 +953,8 @@ class FluchsSondheimer(Model):
 
     Example:
         .. plot:: samples/Fitting/f_s.py
-        :include-source:
+            :include-source:
+            :outname: FluchsSondheimer
     """
 
     display_names=[r"\lambda_{mfp}","p_{refl}",r"\sigma_0"]
@@ -969,7 +989,8 @@ def blochGrueneisen(T, thetaD, rho0, A, n):
 
     Example:
         .. plot:: samples/Fitting/b_g.py
-        :include-source:
+            :include-source:
+            :outname: blochgruneisen
     """
     ret = _np_.zeros(T.shape)
     for i, t in enumerate(T):
@@ -979,7 +1000,7 @@ def blochGrueneisen(T, thetaD, rho0, A, n):
 
 
 class BlochGrueneisen(Model):
-    
+
     """BlochGrueneiseen Function for fitting R(T).
 
     Args:
@@ -994,7 +1015,8 @@ class BlochGrueneisen(Model):
 
     Example:
         .. plot:: samples/Fitting/b_g.py
-        :include-source:
+            :include-source:
+            :outname: BlochGruneisen
     """
 
     display_names=[r"\theta_D",r"\rho_0","A","n"]
@@ -1026,13 +1048,14 @@ def langevin(H, M_s, m, T):
 
     Example:
         .. plot:: samples/Fitting/langevin.py
-        :include-source:
+            :include-source:
+            :outname: langevin
     """
     from scipy.constants import k, mu_0
 
     x = mu_0 * H*m / (k * T)
     n=M_s/m
-    
+
     return m*n*(1.0/_np_.tanh(x)-1.0/x)
 
 class Langevin(Model):
@@ -1053,7 +1076,8 @@ class Langevin(Model):
 
     Example:
         .. plot:: samples/Fitting/langevin.py
-        :include-source:
+            :include-source:
+            :outname: Langevin
     """
 
     def __init__(self, *args, **kwargs):
@@ -1101,7 +1125,8 @@ def vftEquation(x, A, DE, x_0):
 
     Example:
         .. plot:: samples/Fitting/vftEquation.py
-        :include-source:
+            :include-source:
+            :outname: vft
     """
     _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
     return A * _np_.exp(-DE / (_kb * (x - x_0)))
@@ -1122,12 +1147,13 @@ class VFTEquation(Model):
 
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
     a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
-    
+
     See :py:func:`Stoner.Fit.vftEquation` for an example.
 
     Example:
         .. plot:: samples/Fitting/vftEquation.py
-        :include-source:
+            :include-source:
+            :outname: VFT
     """
 
     display_names=["A",r"\Delta E","x_0"]
@@ -1166,7 +1192,7 @@ def stretchedExp(x, A, beta, x_0):
 
 
 class StretchedExp(Model):
-    
+
     r"""A stretched exponential fuinction.
 
     Args:
@@ -1214,19 +1240,20 @@ def kittelEquation(H,g,M_s,H_k):
 
     Returns:
         Reesonance peak frequencies in Hz
-        
+
     :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
 
     Example:
         .. plot:: samples/Fitting/kittel.py
-        :include-source:                
+            :include-source:
+            :outname: kittel
     """
     gamma=g*cnst.e/(2*cnst.m_e)
     return (consts.mu0*gamma/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
 
 def inverse_kittel(f,g,M_s,H_k):
     """Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency
-    
+
     Args:
         f (array): Resonance Frequency in Hz
         g (float): g factor for the gyromagnetic radius
@@ -1235,20 +1262,20 @@ def inverse_kittel(f,g,M_s,H_k):
 
     Returns:
         Reesonance peak frequencies in Hz
-    
+
     Notes:
         In practice one often measures FMR by sweepign field for constant frequency and then locates the
         peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a :math:`H_{res}\\pm \\Delta H_{res}`
         In order to make use of this data with :py:math:`Stoner.Analysis.AnalysisMixin.lmfit` or :py:math:`Stoner.Analysis.AnalysisMixin.curve_fit`
         it makes more sense to fit the Kittel Equation written in terms of H than frequency.
-        
-       :math:`H_{res}=- H_{k} - \\frac{M_{s}}{2} + \\frac{1}{2 \\gamma \\mu_{0}} \\sqrt{M_{s}^{2} \\gamma^{2} \\mu_{0}^{2} + 16 \\pi^{2} f^{2}}` 
-    """            
+
+       :math:`H_{res}=- H_{k} - \\frac{M_{s}}{2} + \\frac{1}{2 \\gamma \\mu_{0}} \\sqrt{M_{s}^{2} \\gamma^{2} \\mu_{0}^{2} + 16 \\pi^{2} f^{2}}`
+    """
     gamma=g*cnst.e/(2*cnst.m_e)
     return -H_k - M_s/2 + _np_.sqrt(M_s**2*gamma**2*cnst.mu_0**2 + 16*_np_.pi**2*f**2)/(2*gamma*cnst.mu_0)
 
 class KittelEquation(Model):
-    
+
     r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
@@ -1264,7 +1291,8 @@ class KittelEquation(Model):
 
     Example:
         .. plot:: samples/Fitting/kittel.py
-        :include-source:                
+            :include-source:
+            :outname: Kittel
     """
 
     display_names=["g","M_s","H_k"]
@@ -1277,7 +1305,7 @@ class KittelEquation(Model):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
         g=2
         H_k=100
-        gamma=g*cnst.e/(2*cnst.m_e)    
+        gamma=g*cnst.e/(2*cnst.m_e)
         M_s=(4*_np_.pi**2*data**2 - gamma**2*cnst.mu_0**2*(x**2 + 2*x*H_k + H_k**2))/(gamma**2*cnst.mu_0**2*(x + H_k))
         M_s=_np_.mean(M_s)
 
@@ -1290,7 +1318,7 @@ class KittelEquation(Model):
 
 
 class Inverse_Kittel(Model):
-    
+
     r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
@@ -1316,7 +1344,7 @@ class Inverse_Kittel(Model):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
         g=2
         H_k=100
-        gamma=g*cnst.e/(2*cnst.m_e)    
+        gamma=g*cnst.e/(2*cnst.m_e)
         M_s=(4*_np_.pi**2*x**2 - gamma**2*cnst.mu_0**2*(data**2 + 2*data*H_k + H_k**2))/(gamma**2*cnst.mu_0**2*(data + H_k))
         M_s=_np_.mean(M_s)
 
@@ -1329,28 +1357,28 @@ class Inverse_Kittel(Model):
 
 def lorentzian_diff(x,A,sigma,mu):
     r"""Implement a differential form of a Lorentzian peak.
-    
+
     Args:
         x (array): x data
         A (flaot): Peak amplitude
         sigma (float): peak wideth
         mu (float): peak location in x
-        
-        Returns 
+
+        Returns
             :math:`\\frac{A \\sigma \\left(2 \\mu - 2 x\\right)}{\\pi \\left(\\sigma^{2} + \\left(- \\mu + x\\right)^{2}\\right)^{2}}`
         """
     return A*sigma*(2*mu - 2*x)/(pi*(sigma**2 + (-mu + x)**2)**2)
 
 class Lorentzian_diff(Model):
     r"""lmfit Model rerprenting the differential form of a Lorentzian Peak.
-    
+
     Args:
         x (array): x data
         A (flaot): Peak amplitude
         sigma (float): peak wideth
         mu (float): peak location in x
-        
-        Returns 
+
+        Returns
             :math:`\\frac{A \\sigma \\left(2 \\mu - 2 x\\right)}{\\pi \\left(\\sigma^{2} + \\left(- \\mu + x\\right)^{2}\\right)^{2}}`
     """
     display_names=["A",r"\sigma",r"\mu"]
@@ -1358,13 +1386,13 @@ class Lorentzian_diff(Model):
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
         super(Lorentzian_diff, self).__init__(lorentzian_diff, *args, **kwargs)
-    
+
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
-    
+
         if x is None:
             x=_np_.linspace(1,len(data),len(data)+1)
-            
+
         x1=x[_np_.argmax(data)]
         x2=x[_np_.argmin(data)]
         sigma=abs(x1-x2)
@@ -1380,36 +1408,36 @@ class Lorentzian_diff(Model):
         pars["mu"].min=_np_.min(x)
         pars["mu"].max=_np_.max(x)
         return update_param_vals(pars, self.prefix, **kwargs)
-    
-    
+
+
 def fmr_power(H,H_res,Delta_H,K_1,K_2):
     """A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
-    
+
     Args:
         H (array) magnetic field data
         H_res (float): Resonance field of peak
         Delta_H (float): Preak wideth
         K_1, K_2 (float): Relative weighting of each component.
-    
+
     Returns:
         Array of model absorption values.
-        
+
     math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
     """
     return 4*Delta_H*K_1*(H - H_res)/(Delta_H**2 + 4*(H - H_res)**2)**2 - K_2*(Delta_H**2 - 4*(H - H_res)**2)/(Delta_H**2 + 4*(H - H_res)**2)**2
 
 class FMR_Power(Model):
     """A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
-    
+
     Args:
         H (array) magnetic field data
         H_res (float): Resonance field of peak
         Delta_H (float): Preak wideth
         K_1, K_2 (float): Relative weighting of each component.
-    
+
     Returns:
         Array of model absorption values.
-        
+
     math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
     """
     display_names=["H_{res}",r"\Delta_H","K_1","K_2"]
@@ -1417,13 +1445,13 @@ class FMR_Power(Model):
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
         super(FMR_Power, self).__init__(fmr_power, *args, **kwargs)
-    
+
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
-    
+
         if x is None:
             x=_np_.linspace(1,len(data),len(data)+1)
-            
+
         x1=x[_np_.argmax(data)]
         x2=x[_np_.argmin(data)]
         Delta_H=abs(x1-x2)
@@ -1434,7 +1462,7 @@ class FMR_Power(Model):
         K_2=dy*(4*_np_.pi*Delta_H**2)/(3*_np_.sqrt(3))
         ay=(y1+y2)/2
         K_1=ay*_np_.pi/Delta_H
-               
+
 
         pars = self.make_params(Delta_H=Delta_H,H_res=H_res,K_1=K_1,K_2=K_2)
         pars["K_1"].min=0

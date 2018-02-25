@@ -91,9 +91,11 @@ these on a surface plot or 3D plot. The :py:meth:`PlotMixin.plot_xyz` method can
 
 .. plot:: samples/3D_plot.py
    :include-source:
+   :outfiel: 3D
 
 .. plot:: samples/colormap_plot.py
    :include-source:
+   :outname: colormap
 
 By default the :py:meth:`PlotMixin.plot_xyz` will produce a 3D surface plot with the z-axis coded with a rainbow colour-map
 (specifically, the matplotlib provided *matplotlib.cm.jet* colour-map. This can be overriden with the *cmap* keyword
@@ -108,6 +110,7 @@ method.
 
 .. plot:: samples/contour_plot.py
    :include-source:
+   :outname: contour
 
 Both :py:meth:`PlotMixin.plot_xyz` and :py:meth:`PlotMixin.contour_xyz` make use of a call to :py:meth:`PlotMixin.griddata`
 which is a utility method of the :py:class:`PlotMixin` -- essentially this is just a pass through method to the underlying
@@ -127,6 +130,7 @@ number of points.
 
 .. plot:: samples/matrix_plot.py
    :include-source:
+   :outname: matrix
 
 The first example just uses all the default values, in which case the matrix is assumed to run from the 2nd column in the
 file to the last and over all of the rows. The x values for each row are found from the contents of the first column, and
@@ -182,6 +186,7 @@ As usual, the default operation should still produce reasonable graphs.
 
 .. plot:: samples/Vectorfield.py
    :include-source:
+   :outname: vector_field
 
 
 
@@ -193,6 +198,7 @@ with the :py:attr:`Stoner.Core.DataFile.setas` attribute it allows very quick pl
 
 .. plot:: samples/single_plot.py
    :include-source:
+   :outname: single
 
 
 Getting More Control on the Figure
@@ -251,6 +257,7 @@ provided. This produces a second axes object with a common x-axis, but independe
 
 .. plot:: samples/double_y_plot.py
    :include-source:
+   :outname: double_y
 
 There is an equivalent :py:meth:`PlotMixin.x2` method to create a second set of axes with a common y scale but different x scales.
 
@@ -280,6 +287,7 @@ executed during the process of plotting a figure.
 
 .. plot:: samples/template2.py
    :include-source:
+   :outname:  template2
 
 The template can either be set by passing a subclass of :py:class:`Stoner.plot.formats.DefaultPlotStyle` or
 a particular instance of such a subclass. This latter option allows you to override the default plot attribute
@@ -291,6 +299,7 @@ prefix the translated rcParam key with *template_*.
 
 .. plot:: samples/template.py
    :include-source:
+   :outname:  template
 
 You can also copy the style template from one plot to the next.
 
@@ -338,6 +347,7 @@ will be to the inset until a new set of axes are chosen. The :py:class:`pyplot.A
 
 .. plot:: samples/inset_plot.py
    :include-source:
+   :outname:  inset
 
 The *loc* parameter specifies the location of the inset, the width and height the size (either as a percentage or
 fixed units). There is an optional parent keyword that lets you specify an alternative parent set of axes for the
@@ -364,6 +374,7 @@ this can result in a less than helpful plot.
 
 .. plot:: samples/common_y_plot.py
    :include-source:
+   :outname: common_y
 
 The :py:meth:`PlotMixin.plot_xy` method (and also the :py:meth:`PlotMixin.plot` method when doing 2D plots) will take
 a keyword argument *multiple* that can offer a number of alternatives. If you have just two y columns, or the the
@@ -371,14 +382,17 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
 
 .. plot:: samples/multiple_y2_plot.py
    :include-source:
+   :outname:  multiple_y
 
 Alternatively, if you want the various y plots to form multiple panels with a common x-axis (a *ganged plot*) then
 *multiple* can be set of *panels*.
 
 .. plot:: samples/multiple_panels_plot.py
    :include-source:
+   :outname:  panels
 
 Finally, you can also simply plot the y data as a grid of independent subplots.
 
 .. plot:: samples/subplot_plot.py
    :include-source:
+   :outname:  subplots

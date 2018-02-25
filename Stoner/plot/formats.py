@@ -23,9 +23,9 @@ import numpy as _np_
 
 
 class TexFormatter(Formatter):
-    
+
     """An axis tick label formatter that emits Tex formula mode code.
-    
+
     Formating is set so that large numbers are registered as \\times 10^{power}
     rather than ysing E notation."""
 
@@ -49,7 +49,7 @@ class TexFormatter(Formatter):
 
     def format_data_short(self, value):
         return "{:g}".format(value)
-    
+
     def _round(self,value):
         for i in range(5):
             vt=_np_.round(value,i)
@@ -60,9 +60,9 @@ class TexFormatter(Formatter):
 
 
 class TexEngFormatter(EngFormatter):
-    
+
     """An axis tick label formatter that emits Tex formula mode code.
-    
+
     Formatting is set so that large numbers are registered as with SI prefixes
     rather than ysing E notation.
     """
@@ -112,7 +112,7 @@ class TexEngFormatter(EngFormatter):
 
 
 class DefaultPlotStyle(object):
-    
+
     """Produces a default plot style.
 
     To produce alternative plot styles, create subclasses of this plot. Either override or
@@ -133,14 +133,15 @@ class DefaultPlotStyle(object):
     Example
         .. plot:: samples/plotstyles/default.py
             :include-source:
+            :outname: defaultstyle
 
     """
-    
+
     #Internal class attributes.
     _inches_per_pt = 1.0 / 72.27  # Convert pt to inch
     _mm_per_inch = 25.4
     _golden_mean = (_np_.sqrt(5) - 1.0) / 2.0  # Aesthetic ratio
-    
+
     #Settings for this figure type. All instance attributes which start template_
     #will be used. Once the leading template_ is stripped, all _ characters are replaced
     #with . and then the attributes are mapped to a dictionary and used to update the rcParams
@@ -266,7 +267,7 @@ class DefaultPlotStyle(object):
 
     def update(self, **kargs):
         """Update the template with new attributes from keyword arguments.
-        
+
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
@@ -315,11 +316,11 @@ class DefaultPlotStyle(object):
                 else:
                     ax = fig.add_axes(rect)
             else:
-                if projection == "3d":                
+                if projection == "3d":
                     ax = kargs.pop("ax",fig.gca(projection="3d"))
                 else:
                     ax = kargs.pop("ax",fig.gca())
-                    
+
             ret = fig
         else:
             if projection == "3d":
@@ -337,7 +338,7 @@ class DefaultPlotStyle(object):
 
     def customise(self):
         """Hook to customise plot.
-        
+
         This method is supplied for sub classes to override to provide additional
         plot customisation after the rc paramaters are updated from the class and
         instance attributes."""
@@ -406,7 +407,7 @@ class DefaultPlotStyle(object):
             pass
 
 class GBPlotStyle(DefaultPlotStyle):
-    
+
     """Template developed for Gavin's plotting.
 
     This is largely an experimental class for trying things out rather than
@@ -415,10 +416,11 @@ class GBPlotStyle(DefaultPlotStyle):
     Example
         .. plot:: samples/plotstyles/GBStyle.py
             :include-source:
+            :outname: gbstyle
 
 
     """
-    
+
     xformatter = TexEngFormatter
     yformatter = TexEngFormatter
     stylename = "GBStyle"
@@ -436,12 +438,13 @@ class GBPlotStyle(DefaultPlotStyle):
 
 
 class JTBPlotStyle(DefaultPlotStyle):
-    
+
     """Template class for Joe's Plot settings.
 
     Example
         .. plot:: samples/plotstyles/JTBStyle.py
             :include-source:
+            :outname: jtbstyle
 
     """
 
@@ -454,7 +457,7 @@ class JTBPlotStyle(DefaultPlotStyle):
 
 
 class JTBinsetStyle(DefaultPlotStyle):
-    
+
     """Template class for Joe's Plot settings."""
 
     show_title = False
@@ -466,7 +469,7 @@ class JTBinsetStyle(DefaultPlotStyle):
 
 
 class ThesisPlotStyle(DefaultPlotStyle):
-    
+
     """Template class for Joe's Plot settings."""
 
     show_title = False
@@ -474,14 +477,15 @@ class ThesisPlotStyle(DefaultPlotStyle):
 
 
 class PRBPlotStyle(DefaultPlotStyle):
-    
+
     """A figure Style for making figures for Phys Rev * Jounrals.
 
     Example
         .. plot:: samples/plotstyles/PRBStyle.py
             :include-source:
+            :outname: prbstyle
     """
-    
+
     show_title = False
     stylename = "PRB"
 
@@ -491,7 +495,7 @@ class PRBPlotStyle(DefaultPlotStyle):
 
 
 class SketchPlot(DefaultPlotStyle):
-    
+
     """Turn on xkcd plot style.
 
     Implemented as a bit of a joke, but perhaps someone will use this in a real
@@ -500,10 +504,11 @@ class SketchPlot(DefaultPlotStyle):
     Example
         .. plot:: samples/plotstyles/SketchStyle.py
             :include-source:
+            sketchstyle
 
 
     """
-    
+
     stylename = "sketch"
 
     def customise(self):
@@ -534,7 +539,7 @@ class SketchPlot(DefaultPlotStyle):
 if SEABORN: # extra classes if we have seaborn available
 
     class SeabornPlotStyle(DefaultPlotStyle):
-        
+
         """A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.
 
         Attributes:
@@ -545,6 +550,7 @@ if SEABORN: # extra classes if we have seaborn available
         Example
             .. plot:: samples/plotstyles/SeabornStyle.py
                 :include-source:
+                :outname: seabornstyle
         """
 
         _stylename=None

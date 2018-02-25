@@ -107,6 +107,7 @@ illustrates this by fitting a plane to a collection of points in 3D space.
 
 .. plot:: samples/curve_fit_plane.py
     :include-source:
+    :outname: curvefit_plane2
 
 Fitting to Minimize a Function
 ------------------------------
@@ -120,6 +121,7 @@ For example:
 
 .. plot:: samples/sphere_fit.py
     :include-source:
+    :outname:  curvefit_sphere_2
 
 
 Other Recipies
