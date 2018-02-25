@@ -9,6 +9,7 @@ import io
 import copy
 import os.path as path
 import inspect as _inspect_
+from ast import literal_eval
 import itertools
 from collections import OrderedDict,MutableMapping
 from traceback import format_exc
@@ -17,7 +18,7 @@ import numpy as _np_
 from numpy import NaN # pylint: disable=unused-import
 import numpy.ma as _ma_
 
-from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes
+from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,bytes2str
 from .tools import isNone,all_size,all_type,_attribute_store,operator,isiterable,typedList
 
 
@@ -995,7 +996,7 @@ class typeHintedDict(regexpDict):
             A string of the format : key{type hint} = value
         """
         return "{}{{{}}}={}".format(key, self.type(key), repr(self[key]).encode('unicode_escape'))
-
+    
     def export_all(self):
         """Return all the entries in the typeHintedDict as a list of exported lines.
 
@@ -1006,6 +1007,40 @@ class typeHintedDict(regexpDict):
             The keys are returned in sorted order as a result of the underlying blist.sorteddict meothd.
         """
         return [self.export(x) for x in self]
+    
+    def import_all(self,lines):
+        """Reads multiple lines of strings and tries to import keys from them.
+        
+        Args:
+            lines(list of str): The lines of metadata values to import.
+        """
+        for line in lines:
+            self.import_key(line)
+
+    def import_key(self,line):
+        """Import a single key from a string like key{type hint} = value.
+        
+        This is the inverse of the :py:meth:`typeHintedDict.export` method.
+        
+        Args:
+            line(str): The string line to be interpreted as a key-value pair.
+            
+        """
+        parts=line.split("=")
+        k=parts[0]
+        v="=".join(parts[1:]) #rejoin any = in the value string
+        bv=v
+        v=literal_eval(v) #In python v3 this can result in a bytes string of te literal value
+        if python_v3 and isinstance(v,bytes): #Try again to unwrap the bytes object in python 3
+            v=bytes2str(v)
+            v=literal_eval(v) #Now we should be good
+
+        print(bv,v)
+            
+        if isinstance(v,string_types):
+            v = self.string_to_type(v) #convert back to a value type
+        self[k] = v
+
 
 class metadataObject(MutableMapping):
 

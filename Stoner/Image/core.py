@@ -333,20 +333,9 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                     metadata=[]
             else:
                 metadata=[]
-            for line in metadata:
-                #All this bit to reimport exported typeHintedDict data, should
-                #prob make this a function in typeHintedDict (metadict.import_all())
-                #also pretty sure this won't work in python 2.7, needs fettling
-                parts=line.split("=")
-                k=parts[0]
-                v="=".join(parts[1:]) #rejoin any = in the value string
-                v=bytes(v[2:-1], "utf-8")  #change the bytes representation back to actual bytes type
-                v=v.decode("unicode_escape")  #opposite process to the export func in typeHintedDict
-                v = metadict.string_to_type(v) #convert back to a value type
-                if isinstance(v, str): #if it was string type it will still have the string markers at the beginning and end so need to change this bit
-                    v = v[1:-1]
-                metadict[k] = v
-        #OK now try and sort out the datatype before loading
+            metadict.import_all(metadata)
+                
+                #OK now try and sort out the datatype before loading
         dtype = metadict.get("ImageArray.dtype", None) #if tif was previously saved by Stoner then dtype should have been added to the metadata
         # If we convert to float, it's important to make
         # sure that we're not using too many bits to store the image in.

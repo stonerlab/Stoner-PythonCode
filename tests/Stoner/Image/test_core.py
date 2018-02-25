@@ -270,5 +270,5 @@ if __name__=="__main__": # Run some tests manually to allow debugging
 #    test2.setUp()
 #    test2.test_methods()
     
-    #unittest.main()
+    unittest.main()
 
