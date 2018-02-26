@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 from Stoner.Core import typeHintedDict,metadataObject,regexpDict
 from Stoner.Image.util import convert
 from Stoner import Data
-from Stoner.tools import istuple,fix_signature
+from Stoner.tools import istuple,fix_signature,islike_list
 from Stoner.compat import python_v3,string_types,get_filedialog,bytes # Some things to help with Python2 and Python3 compatibility
 import inspect
 from functools import wraps
@@ -641,17 +641,17 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
             if box is None: #experimental
                 print('Select crop area')
                 box = self.draw_rectangle(box)
-            elif isinstance(box, (tuple,list)) and len(box)==4:
-                pass
+            elif islike_list(box) and len(box)==4:
+                box=[x for x in box]
             elif isinstance(box,int):
-                box=(box,self.shape[1]-box,box,self.shape[0]-box)
+                box=[box,self.shape[1]-box,box,self.shape[0]-box]
             elif isinstance(box,float):
                 box=[round(self.shape[1]*box/2),round(self.shape[1]*(1-box/2)),round(self.shape[1]*box/2),round(self.shape[1]*(1-box/2))]
-                box=tuple([int(x) for x in box])
+                box=list([int(x) for x in box])
             else:
                 raise ValueError('crop accepts tuple of length 4, {} given.'.format(len(box)))
         else:
-            box = tuple(args)
+            box = list(args)
         for i,item in enumerate(box): #replace None with max extent
             if item is None:
                 box[i]=self.max_box[i]

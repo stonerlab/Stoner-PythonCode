@@ -53,28 +53,26 @@ class KerrArray(ImageArray):
                         'reduce_metadata':True,
                         'asfloat':True,
                         'crop_text':True}
-        kerrargs={}
-        for k, v in kerrdefaults:
-            kerrargs[k] = kargs.pop(k, v) 
+        kerrdefaults.update(kargs)
         super(KerrArray,self).__init__(*args,**kargs)
-        if kerrargs['reduce_metadata']:
+        self._tesseractable=None
+        if kerrdefaults['reduce_metadata']:
             self.reduce_metadata()
-        if kerrargs['ocr_metadata']:
-            self.ocr_metadata(field_only=kerrargs['field_only']) 
-        if kerrargs['asfloat']:
+        if kerrdefaults['ocr_metadata']:
+            self.ocr_metadata(field_only=kerrdefaults['field_only']) 
+        if kerrdefaults['asfloat']:
             self.asfloat()
-        if kerrargs['crop_text']:
+        if kerrdefaults['crop_text']:
             self.crop_text()
             
     @property
     def tesseractable(self):
         """Do a test call to tesseract to see if it is there and cache the result."""
-        try:
-            self.__tesseractable=getattr(self,"_tesseractable")
-        except AttributeError:
-            self._tesseractable=subprocess.call(["tesseract","-v"])==0
-        except Exception:
-            self._tesseractable=False
+        if self._tesseractable is None:
+            try:
+                self._tesseractable=subprocess.call(["tesseract","-v"])==0
+            except Exception:
+                self._tesseractable=False
         return self._tesseractable
     
     def crop_text(self, copy=False):
@@ -88,8 +86,8 @@ class KerrArray(ImageArray):
         (ImageArray):
             cropped image
         """
-        if self.shape!=AN_IM_SIZE and self.shape!=IM_SIZE:
-            raise ValueError('Need a full sized Kerr image to crop') #check it's a normal image
+        if self.shape!=AN_IM_SIZE:
+            raise ValueError('Need a full sized Kerr image to crop. Current size is {}'.format(self.shape)) #check it's a normal image
         return self.crop(None, None, None, IM_SIZE[0],copy=copy)
 
     def reduce_metadata(self):
