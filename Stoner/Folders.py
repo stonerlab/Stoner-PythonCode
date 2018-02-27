@@ -224,10 +224,11 @@ class baseFolder(MutableSequence):
         - __lookup__ take a keyname and return a canonical accessor key
         - __names__ returns the ordered list of mapping keys to the object store
         - __getter__ returns a single instance of the data object referenced by a canonical key
-        - __setter__ insert or overwrite an instance of the object store by canonical key
+        - __setter__ add or overwrite an instance of the object store by canonical key
+        - __inserter__ insert an instance into a specific place in the Folder
         - __deleter__ remove an instance of a data object by canonical key
         - __clear__ remove all instance
-        = __clone__ create a new copy of the mixin's state kinformation
+        - __clone__ create a new copy of the mixin's state kinformation
     """
 
     def __new__(cls,*args,**kargs):
@@ -246,7 +247,7 @@ class baseFolder(MutableSequence):
         self._objects=regexpDict()
         self._instance=None
         self._object_attrs=dict()
-        self.key=None
+        self._key=None
         self._type=metadataObject
         self._instance_attrs=set()
         return self
@@ -332,6 +333,16 @@ class baseFolder(MutableSequence):
         if self._instance is None:
             self._instance=self._type()
         return self._instance
+
+    @property
+    def key(self):
+        """Allow overriding for getting and setting the key in mixins."""
+        return self._key
+
+    @key.setter
+    def key(self,value):
+        """Set the folder's key."""
+        self._key=value
 
     @property
     def loaded(self):

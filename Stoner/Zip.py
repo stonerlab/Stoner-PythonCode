@@ -14,15 +14,26 @@ Created on Tue Jan 13 16:39:51 2015
 
 from Stoner.compat import string_types,bytes2str,str2bytes
 import zipfile as zf
-from .Core import DataFile,StonerLoadError
-from .Folders import DataFolder
+from .Core import DataFile,StonerLoadError,metadataObject
+from .Folders import baseFolder
 import os.path as path
 from traceback import format_exc
 import numpy as _np_
 
 
 def test_is_zip(filename, member=""):
-    "Recursively searches for a zipfile in the tree."
+    """Recursively searches for a zipfile in the tree.
+
+    Args:
+        filename (str): Path to test whether it is a zip file or not.
+
+    Keyword Arguments:
+        member (str): Used in recursive calls to identify the path within the zip file
+
+    Returns:
+        False or (filename,member): Returns False if not a zip file, otherwise the actual filename of the zip file and the nanme of the member within that
+        zipfile.
+    """
     if not filename or filename == "":
         return False
     elif zf.is_zipfile(filename):
@@ -40,8 +51,8 @@ def test_is_zip(filename, member=""):
         return test_is_zip(newfile, newmember)
 
 
-class ZipFile(DataFile):
-    
+class ZippedFile(DataFile):
+
     """A sub class of DataFile that sores itself in a zip file.
 
     If the first non-keyword arguement is not an :py:class:`zipfile:ZipFile` then
@@ -52,23 +63,23 @@ class ZipFile(DataFile):
 
     priority = 32
     patterns = ["*.zip"]
-    
+
     mime_type=["application/zip"]
 
 
     def __init__(self, *args, **kargs):
-        "Constructor to catch initialising with an h5py.File or h5py.Group"
+        "Constructor to catch initialising with an open zf.ZipFile"
         if len(args) > 0:
             other = args[0]
             if isinstance(other, zf.ZipFile):
-                if len(args) == 2 and isinstance(args[1], string_types):
+                if len(args) == 2 and isinstance(args[1], string_types): #ZippedFile(open_zip,"filename")
                     kargs["file"] = args[1]
-                elif "file" not in kargs:
+                elif "file" not in kargs: # ZippedFile(open_zip) - assume we use tyhe first zipped file in there
                     kargs["file"] = other.namelist()[0]
-                if kargs["file"] not in other.namelist():
+                if kargs["file"] not in other.namelist(): # New file not in the zip file yet
                     raise StonerLoadError("File {} not found in zip file {}".format(kargs["name"], other.filename))
                 #Ok, by this point we have a zipfile which has a file in it. Construct ourselves and then load
-                super(ZipFile, self).__init__(**kargs)
+                super(ZippedFile, self).__init__(**kargs)
                 self._extract(other, kargs["file"])
             elif isinstance(other, string_types):  # Passed a string - so try as a zipfile
                 if zf.is_zipfile(other):
@@ -78,7 +89,7 @@ class ZipFile(DataFile):
                     args = test_is_zip(other)
                 self.__init__(*args, **kargs)
             else:
-                super(ZipFile, self).__init__(*args, **kargs)
+                super(ZippedFile, self).__init__(*args, **kargs)
 
     def _extract(self, archive, member):
         """Responsible for actually reading the zip file archive.
@@ -111,11 +122,11 @@ class ZipFile(DataFile):
                 else: #Zip file is already open
                     other = self.filename
                     close_me = False
-                member = other.namelist()[0]
+                member = kargs.get("member",other.namelist()[0])
                 solo_file=len(other.namelist())==1
             elif isinstance(self.filename, string_types) and zf.is_zipfile(self.filename): #filename is a string that is a zip file
                 other = zf.ZipFile(self.filename, "a")
-                member = other.namelist()[0]
+                member = kargs.get("member",other.namelist()[0])
                 close_me = True
                 solo_file=len(other.namelist())==1
             elif isinstance(self.filename, string_types) and test_is_zip(self.filename): #Filename is something buried in a zipfile
@@ -182,7 +193,7 @@ class ZipFile(DataFile):
                     close_me = False
                 zipfile = filename
                 member = ""
-    
+
             if member == "" or member =="/":  # Is our file object a bare zip file - if so create a default member name
                 if len(zipfile.namelist()) > 0:
                     member = zipfile.namelist()[-1]
@@ -190,7 +201,7 @@ class ZipFile(DataFile):
                 else:
                     member = "DataFile.txt"
                     self.filename=filename
-    
+
             zipfile.writestr(member, str2bytes(str(self)))
             if close_me:
                 zipfile.close()
@@ -203,17 +214,21 @@ class ZipFile(DataFile):
             raise IOError("Error saving zipfile\n{}".format(error))
         return self
 
-class ZipFolder(DataFolder):
-    
+class ZipFolderMixin(object):
+
     """A sub class of :py:class:`Stoner.Folders.DataFolder` that provides a method to load and save data from a single Zip file.
 
     See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.
+
+    Note:
+        As this mixin class provides both read and write storage, it cannot be mixed in with another class that
+        provides a __setter__ method without causing a problem.
     """
 
     def __init__(self, *args, **kargs):
-        "Constructor for the HDF5Folder Class."
+        "Constructor for the ZipFolderMixin Class."
         self.File = None
-        self.type = ZipFile
+        self.path=""
         if len(args) > 1:
             if isinstance(args[0], string_types) and zf.is_zipfile(args[0]):
                 self.File = zf.ZipFile(args[0], "a")
@@ -223,7 +238,18 @@ class ZipFolder(DataFolder):
                 else:
                     self.File = zf.ZipFile(args[0].filename, "a")
 
-        super(ZipFolder, self).__init__(*args, **kargs)
+
+
+        super(ZipFolderMixin, self).__init__(*args, **kargs)
+
+    @property
+    def key(self):
+        return path.basename(self.path)
+
+    @key.setter
+    def key(self,value):
+        self.path=path.join(self.path,value)
+
 
 
     def _dialog(self, message="Select Folder", new_directory=True, mode='r'):
@@ -286,7 +312,7 @@ class ZipFolder(DataFolder):
                 close_me = True
             self.directory = self.File.filename
         elif isinstance(directory, string_types) and path.isdir(directory):  #Fall back to DataFolder
-            return super(ZipFolder, self).getlist(recursive, directory, flatten)
+            return super(ZipFolderMixin, self).getlist(recursive, directory, flatten)
         else:
             raise IOError("{} does not appear to be zip file!".format(directory))
         #At this point directory contains an open h5py.File object, or possibly a group
@@ -297,34 +323,34 @@ class ZipFolder(DataFolder):
             directory.close()
         return self
 
-    def __read__(self, f):
-        "Override the _-read method to handle pulling files from the zip file"
-        if isinstance(f, DataFile):  # This is an already loaded DataFile
-            tmp = f
-            f = tmp.filename
-        elif isinstance(f, string_types):  #This sis a string, so see if it maps to a path in the current File
-            if isinstance(self.File, zf.ZipFile) and f in self.File.namelist():
-                if not self.File.fp:
-                    with zf.ZipFile(self.File.filename, "r") as z:
-                        tmp = ZipFile(z, f)
-                else:
-                    tmp = ZipFile(self.File, f)
-            else:  # Otherwise fallback and try to laod from disc
-                tmp = super(ZipFolder, self).__read__(f)
-        else:
-            raise RuntimeError("Unable to workout how to read from {}".format(f))
-        tmp["Loaded from"] = f
-        if self.read_means:
-            if len(tmp) == 0:
-                pass
-            elif len(tmp) == 1:
-                for h in tmp.column_headers:
-                    tmp[h] = tmp.column(h)[0]
-            else:
-                for h in tmp.column_headers:
-                    tmp[h] = _np_.mean(tmp.column(h))
+    def __getter__(self,name,instantiate=True):
+        """Loads the specified name from a compressed archive.
 
-        return tmp
+        Parameters:
+            name (key type): The canonical mapping key to construct the path from.
+
+        Keyword Arguments:
+            instatiate (bool): IF True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
+                the __getter__ method may return a key that can be used by it later to actually get the
+                :py:class:`Stoner.Core.Data` object.
+
+        Returns:
+            (metadataObject): The metadataObject
+        """
+        try: # try to go back to the base to see if it's already loaded
+            return baseFolder.__getter__(self,name,instantiate=instantiate)
+        except (AttributeError,IndexError,KeyError):
+            pass
+
+        pth=path.join(self.key,name)
+        if pth in self.File.namelist():
+            if instantiate:
+                return self.type(ZippedFile(path.join(self.File.filename,pth)))
+            else:
+                return name
+        else:
+            return super(ZipFolderMixin,self).__getter__(name,instantiate=instantiate)
+
 
     def save(self, root=None):
         """Saves a load of files to a single Zip file, creating members as it goes.
@@ -366,6 +392,6 @@ class ZipFolder(DataFolder):
             f = DataFile(f)
         member = path.join(self.File.filename, *trail)
         member = path.abspath(path.join(member, f.filename))
-        f = ZipFile(f)
+        f = ZippedFile(f)
         f.save(member)
         return f.filename
