@@ -19,6 +19,9 @@ from .Folders import baseFolder
 import os.path as path
 from traceback import format_exc
 import numpy as _np_
+from copy import copy,deepcopy
+import fnmatch
+import re
 
 
 def test_is_zip(filename, member=""):
@@ -73,14 +76,14 @@ class ZippedFile(DataFile):
             other = args[0]
             if isinstance(other, zf.ZipFile):
                 if len(args) == 2 and isinstance(args[1], string_types): #ZippedFile(open_zip,"filename")
-                    kargs["file"] = args[1]
-                elif "file" not in kargs: # ZippedFile(open_zip) - assume we use tyhe first zipped file in there
-                    kargs["file"] = other.namelist()[0]
-                if kargs["file"] not in other.namelist(): # New file not in the zip file yet
+                    kargs["filename"] = args[1]
+                elif "filename" not in kargs: # ZippedFile(open_zip) - assume we use tyhe first zipped file in there
+                    kargs["filename"] = other.namelist()[0]
+                if kargs["filename"] not in other.namelist(): # New file not in the zip file yet
                     raise StonerLoadError("File {} not found in zip file {}".format(kargs["name"], other.filename))
                 #Ok, by this point we have a zipfile which has a file in it. Construct ourselves and then load
                 super(ZippedFile, self).__init__(**kargs)
-                self._extract(other, kargs["file"])
+                self._extract(other, kargs["filename"])
             elif isinstance(other, string_types):  # Passed a string - so try as a zipfile
                 if zf.is_zipfile(other):
                     other = zf.ZipFile(other, "a")
@@ -225,11 +228,26 @@ class ZipFolderMixin(object):
         provides a __setter__ method without causing a problem.
     """
 
+    _defaults={"pattern":["*.*"],
+              "type":None,
+              "exclude":["*.tdms_index"],
+              "read_means":False,
+              "recursive":True,
+              "flat":False,
+              "readlist":True,
+              }
+
+
     def __init__(self, *args, **kargs):
         "Constructor for the ZipFolderMixin Class."
         self.File = None
         self.path=""
-        if len(args) > 1:
+        defaults=copy(self._defaults)
+        defaults.update(kargs)
+        if defaults["type"] is None:
+            from Stoner import Data
+            defaults["type"]=Data
+        if len(args) > 0:
             if isinstance(args[0], string_types) and zf.is_zipfile(args[0]):
                 self.File = zf.ZipFile(args[0], "a")
             elif isinstance(args[0], zf.ZipFile):
@@ -237,10 +255,19 @@ class ZipFolderMixin(object):
                     self.File = args[0]
                 else:
                     self.File = zf.ZipFile(args[0].filename, "a")
+        else:
+            self.File=None
+                    
+        for k in defaults:
+            setattr(self,k,kargs.pop(k,defaults[k]))
 
-
+        self._zip_contents=[]
 
         super(ZipFolderMixin, self).__init__(*args, **kargs)
+
+        if self.readlist:
+            self.getlist()
+
 
     @property
     def key(self):
@@ -290,18 +317,12 @@ class ZipFolderMixin(object):
             recursive = self.recursive
         self.files = []
         self.groups = {}
-        for d in [directory, self.directory, self.File, True]:
-            if isinstance(d, bool) and d:
-                d = self._dialog()
-            directory = d
-            if d is not None:
-                break
-        if directory is None:
-            return None
-        if isinstance(directory, string_types) and zf.is_zipfile(directory):
-            self.directory = directory
-            directory = zf.ZipFile(directory, 'a')
-            self.File = directory
+        
+        if flatten is None:
+            flatten=self.flat
+        
+        if self.File is None and directory is None:
+            self.File=zf.ZipExtFile(self._dialog(),"a")
             close_me = True
         elif isinstance(directory, zf.ZipFile):
             if directory.fp:
@@ -310,19 +331,58 @@ class ZipFolderMixin(object):
             else:
                 self.File = zf.ZipFile(directory, "a")
                 close_me = True
-            self.directory = self.File.filename
         elif isinstance(directory, string_types) and path.isdir(directory):  #Fall back to DataFolder
             return super(ZipFolderMixin, self).getlist(recursive, directory, flatten)
+        elif isinstance(self.File,zf.ZipFile):
+            close_me=False
         else:
             raise IOError("{} does not appear to be zip file!".format(directory))
         #At this point directory contains an open h5py.File object, or possibly a group
-        self.files = directory.namelist()
+        files=[x.filename for x in self.File.filelist]
+        for p in self.exclude: #Remove excluded files
+            if isinstance(p,string_types):
+                for f in list(fnmatch.filter(files,p)):
+                    del files[files.index(f)]
+            if isinstance(p,re._pattern_type):
+                matched=[]
+                # For reg expts we iterate over all files, but we can't delete matched
+                # files as we go as we're iterating over them - so we store the
+                # indices and delete them later.
+                for f in files:
+                    if p.search(f):
+                        matched.append(files.index(f))
+                matched.sort(reverse=True)
+                for i in matched: # reverse sort the matching indices to safely delete
+                    del(files[i])
+
+        for p in self.pattern: # pattern is a list of strings and regeps
+            if isinstance(p,string_types):
+                for f in fnmatch.filter(files, p):
+                    self.append(f)
+                    # Now delete the matched file from the list of candidates
+                    #This stops us double adding fles that match multiple patterns
+                    del(files[files.index(f)])
+            if isinstance(p,re._pattern_type):
+                matched=[]
+                # For reg expts we iterate over all files, but we can't delete matched
+                # files as we go as we're iterating over them - so we store the
+                # indices and delete them later.
+                for f in files:
+                    if p.search(f):
+                        self.__setter__(path.join(root,f),path.join(root,f))
+                        matched.append(files.index(f))
+                matched.sort(reverse=True)
+                for i in matched: # reverse sort the matching indices to safely delete
+                    del(files[i])
+                    
+        self._zip_contents=files
+        
         if flatten is None or not flatten:
             self.unflatten()
         if close_me:
             directory.close()
         return self
-
+    
     def __getter__(self,name,instantiate=True):
         """Loads the specified name from a compressed archive.
 
