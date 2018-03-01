@@ -91,7 +91,7 @@ these on a surface plot or 3D plot. The :py:meth:`PlotMixin.plot_xyz` method can
 
 .. plot:: samples/3D_plot.py
    :include-source:
-   :outfiel: 3D
+   :outname: 3D
 
 .. plot:: samples/colormap_plot.py
    :include-source:

@@ -4,7 +4,7 @@ Stoner.Zip module - sipport reading DataFile like objects into and outof standar
 
 Classes Include
 
-* ZipFile - A :py:class:`Stoner.Code.DataFile` subclass that can save and load data from a zip files
+* ZippedFile - A :py:class:`Stoner.Code.DataFile` subclass that can save and load data from a zip files
 * ZipFolder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single zip file
 
 Created on Tue Jan 13 16:39:51 2015
@@ -157,7 +157,7 @@ class ZippedFile(DataFile):
         return self
 
     def save(self, filename=None,compression=zf.ZIP_DEFLATED):
-        """Overrides the save method to allow ZipFile to be written out to disc (as a mininmalist output)
+        """Overrides the save method to allow ZippedFile to be written out to disc (as a mininmalist output)
 
         Args:
             filename (string or zipfile.ZipFile instance): Filename to save as (using the same rules as for the load routines)
@@ -242,7 +242,7 @@ class ZipFolderMixin(object):
         "Constructor for the ZipFolderMixin Class."
         for cls in self.__class__.__mro__[1:]: #Trail back to find a parent that might actually be handling the storage
             if "__setter__" in cls.__dict__ and "__getter__" in cls.__dict__:
-                seld._storage_class=cls
+                self._storage_class=cls
                 break
         else:
             self._storage_class=baseFolder # Fall back to the base class
@@ -263,7 +263,7 @@ class ZipFolderMixin(object):
                     self.File = zf.ZipFile(args[0].filename, "a")
         else:
             self.File=None
-                    
+
         for k in defaults:
             setattr(self,k,kargs.pop(k,defaults[k]))
 
@@ -323,10 +323,10 @@ class ZipFolderMixin(object):
             recursive = self.recursive
         self.files = []
         self.groups = {}
-        
+
         if flatten is None:
             flatten=self.flat
-        
+
         if self.File is None and directory is None:
             self.File=zf.ZipExtFile(self._dialog(),"a")
             close_me = True
@@ -380,15 +380,15 @@ class ZipFolderMixin(object):
                 matched.sort(reverse=True)
                 for i in matched: # reverse sort the matching indices to safely delete
                     del(files[i])
-                    
+
         self._zip_contents=files
-        
+
         if flatten is None or not flatten:
             self.unflatten()
         if close_me:
             directory.close()
         return self
-    
+
     def __getter__(self,name,instantiate=True):
         """Loads the specified name from a compressed archive.
 
@@ -460,3 +460,17 @@ class ZipFolderMixin(object):
         f = ZippedFile(f)
         f.save(member)
         return f.filename
+
+class ZipFolder(ZipFolderMixin,baseFolder):
+
+    """A sub class of DataFile that sores itself in a zip file.
+
+    If the first non-keyword arguement is not an :py:class:`zipfile:ZipFile` then
+    initialises with a blank parent constructor and then loads data, otherwise,
+    calls parent constructor.
+
+    """
+
+
+    pass
+
