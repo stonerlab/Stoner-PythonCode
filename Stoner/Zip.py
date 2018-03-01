@@ -227,6 +227,12 @@ class ZipFolderMixin(object):
 
     def __init__(self, *args, **kargs):
         "Constructor for the ZipFolderMixin Class."
+        for cls in self.__class__.__mro__[1:]: #Trail back to find a parent that might actually be handling the storage
+            if "__setter__" in cls.__dict__ and "__getter__" in cls.__dict__:
+                seld._storage_class=cls
+                break
+        else:
+            self._storage_class=baseFolder # Fall back to the base class
         self.File = None
         self.path=""
         if len(args) > 1:
@@ -338,8 +344,8 @@ class ZipFolderMixin(object):
             (metadataObject): The metadataObject
         """
         try: # try to go back to the base to see if it's already loaded
-            return baseFolder.__getter__(self,name,instantiate=instantiate)
-        except (AttributeError,IndexError,KeyError):
+            self._storage_class.__getter__(name,instantiate=instantiate)
+        except (AttributeError,IndexError,KeyError): #Ok, that failed, so let's
             pass
 
         pth=path.join(self.key,name)
@@ -350,7 +356,6 @@ class ZipFolderMixin(object):
                 return name
         else:
             return super(ZipFolderMixin,self).__getter__(name,instantiate=instantiate)
-
 
     def save(self, root=None):
         """Saves a load of files to a single Zip file, creating members as it goes.
