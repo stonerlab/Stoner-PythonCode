@@ -22,11 +22,9 @@ d.column_headers=["X","Y","Z"]
 d.figure(projection="3d")
 d.plot_xyz(plotter="scatter")
 
-popt,pcov=d.curve_fit(plane,[0,1],2)
-
-z=plane(row_stack((d.x,d.y)),*popt)
-d.add_column(z,header="Fitted with plane")
+popt,pcov=d.curve_fit(plane,[0,1],2,result=True)
 d.setas="xy.z"
+
 d.plot_xyz(linewidth=0,cmap=cmap.jet)
 
 txt="$z=c-ax+by$\n"
