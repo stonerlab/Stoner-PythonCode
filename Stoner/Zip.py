@@ -268,6 +268,17 @@ class ZipFolderMixin(object):
         if self.readlist:
             self.getlist()
 
+    @property
+    def directory(self):
+        return self.path
+
+    @directory.setter
+    def directory(self,value):
+        self.path=value
+        
+    @property
+    def full_key(self):
+        return path.relpath(self.path,self.File.filename).replace(path.sep,"/")
 
     @property
     def key(self):
@@ -338,6 +349,7 @@ class ZipFolderMixin(object):
         else:
             raise IOError("{} does not appear to be zip file!".format(directory))
         #At this point directory contains an open h5py.File object, or possibly a group
+        self.path=self.File.filename
         files=[x.filename for x in self.File.filelist]
         for p in self.exclude: #Remove excluded files
             if isinstance(p,string_types):
@@ -382,6 +394,15 @@ class ZipFolderMixin(object):
         if close_me:
             directory.close()
         return self
+
+    def __clone__(self,other=None,attrs_only=False):
+        """Do whatever is necessary to copy attributes from self to other."""
+        if other is None and attrs_only:
+            other=self.__class__(readlist=False)
+        for arg in self._defaults:
+            if hasattr(self,arg):
+                setattr(other,arg,getattr(self,arg))
+        return super(ZipFolderMixin,self).__clone__(other=other,attrs_only=attrs_only)            
     
     def __getter__(self,name,instantiate=True):
         """Loads the specified name from a compressed archive.
@@ -402,7 +423,7 @@ class ZipFolderMixin(object):
         except (AttributeError,IndexError,KeyError):
             pass
 
-        pth=path.join(self.key,name)
+        pth=path.normpath(path.join(self.full_key,name)).replace(path.sep,"/")
         if pth in self.File.namelist():
             if instantiate:
                 return self.type(ZippedFile(path.join(self.File.filename,pth)))

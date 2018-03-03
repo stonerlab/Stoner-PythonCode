@@ -288,7 +288,7 @@ class baseFolder(MutableSequence):
     @property
     def clone(self):
         """Clone just does a deepcopy as a property for compatibility with :py:class:`Stoner.Core.DataFile`."""
-        return deepcopy(self)
+        return self.__clone__(self)
 
     @property
     def depth(self):
@@ -552,8 +552,10 @@ class baseFolder(MutableSequence):
 
 
         """
-        if other is None:
+        if other is None and not attrs_only:
             return deepcopy(self)
+        elif other is None:
+            other=self.__class__()
         other.args=self.args
         other.kargs=self.kargs
         other.type=self.type
@@ -1137,6 +1139,47 @@ class baseFolder(MutableSequence):
         if isinstance(name,metadataObject):
             match=[1 for d in self if d==name ]
             return len(match)
+        
+    def file(self, name, value, create=True, pathsplit=None):
+        """Recursively add groups in order to put the named value into a virtual tree of :py:class:`baseFolder`.
+        
+        Args:
+            name(str): A name (which may be a nested path) of the object to file.
+            value(metadataObject): The object to be filed - it should be an instance of :py:attr:`baseFolder.type`.
+            
+        Keyword Aprameters:
+            create(bool): Whether to create missing groups or to raise an error (default True to create groups).
+            pathsplit(str or None): Character to use to split the name into path components. Defaults to using os.path.split()
+        
+        Returns:
+            (baseFolder): A reference to the group where the value was eventually filed
+        
+        """
+        if pathsplit is None:
+            pathsplit=r"[\\/]+"
+        pathsplit=re.compile(pathsplit)
+        pth=pathsplit.split(name)
+        tmp=self            
+        for ix,section in enumerate(pth):
+            if ix==len(pth)-1:
+                if section not in tmp.__names__() or id(value)!=id(self.__getter__(section,instantiate=None)): #skip if this is a nul op
+                    if hasattr(value,"filename"):
+                        value.filename=section
+                    tmp.__setter__(section,value)
+                else:
+                    return False # Return False if we didn't need to move the filing.
+                break
+            
+            if section not in tmp.groups and create:
+                tmp.add_group(section)
+            
+            if section in tmp.groups:
+                tmp=tmp.groups[section]
+            else:
+                raise KeyError("No group {} exists and not creating groups.".format(section))
+        return tmp
+        
+        
 
     def filter(self, filter=None,  invert=False,copy=False): # pylint: disable=redefined-builtin
         """Filter the current set of files by some criterion
@@ -1199,7 +1242,7 @@ class baseFolder(MutableSequence):
         Returns:
             A copy of the now flattened DatFolder
         """
-        if isinstance(depth,int):
+        if isinstance(depth,int_types):
             if self.depth<=depth:
                 self.flatten()
             else:
@@ -1208,9 +1251,13 @@ class baseFolder(MutableSequence):
         else:
             for g in self.groups:
                 self.groups[g].flatten()
-                self.extend([
-                    self.groups[g].__getter__(self.groups[g].__lookup__(n),instantiate=None)
-                    for n in self.groups[g].__names__()])
+                for n in self.groups[g].__names__():
+                    value=self.groups[g].__getter__(n,instantiate=None)
+                    if hasattr(value,"filename"):
+                        value.filename=path.join(self.groups[g].key,value.filename)
+                    new_name=path.join(self.groups[g].key,n)
+                    self.__setter__(new_name,value)
+                self.groups[g].__clear__()
             self.groups={}
         return self
 
@@ -1331,7 +1378,6 @@ class baseFolder(MutableSequence):
         elif isinstance(value,string_types):
             return value
         else:
-            print(type(value))
             name="Untitled-{}".format(self._last_name)
             while name in self:
                 self._last_name+=1
@@ -1543,19 +1589,17 @@ class baseFolder(MutableSequence):
         Returns:
             A copy of the objectFolder
         """
-        self.directory=path.commonprefix(self.__names__())
-        if self.directory[-1]!=path.sep:
-            self.directory=path.dirname(self.directory)
-        relpaths=[path.relpath(f,self.directory) for f in self.__names__()]
-        dels=list()
-        for i,f in enumerate(relpaths):
-            grp=_pathsplit(f)[0]
-            if grp!=f and grp!="":
-                self.add_group(grp)
-                self.groups[grp].append(self.__getter__(i,instantiate=None))
-                dels.append(i)
-        for i in sorted(dels,reverse=True):
-            del self[i]
+        if len(self):
+            self.directory=path.commonpath([path.realpath(path.join(self.directory, x)) for x in self.__names__()])
+            names=self.__names__()
+            relpaths=[path.relpath(path.join(self.directory,f),self.directory) for f in names]
+            dels=list()
+            for i,f in enumerate(relpaths):
+                ret=self.file(f,self.__getter__(names[i],instantiate=None))
+                if isinstance(ret,baseFolder): # filed ok
+                    dels.append(i)
+            for i in sorted(dels,reverse=True):
+                del self[i]
         for g in self.groups:
             self.groups[g].unflatten()
         return self

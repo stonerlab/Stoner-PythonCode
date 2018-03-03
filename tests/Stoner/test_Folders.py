@@ -117,15 +117,26 @@ class Folders_test(unittest.TestCase):
                     d.filename="test/{amplitude}/{phase}/{frequency}.dat".format(**d)
                     self.fldr4+=d
         self.fldr4.unflatten()
-        self.assertEqual(self.fldr4.mindepth,2,"Unflattened DataFolder had wrong mindepth.")
+        self.assertEqual(self.fldr4.mindepth,3,"Unflattened DataFolder had wrong mindepth.")
         self.assertEqual(self.fldr4.shape, (~~self.fldr4).shape,"Datafodler changed shape on flatten/unflatten")
         self.fldr5=self.fldr4.select(amplitude=1.4,recurse=True)
         self.fldr5.prune()
-        pruned=(0,{'1.4': (0,{'0.0': (5, {}),'0.25': (5, {}),'0.5': (5, {}),'0.75': (5, {}),'1.0': (5, {})})})
+        pruned=(0,
+                {'test': (0,
+                   {'1.4': (0,
+                     {'0.0': (5, {}),
+                      '0.25': (5, {}),
+                      '0.5': (5, {}),
+                      '0.75': (5, {}),
+                      '1.0': (5, {})})})})
+        selected=(0,
+                {'test': (0,
+                   {'1.4': (0,
+                     {'0.25': (1, {}), '0.5': (1, {}), '0.75': (1, {}), '1.0': (1, {})})})})
         self.assertEqual(self.fldr5.shape,pruned,"Folder pruning gave an unxpected shape.")
-        self.assertEqual(self.fldr5[("1.4","0.5",0,"phase")],0.5,"Multilevel indexing of tree failed.")
+        self.assertEqual(self.fldr5[("test","1.4","0.5",0,"phase")],0.5,"Multilevel indexing of tree failed.")
         shape=(~(~self.fldr4).select(amplitude=1.4).select(frequency=1).select(phase__gt=0.2)).shape
-        self.assertEqual(shape,(0, {'0.25': (1, {}), '0.5': (1, {}), '0.75': (1, {}), '1.0': (1, {})}),"Multi selects and inverts failed.")
+        self.assertEqual(shape, selected,"Multi selects and inverts failed.")
         g=(~self.fldr4)/10
         self.assertEqual(g.shape,(0,{'Group 0': (15, {}),'Group 1': (15, {}),'Group 2': (15, {}),'Group 3': (15, {}),'Group 4': (15, {}),
                                      'Group 5': (15, {}),'Group 6': (15, {}),'Group 7': (15, {}),'Group 8': (15, {}),'Group 9': (15, {})}),"Dive by int failed.")
@@ -136,14 +147,14 @@ class Folders_test(unittest.TestCase):
         g["Group 3"]-=remove
         self.assertEqual(g.shape,(0,{'Group 0': (15, {}),'Group 1': (15, {}),'Group 2': (15, {}),'Group 3': (14, {}),'Group 4': (15, {}),
                                      'Group 5': (15, {}),'Group 6': (14, {}),'Group 7': (15, {}),'Group 8': (15, {}),'Group 9': (15, {})}),"Sub by object failed.")
-        d=self.fldr4["1.0","1.0"].gather(0,1)
+        d=self.fldr4["test",1.0,1.0].gather(0,1)
         self.assertEqual(d.shape,(181,6),"Gather seems have failed.")
-        self.assertTrue(np.all(self.fldr4["1.0","1.0"].slice_metadata("phase")==
+        self.assertTrue(np.all(self.fldr4["test",1.0,1.0].slice_metadata("phase")==
                                np.ones(5)),"Slice metadata failure.")
         d=(~self.fldr4).extract("phase","frequency","amplitude","params")
         self.assertEqual(d.shape,(150,6),"Extract failed to produce data of correct shape.")
         self.assertEqual(d.column_headers,['phase', 'frequency', 'amplitude', 'params', 'params', 'params'],"Exctract failed to get correct column headers.")
-        p=self.fldr4["1.0","1.0"]
+        p=self.fldr4["test",1.0,1.0]
         p=SF.PlotFolder(p)
         p.plot()
         self.assertEqual(len(plt.get_fignums()),1,"Failed to generate a single plot for PlotFolder.")
@@ -155,3 +166,4 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
     unittest.main()
+    #test.test_grouping()

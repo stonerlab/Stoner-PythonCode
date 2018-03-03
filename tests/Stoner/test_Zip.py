@@ -34,7 +34,13 @@ class Zip_test(unittest.TestCase):
         self.fldr=ZipFolder(path.join(testdata,"ZipFolder.zip"),flat=True)
         
     def test_zipfolder(self):
-        pass
+        key=self.fldr[0].filename
+        parts=path.dirname(path.relpath(key,self.fldr.File.filename)).split(path.sep)
+        self.fldr.unflatten()
+        tmp=self.fldr
+        for s in parts:
+            tmp=tmp[s]
+        self.assertEqual(key,tmp[0].filename,"Unflatten groups tree entry 0 didn't match flattened entry 0")
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
