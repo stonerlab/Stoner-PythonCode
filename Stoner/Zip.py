@@ -401,7 +401,6 @@ class ZipFolderMixin(object):
             directory.close()
         return self
 
-<<<<<<< HEAD
     def __clone__(self,other=None,attrs_only=False):
         """Do whatever is necessary to copy attributes from self to other."""
         if other is None and attrs_only:
@@ -411,8 +410,6 @@ class ZipFolderMixin(object):
                 setattr(other,arg,getattr(self,arg))
         return super(ZipFolderMixin,self).__clone__(other=other,attrs_only=attrs_only)            
     
-=======
->>>>>>> 5f2890f31a07cb54f6882f05029a4101ae100339
     def __getter__(self,name,instantiate=True):
         """Loads the specified name from a compressed archive.
 
@@ -428,10 +425,17 @@ class ZipFolderMixin(object):
             (metadataObject): The metadataObject
         """
         try: # try to go back to the base to see if it's already loaded
-            self._storage_class.__getter__(name,instantiate=instantiate)
+            self._storage_class.__getter__(self,name=name,instantiate=instantiate)
         except (AttributeError,IndexError,KeyError): #Ok, that failed, so let's
             pass
-
+        
+        name=name.replace(path.sep,"/")
+        #First try tthe direct lookup - will work if we have a full name
+        if name in self.File.namelist():
+            if instantiate:
+                return self.type(ZippedFile(path.join(self.File.filename,name)))
+            else:
+                return name
         pth=path.normpath(path.join(self.full_key,name)).replace(path.sep,"/")
         if pth in self.File.namelist():
             if instantiate:

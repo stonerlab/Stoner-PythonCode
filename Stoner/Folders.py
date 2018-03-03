@@ -1162,7 +1162,10 @@ class baseFolder(MutableSequence):
         tmp=self            
         for ix,section in enumerate(pth):
             if ix==len(pth)-1:
-                if section not in tmp.__names__() or id(value)!=id(self.__getter__(section,instantiate=None)): #skip if this is a nul op
+                existing=self.__getter__(section,instantiate=None) if section in self.__names__() else None
+                if existing is None or (
+                            isinstance(value,self.type) and id(existing)!=id(value)) or (
+                            isinstance(existing,string_types) and existing!=value): #skip if this is a nul op
                     if hasattr(value,"filename"):
                         value.filename=section
                     tmp.__setter__(section,value)
