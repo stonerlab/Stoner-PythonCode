@@ -999,7 +999,11 @@ class typeHintedDict(regexpDict):
         Returns:
             A string of the format : key{type hint} = value
         """
-        return "{}{{{}}}={}".format(key, self.type(key), repr(self[key]).encode('unicode_escape'))
+        if isinstance(self[key], string_types): #avoid string within string problems and backslash overdrive
+            ret = "{}{{{}}}={}".format(key, self.type(key), self[key])
+        else:
+            ret = "{}{{{}}}={}".format(key, self.type(key), repr(self[key]))
+        return ret
 
     def export_all(self):
         """Return all the entries in the typeHintedDict as a list of exported lines.
@@ -1032,13 +1036,7 @@ class typeHintedDict(regexpDict):
         """
         parts=line.split("=")
         k=parts[0]
-        v="=".join(parts[1:]) #rejoin any = in the value string
-        v=literal_eval(v) #In python v3 this can result in a bytes string of the literal value
-        if python_v3 and isinstance(v,bytes): #Try again to unwrap the bytes object in python 3
-            v=bytes2str(v)
-            if v[0]==v[-1]=='"' or v[0]==v[-1]=="'": #still a string within a string
-                v=v[1:-1]
-            #v=self.string_to_type(v) #Now we should be good        
+        v="=".join(parts[1:]) #rejoin any = in the value string     
         self[k] = v
 
 
@@ -3697,7 +3695,8 @@ class DataFile(metadataObject):
         with io.open(filename, 'wb') as f:
             _np_.savetxt(f, data_out, fmt=fmt, header=header, delimiter="\t", comments="")
             for k in mdremains:
-                f.write(str2bytes(self.metadata.export(k) + "\n"))
+                t = self.metadata.export(k)
+                f.write(str2bytes(self.metadata.export(k) + "\n")) #(str2bytes(self.metadata.export(k) + "\n"))
 
         self.filename = filename
         return self
