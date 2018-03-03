@@ -19,7 +19,7 @@ from scipy.optimize import curve_fit,newton
 from scipy.signal import savgol_filter
 
 from .compat import python_v3, string_types, int_types, index_types, LooseVersion
-from .tools import isNone, isiterable, all_type, istuple
+from .tools import isNone, isiterable, all_type, istuple,islike_list
 
 try:  #Allow lmfit to be optional
     import lmfit
@@ -604,7 +604,10 @@ class AnalysisMixin(object):
             tmp_mask=_np_.column_stack((tmp_mask,col_mask))
         else: # Inserting data
             tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
-        new_col=func(self.column(xcol),*popt)
+        if islike_list(xcol):
+            new_col=func(self[:,xcol].T,*popt)
+        else:
+            new_col=func(self.column(xcol),*popt)
         self.add_column(new_col,index=result, replace=replace, header=header)
         self.mask=tmp_mask
 
