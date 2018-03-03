@@ -779,8 +779,11 @@ class typeHintedDict(regexpDict):
             if m is not None:
                 if isinstance(valuetype, _evaluatable):
                     try:
-                        array=_np_.array # pylint: disable=unused-variable
-                        ret = eval(repr(value), globals(), locals()) # pylint: disable=eval-used
+                        array=_np_.array
+                        if isinstance(value, string_types): #we've got a string already don't need repr
+                            ret = eval(value, globals(), locals())
+                        else:
+                            ret = eval(repr(value), globals(), locals()) # pylint: disable=eval-used
                     except NameError:
                         ret = str(value)
                     except SyntaxError:
@@ -814,14 +817,15 @@ class typeHintedDict(regexpDict):
             tests = ['list(' + value + ')', 'dict(' + value + ')']
             try:
                 i = "[{".index(value[0])
-                ret = eval(tests[i]) # pylint: disable=eval-used
+                array=_np_.array
+                ret = eval(tests[i],  globals(), locals()) # pylint: disable=eval-used
             except (SyntaxError, ValueError):
-                if value.lower() in ['true', 'ues', 'on', 'false', 'no', 'off']:
-                    ret = value.lower() in ['true', 'yes', 'on']  #Booleab
+                if value.lower() in ['true', 'yes', 'on', 'false', 'no', 'off']:
+                    ret = value.lower() in ['true', 'yes', 'on']  #Boolean
                 else:
                     for trial in [int, float, str]:
                         try:
-                            ret = trial(value)
+                            ret = trial(value)                            
                             break
                         except ValueError:
                             continue
@@ -896,7 +900,7 @@ class typeHintedDict(regexpDict):
         name, typehint = self._get_name_(name)
         if typehint is not None:
             self._typehints[name] = typehint
-            if value is None:  # Empty data so reset to string and set empty #RCT don't think this a great test for empty data but there was an issue with if str(value) which always returns True
+            if value is None:  # Empty data so reset to string and set empty #RCT changed the test here
                 super(typeHintedDict, self).__setitem__(name, "")
                 self._typehints[name] = "String"
             else:
@@ -1029,13 +1033,12 @@ class typeHintedDict(regexpDict):
         parts=line.split("=")
         k=parts[0]
         v="=".join(parts[1:]) #rejoin any = in the value string
-        v=literal_eval(v) #In python v3 this can result in a bytes string of te literal value
+        v=literal_eval(v) #In python v3 this can result in a bytes string of the literal value
         if python_v3 and isinstance(v,bytes): #Try again to unwrap the bytes object in python 3
             v=bytes2str(v)
-            v=literal_eval(v) #Now we should be good
-
-        if isinstance(v,string_types):
-            v = self.string_to_type(v) #convert back to a value type
+            if v[0]==v[-1]=='"' or v[0]==v[-1]=="'": #still a string within a string
+                v=v[1:-1]
+            #v=self.string_to_type(v) #Now we should be good        
         self[k] = v
 
 
@@ -2486,9 +2489,7 @@ class DataFile(metadataObject):
                 else:
                     cols = max(cols, len(row))
                     metaDataArray += 1
-                    md = row[0].split('=')
-                    val = "=".join(md[1:])
-                    self.metadata[md[0].strip()] = val.strip()
+                    self.metadata.import_key(row[0])
         #End of metadata reading, close filke and reopen to read data
         if still_data:  # data extends beyond metada - read with genfromtxt
             self.data = DataArray(_np_.genfromtxt(self.filename,
