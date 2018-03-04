@@ -4,7 +4,7 @@ Classes:
      :py:class:`objectFolder` - manages a list of individual data files (e.g. from a directory tree)
 """
 __all__ = ["baseFolder","DataFolder","PlotFolder"]
-from .compat import python_v3,int_types,string_types,get_filedialog
+from .compat import python_v3,int_types,string_types,get_filedialog,commonpath
 from .tools import operator,isiterable,isproperty,islike_list
 import os
 import re
@@ -1593,7 +1593,7 @@ class baseFolder(MutableSequence):
             A copy of the objectFolder
         """
         if len(self):
-            self.directory=path.commonpath([path.realpath(path.join(self.directory, x)) for x in self.__names__()])
+            self.directory=commonpath([path.realpath(path.join(self.directory, x)) for x in self.__names__()])
             names=self.__names__()
             relpaths=[path.relpath(path.join(self.directory,f),self.directory) for f in names]
             dels=list()

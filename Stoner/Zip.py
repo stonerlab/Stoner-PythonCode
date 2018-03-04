@@ -385,12 +385,12 @@ class ZipFolderMixin(object):
                 # For reg expts we iterate over all files, but we can't delete matched
                 # files as we go as we're iterating over them - so we store the
                 # indices and delete them later.
-                for f in files:
+                for ix,f in enumerate(files):
                     if p.search(f):
                         self.__setter__(path.join(root,f),path.join(root,f))
-                        matched.append(files.index(f))
-                matched.sort(reverse=True)
-                for i in matched: # reverse sort the matching indices to safely delete
+                    else:
+                        matched.append(ix)
+                for i in reversed(matched): # reverse sort the matching indices to safely delete
                     del(files[i])
 
         self._zip_contents=files
@@ -425,7 +425,7 @@ class ZipFolderMixin(object):
             (metadataObject): The metadataObject
         """
         try: # try to go back to the base to see if it's already loaded
-            self._storage_class.__getter__(self,name=name,instantiate=instantiate)
+            return self._storage_class.__getter__(self,name=name,instantiate=instantiate)
         except (AttributeError,IndexError,KeyError): #Ok, that failed, so let's
             pass
         

@@ -13,7 +13,7 @@ from re import _pattern_type
 from matplotlib import __version__ as mpl_version
 from distutils.version import LooseVersion
 from os import walk
-from os.path import join
+from os.path import join, commonprefix,sep
 import fnmatch
 import numpy as np
 
@@ -65,10 +65,26 @@ if __vi__[0] == 2:
             raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
         else:
             return funcs[what](**opts)
+        
+    def commonpath(paths):
+        """Given a sequence of path names, returns the longest common sub-path."""
+    
+        if not paths:
+            raise ValueError('commonpath() arg is an empty sequence')
+    
+        prefix=commonprefix(paths)
+        prefix=prefix[::-1]
+        split=prefix.index(sep)
+        if split>0:
+            prefix=prefix[split:]
+        return prefix[::-1]
+        
+        
 
 elif __vi__[0] == 3:
 
     from builtins import bytes as _bytes
+    from os.path import commonpath
 
 
     string_types = (str, )
