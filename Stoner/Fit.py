@@ -459,8 +459,6 @@ def quadratic(x, a, b, c):
     """
     return a * x ** 2 + b * x + c
 
-Quadratic.__doc__=quadratic.__doc__
-
 def simmons(V, A, phi, d):
     """Simmons model of electron tunnelling.
 
