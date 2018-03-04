@@ -459,6 +459,7 @@ def quadratic(x, a, b, c):
     """
     return a * x ** 2 + b * x + c
 
+Quadratic.__doc__=quadratic.__doc__
 
 def simmons(V, A, phi, d):
     """Simmons model of electron tunnelling.
@@ -1266,7 +1267,7 @@ def inverse_kittel(f,g,M_s,H_k):
     Notes:
         In practice one often measures FMR by sweepign field for constant frequency and then locates the
         peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a :math:`H_{res}\\pm \\Delta H_{res}`
-        In order to make use of this data with :py:math:`Stoner.Analysis.AnalysisMixin.lmfit` or :py:math:`Stoner.Analysis.AnalysisMixin.curve_fit`
+        In order to make use of this data with :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit` or :py:meth:`Stoner.Analysis.AnalysisMixin.curve_fit`
         it makes more sense to fit the Kittel Equation written in terms of H than frequency.
 
        :math:`H_{res}=- H_{k} - \\frac{M_{s}}{2} + \\frac{1}{2 \\gamma \\mu_{0}} \\sqrt{M_{s}^{2} \\gamma^{2} \\mu_{0}^{2} + 16 \\pi^{2} f^{2}}`
@@ -1411,7 +1412,7 @@ class Lorentzian_diff(Model):
 
 
 def fmr_power(H,H_res,Delta_H,K_1,K_2):
-    """A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
+    r"""A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
 
     Args:
         H (array) magnetic field data
@@ -1422,12 +1423,12 @@ def fmr_power(H,H_res,Delta_H,K_1,K_2):
     Returns:
         Array of model absorption values.
 
-    math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
+    :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
     """
     return 4*Delta_H*K_1*(H - H_res)/(Delta_H**2 + 4*(H - H_res)**2)**2 - K_2*(Delta_H**2 - 4*(H - H_res)**2)/(Delta_H**2 + 4*(H - H_res)**2)**2
 
 class FMR_Power(Model):
-    """A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
+    r"""A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
 
     Args:
         H (array) magnetic field data
@@ -1438,7 +1439,7 @@ class FMR_Power(Model):
     Returns:
         Array of model absorption values.
 
-    math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
+    :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
     """
     display_names=["H_{res}",r"\Delta_H","K_1","K_2"]
 

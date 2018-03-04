@@ -1517,7 +1517,7 @@ class DataFile(metadataObject):
                             priority (!)
         setas (list or string): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.
         shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape.
-        records (numpoy record array): Returns the data in the form of a list of yuples where each tuple maps to the columsn names.
+        records (numpy record array): Returns the data in the form of a list of yuples where each tuple maps to the columsn names.
         clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.
         dict_records (array of dictionaries): View the data as an array or dictionaries where each dictionary represnets one
             row with keys dervied from column headers.
