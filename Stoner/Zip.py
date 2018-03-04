@@ -15,7 +15,7 @@ Created on Tue Jan 13 16:39:51 2015
 from Stoner.compat import string_types,bytes2str,str2bytes
 import zipfile as zf
 from .Core import DataFile,StonerLoadError,metadataObject
-from .Folders import baseFolder
+from .Folders import baseFolder,pathjoin
 import os.path as path
 from traceback import format_exc
 import numpy as _np_
@@ -292,7 +292,7 @@ class ZipFolderMixin(object):
 
     @key.setter
     def key(self,value):
-        self.path=path.join(self.path,value)
+        self.path=pathjoin(self.path,value)
 
 
 
@@ -376,18 +376,18 @@ class ZipFolderMixin(object):
         for p in self.pattern: # pattern is a list of strings and regeps
             if isinstance(p,string_types):
                 for f in fnmatch.filter(files, p):
-                    self.append(f)
-                    # Now delete the matched file from the list of candidates
-                    #This stops us double adding fles that match multiple patterns
                     del(files[files.index(f)])
-            if isinstance(p,re._pattern_type):
+                    f.replace(path.sep,"/")
+                    self.append(f)
+            elif isinstance(p,re._pattern_type):
                 matched=[]
                 # For reg expts we iterate over all files, but we can't delete matched
                 # files as we go as we're iterating over them - so we store the
                 # indices and delete them later.
                 for ix,f in enumerate(files):
                     if p.search(f):
-                        self.__setter__(path.join(root,f),path.join(root,f))
+                        f.replace(path.sep,"/")
+                        self.append(f)
                     else:
                         matched.append(ix)
                 for i in reversed(matched): # reverse sort the matching indices to safely delete
@@ -429,21 +429,50 @@ class ZipFolderMixin(object):
         except (AttributeError,IndexError,KeyError): #Ok, that failed, so let's
             pass
         
-        name=name.replace(path.sep,"/")
-        #First try tthe direct lookup - will work if we have a full name
-        if name in self.File.namelist():
-            if instantiate:
+        #name=self.__lookup__(name)
+        if instantiate:
+            try:
                 return self.type(ZippedFile(path.join(self.File.filename,name)))
-            else:
-                return name
-        pth=path.normpath(path.join(self.full_key,name)).replace(path.sep,"/")
-        if pth in self.File.namelist():
-            if instantiate:
-                return self.type(ZippedFile(path.join(self.File.filename,pth)))
-            else:
-                return name
+            except AttributeError: # closed zip file?
+                filename=test_is_zip(self.path)[0]
+                self.File = zf.ZipFile(filename, "a")
+                tmp=self.type(ZippedFile(path.join(self.File.filename,name)))
+                self.File.close()
+                return tmp
         else:
-            return super(ZipFolderMixin,self).__getter__(name,instantiate=instantiate)
+            return name
+       
+    def __lookup__(self,name):
+        """Look for a given name in the ZipFolder namelist.
+
+        Parameters:
+            name(str): Name of an object
+
+        Returns:
+            A canonical key name for that file
+
+        Note:
+            We try two things - first a direct lookup in the namelist if there is an exact match to the key and then
+            we preprend the ZipFolder's path to try for a match with just the final part of the filename.
+        """
+        try: # try to go back to the base to see if it's already loaded
+            return self._storage_class.__lookup__(self,name)
+        except (AttributeError,IndexError,KeyError): #Ok, that failed, so let's
+            pass
+
+        try:
+            if isinstance(name,string_types):
+                name=name.replace(path.sep,"/")
+                #First try tthe direct lookup - will work if we have a full name
+                if name in self.File.namelist():
+                    return name
+                pth=path.normpath(path.join(self.full_key,name)).replace(path.sep,"/")
+                if pth in self.File.namelist():
+                    return pth
+        except AttributeError:
+            pass
+        return super(ZipFolderMixin,self).__lookup__(name)
+
 
     def save(self, root=None):
         """Saves a load of files to a single Zip file, creating members as it goes.

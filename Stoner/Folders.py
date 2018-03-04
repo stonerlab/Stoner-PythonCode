@@ -33,6 +33,11 @@ def _pathsplit(pth):
         rest.append(fpart)
         return rest
 
+def pathjoin(*args):
+    """Join a path like path.join, but then replace the path separator with a standard /."""
+    tmp=path.join(*args)
+    return tmp.replace(path.sep,"/")
+
 class _combined_metadata_proxy(object):
 
     """Provide methods to interact with a whole collection of metadataObjects' metadata."""
@@ -1257,8 +1262,8 @@ class baseFolder(MutableSequence):
                 for n in self.groups[g].__names__():
                     value=self.groups[g].__getter__(n,instantiate=None)
                     if hasattr(value,"filename"):
-                        value.filename=path.join(self.groups[g].key,value.filename)
-                    new_name=path.join(self.groups[g].key,n)
+                        value.filename=pathjoin(self.groups[g].key,value.filename)
+                    new_name=pathjoin(self.groups[g].key,n)
                     self.__setter__(new_name,value)
                 self.groups[g].__clear__()
             self.groups={}
@@ -1798,7 +1803,7 @@ class DiskBssedFolder(object):
         return grp.filename
 
     def __add_core__(self,result,other):
-        """Additional logic for the add olperator."""
+        """Additional logic for the add operator."""
         if isinstance(other,string_types):
             othername=path.join(self.directory,other)
             if path.exists(othername) and othername not in result:

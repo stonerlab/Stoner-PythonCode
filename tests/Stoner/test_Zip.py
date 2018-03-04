@@ -41,7 +41,7 @@ class Zip_test(unittest.TestCase):
         for s in self.parts:
             tmp=tmp[s]
         self.assertEqual(key,tmp[0].filename,"Unflatten groups tree entry 0 didn't match flattened entry 0")
-        data=test.fldr["20170411/6221-2182 DC IV/6221-2182 DC IV Temperature Control 0000 5.00.txt"]
+        data=(~self.fldr)["20170411/6221-2182 DC IV/6221-2182 DC IV Temperature Control 0000 5.00.txt"]
         self.assertTrue(isinstance(data,Stoner.Data),"Failed to retrieve the correct instance type from the ZipFolder.")
         #self.fldr.save("test-data/new-zip.zip") #Currently broken
 
