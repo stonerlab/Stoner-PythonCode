@@ -8,7 +8,7 @@ Created on Tue Jan 07 22:05:55 2014
 
 import unittest
 import sys
-import os.path as path
+import os, os.path as path
 import numpy as np
 import re
 from numpy import any,all,sqrt
@@ -28,6 +28,7 @@ class Datatest(unittest.TestCase):
         self.d=Data(path.join(path.dirname(__file__),"CoreTest.dat"),setas="xy")
         self.d2=Data(path.join(__home__,"..","sample-data","TDI_Format_RT.txt"))
         self.d3=Data(path.join(__home__,"..","sample-data","New-XRay-Data.dql"))
+        self.d4=Data(path.join(__home__,"..","sample-data","Cu_resistivity_vs_T.txt"))
         
         
     def test_constructor(self):
@@ -231,6 +232,38 @@ class Datatest(unittest.TestCase):
         e=self.d2.clone
         e.reorder_columns([2,0,1])
         self.assertTrue(e.column_headers==[self.d2.column_headers[x] for x in [2,0,1]],"Failed to reorder columns: {}".format(e.column_headers))
+    
+    def test_metadata_save(self):
+        local = path.dirname(__file__)
+        t = np.arange(12).reshape(3,4) #set up a test data file with mixed metadata
+        t = Data(t)
+        t.column_headers = ["1","2","3","4"]
+        metitems = [True,1,0.2,{"a":1, "b":"abc"},(1,2),np.arange(3),[1,2,3], "abc", #all types accepted
+                    r"\\abc\cde", 1e-20, #extra tests
+                    [1,(1,2),"abc"], #list with different types
+                    [[[1]]] #nested list
+                    ]
+        metnames = ["t"+str(i) for i in range(len(metitems))]
+        for k,v in zip(metnames,metitems):
+            t[k] = v
+        t.save(path.join(local, "mixedmetatest.dat"))
+        tl = Data(path.join(local, "mixedmetatest.txt")) #will change extension to txt if not txt or tdi, is this what we want?
+        t2 = self.d4.clone  #check that python tdi save is the same as labview tdi save
+        t2.save(path.join(local, "mixedmetatest2.txt"))
+        t2l = Data(path.join(local, "mixedmetatest2.txt"))
+        for orig, load in [(t,tl), (t2, t2l)]: 
+            self.assertTrue(np.allclose(orig.data, load.data))
+            self.assertTrue(orig.column_headers==load.column_headers)
+            self.assertTrue(all([i in load.metadata.keys() for i in orig.metadata.keys()]))
+            for k in orig.metadata.keys():
+                if isinstance(orig[k], np.ndarray):
+                    self.assertTrue(np.allclose(load[k],orig[k]))
+                elif isinstance(orig[k], float) and np.isnan(orig[k]):
+                    self.assertTrue(np.isnan(load[k]))
+                else:
+                    self.assertTrue(load[k] == orig[k], "Not equal for metadata: {}".format(load[k]))
+        os.remove(path.join(local, "mixedmetatest.txt")) #clear up
+        os.remove(path.join(local, "mixedmetatest2.txt"))
         
     def test_setas_metadata(self):
         d=self.d.clone
