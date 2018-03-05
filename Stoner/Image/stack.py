@@ -225,9 +225,12 @@ class ImageStackMixin(object):
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         if other is None:
-            return copy.deepcopy(self)
-        other=super(ImageStackMixin,self).__clone__(other,attrs_only)
-        return other
+            other=self.__class__()
+        if not attrs_only:
+            other._metadata=copy.deepcopy(self._metadata)
+            other._stack=copy.deepcopy(self._stack)
+            other._names=copy.deepcopy(self._names)
+        return super(ImageStackMixin,self).__clone__(other=other,attrs_only=attrs_only)
 
     def _instantiate(self,idx):
         """Reconstructs the data type."""

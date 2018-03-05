@@ -2,7 +2,7 @@
 from __future__ import print_function
 from Stoner import Data
 from numpy.random import normal
-from numpy import linspace,meshgrid,column_stack
+from numpy import linspace,meshgrid,column_stack,row_stack
 import matplotlib.cm as cmap
 import matplotlib.pyplot as plt
 
@@ -20,11 +20,11 @@ d=Data(column_stack((X.ravel(),Y.ravel(),Z.ravel())),filename="Fitting a Plane",
 
 d.column_headers=["X","Y","Z"]
 d.figure(projection="3d")
-d.plot_xyz(plotter="scatter",c=cmap.jet(d.z))
+d.plot_xyz(plotter="scatter")
 
-d.curve_fit(plane,[0,1],2,result=True)
-
+popt,pcov=d.curve_fit(plane,[0,1],2,result=True)
 d.setas="xy.z"
+
 d.plot_xyz(linewidth=0,cmap=cmap.jet)
 
 txt="$z=c-ax+by$\n"

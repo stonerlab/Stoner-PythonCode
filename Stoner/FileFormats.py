@@ -1261,8 +1261,9 @@ class LSTemperatureFile(_SC_.DataFile):
     """A class that reads and writes Lakeshore Temperature Calibration Curves.
 
     .. warning::
+
         This class works for cernox curves in Log Ohms/Kelvin and Log Ohms/Log Kelvin. It may or may not work with any
-    other temperature calibration data !
+        other temperature calibration data !
 
     """
 

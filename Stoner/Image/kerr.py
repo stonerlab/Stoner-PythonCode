@@ -19,30 +19,30 @@ AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
 
 
 class KerrArray(ImageArray):
-    
+
     """A subclass for Kerr microscopy specific image functions."""
-    
-    #useful_keys are metadata keys that we'd usually like to keep from a 
+
+    #useful_keys are metadata keys that we'd usually like to keep from a
     #standard kerr output.
     _useful_keys = ['X-B-2d','field: units','MicronsPerPixel','Comment:',
         'Contrast Shift','HorizontalFieldOfView','Images to Average',
         'Lens','Magnification','Substraction Std']
     _test_keys = ['X-B-2d','field: units'] #minimum keys in data to assert that it is a standard file output
-               
+
     def __init__(self,*args,**kargs):
-        """Constructor for KerrArray which subclasses ImageArray. 
-        
+        """Constructor for KerrArray which subclasses ImageArray.
+
         Extra keyword arguments accepted are given below.
         Keyword Arguments:
             reduce_metadata(bool):
-                if True reduce the metadata to useful bits and do some processing on it          
+                if True reduce the metadata to useful bits and do some processing on it
             asfloat(bool)
-                if True convert the image to float values between 0 and 1 (necessary 
+                if True convert the image to float values between 0 and 1 (necessary
                 for some forms of processing)
             crop_text(bool):
                 whether to crop the bottom text area from the image
             ocr_metadata(bool):
-                whether to try to use optical character recognition to get the 
+                whether to try to use optical character recognition to get the
                 metadata from the image (necessary for images taken pre 06/2016
                 and so far field from hysteresis images)
             field_only(bool):
@@ -53,30 +53,28 @@ class KerrArray(ImageArray):
                         'reduce_metadata':True,
                         'asfloat':True,
                         'crop_text':True}
-        kerrargs={}
-        for k, v in kerrdefaults:
-            kerrargs[k] = kargs.pop(k, v) 
+        kerrdefaults.update(kargs)
         super(KerrArray,self).__init__(*args,**kargs)
-        if kerrargs['reduce_metadata']:
+        self._tesseractable=None
+        if kerrdefaults['reduce_metadata']:
             self.reduce_metadata()
-        if kerrargs['ocr_metadata']:
-            self.ocr_metadata(field_only=kerrargs['field_only']) 
-        if kerrargs['asfloat']:
+        if kerrdefaults['ocr_metadata']:
+            self.ocr_metadata(field_only=kerrdefaults['field_only'])
+        if kerrdefaults['asfloat']:
             self.asfloat()
-        if kerrargs['crop_text']:
+        if kerrdefaults['crop_text']:
             self.crop_text()
-            
+
     @property
     def tesseractable(self):
         """Do a test call to tesseract to see if it is there and cache the result."""
-        try:
-            self.__tesseractable=getattr(self,"_tesseractable")
-        except AttributeError:
-            self._tesseractable=subprocess.call(["tesseract","-v"])==0
-        except Exception:
-            self._tesseractable=False
+        if self._tesseractable is None:
+            try:
+                self._tesseractable=subprocess.call(["tesseract","-v"])==0
+            except Exception:
+                self._tesseractable=False
         return self._tesseractable
-    
+
     def crop_text(self, copy=False):
         """Crop the bottom text area from a standard Kermit image
 
@@ -88,15 +86,15 @@ class KerrArray(ImageArray):
         (ImageArray):
             cropped image
         """
-        if self.shape!=AN_IM_SIZE and self.shape!=IM_SIZE:
-            raise ValueError('Need a full sized Kerr image to crop') #check it's a normal image
+        if self.shape!=AN_IM_SIZE:
+            raise ValueError('Need a full sized Kerr image to crop. Current size is {}'.format(self.shape)) #check it's a normal image
         return self.crop(None, None, None, IM_SIZE[0],copy=copy)
 
     def reduce_metadata(self):
         """Reduce the metadata down to a few useful pieces and do a bit of processing.
-        
+
         Returns:
-            (:py:class:`typeHintedDict`): the new metadata 
+            (:py:class:`typeHintedDict`): the new metadata
         """
         newmet={}
         if not all([k in self.keys() for k in KerrArray._test_keys]):
@@ -115,10 +113,10 @@ class KerrArray(ImageArray):
                 newmet.pop('Images to Average')
         self.metadata=typeHintedDict(newmet)
         return self.metadata
-                
+
     def _parse_text(self, text, key=None):
         """Attempt to parse text which has been recognised from an image
-        
+
         if key is given specific hints may be applied
         """
         #strip any internal white space
@@ -144,7 +142,7 @@ class KerrArray(ImageArray):
 
     def _tesseract_image(self, im, key):
         """ocr image with tesseract tool.
-        
+
         im is the cropped image containing just a bit of text
         key is the metadata key we're trying to find, it may give a
         hint for parsing the text generated.
@@ -250,18 +248,18 @@ class KerrArray(ImageArray):
         if 'ocr_field' in self.metadata.keys() and not isinstance(self.metadata['ocr_field'],(int,float)):
             self.metadata['ocr_field']=np.nan  #didn't read the field properly
         return self.metadata
-    
-    
+
+
 class KerrStack(ImageStack):
-    
-    """:py:class:`Stoner.Image.stack.KerrStack is similar to ImageStack but adds some functionality particular to Kerr images.
-    
+
+    """:py:class:`KerrStack` is similar to :py:class:`ImageStack` but adds some functionality particular to Kerr images.
+
     Attributes:
         fields(list):
             list of applied fields in stack. This is the most important metadata
-            for things like hysteresis.    
+            for things like hysteresis.
     """
-        
+
     def __init__(self, *args, **kargs):
         """Constructor."""
         super(KerrStack, self).__init__(*args, **kargs)
@@ -270,21 +268,21 @@ class KerrStack(ImageStack):
             self.fields = np.array(self.zipallmeta['field'])
         else:
             self.fields = np.arange(len(self))
-#    
+#
     def hysteresis(self, mask=None):
         """Make a hysteresis loop of the average intensity in the given images
-    
+
         Keyword Argument:
             mask(ndarray or list):
-                boolean array of same size as an image or imarray or list of 
-                masks for each image. If True then don't include that area in 
+                boolean array of same size as an image or imarray or list of
+                masks for each image. If True then don't include that area in
                 the intensity averaging.
-    
+
         Returns
         -------
         hyst(Data):
             'Field', 'Intensity', 2 column array
-        """     
+        """
         hyst=np.column_stack((self.fields,np.zeros(len(self))))
         for i in range(len(self)):
             im=self[i]
@@ -299,36 +297,36 @@ class KerrStack(ImageStack):
         d = Data(hyst, setas='xy')
         d.column_headers = ['Field', 'Intensity']
         return d
-            
+
     def index_to_field(self, index_map):
         """Convert an image of index values into an image of field values"""
         fieldvals=np.take(self.fields, index_map)
         return ImageArray(fieldvals)
-    
+
     def reverse(self):
         """Reverse the image order"""
         self.imarray = self.imarray[::-1,:,:]
         self.fields = self.fields[::-1]
-                              
+
     def denoise_thresh(self, denoise_weight=0.1, thresh=0.5, invert=False):
         """apply denoise then threshold images.
-        
+
         Return a new MaskStack.
         True for values greater than thresh, False otherwise
         else return True for values between thresh and 1
         """
         masks=self.clone
         masks.apply_all('denoise', weight=0.1)
-        masks.apply_all('threshold_minmax', threshmin=thresh, 
-                        threshmax=np.max(masks.imarray))        
+        masks.apply_all('threshold_minmax', threshmin=thresh,
+                        threshmax=np.max(masks.imarray))
         masks=MaskStack(masks)
         if invert:
             masks.imarray = np.invert(masks.imarray)
         return masks
-    
+
     def find_threshold(self, testim=None, mask=None):
-        """Try to find the threshold value at which the image switches. 
-        
+        """Try to find the threshold value at which the image switches.
+
         Takes it as the median value of the testim. Masks values
         where the difference is less than tolerance in case part of the image is
         irrelevant.
@@ -342,10 +340,10 @@ class KerrStack(ImageStack):
         else:
             med = np.median(np.ravel(testim[np.invert(mask)]))
         return med
-        
+
     def stable_mask(self, tolerance=1e-2, comparison = None):
-        """Produce a mask of areas of the image that are changing little over the stack. 
-        
+        """Produce a mask of areas of the image that are changing little over the stack.
+
         comparison is an optional tuple that gives the index of two images
         to compare, otherwise first and last used. tolerance is the difference
         tolerance
@@ -353,10 +351,10 @@ class KerrStack(ImageStack):
         mask = np.zeros(self[0].shape, dtype=bool)
         mask[abs(self[-1]-self[0])<tolerance] = True
         return mask
-    
+
     def crop_text(self, copy=False):
         """Crop the bottom text area from a standard Kermit image stack
-        
+
         Returns:
             (self):
             cropped image
@@ -365,29 +363,29 @@ class KerrStack(ImageStack):
                 'Need a full sized Kerr image to crop' #check it's a normal image
         crop=(0,IM_SIZE[1],0,IM_SIZE[0])
         self.crop_stack(box=crop)
-    
-    def HcMap(self, threshold=0.5, correct_drift=False, baseimage=0, quiet=True, 
+
+    def HcMap(self, threshold=0.5, correct_drift=False, baseimage=0, quiet=True,
               saturation_end=True, saturation_white=True, extra_info=False):
         """produce a map of the switching field at every pixel in the stack.
-        
+
         It needs the stack to start saturated one way and end saturated the other way.
-        
+
         Keyword Arguments:
             threshold(float):
-                the threshold value for the intensity switching. This will need to 
+                the threshold value for the intensity switching. This will need to
                 be tuned for each stack
             correct_drift(bol):
                 whether to correct drift on the image stack before proceding
             baseimage(int or ImageArray):
                 we use drift correction from the baseimage.
             saturation_end(bool):
-                last image in stack is closest to saturation 
+                last image in stack is closest to saturation
             saturation_white(bool):
                 bright pixels are saturated dark pixels are not yet switched
             quiet: bool
                 choose wether to output status updates as print messages
             extra_info(bool):
-                choose whether to return intermediate calculation steps as an extra dictionary        
+                choose whether to return intermediate calculation steps as an extra dictionary
         Returns:
             (ImageArray): The map of field values for switching of each pixel in the stack
         """
@@ -400,8 +398,8 @@ class KerrStack(ImageStack):
             ks.apply_all('correct_drift', ref=baseimage, quiet=quiet)
             if not quiet: print('drift correct done')
         masks = self.denoise_thresh(denoise_weight=0.1, thresh=threshold, invert=not(saturation_white))
-        if not quiet: print('thresholding done')  
-        si,sp = masks.switch_index(saturation_end=saturation_end)       
+        if not quiet: print('thresholding done')
+        si,sp = masks.switch_index(saturation_end=saturation_end)
         Hcmap=ks.index_to_field(si)
         Hcmap[Hcmap==ks.fields[0]]=0 #not switching does not give us a Hc value
         if extra_info:
@@ -411,13 +409,13 @@ class KerrStack(ImageStack):
 
     def average_Hcmap(self, weights=None, ignore_zeros=False):
         """Get an array of average pixel values for the stack.
-        
+
         Return average of pixel values in the stack.
-        
+
         Keyword arguments:
             ignore zeros(bool):
                 Weight zero values in an image as 0 in the averaging.
-        
+
         Returns:
             average(ImageArray):
                 average values
@@ -429,46 +427,46 @@ class KerrStack(ImageStack):
             for m in range(self.shape[0]):
                 weights[m] = np.select([condition, np.logical_not(condition)],
                                  [np.ones_like(weights[m]),weights[m]])
-            #weights means we only account for non-zero values in average                     
+            #weights means we only account for non-zero values in average
         average = np.average(self.imarray, axis=0, weights=weights)
-        return average.view(ImageArray)    
-    
+        return average.view(ImageArray)
+
 class MaskStack(KerrStack):
-    
+
     """Similar to ImageStack but made for stacks of boolean or binary images"""
-    
+
     def __init__(self, *args, **kargs):
         """Constructor."""
         super(MaskStack,self).__init__(*args, **kargs)
         self.imarray=self.imarray.astype(bool)
-    
+
     def switch_index(self, saturation_end=True, saturation_value=True):
         """Given a stack of boolean masks representing a hystersis loop find the stack index of the saturation field for each pixel.
-        
+
         Take the final mask as all switched (or the first mask if saturation_end
-        is False). Work back through the masks taking the first time a pixel 
+        is False). Work back through the masks taking the first time a pixel
         switches as its coercive field (ie the last time it switches before
         reaching saturation).
         Elements that start switched at the lowest measured field or never
         switch are given a zero index.
-        
+
         At the moment it's set up to expect masks to be false when the sample is saturated
         at a high field
-        
+
         Keyword Arguments:
             saturation_end(bool):
-                True if the last image is closest to the fully saturated state. 
+                True if the last image is closest to the fully saturated state.
                 False if you want the first image
             saturation_value(bool):
                 if True then a pixel value True means that switching has occured
                 (ie magnetic saturation would be all True)
-            
+
         Returns:
             switch_ind: MxN ndarray of int
                 index that each pixel switches at
             switch_progession: MxNx(P-1) ndarray of bool
                 stack of masks showing when each pixel saturates
-        
+
         """
         ms=self.clone
         if not saturation_end:
@@ -488,7 +486,7 @@ class MaskStack(KerrStack):
             condition=np.logical_and(condition, np.invert(already_done))
             condition=[condition, np.logical_not(condition)]
             choice=[np.ones(switch_ind.shape)*m, switch_ind] #index or leave as is
-            switch_ind = np.select(condition, choice)       
+            switch_ind = np.select(condition, choice)
             switch_prog[m]=already_done
         if not saturation_end:
             switch_ind=-switch_ind + len(self)-1 #should check this!

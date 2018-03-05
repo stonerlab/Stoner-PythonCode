@@ -17,7 +17,7 @@ import warnings
 
 #data arrays for testing - some useful small images for tests
 
-thisdir=path.dirname(__file__)
+testdir=os.path.join(os.path.dirname(__file__),"kerr_testdata")
 
 def shares_memory(arr1, arr2):
     """Check if two numpy arrays share memory"""
@@ -25,28 +25,32 @@ def shares_memory(arr1, arr2):
     ret = np.may_share_memory(arr1, arr2)
     return ret
 
-#class KerrArrayTest(unittest.TestCase):
-#    
-#    def test_tesseract_ocr(self):
-#        #this incidently tests get_metadata too
-#        if not self.anim.tesseractable:
-#            print("#"*80)
-#            print("Skipping test that uses tesseract.")
-#            return None
-#        m=self.anim.metadata
-#        self.assertTrue(all((m['ocr_average']=='on,8x',
-#                            m['ocr_date']=='09/03/16',
-#                            m['ocr_field'] == 148.63)), 'Misread metadata')
-#        keys=('ocr_scalebar_length_pixels', 'ocr_field_of_view_microns',
-#                          'filename', 'ocr_microns_per_pixel', 'ocr_pixels_per_micron')
-#        self.assertTrue(all([k in m.keys() for k in keys]), 'some part of the metadata didn\'t load')
-#        m_un=self.unanim.metadata
-#        self.assertTrue('ocr_field' not in m_un.keys(), 'Unannotated image has wrong metadata')
+class KerrArrayTest(unittest.TestCase):
+
+    def setUp(self):
+        self.image=KerrArray(os.path.join(testdir,"kermit3.png"),ocr_metadata=True)
+        self.image2=KerrArray(os.path.join(testdir,"kermit3.png"))
+    
+    def test_tesseract_ocr(self):
+        #this incidently tests get_metadata too
+        if not self.image.tesseractable:
+            print("#"*80)
+            print("Skipping test that uses tesseract.")
+            return None
+        m=self.image.metadata
+        self.assertTrue(all((m['ocr_average']=='a//,16x',
+                            m['ocr_date']=='11/30/15',
+                            m['ocr_field'] == -0.13)), 'Misread metadata')
+        keys=('ocr_scalebar_length_pixels', 'ocr_field_of_view_microns',
+                          'Loaded from', 'ocr_microns_per_pixel', 'ocr_pixels_per_micron')
+        self.assertTrue(all([k in m.keys() for k in keys]), 'some part of the metadata didn\'t load')
+        m_un=self.image2.metadata
+        self.assertTrue('ocr_field' not in m_un.keys(), 'Unannotated image has wrong metadata')
         
         
         
 if __name__=="__main__": # Run some tests manually to allow debugging
-    test=ImageArrayTest()
-    #test.setUp()
-    #test.test_filename()
-    unittest.main()
+    test=KerrArrayTest()
+    test.setUp()
+    test.test_tesseract_ocr()
+    #unittest.main()
