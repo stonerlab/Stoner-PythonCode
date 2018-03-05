@@ -780,6 +780,7 @@ class typeHintedDict(regexpDict):
                 if isinstance(valuetype, _evaluatable):
                     try:
                         array=_np_.array
+                        nan=_np_.nan
                         if isinstance(value, string_types): #we've got a string already don't need repr
                             ret = eval(value, globals(), locals())
                         else:
@@ -818,6 +819,7 @@ class typeHintedDict(regexpDict):
             try:
                 i = "[{".index(value[0])
                 array=_np_.array
+                nan=_np_.nan
                 ret = eval(tests[i],  globals(), locals()) # pylint: disable=eval-used
             except (SyntaxError, ValueError):
                 if value.lower() in ['true', 'yes', 'on', 'false', 'no', 'off']:
