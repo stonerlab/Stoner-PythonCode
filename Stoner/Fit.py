@@ -272,7 +272,7 @@ class Arrhenius(Model):
     Example:
         .. plot:: samples/Fitting/Arrhenius.py
             :include-source:
-            :outname: Arrhenius
+            :outname: arrhenius-class
     """
 
     display_names=["A",r"\Delta E"]
@@ -335,7 +335,7 @@ class NDimArrhenius(Model):
     Example:
         .. plot:: samples/Fitting/nDimArrhenius.py
             :include-source:
-            :outname: nDimArrhenius
+            :outname: nDimarrhenius-class
     """
 
     display_names=["A",r"\Delta E","n"]
@@ -397,7 +397,7 @@ class ModArrhenius(Model):
     Example:
         .. plot:: samples/Fitting/modArrhenius.py
             :include-source:
-            :outname: modArrhenius
+            :outname: modarrhenius-class
     """
 
     display_names=["A",r"\Delta E","n"]
@@ -455,7 +455,7 @@ def quadratic(x, a, b, c):
     Example:
         .. plot:: samples/Fitting/Quadratic.py
             :include-source:
-            :outname: Powerlaw
+            :outname: powerlaw-class
     """
     return a * x ** 2 + b * x + c
 
@@ -505,7 +505,7 @@ class Simmons(Model):
     Example:
         .. plot:: samples/Fitting/Simmons.py
             :include-source:
-            :outname: Simmons
+            :outname: simmons-class
     """
 
     display_names=["A",r"\phi","d"]
@@ -572,7 +572,7 @@ class BDR(Model):
     Example:
         .. plot:: samples/Fitting/BDR.py
             :include-source:
-            :outname: BDR
+            :outname: bdr-class
     """
 
     def __init__(self, *args, **kwargs):
@@ -622,7 +622,7 @@ class FowlerNordheim(Model):
     Example:
         .. plot:: samples/Fitting/FowlerNordheim.py
             :include-source:
-            :outname: FowlerNordheim
+            :outname: fowlernordheim-class
     """
 
     def __init__(self, *args, **kwargs):
@@ -742,7 +742,7 @@ class WLfit(Model):
     Example:
         .. plot:: samples/Fitting/weak_localisation.py
             :include-source:
-            :outname: WLfit
+            :outname: wlfit-class
     """
 
     display_names=[r"\sigma_0","D_S","B_1","B_2"]
@@ -886,7 +886,7 @@ class Strijkers(Model):
     Example:
         .. plot:: samples/lmfit_demo.py
             :include-source:
-            :outname: Strijkers
+            :outname: strijkers-class
     """
 
     display_names=[r"\omega",r"\Delta","P","Z"]
@@ -953,7 +953,7 @@ class FluchsSondheimer(Model):
     Example:
         .. plot:: samples/Fitting/f_s.py
             :include-source:
-            :outname: FluchsSondheimer
+            :outname: fluchsdondheimer-class
     """
 
     display_names=[r"\lambda_{mfp}","p_{refl}",r"\sigma_0"]
@@ -1015,7 +1015,7 @@ class BlochGrueneisen(Model):
     Example:
         .. plot:: samples/Fitting/b_g.py
             :include-source:
-            :outname: BlochGruneisen
+            :outname: blochgruneisen-class
     """
 
     display_names=[r"\theta_D",r"\rho_0","A","n"]
@@ -1076,7 +1076,7 @@ class Langevin(Model):
     Example:
         .. plot:: samples/Fitting/langevin.py
             :include-source:
-            :outname: Langevin
+            :outname: langevin-class
     """
 
     def __init__(self, *args, **kwargs):
@@ -1152,7 +1152,7 @@ class VFTEquation(Model):
     Example:
         .. plot:: samples/Fitting/vftEquation.py
             :include-source:
-            :outname: VFT
+            :outname: vft-class
     """
 
     display_names=["A",r"\Delta E","x_0"]
@@ -1291,7 +1291,7 @@ class KittelEquation(Model):
     Example:
         .. plot:: samples/Fitting/kittel.py
             :include-source:
-            :outname: Kittel
+            :outname: kittel-class
     """
 
     display_names=["g","M_s","H_k"]
