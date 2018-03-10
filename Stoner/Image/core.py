@@ -83,25 +83,26 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
     instance, it will clone it first then return the clone after performing the
     function on it.
 
-    A note on coordinate systems:
-    For arrays the indexing is (row, column). However the normal way to index
-    an image would be to do (horizontal, vert), which is the opposite.
-    In ImageArray the coordinate system is chosen similar to skimage. y points
-    down x points right and the origin is in the top left corner of the image.
-    When indexing the array therefore you need to give it (y,x) coordinates
-    for (row, column).
+   Note:
 
-     ----> x (column)
-    |
-    |
-    v
-    y (row)
+        For arrays the indexing is (row, column). However the normal way to index
+        an image would be to do (horizontal, vert), which is the opposite.
+        In ImageArray the coordinate system is chosen similar to skimage. y points
+        down x points right and the origin is in the top left corner of the image.
+        When indexing the array therefore you need to give it (y,x) coordinates
+        for (row, column).::
 
-    eg I want the 4th pixel in the horizontal direction and the 10th pixel down
-    from the top I would ask for ImageArray[10,4]
+             ----> x (column)
+            |
+            |
+            v
+            y (row)
 
-    but if I want to translate the image 4 in the x direction and 10 in the y
-    I would call im=im.translate((4,10))
+        eg I want the 4th pixel in the horizontal direction and the 10th pixel down
+        from the top I would ask for ImageArray[10,4]
+
+        but if I want to translate the image 4 in the x direction and 10 in the y
+        I would call im=im.translate((4,10))
 
     """
 
@@ -334,7 +335,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
             else:
                 metadata=[]
             metadict.import_all(metadata)
-                
+
                 #OK now try and sort out the datatype before loading
         dtype = metadict.get("ImageArray.dtype", None) #if tif was previously saved by Stoner then dtype should have been added to the metadata
         # If we convert to float, it's important to make
@@ -363,7 +364,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
 
     #################################################################################################
     ############ Properties #########################################################################
-    
+
     @property
     def aspect(self):
         """Return the aspect ratio (width/height) of the image."""
@@ -610,7 +611,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                 (xmin,xmax,ymin,ymax)
                 If None image will be shown and user will be asked to select
                 a box (bit experimental)
-                
+
         Keyword Arguments:
             copy(bool):
                 If True return a copy of ImageFile with the cropped image
@@ -660,7 +661,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
             clip_negative(bool):
                 If True, clip the negative range (i.e. return 0 for min intensity)
                 even if the image dtype allows negative values.
-                
+
         Returns:
             (imin, imax : tuple): Lower and upper intensity limits.
         """
@@ -677,7 +678,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         If currently an int type then floats will be automatically normalised.
         If currently a float type then will normalise if normalise.
         If currently an unsigned int type then image will be in range 0,1
-        
+
         Keyword Arguments:
             normalise(bool):
                 normalise the image to -1,1
@@ -732,7 +733,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         Keyword args:
             fmt (string or list): format to save data as. 'tif', 'png' or 'npy'
                 or a list of them. If not included will guess from filename.
-            
+
             forcetype (bool): integer data will be converted to np.float32 type
                 for saving. if forcetype then preserve and save as int type (will
                                                                              be unsigned).
@@ -798,7 +799,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         type so if forcetype is not specified then this is the default. For
         boolean type data mode "L" will suffice and this is chosen in all cases.
         The type name is added as a string to the metadata before saving.
-        
+
         Keyword Args:
             forcetype(bool): if forcetype then preserve data type as best as
                 possible on save.
@@ -882,7 +883,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
     def convert_float(self, clip_negative=True):
         """Deproicated compatability. :py:meth:`ImageArray.asfloat` preferred"""
         self.asfloat(normalise=False, clip_negative=clip_negative)
-            
+
     def convert_int(self):
         """Depricated compatability meothd. :py:meth:`ImageArray.asint` preferred"""
         self.asint()
@@ -906,16 +907,16 @@ class ImageFile(metadataObject):
     The penalty is that numpy ufuncs don't return ImageFile type
 
     so can do::
-        
+
         imfile.asfloat() #imagefile.image is updated to float type however need to do:
         imfile.image = np.abs(imfile.image)
 
     whereas for imarray need to do::
-    
+
             imarray = imagearray.asfloat()
-    
+
     but::
-    
+
             np.abs(imarray) #returns ImageArray type
     """
 

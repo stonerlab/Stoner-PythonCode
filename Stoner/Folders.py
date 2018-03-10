@@ -1144,27 +1144,27 @@ class baseFolder(MutableSequence):
         if isinstance(name,metadataObject):
             match=[1 for d in self if d==name ]
             return len(match)
-        
+
     def file(self, name, value, create=True, pathsplit=None):
         """Recursively add groups in order to put the named value into a virtual tree of :py:class:`baseFolder`.
-        
+
         Args:
             name(str): A name (which may be a nested path) of the object to file.
             value(metadataObject): The object to be filed - it should be an instance of :py:attr:`baseFolder.type`.
-            
+
         Keyword Aprameters:
             create(bool): Whether to create missing groups or to raise an error (default True to create groups).
             pathsplit(str or None): Character to use to split the name into path components. Defaults to using os.path.split()
-        
+
         Returns:
             (baseFolder): A reference to the group where the value was eventually filed
-        
+
         """
         if pathsplit is None:
             pathsplit=r"[\\/]+"
         pathsplit=re.compile(pathsplit)
         pth=pathsplit.split(name)
-        tmp=self            
+        tmp=self
         for ix,section in enumerate(pth):
             if ix==len(pth)-1:
                 existing=self.__getter__(section,instantiate=None) if section in self.__names__() else None
@@ -1177,17 +1177,17 @@ class baseFolder(MutableSequence):
                 else:
                     return False # Return False if we didn't need to move the filing.
                 break
-            
+
             if section not in tmp.groups and create:
                 tmp.add_group(section)
-            
+
             if section in tmp.groups:
                 tmp=tmp.groups[section]
             else:
                 raise KeyError("No group {} exists and not creating groups.".format(section))
         return tmp
-        
-        
+
+
 
     def filter(self, filter=None,  invert=False,copy=False): # pylint: disable=redefined-builtin
         """Filter the current set of files by some criterion
@@ -2228,7 +2228,7 @@ class PlotFolder(DataFolder):
 
         .. plot:: samples/plot-folder-test.py
             :include-source:
-                :outname:  plotfolder
+            :outname:  plotfolder
     """
 
     def figure(self,*args,**kargs):

@@ -779,8 +779,12 @@ class typeHintedDict(regexpDict):
             if m is not None:
                 if isinstance(valuetype, _evaluatable):
                     try:
-                        array=_np_.array # pylint: disable=unused-variable
-                        ret = eval(repr(value), globals(), locals()) # pylint: disable=eval-used
+                        array=_np_.array
+                        nan=_np_.nan
+                        if isinstance(value, string_types): #we've got a string already don't need repr
+                            ret = eval(value, globals(), locals())
+                        else:
+                            ret = eval(repr(value), globals(), locals()) # pylint: disable=eval-used
                     except NameError:
                         ret = str(value)
                     except SyntaxError:
@@ -814,14 +818,16 @@ class typeHintedDict(regexpDict):
             tests = ['list(' + value + ')', 'dict(' + value + ')']
             try:
                 i = "[{".index(value[0])
-                ret = eval(tests[i]) # pylint: disable=eval-used
+                array=_np_.array
+                nan=_np_.nan
+                ret = eval(tests[i],  globals(), locals()) # pylint: disable=eval-used
             except (SyntaxError, ValueError):
-                if value.lower() in ['true', 'ues', 'on', 'false', 'no', 'off']:
-                    ret = value.lower() in ['true', 'yes', 'on']  #Booleab
+                if value.lower() in ['true', 'yes', 'on', 'false', 'no', 'off']:
+                    ret = value.lower() in ['true', 'yes', 'on']  #Boolean
                 else:
                     for trial in [int, float, str]:
                         try:
-                            ret = trial(value)
+                            ret = trial(value)                            
                             break
                         except ValueError:
                             continue
@@ -896,7 +902,7 @@ class typeHintedDict(regexpDict):
         name, typehint = self._get_name_(name)
         if typehint is not None:
             self._typehints[name] = typehint
-            if value is None:  # Empty data so reset to string and set empty #RCT don't think this a great test for empty data but there was an issue with if str(value) which always returns True
+            if value is None:  # Empty data so reset to string and set empty #RCT changed the test here
                 super(typeHintedDict, self).__setitem__(name, "")
                 self._typehints[name] = "String"
             else:
@@ -995,7 +1001,11 @@ class typeHintedDict(regexpDict):
         Returns:
             A string of the format : key{type hint} = value
         """
-        return "{}{{{}}}={}".format(key, self.type(key), repr(self[key]).encode('unicode_escape'))
+        if isinstance(self[key], string_types): #avoid string within string problems and backslash overdrive
+            ret = "{}{{{}}}={}".format(key, self.type(key), self[key])
+        else:
+            ret = "{}{{{}}}={}".format(key, self.type(key), repr(self[key]))
+        return ret
 
     def export_all(self):
         """Return all the entries in the typeHintedDict as a list of exported lines.
@@ -1028,14 +1038,7 @@ class typeHintedDict(regexpDict):
         """
         parts=line.split("=")
         k=parts[0]
-        v="=".join(parts[1:]) #rejoin any = in the value string
-        v=literal_eval(v) #In python v3 this can result in a bytes string of te literal value
-        if python_v3 and isinstance(v,bytes): #Try again to unwrap the bytes object in python 3
-            v=bytes2str(v)
-            v=literal_eval(v) #Now we should be good
-
-        if isinstance(v,string_types):
-            v = self.string_to_type(v) #convert back to a value type
+        v="=".join(parts[1:]) #rejoin any = in the value string     
         self[k] = v
 
 
@@ -1517,7 +1520,7 @@ class DataFile(metadataObject):
                             priority (!)
         setas (list or string): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.
         shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape.
-        records (numpoy record array): Returns the data in the form of a list of yuples where each tuple maps to the columsn names.
+        records (numpy record array): Returns the data in the form of a list of yuples where each tuple maps to the columsn names.
         clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.
         dict_records (array of dictionaries): View the data as an array or dictionaries where each dictionary represnets one
             row with keys dervied from column headers.
@@ -2486,9 +2489,7 @@ class DataFile(metadataObject):
                 else:
                     cols = max(cols, len(row))
                     metaDataArray += 1
-                    md = row[0].split('=')
-                    val = "=".join(md[1:])
-                    self.metadata[md[0].strip()] = val.strip()
+                    self.metadata.import_key(row[0])
         #End of metadata reading, close filke and reopen to read data
         if still_data:  # data extends beyond metada - read with genfromtxt
             self.data = DataArray(_np_.genfromtxt(self.filename,
@@ -3696,7 +3697,8 @@ class DataFile(metadataObject):
         with io.open(filename, 'wb') as f:
             _np_.savetxt(f, data_out, fmt=fmt, header=header, delimiter="\t", comments="")
             for k in mdremains:
-                f.write(str2bytes(self.metadata.export(k) + "\n"))
+                t = self.metadata.export(k)
+                f.write(str2bytes(self.metadata.export(k) + "\n")) #(str2bytes(self.metadata.export(k) + "\n"))
 
         self.filename = filename
         return self
