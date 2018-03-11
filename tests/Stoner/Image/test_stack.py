@@ -69,6 +69,8 @@ class ImageStackTest(unittest.TestCase):
             sa.append(im.shape)
         sa=np.array(sa)
         self.assertTrue(np.all(sa==np.ones((91,2))*100),"Result from iterating over images failed.")
+        self.istack2.adjust_contrast()
+        self.assertEqual((np.array(self.istack2.min()).mean(),np.array(self.istack2.max()).mean()),(-1.0,1.0),"Adjust contrast failure")
         
         
 
