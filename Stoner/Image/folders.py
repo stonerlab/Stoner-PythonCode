@@ -32,15 +32,16 @@ class _generator(object):
         return self.len
 
     def __iter__(self):
+        self.ix=0
         return self
 
     def __next__(self):
-        for i in self.fldr:
-            if hasattr(i,"image"):
-                ret=i.image
-            else:
-                ret=i
-            yield ret
+        if self.ix<len(self):
+            ret=self[self.ix]
+            self.ix+=1
+            return ret
+        else:
+            raise StopIteration("Finished iterating Folder.")
 
     def __getitem__(self,index):
         ret=self.fldr[index]
@@ -48,8 +49,8 @@ class _generator(object):
             ret=ret.image
         return ret
 
-    next=__next__
-
+    def next(self):
+        return self.__next__()
 
 class ImageFolderMixin(object):
 
