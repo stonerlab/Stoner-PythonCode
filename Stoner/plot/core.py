@@ -360,27 +360,6 @@ class PlotMixin(object):
     def _fix_cols(self, **kargs):
         """Sorts out axis specs, replacing with contents from setas as necessary."""
         return self.data._col_args(**kargs)
-        if "startx" in kargs:
-            startx = kargs["startx"]
-            del kargs["startx"]
-        else:
-            startx = 0
-
-        c = self.setas._get_cols(startx=startx)
-        for k in ["xcol", "ycol", "zcol", "ucol", "vcol", "wcol", "xerr", "yerr", "zerr"]:
-            if k in kargs and k == "xcol" and kargs["xcol"] is None:
-                kargs["xcol"] = c.xcol
-            elif k in kargs and k == "xerr" and kargs["xerr"] is None:
-                kargs["xerr"] = c.xerr
-            elif k in kargs and k != "xcol" and kargs[k] is None and len(c[k]) > 0:
-                if kargs.get("multi_y",False):
-                    kargs[k] = c[k]
-                else:
-                    kargs[k] = c[k][0]
-        for k in list(kargs.keys()):
-            if k not in ["xcol", "ycol", "zcol", "ucol", "vcol", "wcol", "xerr", "yerr", "zerr"]:
-                del kargs[k]
-        return _attribute_store(kargs)
 
     def _fix_fig(self, figure, **kargs):
         """Sorts out the matplotlib figure handling."""
