@@ -135,7 +135,7 @@ class ImageStackMixin(object):
             instance= self._instantiate(idx)
             return self._update_from_object_attrs(instance)
 
-    def __setter__(self,name,value):
+    def __setter__(self,name,value,force_insert=False):
         """Stub to setting routine to store a metadataObject.
 
         Parameters:
@@ -153,6 +153,8 @@ class ImageStackMixin(object):
         if name is None:
             name=self.make_name(value)
         try:
+            if force_insert:
+                raise KeyError("Fake force insert")
             idx=self.__lookup__(name)
         except KeyError: #Ok we're appending here
             self._metadata[name]=value.metadata

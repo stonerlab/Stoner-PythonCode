@@ -5,7 +5,7 @@ Classes:
 """
 __all__ = ["baseFolder","DataFolder","PlotFolder"]
 from .compat import python_v3,int_types,string_types,get_filedialog,commonpath
-from .tools import operator,isiterable,isproperty,islike_list
+from .tools import operator,isiterable,isproperty,islike_list,all_type
 import os
 import re
 import os.path as path
@@ -15,7 +15,7 @@ from copy import copy,deepcopy
 import unicodedata
 from inspect import ismethod
 import string
-from collections import Iterable,MutableSequence
+from collections import Iterable,MutableSequence,OrderedDict
 from itertools import islice
 import matplotlib.pyplot as plt
 from .Core import metadataObject,DataFile,regexpDict
@@ -493,7 +493,7 @@ class baseFolder(MutableSequence):
                 raise KeyError("{} is not a valid {}".format(name,self._type))
         return self._update_from_object_attrs(name)
 
-    def __setter__(self,name,value):
+    def __setter__(self,name,value,force_insert=False):
         """Stub to setting routine to store a metadataObject.
 
         Parameters:
@@ -505,7 +505,10 @@ class baseFolder(MutableSequence):
         """
         if name is None:
             name=self.make_name()
-        self.objects[name]=value
+        if force_insert:
+            OrderedDict.update(self.objects,{name:value})
+        else:            
+            self.objects[name]=value
 
     def __inserter__(self,ix,name,value):
         """Insert the element into a specific place in our data folder.
@@ -618,21 +621,40 @@ class baseFolder(MutableSequence):
                 raise IndexError("{} is out of range.".format(name))
         elif isinstance(name,slice): #Possibly ought to return another Folder?
             other=self.__clone__(attrs_only=True)
-            for iname in islice(self.__names__(),name.start,name.stop,name.step):
-                other.__setter__(iname,self.__getter__(iname))
+            for ix,iname in enumerate(islice(self.__names__(),name.start,name.stop,name.step)):
+                item=self.__getter__(iname)
+                if hasattr(item,"filename"):
+                    item.filename=iname
+                other.append(item)
             return other
         elif isinstance(name,tuple): # Recursive indexing through tree with a tuple
-            item=name[0]
-            name=tuple(name[1:])
-            if len(name)==0: #Final stage of indexing and we're still in the data folder
-                return self[item]
-            elif len(name)==1: # This allows indexing into a metadataobject
-                name=name[0]
-                grp=self[item]
-                return grp[name]
+            item=self[name[0]]
+            if len(name)>2:
+                name=tuple(name[1:])
+            elif len(name)==1:
+                return item
+            else:
+                name=name[1]
+            if isinstance(item,self._type):
+                return item[name]
+            elif isinstance(item,self.__class__):
+                if all_type(name,(int_types,slice)): #Looks like we're accessing data arrays
+                    test=(len(item),)+item[0].data[name].shape
+                    output=_np_.array([]).view(item[0].data.__class__)
+                    for ix,data in enumerate(item):
+                        output=_np_.append(output,data[name])
+                    output=output.reshape(test)
+                    return output
+                else:  # Slicing metadata
+                    try:
+                        return item[name]
+                    except KeyError as e:
+                        if name in item.metadata.common_keys:
+                            return item.metadata.slice(name,output="Data")
+                        print(name)
+                        raise e
             else: # Continuing to index into the tree of groups
-                grp=self[item]
-                return grp[name]
+                raise KeyError("Can't index the baseFolder with {}".format(name))
         else:
             raise KeyError("Can't index the baseFolder with {}".format(name))
 
@@ -1362,7 +1384,7 @@ class baseFolder(MutableSequence):
             name=self.__names__()[ix]
             self.__setter__(self.__lookup__(name),value)
         elif ix>=len(self):
-            self.__setter__(name,value)
+            self.__setter__(name,value,force_insert=True)
 
     def items(self):
         """Return the key,value pairs for the subbroups of this folder."""

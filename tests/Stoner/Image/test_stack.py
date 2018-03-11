@@ -54,6 +54,16 @@ class ImageStackTest(unittest.TestCase):
         self.assertTrue(data.shape==(91,4),"Slice metadata went a bit funny")
         self.assertTrue(sorted(data.column_headers)==['angle','scale','tvec_0', 'tvec_1'],"slice metadata column headers wrong at {}".format(data.column_headers))
         self.m2=self.istack2.mean()
+        self.assertTrue(np.abs(self.m1.mean()-self.m2.mean())/self.m1.mean()<1E-2,"Problem calculating means of stacks.")
+        s1=self.istack2[:,45:55,45:55]
+        s2=self.istack2[:,50,:]
+        s3=self.istack2[:,:,50]
+        s4=self.istack2[50,:,:]
+        self.assertEqual(s1.shape,(91,10,10),"3D slicing to produce 3D stack didn't work.")
+        self.assertEqual(s2.shape,(91,100),"3D slicing to 2D section z-y plane failed.")
+        self.assertEqual(s3.shape,(91,100),"3D slicing to 2D section z-x plane failed.")
+        self.assertEqual(s4.shape,(100,100),"3D slicing to 2D section x-y plane failed.")
+        
 
 
 if __name__=="__main__":
@@ -63,7 +73,5 @@ if __name__=="__main__":
     #test.setUp()
     #test.test_kerrstack()
     #test.test_load()
-    unittest.main()
+    #unittest.main()
     test.test_ImageStack2()
-    st=test.istack2
-    del st[4]["scale"]
