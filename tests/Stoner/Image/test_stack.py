@@ -65,7 +65,7 @@ class ImageStackTest(unittest.TestCase):
         self.assertEqual(s4.shape,(100,100),"3D slicing to 2D section x-y plane failed.")
         self.assertEqual(len(self.istack2.images),91,"len(ImageFolder.images) failed.")
         sa=[]
-        for im in st.images:
+        for im in self.istack2.images:
             sa.append(im.shape)
         sa=np.array(sa)
         self.assertTrue(np.all(sa==np.ones((91,2))*100),"Result from iterating over images failed.")
