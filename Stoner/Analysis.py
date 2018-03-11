@@ -231,12 +231,11 @@ def _threshold(threshold, data, rising=True, falling=False):
 
     intr=interp1d(index,data.ravel()-threshold,kind="cubic")
     roots=[]
-    for ix in range(sdat.shape[0]):
-        x=sdat[ix]
-        if expr(x): # There's a root somewhere here !
+    for ix,x in enumerate(sdat):
+        if ix>0 and expr(x): # There's a root somewhere here !
             try:
                 roots.append(newton(intr,ix))
-            except ValueError: # fell off the end here
+            except (ValueError,RuntimeError): # fell off the end here
                 pass
     return _np_.array(roots)
 

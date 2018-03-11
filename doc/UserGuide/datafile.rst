@@ -360,15 +360,15 @@ If you do not specify the column types via the setas attributes, then :py:class:
 of columns in your data file. These default assignments are only done at the point at which the :py:attr:`DataFile.setas` attribute is consulted. The default
 assignments are:
 
-================= ===============
-Number of Columns Assignements
-================= ===============
-    2               x,y
-    3               x,y,e
-    4               x,d,y,e
-    5               x,y,u,v,w
-    6               x,y,z,u,v,w
-        
+=================  ================
+Number of Columns  Assignments
+=================  ================
+2                  x, y
+3                  x, y, e
+4                  x, d, y, e
+5                  x, y, u, v, w
+6                  x, y, z, u, v, w
+=================  ================        
         
 Swapping and Rotating Column Assignments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
