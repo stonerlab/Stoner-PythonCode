@@ -73,5 +73,5 @@ if __name__=="__main__":
     #test.setUp()
     #test.test_kerrstack()
     #test.test_load()
-    #unittest.main()
-    test.test_ImageStack2()
+    unittest.main()
+    #test.test_ImageStack2()

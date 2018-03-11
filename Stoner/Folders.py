@@ -506,7 +506,7 @@ class baseFolder(MutableSequence):
         if name is None:
             name=self.make_name()
         if force_insert:
-            OrderedDict.update(self.objects,{name:value})
+           self.objects.update({name:value})
         else:            
             self.objects[name]=value
 
