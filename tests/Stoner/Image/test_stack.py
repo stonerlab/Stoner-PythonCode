@@ -48,10 +48,12 @@ class ImageStackTest(unittest.TestCase):
             self.istack2.insert(0,i)
         self.assertTrue(self.istack2.shape==(100,100,91),"ImageStack2.shape wrong at {}".format(self.istack2.shape))
         i=ImageFile(np.zeros((100,100))).draw.circle(50,50,25)
+        self.m1=self.istack2.mean()
         self.istack2.align(i,method="imreg_dft")
         data=self.istack2.slice_metadata(["tvec","angle","scale"],output="Data")
         self.assertTrue(data.shape==(91,4),"Slice metadata went a bit funny")
         self.assertTrue(sorted(data.column_headers)==['angle','scale','tvec_0', 'tvec_1'],"slice metadata column headers wrong at {}".format(data.column_headers))
+        self.m2=self.istack2.mean()
 
 
 if __name__=="__main__":

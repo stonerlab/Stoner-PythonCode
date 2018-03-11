@@ -90,7 +90,7 @@ class PlotMixin(object):
             "showfig": bool
         }
         super(PlotMixin,self).__init__(*args,**kargs)
-        self._labels = typedList(string_types,self.column_headers)
+        self._labels = typedList(string_types,[])
         if self.debug: print("Done PlotMixin init")
 
 
@@ -147,6 +147,8 @@ class PlotMixin(object):
     @property
     def labels(self):
         """Return the labels for the plot columns"""
+        if len(self._labels)==0:
+            return self.column_headers
         if len(self._labels) < len(self.column_headers):
             self._labels.extend(copy.deepcopy(self.column_headers[len(self._labels):]))
         return self._labels
@@ -357,6 +359,7 @@ class PlotMixin(object):
 
     def _fix_cols(self, **kargs):
         """Sorts out axis specs, replacing with contents from setas as necessary."""
+        return self.data._col_args(**kargs)
         if "startx" in kargs:
             startx = kargs["startx"]
             del kargs["startx"]

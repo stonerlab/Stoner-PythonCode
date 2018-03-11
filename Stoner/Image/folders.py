@@ -112,12 +112,12 @@ class ImageFolderMixin(object):
         """Calculate the mean value of all the images in the stack."""
         total=np.zeros_like(self[0])
         for i in self:
-            total+=i
+            total+=i.data
         total/=len(self)
-        if isinstance(self._type,np.ndarray):
+        if issubclass(self._type,np.ndarray):
             ret= total.view(type=self._type)
             ret.metadata.update(self[0].metadata)
-        elif isinstance(self._type,ImageFile):
+        elif issubclass(self._type,ImageFile):
             ret=self._type()
             ret.image=total
             ret.metadata.update(self[0].metadata)

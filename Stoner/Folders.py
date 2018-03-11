@@ -157,45 +157,44 @@ class _combined_metadata_proxy(object):
             key=metadata[0].__lookup__(key,multiple=True)
             key=[key] if not islike_list(key) else key
             keys=key
-        if islike_list(key): #Otherwise must be a list of similar of keys
-            newkey=[]
-            for k in key:
-                newkey.extend(metadata[0].__lookup__(k,multiple=True))
-            key=newkey
-            if len(set(key)-set(self.common_keys)): #Is the key in the common keys? # TODO: implement __getitem__'s masked array logic?
-                raise KeyError("{} are missing from some items in the Folder.".format(set(key)-set(self.common_keys)))
-            else:
-                keys=key
-            for i,met in enumerate(metadata):#Assemble a list of dictionaries of values
-                metadata[i]={k:v for k,v in metadata[i].items() if k in key}
-        if output in ["list","array","Data",list,_np_.ndarray,DataFile] or (output=="smart" and len(metadata[0])==1): # Reformat output
+        # Expand all keys in case of multiple metadata matches
+        newkey=[]
+        for k in key:
+            newkey.extend(metadata[0].__lookup__(k,multiple=True))
+        key=newkey
+        if len(set(key)-set(self.common_keys)): #Is the key in the common keys? # TODO: implement __getitem__'s masked array logic?
+            raise KeyError("{} are missing from some items in the Folder.".format(set(key)-set(self.common_keys)))
+        results=[]
+        for i,met in enumerate(metadata):#Assemble a list of dictionaries of values
+            results.append({k:v for k,v in metadata[i].items() if k in key})
+        if output in ["list","array","Data",list,_np_.ndarray,DataFile] or (output=="smart" and len(results[0])==1): # Reformat output
             cols=[]
-            for k in keys: # Expand the columns of data we're going to need if some values are not scalar
+            for k in key: # Expand the columns of data we're going to need if some values are not scalar
                 if islike_list(metadata[0][k]):
                     for i,_ in enumerate(metadata[0][k]):
                         cols.append("{}_{}".format(k,i))
                 else:
                     cols.append(k)
 
-            for i,met in enumerate(metadata): #For each object in the Folder
-                metadata[i]=[]
-                for k in keys: # and for each key in out list
+            for i,met in enumerate(results): #For each object in the Folder
+                results[i]=[]
+                for k in key: # and for each key in out list
                     v=met[k]
                     if islike_list(v): # extend or append depending if the value is scalar. # TODO: This will blowup for values with more than 1 D!
-                        metadata[i].extend(v)
+                        results[i].extend(v)
                     else:
-                        metadata[i].append(v)
-            if len(keys)==1: #single key
-                metadata=[m[0] for m in metadata]
+                        results[i].append(v)
+            if len(cols)==1: #single key
+                results=[m[0] for m in results]
             if output in ["array",_np_.ndarray]:
-                metadata=_np_.array(metadata)
+                results=_np_.array(results)
             if output in ["Data",DataFile]: # Build oour Data object
                 from Stoner import Data
                 tmp=Data()
-                tmp.data=_np_.array(metadata)
+                tmp.data=_np_.array(results)
                 tmp.column_headers=cols
-                metadata=tmp
-        return metadata
+                results=tmp
+        return results
 
 
 class baseFolder(MutableSequence):
@@ -1659,7 +1658,7 @@ class baseFolder(MutableSequence):
         Args:
             groups(list of strings): A list of keys of groups in the Lpy:class:`objectFolder`
 
-        ReturnsL
+        Returns:
             A list of tuples of groups of files:
                 [(grp_1_file_1,grp_2_file_1....grp_n_files_1),(grp_1_file_2,grp_2_file_2....grp_n_file_2)....(grp_1_file_m,grp_2_file_m...grp_n_file_m)]
         """
