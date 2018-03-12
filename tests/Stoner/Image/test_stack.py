@@ -75,6 +75,10 @@ class ImageStackTest(unittest.TestCase):
         self.im2=self.im1.convert(np.float32)
         conv_err=(self.istack2[0].image-self.im2.image).max()
         self.assertTrue(conv_err<1E-7,"Problems double converting images:{}.".format(conv_err))
+        self.im1=self.istack2[0].convert(np.int64)
+        self.im1=self.im1.convert(np.int8)
+        self.im2=self.istack2[0].convert(np.int8)
+        self.assertTrue(abs((self.im2-self.im1).max())<=2.0,"Failed up/down conversion to integer images.")
         
         
 
