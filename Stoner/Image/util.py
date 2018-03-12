@@ -19,8 +19,8 @@ dtype_range = {np.bool_: (False, True),
                np.uint64: (0, 2**64 - 1),
                np.int32: (-2**31, 2**31 - 1),
                np.uint32: (0, 2**32 - 1),
-               np.float32: (-1, 1),
-               np.float64: (-1, 1)}
+               np.float32: (-1., 1.),
+               np.float64: (-1., 1.)}
 
 integer_types = (np.uint8, np.uint16, np.int8, np.int16)
 
