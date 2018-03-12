@@ -432,10 +432,10 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
 
             # Get the Stoner.Image.util mopdule next
             from .import util
-            for d in dir(imagefuncs):
+            for d in dir(util):
                 if not d.startswith("_"):
-                    func=getattr(imagefuncs,d)
-                    if callable(func) and func.__module__==imagefuncs.__name__:
+                    func=getattr(util,d)
+                    if callable(func) and func.__module__==util.__name__:
                         name="{}__{}".format(func.__module__,d).replace(".","__")
                         func_proxy[name]=func
 
