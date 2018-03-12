@@ -431,11 +431,11 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                         func_proxy[name]=func
 
             # Get the Stoner.Image.util mopdule next
-            from .import util
-            for d in dir(util):
+            from .import util as SIutil
+            for d in dir(SIutil):
                 if not d.startswith("_"):
-                    func=getattr(util,d)
-                    if callable(func) and func.__module__==util.__name__:
+                    func=getattr(SIutil,d)
+                    if callable(func) and func.__module__==SIutil.__name__:
                         name="{}__{}".format(func.__module__,d).replace(".","__")
                         func_proxy[name]=func
 
