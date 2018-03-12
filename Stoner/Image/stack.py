@@ -72,6 +72,7 @@ class ImageStackMixin(object):
         self._stack=np.atleast_3d(np.ma.MaskedArray([]))
         self._metadata=regexpDict()
         self._names=list()
+        self._sizes=np.array([],dtype=int).reshape(0,2)
 
         kargs["type"]=ImageFile
         super(ImageStackMixin,self).__init__(*args,**kargs)
@@ -90,7 +91,7 @@ class ImageStackMixin(object):
         """
         if isinstance(name,int_types):
             try:
-                _=self._stack[::,name]
+                _=self._stack[:,:,name]
             except IndexError:
                 raise KeyError("{} is out of range for accessing the ImageStack.".format(name))
             return name
@@ -158,36 +159,22 @@ class ImageStackMixin(object):
                 raise KeyError("Fake force insert")
             idx=self.__lookup__(name)
         except KeyError: #Ok we're appending here
-            if isinstance(value,string_types):
+            if isinstance(value,string_types): # Append with a filename, call __getter__
                 value=self.__getter__(value,instantiate=True) # self.__getter__ will also insert if necessary
-            else:
-                self._metadata[name]=value.metadata
-                self._names.append(name)
-                current_shape=self._stack.shape
-                if np.product(current_shape)==0: # ok we're just adding the first elemtn here
-                    self._stack=np.atleast_3d(value.data.view(type=np.ma.MaskedArray))
-                else:
-                    if current_shape[:2]==value.data.shape: # easy to append
-                        self._stack=np.append(self._stack,np.atleast_3d(value.data),axis=2)
-                    else: # Full resize needed
-                        mrows=max(current_shape[0],value.data[0])
-                        mcols=max(current_shape[1],value.data[1])
-                        tmp=np.ma.MaskedArray((mrows,mcols,current_shape[2]+1))
-                        tmp[:current_shape[0],:current_shape[1],:current_shape[2]]=self._stack
-                        tmp[:value.data.shape[0],:value.data.shape[1],-1]=value.data
-                        self._stack=tmp
-        else: # Doing an insert here
-            self._metadata[name]=value.metadata
-            current_shape=self._stack.shape
-            if current_shape[:2]==value.data.shape: # easy to append
-                self._stack[:,:,idx]=value.data
-            else: # Full resize needed
-                mrows=max(current_shape[0],value.data.shape[0])
-                mcols=max(current_shape[1],value.data.shape[1])
-                tmp=np.ma.MaskedArray((mrows,mcols,current_shape[2]))
-                tmp[:current_shape[0],:current_shape[1],:current_shape[2]]=self._stack
-                tmp[:value.data.shape[0],:value.data.shape[1],idx]=value.data
-                self._stack=tmp
+                return None
+            else: # Append with real value
+                idx=len(self)
+                return self.__inserter__(idx,name,value)
+        else:
+            self._sizes[idx]=value.shape
+        self._metadata[name]=value.metadata
+        if hasattr(value,"image"):
+            value=value.image
+        row,col=value.shape
+        pag=len(self._sizes)
+        new_size=self.max_size+(pag,)
+        self._resize_stack(new_size)
+        self._stack[:row,:col,idx]=value
 
     def __inserter__(self,ix,name,value):
         """Provide an efficient insert into the stack.
@@ -196,6 +183,9 @@ class ImageStackMixin(object):
         a simple insert."""
         self._names.insert(ix,name)
         self._metadata[name]=value.metadata
+        self._sizes=np.insert(self._sizes,ix,value.shape,axis=0)
+        new_size=self.max_size+(len(self._names),)
+        self._resize_stack(new_size)        
         self._stack=np.insert(self._stack,ix,value.data,axis=2)
 
 
@@ -238,12 +228,28 @@ class ImageStackMixin(object):
             other._names=copy.deepcopy(self._names)
         return super(ImageStackMixin,self).__clone__(other=other,attrs_only=attrs_only)
 
+    ###########################################################################
+    ###################      Private methods     ##############################
+
     def _instantiate(self,idx):
         """Reconstructs the data type."""
         tmp=self.type()
-        tmp.data=self._stack[:,:,idx]
+        r,c=self._sizes[idx]
+        tmp.data=self._stack[:r,:c,idx]
         tmp.metadata=self._metadata[self.__names__()[idx]]
         return tmp
+
+    def _resize_stack(self,new_size):
+        """Create a new stack with a new size."""
+        old_size=self._stack.shape
+        if old_size==new_size:
+            return new_size
+        row,col,pag=tuple([min(o,n) for o,n in zip(old_size,new_size)])
+            
+        new=np.ma.zeros(new_size)
+        new[:row,:col,:pag]=self._stack[:row,:col,:pag]
+        self._stack=new
+        return row,col,pag        
 
     ###########################################################################
     ################### Properties of ImageStack ##############################
@@ -256,6 +262,12 @@ class ImageStackMixin(object):
     def imarray(self,value):
         value=np.ma.MaskedArray(np.atleast_3d(value))
         self._stack=value
+
+    @property
+    def max_size(self):
+        if np.prod(self._sizes.shape)==0:
+            return(0,0)
+        return (self._sizes[:,0].max(),self._sizes[:,1].max())
 
     @property
     def shape(self):
@@ -293,20 +305,6 @@ class ImageStackMixin(object):
         if clip_negative:
             self.clip_intensity()
 
-    def crop_stack(self, box):
-        """Crop the imagestack.
-        Crops to the box given
-
-        Args:
-            box(array or list of type int):
-                [xmin,xmax,ymin,ymax]
-
-        Returns:
-            (ImageStack):
-                cropped images
-        """
-        self._stack = self._stack[:,box[2]:box[3],box[0]:box[1]]
-
     def dtype_limits(self, clip_negative=True):
         """Return intensity limits, i.e. (min, max) tuple, of imarray dtype.
 
@@ -323,19 +321,6 @@ class ImageStackMixin(object):
             imin = 0
         return imin, imax
 
-    def crop_stack(self, box):
-        """Crop the imagestack.
-        Crops to the box given
-
-        Args:
-            box(array or list of type int):
-                [xmin,xmax,ymin,ymax]
-
-        Returns:
-            (ImageStack):
-                cropped images
-        """
-        self.imarray = self.imarray[:,box[2]:box[3],box[0]:box[1]]
 
     def subtract(self, background, contrast=16, clip_intensity=True):
         """Subtract a background image (or index) from all images in the stack.
@@ -398,6 +383,21 @@ class ImageStackMixin(object):
         ref=self[refindex]
         self.apply_all('correct_drift', ref, threshold=threshold,
                      upsample_factor=upsample_factor, box=box)
+
+    def crop_stack(self, box):
+        """Crop the imagestack.
+        Crops to the box given
+
+        Args:
+            box(array or list of type int):
+                [xmin,xmax,ymin,ymax]
+
+        Returns:
+            (ImageStack):
+                cropped images
+        """
+        warnings.warn("crop_stack is depricated - sam effect can be achieved with crop(box,_=True)")
+        self.crop(box,_=True)
 
     def show(self):
         """Pass through to :py:meth:`Stoner.Image.ImageFolder.view`"""

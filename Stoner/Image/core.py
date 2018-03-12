@@ -430,6 +430,15 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                         name="{}__{}".format(func.__module__,d).replace(".","__")
                         func_proxy[name]=func
 
+            # Get the Stoner.Image.util mopdule next
+            from .import util
+            for d in dir(imagefuncs):
+                if not d.startswith("_"):
+                    func=getattr(imagefuncs,d)
+                    if callable(func) and func.__module__==imagefuncs.__name__:
+                        name="{}__{}".format(func.__module__,d).replace(".","__")
+                        func_proxy[name]=func
+
             #Add scipy.ndimage functions
             import scipy.ndimage as ndi
             _sp_mods=[ndi.interpolation,ndi.filters,ndi.measurements,ndi.morphology,ndi.fourier]
