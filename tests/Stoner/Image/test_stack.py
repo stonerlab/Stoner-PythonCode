@@ -73,7 +73,8 @@ class ImageStackTest(unittest.TestCase):
         self.assertEqual((np.array(self.istack2.min()).mean(),np.array(self.istack2.max()).mean()),(-1.0,1.0),"Adjust contrast failure")
         im=self.istack2[0].convert(int)
         self.im=im.convert(float)
-        self.assertTrue(np.abs(self.istack2[0].image-self.im.image).max()<1E-9,"Problems double converting images.")
+        conv_err=np.abs(self.istack2[0].image-self.im.image).max()
+        self.assertTrue(conv_err<1E-9,"Problems double converting images:{}.".format(conv_err))
         
         
 
