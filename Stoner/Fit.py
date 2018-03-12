@@ -1229,7 +1229,7 @@ class StretchedExp(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 def kittelEquation(H,g,M_s,H_k):
-    """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
+    r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
         H (array): Magnetic fields in A/m
@@ -1240,7 +1240,7 @@ def kittelEquation(H,g,M_s,H_k):
     Returns:
         Reesonance peak frequencies in Hz
 
-    :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
+    :math:`f = \frac{\gamma \mu_{0}}{2 \pi} \sqrt{\left(H + H_{k}\right) \left(H + H_{k} + M_{s}\right)}`
 
     Example:
         .. plot:: samples/Fitting/kittel.py
@@ -1251,7 +1251,7 @@ def kittelEquation(H,g,M_s,H_k):
     return (consts.mu0*gamma/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
 
 def inverse_kittel(f,g,M_s,H_k):
-    """Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency
+    r"""Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency
 
     Args:
         f (array): Resonance Frequency in Hz
@@ -1264,11 +1264,11 @@ def inverse_kittel(f,g,M_s,H_k):
 
     Notes:
         In practice one often measures FMR by sweepign field for constant frequency and then locates the
-        peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a :math:`H_{res}\\pm \\Delta H_{res}`
+        peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a :math:`H_{res}\pm \Delta H_{res}`
         In order to make use of this data with :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit` or :py:meth:`Stoner.Analysis.AnalysisMixin.curve_fit`
         it makes more sense to fit the Kittel Equation written in terms of H than frequency.
 
-       :math:`H_{res}=- H_{k} - \\frac{M_{s}}{2} + \\frac{1}{2 \\gamma \\mu_{0}} \\sqrt{M_{s}^{2} \\gamma^{2} \\mu_{0}^{2} + 16 \\pi^{2} f^{2}}`
+       :math:`H_{res}=- H_{k} - \frac{M_{s}}{2} + \frac{1}{2 \gamma \mu_{0}} \sqrt{M_{s}^{2} \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}`
     """
     gamma=g*cnst.e/(2*cnst.m_e)
     return -H_k - M_s/2 + _np_.sqrt(M_s**2*gamma**2*cnst.mu_0**2 + 16*_np_.pi**2*f**2)/(2*gamma*cnst.mu_0)
@@ -1286,7 +1286,7 @@ class KittelEquation(Model):
     Returns:
         Reesonance peak frequencies in Hz
 
-    :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
+    :math:`f = \frac{\gamma \mu_{0}}{2 \pi} \sqrt{\left(H + H_{k}\right) \left(H + H_{k} + M_{s}\right)}`
 
     Example:
         .. plot:: samples/Fitting/kittel.py
@@ -1329,7 +1329,7 @@ class Inverse_Kittel(Model):
     Returns:
         Reesonance peak frequencies in Hz
 
-    :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
+    :math:`f = \frac{\gamma \mu_{0}}{2 \pi} \sqrt{\left(H + H_{k}\right) \left(H + H_{k} + M_{s}\right)}`
 
     """
 
@@ -1364,9 +1364,9 @@ def lorentzian_diff(x,A,sigma,mu):
         mu (float): peak location in x
 
         Returns
-            :math:`\\frac{A \\sigma \\left(2 \\mu - 2 x\\right)}{\\pi \\left(\\sigma^{2} + \\left(- \\mu + x\\right)^{2}\\right)^{2}}`
+            :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`
         """
-    return A*sigma*(2*mu - 2*x)/(pi*(sigma**2 + (-mu + x)**2)**2)
+    return A*sigma*(2*mu - 2*x)/(_np_.pi*(sigma**2 + (-mu + x)**2)**2)
 
 class Lorentzian_diff(Model):
     r"""lmfit Model rerprenting the differential form of a Lorentzian Peak.
@@ -1378,7 +1378,7 @@ class Lorentzian_diff(Model):
         mu (float): peak location in x
 
         Returns
-            :math:`\\frac{A \\sigma \\left(2 \\mu - 2 x\\right)}{\\pi \\left(\\sigma^{2} + \\left(- \\mu + x\\right)^{2}\\right)^{2}}`
+            :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`
     """
     display_names=["A",r"\sigma",r"\mu"]
 

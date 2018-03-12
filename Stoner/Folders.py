@@ -45,6 +45,25 @@ class _combined_metadata_proxy(object):
     def __init__(self,folder):
 
         self._folder=folder
+        
+    @property
+    def all(self):
+        """A l,ist of all the metadata dictionaries in the Folder."""
+        if hasattr(self._folder,"_metadata"): #Extra logic for Folders like Stack
+            for item in self._folder._metadata.items():
+                yield item
+        for item in self._folder:
+            yield item.metadata
+
+    @all.setter
+    def all(self,value):
+        """A l,ist of all the metadata dictionaries in the Folder."""
+        if hasattr(self._folder,"_metadata"): #Direct support for metadata dictionary
+            for new,old in zip(value,self._folder._metadata):
+                old.update(new)
+        else:
+            for new,item in zip(value,self._folder):
+                item.metadata.update(new)
 
     @property
     def all_keys(self):

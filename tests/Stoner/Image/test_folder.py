@@ -6,7 +6,7 @@ Created on Fri Mar 03 18:21:52 2017
 """
 
 from Stoner import Data
-from Stoner.Image import ImageArray, ImageFolder, ImageStack, KerrStack
+from Stoner.Image import ImageArray, ImageFolder, ImageStack, KerrStack,ImageStack2
 import numpy as np
 import unittest
 from os import path
@@ -25,12 +25,18 @@ class ImageFolderTest(unittest.TestCase):
     def setUp(self):
         self.td = ImageFolder(testdir, pattern='*.png')
         self.td=self.td.sort(key=lambda x:x.filename.lower())
-        self.ks = ImageStack(testdir)
+        self.ks_dir = ImageStack(testdir)
         self.ks = ImageStack(self.td) #load in two ways
-        self.assertTrue(len(self.ks)==len(os.listdir(testdir)))
+        self.ks2_dir = ImageStack2(testdir)
+        self.ks2 = ImageStack2(self.td) #load in two ways
 
     def test_load(self):
         self.assertTrue(len(self.td)==len(os.listdir(testdir)), "Didn't find all the images")
+        self.assertTrue(len(self.ks)==len(os.listdir(testdir)),"ImageStack conversion from ImageFolder failed")
+        self.assertTrue(len(self.ks_dir)==len(os.listdir(testdir)),"IamgeStack read from directory failed")
+        self.assertTrue(len(self.ks2)==len(os.listdir(testdir)),"ImageStack2 conversion from ImagerFolder failed")
+        self.assertTrue(len(self.ks2_dir)==len(os.listdir(testdir)),"ImageStack2 read from directory failed.")
+
         self.assertTrue(isinstance(self.td[0],ImageArray), 'Getting an image array from the ImageFolder failed') #'{}, '.format(isinstance(self.td[0], ImageArray))#
         #self.assertTrue(self.td.slice_metadata(key='field',values_only=True)==knownfieldvals, 'slice metadata failed')
 
