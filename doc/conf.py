@@ -123,7 +123,7 @@ intersphinx_mapping = {
     'h5py': ('http://docs.h5py.org/en/latest/', None),
     }
 
-
+primary_domain = "py"
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for

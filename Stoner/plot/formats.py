@@ -504,7 +504,7 @@ class SketchPlot(DefaultPlotStyle):
     Example
         .. plot:: samples/plotstyles/SketchStyle.py
             :include-source:
-            sketchstyle
+            :outname: sketchstyle
 
 
     """
