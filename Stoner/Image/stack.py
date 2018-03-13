@@ -198,7 +198,7 @@ class ImageStackMixin(object):
         idx=self.__lookup__(ix)
         name=list(self.__names__())[idx]
         del self._metadata[name]
-        self._stack=np.delte(self._stack,idx,axis=2)
+        self._stack=np.delete(self._stack,idx,axis=2)
 
     def __clear__(self):
         """"Clears all stored :py:class:`Stoner.Core.metadataObject` instances stored.
