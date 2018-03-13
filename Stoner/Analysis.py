@@ -1,9 +1,7 @@
-"""Stoner .Analysis provides a subclass of :py:class:`Stoner.Core.DataFile` that has extra analysis routines builtin.
-
-Provides  :py:class:`AnalysisMixin` - DataFile with extra bells and whistles.
+"""Stoner .Analysis provides a subclass of :class:`.Data` that has extra analysis routines builtin.
 """
 
-__all__ = ["AnalysisMixin"]
+__all__ = ["AnalysisMixin","GetAffineTransform","ApplyAffineTransform"]
 from inspect import isclass
 from warnings import warn
 

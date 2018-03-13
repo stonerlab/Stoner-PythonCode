@@ -1,6 +1,6 @@
 """Stoner.Core provides the core classes for the Stoner package."""
 from __future__ import print_function
-__all__ = ["StonerLoadError", "StonerSetasError","regexpDict","typeHintedDict","metadataObject","DataArray","DataFile"]
+__all__ = ["StonerLoadError", "StonerSetasError","_setas","regexpDict","typeHintedDict","metadataObject","DataArray","DataFile"]
 
 import re
 #import pdb # for debugging

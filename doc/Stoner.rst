@@ -1,24 +1,38 @@
-Stoner Package
-###############
+:mod:`Stoner` Package
+=======================
+
+.. module:: Stoner
+
+.. autosummary::
+   :toctree: classes
+   :template: classdocs.rst
+
+    Data
+    DataFolder
+
+Class Inheritance Diagram
+--------------------------
+
+.. inheritance-diagram:: Data DataFolder
 
 .. automodapi:: Stoner.Core
    :inherited-members:
-   :no-main-docstr:
    
 .. automodapi:: Stoner.Analysis
-   :no-main-docstr:
+    :no-inheritance-diagram:
 
 .. automodapi:: Stoner.plot
-   :no-main-docstr:
+    :no-inheritance-diagram:
+    :classes-only:
+
 
 .. automodapi:: Stoner.plot.formats
-   :no-main-docstr:
 
 .. automodapi:: Stoner.plot.utils
    :no-main-docstr:
 
+
 .. automodapi:: Stoner.Folders
-   :no-main-docstr:
 
 :mod:`FileFormats` Module
 =========================
@@ -68,6 +82,8 @@ Facility Outputs
     SNSFile
 
 .. automodapi:: Stoner.Fit
+    :no-inheritance-diagram:
+
 
 The following modules offer specialised file and foler formats.
 
@@ -75,20 +91,22 @@ The following modules offer specialised file and foler formats.
 .. automodapi:: Stoner.HDF5
    :no-main-docstr:
 
+
 .. automodapi:: Stoner.Zip
    :no-main-docstr:
+
+
 
 .. automodapi:: Stoner.Util
    :no-main-docstr:
 
 .. automodapi:: Stoner.tools
-   :no-main-docstr:
+   :allowed-package-names: Stoner.tools
 
 Subpackages
 ===========
 
 .. automodapi:: Stoner.Image
-   :no-main-docstr:
 
 .. automodapi:: Stoner.Image.folders
    :no-main-docstr:
@@ -103,4 +121,4 @@ Subpackages
    :no-main-docstr:
 
 .. automodapi:: Stoner.Image.util
-   :no-main-docstr:
+   :allowed-package-names: Stoner.Image

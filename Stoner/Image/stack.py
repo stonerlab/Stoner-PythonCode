@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon May 23 12:05:59 2016
-
-@author: phyrct
-"""
-
+"""Provide variants of :class:`Stoner.Image.ImageFolder` that store images efficiently in 3D numpy arrays."""
+__all__ = ["ImageStackMixin","ImageStack2","ImageStack"]
 import numpy as np
 import copy
 import numbers
@@ -16,7 +12,7 @@ from Stoner.tools import all_type
 from .core import ImageArray,dtype_range, ImageFile
 from .folders import ImageFolder,ImageFolderMixin
 from Stoner.Core import regexpDict,metadataObject
-from Stoner.Folders import DiskBssedFolder, baseFolder
+from Stoner.Folders import DiskBasedFolder, baseFolder
 
 IM_SIZE=(512,672) #Standard Kerr image size
 AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
@@ -405,7 +401,7 @@ class ImageStackMixin(object):
         return self.view()
 
 
-class ImageStack2(ImageStackMixin,ImageFolderMixin,DiskBssedFolder,baseFolder):
+class ImageStack2(ImageStackMixin,ImageFolderMixin,DiskBasedFolder,baseFolder):
 
     """An akternative implementation of an image stack based on baseFolder."""
 

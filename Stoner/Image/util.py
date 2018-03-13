@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Apr 20 21:56:22 2017
-
-Code copied directly from skimage module   
+"""Code copied directly from skimage module   
 """
 from __future__ import division
+__all__ = ["convert"]
+
 import numpy as np
 from warnings import warn
 

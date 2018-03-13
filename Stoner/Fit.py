@@ -10,6 +10,11 @@ Please do keep documentation up to date, see other functions for documentation e
 All the functions here defined for scipy.optimize.curve\_fit to call themm
 i.e. the parameters are expanded to separate arguements.
 """
+__all__ = ['Arrhenius', 'BDR', 'BlochGrueneisen',  'FMR_Power', 'FluchsSondheimer', 'FowlerNordheim', 'Inverse_Kittel', 'KittelEquation', 'Langevin',
+            'Linear', 'Lorentzian_diff', 'ModArrhenius', 'NDimArrhenius', 'PowerLaw', 'Quadratic', 'Simmons', 'StretchedExp', 'Strijkers', 'TersoffHammann',
+             'VFTEquation', 'WLfit', '_strijkers_core', 'arrhenius', 'bdr', 'blochGrueneisen', 'cfg_data_from_ini', 'cfg_model_from_ini', 'fluchsSondheimer',
+              'fmr_power', 'fowlerNordheim', 'inverse_kittel', 'kittelEquation', 'langevin', 'linear', 'lorentzian_diff', 'modArrhenius', 'nDimArrhenius',
+               'powerLaw', 'quadratic', 'simmons', 'stretchedExp', 'strijkers', 'vftEquation', 'wlfit']
 import Stoner.Core as _SC_
 from .compat import python_v3,string_types
 from . import Data

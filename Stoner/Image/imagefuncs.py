@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jun 20 13:01:56 2016
+"""Functions for manipulating Kerr (or any other) images
 
-@author: phyrct
-
-kfuncs.py
-
-Functions for manipulating Kerr (or any other) images
-
-All of these functions are accessible through the ImageArray attributes
-e.g. k=ImageArray('myfile'); k.level_image(). The first 'im' function argument
-is automatically added in this case.
+All of these functions are accessible through the :class:`ImageArray` attributes e.g.:
+    
+    k=ImageArray('myfile'); k.level_image(). 
+    
+The first 'im' function argument is automatically added in this case.
 
 If you want to add new functions that's great. There's a few important points:
 
@@ -24,8 +19,10 @@ If you want to add new functions that's great. There's a few important points:
 
     * After that you're free to treat im as a ImageArray
           or numpy array, it should all behave the same.
-
 """
+__all__ = ["adjust_contrast","align","correct_drift","subtract_image","fft","filter_image","gridimage","hist","imshow","level_image","normalise",
+           "profile_line","quantize","rotate","translate","translate_limits","plot_histogram","threshold_minmax","defect_mask","do_nothing",
+           "float_and_croptext","denoise"]
 import copy
 
 import numpy as np,matplotlib.pyplot as plt, os

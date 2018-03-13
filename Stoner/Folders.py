@@ -1,9 +1,8 @@
-"""Stoner.Folders : Classes for working collections of data files
+"""Stoner.Folders : Classes for working collections of :class:`.Data` files.
 
-Classes:
-     :py:class:`objectFolder` - manages a list of individual data files (e.g. from a directory tree)
+The core classes provides a means to access them as an ordered collection or as a mapping.
 """
-__all__ = ["baseFolder","DataFolder","PlotFolder"]
+__all__ = ["baseFolder","DiskBasedFolder","DataFolder","PlotFolder"]
 from .compat import python_v3,int_types,string_types,get_filedialog,commonpath
 from .tools import operator,isiterable,isproperty,islike_list,all_type
 import os
@@ -1708,7 +1707,7 @@ class baseFolder(MutableSequence):
         grps=[[y for y in self.groups[x]] for x in groups]
         return zip(*grps)
 
-class DiskBssedFolder(object):
+class DiskBasedFolder(object):
 
     """A Mixin class that implmenets reading metadataObjects from disc.
 
@@ -1763,7 +1762,7 @@ class DiskBssedFolder(object):
             defaults.pop("type")
         for k in defaults:
             setattr(self,k,kargs.pop(k,defaults[k]))
-        super(DiskBssedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
+        super(DiskBasedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
         if self.readlist and len(args)>0 and isinstance(args[0],string_types):
             self.getlist(directory=args[0])
 
@@ -1775,7 +1774,7 @@ class DiskBssedFolder(object):
         for arg in self._defaults:
             if hasattr(self,arg):
                 setattr(other,arg,getattr(self,arg))
-        return super(DiskBssedFolder,self).__clone__(other=other,attrs_only=attrs_only)
+        return super(DiskBasedFolder,self).__clone__(other=other,attrs_only=attrs_only)
 
     def _dialog(self, message="Select Folder",  new_directory=True):
         """Creates a directory dialog box for working with
@@ -1851,7 +1850,7 @@ class DiskBssedFolder(object):
             else:
                 raise RuntimeError("{} either does not exist of is already in the folder.".format(othername))
         else:
-            return super(DiskBssedFolder,self).__add_core__(result,other)
+            return super(DiskBasedFolder,self).__add_core__(result,other)
         return result
 
     def __sub_core__(self,result,other):
@@ -1861,7 +1860,7 @@ class DiskBssedFolder(object):
                 other=path.join(result.directory,other)
                 result.__deleter__(other)
                 return result
-        return super(DiskBssedFolder,self).__sub_core__(result,other)
+        return super(DiskBasedFolder,self).__sub_core__(result,other)
 
 
     def __lookup__(self,name):
@@ -1870,7 +1869,7 @@ class DiskBssedFolder(object):
             if list(self.basenames).count(name)==1:
                 return self.__names__()[list(self.basenames).index(name)]
 
-        return super(DiskBssedFolder,self).__lookup__(name)
+        return super(DiskBasedFolder,self).__lookup__(name)
 
     def __getter__(self,name,instantiate=True):
         """Loads the specified name from a file on disk.
@@ -1888,7 +1887,7 @@ class DiskBssedFolder(object):
             (metadataObject): The metadataObject
         """
         try:
-            return super(DiskBssedFolder,self).__getter__(name,instantiate=instantiate)
+            return super(DiskBasedFolder,self).__getter__(name,instantiate=instantiate)
         except (AttributeError,IndexError,KeyError):
             pass
         if name is not None and not path.exists(name):
@@ -2064,8 +2063,16 @@ class DiskBssedFolder(object):
 
 
 
-class DataFolder(DiskBssedFolder,baseFolder):
-
+class DataFolder(DiskBasedFolder,baseFolder):
+    
+    """Provide an interface to manipulating lots of data files stored within a directory structure on disc. 
+    
+    By default, the members of the DataFolder are isntances of :class:`Stoner.Data`. The DataFolder emplys a lazy open strategy, so that 
+    files are only read in from disc when actually needed.
+    
+    .. inheritance-diagram:: DataFolder
+    
+    """
 
     def __init__(self,*args,**kargs):
         from Stoner import Data
