@@ -2,12 +2,10 @@
 # -*- coding: utf-8 -*-
 """Support functions for Stoner package.
 
-These functions depend only on Stoner.compat which is used to ensure a consostent namespace.
-
-Created on Wed Apr 19 19:47:50 2017
-
-@author: Gavin Burnell
+These functions depend only on Stoner.compat which is used to ensure a consistent namespace between python 2.7 and 3.x.
 """
+__all__ = [ '_attribute_store', 'all_size', 'all_type', 'fix_signature', 'format_error', 'format_val', 'html_escape', 'isAnyNone', 'isNone', 'isiterable', 'islike_list',
+             'isproperty', 'istuple', 'quantize', 'tex_escape', 'typedList']
 from collections import Iterable,MutableSequence
 from .compat import string_types,bytes2str
 import re

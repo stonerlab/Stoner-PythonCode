@@ -1,20 +1,7 @@
 
 # -*- coding: utf-8 -*-
-"""
-Created on Tue May 03 14:31:14 2016
-
-@author: phyrct
-
-kermit.py
-
-Implements ImageArray, a class for using and manipulating two tone images such
-as those produced by Kerr microscopy (with particular emphasis on the Evico
-software images).
-
-Images from the Evico software are 2D arrays of 16bit unsigned integers.
-
-"""
-
+"""Implements core image handling classes for the :mod:`Stoner.Image` package."""
+__all__ = ["ImageArray","ImageFile","DrawProxy","MaskProxy"]
 import numpy as np
 import os
 from copy import copy, deepcopy
@@ -427,6 +414,15 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                 if not d.startswith("_"):
                     func=getattr(imagefuncs,d)
                     if callable(func) and func.__module__==imagefuncs.__name__:
+                        name="{}__{}".format(func.__module__,d).replace(".","__")
+                        func_proxy[name]=func
+
+            # Get the Stoner.Image.util mopdule next
+            from .import util as SIutil
+            for d in dir(SIutil):
+                if not d.startswith("_"):
+                    func=getattr(SIutil,d)
+                    if callable(func) and func.__module__==SIutil.__name__:
                         name="{}__{}".format(func.__module__,d).replace(".","__")
                         func_proxy[name]=func
 

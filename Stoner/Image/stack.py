@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon May 23 12:05:59 2016
-
-@author: phyrct
-"""
-
+"""Provide variants of :class:`Stoner.Image.ImageFolder` that store images efficiently in 3D numpy arrays."""
+__all__ = ["ImageStackMixin","ImageStack2","ImageStack"]
 import numpy as np
 import copy
 import numbers
+import warnings
 
 from skimage.viewer import CollectionViewer
 from Stoner.compat import  string_types,int_types
@@ -15,7 +12,7 @@ from Stoner.tools import all_type
 from .core import ImageArray,dtype_range, ImageFile
 from .folders import ImageFolder,ImageFolderMixin
 from Stoner.Core import regexpDict,metadataObject
-from Stoner.Folders import DiskBssedFolder, baseFolder
+from Stoner.Folders import DiskBasedFolder, baseFolder
 
 IM_SIZE=(512,672) #Standard Kerr image size
 AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
@@ -71,6 +68,7 @@ class ImageStackMixin(object):
         self._stack=np.atleast_3d(np.ma.MaskedArray([]))
         self._metadata=regexpDict()
         self._names=list()
+        self._sizes=np.array([],dtype=int).reshape(0,2)
 
         kargs["type"]=ImageFile
         super(ImageStackMixin,self).__init__(*args,**kargs)
@@ -89,7 +87,7 @@ class ImageStackMixin(object):
         """
         if isinstance(name,int_types):
             try:
-                _=self._stack[::,name]
+                _=self._stack[:,:,name]
             except IndexError:
                 raise KeyError("{} is out of range for accessing the ImageStack.".format(name))
             return name
@@ -135,7 +133,7 @@ class ImageStackMixin(object):
             instance= self._instantiate(idx)
             return self._update_from_object_attrs(instance)
 
-    def __setter__(self,name,value):
+    def __setter__(self,name,value,force_insert=False):
         """Stub to setting routine to store a metadataObject.
 
         Parameters:
@@ -153,35 +151,26 @@ class ImageStackMixin(object):
         if name is None:
             name=self.make_name(value)
         try:
+            if force_insert:
+                raise KeyError("Fake force insert")
             idx=self.__lookup__(name)
         except KeyError: #Ok we're appending here
-            self._metadata[name]=value.metadata
-            self._names.append(name)
-            current_shape=self._stack.shape
-            if np.product(current_shape)==0: # ok we're just adding the first elemtn here
-                self._stack=np.atleast_3d(value.data.view(type=np.ma.MaskedArray))
-            else:
-                if current_shape[:2]==value.data.shape: # easy to append
-                    self._stack=np.append(self._stack,np.atleast_3d(value.data),axis=2)
-                else: # Full resize needed
-                    mrows=max(current_shape[0],value.data[0])
-                    mcols=max(current_shape[1],value.data[1])
-                    tmp=np.ma.MaskedArray((mrows,mcols,current_shape[2]+1))
-                    tmp[:current_shape[0],:current_shape[1],:current_shape[2]]=self._stack
-                    tmp[:value.data.shape[0],:value.data.shape[1],-1]=value.data
-                    self._stack=tmp
-        else: # Doing an insert here
-            self._metadata[name]=value.metadata
-            current_shape=self._stack.shape
-            if current_shape[:2]==value.data.shape: # easy to append
-                self._stack[:,:,idx]=value.data
-            else: # Full resize needed
-                mrows=max(current_shape[0],value.data[0])
-                mcols=max(current_shape[1],value.data[1])
-                tmp=np.ma.MaskedArray((mrows,mcols,current_shape[2]))
-                tmp[:current_shape[0],:current_shape[1],:current_shape[2]]=self._stack
-                tmp[:value.data.shape[0],:value.data.shape[1],idx]=value.data
-                self._stack=tmp
+            if isinstance(value,string_types): # Append with a filename, call __getter__
+                value=self.__getter__(value,instantiate=True) # self.__getter__ will also insert if necessary
+                return None
+            else: # Append with real value
+                idx=len(self)
+                return self.__inserter__(idx,name,value)
+        else:
+            self._sizes[idx]=value.shape
+        self._metadata[name]=value.metadata
+        if hasattr(value,"image"):
+            value=value.image
+        row,col=value.shape
+        pag=len(self._sizes)
+        new_size=self.max_size+(pag,)
+        self._resize_stack(new_size)
+        self._stack[:row,:col,idx]=value
 
     def __inserter__(self,ix,name,value):
         """Provide an efficient insert into the stack.
@@ -190,6 +179,9 @@ class ImageStackMixin(object):
         a simple insert."""
         self._names.insert(ix,name)
         self._metadata[name]=value.metadata
+        self._sizes=np.insert(self._sizes,ix,value.shape,axis=0)
+        new_size=self.max_size+(len(self._names),)
+        self._resize_stack(new_size)        
         self._stack=np.insert(self._stack,ix,value.data,axis=2)
 
 
@@ -232,12 +224,28 @@ class ImageStackMixin(object):
             other._names=copy.deepcopy(self._names)
         return super(ImageStackMixin,self).__clone__(other=other,attrs_only=attrs_only)
 
+    ###########################################################################
+    ###################      Private methods     ##############################
+
     def _instantiate(self,idx):
         """Reconstructs the data type."""
         tmp=self.type()
-        tmp.data=self._stack[:,:,idx]
+        r,c=self._sizes[idx]
+        tmp.data=self._stack[:r,:c,idx]
         tmp.metadata=self._metadata[self.__names__()[idx]]
         return tmp
+
+    def _resize_stack(self,new_size):
+        """Create a new stack with a new size."""
+        old_size=self._stack.shape
+        if old_size==new_size:
+            return new_size
+        row,col,pag=tuple([min(o,n) for o,n in zip(old_size,new_size)])
+            
+        new=np.ma.zeros(new_size)
+        new[:row,:col,:pag]=self._stack[:row,:col,:pag]
+        self._stack=new
+        return row,col,pag        
 
     ###########################################################################
     ################### Properties of ImageStack ##############################
@@ -252,11 +260,148 @@ class ImageStackMixin(object):
         self._stack=value
 
     @property
+    def max_size(self):
+        if np.prod(self._sizes.shape)==0:
+            return(0,0)
+        return (self._sizes[:,0].max(),self._sizes[:,1].max())
+
+    @property
     def shape(self):
         return self._stack.shape
 
+    ###########################################################################
+    ###################         Public  methods         #######################
 
-class ImageStack2(ImageStackMixin,ImageFolderMixin,DiskBssedFolder,baseFolder):
+
+    def clip_intensity(self):
+        """Clip intensity that lies outside the range allowed by dtype.
+
+        Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
+        are changed to 0. (Numpy should limit the range on arrays of int dtypes.
+        """
+        dl=self.dtype_limits(clip_negative=True)
+        np.clip(self._stack, dl[0], dl[1], out=self._stack)
+
+    def convert_float(self, clip_negative=True):
+        """Convert the imarray to floating point type normalised to -1 to 1.
+
+        If clip_negative then clip intensities below 0 to 0.
+
+        Keyword Arguments:
+            clip_negative(bool):
+                whether to clip intensities
+        """
+        if self._stack.dtype.kind=='f': #already float
+            pass
+        else:
+            dl=self.dtype_limits(clip_negative=False)
+            new=self._stack.astype(np.float64)
+            new=new/float(dl[1])
+            self._stack = new
+        if clip_negative:
+            self.clip_intensity()
+
+    def dtype_limits(self, clip_negative=True):
+        """Return intensity limits, i.e. (min, max) tuple, of imarray dtype.
+
+        Keyword Arguments:
+            clip_negative(bool):
+                If True, clip the negative range (i.e. return 0 for min intensity)
+                even if the image dtype allows negative values.
+        Returns:
+            (imin,imax) (tuple):
+                Lower and upper intensity limits.
+        """
+        imin, imax = dtype_range[self._stack.dtype.type]
+        if clip_negative:
+            imin = 0
+        return imin, imax
+
+
+    def subtract(self, background, contrast=16, clip_intensity=True):
+        """Subtract a background image (or index) from all images in the stack.
+
+        The formula used is new = (ImageArray - background) * contrast + 0.5
+        If clip_intensity then clip negative intensities to 0. Array is always
+        converted to float for this method.
+
+        Arg:
+            background(int or 2d np.ndarray):
+                the background image to subtract. If int is given this is used
+                as an index on the stack.
+        Keyword Arguments:
+            contrast(int):
+                Default 16. Magnifies the subtraction
+            clip_intensity(bool):
+                whether to clip the image intensities in range (0,1) after subtraction
+        """
+        self.convert_float(clip_negative=False)
+        if isinstance(background, int):
+            bg=self[background]
+        if isinstance(bg.ImageFile):
+            bg=bg.image
+        bg = bg.view(ImageArray).convert_float(clip_negative=False)
+        bg=np.tile(bg, (1,1,len(self)))
+        self._stack = contrast * (self._stack - bg) + 0.5
+        if clip_intensity:
+            self.clip_intensity()
+
+    ###########################################################################
+    ################### Depricated Compaibility methods #######################
+
+    @property
+    def allmeta(self):
+        """List of complete metadata for each image in ImageStack"""
+        warnings.warn("allmeta is depricated in favour of ImageStack.metadata.all")
+        return self.metadata.all
+
+    @allmeta.setter
+    def allmeta(self, value):
+        """List of complete metadata for each image in ImageStack"""
+        warnings.warn("allmeta is depricated in favour of ImageStack.metadata.all")
+        self.metadata.all=value
+        
+    def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50, box=None):
+        """Align images to correct for image drift.
+
+        Pass through to ImageArray.corret_drift.
+
+        Arg:
+            refindex: int or str
+                index or name of the reference image to use for zero drift
+        Keyword Arguments:
+            threshold(float): see ImageArray.correct_drift
+            upsample_factor(int): see ImageArray.correct_drift
+            box: see ImageArray.correct_drift
+
+        """
+        warnings.warn("correct_drift is a depricated method for an image stack - consider using align.")
+        ref=self[refindex]
+        self.apply_all('correct_drift', ref, threshold=threshold,
+                     upsample_factor=upsample_factor, box=box)
+
+    def crop_stack(self, box):
+        """Crop the imagestack.
+        Crops to the box given
+
+        Args:
+            box(array or list of type int):
+                [xmin,xmax,ymin,ymax]
+
+        Returns:
+            (ImageStack):
+                cropped images
+        """
+        warnings.warn("crop_stack is depricated - sam effect can be achieved with crop(box,_=True)")
+        self.crop(box,_=True)
+
+    def show(self):
+        """Pass through to :py:meth:`Stoner.Image.ImageFolder.view`"""
+        warnings.weanr("show() is depricated in favour of ImageFolder.view()")
+        return self.view()
+
+
+class ImageStack2(ImageStackMixin,ImageFolderMixin,DiskBasedFolder,baseFolder):
 
     """An akternative implementation of an image stack based on baseFolder."""
 
@@ -303,6 +448,12 @@ class ImageStack(metadataObject):
             copyarray: whether to copy the image given in args[0]
 
         """
+        warnings.warn("""ImageStack is a depricated class.
+                      
+        Please conider using ImageStack2 which is based on ImageFolder and DataFolder and has a number of advantages.
+        
+        Please report any missing functionality that is in ImageStack and not ImageStack2 as an issue on github. """)
+        
         super(ImageStack, self).__init__(  \
                     metadata=kargs.pop('metadata',None)) #initialise metadata
         self._len = 0 #lock on adhoc imarray adjustments

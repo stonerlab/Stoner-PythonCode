@@ -10,6 +10,11 @@ Please do keep documentation up to date, see other functions for documentation e
 All the functions here defined for scipy.optimize.curve\_fit to call themm
 i.e. the parameters are expanded to separate arguements.
 """
+__all__ = ['Arrhenius', 'BDR', 'BlochGrueneisen',  'FMR_Power', 'FluchsSondheimer', 'FowlerNordheim', 'Inverse_Kittel', 'KittelEquation', 'Langevin',
+            'Linear', 'Lorentzian_diff', 'ModArrhenius', 'NDimArrhenius', 'PowerLaw', 'Quadratic', 'Simmons', 'StretchedExp', 'Strijkers', 'TersoffHammann',
+             'VFTEquation', 'WLfit', '_strijkers_core', 'arrhenius', 'bdr', 'blochGrueneisen', 'cfg_data_from_ini', 'cfg_model_from_ini', 'fluchsSondheimer',
+              'fmr_power', 'fowlerNordheim', 'inverse_kittel', 'kittelEquation', 'langevin', 'linear', 'lorentzian_diff', 'modArrhenius', 'nDimArrhenius',
+               'powerLaw', 'quadratic', 'simmons', 'stretchedExp', 'strijkers', 'vftEquation', 'wlfit']
 import Stoner.Core as _SC_
 from .compat import python_v3,string_types
 from . import Data
@@ -272,7 +277,7 @@ class Arrhenius(Model):
     Example:
         .. plot:: samples/Fitting/Arrhenius.py
             :include-source:
-            :outname: Arrhenius
+            :outname: arrhenius-class
     """
 
     display_names=["A",r"\Delta E"]
@@ -335,7 +340,7 @@ class NDimArrhenius(Model):
     Example:
         .. plot:: samples/Fitting/nDimArrhenius.py
             :include-source:
-            :outname: nDimArrhenius
+            :outname: nDimarrhenius-class
     """
 
     display_names=["A",r"\Delta E","n"]
@@ -397,7 +402,7 @@ class ModArrhenius(Model):
     Example:
         .. plot:: samples/Fitting/modArrhenius.py
             :include-source:
-            :outname: modArrhenius
+            :outname: modarrhenius-class
     """
 
     display_names=["A",r"\Delta E","n"]
@@ -455,7 +460,7 @@ def quadratic(x, a, b, c):
     Example:
         .. plot:: samples/Fitting/Quadratic.py
             :include-source:
-            :outname: Powerlaw
+            :outname: powerlaw-class
     """
     return a * x ** 2 + b * x + c
 
@@ -505,7 +510,7 @@ class Simmons(Model):
     Example:
         .. plot:: samples/Fitting/Simmons.py
             :include-source:
-            :outname: Simmons
+            :outname: simmons-class
     """
 
     display_names=["A",r"\phi","d"]
@@ -572,7 +577,7 @@ class BDR(Model):
     Example:
         .. plot:: samples/Fitting/BDR.py
             :include-source:
-            :outname: BDR
+            :outname: bdr-class
     """
 
     def __init__(self, *args, **kwargs):
@@ -622,7 +627,7 @@ class FowlerNordheim(Model):
     Example:
         .. plot:: samples/Fitting/FowlerNordheim.py
             :include-source:
-            :outname: FowlerNordheim
+            :outname: fowlernordheim-class
     """
 
     def __init__(self, *args, **kwargs):
@@ -742,7 +747,7 @@ class WLfit(Model):
     Example:
         .. plot:: samples/Fitting/weak_localisation.py
             :include-source:
-            :outname: WLfit
+            :outname: wlfit-class
     """
 
     display_names=[r"\sigma_0","D_S","B_1","B_2"]
@@ -886,7 +891,7 @@ class Strijkers(Model):
     Example:
         .. plot:: samples/lmfit_demo.py
             :include-source:
-            :outname: Strijkers
+            :outname: strijkers-class
     """
 
     display_names=[r"\omega",r"\Delta","P","Z"]
@@ -953,7 +958,7 @@ class FluchsSondheimer(Model):
     Example:
         .. plot:: samples/Fitting/f_s.py
             :include-source:
-            :outname: FluchsSondheimer
+            :outname: fluchsdondheimer-class
     """
 
     display_names=[r"\lambda_{mfp}","p_{refl}",r"\sigma_0"]
@@ -1015,7 +1020,7 @@ class BlochGrueneisen(Model):
     Example:
         .. plot:: samples/Fitting/b_g.py
             :include-source:
-            :outname: BlochGruneisen
+            :outname: blochgruneisen-class
     """
 
     display_names=[r"\theta_D",r"\rho_0","A","n"]
@@ -1076,7 +1081,7 @@ class Langevin(Model):
     Example:
         .. plot:: samples/Fitting/langevin.py
             :include-source:
-            :outname: Langevin
+            :outname: langevin-class
     """
 
     def __init__(self, *args, **kwargs):
@@ -1152,7 +1157,7 @@ class VFTEquation(Model):
     Example:
         .. plot:: samples/Fitting/vftEquation.py
             :include-source:
-            :outname: VFT
+            :outname: vft-class
     """
 
     display_names=["A",r"\Delta E","x_0"]
@@ -1229,7 +1234,7 @@ class StretchedExp(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 def kittelEquation(H,g,M_s,H_k):
-    """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
+    r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
         H (array): Magnetic fields in A/m
@@ -1240,7 +1245,7 @@ def kittelEquation(H,g,M_s,H_k):
     Returns:
         Reesonance peak frequencies in Hz
 
-    :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
+    :math:`f = \frac{\gamma \mu_{0}}{2 \pi} \sqrt{\left(H + H_{k}\right) \left(H + H_{k} + M_{s}\right)}`
 
     Example:
         .. plot:: samples/Fitting/kittel.py
@@ -1251,7 +1256,7 @@ def kittelEquation(H,g,M_s,H_k):
     return (consts.mu0*gamma/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
 
 def inverse_kittel(f,g,M_s,H_k):
-    """Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency
+    r"""Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency
 
     Args:
         f (array): Resonance Frequency in Hz
@@ -1264,11 +1269,11 @@ def inverse_kittel(f,g,M_s,H_k):
 
     Notes:
         In practice one often measures FMR by sweepign field for constant frequency and then locates the
-        peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a :math:`H_{res}\\pm \\Delta H_{res}`
+        peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a :math:`H_{res}\pm \Delta H_{res}`
         In order to make use of this data with :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit` or :py:meth:`Stoner.Analysis.AnalysisMixin.curve_fit`
         it makes more sense to fit the Kittel Equation written in terms of H than frequency.
 
-       :math:`H_{res}=- H_{k} - \\frac{M_{s}}{2} + \\frac{1}{2 \\gamma \\mu_{0}} \\sqrt{M_{s}^{2} \\gamma^{2} \\mu_{0}^{2} + 16 \\pi^{2} f^{2}}`
+       :math:`H_{res}=- H_{k} - \frac{M_{s}}{2} + \frac{1}{2 \gamma \mu_{0}} \sqrt{M_{s}^{2} \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}`
     """
     gamma=g*cnst.e/(2*cnst.m_e)
     return -H_k - M_s/2 + _np_.sqrt(M_s**2*gamma**2*cnst.mu_0**2 + 16*_np_.pi**2*f**2)/(2*gamma*cnst.mu_0)
@@ -1286,12 +1291,12 @@ class KittelEquation(Model):
     Returns:
         Reesonance peak frequencies in Hz
 
-    :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
+    :math:`f = \frac{\gamma \mu_{0}}{2 \pi} \sqrt{\left(H + H_{k}\right) \left(H + H_{k} + M_{s}\right)}`
 
     Example:
         .. plot:: samples/Fitting/kittel.py
             :include-source:
-            :outname: Kittel
+            :outname: kittel-class
     """
 
     display_names=["g","M_s","H_k"]
@@ -1329,7 +1334,7 @@ class Inverse_Kittel(Model):
     Returns:
         Reesonance peak frequencies in Hz
 
-    :math:`f = \\frac{\\gamma \\mu_{0}}{2 \\pi} \\sqrt{\\left(H + H_{k}\\right) \\left(H + H_{k} + M_{s}\\right)}`
+    :math:`f = \frac{\gamma \mu_{0}}{2 \pi} \sqrt{\left(H + H_{k}\right) \left(H + H_{k} + M_{s}\right)}`
 
     """
 
@@ -1364,9 +1369,9 @@ def lorentzian_diff(x,A,sigma,mu):
         mu (float): peak location in x
 
         Returns
-            :math:`\\frac{A \\sigma \\left(2 \\mu - 2 x\\right)}{\\pi \\left(\\sigma^{2} + \\left(- \\mu + x\\right)^{2}\\right)^{2}}`
+            :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`
         """
-    return A*sigma*(2*mu - 2*x)/(pi*(sigma**2 + (-mu + x)**2)**2)
+    return A*sigma*(2*mu - 2*x)/(_np_.pi*(sigma**2 + (-mu + x)**2)**2)
 
 class Lorentzian_diff(Model):
     r"""lmfit Model rerprenting the differential form of a Lorentzian Peak.
@@ -1378,7 +1383,7 @@ class Lorentzian_diff(Model):
         mu (float): peak location in x
 
         Returns
-            :math:`\\frac{A \\sigma \\left(2 \\mu - 2 x\\right)}{\\pi \\left(\\sigma^{2} + \\left(- \\mu + x\\right)^{2}\\right)^{2}}`
+            :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`
     """
     display_names=["A",r"\sigma",r"\mu"]
 

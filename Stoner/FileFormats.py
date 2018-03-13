@@ -10,8 +10,11 @@ High priority is run last (so is a bit of a misnomer!).
 Eacg class should implement a load() method and optionally a save() method. Classes should make every effort to
 positively identify that the file is one that they understand and throw a :py:exception:Stoner.Core._SC_.StonerLoadError` if not.
 """
-# pylint: disable=unused-argument
 from __future__ import print_function
+__all__=['BNLFile', 'BigBlueFile', 'CSVFile', 'EasyPlotFile', 'FmokeFile', 'GenXFile', 'KermitPNGFile', 'LSTemperatureFile', 'MDAASCIIFile', 'MokeFile',
+          'OVFFile', 'OpenGDAFile', 'PIL', 'PinkLibFile', 'QDFile', 'RasorFile', 'RigakuFile', 'SNSFile', 'SPCFile', 'TDMSFile', 'TdmsFile', 'VSMFile',
+           'XRDFile',]
+# pylint: disable=unused-argument
 import Stoner.Core as _SC_
 import linecache
 import re

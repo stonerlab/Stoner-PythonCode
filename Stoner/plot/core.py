@@ -90,7 +90,7 @@ class PlotMixin(object):
             "showfig": bool
         }
         super(PlotMixin,self).__init__(*args,**kargs)
-        self._labels = typedList(string_types,self.column_headers)
+        self._labels = typedList(string_types,[])
         if self.debug: print("Done PlotMixin init")
 
 
@@ -147,6 +147,8 @@ class PlotMixin(object):
     @property
     def labels(self):
         """Return the labels for the plot columns"""
+        if len(self._labels)==0:
+            return self.column_headers
         if len(self._labels) < len(self.column_headers):
             self._labels.extend(copy.deepcopy(self.column_headers[len(self._labels):]))
         return self._labels
@@ -355,28 +357,28 @@ class PlotMixin(object):
         attr = list(set(attr))
         return sorted(attr)
 
-    def _fix_cols(self, **kargs):
+    def _fix_cols(self, scalar=False,**kargs):
         """Sorts out axis specs, replacing with contents from setas as necessary."""
-        if "startx" in kargs:
-            startx = kargs["startx"]
-            del kargs["startx"]
-        else:
-            startx = 0
-
-        c = self.setas._get_cols(startx=startx)
-        for k in ["xcol", "ycol", "zcol", "ucol", "vcol", "wcol", "xerr", "yerr", "zerr"]:
-            if k in kargs and k == "xcol" and kargs["xcol"] is None:
-                kargs["xcol"] = c.xcol
-            elif k in kargs and k == "xerr" and kargs["xerr"] is None:
-                kargs["xerr"] = c.xerr
-            elif k in kargs and k != "xcol" and kargs[k] is None and len(c[k]) > 0:
-                if kargs.get("multi_y",False):
-                    kargs[k] = c[k]
-                else:
-                    kargs[k] = c[k][0]
-        for k in list(kargs.keys()):
-            if k not in ["xcol", "ycol", "zcol", "ucol", "vcol", "wcol", "xerr", "yerr", "zerr"]:
-                del kargs[k]
+        if "startx" in kargs:	
+            startx = kargs["startx"]	
+            del kargs["startx"]	
+        else:	
+            startx = 0	
+	
+        c = self.setas._get_cols(startx=startx)	
+        for k in ["xcol", "ycol", "zcol", "ucol", "vcol", "wcol", "xerr", "yerr", "zerr"]:	
+            if k in kargs and k == "xcol" and kargs["xcol"] is None:	
+                kargs["xcol"] = c.xcol	
+            elif k in kargs and k == "xerr" and kargs["xerr"] is None:	
+                kargs["xerr"] = c.xerr	
+            elif k in kargs and k != "xcol" and kargs[k] is None and len(c[k]) > 0:	
+                if kargs.get("multi_y",False):	
+                    kargs[k] = c[k]	
+                else:	
+                    kargs[k] = c[k][0]	
+        for k in list(kargs.keys()):	
+            if k not in ["xcol", "ycol", "zcol", "ucol", "vcol", "wcol", "xerr", "yerr", "zerr"]:	
+                del kargs[k]	
         return _attribute_store(kargs)
 
     def _fix_fig(self, figure, **kargs):

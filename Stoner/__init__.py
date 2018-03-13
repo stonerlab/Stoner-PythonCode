@@ -1,10 +1,8 @@
-"""Stoner Python Package: Utility classes for simple data analysis scripts.
-
-See http://github.com/~gb119/Stoner-PythonCode for more details.
-
+"""The Stoner Python package provides utility classes for writing simple data analysis scripts more easily.  It has been developed by members
+of the `Condensed Matter Group<http://www.stoner.leeds.ac.uk/>` at the `University of Leeds<http://www.leeds.ac.uk>`.
 """
 # pylint: disable=import-error
-__all__=['Core', 'Analysis', 'plot', 'tools','FileFormats','Folders','Data','DataFolder']
+__all__=['Core', 'Analysis', 'plot', 'Image','tools','FileFormats','Folders','Data','DataFolder']
 
 # These fake the old namespace if you do an import Stoner
 from sys import float_info
@@ -23,7 +21,7 @@ from .compat import _lmfit,Model
 from .tools import format_error
 
 from os import path as _path_
-__version_info__ = ('0', '8', 'a2')
+__version_info__ = ('0', '8', 'b1')
 __version__ = '.'.join(__version_info__)
 
 __home__=_path_.realpath(_path_.dirname(__file__))

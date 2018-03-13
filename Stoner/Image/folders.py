@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon May 23 12:05:59 2016
-
-@author: phyrct
-"""
-
+"""Implements a baseFolder type structure for working with collections of images."""
+__all__ = ["_generator","ImageFolderMixin","ImageFolder"]
 from .core import ImageArray
 from Stoner import Data
-from Stoner.Folders import DiskBssedFolder, baseFolder
+from Stoner.Folders import DiskBasedFolder, baseFolder
 from Stoner.compat import string_types
 from Stoner.tools import isiterable,islike_list
 from Stoner.Image import ImageFile,ImageArray
@@ -32,15 +28,16 @@ class _generator(object):
         return self.len
 
     def __iter__(self):
+        self.ix=0
         return self
 
     def __next__(self):
-        for i in self.fldr:
-            if hasattr(i,"image"):
-                ret=i.image
-            else:
-                ret=i
-            yield ret
+        if self.ix<len(self):
+            ret=self[self.ix]
+            self.ix+=1
+            return ret
+        else:
+            raise StopIteration("Finished iterating Folder.")
 
     def __getitem__(self,index):
         ret=self.fldr[index]
@@ -48,8 +45,8 @@ class _generator(object):
             ret=ret.image
         return ret
 
-    next=__next__
-
+    def next(self):
+        return self.__next__()
 
 class ImageFolderMixin(object):
 
@@ -93,14 +90,65 @@ class ImageFolderMixin(object):
         super(ImageFolderMixin,self).__init__(*args,**kargs)
 
     @property
+    def size(self):
+        """Return the size of an individual image or False if not all images are the same size."""
+        shape=self.images[0].shape
+        for i in self.images:
+            if i.shape!=shape:
+                return False
+        return shape
+
+    @property
     def images(self):
         """A generator that iterates over just the images in the Folder."""
         return _generator(self)
 
+    def apply_all(self, *args, **kargs):
+        """apply function to all images in the stack
+
+        Args:
+            func(string or callable):
+                if string it must be a function reachable by ImageArray
+            quiet(bool):
+                if False print '.' for every iteration
+
+        Note:
+            Further args, kargs are passed through to the function
+        """
+        args = list(args)
+        func = args.pop(0)
+        quiet = kargs.pop('quiet', True)
+        if isinstance(func, string_types):
+            for i, im in enumerate(self):
+                f=getattr(im,func)
+                self[i]=f(*args,**kargs)
+                if not quiet:
+                    print('.')
+        elif hasattr(func, '__call__'):
+            for i, im in enumerate(self):
+                self[i]=func(im, *args, **kargs)
+            if not quiet:
+                print(".")
+
+    def average(self, weights=None):
+        """Get an array of average pixel values for the stack.
+
+        Pass through to numpy average
+        Returns:
+            average(ImageArray):
+                average values
+        """
+        if not self.size:
+            raise RuntimeError("Cannot average Imagefolder if images have different sizes")
+        stack=np.stack(self.images,axis=0)
+        average = np.average(stack,axis=0, weights=weights)
+        return average.view(ImageArray)
+    
     def loadgroup(self):
         """Load all files from this group into memory"""
         for _ in self:
             pass
+        
 
     def as_stack(self):
         """Return a ImageStack of the images in the current group."""
@@ -109,22 +157,30 @@ class ImageFolderMixin(object):
         return k
 
     def mean(self):
-        """Calculate the mean value of all the images in the stack."""
-        total=np.zeros_like(self[0])
-        for i in self:
-            total+=i
-        total/=len(self)
-        if isinstance(self._type,np.ndarray):
-            ret= total.view(type=self._type)
-            ret.metadata.update(self[0].metadata)
-        elif isinstance(self._type,ImageFile):
-            ret=self._type()
-            ret.image=total
-            ret.metadata.update(self[0].metadata)
-        else:
-            ret=total
-        return ret
+        """Calculate the mean value of all the images in the stack.
+        
+        Actually a synonym for self.average with not weights
+        """
+        return self.average()
 
+
+    def stddev(self, weights=None):
+        """Calculate weighted standard deviation for stack
+
+        This is a biased standard deviation, may not be appropriate for small sample sizes
+        """
+        weights=np.ones(len(self)) if weights is None else weights
+        avs = self.average(weights=weights)
+        sumsqdev=np.zeros_like(avs)
+        for ix,img in enumerate(self.images):
+            sumsqdev+=weights[ix]*(img-avs)**2
+        sumsqdev=np.sqrt(sumsqdev)/np.sum(weights,axis=0)
+        return sumsqdev.view(ImageArray)
+
+    def stderr(self, weights=None):
+        """Standard error in the stack average"""
+        serr = self.stddev(weights=weights)/np.sqrt(len(self))
+        return serr
 
     def view(self):
         """Create a matplotlib animated view of the contents.
@@ -134,7 +190,7 @@ class ImageFolderMixin(object):
         cv.show()
         return cv
 
-class ImageFolder(ImageFolderMixin,DiskBssedFolder,baseFolder):
+class ImageFolder(ImageFolderMixin,DiskBasedFolder,baseFolder):
 
     """Folder object for images.
 

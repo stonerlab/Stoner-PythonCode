@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Plot Templates module - contains classes that style plots for Stoner.plot and pyplot
-Created on Fri Feb 07 19:57:30 2014
-
-@author: Gavin Burnell
+"""Plot Templates module - contains classes that style plots produced by :class:`.Data`
 """
 
 __all__=["TexFormatter","DefaultPlotStyle","GBPlotStyle","JTBPlotStyle","JTBinsetStyle","PRBPlotStyle","SketchPlot","SeabornPlotStyle"]
@@ -504,7 +501,7 @@ class SketchPlot(DefaultPlotStyle):
     Example
         .. plot:: samples/plotstyles/SketchStyle.py
             :include-source:
-            sketchstyle
+            :outname: sketchstyle
 
 
     """

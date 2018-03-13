@@ -9,6 +9,7 @@ It is only necessary to import this module for the subclasses of :py:class:`Ston
 to :py:class:`Stoner.Core.Data`.
 
 """
+__all__ = [ 'HDF5File', 'HDF5Folder', 'HGXFile', 'SLS_STXMFile', 'STXMImage']
 from .compat import string_types,bytes2str,get_filedialog
 import h5py
 import numpy as _np_

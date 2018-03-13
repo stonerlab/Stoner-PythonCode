@@ -165,5 +165,5 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-    unittest.main()
-    #test.test_grouping()
+    #unittest.main()
+    test.test_grouping()

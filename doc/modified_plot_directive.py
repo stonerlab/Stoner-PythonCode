@@ -675,7 +675,7 @@ def render_figures(code, code_path, output_dir, output_base, context,
                 try:
                     figman.canvas.figure.savefig(img.filename(format), dpi=dpi)
                     if config.plot_preserve_dir and outname:
-                      print("Preserving '{0}' into '{1}'".format(img.filename(format), config.plot_preserve_dir))
+                      #print("Preserving '{0}' into '{1}'".format(img.filename(format), config.plot_preserve_dir))
                       shutil.copy2(img.filename(format), config.plot_preserve_dir)
                 except Exception as err:
                     raise PlotError(traceback.format_exc())
@@ -803,7 +803,7 @@ def run(arguments, content, options, state_machine, state, lineno):
     if config.plot_preserve_dir and outname:
       outfiles = glob.glob(os.path.join(config.plot_preserve_dir,outname) + '*')
       for of in outfiles:
-        print("Copying preserved copy of '{0}' into '{1}'".format(of, build_dir))
+        #print("Copying preserved copy of '{0}' into '{1}'".format(of, build_dir))
         shutil.copy2(of, build_dir)
 
     # make figures

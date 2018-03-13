@@ -1,11 +1,10 @@
-"""Stoner.Folders : Classes for working collections of data files
+"""Stoner.Folders : Classes for working collections of :class:`.Data` files.
 
-Classes:
-     :py:class:`objectFolder` - manages a list of individual data files (e.g. from a directory tree)
+The core classes provides a means to access them as an ordered collection or as a mapping.
 """
-__all__ = ["baseFolder","DataFolder","PlotFolder"]
+__all__ = ["baseFolder","DiskBasedFolder","DataFolder","PlotFolder"]
 from .compat import python_v3,int_types,string_types,get_filedialog,commonpath
-from .tools import operator,isiterable,isproperty,islike_list
+from .tools import operator,isiterable,isproperty,islike_list,all_type
 import os
 import re
 import os.path as path
@@ -15,7 +14,7 @@ from copy import copy,deepcopy
 import unicodedata
 from inspect import ismethod
 import string
-from collections import Iterable,MutableSequence
+from collections import Iterable,MutableSequence,OrderedDict
 from itertools import islice
 import matplotlib.pyplot as plt
 from .Core import metadataObject,DataFile,regexpDict
@@ -45,6 +44,25 @@ class _combined_metadata_proxy(object):
     def __init__(self,folder):
 
         self._folder=folder
+        
+    @property
+    def all(self):
+        """A l,ist of all the metadata dictionaries in the Folder."""
+        if hasattr(self._folder,"_metadata"): #Extra logic for Folders like Stack
+            for item in self._folder._metadata.items():
+                yield item
+        for item in self._folder:
+            yield item.metadata
+
+    @all.setter
+    def all(self,value):
+        """A l,ist of all the metadata dictionaries in the Folder."""
+        if hasattr(self._folder,"_metadata"): #Direct support for metadata dictionary
+            for new,old in zip(value,self._folder._metadata):
+                old.update(new)
+        else:
+            for new,item in zip(value,self._folder):
+                item.metadata.update(new)
 
     @property
     def all_keys(self):
@@ -157,45 +175,44 @@ class _combined_metadata_proxy(object):
             key=metadata[0].__lookup__(key,multiple=True)
             key=[key] if not islike_list(key) else key
             keys=key
-        if islike_list(key): #Otherwise must be a list of similar of keys
-            newkey=[]
-            for k in key:
-                newkey.extend(metadata[0].__lookup__(k,multiple=True))
-            key=newkey
-            if len(set(key)-set(self.common_keys)): #Is the key in the common keys? # TODO: implement __getitem__'s masked array logic?
-                raise KeyError("{} are missing from some items in the Folder.".format(set(key)-set(self.common_keys)))
-            else:
-                keys=key
-            for i,met in enumerate(metadata):#Assemble a list of dictionaries of values
-                metadata[i]={k:v for k,v in metadata[i].items() if k in key}
-        if output in ["list","array","Data",list,_np_.ndarray,DataFile] or (output=="smart" and len(metadata[0])==1): # Reformat output
+        # Expand all keys in case of multiple metadata matches
+        newkey=[]
+        for k in key:
+            newkey.extend(metadata[0].__lookup__(k,multiple=True))
+        key=newkey
+        if len(set(key)-set(self.common_keys)): #Is the key in the common keys? # TODO: implement __getitem__'s masked array logic?
+            raise KeyError("{} are missing from some items in the Folder.".format(set(key)-set(self.common_keys)))
+        results=[]
+        for i,met in enumerate(metadata):#Assemble a list of dictionaries of values
+            results.append({k:v for k,v in metadata[i].items() if k in key})
+        if output in ["list","array","Data",list,_np_.ndarray,DataFile] or (output=="smart" and len(results[0])==1): # Reformat output
             cols=[]
-            for k in keys: # Expand the columns of data we're going to need if some values are not scalar
+            for k in key: # Expand the columns of data we're going to need if some values are not scalar
                 if islike_list(metadata[0][k]):
                     for i,_ in enumerate(metadata[0][k]):
                         cols.append("{}_{}".format(k,i))
                 else:
                     cols.append(k)
 
-            for i,met in enumerate(metadata): #For each object in the Folder
-                metadata[i]=[]
-                for k in keys: # and for each key in out list
+            for i,met in enumerate(results): #For each object in the Folder
+                results[i]=[]
+                for k in key: # and for each key in out list
                     v=met[k]
                     if islike_list(v): # extend or append depending if the value is scalar. # TODO: This will blowup for values with more than 1 D!
-                        metadata[i].extend(v)
+                        results[i].extend(v)
                     else:
-                        metadata[i].append(v)
-            if len(keys)==1: #single key
-                metadata=[m[0] for m in metadata]
+                        results[i].append(v)
+            if len(cols)==1: #single key
+                results=[m[0] for m in results]
             if output in ["array",_np_.ndarray]:
-                metadata=_np_.array(metadata)
+                results=_np_.array(results)
             if output in ["Data",DataFile]: # Build oour Data object
                 from Stoner import Data
                 tmp=Data()
-                tmp.data=_np_.array(metadata)
+                tmp.data=_np_.array(results)
                 tmp.column_headers=cols
-                metadata=tmp
-        return metadata
+                results=tmp
+        return results
 
 
 class baseFolder(MutableSequence):
@@ -494,7 +511,7 @@ class baseFolder(MutableSequence):
                 raise KeyError("{} is not a valid {}".format(name,self._type))
         return self._update_from_object_attrs(name)
 
-    def __setter__(self,name,value):
+    def __setter__(self,name,value,force_insert=False):
         """Stub to setting routine to store a metadataObject.
 
         Parameters:
@@ -506,7 +523,10 @@ class baseFolder(MutableSequence):
         """
         if name is None:
             name=self.make_name()
-        self.objects[name]=value
+        if force_insert:
+           self.objects.update({name:value})
+        else:            
+            self.objects[name]=value
 
     def __inserter__(self,ix,name,value):
         """Insert the element into a specific place in our data folder.
@@ -619,21 +639,40 @@ class baseFolder(MutableSequence):
                 raise IndexError("{} is out of range.".format(name))
         elif isinstance(name,slice): #Possibly ought to return another Folder?
             other=self.__clone__(attrs_only=True)
-            for iname in islice(self.__names__(),name.start,name.stop,name.step):
-                other.__setter__(iname,self.__getter__(iname))
+            for ix,iname in enumerate(islice(self.__names__(),name.start,name.stop,name.step)):
+                item=self.__getter__(iname)
+                if hasattr(item,"filename"):
+                    item.filename=iname
+                other.append(item)
             return other
         elif isinstance(name,tuple): # Recursive indexing through tree with a tuple
-            item=name[0]
-            name=tuple(name[1:])
-            if len(name)==0: #Final stage of indexing and we're still in the data folder
-                return self[item]
-            elif len(name)==1: # This allows indexing into a metadataobject
-                name=name[0]
-                grp=self[item]
-                return grp[name]
+            item=self[name[0]]
+            if len(name)>2:
+                name=tuple(name[1:])
+            elif len(name)==1:
+                return item
+            else:
+                name=name[1]
+            if isinstance(item,self._type):
+                return item[name]
+            elif isinstance(item,self.__class__):
+                if all_type(name,(int_types,slice)): #Looks like we're accessing data arrays
+                    test=(len(item),)+item[0].data[name].shape
+                    output=_np_.array([]).view(item[0].data.__class__)
+                    for ix,data in enumerate(item):
+                        output=_np_.append(output,data[name])
+                    output=output.reshape(test)
+                    return output
+                else:  # Slicing metadata
+                    try:
+                        return item[name]
+                    except KeyError as e:
+                        if name in item.metadata.common_keys:
+                            return item.metadata.slice(name,output="Data")
+                        print(name)
+                        raise e
             else: # Continuing to index into the tree of groups
-                grp=self[item]
-                return grp[name]
+                raise KeyError("Can't index the baseFolder with {}".format(name))
         else:
             raise KeyError("Can't index the baseFolder with {}".format(name))
 
@@ -1363,7 +1402,7 @@ class baseFolder(MutableSequence):
             name=self.__names__()[ix]
             self.__setter__(self.__lookup__(name),value)
         elif ix>=len(self):
-            self.__setter__(name,value)
+            self.__setter__(name,value,force_insert=True)
 
     def items(self):
         """Return the key,value pairs for the subbroups of this folder."""
@@ -1659,7 +1698,7 @@ class baseFolder(MutableSequence):
         Args:
             groups(list of strings): A list of keys of groups in the Lpy:class:`objectFolder`
 
-        ReturnsL
+        Returns:
             A list of tuples of groups of files:
                 [(grp_1_file_1,grp_2_file_1....grp_n_files_1),(grp_1_file_2,grp_2_file_2....grp_n_file_2)....(grp_1_file_m,grp_2_file_m...grp_n_file_m)]
         """
@@ -1668,7 +1707,7 @@ class baseFolder(MutableSequence):
         grps=[[y for y in self.groups[x]] for x in groups]
         return zip(*grps)
 
-class DiskBssedFolder(object):
+class DiskBasedFolder(object):
 
     """A Mixin class that implmenets reading metadataObjects from disc.
 
@@ -1723,7 +1762,7 @@ class DiskBssedFolder(object):
             defaults.pop("type")
         for k in defaults:
             setattr(self,k,kargs.pop(k,defaults[k]))
-        super(DiskBssedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
+        super(DiskBasedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
         if self.readlist and len(args)>0 and isinstance(args[0],string_types):
             self.getlist(directory=args[0])
 
@@ -1735,7 +1774,7 @@ class DiskBssedFolder(object):
         for arg in self._defaults:
             if hasattr(self,arg):
                 setattr(other,arg,getattr(self,arg))
-        return super(DiskBssedFolder,self).__clone__(other=other,attrs_only=attrs_only)
+        return super(DiskBasedFolder,self).__clone__(other=other,attrs_only=attrs_only)
 
     def _dialog(self, message="Select Folder",  new_directory=True):
         """Creates a directory dialog box for working with
@@ -1811,7 +1850,7 @@ class DiskBssedFolder(object):
             else:
                 raise RuntimeError("{} either does not exist of is already in the folder.".format(othername))
         else:
-            return super(DiskBssedFolder,self).__add_core__(result,other)
+            return super(DiskBasedFolder,self).__add_core__(result,other)
         return result
 
     def __sub_core__(self,result,other):
@@ -1821,7 +1860,7 @@ class DiskBssedFolder(object):
                 other=path.join(result.directory,other)
                 result.__deleter__(other)
                 return result
-        return super(DiskBssedFolder,self).__sub_core__(result,other)
+        return super(DiskBasedFolder,self).__sub_core__(result,other)
 
 
     def __lookup__(self,name):
@@ -1830,7 +1869,7 @@ class DiskBssedFolder(object):
             if list(self.basenames).count(name)==1:
                 return self.__names__()[list(self.basenames).index(name)]
 
-        return super(DiskBssedFolder,self).__lookup__(name)
+        return super(DiskBasedFolder,self).__lookup__(name)
 
     def __getter__(self,name,instantiate=True):
         """Loads the specified name from a file on disk.
@@ -1848,7 +1887,7 @@ class DiskBssedFolder(object):
             (metadataObject): The metadataObject
         """
         try:
-            return super(DiskBssedFolder,self).__getter__(name,instantiate=instantiate)
+            return super(DiskBasedFolder,self).__getter__(name,instantiate=instantiate)
         except (AttributeError,IndexError,KeyError):
             pass
         if name is not None and not path.exists(name):
@@ -2024,8 +2063,16 @@ class DiskBssedFolder(object):
 
 
 
-class DataFolder(DiskBssedFolder,baseFolder):
-
+class DataFolder(DiskBasedFolder,baseFolder):
+    
+    """Provide an interface to manipulating lots of data files stored within a directory structure on disc. 
+    
+    By default, the members of the DataFolder are isntances of :class:`Stoner.Data`. The DataFolder emplys a lazy open strategy, so that 
+    files are only read in from disc when actually needed.
+    
+    .. inheritance-diagram:: DataFolder
+    
+    """
 
     def __init__(self,*args,**kargs):
         from Stoner import Data

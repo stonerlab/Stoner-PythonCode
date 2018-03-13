@@ -352,7 +352,24 @@ Alternatively, and equivalently, you can access the column indexes via attribute
     d.setas.has_ucol # False
     d.setas.ycol # [1]
     d.setas.xcol # 0
+    
+Implied Column Assignments
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+If you do not specify the column types via the setas attributes, then :py:class:`DataFile` will try to guess sensible columns assignments based on the number
+of columns in your data file. These default assignments are only done at the point at which the :py:attr:`DataFile.setas` attribute is consulted. The default
+assignments are:
+
+=================  ================
+Number of Columns  Assignments
+=================  ================
+2                  x, y
+3                  x, y, e
+4                  x, d, y, e
+5                  x, y, u, v, w
+6                  x, y, z, u, v, w
+=================  ================        
+        
 Swapping and Rotating Column Assignments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

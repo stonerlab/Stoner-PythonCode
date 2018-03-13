@@ -6,12 +6,8 @@ Classes Include
 
 * ZippedFile - A :py:class:`Stoner.Code.DataFile` subclass that can save and load data from a zip files
 * ZipFolder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single zip file
-
-Created on Tue Jan 13 16:39:51 2015
-
-@author: phygbu
 """
-
+__all__ = ['test_is_zip','ZippedFile','ZipFolderMixin','ZipFolder']
 from Stoner.compat import string_types,bytes2str,str2bytes
 import zipfile as zf
 from .Core import DataFile,StonerLoadError,metadataObject
