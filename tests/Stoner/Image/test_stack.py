@@ -46,7 +46,7 @@ class ImageStackTest(unittest.TestCase):
             x,y=10*np.cos(np.pi*theta/180)+50,10*np.sin(np.pi*theta/180)+50
             i.draw.circle(x,y,25)
             self.istack2.insert(0,i)
-        self.assertTrue(self.istack2.shape==(100,100,91),"ImageStack2.shape wrong at {}".format(self.istack2.shape))
+        self.assertTrue(self.istack2.shape==(91,100,100),"ImageStack2.shape wrong at {}".format(self.istack2.shape))
         i=ImageFile(np.zeros((100,100))).draw.circle(50,50,25)
         self.m1=self.istack2.mean()
         self.istack2.align(i,method="imreg_dft")

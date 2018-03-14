@@ -11,7 +11,7 @@ from Stoner.compat import  string_types,int_types
 from Stoner.tools import all_type
 from .core import ImageArray,dtype_range, ImageFile
 from .folders import ImageFolder,ImageFolderMixin
-from Stoner.Core import regexpDict,metadataObject
+from Stoner.Core import regexpDict,metadataObject,typeHintedDict
 from Stoner.Folders import DiskBasedFolder, baseFolder
 
 IM_SIZE=(512,672) #Standard Kerr image size
@@ -71,8 +71,29 @@ class ImageStackMixin(object):
         self._sizes=np.array([],dtype=int).reshape(0,2)
 
         kargs["type"]=ImageFile
-        super(ImageStackMixin,self).__init__(*args,**kargs)
-
+        
+        if not len(args):
+            super(ImageStackMixin,self).__init__(**kargs)
+            return None # No further initialisation
+        other=args[0]
+        if isinstance(other,ImageStackMixin):
+            super(ImageStackMixin,self).__init__(*args[1:],**kargs)
+            self._stack=other._stack
+            self._metadata=other._metadata
+            self._names=other._names
+            self._sizes=other._sizes
+        elif isinstance(other,ImageFolder): #ImageFolder can already init from itself
+            super(ImageStackMixin,self).__init__(*args,**kargs)
+        elif isinstance(other,np.ndarray) and len(other.shapoe)==3: #Initialise with 3D numpy array
+            super(ImageStackMixin,self).__init__(*args[1:],**kargs)
+            self.imarray=other
+            self._sizes=np.ones(other.shape[0],2)*other.shape[1:]
+            self._names_=["Untitled-{}".format(d) for d in range(len(self))]
+            for n in self._names:
+                self._metadata[n]=typeHintedDict()
+        else:
+            super(ImageStackMixin,self).__init__(*args,**kargs)
+            
     def __lookup__(self,name):
         """Stub for other classes to implement.
 
@@ -252,12 +273,13 @@ class ImageStackMixin(object):
 
     @property
     def imarray(self):
-        return self._stack
+        """"Produce the 3D stack of images - as [image,x,y]"""
+        return np.transpose(self._stack,(2,0,1))
 
     @imarray.setter
     def imarray(self,value):
         value=np.ma.MaskedArray(np.atleast_3d(value))
-        self._stack=value
+        self._stack=np.transpose(value,(2,0,1))
 
     @property
     def max_size(self):
@@ -267,7 +289,8 @@ class ImageStackMixin(object):
 
     @property
     def shape(self):
-        return self._stack.shape
+        x,y,z=self._stack.shape
+        return (z,x,y)
 
     ###########################################################################
     ###################         Public  methods         #######################
