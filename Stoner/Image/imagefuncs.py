@@ -110,7 +110,9 @@ def align(im, ref, method=None,**kargs):
         ref (ndarray) reference array
 
     Keyword Args:
-        method (str or None): If given specifies which module to try and use.
+        method (str or None): 
+            If given specifies which module to try and use.
+            Options: 'scharr', 'chi2_shift', 'imreg_dft', 'cv2'
         **kargs (various): All other keyword arguments are passed to the specific algorithm.
 
     Returns
@@ -128,6 +130,8 @@ def align(im, ref, method=None,**kargs):
               from: http://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
     """
     #To be consistent with x-y co-ordinate systems
+    if all([m is None for m in [imreg_dft, chi2_shift, cv2]]):
+        raise ImportError('align requires one of imreg_dft, chi2_shift or cv2 modules to be available.')
     if method=="scharr" and imreg_dft is not None:
         im=im.T
         ref=ref.T
