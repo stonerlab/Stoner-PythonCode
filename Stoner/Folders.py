@@ -1403,6 +1403,10 @@ class baseFolder(MutableSequence):
             self.__setter__(self.__lookup__(name),value)
         elif ix>=len(self):
             self.__setter__(name,value,force_insert=True)
+        
+    def append(self, value):
+        """Append an item to the folder object"""
+        self.insert(len(self), value)
 
     def items(self):
         """Return the key,value pairs for the subbroups of this folder."""
