@@ -87,7 +87,8 @@ class ImageStackMixin(object):
         elif isinstance(other,np.ndarray) and len(other.shape)==3: #Initialise with 3D numpy array
             super(ImageStackMixin,self).__init__(*args[1:],**kargs)
             self.imarray=other
-            self._sizes=np.ones(other.shape[0],2)*other.shape[1:]
+            self.imarray.shape
+            self._sizes=np.ones((other.shape[0],2))*other.shape[1:]
             self._names_=["Untitled-{}".format(d) for d in range(len(self))]
             for n in self._names:
                 self._metadata[n]=typeHintedDict()
@@ -97,8 +98,10 @@ class ImageStackMixin(object):
             except:
                 raise ValueError('Failed to initialise ImageStack with list input')
             super(ImageStackMixin,self).__init__(*args[1:],**kargs)
-            for i in range(len(other)):
-                self.insert(i, other[i])           
+            for ot in other:
+                self.append(ot)
+            del(self[-1]) #Bit of a hack to get rid of initialised zeros data - 
+                          #this poss needs changing in the append method
         else:
             super(ImageStackMixin,self).__init__(*args,**kargs)
             
@@ -287,7 +290,7 @@ class ImageStackMixin(object):
     @imarray.setter
     def imarray(self,value):
         value=np.ma.MaskedArray(np.atleast_3d(value))
-        self._stack=np.transpose(value,(2,0,1))
+        self._stack=np.transpose(value,(1,2,0))
 
     @property
     def max_size(self):

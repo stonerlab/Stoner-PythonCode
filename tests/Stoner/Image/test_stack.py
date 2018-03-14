@@ -22,6 +22,12 @@ class ImageStackTest(unittest.TestCase):
         self.ks = ImageStack(testdir)
         self.ks = ImageStack(self.td) #load in two ways
         self.assertTrue(len(self.ks)==len(os.listdir(testdir)))
+        self.istack2=ImageStack2()
+        for theta in np.linspace(0,360,91):
+            i=ImageFile(np.zeros((100,100)))
+            x,y=10*np.cos(np.pi*theta/180)+50,10*np.sin(np.pi*theta/180)+50
+            i.draw.circle(x,y,25)
+            self.istack2.insert(0,i)
 
     def test_imagestack(self):
         ks=self.ks.clone
@@ -40,12 +46,7 @@ class ImageStackTest(unittest.TestCase):
         self.assertTrue(d.data.shape==(len(ks),2), 'hysteresis didnt return correct shape')
 
     def test_ImageStack2(self):
-        self.istack2=ImageStack2()
-        for theta in np.linspace(0,360,91):
-            i=ImageFile(np.zeros((100,100)))
-            x,y=10*np.cos(np.pi*theta/180)+50,10*np.sin(np.pi*theta/180)+50
-            i.draw.circle(x,y,25)
-            self.istack2.insert(0,i)
+        
         self.assertTrue(self.istack2.shape==(91,100,100),"ImageStack2.shape wrong at {}".format(self.istack2.shape))
         i=ImageFile(np.zeros((100,100))).draw.circle(50,50,25)
         self.m1=self.istack2.mean()
@@ -79,16 +80,30 @@ class ImageStackTest(unittest.TestCase):
         self.im1=self.im1.convert(np.int8)
         self.im2=self.istack2[0].convert(np.int8)
         self.assertTrue(abs((self.im2-self.im1).max())<=2.0,"Failed up/down conversion to integer images.")
+   
+    def test_ImageStack2_init(self):
+        #try to init with a few different call sequences
+        listinit = []
+        for i in range(10):
+            listinit.append(np.arange(12).reshape(3,4))
+        npinit = np.arange(1000).reshape(5,10,20)
+        listinit = ImageStack2(listinit)
+        self.assertTrue(listinit.shape == (10,3,4), "problem with initialising ImageStack2 with list of data")
+        npinitist = ImageStack2(npinit)
+        self.assertTrue(np.allclose(npinitist.imarray,npinit), "problem initiating with 3d numpy array")
+        ist2init = ImageStack2(self.istack2)
+        self.assertTrue(np.allclose(ist2init.imarray,self.istack2.imarray), "problem initiating with other ImageStack")
+        self.assertTrue(all([k in ist2init[0].metadata.keys() for k in self.istack2[0].metadata.keys()]), 
+                        "problem with metadata when initiating with other ImageStack")
+        imfinit = ImageStack2(self.td) #init with another ImageFolder
+        self.assertTrue(len(imfinit)==8, "Couldn't load from another ImageFolder object")
         
         
 
 
 if __name__=="__main__":
-    #t=ImageFolder(testdir)
-    #ti=KerrStack(t)
-    test=ImageStackTest("test_imagestack")
+    test=ImageStackTest()
     #test.setUp()
-    #test.test_kerrstack()
-    #test.test_load()
-    #unittest.main()
-    test.test_ImageStack2()
+    #test.test_ImageStack2_init()
+    unittest.main()
+   
