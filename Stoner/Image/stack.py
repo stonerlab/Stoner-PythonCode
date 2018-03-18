@@ -84,12 +84,12 @@ class ImageStackMixin(object):
             self._sizes=other._sizes
         elif isinstance(other,ImageFolder): #ImageFolder can already init from itself
             super(ImageStackMixin,self).__init__(*args,**kargs)
-        elif isinstance(other,np.ndarray) and len(other.shape)==3: #Initialise with 3D numpy array
+        elif isinstance(other,np.ndarray) and len(other.shape)==3: #Initialise with 3D numpy array, first coordinate is number of images
             super(ImageStackMixin,self).__init__(*args[1:],**kargs)
             self.imarray=other
             self.imarray.shape
-            self._sizes=np.ones((other.shape[0],2))*other.shape[1:]
-            self._names_=["Untitled-{}".format(d) for d in range(len(self))]
+            self._sizes=np.ones((other.shape[0],2), dtype=int)*other.shape[1:]
+            self._names=["Untitled-{}".format(d) for d in range(other.shape[0])]
             for n in self._names:
                 self._metadata[n]=typeHintedDict()
         elif isinstance(other,list):
