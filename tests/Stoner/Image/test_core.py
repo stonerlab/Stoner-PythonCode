@@ -258,14 +258,16 @@ class ImageFileTest(unittest.TestCase):
         ifi.image == ifi.image*5
         ifi.rescale_intensity()
         self.assertTrue(np.allclose(ifi.image, np.linspace(0,1,12).reshape(3,4)))
+        ifi.crop(0,3,0,None)
+        self.assertTrue(ifi.shape==(3,3)) #check crop is forced to overwrite ifi despite shape change
 
         
 if __name__=="__main__": # Run some tests manually to allow debugging
-    test=ImageArrayTest("test_filename")
-    test.setUp()
-    test.test_save()
-    test.test_savetiff()
-    
+#    test=ImageArrayTest("test_filename")
+#    test.setUp()
+#    test.test_save()
+#    test.test_savetiff()
+#    
 #    test2=ImageFileTest("test_methods")
 #    test2.setUp()
 #    test2.test_methods()

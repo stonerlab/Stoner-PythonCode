@@ -81,7 +81,7 @@ class ImageStackTest(unittest.TestCase):
         self.im2=self.istack2[0].convert(np.int8)
         self.assertTrue(abs((self.im2-self.im1).max())<=2.0,"Failed up/down conversion to integer images.")
    
-    def test_ImageStack2_init(self):
+    def test_IS2_init(self):
         #try to init with a few different call sequences
         listinit = []
         for i in range(10):
@@ -98,12 +98,15 @@ class ImageStackTest(unittest.TestCase):
         imfinit = ImageStack2(self.td) #init with another ImageFolder
         self.assertTrue(len(imfinit)==8, "Couldn't load from another ImageFolder object")
         
-        
+    def test_IS2_methods(self):
+        #check function generator machinery works
+        self.istack2.crop(0,30,0,50)
+        self.assertTrue(self.istack2.shape==(91,50,30))
 
 
 if __name__=="__main__":
     test=ImageStackTest()
-    #test.setUp()
-    #test.test_ImageStack2_init()
+    test.setUp()
+    test.test_IS2_methods()
     unittest.main()
    
