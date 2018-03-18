@@ -959,14 +959,17 @@ class baseFolder(MutableSequence):
             """
             retvals=[]
             for ix,f in enumerate(self):
-                meth=getattr(f,item,None)
+                ret = f.clone
+                meth=getattr(ret,item,None)
                 ret=meth(*args,**kargs)
-                if ret is not f: # method did not returned a modified version of the metadataObject
-                    retvals.append(ret)
+                retvals.append(ret)
                 if isinstance(ret,self._type):
+                    try: #Check if ret has same data type, otherwise will not overwrite well
+                        if ret.data.dtype!=f.data.dtype:
+                            continue
+                    except AttributeError:
+                        pass
                     self[ix]=ret
-            if len(retvals)==0: # If we haven't got anything to retun, return a copy of our objectFolder
-                retvals=self
             return retvals
         #Ok that's the wrapper function, now return  it for the user to mess around with.
         _wrapper_.__doc__=meth.__doc__
