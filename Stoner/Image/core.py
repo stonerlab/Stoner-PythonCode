@@ -1201,7 +1201,10 @@ class ImageFile(metadataObject):
                 for ix,a in enumerate(args):
                     if isinstance(a,ImageFile):
                         args[ix]=a.image
-            force=kargs.pop("_",False)
+            if workingfunc.__name__=="crop" and "_" not in kargs.keys(): #special case for common function crop which will change the array shape
+                force = True
+            else:
+                force=kargs.pop("_",False)
             r = workingfunc(*args, **kargs)
             if isinstance(r,ImageArray) and (force or r.shape==self.image.shape):
                 #Enure that we've captured any metadata added inside the working function
