@@ -15,7 +15,7 @@ from Stoner.Core import typeHintedDict,metadataObject,regexpDict
 from Stoner.Image.util import convert
 from Stoner import Data
 from Stoner.tools import istuple,fix_signature,islike_list
-from Stoner.compat import python_v3,string_types,get_filedialog,bytes # Some things to help with Python2 and Python3 compatibility
+from Stoner.compat import python_v3,string_types,get_filedialog,bytes,int_types # Some things to help with Python2 and Python3 compatibility
 import inspect
 from functools import wraps
 if python_v3:
@@ -349,6 +349,54 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         image.filename=os.path.realpath(filename)
         return image
 
+    def _box(self,*args,**kargs):
+        """Construct and indexing tuple for selecting areas for cropping and boxing.
+        
+        The box can be specified as:
+            
+            - (int): a fixed number of pxiels is removed from all sides
+            - (float): the central region of the image is selected
+            - None: the whole image is selected
+            - False: The user can select a region of interest
+            - (iterable of length 4) - assumed to give 4 integers to describe a specific box
+        """
+        if len(args)==0 and 'box' in kargs.keys():
+            args = kargs['box'] #back compatability
+        elif len(args) not in (1,4):
+            raise ValueError('box accepts 1 or 4 arguments, {} given.'.format(len(args)))
+        if len(args)==1:
+            box = args[0]
+            if isinstance(box,bool) and not box: #experimental
+                print('Select crop area')
+                box = self.draw_rectangle(box)
+            elif islike_list(box) and len(box)==4: #Full box as a list
+                box=[x for x in box]
+            elif box is None: #Whole image
+                box=[0,self.shape[1],0,self.shape[0]]
+            elif isinstance(box,int): #Take a border of n pixels out
+                box=[box,self.shape[1]-box,box,self.shape[0]-box]
+            elif isinstance(box,float): #Keep the central fraction of the image
+                box=[round(self.shape[1]*box/2),round(self.shape[1]*(1-box/2)),round(self.shape[1]*box/2),round(self.shape[1]*(1-box/2))]
+                box=list([int(x) for x in box])
+            else:
+                raise ValueError('crop accepts tuple of length 4, {} given.'.format(len(box)))
+        else:
+            box = list(args)
+        for i,item in enumerate(box): #replace None with max extent
+            if isinstance(item,float):
+                if i<2:
+                    box[i]=round(self.shape[1]*item)
+                else:
+                    box[i]=round(self.shape[0]*item)
+            elif isinstance(item,int_types):
+                pass
+            elif item is None:
+                box[i]=self.max_box[i]
+            else:
+                raise TypeError("Arguments for box should be floats, integers or None, not {}".format(type(item)))
+        return slice(box[2],box[3]),slice(box[0],box[1])
+
+
     #################################################################################################
     ############ Properties #########################################################################
 
@@ -620,30 +668,8 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
 
             a.crop(1,3,None,None)
         """
-        if len(args)==0 and 'box' in kargs.keys():
-            args = kargs['box'] #back compatability
-        elif len(args) not in (1,4):
-            raise ValueError('crop accepts 1 or 4 arguments, {} given.'.format(len(args)))
-        if len(args)==1:
-            box = args[0]
-            if box is None: #experimental
-                print('Select crop area')
-                box = self.draw_rectangle(box)
-            elif islike_list(box) and len(box)==4:
-                box=[x for x in box]
-            elif isinstance(box,int):
-                box=[box,self.shape[1]-box,box,self.shape[0]-box]
-            elif isinstance(box,float):
-                box=[round(self.shape[1]*box/2),round(self.shape[1]*(1-box/2)),round(self.shape[1]*box/2),round(self.shape[1]*(1-box/2))]
-                box=list([int(x) for x in box])
-            else:
-                raise ValueError('crop accepts tuple of length 4, {} given.'.format(len(box)))
-        else:
-            box = list(args)
-        for i,item in enumerate(box): #replace None with max extent
-            if item is None:
-                box[i]=self.max_box[i]
-        ret = self[box[2]:box[3],box[0]:box[1]]
+        box=self._box(*args,**kargs)
+        ret = self[box]
         if 'copy' in kargs.keys() and kargs['copy']:
             ret = ret.clone
         return ret
@@ -1195,18 +1221,19 @@ class ImageFile(metadataObject):
         """
         @wraps(workingfunc)
         def gen_func(*args, **kargs):
-
+            
+            box=kargs.pop("_box",None)
             if len(args)>0:
                 args=list(args)
                 for ix,a in enumerate(args):
                     if isinstance(a,ImageFile):
-                        args[ix]=a.image
+                        args[ix]=a.image[self.image._box(box)]
             if workingfunc.__name__=="crop" and "_" not in kargs.keys(): #special case for common function crop which will change the array shape
                 force = True
             else:
                 force=kargs.pop("_",False)
             r = workingfunc(*args, **kargs)
-            if isinstance(r,ImageArray) and (force or r.shape==self.image.shape):
+            if isinstance(r,ImageArray) and (force or r.shape==self.image[self.image._box(box)].shape):
                 #Enure that we've captured any metadata added inside the working function
                 self.metadata.update(r.metadata)
                 #Now swap the iamge in, but keep the metadata

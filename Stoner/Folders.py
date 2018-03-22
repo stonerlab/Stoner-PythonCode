@@ -37,6 +37,93 @@ def pathjoin(*args):
     tmp=path.join(*args)
     return tmp.replace(path.sep,"/")
 
+class _each_item(object):
+    
+    """Provides a proxy object for accessing methods on the inividual members of a Folder.
+    8
+    Notes:
+        The prupose of this class is to allow it to be explicit that we're calling methods
+        on the members of the folder rather than a collective method. This allows us to work
+        around nameclashes.
+    """
+    
+    def __init__(self,folder):
+
+        self._folder=folder
+    
+    def __getattr__(self, item):
+        """Handles some special case attributes that provide alternative views of the objectFolder
+
+        Args:
+            item (string): The attribute name being requested
+
+        Returns:
+            Depends on the attribute
+
+        """
+        try:
+            instance=self._folder.instance
+            if callable(getattr(instance,item,None)): # It's a method
+                ret=self.__getattr_proxy(item)
+            else: # It's a static attribute
+                if item in self._folder._object_attrs:
+                    ret=self._folder._object_attrs[item]
+                elif len(self._folder):
+                    ret=getattr(instance,item,None)
+                else:
+                    ret=None
+                if ret is None:
+                    raise AttributeError
+        except AttributeError: # Ok, pass back
+            raise AttributeError("{} is not an Attribute of {} or {}".format(item,type(self),type(instance)))
+        return ret
+
+    def __getattr_proxy(self,item):
+        """Make a prpoxy call to access a method of the metadataObject like types.
+
+        Args:
+            item (string): Name of method of metadataObject class to be called
+
+        Returns:
+            Either a modifed copy of this objectFolder or a list of return values
+            from evaluating the method for each file in the Folder.
+        """
+        meth=getattr(self._folder.instance,item,None)
+        def _wrapper_(*args,**kargs):
+            """Wraps a call to the metadataObject type for magic method calling.
+
+            Keyword Arguments:
+                _return (index types or None): specify to store the return value in the individual object's metadata
+
+            Note:
+                This relies on being defined inside the enclosure of the objectFolder method
+                so we have access to self and item
+            """
+            retvals=[]
+            _return=kargs.pop("_return",None)
+            for ix,f in enumerate(self._folder):
+                ret = f.clone
+                meth=getattr(ret,item,None)
+                ret=meth(*args,**kargs)
+                retvals.append(ret)
+                if isinstance(ret,self._folder._type) and _return is None:
+                    try: #Check if ret has same data type, otherwise will not overwrite well
+                        if ret.data.dtype!=f.data.dtype:
+                            continue
+                    except AttributeError:
+                        pass
+                    self[ix]=ret
+                elif _return is not None:
+                    if isinstance(_return,bool) and _return:
+                        _return=meth.__name__
+                    self._folder[ix][_return]=ret
+            return retvals
+        #Ok that's the wrapper function, now return  it for the user to mess around with.
+        _wrapper_.__doc__=meth.__doc__
+        _wrapper_.__name__=meth.__name__
+        return _wrapper_
+
+
 class _combined_metadata_proxy(object):
 
     """Provide methods to interact with a whole collection of metadataObjects' metadata."""
@@ -322,6 +409,11 @@ class baseFolder(MutableSequence):
             for g in self.groups:
                 r=max(r,self.groups[g].depth+1)
         return r
+    
+    @property
+    def each(self):
+        """Return a proxy object for calling attributes of the member type of the folder."""
+        return _each_item(self)
 
     @property
     def files(self):
@@ -953,23 +1045,31 @@ class baseFolder(MutableSequence):
         def _wrapper_(*args,**kargs):
             """Wraps a call to the metadataObject type for magic method calling.
 
+            Keyword Arguments:
+                _return (index types or None): specify to store the return value in the individual object's metadata
+
             Note:
                 This relies on being defined inside the enclosure of the objectFolder method
                 so we have access to self and item
             """
             retvals=[]
+            _return=kargs.pop("_return",None)
             for ix,f in enumerate(self):
                 ret = f.clone
                 meth=getattr(ret,item,None)
                 ret=meth(*args,**kargs)
                 retvals.append(ret)
-                if isinstance(ret,self._type):
+                if isinstance(ret,self._type) and _return is None:
                     try: #Check if ret has same data type, otherwise will not overwrite well
                         if ret.data.dtype!=f.data.dtype:
                             continue
                     except AttributeError:
                         pass
                     self[ix]=ret
+                elif _return is not None:
+                    if isinstance(_return,bool) and _return:
+                        _return=meth.__name__
+                    self[ix][_return]=ret
             return retvals
         #Ok that's the wrapper function, now return  it for the user to mess around with.
         _wrapper_.__doc__=meth.__doc__

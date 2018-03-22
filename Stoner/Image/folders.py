@@ -130,7 +130,7 @@ class ImageFolderMixin(object):
             if not quiet:
                 print(".")
 
-    def average(self, weights=None):
+    def average(self, weights=None,_box=None):
         """Get an array of average pixel values for the stack.
 
         Pass through to numpy average
@@ -142,7 +142,8 @@ class ImageFolderMixin(object):
             raise RuntimeError("Cannot average Imagefolder if images have different sizes")
         stack=np.stack(self.images,axis=0)
         average = np.average(stack,axis=0, weights=weights)
-        return average.view(ImageArray)
+        ret=average.view(ImageArray)
+        return ret[ret._box(_box)]
     
     def loadgroup(self):
         """Load all files from this group into memory"""
@@ -156,12 +157,12 @@ class ImageFolderMixin(object):
         k = ImageStack(self)
         return k
 
-    def mean(self):
+    def mean(self,_box=None):
         """Calculate the mean value of all the images in the stack.
         
         Actually a synonym for self.average with not weights
         """
-        return self.average()
+        return self.average(_box=_box)
 
 
     def stddev(self, weights=None):

@@ -107,6 +107,6 @@ class ImageStackTest(unittest.TestCase):
 if __name__=="__main__":
     test=ImageStackTest()
     test.setUp()
-    test.test_IS2_methods()
-    unittest.main()
+    test.test_ImageStack2
+    #unittest.main()
    
