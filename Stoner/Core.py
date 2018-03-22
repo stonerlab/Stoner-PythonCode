@@ -20,7 +20,7 @@ from numpy import NaN # pylint: disable=unused-import
 import numpy.ma as _ma_
 
 from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,bytes2str
-from .tools import isNone,all_size,all_type,_attribute_store,operator,isiterable,typedList
+from .tools import isNone,all_size,all_type,_attribute_store,operator,isiterable,typedList,islike_list
 
 
 try:
@@ -308,15 +308,17 @@ class _setas(object):
         """
         if isinstance(name, string_types) and len(name) == 1 and name in "xyzuvwdef.-":
             ret = list()
-            for i, v in enumerate(self.setas):
-                if v == name:
-                    ret.append(self.column_headers[i])
+            s=0
+            while name in self._setas[s:]:
+                s=self._setas.index(name)+1
+                ret.append(self.column_headers[s-1])
         elif isinstance(name, string_types) and len(name) == 2 and name[0]=="#" and name[1] in "xyzuvwdef.-":
             ret = list()
-            for i, v in enumerate(self.setas):
-                if v == name[1]:
-                    ret.append(i)
-
+            name=name[1]
+            s=0
+            while name in self._setas[s:]:
+                s=self._setas.index(name)+1
+                ret.append(s-1)
         elif isinstance(name, slice):
             indices = name.indices(len(self.setas))
             name = range(*indices)
@@ -328,9 +330,11 @@ class _setas(object):
                 name = int(name)
                 ret = [self.setas[name]]
             except ValueError:
-                raise TypeError("Index should be a number, slice or x,y,z,u,v,w,e,d of f")
+                raise IndexError("Index should be a number, slice or x,y,z,u,v,w,e,d of f")
         if len(ret) == 1:
             ret = ret[0]
+        elif len(ret) == 0:
+            raise IndexError("{} was not found in the setas attribute.".format(name))
         return ret
 
 
@@ -350,9 +354,16 @@ class _setas(object):
                 a single letter string in the set above.
             value (integer or column index): See above.
         """
-        if isinstance(name, string_types) and len(name) == 1 and name in "xyzuvwdef.-":
+        if islike_list(name): #Sipport indexing with a list like object
+            if islike_list(value) and len(value)==len(name):
+                for n,v in zip(name,value):
+                    self._setas[n]=v
+            else:
+                for n in name:
+                    self._setas[n]=value
+        elif isinstance(name, string_types) and len(name) == 1 and name in "xyzuvwdef.-": #indexing by single letter
             self({name: value},reset=False)
-        else:
+        else: #try indexing by integer
             try:
                 name = int(name)
                 if len(value) == 1 and value in "xyzuvwdef.":
@@ -375,10 +386,47 @@ class _setas(object):
         elif len(self.setas) < len(self.column_headers):
             self.setas.extend(list("." * (len(self.column_headers) - len(self.setas))))
         return self.setas.__repr__()
-
+    
+    def __contains__(self,item):
+        """Use getitem to test for membership."""
+        try:
+            _=self[item]
+        except IndexError:
+            return False
+        return True
+          
     def __str__(self):
         #Quick string conversion routine
         return "".join(self.setas)
+
+    #################################################################################################################
+    #############################   Operator Methods ################################################################
+    
+    def __add_core__(self,new,other):
+        """Allow the user to add a dictionary to setas to add extra columns."""
+        if isinstance(other,_setas): #Deal with the other value being a setas attribute already.
+            other=other.to_dict()
+        if not isinstance(other,dict):
+            return NotImplemented
+        for k,v in other.iterms():
+            if len(k)==1 and k in "xyzuvwdef": #of the form x:column_name
+                v=new.find_col(v)
+                new._setas[v]=k
+            elif len(v)==1 and v in "xyzuvwdef": #of the form column_name:x
+                k=new.find_col(k)
+                new._setas[k]=v
+            else:
+                raise IndexError("Unable to workout what do with {}:{} when setting the setas attribute.".format(k,v))
+        return new
+    
+    def __add__(self,other):
+        """Jump to the core."""
+        new=self.clone
+        return self.__add_core__(new,other)
+    
+    def __iadd__(self,other):
+        return self.__add_core__(self,other)
+    
 
     def find_col(self, col, force_list=False):
         """Indexes the column headers in order to locate a column of data.shape.
@@ -444,6 +492,46 @@ class _setas(object):
         if force_list and not isinstance(col, list):
             col = [col]
         return col
+    
+    def clear(self):
+        """"Clear the current setas attrbute."""
+        self._setas=["."]*self.shape[1]
+        return self
+    
+    def update(self,other):
+        """Replace any assignments in self with assignments from other."""
+        if isinstance(other,_setas):
+            other=other.to_dict()
+        elif not isinstance(other,dict):
+            raise TypeError("setas.update requires a dictionary not a {}".format(type(other)))
+        vals=list(other.values())
+        keys=list(other.keys())
+        for k in "xyzuvwdef":
+            if k in other:
+                try:
+                    c=self[k]
+                    self[c]="."
+                except IndexError:
+                    pass
+                self[k]=other
+            elif k in vals:
+                try:
+                    c=self[k]
+                    self[c]="."
+                except IndexError:
+                    pass
+                self[k]=keys[vals.index(k)]
+        return self
+
+    def to_dict(self):
+        """Return the setas attribute as a dictionary."""
+        ret=dict()
+        for k in "xyzuvwdef":
+            try:
+                ret[k]=self[k]
+            except IndexError:
+                pass
+        return ret
 
     def _get_cols(self, what=None, startx=0):
         """Uses the setas attribute to work out which columns to use for x,y,z etc.
