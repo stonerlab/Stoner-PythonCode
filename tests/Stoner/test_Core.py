@@ -29,8 +29,8 @@ class Datatest(unittest.TestCase):
         self.d2=Data(path.join(__home__,"..","sample-data","TDI_Format_RT.txt"))
         self.d3=Data(path.join(__home__,"..","sample-data","New-XRay-Data.dql"))
         self.d4=Data(path.join(__home__,"..","sample-data","Cu_resistivity_vs_T.txt"))
-        
-        
+
+
     def test_constructor(self):
         """Constructor Tests"""
         d=Data()
@@ -85,8 +85,8 @@ class Datatest(unittest.TestCase):
         self.assertTrue(np.all(d[0]==np.array([5,6,7,1,1,1,1,1,1,1])),"setitem on Data to index into Data.data failed.\n{}".format(d[0]))
         self.assertEqual(d.metadata["Column_3"],[1,2,2,4],"Tuple indexing into metadata Failed.")
         self.assertEqual(d.metadata[0,5],12,"Indexing of pre-existing metadta keys rather than Data./data failed.")
-        
-        
+
+
 
 
     def test_len(self):
@@ -232,7 +232,7 @@ class Datatest(unittest.TestCase):
         e=self.d2.clone
         e.reorder_columns([2,0,1])
         self.assertTrue(e.column_headers==[self.d2.column_headers[x] for x in [2,0,1]],"Failed to reorder columns: {}".format(e.column_headers))
-    
+
     def test_metadata_save(self):
         local = path.dirname(__file__)
         t = np.arange(12).reshape(3,4) #set up a test data file with mixed metadata
@@ -251,7 +251,7 @@ class Datatest(unittest.TestCase):
         t2 = self.d4.clone  #check that python tdi save is the same as labview tdi save
         t2.save(path.join(local, "mixedmetatest2.txt"))
         t2l = Data(path.join(local, "mixedmetatest2.txt"))
-        for orig, load in [(t,tl), (t2, t2l)]: 
+        for orig, load in [(t,tl), (t2, t2l)]:
             self.assertTrue(np.allclose(orig.data, load.data))
             self.assertTrue(orig.column_headers==load.column_headers)
             self.assertTrue(all([i in load.metadata.keys() for i in orig.metadata.keys()]))
@@ -264,8 +264,37 @@ class Datatest(unittest.TestCase):
                     self.assertTrue(load[k] == orig[k], "Not equal for metadata: {}".format(load[k]))
         os.remove(path.join(local, "mixedmetatest.txt")) #clear up
         os.remove(path.join(local, "mixedmetatest2.txt"))
-        
+
     def test_setas_metadata(self):
+        d2=self.d2.clone
+        d2.setas+={"x":0,"y":1}
+        self.assertEqual(d2.setas.to_dict(),{'x': 'Temperature', 'y': 'Resistance'},"__iadd__ failure {}".format(repr(d2.setas.to_dict())))
+        d3=self.d2.clone
+        d3.setas="..e"
+        d2.setas.update(d3.setas)
+        self.assertEqual(d2.setas.to_dict(),{'x': 'Temperature', 'y': 'Resistance', 'e': 'Column 2'},"__iadd__ failure {}".format(repr(d2.setas.to_dict())))
+        auto_setas={ 'axes': 2,
+                     'has_axes': True,
+                     'has_ucol': False,
+                     'has_uvw': False,
+                     'has_vcol': False,
+                     'has_wcol': False,
+                     'has_xcol': True,
+                     'has_xerr': False,
+                     'has_ycol': True,
+                     'has_yerr': True,
+                     'has_zcol': False,
+                     'has_zerr': False,
+                     'ucol': None,
+                     'vcol': None,
+                     'wcol': None,
+                     'xcol': 0,
+                     'xerr': None,
+                     'ycol': 1,
+                     'yerr': 2,
+                     'zcol': None,
+                     'zerr': None}
+        self.assertEqual(self.d2.setas._get_cols(),auto_setas,"Automatic guessing of setas failed!")
         d=self.d.clone
         d.setas="xyz"
         self.assertEqual(repr(d.setas),"['x', 'y']","setas __repr__ failure {}".format(repr(d.setas)))
@@ -273,13 +302,13 @@ class Datatest(unittest.TestCase):
         d=self.d2.clone
         d.setas="xyz"
         self.assertTrue(d["Column 2",5]==d[5,"Column 2"],"Indexing with mixed integer and string failed.")
-        self.assertEqual(d.metadata.type(["User","Timestamp"]),['String', 'String'],"Metadata.type with slice failed")        
+        self.assertEqual(d.metadata.type(["User","Timestamp"]),['String', 'String'],"Metadata.type with slice failed")
         d.data["Column 2",:]=np.zeros(len(d)) #TODO make this work with d["Column 2",:] as well
         self.assertTrue(d.z.max()==0.0 and d.z.min()==0.0,"Failed to set Dataarray using string indexing")
 
 class typeHintedDictTest(unittest.TestCase):
     """Test typeHintedDict class"""
-    
+
     def test_filter(self):
         d = typeHintedDict([('el1',1),('el2',2),('el3',3),('other',4)])
         d.filter('el')
@@ -287,8 +316,8 @@ class typeHintedDictTest(unittest.TestCase):
         d.filter(lambda x: x.endswith('3'))
         self.assertTrue(len(d)==1)
         self.assertTrue(d['el3']==3)
-        
-        
+
+
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Datatest("test_operators")

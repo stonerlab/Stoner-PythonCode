@@ -89,7 +89,14 @@ class _tab_delimited(csv.Dialect):
 class _setas(object):
 
     """A Class that provides a mechanism for managing the column assignments in a DataFile like object."""
-    
+
+    _col_defaults={2: {"axes":2,"xcol":0,"ycol":1,"zcol":None,"ucol":None,"vcol":None,"wcol":None,"xerr":None,"yerr":None,"zerr":None}, # xy
+                  3: {"axes":2,"xcol":0,"ycol":1,"zcol":None,"ucol":None,"vcol":None,"wcol":None,"xerr":None,"yerr":2,"zerr":None}, # xye
+                  4: {"axes":2,"xcol":0,"ycol":2,"zcol":None,"ucol":None,"vcol":None,"wcol":None,"xerr":1,"yerr":3,"zerr":None}, #xdye
+                  5: {"axes":5,"xcol":0,"ycol":1,"zcol":None,"ucol":2,"vcol":3,"wcol":4,"xerr":None,"yerr":None,"zerr":None}, #xyuvw
+                  6: {"axes":6,"xcol":0,"ycol":1,"zcol":2,"ucol":3,"vcol":4,"wcol":5,"xerr":None,"yerr":None,"zerr":None},} # xyzuvw
+
+
     def __init__(self, initial_val=None, **kargs):
         """Constructs the setas instance and sets an initial value.
 
@@ -386,7 +393,7 @@ class _setas(object):
         elif len(self.setas) < len(self.column_headers):
             self.setas.extend(list("." * (len(self.column_headers) - len(self.setas))))
         return self.setas.__repr__()
-    
+
     def __contains__(self,item):
         """Use getitem to test for membership."""
         try:
@@ -394,21 +401,21 @@ class _setas(object):
         except IndexError:
             return False
         return True
-          
+
     def __str__(self):
         #Quick string conversion routine
         return "".join(self.setas)
 
     #################################################################################################################
     #############################   Operator Methods ################################################################
-    
+
     def __add_core__(self,new,other):
         """Allow the user to add a dictionary to setas to add extra columns."""
         if isinstance(other,_setas): #Deal with the other value being a setas attribute already.
             other=other.to_dict()
         if not isinstance(other,dict):
             return NotImplemented
-        for k,v in other.iterms():
+        for k,v in other.items():
             if len(k)==1 and k in "xyzuvwdef": #of the form x:column_name
                 v=new.find_col(v)
                 new._setas[v]=k
@@ -418,15 +425,11 @@ class _setas(object):
             else:
                 raise IndexError("Unable to workout what do with {}:{} when setting the setas attribute.".format(k,v))
         return new
-    
+
     def __add__(self,other):
         """Jump to the core."""
         new=self.clone
         return self.__add_core__(new,other)
-    
-    def __iadd__(self,other):
-        return self.__add_core__(self,other)
-    
 
     def find_col(self, col, force_list=False):
         """Indexes the column headers in order to locate a column of data.shape.
@@ -492,12 +495,12 @@ class _setas(object):
         if force_list and not isinstance(col, list):
             col = [col]
         return col
-    
+
     def clear(self):
         """"Clear the current setas attrbute."""
         self._setas=["."]*self.shape[1]
         return self
-    
+
     def update(self,other):
         """Replace any assignments in self with assignments from other."""
         if isinstance(other,_setas):
@@ -513,7 +516,7 @@ class _setas(object):
                     self[c]="."
                 except IndexError:
                     pass
-                self[k]=other
+                self[k]=other[k]
             elif k in vals:
                 try:
                     c=self[k]
@@ -614,6 +617,8 @@ class _setas(object):
             "wcol": wcol,
             "axes": axes
         })
+        if ret["axes"]==0 and len(self.shape)>=2 and self.shape[1] in self._col_defaults:
+            ret.update(self._col_defaults[self.shape[1]])
         for n in list(ret.keys()):
             if ret[n] is None or (isinstance(ret[n],list) and  not ret[n]):
                 ret["has_{}".format(n)]=False
@@ -916,7 +921,7 @@ class typeHintedDict(regexpDict):
                 else:
                     for trial in [int, float, str]:
                         try:
-                            ret = trial(value)                            
+                            ret = trial(value)
                             break
                         except ValueError:
                             continue
@@ -1127,7 +1132,7 @@ class typeHintedDict(regexpDict):
         """
         parts=line.split("=")
         k=parts[0]
-        v="=".join(parts[1:]) #rejoin any = in the value string     
+        v="=".join(parts[1:]) #rejoin any = in the value string
         self[k] = v
 
 
@@ -1229,14 +1234,7 @@ class DataArray(_ma_.MaskedArray):
     attribute access to work. This makes writing functions to work with a single row of data
     more attractive.
     """
- 
-    _col_defaults={2: {"axes":2,"xcol":0,"ycol":1,"zcol":None,"ucol":None,"vcol":None,"wcol":None,"xerr":None,"yerr":None,"zerr":None}, # xy
-                  3: {"axes":3,"xcol":0,"ycol":1,"zcol":None,"ucol":None,"vcol":None,"wcol":None,"xerr":None,"yerr":2,"zerr":None}, # xye
-                  4: {"axes":4,"xcol":0,"ycol":2,"zcol":None,"ucol":None,"vcol":None,"wcol":None,"xerr":1,"yerr":3,"zerr":None}, #xdye
-                  5: {"axes":5,"xcol":0,"ycol":1,"zcol":None,"ucol":2,"vcol":3,"wcol":4,"xerr":None,"yerr":None,"zerr":None}, #xyuvw
-                  6: {"axes":6,"xcol":0,"ycol":1,"zcol":2,"ucol":3,"vcol":4,"wcol":5,"xerr":None,"yerr":None,"zerr":None},} # xyzuvw
 
-    
     #============================================================================================================================
     ############################                       Object Construction                        ###############################
     #============================================================================================================================
@@ -1570,9 +1568,9 @@ class DataArray(_ma_.MaskedArray):
             if not i is None: #User specification wins out
                 break
         else: #User didn't set any values, setas will win
-            if ret["axes"]==0 and self.shape[1] in self._col_defaults: # setas not saet, can we use default assumptions?
+            if ret["axes"]==0 and self.shape[1] in self.setas._col_defaults: # setas not saet, can we use default assumptions?
                 warnings.warn("No column arguments given and no setas value, so assuming column assignments.")
-                ret=_attribute_store(self._col_defaults[self.shape[1]])
+                ret=_attribute_store(self.setas._col_defaults[self.shape[1]])
                 for k in list(ret.keys()):
                     ret["has_{}".format(k)]=ret[k] is not None
         for c in list(cols.keys()):
@@ -1716,7 +1714,7 @@ class DataFile(metadataObject):
 
     _conv_string = _np_.vectorize(str)
     _conv_float = _np_.vectorize(float)
-    
+
     #============================================================================================================================
     ############################                       Object Construction                        ###############################
     #============================================================================================================================
@@ -2374,7 +2372,7 @@ class DataFile(metadataObject):
                 setas[c]=nlet
         ret.setas=setas
         return ret#
-    
+
     #============================================================================================================================
     ############################              Speical Methods                ####################################################
     #============================================================================================================================

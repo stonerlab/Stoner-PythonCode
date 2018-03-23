@@ -11,7 +11,7 @@ source:
   url: https://github.com/gb119/Stoner-PythonCode/archive/v{{ version }}.{{ file_ext }}
 
 build:
-  number: 2
+  number: 3
   script: python setup.py install --single-version-externally-managed --record=record.txt
 
 requirements:
