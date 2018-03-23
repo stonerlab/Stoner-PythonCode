@@ -536,7 +536,7 @@ class _setas(object):
                 pass
         return ret
 
-    def _get_cols(self, what=None, startx=0):
+    def _get_cols(self, what=None, startx=0,no_guess=False):
         """Uses the setas attribute to work out which columns to use for x,y,z etc.
 
         Keyword Arguments:
@@ -617,7 +617,7 @@ class _setas(object):
             "wcol": wcol,
             "axes": axes
         })
-        if ret["axes"]==0 and len(self.shape)>=2 and self.shape[1] in self._col_defaults:
+        if ret["axes"]==0 and len(self.shape)>=2 and self.shape[1] in self._col_defaults and not no_guess:
             ret.update(self._col_defaults[self.shape[1]])
         for n in list(ret.keys()):
             if ret[n] is None or (isinstance(ret[n],list) and  not ret[n]):
@@ -1563,7 +1563,7 @@ class DataArray(_ma_.MaskedArray):
     def _col_args(self,scalar=True,xcol=None,ycol=None,zcol=None,ucol=None,vcol=None,wcol=None,xerr=None,yerr=None,zerr=None,**kargs):
         """Utility method that creates an object which has keys  based either on arguments or setas attribute."""
         cols={"xcol":xcol,"ycol":ycol,"zcol":zcol,"ucol":ucol,"vcol":vcol,"wcol":wcol,"xerr":xerr,"yerr":yerr,"zerr":zerr}
-        ret=copy.deepcopy(self.setas.cols)
+        ret=copy.deepcopy(self.setas._get_cols(no_guess=True))
         for i in cols.values():
             if not i is None: #User specification wins out
                 break

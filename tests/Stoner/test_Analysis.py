@@ -27,7 +27,7 @@ class Analysis_test(unittest.TestCase):
         self.d2=Data(path.join(self.datadir,"TDI_Format_RT.txt"))
         self.d3=Data(path.join(self.datadir,"New-XRay-Data.dql"))
         self.d4=Data(np.column_stack([np.ones(100),np.ones(100)*2]),setas="xy")
-        
+
     def test_functions(self):
         #Test section:
         self.s1=self.d1.section(z=(12,13))
@@ -42,15 +42,15 @@ class Analysis_test(unittest.TestCase):
         self.d4.divide(0,1,header="Divide")
         self.d4.diffsum(0,1,header="Diffsum")
         self.assertTrue(np.all(self.d4[0]==np.array([-0.5,-1,-3,3,-1,2])),"Test column ops failed.")
-        
+
     def test_peaks(self):
         d=self.d3.clone
         d.peaks(width=8,poly=4,significance=40,modify=True)
         self.assertEqual(len(d),10,"Failed on peaks test.")
-    
+
     def test_threshold(self):
         #set up some zigzag data
-        #mins at 0,100,200,300,400, max at 50, 150, 250, 350 and zeros in between 
+        #mins at 0,100,200,300,400, max at 50, 150, 250, 350 and zeros in between
         ar = np.zeros((400,2))
         ar[:,0]=np.arange(0,len(ar))
         for i in range(4):
@@ -63,10 +63,10 @@ class Analysis_test(unittest.TestCase):
         self.assertTrue(len(d.threshold(0,interpolate=False,rising=False,falling=True,all_vals=True)==4))
         self.assertTrue(d.threshold(0,all_vals=True)[1]==124.5)
         #self.assertTrue(d.threshold(0,interpolate=False,all_vals=True)[1]==125.0)
-    
+
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Analysis_test("test_functions")
     test.setUp()
-    test.test_functions()   
+    test.test_functions()
     test.test_peaks()
     test.test_threshold()
