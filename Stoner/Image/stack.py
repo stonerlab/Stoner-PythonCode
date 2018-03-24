@@ -194,6 +194,7 @@ class ImageStackMixin(object):
                 idx=len(self)
                 return self.__inserter__(idx,name,value)
         else:
+            value = self.type(value) #ensure type if a bare numpy array was given
             self._sizes[idx]=value.shape
         self._metadata[name]=value.metadata
         if hasattr(value,"image"):
@@ -265,6 +266,7 @@ class ImageStackMixin(object):
         r,c=self._sizes[idx]
         tmp.data=self._stack[:r,:c,idx]
         tmp.metadata=self._metadata[self.__names__()[idx]]
+        tmp._fromstack = True
         return tmp
 
     def _resize_stack(self,new_size):

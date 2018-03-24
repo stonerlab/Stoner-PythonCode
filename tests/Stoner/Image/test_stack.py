@@ -45,8 +45,21 @@ class ImageStackTest(unittest.TestCase):
         self.assertTrue(isinstance(d, Data), 'hysteresis didnt return Data')
         self.assertTrue(d.data.shape==(len(ks),2), 'hysteresis didnt return correct shape')
 
+class ImageStack2Test(unittest.TestCase):
+    
+    def setUp(self):
+        self.td = ImageFolder(testdir, pattern='*.png')
+        self.ks = ImageStack2(testdir)
+        self.ks = ImageStack2(self.td) #load in two ways
+        self.assertTrue(len(self.ks)==len(os.listdir(testdir)))
+        self.istack2=ImageStack2()
+        for theta in np.linspace(0,360,91):
+            i=ImageFile(np.zeros((100,100)))
+            x,y=10*np.cos(np.pi*theta/180)+50,10*np.sin(np.pi*theta/180)+50
+            i.draw.circle(x,y,25)
+            self.istack2.insert(0,i)
+    
     def test_ImageStack2(self):
-        
         self.assertTrue(self.istack2.shape==(91,100,100),"ImageStack2.shape wrong at {}".format(self.istack2.shape))
         i=ImageFile(np.zeros((100,100))).draw.circle(50,50,25)
         self.m1=self.istack2.mean()
@@ -81,7 +94,7 @@ class ImageStackTest(unittest.TestCase):
         self.im2=self.istack2[0].convert(np.int8)
         self.assertTrue(abs((self.im2-self.im1).max())<=2.0,"Failed up/down conversion to integer images.")
    
-    def test_IS2_init(self):
+    def test_init(self):
         #try to init with a few different call sequences
         listinit = []
         for i in range(10):
@@ -97,16 +110,41 @@ class ImageStackTest(unittest.TestCase):
                         "problem with metadata when initiating with other ImageStack")
         imfinit = ImageStack2(self.td) #init with another ImageFolder
         self.assertTrue(len(imfinit)==8, "Couldn't load from another ImageFolder object")
+    
+    def test_accessing(self):
+        #ensure we can write and read to the stack in different ways 
+        ist2 = ImageStack2(np.arange(60).reshape(4,3,5))
+        im = np.zeros((3,5), dtype=int)
+        ist2[0].image = im
+        ist2[1] = im
+        ist2[2].image[:] = im
+        ist2[3][0,0] = 100
+        ist2[3].image[0,1] = 101
+        #ist2[3,0,2] = 102 may want to support this type of index accessing in the future?
+        for i in range(3):
+            self.assertTrue(np.allclose(ist2[i],im))
+        self.assertTrue(np.allclose(ist2[3][0,0],100))
+        self.assertTrue(np.allclose(ist2[3][0,1],101))
+        #check imarray behaviour
+        ist2.imarray = np.arange(60).reshape(4,3,5)*3
+        self.assertTrue(np.allclose(ist2.imarray, np.arange(60).reshape(4,3,5)*3))
+        ist2.imarray[1,2,3] = 500
+        self.assertTrue(ist2.imarray[1,2,3] == 500)
+        #check slice access #not implemented yet
+        #im2 = np.zeros((2,3,5))
+        #ist2[3:5] = im2 #try setting two images at once
+        #self.assertTrue(np.allclose(ist2[4],im))
         
-    def test_IS2_methods(self):
+        
+    def test_methods(self):
         #check function generator machinery works
         self.istack2.crop(0,30,0,50)
         self.assertTrue(self.istack2.shape==(91,50,30))
 
 
 if __name__=="__main__":
-    test=ImageStackTest()
-    test.setUp()
-    test.test_ImageStack2
-    #unittest.main()
+    test=ImageStack2Test()
+    #test.setUp()
+    #test.test_accessing()
+    unittest.main()
    

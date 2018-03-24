@@ -960,6 +960,7 @@ class ImageFile(metadataObject):
             self._image=args[0].image
         elif len(args)>0 and isinstance(args[0],np.ndarray): # Fixing type
             self._image=ImageArray(*args,**kargs)
+        self._fromstack = kargs.pop('_fromstack', False) #for use by ImageStack
 
 
     #####################################################################################################################################
@@ -1011,7 +1012,12 @@ class ImageFile(metadataObject):
     def image(self, v):
         """Ensure stored image is always an ImageArray."""
         filename=self.filename
-        self._image = ImageArray(v)
+        #ensure setting image goes into the same memory block if from stack
+        if self._fromstack and self._image.shape==v.shape \
+              and self._image.dtype==v.dtype:
+            self._image[:] = v
+        else:
+            self._image = ImageArray(v)
         self.filename=filename
 
     @property
