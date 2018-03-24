@@ -295,6 +295,12 @@ class Datatest(unittest.TestCase):
                      'zcol': None,
                      'zerr': None}
         self.assertEqual(self.d2.setas._get_cols(),auto_setas,"Automatic guessing of setas failed!")
+        d2.setas.clear()
+        self.assertEqual(list(d2.setas),["."]*3,"Failed to clear() setas")
+        d2.setas[[0,1,2]]="x","y","z"
+        self.assertEqual("".join(d2.setas),"xyz","Failed to set setas with a list")
+        d2.setas[[0,1,2]]="x"
+        self.assertEqual("".join(d2.setas),"xxx","Failed to set setas with an element from a list")
         d=self.d.clone
         d.setas="xyz"
         self.assertEqual(repr(d.setas),"['x', 'y']","setas __repr__ failure {}".format(repr(d.setas)))
