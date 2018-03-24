@@ -359,24 +359,19 @@ class PlotMixin(object):
 
     def _fix_cols(self, scalar=False,**kargs):
         """Sorts out axis specs, replacing with contents from setas as necessary."""
-        if "startx" in kargs:
-            startx = kargs["startx"]
-            del kargs["startx"]
-        else:
-            startx = 0
+        startx=kargs.pop("startx",0)
 
         c = self.setas._get_cols(startx=startx)
-        for k in ["xcol", "ycol", "zcol", "ucol", "vcol", "wcol", "xerr", "yerr", "zerr"]:
-            if k in kargs and k == "xcol" and kargs["xcol"] is None:
-                kargs["xcol"] = c.xcol
-            elif k in kargs and k == "xerr" and kargs["xerr"] is None:
-                kargs["xerr"] = c.xerr
-            elif k in kargs and k != "xcol" and kargs[k] is None and isiterable(c[k]) and len(c[k]) > 0:
+        for k in "xcol","xerr":
+            if k in kargs and kargs[k] is None:
+                kargs[k]=c[k]
+        for k in ["ycol", "zcol", "ucol", "vcol", "wcol",  "yerr", "zerr"]:
+            if k in kargs and kargs[k] is None and isiterable(c[k]) and len(c[k]) > 0:
                 if kargs.get("multi_y",False):
                     kargs[k] = c[k]
                 else:
                     kargs[k] = c[k][0]
-            elif k in c and k in kargs and k not in ["xcol","xerr"] and kargs[k] is None:
+            elif k in c and k in kargs and kargs[k] is None:
                 kargs[k]=c[k]
         for k in list(kargs.keys()):
             if k not in ["xcol", "ycol", "zcol", "ucol", "vcol", "wcol", "xerr", "yerr", "zerr"]:

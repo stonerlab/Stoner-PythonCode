@@ -1563,32 +1563,26 @@ class DataArray(_ma_.MaskedArray):
     def _col_args(self,scalar=True,xcol=None,ycol=None,zcol=None,ucol=None,vcol=None,wcol=None,xerr=None,yerr=None,zerr=None,**kargs):
         """Utility method that creates an object which has keys  based either on arguments or setas attribute."""
         cols={"xcol":xcol,"ycol":ycol,"zcol":zcol,"ucol":ucol,"vcol":vcol,"wcol":wcol,"xerr":xerr,"yerr":yerr,"zerr":zerr}
-        ret=copy.deepcopy(self.setas._get_cols(no_guess=True))
+        no_guess=True
         for i in cols.values():
             if not i is None: #User specification wins out
                 break
         else: #User didn't set any values, setas will win
-            if ret["axes"]==0 and self.shape[1] in self.setas._col_defaults: # setas not saet, can we use default assumptions?
-                warnings.warn("No column arguments given and no setas value, so assuming column assignments.")
-                ret=_attribute_store(self.setas._col_defaults[self.shape[1]])
-                for k in list(ret.keys()):
-                    ret["has_{}".format(k)]=ret[k] is not None
+            no_guess=False
+        ret=_attribute_store(self.setas._get_cols(no_guess=no_guess))
         for c in list(cols.keys()):
             if isNone(cols[c]): # Not defined, fallback on setas
                 del cols[c]
+                continue
             elif isinstance(cols[c],bool) and not cols[c]: #False, delete column altogether
                 del cols[c]
                 if c in ret:
                     del ret[c]
+                continue
             elif c in ret and isinstance(ret[c],list):
-                if isinstance(cols[c],string_types):
-                    cols[c]=self.setas.find_col(cols[c])
-                elif isinstance(cols[c],_np_.ndarray) and cols[c].size==len(self):
+                if isinstance(cols[c],_np_.ndarray) and cols[c].size==len(self):
                     continue
-                elif isiterable(cols[c]):
-                    cols[c]=self.setas.find_col(cols[c])
-            else:
-                cols[c]=self.setas.find_col(cols[c])
+            cols[c]=self.setas.find_col(cols[c])
         ret.update(cols)
         if scalar:
             for c in ret:
@@ -1605,7 +1599,6 @@ class DataArray(_ma_.MaskedArray):
                     ret[c]=list([ret[c]])
                 elif ret[c] is None:
                     ret[c]=[]
-
         return ret
 
 
