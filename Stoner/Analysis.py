@@ -791,6 +791,13 @@ class AnalysisMixin(object):
 
         for limits in zip(bin_left, bin_right):
             data = self.search(xcol, limits)
+            if len(data)>1:
+                ok=_np_.logical_not(_np_.isnan(data.y))
+                data=data[ok]
+            elif len(data)==1 and _np_.isnan(data.y):
+                shape=list(data.shape)
+                shape[0]=0
+                data=_np_.zeros(shape)
             if yerr is not None:
                 w = 1.0 / data[:, yerr] ** 2
                 W = _np_.sum(w, axis=0)
@@ -806,6 +813,8 @@ class AnalysisMixin(object):
                     e = _np_.std(data[:, ycol], axis=0) / _np_.sqrt(W)
                 else:
                     e=_np_.nan
+            if data.shape[0]==0:
+                warn("Empty bin at {}".format(limits))
             y = _np_.sum(data[:, ycol] * (w / W), axis=0)
             ybin[i,:] = y
             ebin[i,:] = e
