@@ -20,8 +20,7 @@ from numpy import NaN # pylint: disable=unused-import
 import numpy.ma as _ma_
 
 from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,bytes2str
-from .tools import isNone,all_size,all_type,_attribute_store,operator,isiterable,typedList,islike_list
-
+from .tools import isNone,all_size,all_type,_attribute_store,operator,isiterable,typedList,islike_list,get_option
 
 try:
     assert not python_v3 # blist doesn't seem entirely reliable in 3.5 :-(
@@ -1867,6 +1866,13 @@ class DataFile(metadataObject):
     def _public_attrs(self,value):
         """Privaye property to update the list of public attributes."""
         self._public_attrs_real.update(dict(value))
+        
+    @property
+    def _repr_html_(self):
+        if get_option("short_repr") or get_option("short_data_repr"):
+            raise AttributeError("Rich html output su[[ressed")
+        else:
+            return self._repr_html_private
 
     @property
     def basename(self):
@@ -2583,6 +2589,8 @@ class DataFile(metadataObject):
         Returns:
             self in a textual format.
         """
+        if get_option("short_repr") or get_option("short_data_repr"):
+            return self._repr_short_()
         try:
             return self._repr_table_()
         except Exception:
@@ -2923,9 +2931,12 @@ class DataFile(metadataObject):
                         outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
         return outp
 
-    def _repr_html_(self):
+    def _repr_html_private(self):
         """Version of repr_core that does and html output."""
         return self._repr_table_("html")
+
+    def _repr_short_(self):
+        return "{}({}) of shape {} ({}) and {} items of metadata".format(self.filename,type(self),self.shape,"".join(self.setas),len(self.metadata))
 
     def _repr_table_(self,fmt="rst"):
         """Convert the DataFile to a 2D array and then feed to tabulate."""

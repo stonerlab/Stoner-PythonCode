@@ -2,7 +2,7 @@
 of the `Condensed Matter Group<http://www.stoner.leeds.ac.uk/>` at the `University of Leeds<http://www.leeds.ac.uk>`.
 """
 # pylint: disable=import-error
-__all__=['Core', 'Analysis', 'plot', 'Image','tools','FileFormats','Folders','Data','DataFolder']
+__all__=['Core', 'Analysis', 'plot', 'Image','tools','FileFormats','Folders','Data','DataFolder','set_option','get_option']
 
 # These fake the old namespace if you do an import Stoner
 from sys import float_info
@@ -18,10 +18,10 @@ import Stoner.Folders as Folders
 from .Folders import DataFolder
 
 from .compat import _lmfit,Model
-from .tools import format_error
+from .tools import format_error,set_option,get_option
 
 from os import path as _path_
-__version_info__ = ('0', '8', '0b3')
+__version_info__ = ('0', '8', '0b4')
 __version__ = '.'.join(__version_info__)
 
 __home__=_path_.realpath(_path_.dirname(__file__))
@@ -162,3 +162,4 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
         else:
             ret=text
         return ret
+    

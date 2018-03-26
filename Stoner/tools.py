@@ -5,7 +5,7 @@
 These functions depend only on Stoner.compat which is used to ensure a consistent namespace between python 2.7 and 3.x.
 """
 __all__ = [ '_attribute_store', 'all_size', 'all_type', 'fix_signature', 'format_error', 'format_val', 'html_escape', 'isAnyNone', 'isNone', 'isiterable', 'islike_list',
-             'isproperty', 'istuple', 'quantize', 'tex_escape', 'typedList']
+             'isproperty', 'istuple', 'quantize', 'tex_escape', 'typedList','get_option','set_option']
 from collections import Iterable,MutableSequence
 from .compat import string_types,bytes2str
 import re
@@ -49,6 +49,11 @@ prefs={"text":{
         -3: "m", -6: r"&micro;", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
         }
     }
+
+_options={"short_repr":False,
+          "short_data_repr":False,
+          "short_img_repr":True,
+          "no_figs":True }
 
 
 def isNone(iterator):
@@ -547,3 +552,23 @@ class typedList(MutableSequence):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         else:
             self._store.insert(index,obj)
+            
+def set_option(name,value):
+    """Set a global package option.
+    
+    - short_repr (bool): Instead of using a rich representation, use a short description for DataFile and Imagefile.
+    - short_data_repr (bool): Just use short representation for DataFiles
+    - short_img_repr (bool): Just use a short representation for image file
+    - no_figs (bool): Do not return figures from plotting functions, just plot them.
+    """
+    if name not in _options.keys():
+        raise IndexError("{} is not a valid package option".format(name))
+    if not isinstance(value,bool):
+        raise ValueError("{} takes a boolean value not a {}".format(name,type(value)))
+    _options[name]=value
+    
+def get_option(name):
+    """Return the option value"""
+    if name not in _options.keys():
+        raise IndexError("{} is not a valid package option".format(name))
+    return _options[name]

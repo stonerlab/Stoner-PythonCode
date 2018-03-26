@@ -9,7 +9,7 @@ Classes:
 
 __all__ = ["PlotMixin","hsl2rgb"]
 from Stoner.compat import python_v3,string_types,index_types
-from Stoner.tools import _attribute_store, isNone,isAnyNone,all_type,isiterable,typedList
+from Stoner.tools import _attribute_store, isNone,isAnyNone,all_type,isiterable,typedList,get_option
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 
@@ -166,7 +166,7 @@ class PlotMixin(object):
     @property
     def showfig(self):
         """Returns either the current figure or self or None, depeding on whether the attribute is True or False or None."""
-        if self._showfig is None:
+        if self._showfig is None or get_option("no_figs"):
             return None
         if self._showfig:
             return self.__figure
