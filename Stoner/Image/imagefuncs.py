@@ -437,6 +437,15 @@ def normalise(im,scale=None):
     im=scaled*delta+offset
     return im
 
+def clip_neg(im):
+    """Clip negative pixels to 0.
+
+    Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
+    are changed to 0.
+    """
+    im[im<0] = 0
+    return im
+        
 def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode='constant', cval=0.0,constrain=True,**kargs):
     """Wrapper for sckit-image method of the same name to get a line_profile.
 
