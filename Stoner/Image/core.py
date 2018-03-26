@@ -1262,7 +1262,7 @@ class ImageFile(metadataObject):
         return fix_signature(gen_func,workingfunc)
     
     def __repr__(self):
-        return "{}({}) of shape {} and {} items of metadata".format(self.filename,type(self),self.shape,len(self.metadata))
+        return "{}({}) of shape {} ({}) and {} items of metadata".format(self.filename,type(self),self.shape,self.image.dtype,len(self.metadata))
 
     def _repr_png_private_(self):
         """Provide a display function for iPython/Jupyter."""

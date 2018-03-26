@@ -100,8 +100,25 @@ calls is handled a bit carefully:
     
 In this way, many operations can be carried out 'in-place' on a :class:`ImageFile`.
 
-The special __repr__ method of an :class:`ImagerFile` will display a picture of the image data if the console supports graphics. Alternatively the 
-:meth:`ImageArray.imshow` method (accessible to :class:`ImagerFile`) will show the image data in a matplotlib window.
+ImageFile Representation
+------------------------
+
+By default, the representation of an ImageFile is just a short textual description, however if the *short_repr& and *short_img_repr* options
+are both set to False and a graphical console is in use with an ipython kernel, then th special _repr_png_ method will show a picture of the
+contents of the ImageFile instead.::
+
+    i = Stopner.Image.ImageFile("kermit.png")
+    i
+    >>> kermit.png(<class 'Stoner.Image.core.ImageFile'>) of shape (479, 359) (uint16) and 53 items of metadata
+    from Stoner import set_option
+    set_option("short_repr",False)
+    set_option("shoft_img_repr",False)
+    i
+    >>> 
+    
+.. image:: ../../sample-data/kermit.png
+
+Alternatively the :meth:`ImageArray.imshow` method (accessible to :class:`ImagerFile`) will show the image data in a matplotlib window.
 
 Working with Lots of Images: :class:`ImageFolder`
 ==================================================
