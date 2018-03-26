@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from Stoner.Core import typeHintedDict,metadataObject,regexpDict
 from Stoner.Image.util import convert
 from Stoner import Data
-from Stoner.tools import istuple,fix_signature,islike_list
+from Stoner.tools import istuple,fix_signature,islike_list,get_option
 from Stoner.compat import python_v3,string_types,get_filedialog,bytes,int_types # Some things to help with Python2 and Python3 compatibility
 import inspect
 from functools import wraps
@@ -968,6 +968,13 @@ class ImageFile(metadataObject):
     ############################# Properties #### #######################################################################################
 
     @property
+    def _repr_png_(self):
+        if get_option("short_repr") or get_option("short_img_repr"):
+            raise AttrbuteError("Suppressed graphical representation")
+        else:
+            return self._repr_png_private_
+
+    @property
     def clone(self):
         """Make a copy of this ImageFile."""
         new=self.__class__(self.image.clone)
@@ -1253,8 +1260,11 @@ class ImageFile(metadataObject):
             else:
                 return r
         return fix_signature(gen_func,workingfunc)
+    
+    def __repr__(self):
+        return "{}({}) of shape {} and {} items of metadata".format(self.filename,type(self),self.shape,len(self.metadata))
 
-    def _repr_png_(self):
+    def _repr_png_private_(self):
         """Provide a display function for iPython/Jupyter."""
         fig=self.image.imshow()
         plt.title(self.filename)
