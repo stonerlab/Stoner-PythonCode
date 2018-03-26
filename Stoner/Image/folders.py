@@ -102,7 +102,44 @@ class ImageFolderMixin(object):
     def images(self):
         """A generator that iterates over just the images in the Folder."""
         return _generator(self)
+    
+    def _getattr_proxy(self,item):
+        """Override baseFolder proxy call to access a method of the ImageFile
 
+        Args:
+            item (string): Name of method of metadataObject class to be called
+
+        Returns:
+            Either a modifed copy of this objectFolder or a list of return values
+            from evaluating the method for each file in the Folder.
+        """
+        meth=getattr(self.instance,item,None)
+        def _wrapper_(*args,**kargs):
+            """Wraps a call to the metadataObject type for magic method calling.
+
+            Keyword Arguments:
+                _return (index types or None): specify to store the return value in the individual object's metadata
+
+            Note:
+                This relies on being defined inside the enclosure of the objectFolder method
+                so we have access to self and item
+            """
+            retvals=[]
+            _return=kargs.pop("_return",None)
+            for ix,f in enumerate(self):
+                meth=getattr(f,item,None)
+                ret=meth(*args,**kargs) #overwriting array is handled by ImageFile proxy function
+                retvals.append(ret)  
+                if _return is not None:
+                    if isinstance(_return,bool) and _return:
+                        _return=meth.__name__
+                    self[ix][_return]=ret
+            return retvals
+        #Ok that's the wrapper function, now return  it for the user to mess around with.
+        _wrapper_.__doc__=meth.__doc__
+        _wrapper_.__name__=meth.__name__
+        return _wrapper_
+        
     def apply_all(self, *args, **kargs):
         """apply function to all images in the stack
 

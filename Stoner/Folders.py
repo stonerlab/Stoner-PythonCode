@@ -602,7 +602,7 @@ class baseFolder(MutableSequence):
             if not isinstance(name,self._type):
                 raise KeyError("{} is not a valid {}".format(name,self._type))
         return self._update_from_object_attrs(name)
-
+            
     def __setter__(self,name,value,force_insert=False):
         """Stub to setting routine to store a metadataObject.
 
@@ -1017,7 +1017,7 @@ class baseFolder(MutableSequence):
             try:
                 instance=super(baseFolder,self).__getattribute__("instance")
                 if callable(getattr(instance,item,None)): # It's a method
-                    ret=self.__getattr_proxy(item)
+                    ret=self._getattr_proxy(item) #make it a single underscore name that can be overwritten in mixin classes
                 else: # It's a static attribute
                     if item in self._object_attrs:
                         ret=self._object_attrs[item]
@@ -1030,9 +1030,9 @@ class baseFolder(MutableSequence):
             except AttributeError: # Ok, pass back
                 raise AttributeError("{} is not an Attribute of {} or {}".format(item,type(self),type(instance)))
         return ret
-
-    def __getattr_proxy(self,item):
-        """Make a prpoxy call to access a method of the metadataObject like types.
+        
+    def _getattr_proxy(self,item):
+        """Make a proxy call to access a method of the metadataObject like types.
 
         Args:
             item (string): Name of method of metadataObject class to be called
