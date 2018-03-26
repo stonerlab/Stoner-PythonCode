@@ -1055,17 +1055,15 @@ class baseFolder(MutableSequence):
             retvals=[]
             _return=kargs.pop("_return",None)
             for ix,f in enumerate(self):
-                ret = f.clone
-                meth=getattr(ret,item,None)
+                meth=getattr(f,item,None)
                 ret=meth(*args,**kargs)
                 retvals.append(ret)
                 if isinstance(ret,self._type) and _return is None:
                     try: #Check if ret has same data type, otherwise will not overwrite well
-                        if ret.data.dtype!=f.data.dtype:
-                            continue
+                        if ret.data.dtype==f.data.dtype:
+                            self[ix]=ret
                     except AttributeError:
                         pass
-                    self[ix]=ret
                 elif _return is not None:
                     if isinstance(_return,bool) and _return:
                         _return=meth.__name__
