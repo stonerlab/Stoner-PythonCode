@@ -130,6 +130,8 @@ class ImageFolderMixin(object):
                 meth=getattr(f,item,None)
                 ret=meth(*args,**kargs) #overwriting array is handled by ImageFile proxy function
                 retvals.append(ret)  
+                if item=='crop':
+                    self[ix]=ret
                 if _return is not None:
                     if isinstance(_return,bool) and _return:
                         _return=meth.__name__
