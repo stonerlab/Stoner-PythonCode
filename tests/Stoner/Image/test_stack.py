@@ -85,7 +85,9 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(np.all(sa==np.ones((91,2))*100),"Result from iterating over images failed.")
         self.istack2.adjust_contrast()
         self.assertEqual((np.array(self.istack2.min()).mean(),np.array(self.istack2.max()).mean()),(-1.0,1.0),"Adjust contrast failure")
-        self.im1=self.istack2[0].normalise().convert(np.int32)
+        self.im1=self.istack2[0]
+        self.im1.normalise()
+        self.im1.convert(np.int32)
         self.im2=self.im1.convert(np.float32)
         conv_err=(self.istack2[0].image-self.im2.image).max()
         self.assertTrue(conv_err<1E-7,"Problems double converting images:{}.".format(conv_err))
@@ -145,6 +147,6 @@ class ImageStack2Test(unittest.TestCase):
 if __name__=="__main__":
     test=ImageStack2Test()
     #test.setUp()
-    #test.test_accessing()
+    #test.test_ImageStack2()
     unittest.main()
    

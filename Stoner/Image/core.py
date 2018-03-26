@@ -943,6 +943,7 @@ class ImageFile(metadataObject):
     """
 
     _image = None
+    _protected_attrs = ['_fromstack'] #these won't be passed through to self.image attrs
 
 
     def __init__(self, *args, **kargs):
@@ -1104,7 +1105,7 @@ class ImageFile(metadataObject):
 
     def __setattr__(self, n, v):
         """Handles setting attributes."""
-        if not hasattr(self,n):
+        if not hasattr(self,n) and n not in ImageFile._protected_attrs:
             setattr(self._image,n,v)
         else:
             super(ImageFile,self).__setattr__(n, v)
