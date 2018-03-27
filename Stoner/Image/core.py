@@ -457,7 +457,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
             func_proxy=regexpDict() # Cache is a regular expression dictionary - keys matched directly and then by regular expression
 
             # Get the Stoner.Image.imagefuncs mopdule first
-            from .import imagefuncs
+            from Stoner.Image import imagefuncs
             for d in dir(imagefuncs):
                 if not d.startswith("_"):
                     func=getattr(imagefuncs,d)
@@ -466,7 +466,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                         func_proxy[name]=func
 
             # Get the Stoner.Image.util mopdule next
-            from .import util as SIutil
+            from Stoner.Image import util as SIutil
             for d in dir(SIutil):
                 if not d.startswith("_"):
                     func=getattr(SIutil,d)
@@ -715,16 +715,8 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         if normalise:
             ret = ret.normalise()
         if clip_negative:
-            ret = ret.clip_negative()
+            ret = ret.clip_neg()
         return ret
-
-    def clip_negative(self):
-        """Clip negative pixels to 0.
-
-        Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
-        are changed to 0.
-        """
-        self[self<0] = 0
 
     def asint(self, dtype=np.uint16):
         """convert the image to unsigned integer format.
@@ -899,12 +891,12 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
 
     def clip_intensity(self):
         """Depricated compatibility method - prefer :py:meth:`ImageArray.normalise`."""
-        ret = self.asfloat(normalise=True, clip_negative=True)
+        ret = self.asfloat(normalise=True, clip_neg=True)
         return ret
 
     def convert_float(self, clip_negative=True):
         """Deproicated compatability. :py:meth:`ImageArray.asfloat` preferred"""
-        self.asfloat(normalise=False, clip_negative=clip_negative)
+        self.asfloat(normalise=False, clip_neg=clip_negative)
 
     def convert_int(self):
         """Depricated compatability meothd. :py:meth:`ImageArray.asint` preferred"""
@@ -1483,7 +1475,3 @@ class MaskProxy(object):
     def invert(self):
         """Invert the mask."""
         self._IA.mask=-self._IA.mask
-
-
-
-

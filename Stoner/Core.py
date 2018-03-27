@@ -1243,7 +1243,11 @@ class DataArray(_ma_.MaskedArray):
         # Input array is an already formed ndarray instance
         # We first cast to be our class type
         setas=kargs.pop("setas",_setas())
-        mask=kargs.pop("mask",None)
+        if isinstance(input_array,_ma_.MaskedArray):
+            default_mask=input_array.mask
+        else:
+            default_mask=None
+        mask=_np_.copy(kargs.pop("mask",default_mask))
         column_headers=kargs.pop("column_headers",[])
         _row=kargs.pop("isrow",False)
         if isinstance(input_array,DataArray):
@@ -1866,7 +1870,7 @@ class DataFile(metadataObject):
     def _public_attrs(self,value):
         """Privaye property to update the list of public attributes."""
         self._public_attrs_real.update(dict(value))
-        
+
     @property
     def _repr_html_(self):
         if get_option("short_repr") or get_option("short_data_repr"):
@@ -3306,6 +3310,35 @@ class DataFile(metadataObject):
                 self.column_headers=ch
             return self
 
+    def del_nan(self,col=None,clone=False):
+        """Remove rows that have nan in them.
+
+        eyword Arguments:
+            col (index types or None): column(s) to look for nan's in. If None or not given, use setas columns.
+            cone (boolean): if True clone the current object before running and then return the clone not self.
+
+        Return:
+            self (DataFile): Returns a copy of the current object (or clone if *clone*=True)
+        """
+        if clone: #Set ret to be our clone
+            ret=self.clone
+        else: #Not cloning so ret is self
+            ret=self
+
+        if col is None: #If col is still None, use all columsn that are set to any value in self.setas
+            col=[ix for ix,col in enumerate(self.setas) if col!="."]
+        if not islike_list(col): #If col isn't a list, make it one now
+            col=[col]
+        col=[ret.find_col(c) for c in col] #Normalise col to be a list of integers
+        dels=_np_.zeros(len(ret)).astype(bool)
+        for ix in col:
+            dels=_np_.logical_or(dels,_np_.isnan(ret.data[:,ix])) # dels contains True if any row contains a NaN in columns col
+        not_masked=_np_.logical_not(_ma_.mask_rows(ret.data).mask[:,0]) # Get rows wqhich are not masked
+        dels=_np_.logical_and(not_masked,dels) # And make dels just be unmasked rows with NaNs
+
+        ret.del_rows(_np_.logical_not(dels)) # Del the those rows
+        return ret
+
     def del_rows(self, col=None, val=None, invert=False):
         """Searchs in the numerica data for the lines that match and deletes the corresponding rows.
 
@@ -3351,7 +3384,8 @@ class DataFile(metadataObject):
             elif isiterable(col) and all_type(col,bool): # Delete rows by a list of booleans
                 if len(col)<len(self):
                     col.extend([False]*(len(self)-len(col)))
-                col=[i for i in range(len(self)) if col[i]]
+                self.data=self.data[col]
+                return self
             if isiterable(col) and all_type(col,int_types) and val is None and not invert:
                 col.sort(reverse=True)
                 for c in col:

@@ -11,7 +11,7 @@ import sys
 import os, os.path as path
 import numpy as np
 import re
-from numpy import any,all,sqrt
+from numpy import any,all,sqrt,nan
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
@@ -232,6 +232,31 @@ class Datatest(unittest.TestCase):
         e=self.d2.clone
         e.reorder_columns([2,0,1])
         self.assertTrue(e.column_headers==[self.d2.column_headers[x] for x in [2,0,1]],"Failed to reorder columns: {}".format(e.column_headers))
+        d=self.d.clone
+        d.del_rows(0,10.0)
+        self.assertEqual(d.shape,(99,2),"Del Rows with value and column failed - actual shape {}".format(d.shape))
+        d=self.d.clone
+        d.del_rows(0,(10.0,20.0))
+        self.assertEqual(d.shape,(89,2),"Del Rows with tuple and column failed - actual shape {}".format(d.shape))
+        d=self.d.clone
+        d.mask[::2,0]=True
+        d.del_rows()
+        self.assertEqual(d.shape,(50,2),"Del Rows with mask set - actual shape {}".format(d.shape))
+        d=self.d.clone
+        d[::2,1]=nan
+        d.del_nan(1)
+        self.assertEqual(d.shape,(50,2),"del_nan with explicit column set failed shape was {}".format(d.shape))
+        d=self.d.clone
+        d[::2,1]=nan
+        d.del_nan(0)
+        self.assertEqual(d.shape,(100,2),"del_nan with explicit column set and not nans failed shape was {}".format(d.shape))
+        d=self.d.clone
+        d[::2,1]=nan
+        d.setas=".y"
+        d.del_nan()
+        self.assertEqual(d.shape,(50,2),"del_nan with columns from setas failed shape was {}".format(d.shape))
+
+
 
     def test_metadata_save(self):
         local = path.dirname(__file__)

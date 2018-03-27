@@ -602,7 +602,7 @@ class baseFolder(MutableSequence):
             if not isinstance(name,self._type):
                 raise KeyError("{} is not a valid {}".format(name,self._type))
         return self._update_from_object_attrs(name)
-
+            
     def __setter__(self,name,value,force_insert=False):
         """Stub to setting routine to store a metadataObject.
 
@@ -1017,7 +1017,7 @@ class baseFolder(MutableSequence):
             try:
                 instance=super(baseFolder,self).__getattribute__("instance")
                 if callable(getattr(instance,item,None)): # It's a method
-                    ret=self.__getattr_proxy(item)
+                    ret=self._getattr_proxy(item) #make it a single underscore name that can be overwritten in mixin classes
                 else: # It's a static attribute
                     if item in self._object_attrs:
                         ret=self._object_attrs[item]
@@ -1030,9 +1030,9 @@ class baseFolder(MutableSequence):
             except AttributeError: # Ok, pass back
                 raise AttributeError("{} is not an Attribute of {} or {}".format(item,type(self),type(instance)))
         return ret
-
-    def __getattr_proxy(self,item):
-        """Make a prpoxy call to access a method of the metadataObject like types.
+        
+    def _getattr_proxy(self,item):
+        """Make a proxy call to access a method of the metadataObject like types.
 
         Args:
             item (string): Name of method of metadataObject class to be called
@@ -1055,17 +1055,15 @@ class baseFolder(MutableSequence):
             retvals=[]
             _return=kargs.pop("_return",None)
             for ix,f in enumerate(self):
-                ret = f.clone
-                meth=getattr(ret,item,None)
+                meth=getattr(f,item,None)
                 ret=meth(*args,**kargs)
                 retvals.append(ret)
                 if isinstance(ret,self._type) and _return is None:
                     try: #Check if ret has same data type, otherwise will not overwrite well
-                        if ret.data.dtype!=f.data.dtype:
-                            continue
+                        if ret.data.dtype==f.data.dtype:
+                            self[ix]=ret
                     except AttributeError:
                         pass
-                    self[ix]=ret
                 elif _return is not None:
                     if isinstance(_return,bool) and _return:
                         _return=meth.__name__
