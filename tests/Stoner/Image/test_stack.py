@@ -142,11 +142,21 @@ class ImageStack2Test(unittest.TestCase):
         #check function generator machinery works
         self.istack2.crop(0,30,0,50)
         self.assertTrue(self.istack2.shape==(91,50,30))
-
+        ist2 = ImageStack2(np.arange(60).reshape(4,3,5))
+        self.assertTrue(ist2.imarray.dtype==np.int32)
+        t1 = ImageStack2(np.arange(60).reshape(4,3,5))
+        t1.asfloat(normalise=False, clip_negative=False)
+        self.assertTrue(t1.imarray.dtype==np.float64)
+        self.assertTrue(np.max(t1.imarray)==59.0)
+        t2 = ImageStack2(np.arange(60).reshape(4,3,5))
+        t2.asfloat(normalise=True, clip_negative=True)
+        #self.assertTrue( np.max(t2.imarray) == (2*59+1)/(2**31-(-2**31)) )
+        self.assertTrue(np.min(t2.imarray)>=0)
+        
 
 if __name__=="__main__":
     test=ImageStack2Test()
     #test.setUp()
-    #test.test_ImageStack2()
+    #test.test_methods()
     unittest.main()
    

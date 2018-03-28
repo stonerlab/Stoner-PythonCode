@@ -697,23 +697,25 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
     def asfloat(self, normalise=False, clip_negative=False):
         """Return the image converted to floating point type.
 
-        If currently an int type then floats will be automatically normalised.
-        If currently a float type then will normalise if normalise.
-        If currently an unsigned int type then image will be in range 0,1
+        If currently an int type and normalise then floats will be normalised 
+        to the maximum allowed value of the int type.
+        If currently a float type 
+        If currently an unsigned int type then normalised image will be in range 0,1
 
         Keyword Arguments:
             normalise(bool):
-                normalise the image to -1,1
+                normalise the image to the max value of current int type
             clip_negative(bool):
                 clip negative intensity to 0
         """
-        ret = convert(self, dtype=np.float64) #preserve metadata
-        ret = ImageArray(ret)
-        c = self.clone #copy formatting and apply to new array
-        for k,v in c._optinfo.items():
-            setattr(ret, k, v)
-        if normalise:
-            ret = ret.normalise()
+        if self.dtype.kind=='f' and normalise:
+            ret = self.normalise()
+        else:
+            ret = convert(self, dtype=np.float64, normalise=normalise) #preserve metadata
+            ret = ImageArray(ret)
+            c = self.clone #copy formatting and apply to new array
+            for k,v in c._optinfo.items():
+                setattr(ret, k, v)
         if clip_negative:
             ret = ret.clip_neg()
         return ret
@@ -721,7 +723,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
     def asint(self, dtype=np.uint16):
         """convert the image to unsigned integer format.
 
-        May raise warnings about loss of precision. Pass through to skiamge img_as_uint
+        May raise warnings about loss of precision.
         """
         if self.dtype.kind=='f' and (np.max(self)>1 or np.min(self)<-1):
             self=self.normalise()

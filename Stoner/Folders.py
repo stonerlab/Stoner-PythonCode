@@ -2162,6 +2162,7 @@ class DiskBasedFolder(object):
         Returns:
             (DataFolder): returns a copy of itself.
         """
+        name = self.__lookup__(name)
         self.__setter__(name,None)
         return self
 
