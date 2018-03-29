@@ -310,36 +310,29 @@ class ImageStackMixin(object):
     ###################         Public  methods         #######################
 
 
-    def clip_intensity(self):
-        """Clip intensity that lies outside the range allowed by dtype.
-
-        Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
-        are changed to 0. (Numpy should limit the range on arrays of int dtypes.
-        """
-        dl=self.dtype_limits(clip_negative=True)
-        np.clip(self._stack, dl[0], dl[1], out=self._stack)
-    
-    def asfloat(self, normalise=False, clip_negative=False):
+    def asfloat(self, normalise=True, clip=False, clip_negative=False):
         """Convert stack to floating point type.
         Analagous behaviour to ImageFile.asfloat()
 
         If currently an int type and normalise then floats will be normalised 
         to the maximum allowed value of the int type.
-        If currently a float type 
-        If currently an unsigned int type then normalised image will be in range 0,1
+        If currently a float type then no change occurs. 
+        If clip_negative then clip values outside the range 0,1
 
         Keyword Arguments:
             normalise(bool):
                 normalise the image to the max value of current int type
+            clip(bool):
+                clip resulting range to values between -1 and 1
             clip_negative(bool):
-                clip negative intensity to 0
+                clip range further to 0,1
         """
-        if self.imarray.dtype.kind=='f' and normalise:
-            self.normalise() #fall back on ImageFile functionality
+        if self.imarray.dtype.kind=='f':
+            pass
         else:
             self._stack = convert(self._stack, dtype=np.float64, normalise=normalise)
-        if clip_negative:
-            self.clip_neg()
+        if clip or clip_negative:
+            self.clip_intensity(clip_negative=clip_negative)
     
     def dtype_limits(self, clip_negative=True):
         """Return intensity limits, i.e. (min, max) tuple, of imarray dtype.
@@ -425,21 +418,21 @@ class StackAnalysisMixin(object):
         converted to float for this method.
 
         Arg:
-            background(int or 2d np.ndarray):
+            background(int or np.ndarray or ImageFile):
                 the background image to subtract. If int is given this is used
                 as an index on the stack.
         Keyword Arguments:
-            contrast(int):
-                Default 16. Magnifies the subtraction
+            contrast(float):
+                Determines contrast of resulting image
             clip_intensity(bool):
                 whether to clip the image intensities in range (0,1) after subtraction
         """
-        self.convert_float(clip_negative=False)
+        self.asfloat(normalise=True, clip_negative=False)
         if isinstance(background, int):
             bg=self[background]
         if isinstance(bg.ImageFile):
             bg=bg.image
-        bg = bg.view(ImageArray).convert_float(clip_negative=False)
+        bg = bg.view(ImageArray).asfloat(normalise=True, clip_negative=False)
         bg=np.tile(bg, (1,1,len(self)))
         self._stack = contrast * (self._stack - bg) + 0.5
         if clip_intensity:

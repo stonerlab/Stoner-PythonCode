@@ -128,9 +128,9 @@ about:
     Image Subpackage
     ----------------
 
-    The **Stoner.Image** package is a new feature of recent versions of the package and provides dedicated classes for working with image data,
-    and in particular for analysing Kerr Microscope image files. It provides an **ImageFile** class that is functionally similar to **DataFile**
-    except that the numerical data is understood to represent image data and additional methods are incorporated to facilitate processing.
+    The **Stoner.Image** package is a new feature of recent versions of the package and provides dedicated classes for working with greyscale
+	image data.	It provides an **ImageFile** class that is functionally similar to **DataFile** except that the numerical data is understood 
+	to represent image data and additional methods are incorporated to facilitate processing.
 
     Resources
     ==========

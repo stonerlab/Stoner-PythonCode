@@ -83,7 +83,7 @@ class ImageFolderMixin(object):
 
         Mostly a pass through to the :py:class:`Stoner.Folders.baseFolder` class.
         """
-        kargs["pattern"]=kargs.get("pattern","*.png")
+        kargs["pattern"]=kargs.get("pattern","*.tif*")
         kargs["type"]=kargs.get("type",ImageArray)
         if "flat" in self._defaults:
             del self._defaults["flat"]
