@@ -729,7 +729,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
             clip_negative(bool):
                 if True clip to range 0,1 else range -1,1"""
         dl = self.dtype_limits(clip_negative=clip_negative)
-        np.clip(self, dl[0], dl[1], out=self.image)
+        np.clip(self, dl[0], dl[1], out=self)
     
     def asint(self, dtype=np.uint16):
         """convert the image to unsigned integer format.
