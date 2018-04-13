@@ -152,6 +152,13 @@ class ImageStack2Test(unittest.TestCase):
         t2.asfloat(normalise=True, clip_negative=True)
         #self.assertTrue( np.max(t2.imarray) == (2*59+1)/(2**31-(-2**31)) )
         self.assertTrue(np.min(t2.imarray)>=0)
+        ist3 = ist2.clone
+        self.assertFalse(np.may_share_memory(ist2.imarray, ist3.imarray))
+        del ist3[-1]
+        self.assertTrue(len(ist3)==len(ist2)-1)
+        self.assertTrue(np.allclose(ist3[0],ist2[0]))
+        ist3.insert(1, np.arange(18).reshape(3,6))
+        self.assertTrue(ist3[1].shape==(3,6), 'inserting an image of different size to stack')
         
 
 if __name__=="__main__":

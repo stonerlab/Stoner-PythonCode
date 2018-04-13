@@ -211,12 +211,15 @@ class ImageStackMixin(object):
 
         The default implementation is rather slow about inserting since it has to clear the data folder and then rebuild it entry by entry. This does
         a simple insert."""
+        value = ImageFile(value) #ensure we have some metadata
         self._names.insert(ix,name)
         self._metadata[name]=value.metadata
         self._sizes=np.insert(self._sizes,ix,value.shape,axis=0)
         new_size=self.max_size+(len(self._names),)
-        self._resize_stack(new_size)        
-        self._stack=np.insert(self._stack,ix,value.data,axis=2)
+        self._resize_stack(new_size)       
+        self._stack=np.insert(self._stack,ix,np.zeros(self.max_size),axis=2)
+        row,col = value.shape
+        self._stack[:row,:col,ix] = value.data
 
 
     def __deleter__(self,ix):
@@ -233,6 +236,8 @@ class ImageStackMixin(object):
         name=list(self.__names__())[idx]
         del self._metadata[name]
         self._stack=np.delete(self._stack,idx,axis=2)
+        del self._names[idx]
+        self._sizes=np.delete(self._sizes,ix,axis=0)
 
     def __clear__(self):
         """"Clears all stored :py:class:`Stoner.Core.metadataObject` instances stored.
@@ -256,6 +261,7 @@ class ImageStackMixin(object):
             other._metadata=copy.deepcopy(self._metadata)
             other._stack=copy.deepcopy(self._stack)
             other._names=copy.deepcopy(self._names)
+            other._sizes=np.copy(self._sizes)
         return super(ImageStackMixin,self).__clone__(other=other,attrs_only=attrs_only)
 
     ###########################################################################

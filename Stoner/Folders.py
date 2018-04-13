@@ -397,7 +397,7 @@ class baseFolder(MutableSequence):
     @property
     def clone(self):
         """Clone just does a deepcopy as a property for compatibility with :py:class:`Stoner.Core.DataFile`."""
-        return self.__clone__(self)
+        return self.__clone__()
 
     @property
     def depth(self):
