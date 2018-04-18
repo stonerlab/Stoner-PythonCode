@@ -13,6 +13,7 @@ from .core import ImageArray,dtype_range, ImageFile
 from .folders import ImageFolder,ImageFolderMixin
 from Stoner.Core import regexpDict,metadataObject,typeHintedDict
 from Stoner.Folders import DiskBasedFolder, baseFolder
+from Stoner.Image.util import convert
 
 IM_SIZE=(512,672) #Standard Kerr image size
 AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
@@ -210,12 +211,15 @@ class ImageStackMixin(object):
 
         The default implementation is rather slow about inserting since it has to clear the data folder and then rebuild it entry by entry. This does
         a simple insert."""
+        value = ImageFile(value) #ensure we have some metadata
         self._names.insert(ix,name)
         self._metadata[name]=value.metadata
         self._sizes=np.insert(self._sizes,ix,value.shape,axis=0)
         new_size=self.max_size+(len(self._names),)
-        self._resize_stack(new_size)        
-        self._stack=np.insert(self._stack,ix,value.data,axis=2)
+        self._resize_stack(new_size)       
+        self._stack=np.insert(self._stack,ix,np.zeros(self.max_size),axis=2)
+        row,col = value.shape
+        self._stack[:row,:col,ix] = value.data
 
 
     def __deleter__(self,ix):
@@ -232,6 +236,8 @@ class ImageStackMixin(object):
         name=list(self.__names__())[idx]
         del self._metadata[name]
         self._stack=np.delete(self._stack,idx,axis=2)
+        del self._names[idx]
+        self._sizes=np.delete(self._sizes,ix,axis=0)
 
     def __clear__(self):
         """"Clears all stored :py:class:`Stoner.Core.metadataObject` instances stored.
@@ -255,6 +261,7 @@ class ImageStackMixin(object):
             other._metadata=copy.deepcopy(self._metadata)
             other._stack=copy.deepcopy(self._stack)
             other._names=copy.deepcopy(self._names)
+            other._sizes=np.copy(self._sizes)
         return super(ImageStackMixin,self).__clone__(other=other,attrs_only=attrs_only)
 
     ###########################################################################
@@ -309,34 +316,30 @@ class ImageStackMixin(object):
     ###################         Public  methods         #######################
 
 
-    def clip_intensity(self):
-        """Clip intensity that lies outside the range allowed by dtype.
+    def asfloat(self, normalise=True, clip=False, clip_negative=False):
+        """Convert stack to floating point type.
+        Analagous behaviour to ImageFile.asfloat()
 
-        Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
-        are changed to 0. (Numpy should limit the range on arrays of int dtypes.
-        """
-        dl=self.dtype_limits(clip_negative=True)
-        np.clip(self._stack, dl[0], dl[1], out=self._stack)
-
-    def convert_float(self, clip_negative=True):
-        """Convert the imarray to floating point type normalised to -1 to 1.
-
-        If clip_negative then clip intensities below 0 to 0.
+        If currently an int type and normalise then floats will be normalised 
+        to the maximum allowed value of the int type.
+        If currently a float type then no change occurs. 
+        If clip_negative then clip values outside the range 0,1
 
         Keyword Arguments:
+            normalise(bool):
+                normalise the image to the max value of current int type
+            clip(bool):
+                clip resulting range to values between -1 and 1
             clip_negative(bool):
-                whether to clip intensities
+                clip range further to 0,1
         """
-        if self._stack.dtype.kind=='f': #already float
+        if self.imarray.dtype.kind=='f':
             pass
         else:
-            dl=self.dtype_limits(clip_negative=False)
-            new=self._stack.astype(np.float64)
-            new=new/float(dl[1])
-            self._stack = new
-        if clip_negative:
-            self.clip_intensity()
-
+            self._stack = convert(self._stack, dtype=np.float64, normalise=normalise)
+        if clip or clip_negative:
+            self.clip_intensity(clip_negative=clip_negative)
+    
     def dtype_limits(self, clip_negative=True):
         """Return intensity limits, i.e. (min, max) tuple, of imarray dtype.
 
@@ -352,35 +355,6 @@ class ImageStackMixin(object):
         if clip_negative:
             imin = 0
         return imin, imax
-
-
-    def subtract(self, background, contrast=16, clip_intensity=True):
-        """Subtract a background image (or index) from all images in the stack.
-
-        The formula used is new = (ImageArray - background) * contrast + 0.5
-        If clip_intensity then clip negative intensities to 0. Array is always
-        converted to float for this method.
-
-        Arg:
-            background(int or 2d np.ndarray):
-                the background image to subtract. If int is given this is used
-                as an index on the stack.
-        Keyword Arguments:
-            contrast(int):
-                Default 16. Magnifies the subtraction
-            clip_intensity(bool):
-                whether to clip the image intensities in range (0,1) after subtraction
-        """
-        self.convert_float(clip_negative=False)
-        if isinstance(background, int):
-            bg=self[background]
-        if isinstance(bg.ImageFile):
-            bg=bg.image
-        bg = bg.view(ImageArray).convert_float(clip_negative=False)
-        bg=np.tile(bg, (1,1,len(self)))
-        self._stack = contrast * (self._stack - bg) + 0.5
-        if clip_intensity:
-            self.clip_intensity()
 
     ###########################################################################
     ################### Depricated Compaibility methods #######################
@@ -436,8 +410,43 @@ class ImageStackMixin(object):
         warnings.weanr("show() is depricated in favour of ImageFolder.view()")
         return self.view()
 
+class StackAnalysisMixin(object):
+    """Add some analysis capability to ImageStack. These functions may override
+       ImageFile functions but do them efficiently for a numpy stack of 
+       images.
+       """
+    
+    def subtract(self, background, contrast=16, clip_intensity=True):
+        """Subtract a background image (or index) from all images in the stack.
 
-class ImageStack2(ImageStackMixin,ImageFolderMixin,DiskBasedFolder,baseFolder):
+        The formula used is new = (ImageArray - background) * contrast + 0.5
+        If clip_intensity then clip negative intensities to 0. Array is always
+        converted to float for this method.
+
+        Arg:
+            background(int or np.ndarray or ImageFile):
+                the background image to subtract. If int is given this is used
+                as an index on the stack.
+        Keyword Arguments:
+            contrast(float):
+                Determines contrast of resulting image
+            clip_intensity(bool):
+                whether to clip the image intensities in range (0,1) after subtraction
+        """
+        self.asfloat(normalise=True, clip_negative=False)
+        if isinstance(background, int):
+            bg=self[background]
+        if isinstance(bg.ImageFile):
+            bg=bg.image
+        bg = bg.view(ImageArray).asfloat(normalise=True, clip_negative=False)
+        bg=np.tile(bg, (1,1,len(self)))
+        self._stack = contrast * (self._stack - bg) + 0.5
+        if clip_intensity:
+            self.clip_intensity()
+            
+    
+
+class ImageStack2(StackAnalysisMixin, ImageStackMixin,ImageFolderMixin,DiskBasedFolder,baseFolder):
 
     """An akternative implementation of an image stack based on baseFolder."""
 

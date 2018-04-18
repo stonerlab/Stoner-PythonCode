@@ -694,34 +694,47 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
             imin = 0
         return imin, imax
 
-    def asfloat(self, normalise=False, clip_negative=False):
+    def asfloat(self, normalise=True, clip=False, clip_negative=False):
         """Return the image converted to floating point type.
 
-        If currently an int type then floats will be automatically normalised.
-        If currently a float type then will normalise if normalise.
-        If currently an unsigned int type then image will be in range 0,1
+        If currently an int type and normalise then floats will be normalised 
+        to the maximum allowed value of the int type.
+        If currently a float type then no change occurs. 
+        If clip then clip values outside the range -1,1
+        If clip_negative then further clip values to range 0,1
 
         Keyword Arguments:
             normalise(bool):
-                normalise the image to -1,1
+                normalise the image to the max value of current int type
             clip_negative(bool):
                 clip negative intensity to 0
         """
-        ret = convert(self, dtype=np.float64) #preserve metadata
-        ret = ImageArray(ret)
-        c = self.clone #copy formatting and apply to new array
-        for k,v in c._optinfo.items():
-            setattr(ret, k, v)
-        if normalise:
-            ret = ret.normalise()
-        if clip_negative:
-            ret = ret.clip_neg()
+        if self.dtype.kind=='f':
+            pass
+        else:
+            ret = convert(self, dtype=np.float64, normalise=normalise) #preserve metadata
+            ret = ImageArray(ret)
+            c = self.clone #copy formatting and apply to new array
+            for k,v in c._optinfo.items():
+                setattr(ret, k, v)
+        if clip or clip_negative:
+            ret = ret.clip_intensity(clip_negative=clip_negative)
         return ret
-
+    
+    def clip_intensity(self, clip_negative=False):
+        """Clip intensity outside the range -1,1 or 0,1
+        
+        Ensure data range is -1 to 1 or 0 to 1 if clip_negative is True.
+        Keyword ArgumentsL
+            clip_negative(bool):
+                if True clip to range 0,1 else range -1,1"""
+        dl = self.dtype_limits(clip_negative=clip_negative)
+        np.clip(self, dl[0], dl[1], out=self)
+    
     def asint(self, dtype=np.uint16):
         """convert the image to unsigned integer format.
 
-        May raise warnings about loss of precision. Pass through to skiamge img_as_uint
+        May raise warnings about loss of precision.
         """
         if self.dtype.kind=='f' and (np.max(self)>1 or np.min(self)<-1):
             self=self.normalise()
@@ -887,12 +900,6 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
     def crop_image(self, *args, **kargs):
         """Back compatability alias for :py:meth:`ImageArray.crop`"""
         return self.crop(*args, **kargs)
-
-
-    def clip_intensity(self):
-        """Depricated compatibility method - prefer :py:meth:`ImageArray.normalise`."""
-        ret = self.asfloat(normalise=True, clip_neg=True)
-        return ret
 
     def convert_float(self, clip_negative=True):
         """Deproicated compatability. :py:meth:`ImageArray.asfloat` preferred"""

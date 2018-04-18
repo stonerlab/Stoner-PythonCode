@@ -253,8 +253,9 @@ class ImageFileTest(unittest.TestCase):
     def test_methods(self):
         b=np.arange(12).reshape(3,4)
         ifi = ImageFile(b)
-        ifi.asfloat() #convert in place
+        ifi.asfloat(normalise=False, clip_negative=False) #convert in place
         self.assertTrue(ifi.image.dtype.kind == 'f')
+        self.assertTrue(np.max(ifi) == 11.0)
         ifi.image == ifi.image*5
         ifi.rescale_intensity()
         self.assertTrue(np.allclose(ifi.image, np.linspace(0,1,12).reshape(3,4)))

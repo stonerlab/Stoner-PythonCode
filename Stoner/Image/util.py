@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Code copied directly from skimage module   
+"""Code adapted from skimage module   
 """
 from __future__ import division
 __all__ = ["convert"]
@@ -31,7 +31,7 @@ _supported_types = (np.bool_, np.bool8,
 dtype_range[np.float16] = (-1, 1)
 _supported_types += (np.float16, )
 
-def convert(image, dtype, force_copy=False, uniform=False):
+def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
     """
     Convert an image to the requested data-type.
 
@@ -59,6 +59,9 @@ def convert(image, dtype, force_copy=False, uniform=False):
         By default (uniform=False) floating point values are scaled and
         rounded to the nearest integers, which minimizes back and forth
         conversion errors.
+    normalise : bool
+        When converting from int types to float normalise the resulting array
+        by the maximum allowed value of the int type. 
 
     References
     ----------
@@ -228,15 +231,16 @@ def convert(image, dtype, force_copy=False, uniform=False):
         # use float type that can exactly represent input integers
         image = np.array(image, _dtype(itemsize_in, dtype,
                                        np.float32, np.float64))
-        if kind_in == 'u':
-            image /= imax_in
-            # DirectX uses this conversion also for signed ints
-            #if imin_in:
-            #    np.maximum(image, -1.0, out=image)
-        else:
-            image *= 2.0
-            image += 1.0
-            image /= imax_in - imin_in
+        if normalise: #normalise floats by maximum value of int type
+            if kind_in == 'u':
+                image /= imax_in
+                # DirectX uses this conversion also for signed ints
+                #if imin_in:
+                #    np.maximum(image, -1.0, out=image)
+            else:
+                image *= 2.0
+                image += 1.0
+                image /= imax_in - imin_in
         return image.astype(dtype)
 
     if kind_in == 'u':
