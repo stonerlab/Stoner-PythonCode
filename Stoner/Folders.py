@@ -9,6 +9,8 @@ import os
 import re
 import os.path as path
 import fnmatch
+from functools import wraps
+
 import numpy as _np_
 from copy import copy,deepcopy
 import unicodedata
@@ -38,7 +40,7 @@ def pathjoin(*args):
     return tmp.replace(path.sep,"/")
 
 class _each_item(object):
-    
+
     """Provides a proxy object for accessing methods on the inividual members of a Folder.
     8
     Notes:
@@ -46,11 +48,23 @@ class _each_item(object):
         on the members of the folder rather than a collective method. This allows us to work
         around nameclashes.
     """
-    
+
     def __init__(self,folder):
 
         self._folder=folder
-    
+
+    def __dir__(self):
+        """Return a list of the common set of attributes of the instances in the folder."""
+        if len(self._folder)!=0:
+            res=set(dir(self._folder[0]))
+        else:
+            res=set()
+        if len(self._folder)>0:
+            for d in self._folder[1:]:
+                res&=set(dir(d))
+        return list(res)
+
+
     def __getattr__(self, item):
         """Handles some special case attributes that provide alternative views of the objectFolder
 
@@ -89,6 +103,8 @@ class _each_item(object):
             from evaluating the method for each file in the Folder.
         """
         meth=getattr(self._folder.instance,item,None)
+
+        @wraps(meth)
         def _wrapper_(*args,**kargs):
             """Wraps a call to the metadataObject type for magic method calling.
 
@@ -119,8 +135,6 @@ class _each_item(object):
                     self._folder[ix][_return]=ret
             return retvals
         #Ok that's the wrapper function, now return  it for the user to mess around with.
-        _wrapper_.__doc__=meth.__doc__
-        _wrapper_.__name__=meth.__name__
         return _wrapper_
 
 
@@ -131,7 +145,7 @@ class _combined_metadata_proxy(object):
     def __init__(self,folder):
 
         self._folder=folder
-        
+
     @property
     def all(self):
         """A l,ist of all the metadata dictionaries in the Folder."""
@@ -409,7 +423,7 @@ class baseFolder(MutableSequence):
             for g in self.groups:
                 r=max(r,self.groups[g].depth+1)
         return r
-    
+
     @property
     def each(self):
         """Return a proxy object for calling attributes of the member type of the folder."""
@@ -602,7 +616,7 @@ class baseFolder(MutableSequence):
             if not isinstance(name,self._type):
                 raise KeyError("{} is not a valid {}".format(name,self._type))
         return self._update_from_object_attrs(name)
-            
+
     def __setter__(self,name,value,force_insert=False):
         """Stub to setting routine to store a metadataObject.
 
@@ -617,7 +631,7 @@ class baseFolder(MutableSequence):
             name=self.make_name()
         if force_insert:
            self.objects.update({name:value})
-        else:            
+        else:
             self.objects[name]=value
 
     def __inserter__(self,ix,name,value):
@@ -1030,7 +1044,7 @@ class baseFolder(MutableSequence):
             except AttributeError: # Ok, pass back
                 raise AttributeError("{} is not an Attribute of {} or {}".format(item,type(self),type(instance)))
         return ret
-        
+
     def _getattr_proxy(self,item):
         """Make a proxy call to access a method of the metadataObject like types.
 
@@ -1504,7 +1518,7 @@ class baseFolder(MutableSequence):
             self.__setter__(self.__lookup__(name),value)
         elif ix>=len(self):
             self.__setter__(name,value,force_insert=True)
-        
+
     def append(self, value):
         """Append an item to the folder object"""
         self.insert(len(self), value)
@@ -2169,14 +2183,14 @@ class DiskBasedFolder(object):
 
 
 class DataFolder(DiskBasedFolder,baseFolder):
-    
-    """Provide an interface to manipulating lots of data files stored within a directory structure on disc. 
-    
-    By default, the members of the DataFolder are isntances of :class:`Stoner.Data`. The DataFolder emplys a lazy open strategy, so that 
+
+    """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
+
+    By default, the members of the DataFolder are isntances of :class:`Stoner.Data`. The DataFolder emplys a lazy open strategy, so that
     files are only read in from disc when actually needed.
-    
+
     .. inheritance-diagram:: DataFolder
-    
+
     """
 
     def __init__(self,*args,**kargs):
