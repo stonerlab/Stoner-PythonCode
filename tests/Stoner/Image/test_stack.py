@@ -143,7 +143,7 @@ class ImageStack2Test(unittest.TestCase):
         self.istack2.crop(0,30,0,50)
         self.assertTrue(self.istack2.shape==(91,50,30),"Unexpected size of imagestack2 got {} for 91x50x30".format(self.istack2.shape))
         ist2 = ImageStack2(np.arange(60).reshape(4,3,5))
-        self.assertTrue(ist2.imarray.dtype==np.int32,"Unexpected dtype in image stack2 got {} not int32".format(ist2.imarray.dtype))
+        self.assertTrue(issubclass(ist2.imarray.dtype.type, np.integer),"Unexpected dtype in image stack2 got {} not int32".format(ist2.imarray.dtype))
         t1 = ImageStack2(np.arange(60).reshape(4,3,5))
         t1.asfloat(normalise=False, clip_negative=False)
         self.assertTrue(t1.imarray.dtype==np.float64)
