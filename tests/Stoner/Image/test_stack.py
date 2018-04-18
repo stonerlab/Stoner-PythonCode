@@ -141,12 +141,29 @@ class ImageStack2Test(unittest.TestCase):
     def test_methods(self):
         #check function generator machinery works
         self.istack2.crop(0,30,0,50)
-        self.assertTrue(self.istack2.shape==(91,50,30))
-
+        self.assertTrue(self.istack2.shape==(91,50,30),"Unexpected size of imagestack2 got {} for 91x50x30".format(self.istack2.shape))
+        ist2 = ImageStack2(np.arange(60).reshape(4,3,5))
+        self.assertTrue(issubclass(ist2.imarray.dtype.type, np.integer),"Unexpected dtype in image stack2 got {} not int32".format(ist2.imarray.dtype))
+        t1 = ImageStack2(np.arange(60).reshape(4,3,5))
+        t1.asfloat(normalise=False, clip_negative=False)
+        self.assertTrue(t1.imarray.dtype==np.float64)
+        self.assertTrue(np.max(t1.imarray)==59.0)
+        t2 = ImageStack2(np.arange(60).reshape(4,3,5))
+        t2.asfloat(normalise=True, clip_negative=True)
+        #self.assertTrue( np.max(t2.imarray) == (2*59+1)/(2**31-(-2**31)) )
+        self.assertTrue(np.min(t2.imarray)>=0)
+        ist3 = ist2.clone
+        self.assertFalse(np.may_share_memory(ist2.imarray, ist3.imarray))
+        del ist3[-1]
+        self.assertTrue(len(ist3)==len(ist2)-1)
+        self.assertTrue(np.allclose(ist3[0],ist2[0]))
+        ist3.insert(1, np.arange(18).reshape(3,6))
+        self.assertTrue(ist3[1].shape==(3,6), 'inserting an image of different size to stack')
+        
 
 if __name__=="__main__":
     test=ImageStack2Test()
-    #test.setUp()
-    #test.test_ImageStack2()
+    test.setUp()
+    #test.test_methods()
     unittest.main()
    

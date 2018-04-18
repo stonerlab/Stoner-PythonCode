@@ -27,7 +27,7 @@ class ImageFolderTest(unittest.TestCase):
         self.td=self.td.sort(key=lambda x:x.filename.lower())
         self.ks_dir = ImageStack(testdir)
         self.ks = ImageStack(self.td) #load in two ways
-        self.ks2_dir = ImageStack2(testdir)
+        self.ks2_dir = ImageStack2(testdir, pattern='*.png')
         self.ks2 = ImageStack2(self.td) #load in two ways
 
     def test_load(self):
@@ -50,7 +50,7 @@ class ImageFolderTest(unittest.TestCase):
 if __name__=="__main__":
     #t=ImageFolder(testdir)
     #ti=KerrStack(t)
-    test=ImageFolderTest("test_load")
+    #test=ImageFolderTest()
     #test.setUp()
     #test.test_kerrstack()
     #test.test_load()
