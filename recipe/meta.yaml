@@ -5,7 +5,7 @@
 package:
   name: '{{ name|lower }}'
   version: {{ GIT_DESCRIBE_TAG }}
-  
+
 source:
   git_rev: {{ GIT_DESCRIBE_TAG }}
   git_url: https://github.com/gb119/Stoner-PythonCode.git
@@ -14,6 +14,8 @@ build:
   script: python setup.py install --single-version-externally-managed --record=record.txt
 
 requirements:
+  build:
+    - python {{ python }}
   host:
     - python
     - blist>=1.3
@@ -128,7 +130,7 @@ about:
     ----------------
 
     The **Stoner.Image** package is a new feature of recent versions of the package and provides dedicated classes for working with greyscale
-    image data. It provides an **ImageFile** class that is functionally similar to **DataFile** except that the numerical data is understood 
+    image data. It provides an **ImageFile** class that is functionally similar to **DataFile** except that the numerical data is understood
     to represent image data and additional methods are incorporated to facilitate processing.
 
     Resources
