@@ -23,15 +23,15 @@ from io import IOBase
 from scipy.special import digamma
 try:
     from lmfit import Model
-    from lmfit.models import LinearModel as Linear  # NOQA pylint: disable=unused-import
-    from lmfit.models import PowerLawModel as PowerLaw  # NOQA pylint: disable=unused-import
-    from lmfit.models import QuadraticModel as Quadratic  # NOQA pylint: disable=unused-import
+    from lmfit.models import LinearModel as _Linear  # NOQA pylint: disable=unused-import
+    from lmfit.models import PowerLawModel as _PowerLaw  # NOQA pylint: disable=unused-import
+    from lmfit.models import QuadraticModel as _Quadratic  # NOQA pylint: disable=unused-import
     from lmfit.models import update_param_vals
 except ImportError:
     Model=object
-    Linear=None
-    PowerLaw=None
-    Quadratic=None
+    _Linear=object
+    _PowerLaw=object
+    _Quadratic=object
     update_param_vals=None
 
 from scipy.integrate import quad
@@ -89,6 +89,12 @@ def _get_model_(model):
 def linear(x, intercept, slope):
     """Simple linear function"""
     return slope * x + intercept
+
+class Linear(_Linear):
+
+    """Simple linear fit"""
+
+    pass
 
 def cfg_data_from_ini(inifile,filename=None,**kargs):
     """Read an inifile and load and configure a DataFile from it.
@@ -442,6 +448,28 @@ def powerLaw(x, A, k):
     """
     return A * x ** k
 
+class PowerLaw(_PowerLaw):
+
+    r"""Power Law Fitting Equation.
+
+    Args:
+        x (array): Input data
+        A (float): Prefactor
+        k (float): Pwoer
+
+    Return:
+        Power law.
+
+    :math:`p=Ax^k`
+
+    Example:
+        .. plot:: samples/Fitting/Powerlaw.py
+            :include-source:
+            :outname: powerlaw-class
+    """
+
+    pass
+
 
 def quadratic(x, a, b, c):
     r"""A Simple quadratic fitting function.
@@ -460,9 +488,32 @@ def quadratic(x, a, b, c):
     Example:
         .. plot:: samples/Fitting/Quadratic.py
             :include-source:
-            :outname: powerlaw-class
+            :outname: quadratic
     """
     return a * x ** 2 + b * x + c
+
+class Quadratic(_Quadratic):
+
+    r"""A Simple quadratic fitting function.
+
+    Args:
+        x (aray): Input data
+        a (float): Quadratic term co-efficient
+        b (float): Linear term co-efficient
+        c (float): Constant offset term
+
+    Returns:
+        Array of data.
+
+    :math:`y=ax^2+bx+c`
+
+    Example:
+        .. plot:: samples/Fitting/Quadratic.py
+            :include-source:
+            :outname: quadratic-class
+    """
+
+    pass
 
 def simmons(V, A, phi, d):
     """Simmons model of electron tunnelling.

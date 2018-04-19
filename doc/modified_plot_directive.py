@@ -468,9 +468,12 @@ def out_of_date(original, derived):
     Returns True if derivative is out-of-date wrt original,
     both of which are full file paths.
     """
-    return (not os.path.exists(derived) or
+    ret=(not os.path.exists(derived) or
             (os.path.exists(original) and
              os.stat(derived).st_mtime < os.stat(original).st_mtime))
+    if ret:
+        print("{} out of data from {}".format(original,derived))
+    return ret
 
 
 class PlotError(RuntimeError):

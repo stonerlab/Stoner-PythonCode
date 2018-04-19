@@ -30,7 +30,7 @@ d.lmfit(SF.Quadratic,p0=p0,result=True,header="lmfit")
 
 d.setas="x...y"
 d.plot(label="lmfit")
-d.annotate_fit(SF.Quadratic,prefix="QuadraticModel",x=-5,y=200,fontdict={"size":"x-small"})
+d.annotate_fit(SF.Quadratic,prefix="Quadratic",x=-5,y=200,fontdict={"size":"x-small"})
 
 d.title="Qudratic Fitting"
 plt.legend(loc=4)

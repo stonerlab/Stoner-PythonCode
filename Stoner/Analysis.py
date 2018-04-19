@@ -993,8 +993,8 @@ class AnalysisMixin(object):
 
         Example:
             .. plot:: samples/decompose.py
-               :include-source:
-               :outname: decompose
+                :include-source:
+                :outname: decompose
         """
         if xcol is None and ycol is None:
             if "_startx" in kwords:
@@ -2096,8 +2096,8 @@ class AnalysisMixin(object):
 
         Example:
             .. plot:: samples/scale_curves.py
-               :include-source:
-               :outname: scale
+                :include-source:
+                :outname: scale
         """
         _=self._col_args(xcol=xcol,ycol=ycol)
         #

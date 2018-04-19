@@ -58,8 +58,8 @@ second channel of uncertainities. The uncertainity calculation is then propagate
 :py:meth:`AnalysisMixin.diffsum` method where the error propagation is not entirely trivial.
 
 .. plot:: samples/channel_math.py
-   :include-source:
-   :outname: channel_math
+    :include-source:
+    :outname: channel_math
 
 Splitting Data Up
 =================
@@ -142,7 +142,7 @@ for adding appropriately formatted details of the fit to the plot.
 
 .. plot:: samples/curve_fit_line.py
     :include-source:
-    :outname:curve_fit_line
+    :outname: curve_fit_line
 
 :py:meth:`AnalysisMixin.curve_fit` can also be used to fit more complex problems. In the example below, a set of
 points in x,y,z space are fitted to a plane.
@@ -204,8 +204,8 @@ You can pass the model as a subclass of model, if you don't pass initial values 
 *guess* method is called (e.g. :py:meth:`Stoner.Fit.Arrhenius.guess`) to determine parameters fromt he data. For example:
 
 .. plot:: samples/lmfit_example.py
-   :include-source:
-   :outname: lmfit_example
+    :include-source:
+    :outname: lmfit_example
 
 Non-linear curve fitting with initialisation file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -319,8 +319,8 @@ points averaged into each bin.. If *clone* is True or not provided, :py:meth:`An
 (and column headers) replaced with the newly binned data.
 
 .. plot:: samples/bins.py
-   :include-source:
-   :outname: bins
+    :include-source:
+    :outname: bins
 
 
 .. _smoothing_guide:
@@ -394,8 +394,8 @@ best mapping between two sets of (x,y) points that are nominally the same. :py:c
 a :py:meth:`AnalysisMixin.stitch` method to facilitate this.
 
 .. plot:: samples/stitch.py
-   :include-source:
-   :outname:  stitch
+    :include-source:
+    :outname:  stitch
 
 The stitch method can be fine tuned by specifying the possible scaling and shifting operations, overlap
 region to use or even a custom stiching transofmration function::

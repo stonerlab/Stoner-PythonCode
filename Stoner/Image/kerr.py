@@ -6,6 +6,7 @@ Derivatives of ImageArray and ImageStack specific to processing Kerr images.
 
 @author: phyrct
 """
+__all__ = ["KerrArray","KerrStack","MaskStack"]
 from Stoner import Data
 from Stoner.Core import typeHintedDict
 from Stoner.Image import ImageArray, ImageStack

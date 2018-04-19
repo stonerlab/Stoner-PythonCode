@@ -16,15 +16,12 @@ Class Inheritance Diagram
 .. inheritance-diagram:: Data DataFolder
 
 .. automodapi:: Stoner.Core
-   :inherited-members:
-   
+
 .. automodapi:: Stoner.Analysis
     :no-inheritance-diagram:
 
 .. automodapi:: Stoner.plot
     :no-inheritance-diagram:
-    :classes-only:
-
 
 .. automodapi:: Stoner.plot.formats
 
