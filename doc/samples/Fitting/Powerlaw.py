@@ -21,7 +21,7 @@ p0=fit.guess(R,x=T)
 d.lmfit(fit,p0=p0,result=True,header="lmfit")
 d.setas="x..y"
 d.plot()
-d.annotate_fit(SF.PowerLaw,x=150,y=1.5E-1,prefix="PowerLawModel")
+d.annotate_fit(SF.PowerLaw,x=150,y=1.5E-1,prefix="PowerLaw")
 
 d.title="Powerlaw Test Fit"
 d.ylabel="Rate"
