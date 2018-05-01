@@ -105,7 +105,10 @@ Image Subpackage
 
 The **Stoner.Image** package is a new feature of recent versions of the package and provides dedicated classes for working with image data,
 and in particular for analysing Kerr Microscope image files. It provides an **ImageFile** class that is functionally similar to **DataFile**
-except that the numerical data is understood to represent image data and additional methods are incorporated to facilitate processing.
+except that the numerical data is understood to represent image data and additional methods are incorporated to facilitate processing. The **ImageFolder**
+and **ImageStack** classes provide similar functionality to **DataFolder** but with additional methods specific to handling collections of images. **ImageStack**
+uses a 3D numpy array as it's primary image store which permits faster access (at the expense of a larger memory footprint) than the lazy loading ordered
+dictionary of **ImageFolder**
 
 Resources
 ==========
@@ -138,7 +141,7 @@ making beta packages available.
 Development Version
 -------------------
 
-The development version will be on version 0.8. Presently nothing has been done on this.
+The next development version will be on version 0.9. This will be started after the current 0.8 version is given a final release.
 
 Online documentation for all versions can be found on the ReadTheDocs pages `online documentation`_
 
@@ -146,7 +149,7 @@ Build Status
 ~~~~~~~~~~~~
 
 Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls. We currently test against
-python 2.7 and 3.5 via Travis and internally test on Python 3.6. Overall code quality
+python 2.7 and 3.6 via Travis and internally test on Python 3.5 as well. Overall code quality
 is measured by landscape.io. The current status is shown at the top of this readme.
 
 Citing the Stoner Package
@@ -158,6 +161,16 @@ encourage any users to cite this package via that doi.
 Stable Versions
 ---------------
 
+Version 0.8 is now in release-candidate phase. The main new features are
+
+    *   Reworking of the ImageArray, ImageFile and ImageFolder with many updates and new features.
+    *   New mixin based ImageStack2 that can manipulate a large number of images in a 3D numpy array
+    *   Continued re-factoring of DataFolder using the mixin approach
+    *   Further increases to unit-test coverage, bug fixes and refactoring of some parts of the code.
+    *   conda packages now being prepared as the preferred package format
+
+    After release 0.8 will continue to receive bug fixes and updates.
+
 The current stable version is 0.7. Features of 0.7 include
 
     *   Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin
@@ -167,7 +180,7 @@ The current stable version is 0.7. Features of 0.7 include
     *   DataFolder has an options to skip iterating over empty Data files
     *   Further improvements to :py:attr:`Stoner.Core.DataFile.setas` handline.
 
-0.7 will continue to have bug fix releases and back-ports of anything very useful.
+0.7 will continue to have bug fix releases and back-ports of anything very useful until 0.8 is released.
 
 The old stable version was 0.6. This features
 
