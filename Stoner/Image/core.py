@@ -11,7 +11,7 @@ from skimage import color,exposure,feature,io,measure,\
 from PIL import Image
 from PIL import PngImagePlugin #for saving metadata
 import matplotlib.pyplot as plt
-from Stoner.Core import typeHintedDict,metadataObject,regexpDict
+from Stoner.Core import typeHintedDict,metadataObject,regexpDict,DataFile
 from Stoner.Image.util import convert
 from Stoner import Data
 from Stoner.tools import istuple,fix_signature,islike_list,get_option
@@ -351,9 +351,9 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
 
     def _box(self,*args,**kargs):
         """Construct and indexing tuple for selecting areas for cropping and boxing.
-        
+
         The box can be specified as:
-            
+
             - (int): a fixed number of pxiels is removed from all sides
             - (float): the central region of the image is selected
             - None: the whole image is selected
@@ -697,9 +697,9 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
     def asfloat(self, normalise=True, clip=False, clip_negative=False):
         """Return the image converted to floating point type.
 
-        If currently an int type and normalise then floats will be normalised 
+        If currently an int type and normalise then floats will be normalised
         to the maximum allowed value of the int type.
-        If currently a float type then no change occurs. 
+        If currently a float type then no change occurs.
         If clip then clip values outside the range -1,1
         If clip_negative then further clip values to range 0,1
 
@@ -720,17 +720,17 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
         if clip or clip_negative:
             ret = ret.clip_intensity(clip_negative=clip_negative)
         return ret
-    
+
     def clip_intensity(self, clip_negative=False):
         """Clip intensity outside the range -1,1 or 0,1
-        
+
         Ensure data range is -1 to 1 or 0 to 1 if clip_negative is True.
         Keyword ArgumentsL
             clip_negative(bool):
                 if True clip to range 0,1 else range -1,1"""
         dl = self.dtype_limits(clip_negative=clip_negative)
         np.clip(self, dl[0], dl[1], out=self)
-    
+
     def asint(self, dtype=np.uint16):
         """convert the image to unsigned integer format.
 
@@ -950,6 +950,14 @@ class ImageFile(metadataObject):
 
         Local attribute is image. All other attributes and calls are passed
         through to image attribute.
+
+        There is one special case of creating an ImageFile from a :py:class:`Stoner.Core.DataFile`. In this case the
+        the DataFile is assummed to contain (x,y,z) data that should be converted to a map of
+        z on a regular grid of x,y. The columns for the x,y,z data can be taken from the DataFile's
+        :py:attr:`Stoner.Core.DataFile.setas` attribute or overridden by providing xcol, ycol and zcol keyword arguments.
+        A further *shape* keyword can spewcify the shape as a tuple or "unique" to use the unique values of x and y or if
+        omitted asquare grid will be interpolated.
+
         """
         super(ImageFile,self).__init__(*args,**kargs)
         if len(args)==0:
@@ -960,6 +968,8 @@ class ImageFile(metadataObject):
             self._image=args[0].image
         elif len(args)>0 and isinstance(args[0],np.ndarray): # Fixing type
             self._image=ImageArray(*args,**kargs)
+        elif len(args)>0 and isinstance(args[0],DataFile): #Support initing from a DataFile that defines x,y,z coordinates
+            self._init_from_datafile(*args,**kargs)
         self._fromstack = kargs.pop('_fromstack', False) #for use by ImageStack
 
 
@@ -1020,7 +1030,7 @@ class ImageFile(metadataObject):
         """Ensure stored image is always an ImageArray."""
         filename=self.filename
         #ensure setting image goes into the same memory block if from stack
-        if self._fromstack and self._image.shape==v.shape \
+        if hasattr(self,"_fromstack") and self._fromstack and self._image.shape==v.shape \
               and self._image.dtype==v.dtype:
             self._image[:] = v
         else:
@@ -1225,6 +1235,35 @@ class ImageFile(metadataObject):
     #####################################################################################################################################
     ############################# Private methods #######################################################################################
 
+    def _init_from_datafile(self,*args,**kargs):
+        """Initialise ImageFile from DataFile defining x,y,z co-ordinates.
+
+        Args:
+            args[0] (DataFile): A :py:class:`Stoner.Core.DataFile` instance that defines x,y,z co-ordinates or has columns specified in keywords.
+
+        Keyword Args:
+            xcol (column index): Column in the DataFile that has the x-co-ordinate
+            ycol (column index): Column in the data file that defines the y-cordinate
+            zcol (column index): Column in the datafile that defines the intensity
+        """
+        data=Data(args[0])
+        shape=kargs.pop("shape",None)
+
+        _=data._col_args(**kargs)
+        data.setas(x=_.xcol,y=_.ycol,z=_.zcol)
+        if isinstance(shape,string_types) and shape=="unique":
+            shape=(len(np.unique(data.x)),len(np.unique(data.y)))
+        elif istuple(shape,int_types,int_types):
+            pass
+        else:
+            shape=None
+        X,Y,Z=data.griddata(_.xcol,_.ycol,_.zcol,shape=shape)
+        self.image=Z
+        self.metadata=deepcopy(data.metadata)
+        self["x_vector"]=np.unique(X)
+        self["y_vector"]=np.unique(Y)
+
+
     def _func_generator(self, workingfunc):
         """ImageFile generator.
 
@@ -1234,7 +1273,7 @@ class ImageFile(metadataObject):
         """
         @wraps(workingfunc)
         def gen_func(*args, **kargs):
-            
+
             box=kargs.pop("_box",None)
             if len(args)>0:
                 args=list(args)
@@ -1259,7 +1298,7 @@ class ImageFile(metadataObject):
             else:
                 return r
         return fix_signature(gen_func,workingfunc)
-    
+
     def __repr__(self):
         return "{}({}) of shape {} ({}) and {} items of metadata".format(self.filename,type(self),self.shape,self.image.dtype,len(self.metadata))
 

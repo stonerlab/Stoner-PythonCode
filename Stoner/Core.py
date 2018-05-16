@@ -1831,6 +1831,16 @@ class DataFile(metadataObject):
             self.metadata = arg.metadata.copy()
             self.data = DataArray(arg.data,setas=arg.setas.clone)
             self.data.setas = arg.setas.clone
+        elif "<class 'Stoner.Image.core.ImageFile'>" in [str(x) for x in arg.__class__.__mro__]: #Crazy hack to avoid importing a circular ref!
+            x=arg.get("x_vector",_np_.arange(arg.shape[0]))
+            y=arg.get("y_vector",_np_.arange(arg.shape[1]))
+            x,y=_np_.meshgrid(x,y)
+            z=arg.image
+
+            self.data=_np_.column_stack((x.ravel(),y.ravel(),z.ravel()))
+            self.metadata=copy.deepcopy(arg.metadata)
+            self.column_headers=["X","Y","Image Intensity"]
+            self.setas="xyz"
         elif isiterable(arg) and all_type(arg,string_types):
             self.column_headers=list(arg)
         elif isiterable(arg) and all_type(arg,_np_.ndarray):
