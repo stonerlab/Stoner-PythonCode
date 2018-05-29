@@ -182,7 +182,8 @@ class ImageFolderMixin(object):
         stack=np.stack(self.images,axis=0)
         average = np.average(stack,axis=0, weights=weights)
         ret=average.view(ImageArray)
-        return ret[ret._box(_box)]
+        ret.metadata=self.metadata.common_metadata
+        return ImageFile(ret[ret._box(_box)])
     
     def loadgroup(self):
         """Load all files from this group into memory"""

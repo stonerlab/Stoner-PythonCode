@@ -19,7 +19,7 @@ import string
 from collections import Iterable,MutableSequence,OrderedDict
 from itertools import islice
 import matplotlib.pyplot as plt
-from .Core import metadataObject,DataFile,regexpDict
+from .Core import metadataObject,DataFile,regexpDict,typeHintedDict
 
 
 regexp_type=(re._pattern_type,)
@@ -187,6 +187,16 @@ class _combined_metadata_proxy(object):
         else:
             keys=set()
         return sorted(list(keys))
+    
+    @property
+    def common_metadata(self):
+        """Return a dictionary of the common_keys that have common values."""
+        output=typeHintedDict()
+        for key in self.common_keys:
+            val=self._folder[0][key]
+            if _np_.all(self[key]==val):
+                output[key]=val
+        return output
 
     def __getitem__(self,value):
         """Return an array formed by getting a single key from each object in the Folder."""

@@ -416,22 +416,45 @@ def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None,mode="clip"):
         im=im.normalise()
     return im
 
-def normalise(im,scale=None):
+def normalise(im,scale=None,sample=None,limits=(0.0,1.0)):
     """Norm alise the data to a fixed scale.
 
     Keyword Arguements:
         scale (2-tuple): The range to scale the image to, defaults to -1 to 1.
+        saple (box): Only use a section of the input image to calculate the new scale over.
+        limits (low,high): Take the input range from the *high* and *low* fraction of the input when sorted.
 
     Returns:
         A scaled version of the data. The ndarray min and max methods are used to allow masked images
         to be operated on only on the unmasked areas.
+        
+    Notes:
+        The *sample* keyword controls the area in which the range of input values is calculated, the actual scaling is
+        done on the whole image.
+        
+        The *limits* parameter is used to set the input scale being normalised from - if an image has a few outliers then 
+        this setting can be used to clip the input range before normalising. The parameters in the limit are the values at
+        the *low* and *high* fractions of the cumulative distribution functions.
     """
     im=im.astype(float)
     if scale is None:
         scale=(-1.0,1.0)
+    if sample is not None:
+        section=im[im._box(sample)]
+    else:
+        section=im
+    if limits!=(0.,1.):
+        low,high=limits
+        low=np.sort(section.ravel())[int(low*section.size)]
+        high=np.sort(section.ravel())[int(high*section.size)]
+        im.clip_intensity(limits=(low,high))
+    else:
+        high=section.max()
+        low=section.min()
+        
     if not istuple(scale,float,float,strict=False):
         raise ValueError("scale should be a 2-tuple of floats.")
-    scaled=(im-im.min())/(im.max()-im.min())
+    scaled=(im-low)/(high-low)
     delta=scale[1]-scale[0]
     offset=scale[0]
     im=scaled*delta+offset

@@ -721,14 +721,21 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
             ret = ret.clip_intensity(clip_negative=clip_negative)
         return ret
 
-    def clip_intensity(self, clip_negative=False):
+    def clip_intensity(self, clip_negative=False,limits=None):
         """Clip intensity outside the range -1,1 or 0,1
 
-        Ensure data range is -1 to 1 or 0 to 1 if clip_negative is True.
         Keyword ArgumentsL
             clip_negative(bool):
-                if True clip to range 0,1 else range -1,1"""
-        dl = self.dtype_limits(clip_negative=clip_negative)
+                if True clip to range 0,1 else range -1,1
+            limits (low,high): Clip the intensity between low and high rather than zero and 1.
+
+        Ensure data range is -1 to 1 or 0 to 1 if clip_negative is True.
+                
+        """
+        if limits is None:
+            dl = self.dtype_limits(clip_negative=clip_negative)
+        else:
+            dl=list(limits)
         np.clip(self, dl[0], dl[1], out=self)
 
     def asint(self, dtype=np.uint16):

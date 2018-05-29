@@ -541,31 +541,20 @@ class AnalysisMixin(object):
         replace=kargs.pop("replace",False)
         result=kargs.pop("result",False)
         header=kargs.pop("header","")
+        residuals=kargs.pop("residuals",False)
         output=kargs.pop("output","row")
         fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
         if fit.success:
             DataArray=self.data.__class__
             row = []
             ch=[]
-            # Store our current mask, calculate new column's mask and turn off mask
-            tmp_mask=self.mask
-            col_mask=_np_.any(tmp_mask,axis=1)
-            self.mask=False
-
-            if (isinstance(result, bool) and result): # Appending data and mask
-                self.add_column(model.func(self.column(xcol), **fit.best_values), header=header, index=None)
-                tmp_mask=_np_.column_stack((tmp_mask,col_mask))
-            elif isinstance(result, index_types): # Inserting data and mask
-                self.add_column(model.func(self.column(xcol), **fit.best_values), header=header, index=result, replace=replace)
-                tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
-            elif result is not None: # Oops restore mask and bail
-                self.mask=tmp_mask
-                raise RuntimeError("Didn't recognize result as an index type or True")
-            self.mask=tmp_mask #Restore mask
+           
+            popt=[x.value for x in fit.params.values()]
+            perr=[x.stderr for x in fit.params.values()]
+            
+            self._record_curve_fit_result(model,popt,perr,xcol,header,result,replace,residuals,ydata)
 
             for p in fit.params:
-                self["{}{}".format(prefix, p)] = fit.params[p].value
-                self["{}{} err".format(prefix, p)] = fit.params[p].stderr
                 row.extend([fit.params[p].value, fit.params[p].stderr])
                 ch.extend([p,"{}.stderr".format(p)])
             self["{}chi^2".format(prefix)] = fit.chisqr
@@ -580,13 +569,19 @@ class AnalysisMixin(object):
         else:
             raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
 
-    def _record_curve_fit_result(self,func,popt,perr,xcol,header,result,replace):
+    def _record_curve_fit_result(self,func,popt,perr,xcol,header,result,replace,residuals=False,ydata=None):
         """Annotate the DataFile object with the curve_fit result."""
+        if isinstance(func,lmfit.Model):
+            f_name=func.__class__.__name__
+            func=func.func
+        else:
+            f_name=func.__name__
         args = getfullargspec(func)[0] # pylint: disable=W1505
+
         for val,err,name in zip(popt,perr,args[1:]):
-            self['{}:{}'.format(func.__name__,name)] = val
-            self['{}:{} err'.format(func.__name__,name)] = err
-            self['{}:{} label'.format(func.__name__,name)]=name
+            self['{}:{}'.format(f_name,name)] = val
+            self['{}:{} err'.format(f_name,name)] = err
+            self['{}:{} label'.format(f_name,name)]=name
 
         if not isinstance(header, string_types):
             header = 'Fitted with ' + func.__name__
@@ -606,6 +601,14 @@ class AnalysisMixin(object):
         else:
             new_col=func(self.column(xcol),*popt)
         self.add_column(new_col,index=result, replace=replace, header=header)
+        if residuals:
+            residuals=ydata-new_col
+            if result is not None:
+                result=self.find_col(result)+1
+            self.add_column(residuals,index=result, replace=replace, header=header+":residuals")
+            self["{}:mean residual".format(func.__name__)]=_np_.mean(residuals)
+            self["{}:std residual".format(func.__name__)] = _np_.std(residuals)
+                
         self.mask=tmp_mask
 
     def __threshold(self, threshold, data, rising=True, falling=False):
@@ -925,6 +928,7 @@ class AnalysisMixin(object):
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
         header = kargs.pop("header", None)
+        residuals = kargs.pop("residuals",False)
 
         #Support either scale_covar or absolute_sigma, the latter wins if both supplied
         #If neither are specified, then if sigma is not given, absolute sigma will be False.
@@ -965,7 +969,7 @@ class AnalysisMixin(object):
                 popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs)
             perr=_np_.sqrt(_np_.diag(pcov))
             if result is not None:
-                self._record_curve_fit_result(func,popt,perr,xcol,header,result,replace)
+                self._record_curve_fit_result(func,popt,perr,xcol,header,result,replace,residuals=residuals,ydata=ydata)
             row = _np_.array([])
             for val,err in zip(popt,perr):
                 row = _np_.append(row, [val,err])
@@ -1369,6 +1373,7 @@ class AnalysisMixin(object):
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
+        residuals = kargs.pop("residuals",False)
         header = kargs.pop("header", None)
         # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
         absolute_sigma = kargs.pop("absolute_sigma", True)
@@ -1417,7 +1422,7 @@ class AnalysisMixin(object):
         if single_fit:
             p0[xvar] = xdata
 
-            ret_val=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix,result=result,header=header,replace=replace,output=output)
+            ret_val=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix,result=result,header=header,replace=replace,output=output,residuals=residuals)
         else: # chi^2 mode
             pn=p0
             ret_val=_np_.zeros((pn.shape[0],pn.shape[1]*2+1))
