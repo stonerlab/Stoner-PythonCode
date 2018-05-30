@@ -1,6 +1,17 @@
-tersoffHammann
+TersoffHammann
 ==============
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: tersoffHammann
+.. autoclass:: TersoffHammann
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~TersoffHammann.guess
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

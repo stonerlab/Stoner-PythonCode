@@ -1,6 +1,7 @@
-powerLaw
+PowerLaw
 ========
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: powerLaw
+.. autoclass:: PowerLaw
+   :show-inheritance:

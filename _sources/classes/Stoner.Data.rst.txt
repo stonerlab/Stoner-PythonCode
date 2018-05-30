@@ -1,0 +1,107 @@
+Stoner.Data
+===========
+
+.. currentmodule:: Stoner
+
+.. autoclass:: Data
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Data.SG_Filter
+      ~Stoner.Data.__init__
+      ~Stoner.Data.add
+      ~Stoner.Data.add_column
+      ~Stoner.Data.annotate_fit
+      ~Stoner.Data.apply
+      ~Stoner.Data.bin
+      ~Stoner.Data.clear
+      ~Stoner.Data.clip
+      ~Stoner.Data.closest
+      ~Stoner.Data.colormap_xyz
+      ~Stoner.Data.column
+      ~Stoner.Data.columns
+      ~Stoner.Data.contour_xyz
+      ~Stoner.Data.count
+      ~Stoner.Data.curve_fit
+      ~Stoner.Data.decompose
+      ~Stoner.Data.del_column
+      ~Stoner.Data.del_nan
+      ~Stoner.Data.del_rows
+      ~Stoner.Data.diffsum
+      ~Stoner.Data.dir
+      ~Stoner.Data.divide
+      ~Stoner.Data.extrapolate
+      ~Stoner.Data.figure
+      ~Stoner.Data.filter
+      ~Stoner.Data.find_col
+      ~Stoner.Data.format
+      ~Stoner.Data.get
+      ~Stoner.Data.get_filename
+      ~Stoner.Data.griddata
+      ~Stoner.Data.image_plot
+      ~Stoner.Data.insert_rows
+      ~Stoner.Data.inset
+      ~Stoner.Data.integrate
+      ~Stoner.Data.interpolate
+      ~Stoner.Data.items
+      ~Stoner.Data.keys
+      ~Stoner.Data.lmfit
+      ~Stoner.Data.load
+      ~Stoner.Data.make_bins
+      ~Stoner.Data.max
+      ~Stoner.Data.mean
+      ~Stoner.Data.min
+      ~Stoner.Data.multiply
+      ~Stoner.Data.normalise
+      ~Stoner.Data.odr
+      ~Stoner.Data.outlier_detection
+      ~Stoner.Data.peaks
+      ~Stoner.Data.plot
+      ~Stoner.Data.plot_matrix
+      ~Stoner.Data.plot_xy
+      ~Stoner.Data.plot_xyuv
+      ~Stoner.Data.plot_xyz
+      ~Stoner.Data.plot_xyzuvw
+      ~Stoner.Data.polyfit
+      ~Stoner.Data.pop
+      ~Stoner.Data.popitem
+      ~Stoner.Data.quiver_plot
+      ~Stoner.Data.rename
+      ~Stoner.Data.reorder_columns
+      ~Stoner.Data.rolling_window
+      ~Stoner.Data.rows
+      ~Stoner.Data.save
+      ~Stoner.Data.scale
+      ~Stoner.Data.search
+      ~Stoner.Data.section
+      ~Stoner.Data.select
+      ~Stoner.Data.setdefault
+      ~Stoner.Data.smooth
+      ~Stoner.Data.sort
+      ~Stoner.Data.span
+      ~Stoner.Data.spline
+      ~Stoner.Data.split
+      ~Stoner.Data.stitch
+      ~Stoner.Data.subplot
+      ~Stoner.Data.subplot2grid
+      ~Stoner.Data.subtract
+      ~Stoner.Data.swap_column
+      ~Stoner.Data.threshold
+      ~Stoner.Data.unique
+      ~Stoner.Data.update
+      ~Stoner.Data.values
+      ~Stoner.Data.x2
+      ~Stoner.Data.y2
+
+   
+   
+
+   
+   
+   

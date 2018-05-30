@@ -21,6 +21,7 @@ Stoner.FileFormats.LSTemperatureFile
       ~Stoner.FileFormats.LSTemperatureFile.columns
       ~Stoner.FileFormats.LSTemperatureFile.count
       ~Stoner.FileFormats.LSTemperatureFile.del_column
+      ~Stoner.FileFormats.LSTemperatureFile.del_nan
       ~Stoner.FileFormats.LSTemperatureFile.del_rows
       ~Stoner.FileFormats.LSTemperatureFile.dir
       ~Stoner.FileFormats.LSTemperatureFile.filter

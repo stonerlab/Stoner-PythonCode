@@ -21,6 +21,7 @@ Stoner.FileFormats.BigBlueFile
       ~Stoner.FileFormats.BigBlueFile.columns
       ~Stoner.FileFormats.BigBlueFile.count
       ~Stoner.FileFormats.BigBlueFile.del_column
+      ~Stoner.FileFormats.BigBlueFile.del_nan
       ~Stoner.FileFormats.BigBlueFile.del_rows
       ~Stoner.FileFormats.BigBlueFile.dir
       ~Stoner.FileFormats.BigBlueFile.filter

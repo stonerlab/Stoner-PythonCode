@@ -24,7 +24,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="DataFolder" href="Stoner.Folders.DataFolder.html" />
+    <link rel="next" title="DiskBasedFolder" href="Stoner.Folders.DiskBasedFolder.html" />
     <link rel="prev" title="errorfill" href="Stoner.plot.utils.errorfill.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
@@ -40,7 +40,7 @@
           <a href="Stoner.plot.utils.errorfill.html" title="Previous document">errorfill</a>
         </li>
         <li>
-          <a href="Stoner.Folders.DataFolder.html" title="Next document">DataFolder</a>
+          <a href="Stoner.Folders.DiskBasedFolder.html" title="Next document">DiskBasedFolder</a>
           &rarr;
         </li>
     </ul>
@@ -49,7 +49,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -65,7 +65,7 @@
 <dl class="class">
 <dt id="Stoner.Folders.baseFolder">
 <em class="property">class </em><code class="descclassname">Stoner.Folders.</code><code class="descname">baseFolder</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#baseFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.baseFolder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">collections.abc.MutableSequence</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableSequence" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">collections.abc.MutableSequence</span></code></a></p>
 <p>A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.</p>
 <dl class="attribute">
 <dt id="Stoner.Folders.baseFolder.groups">
@@ -98,6 +98,21 @@ not_empty (iterator of metadaaObject): iterates over all members of the folder t
 shape (tuple): a data structure that indicates the structure of the objectFolder - tuple of number of files and dictionary of the shape of each group.
 type (subclass of metadtaObject): the class of objects sotred in this folder</dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>A baseFolder is a multable sequence object that should store a mapping of instances of some sort of data object (typically a
+<code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.metadataobject</span></code>) which can be iterated over in a reproducible and predicatable way as well as being accessed by a key. The
+other requirement is that it stores a mapping to objects of its own type to allow an in-memory tree object to be constructed.</p>
+<p>Additional functionality is built in by providing mixin classes that override the accessors for the data object store. Minimally this should include</p>
+<ul class="simple">
+<li>__lookup__ take a keyname and return a canonical accessor key</li>
+<li>__names__ returns the ordered list of mapping keys to the object store</li>
+<li>__getter__ returns a single instance of the data object referenced by a canonical key</li>
+<li>__setter__ add or overwrite an instance of the object store by canonical key</li>
+<li>__inserter__ insert an instance into a specific place in the Folder</li>
+<li>__deleter__ remove an instance of a data object by canonical key</li>
+<li>__clear__ remove all instance</li>
+<li>__clone__ create a new copy of the mixin’s state kinformation</li>
+</ul>
 </dd></dl>
 
 </div>
@@ -115,24 +130,22 @@ type (subclass of metadtaObject): the class of objects sotred in this folder</dd
   <p class="topless"><a href="Stoner.plot.utils.errorfill.html"
                         title="previous chapter">errorfill</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Folders.DataFolder.html"
-                        title="next chapter">DataFolder</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Folders.baseFolder.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <p class="topless"><a href="Stoner.Folders.DiskBasedFolder.html"
+                        title="next chapter">DiskBasedFolder</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Folders.baseFolder.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -145,7 +158,7 @@ type (subclass of metadtaObject): the class of objects sotred in this folder</dd
           <a href="Stoner.plot.utils.errorfill.html" title="Previous document">errorfill</a>
         </li>
         <li>
-          <a href="Stoner.Folders.DataFolder.html" title="Next document">DataFolder</a>
+          <a href="Stoner.Folders.DiskBasedFolder.html" title="Next document">DiskBasedFolder</a>
           &rarr;
         </li>
     </ul>
@@ -154,14 +167,14 @@ type (subclass of metadtaObject): the class of objects sotred in this folder</dd
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

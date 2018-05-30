@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wlfit &#8212; Stoner Pacakge API Documentation</title>
+    <title>WLfit &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Arrhenius" href="Stoner.Fit.Arrhenius.html" />
-    <link rel="prev" title="vftEquation" href="Stoner.Fit.vftEquation.html" />
+    <link rel="next" title="HDF5File" href="Stoner.HDF5.HDF5File.html" />
+    <link rel="prev" title="VFTEquation" href="Stoner.Fit.VFTEquation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
   <body>
@@ -37,10 +37,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.vftEquation.html" title="Previous document">vftEquation</a>
+          <a href="Stoner.Fit.VFTEquation.html" title="Previous document">VFTEquation</a>
         </li>
         <li>
-          <a href="Stoner.Fit.Arrhenius.html" title="Next document">Arrhenius</a>
+          <a href="Stoner.HDF5.HDF5File.html" title="Next document">HDF5File</a>
           &rarr;
         </li>
     </ul>
@@ -49,7 +49,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -61,11 +61,12 @@
           <div class="body" role="main">
             
   <div class="section" id="wlfit">
-<h1>wlfit<a class="headerlink" href="#wlfit" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.Fit.wlfit">
-<code class="descclassname">Stoner.Fit.</code><code class="descname">wlfit</code><span class="sig-paren">(</span><em>B</em>, <em>s0</em>, <em>DS</em>, <em>B1</em>, <em>B2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#wlfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.wlfit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Weak localisation</p>
+<h1>WLfit<a class="headerlink" href="#wlfit" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Fit.WLfit">
+<em class="property">class </em><code class="descclassname">Stoner.Fit.</code><code class="descname">WLfit</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#WLfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.WLfit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></code></p>
+<p>Weak localisation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -116,18 +117,46 @@
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/weak_localisation.png">png</a>, <a class="reference external" href="../samples/Fitting/weak_localisation.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/weak_localisation.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/Fitting/wlfit-class.png">png</a>, <a class="reference external" href="../samples/Fitting/wlfit-class.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/wlfit-class.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/weak_localisation.png" src="../_images/weak_localisation.png" />
+<img alt="../_images/wlfit-class.png" src="../_images/wlfit-class.png" />
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Include-source:</th><td class="field-body"></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.WLfit.display_names" title="Stoner.Fit.WLfit.display_names"><code class="xref py py-obj docutils literal"><span class="pre">display_names</span></code></a></td>
+<td></td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.WLfit.guess" title="Stoner.Fit.WLfit.guess"><code class="xref py py-obj docutils literal"><span class="pre">guess</span></code></a>(data[,&nbsp;B])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.Fit.WLfit.display_names">
+<code class="descname">display_names</code><em class="property"> = ['\\sigma_0', 'D_S', 'B_1', 'B_2']</em><a class="headerlink" href="#Stoner.Fit.WLfit.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.Fit.WLfit.guess">
+<code class="descname">guess</code><span class="sig-paren">(</span><em>data</em>, <em>B=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#WLfit.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.WLfit.guess" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -142,27 +171,25 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.vftEquation.html"
-                        title="previous chapter">vftEquation</a></p>
+  <p class="topless"><a href="Stoner.Fit.VFTEquation.html"
+                        title="previous chapter">VFTEquation</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Fit.Arrhenius.html"
-                        title="next chapter">Arrhenius</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Fit.wlfit.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <p class="topless"><a href="Stoner.HDF5.HDF5File.html"
+                        title="next chapter">HDF5File</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Fit.WLfit.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -172,10 +199,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.vftEquation.html" title="Previous document">vftEquation</a>
+          <a href="Stoner.Fit.VFTEquation.html" title="Previous document">VFTEquation</a>
         </li>
         <li>
-          <a href="Stoner.Fit.Arrhenius.html" title="Next document">Arrhenius</a>
+          <a href="Stoner.HDF5.HDF5File.html" title="Next document">HDF5File</a>
           &rarr;
         </li>
     </ul>
@@ -184,14 +211,14 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

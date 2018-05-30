@@ -1,7 +1,0 @@
-ZipFile
-=======
-
-.. currentmodule:: Stoner.Zip
-
-.. autoclass:: ZipFile
-   :show-inheritance:

@@ -40,6 +40,9 @@
       <li><a href="../../index.html">Stoner Package</a></li>
       <li>
         <a href="../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -62,11 +65,12 @@
 <span class="sd">to :py:class:`Stoner.Core.Data`.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span><span class="n">bytes2str</span><span class="p">,</span><span class="n">get_filedialog</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;HDF5File&#39;</span><span class="p">,</span> <span class="s1">&#39;HDF5Folder&#39;</span><span class="p">,</span> <span class="s1">&#39;HGXFile&#39;</span><span class="p">,</span> <span class="s1">&#39;SLS_STXMFile&#39;</span><span class="p">,</span> <span class="s1">&#39;STXMImage&#39;</span><span class="p">]</span>
+<span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span><span class="n">bytes2str</span><span class="p">,</span><span class="n">get_filedialog</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
 <span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">StonerLoadError</span><span class="p">,</span> <span class="n">metadataObject</span>
-<span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">.Image.core</span> <span class="k">import</span> <span class="n">ImageFile</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -637,17 +641,13 @@
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+<form class="search" action="../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -662,13 +662,16 @@
       <li><a href="../../index.html">Stoner Package</a></li>
       <li>
         <a href="../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

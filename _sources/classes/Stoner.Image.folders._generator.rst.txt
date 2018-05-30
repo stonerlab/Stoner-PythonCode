@@ -1,0 +1,17 @@
+_generator
+==========
+
+.. currentmodule:: Stoner.Image.folders
+
+.. autoclass:: _generator
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~_generator.next
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: next

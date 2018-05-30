@@ -69,6 +69,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#using-the-development-version-of-the-stoner-package">Using the Development Version of the Stoner Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#package-options">Package Options</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="datafile.html">Loading and Examining Data</a><ul>
@@ -81,6 +82,7 @@
 <li class="toctree-l2"><a class="reference internal" href="datafile.html#examining-and-basic-manipulations-of-data">Examining and Basic Manipulations of Data</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#data-structure">Data Structure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#marking-columns-as-dimensions-the-magic-setas-attribute">Marking Columns as Dimensions: the magic <em>setas</em> attribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#printing-the-complete-datafile">Printing the Complete <code class="docutils literal"><span class="pre">DataFile</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#working-with-columns-of-data">Working with columns of data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#working-with-complete-rows-of-data">Working with complete rows of data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#special-magic-when-working-with-subsets-of-data">Special Magic When Working with Subsets of Data</a></li>
@@ -164,13 +166,15 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="image.html">Working with images</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="image.html#loading-an-image">Loading an Image</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image.html#examining-and-manipulating-the-imagearray">Examining and manipulating the ImageArray</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="image.html#local-functions-and-properties">Local functions and properties</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html#further-functions">Further functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html#skimage-functions">skimage functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image.html#imagefile"><code class="docutils literal"><span class="pre">ImageFile</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="image.html#loading-an-image">Loading an Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html#examining-and-manipulating-the-imagearray">Examining and manipulating the ImageArray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html#imagefile-representation">ImageFile Representation</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="image.html#imagearray-a-numpy-array-like-class"><code class="docutils literal"><span class="pre">ImageArray</span></code>: A numpy array like class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image.html#working-with-lots-of-images-imagefolder-and-imagestack2">Working with Lots of Images: <code class="docutils literal"><span class="pre">ImageFolder</span></code> and <code class="docutils literal"><span class="pre">ImageStack2</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a><ul>
@@ -220,22 +224,20 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="install.html"
                         title="next chapter">Installation of Stoner Package</a></p>
-<div class="sourcelink">
-  <a href="../_sources/UserGuide/ugindex.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/ugindex.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -259,9 +261,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

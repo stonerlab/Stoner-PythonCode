@@ -1,0 +1,6 @@
+islike_list
+===========
+
+.. currentmodule:: Stoner.tools
+
+.. autofunction:: islike_list

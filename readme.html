@@ -65,21 +65,22 @@ API Reference guide. The <a class="reference external" href="http://www.github.c
 </div>
 <div class="section" id="getting-this-code">
 <h1>Getting this Code<a class="headerlink" href="#getting-this-code" title="Permalink to this headline">¶</a></h1>
-<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.5, h5py, lmfit, and has a number of optional dependencies on blist, filemagic, npTDMS
+<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies on blist, filemagic, npTDMS, imreg_dft
 and numba.</p>
-<p>Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit.
-However, this can by installed with the usual tools such as <em>easy_install</em> or <em>pip</em>.</p>
-<div class="highlight-sh"><div class="highlight"><pre><span></span>pip install lmfit
+<p>Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining dependencies are collected together
+in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner package is, therefore, to install the most recent Anaconda Python distribution (Python 3.6,
+3.5 or 2.7 should work) and then to install the Stoner package via:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>conda install -c phygbu Stoner
 </pre></div>
 </div>
-<p>The easiest way to install the Stoner package is via seuptools’ easy_install</p>
+<p>If you are not using Anaconda python, then pip should also work:</p>
 <div class="highlight-sh"><div class="highlight"><pre><span></span>pip install Stoner
 </pre></div>
 </div>
 <p>This will install the Stoner package and any missing dependencies into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: <a class="reference external" href="https://github.com/gb119/Stoner-PythonCode">https://github.com/gb119/Stoner-PythonCode</a></p>
-<p>The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 2.7 but test with 3.5 and 3.6 as well.</p>
+<p>The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 3.6 but test with 2.7 as well.</p>
 </div>
 <div class="section" id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
@@ -119,7 +120,10 @@ support loading some other HDF5 flavoured files into a <strong>DataFile</strong>
 <h2>Image Subpackage<a class="headerlink" href="#image-subpackage" title="Permalink to this headline">¶</a></h2>
 <p>The <strong>Stoner.Image</strong> package is a new feature of recent versions of the package and provides dedicated classes for working with image data,
 and in particular for analysing Kerr Microscope image files. It provides an <strong>ImageFile</strong> class that is functionally similar to <strong>DataFile</strong>
-except that the numerical data is understood to represent image data and additional methods are incorporated to facilitate processing.</p>
+except that the numerical data is understood to represent image data and additional methods are incorporated to facilitate processing. The <strong>ImageFolder</strong>
+and <strong>ImageStack</strong> classes provide similar functionality to <strong>DataFolder</strong> but with additional methods specific to handling collections of images. <strong>ImageStack</strong>
+uses a 3D numpy array as it’s primary image store which permits faster access (at the expense of a larger memory footprint) than the lazy loading ordered
+dictionary of <strong>ImageFolder</strong></p>
 </div>
 </div>
 <div class="section" id="resources">
@@ -145,12 +149,12 @@ making beta packages available.</p>
 </div>
 <div class="section" id="development-version">
 <h2>Development Version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h2>
-<p>The development version will be on version 0.8. Presently nothing has been done on this.</p>
+<p>The next development version will be on version 0.9. This will be started after the current 0.8 version is given a final release.</p>
 <p>Online documentation for all versions can be found on the ReadTheDocs pages <a class="reference external" href="http://stoner-pythoncode.readthedocs.io/en/latest/">online documentation</a></p>
 <div class="section" id="build-status">
 <h3>Build Status<a class="headerlink" href="#build-status" title="Permalink to this headline">¶</a></h3>
 <p>Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls. We currently test against
-python 2.7 and 3.5 via Travis and internally test on Python 3.6. Overall code quality
+python 2.7 and 3.6 via Travis and internally test on Python 3.5 as well. Overall code quality
 is measured by landscape.io. The current status is shown at the top of this readme.</p>
 </div>
 <div class="section" id="citing-the-stoner-package">
@@ -161,18 +165,29 @@ encourage any users to cite this package via that doi.</p>
 </div>
 <div class="section" id="stable-versions">
 <h2>Stable Versions<a class="headerlink" href="#stable-versions" title="Permalink to this headline">¶</a></h2>
+<p>Version 0.8 is now in release-candidate phase. The main new features are</p>
+<blockquote>
+<div><ul class="simple">
+<li>Reworking of the ImageArray, ImageFile and ImageFolder with many updates and new features.</li>
+<li>New mixin based ImageStack2 that can manipulate a large number of images in a 3D numpy array</li>
+<li>Continued re-factoring of DataFolder using the mixin approach</li>
+<li>Further increases to unit-test coverage, bug fixes and refactoring of some parts of the code.</li>
+<li>conda packages now being prepared as the preferred package format</li>
+</ul>
+<p>After release 0.8 will continue to receive bug fixes and updates.</p>
+</div></blockquote>
 <p>The current stable version is 0.7. Features of 0.7 include</p>
 <blockquote>
 <div><ul class="simple">
 <li>Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin</li>
 <li>Addition of Stoner.Image package to handle image analysis</li>
 <li>Refactor DataFolder to use Mixin classes</li>
-<li>DataFolder now defaults to using <a class="reference internal" href="classes/Stoner.Core.Data.html#Stoner.Core.Data" title="Stoner.Core.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code></a></li>
+<li>DataFolder now defaults to using <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code></li>
 <li>DataFolder has an options to skip iterating over empty Data files</li>
 <li>Further improvements to <a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> handline.</li>
 </ul>
 </div></blockquote>
-<p>0.7 will continue to have bug fix releases and back-ports of anything very useful.</p>
+<p>0.7 will continue to have bug fix releases and back-ports of anything very useful until 0.8 is released.</p>
 <p>The old stable version was 0.6. This features</p>
 <blockquote>
 <div><ul class="simple">
@@ -223,22 +238,20 @@ file format detection on platforms where this is supported and adds some extra m
 </li>
 </ul>
 
-<div class="sourcelink">
-  <a href="_sources/readme.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/readme.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -254,9 +267,9 @@ file format detection on platforms where this is supported and adds some extra m
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -21,6 +21,7 @@ Stoner.FileFormats.XRDFile
       ~Stoner.FileFormats.XRDFile.columns
       ~Stoner.FileFormats.XRDFile.count
       ~Stoner.FileFormats.XRDFile.del_column
+      ~Stoner.FileFormats.XRDFile.del_nan
       ~Stoner.FileFormats.XRDFile.del_rows
       ~Stoner.FileFormats.XRDFile.dir
       ~Stoner.FileFormats.XRDFile.filter

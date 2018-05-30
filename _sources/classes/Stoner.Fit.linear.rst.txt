@@ -1,6 +1,7 @@
-linear
+Linear
 ======
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: linear
+.. autoclass:: Linear
+   :show-inheritance:

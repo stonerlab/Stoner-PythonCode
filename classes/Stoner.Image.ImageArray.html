@@ -49,7 +49,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -67,7 +67,8 @@
 <em class="property">class </em><code class="descclassname">Stoner.Image.</code><code class="descname">ImageArray</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray"><code class="docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a>, <a class="reference internal" href="Stoner.Core.metadataObject.html#Stoner.Core.metadataObject" title="Stoner.Core.metadataObject"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.metadataObject</span></code></a></p>
 <p><a class="reference internal" href="#Stoner.Image.ImageArray" title="Stoner.Image.core.ImageArray"><code class="docutils literal"><span class="pre">Stoner.Image.ImageArray</span></code></a> is a numpy array like class with a metadata parameter and pass through to skimage methods.</p>
-<p>ImageArray is for manipulating images stored as a 2d numpy array.
+<blockquote>
+<div><p>ImageArray is for manipulating images stored as a 2d numpy array.
 It is built to be almost identical to a numpy array except for one extra
 parameter which is the metadata. This stores information about the image
 in a dictionary object for later retrieval.
@@ -77,46 +78,42 @@ together should yield a ImageArray type (ie. ImageArray+np.ndarray=ImageArray)</
 They can be called as eg. im=im.gaussian(sigma=2). Don’t include the module
 name, just the function name (ie not filters.gaussian). Also omit the first
 image argument required by skimage.</p>
-<dl class="attribute">
-<dt id="Stoner.Image.ImageArray.metadata">
-<code class="descname">metadata</code><a class="headerlink" href="#Stoner.Image.ImageArray.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – dictionary of metadata for the image</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Image.ImageArray.clone">
-<code class="descname">clone</code><a class="headerlink" href="#Stoner.Image.ImageArray.clone" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>self</em> – copy of self</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Image.ImageArray.max_box">
-<code class="descname">max_box</code><a class="headerlink" href="#Stoner.Image.ImageArray.max_box" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple</em> – coordinate extent (xmin,xmax,ymin,ymax)</p>
-</dd></dl>
-
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd><dl class="first last docutils">
+<dt>metadata (dict):</dt>
+<dd>dictionary of metadata for the image</dd>
+<dt>clone (self):</dt>
+<dd>copy of self</dd>
+<dt>max_box (tuple):</dt>
+<dd>coordinate extent (xmin,xmax,ymin,ymax)</dd>
+</dl>
+</dd>
+</dl>
 <p>For clarity it should be noted that any function will not alter the current
 instance, it will clone it first then return the clone after performing the
 function on it.</p>
-<p>A note on coordinate systems:
-For arrays the indexing is (row, column). However the normal way to index
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>For arrays the indexing is (row, column). However the normal way to index
 an image would be to do (horizontal, vert), which is the opposite.
 In ImageArray the coordinate system is chosen similar to skimage. y points
 down x points right and the origin is in the top left corner of the image.
 When indexing the array therefore you need to give it (y,x) coordinates
-for (row, column).</p>
-<blockquote>
-<div>—-&gt; x (column)</div></blockquote>
-<div class="line-block">
-<div class="line"><br /></div>
-<div class="line"><br /></div>
+for (row, column).:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span> <span class="o">----&gt;</span> <span class="n">x</span> <span class="p">(</span><span class="n">column</span><span class="p">)</span>
+<span class="o">|</span>
+<span class="o">|</span>
+<span class="n">v</span>
+<span class="n">y</span> <span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</pre></div>
 </div>
-<p>v
-y (row)</p>
 <p>eg I want the 4th pixel in the horizontal direction and the 10th pixel down
 from the top I would ask for ImageArray[10,4]</p>
-<p>but if I want to translate the image 4 in the x direction and 10 in the y
+<p class="last">but if I want to translate the image 4 in the x direction and 10 in the y
 I would call im=im.translate((4,10))</p>
+</div>
 </dd></dl>
 
 </div>
@@ -136,22 +133,20 @@ I would call im=im.translate((4,10))</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Image.ImageFile.html"
                         title="next chapter">ImageFile</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Image.ImageArray.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Image.ImageArray.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -173,14 +168,14 @@ I would call im=im.translate((4,10))</p>
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

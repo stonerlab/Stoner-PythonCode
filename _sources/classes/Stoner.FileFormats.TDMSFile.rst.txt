@@ -21,6 +21,7 @@ Stoner.FileFormats.TDMSFile
       ~Stoner.FileFormats.TDMSFile.columns
       ~Stoner.FileFormats.TDMSFile.count
       ~Stoner.FileFormats.TDMSFile.del_column
+      ~Stoner.FileFormats.TDMSFile.del_nan
       ~Stoner.FileFormats.TDMSFile.del_rows
       ~Stoner.FileFormats.TDMSFile.dir
       ~Stoner.FileFormats.TDMSFile.filter

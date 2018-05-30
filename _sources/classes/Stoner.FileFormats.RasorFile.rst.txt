@@ -21,6 +21,7 @@ Stoner.FileFormats.RasorFile
       ~Stoner.FileFormats.RasorFile.columns
       ~Stoner.FileFormats.RasorFile.count
       ~Stoner.FileFormats.RasorFile.del_column
+      ~Stoner.FileFormats.RasorFile.del_nan
       ~Stoner.FileFormats.RasorFile.del_rows
       ~Stoner.FileFormats.RasorFile.dir
       ~Stoner.FileFormats.RasorFile.filter

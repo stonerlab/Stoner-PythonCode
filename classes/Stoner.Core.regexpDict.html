@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="typeHintedDict" href="Stoner.Core.typeHintedDict.html" />
-    <link rel="prev" title="StonerSetasError" href="Stoner.Core.StonerSetasError.html" />
+    <link rel="prev" title="_setas" href="Stoner.Core._setas.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
   <body>
@@ -37,7 +37,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Core.StonerSetasError.html" title="Previous document">StonerSetasError</a>
+          <a href="Stoner.Core._setas.html" title="Previous document">_setas</a>
         </li>
         <li>
           <a href="Stoner.Core.typeHintedDict.html" title="Next document">typeHintedDict</a>
@@ -49,7 +49,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -64,8 +64,8 @@
 <h1>regexpDict<a class="headerlink" href="#regexpdict" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Core.regexpDict">
-<em class="property">class </em><code class="descclassname">Stoner.Core.</code><code class="descname">regexpDict</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#regexpDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.regexpDict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/collections.html#collections.OrderedDict" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">collections.OrderedDict</span></code></a></p>
+<em class="property">class </em><code class="descclassname">Stoner.Core.</code><code class="descname">regexpDict</code><a class="reference internal" href="../_modules/Stoner/Core.html#regexpDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.regexpDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">collections.OrderedDict</span></code></a></p>
 <p>An ordered dictionary that permits looks up by regular expression.</p>
 <p class="rubric">Attributes Summary</p>
 <table border="1" class="longtable docutils">
@@ -86,44 +86,8 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.regexpDict.clear" title="Stoner.Core.regexpDict.clear"><code class="xref py py-obj docutils literal"><span class="pre">clear</span></code></a>(()&nbsp;-&gt;&nbsp;None.&nbsp;&nbsp;Remove&nbsp;all&nbsp;items&nbsp;from&nbsp;od.)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.regexpDict.copy" title="Stoner.Core.regexpDict.copy"><code class="xref py py-obj docutils literal"><span class="pre">copy</span></code></a>(()&nbsp;-&gt;&nbsp;a&nbsp;shallow&nbsp;copy&nbsp;of&nbsp;od)</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.regexpDict.fromkeys" title="Stoner.Core.regexpDict.fromkeys"><code class="xref py py-obj docutils literal"><span class="pre">fromkeys</span></code></a>((S[,&nbsp;…)</td>
-<td>If not specified, the value defaults to None.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.regexpDict.get" title="Stoner.Core.regexpDict.get"><code class="xref py py-obj docutils literal"><span class="pre">get</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;D[k]&nbsp;if&nbsp;k&nbsp;in&nbsp;D,&nbsp;…)</td>
-<td></td>
-</tr>
 <tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.regexpDict.has_key" title="Stoner.Core.regexpDict.has_key"><code class="xref py py-obj docutils literal"><span class="pre">has_key</span></code></a>(name)</td>
-<td>“Key is definitely in dictionary as literal</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.regexpDict.items" title="Stoner.Core.regexpDict.items"><code class="xref py py-obj docutils literal"><span class="pre">items</span></code></a></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.regexpDict.keys" title="Stoner.Core.regexpDict.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.regexpDict.move_to_end" title="Stoner.Core.regexpDict.move_to_end"><code class="xref py py-obj docutils literal"><span class="pre">move_to_end</span></code></a></td>
-<td>Move an existing element to the end (or beginning if last==False).</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.regexpDict.pop" title="Stoner.Core.regexpDict.pop"><code class="xref py py-obj docutils literal"><span class="pre">pop</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;v,&nbsp;…)</td>
-<td>value.  If key is not found, d is returned if given, otherwise KeyError</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.regexpDict.popitem" title="Stoner.Core.regexpDict.popitem"><code class="xref py py-obj docutils literal"><span class="pre">popitem</span></code></a></td>
-<td>Remove and return a (key, value) pair from the dictionary.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.regexpDict.setdefault" title="Stoner.Core.regexpDict.setdefault"><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;od.get(k,d),&nbsp;…)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.regexpDict.update" title="Stoner.Core.regexpDict.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.regexpDict.values" title="Stoner.Core.regexpDict.values"><code class="xref py py-obj docutils literal"><span class="pre">values</span></code></a></td>
-<td></td>
+<td>Key is definitely in dictionary as literal</td>
 </tr>
 </tbody>
 </table>
@@ -135,78 +99,10 @@
 
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
-<dt id="Stoner.Core.regexpDict.clear">
-<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None.  Remove all items from od.<a class="headerlink" href="#Stoner.Core.regexpDict.clear" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.regexpDict.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; a shallow copy of od<a class="headerlink" href="#Stoner.Core.regexpDict.copy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.regexpDict.fromkeys">
-<code class="descname">fromkeys</code><span class="sig-paren">(</span><em>S</em><span class="optional">[</span>, <em>v</em><span class="optional">]</span><span class="sig-paren">)</span> &#x2192; New ordered dictionary with keys from S.<a class="headerlink" href="#Stoner.Core.regexpDict.fromkeys" title="Permalink to this definition">¶</a></dt>
-<dd><p>If not specified, the value defaults to None.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.regexpDict.get">
-<code class="descname">get</code><span class="sig-paren">(</span><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><span class="sig-paren">)</span> &#x2192; D[k] if k in D, else d.  d defaults to None.<a class="headerlink" href="#Stoner.Core.regexpDict.get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="Stoner.Core.regexpDict.has_key">
 <code class="descname">has_key</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#regexpDict.has_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.regexpDict.has_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>“Key is definitely in dictionary as literal</p>
+<dd><p>Key is definitely in dictionary as literal</p>
 </dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.regexpDict.items">
-<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Core.regexpDict.items" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.regexpDict.keys">
-<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Core.regexpDict.keys" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.regexpDict.move_to_end">
-<code class="descname">move_to_end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Core.regexpDict.move_to_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Move an existing element to the end (or beginning if last==False).</p>
-<p>Raises KeyError if the element does not exist.
-When last=True, acts like a fast version of self[key]=self.pop(key).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.regexpDict.pop">
-<code class="descname">pop</code><span class="sig-paren">(</span><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><span class="sig-paren">)</span> &#x2192; v, remove specified key and return the corresponding<a class="headerlink" href="#Stoner.Core.regexpDict.pop" title="Permalink to this definition">¶</a></dt>
-<dd><p>value.  If key is not found, d is returned if given, otherwise KeyError
-is raised.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.regexpDict.popitem">
-<code class="descname">popitem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Core.regexpDict.popitem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove and return a (key, value) pair from the dictionary.</p>
-<p>Pairs are returned in LIFO order if last is true or FIFO order if false.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.regexpDict.setdefault">
-<code class="descname">setdefault</code><span class="sig-paren">(</span><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><span class="sig-paren">)</span> &#x2192; od.get(k,d), also set od[k]=d if k not in od<a class="headerlink" href="#Stoner.Core.regexpDict.setdefault" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.regexpDict.update">
-<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Core.regexpDict.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.regexpDict.values">
-<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Core.regexpDict.values" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -222,27 +118,25 @@ is raised.</p>
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Core.StonerSetasError.html"
-                        title="previous chapter">StonerSetasError</a></p>
+  <p class="topless"><a href="Stoner.Core._setas.html"
+                        title="previous chapter">_setas</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Core.typeHintedDict.html"
                         title="next chapter">typeHintedDict</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Core.regexpDict.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Core.regexpDict.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -252,7 +146,7 @@ is raised.</p>
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Core.StonerSetasError.html" title="Previous document">StonerSetasError</a>
+          <a href="Stoner.Core._setas.html" title="Previous document">_setas</a>
         </li>
         <li>
           <a href="Stoner.Core.typeHintedDict.html" title="Next document">typeHintedDict</a>
@@ -264,14 +158,14 @@ is raised.</p>
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

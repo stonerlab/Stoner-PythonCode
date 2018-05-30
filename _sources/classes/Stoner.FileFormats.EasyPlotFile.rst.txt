@@ -21,6 +21,7 @@ Stoner.FileFormats.EasyPlotFile
       ~Stoner.FileFormats.EasyPlotFile.columns
       ~Stoner.FileFormats.EasyPlotFile.count
       ~Stoner.FileFormats.EasyPlotFile.del_column
+      ~Stoner.FileFormats.EasyPlotFile.del_nan
       ~Stoner.FileFormats.EasyPlotFile.del_rows
       ~Stoner.FileFormats.EasyPlotFile.dir
       ~Stoner.FileFormats.EasyPlotFile.filter

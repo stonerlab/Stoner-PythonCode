@@ -1,0 +1,7 @@
+ImageStack2
+===========
+
+.. currentmodule:: Stoner.Image.stack
+
+.. autoclass:: ImageStack2
+   :show-inheritance:

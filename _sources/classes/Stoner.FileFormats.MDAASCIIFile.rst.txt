@@ -21,6 +21,7 @@ Stoner.FileFormats.MDAASCIIFile
       ~Stoner.FileFormats.MDAASCIIFile.columns
       ~Stoner.FileFormats.MDAASCIIFile.count
       ~Stoner.FileFormats.MDAASCIIFile.del_column
+      ~Stoner.FileFormats.MDAASCIIFile.del_nan
       ~Stoner.FileFormats.MDAASCIIFile.del_rows
       ~Stoner.FileFormats.MDAASCIIFile.dir
       ~Stoner.FileFormats.MDAASCIIFile.filter

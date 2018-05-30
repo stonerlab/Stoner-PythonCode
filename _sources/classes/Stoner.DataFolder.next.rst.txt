@@ -1,0 +1,8 @@
+
+
+DataFolder.next
+======================
+
+.. currentmodule:: Stoner
+
+.. automethod:: DataFolder.next

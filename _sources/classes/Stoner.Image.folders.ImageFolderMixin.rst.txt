@@ -1,0 +1,43 @@
+ImageFolderMixin
+================
+
+.. currentmodule:: Stoner.Image.folders
+
+.. autoclass:: ImageFolderMixin
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~ImageFolderMixin.images
+      ~ImageFolderMixin.size
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ImageFolderMixin.apply_all
+      ~ImageFolderMixin.as_stack
+      ~ImageFolderMixin.average
+      ~ImageFolderMixin.loadgroup
+      ~ImageFolderMixin.mean
+      ~ImageFolderMixin.stddev
+      ~ImageFolderMixin.stderr
+      ~ImageFolderMixin.view
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: images
+   .. autoattribute:: size
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: apply_all
+   .. automethod:: as_stack
+   .. automethod:: average
+   .. automethod:: loadgroup
+   .. automethod:: mean
+   .. automethod:: stddev
+   .. automethod:: stderr
+   .. automethod:: view

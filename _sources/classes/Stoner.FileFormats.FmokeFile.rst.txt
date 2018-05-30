@@ -21,6 +21,7 @@ Stoner.FileFormats.FmokeFile
       ~Stoner.FileFormats.FmokeFile.columns
       ~Stoner.FileFormats.FmokeFile.count
       ~Stoner.FileFormats.FmokeFile.del_column
+      ~Stoner.FileFormats.FmokeFile.del_nan
       ~Stoner.FileFormats.FmokeFile.del_rows
       ~Stoner.FileFormats.FmokeFile.dir
       ~Stoner.FileFormats.FmokeFile.filter

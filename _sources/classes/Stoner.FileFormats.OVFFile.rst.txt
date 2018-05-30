@@ -21,6 +21,7 @@ Stoner.FileFormats.OVFFile
       ~Stoner.FileFormats.OVFFile.columns
       ~Stoner.FileFormats.OVFFile.count
       ~Stoner.FileFormats.OVFFile.del_column
+      ~Stoner.FileFormats.OVFFile.del_nan
       ~Stoner.FileFormats.OVFFile.del_rows
       ~Stoner.FileFormats.OVFFile.dir
       ~Stoner.FileFormats.OVFFile.filter

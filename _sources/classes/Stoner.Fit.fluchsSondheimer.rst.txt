@@ -1,6 +1,27 @@
-fluchsSondheimer
+FluchsSondheimer
 ================
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: fluchsSondheimer
+.. autoclass:: FluchsSondheimer
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~FluchsSondheimer.display_names
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~FluchsSondheimer.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

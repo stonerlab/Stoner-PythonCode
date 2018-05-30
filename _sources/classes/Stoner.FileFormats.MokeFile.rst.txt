@@ -21,6 +21,7 @@ Stoner.FileFormats.MokeFile
       ~Stoner.FileFormats.MokeFile.columns
       ~Stoner.FileFormats.MokeFile.count
       ~Stoner.FileFormats.MokeFile.del_column
+      ~Stoner.FileFormats.MokeFile.del_nan
       ~Stoner.FileFormats.MokeFile.del_rows
       ~Stoner.FileFormats.MokeFile.dir
       ~Stoner.FileFormats.MokeFile.filter

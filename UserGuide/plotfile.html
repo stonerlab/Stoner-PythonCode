@@ -169,9 +169,9 @@ these on a surface plot or 3D plot. The <a class="reference internal" href="../c
 <span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Surface plot&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/3D_plot.png">png</a>, <a class="reference external" href="../samples/3D_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/3D_plot.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/3D.png">png</a>, <a class="reference external" href="../samples/3D.hires.png">hires.png</a>, <a class="reference external" href="../samples/3D.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/3D_plot.png" src="../_images/3D_plot.png" />
+<img alt="../_images/3D.png" src="../_images/3D.png" />
 </div>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Plot 3d fdata as a colourmap.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
@@ -189,9 +189,9 @@ these on a surface plot or 3D plot. The <a class="reference internal" href="../c
 <span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Colourmap plot&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/colormap_plot.png">png</a>, <a class="reference external" href="../samples/colormap_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/colormap_plot.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/colormap.png">png</a>, <a class="reference external" href="../samples/colormap.hires.png">hires.png</a>, <a class="reference external" href="../samples/colormap.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/colormap_plot.png" src="../_images/colormap_plot.png" />
+<img alt="../_images/colormap.png" src="../_images/colormap.png" />
 </div>
 <p>By default the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-meth docutils literal"><span class="pre">PlotMixin.plot_xyz()</span></code></a> will produce a 3D surface plot with the z-axis coded with a rainbow colour-map
 (specifically, the matplotlib provided <em>matplotlib.cm.jet</em> colour-map. This can be overriden with the <em>cmap</em> keyword
@@ -219,9 +219,9 @@ method.</p>
 <span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Contour plot&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/contour_plot.png">png</a>, <a class="reference external" href="../samples/contour_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/contour_plot.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/contour.png">png</a>, <a class="reference external" href="../samples/contour.hires.png">hires.png</a>, <a class="reference external" href="../samples/contour.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/contour_plot.png" src="../_images/contour_plot.png" />
+<img alt="../_images/contour.png" src="../_images/contour.png" />
 </div>
 <p>Both <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-meth docutils literal"><span class="pre">PlotMixin.plot_xyz()</span></code></a> and <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.contour_xyz" title="Stoner.plot.PlotMixin.contour_xyz"><code class="xref py py-meth docutils literal"><span class="pre">PlotMixin.contour_xyz()</span></code></a> make use of a call to <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.griddata" title="Stoner.plot.PlotMixin.griddata"><code class="xref py py-meth docutils literal"><span class="pre">PlotMixin.griddata()</span></code></a>
 which is a utility method of the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal"><span class="pre">PlotMixin</span></code></a> – essentially this is just a pass through method to the underlying
@@ -254,9 +254,9 @@ number of points.</p>
 <span class="n">p</span><span class="o">.</span><span class="n">plot_matrix</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Data as Matrix&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/matrix_plot.png">png</a>, <a class="reference external" href="../samples/matrix_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/matrix_plot.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/matrix.png">png</a>, <a class="reference external" href="../samples/matrix.hires.png">hires.png</a>, <a class="reference external" href="../samples/matrix.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/matrix_plot.png" src="../_images/matrix_plot.png" />
+<img alt="../_images/matrix.png" src="../_images/matrix.png" />
 </div>
 <p>The first example just uses all the default values, in which case the matrix is assumed to run from the 2nd column in the
 file to the last and over all of the rows. The x values for each row are found from the contents of the first column, and
@@ -290,7 +290,7 @@ Following the naming convention above, the <a class="reference internal" href=".
 </pre></div>
 </div>
 <p>The <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xyzuvw" title="Stoner.plot.PlotMixin.plot_xyzuvw"><code class="xref py py-meth docutils literal"><span class="pre">PlotMixin.plot_xyzuvw()</span></code></a> method uses a default vector field plot function that is based on mayavi from
-Enthought. The import is done when the plot is required to speed loading times for the <code class="xref py py-mod docutils literal"><span class="pre">Stoner.plot</span></code> when
+Enthought. The import is done when the plot is required to speed loading times for the <a class="reference internal" href="../Stoner.html#module-Stoner.plot" title="Stoner.plot"><code class="xref py py-mod docutils literal"><span class="pre">Stoner.plot</span></code></a> when
 2D plotting only is required. If the mayavi package is not available, then matplotlib’s 3D quiver plot is used as a fall back.</p>
 <p>The first example above will result in a plot using flat arroiws coloured according to the vector magnitude. The second
 examnple will instead color them using the specified column from the data. The third example demonstrates passing in
@@ -326,9 +326,9 @@ default in this function.</p>
 <span class="n">e</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Vectorfield.png">png</a>, <a class="reference external" href="../samples/Vectorfield.hires.png">hires.png</a>, <a class="reference external" href="../samples/Vectorfield.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/vector_field.png">png</a>, <a class="reference external" href="../samples/vector_field.hires.png">hires.png</a>, <a class="reference external" href="../samples/vector_field.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/Vectorfield.png" src="../_images/Vectorfield.png" />
+<img alt="../_images/vector_field.png" src="../_images/vector_field.png" />
 </div>
 </div>
 </div>
@@ -343,9 +343,9 @@ with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.htm
 <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/single_plot.png">png</a>, <a class="reference external" href="../samples/single_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/single_plot.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/single.png">png</a>, <a class="reference external" href="../samples/single.hires.png">hires.png</a>, <a class="reference external" href="../samples/single.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/single_plot.png" src="../_images/single_plot.png" />
+<img alt="../_images/single.png" src="../_images/single.png" />
 </div>
 </div>
 <div class="section" id="getting-more-control-on-the-figure">
@@ -409,9 +409,9 @@ provided. This produces a second axes object with a common x-axis, but independe
 <span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;r-&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/double_y_plot.png">png</a>, <a class="reference external" href="../samples/double_y_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/double_y_plot.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/double_y.png">png</a>, <a class="reference external" href="../samples/double_y.hires.png">hires.png</a>, <a class="reference external" href="../samples/double_y.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/double_y_plot.png" src="../_images/double_y_plot.png" />
+<img alt="../_images/double_y.png" src="../_images/double_y.png" />
 </div>
 <p>There is an equivalent <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.x2" title="Stoner.plot.PlotMixin.x2"><code class="xref py py-meth docutils literal"><span class="pre">PlotMixin.x2()</span></code></a> method to create a second set of axes with a common y scale but different x scales.</p>
 <p>To work out which set of axes you are current working with the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.ax" title="Stoner.plot.PlotMixin.ax"><code class="xref py py-attr docutils literal"><span class="pre">PlotMixin.ax</span></code></a> attribute can be read or set.:</p>
@@ -427,7 +427,7 @@ provided. This produces a second axes object with a common x-axis, but independe
 <div class="section" id="plot-templates">
 <h3>Plot Templates<a class="headerlink" href="#plot-templates" title="Permalink to this headline">¶</a></h3>
 <p>Frequently one wishes to create many plots that have a similar set of formatting options - for example
-in a thesis or to conform to a journal’s specifications. The <code class="xref py py-mod docutils literal"><span class="pre">Stoner.plot.formats</span></code> in conjunctions with
+in a thesis or to conform to a journal’s specifications. The <a class="reference internal" href="../Stoner.html#module-Stoner.plot.formats" title="Stoner.plot.formats"><code class="xref py py-mod docutils literal"><span class="pre">Stoner.plot.formats</span></code></a> in conjunctions with
 the <code class="xref py py-attr docutils literal"><span class="pre">PlotMixin.template</span></code> attribute can help here.</p>
 <p>A <code class="xref py py-attr docutils literal"><span class="pre">PlotMixin.template</span></code> template is a set of instructions that controls the default settings for many
 aspects of a matplotlib figure’s style. In addition the template allows for pyplot formatting commands to be
@@ -506,9 +506,9 @@ will be to the inset until a new set of axes are chosen. The <code class="xref p
 <span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span> <span class="c1">#Turn off the inset title</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/inset_plot.png">png</a>, <a class="reference external" href="../samples/inset_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/inset_plot.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/inset.png">png</a>, <a class="reference external" href="../samples/inset.hires.png">hires.png</a>, <a class="reference external" href="../samples/inset.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/inset_plot.png" src="../_images/inset_plot.png" />
+<img alt="../_images/inset.png" src="../_images/inset.png" />
 </div>
 <p>The <em>loc</em> parameter specifies the location of the inset, the width and height the size (either as a percentage or
 fixed units). There is an optional parent keyword that lets you specify an alternative parent set of axes for the
@@ -540,9 +540,9 @@ this can result in a less than helpful plot.</p>
 <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/common_y_plot.png">png</a>, <a class="reference external" href="../samples/common_y_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/common_y_plot.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/common_y.png">png</a>, <a class="reference external" href="../samples/common_y.hires.png">hires.png</a>, <a class="reference external" href="../samples/common_y.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/common_y_plot.png" src="../_images/common_y_plot.png" />
+<img alt="../_images/common_y.png" src="../_images/common_y.png" />
 </div>
 <p>The <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-meth docutils literal"><span class="pre">PlotMixin.plot_xy()</span></code></a> method (and also the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-meth docutils literal"><span class="pre">PlotMixin.plot()</span></code></a> method when doing 2D plots) will take
 a keyword argument <em>multiple</em> that can offer a number of alternatives. If you have just two y columns, or the the
@@ -554,9 +554,9 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
 <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">multiple</span><span class="o">=</span><span class="s2">&quot;y2&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/multiple_y2_plot.png">png</a>, <a class="reference external" href="../samples/multiple_y2_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/multiple_y2_plot.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/multiple_y.png">png</a>, <a class="reference external" href="../samples/multiple_y.hires.png">hires.png</a>, <a class="reference external" href="../samples/multiple_y.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/multiple_y2_plot.png" src="../_images/multiple_y2_plot.png" />
+<img alt="../_images/multiple_y.png" src="../_images/multiple_y.png" />
 </div>
 <p>Alternatively, if you want the various y plots to form multiple panels with a common x-axis (a <em>ganged plot</em>) then
 <em>multiple</em> can be set of <em>panels</em>.</p>
@@ -569,9 +569,9 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
 <span class="n">p</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/multiple_panels_plot.png">png</a>, <a class="reference external" href="../samples/multiple_panels_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/multiple_panels_plot.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/panels.png">png</a>, <a class="reference external" href="../samples/panels.hires.png">hires.png</a>, <a class="reference external" href="../samples/panels.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/multiple_panels_plot.png" src="../_images/multiple_panels_plot.png" />
+<img alt="../_images/panels.png" src="../_images/panels.png" />
 </div>
 <p>Finally, you can also simply plot the y data as a grid of independent subplots.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Independent sub plots for multiple y data.&quot;&quot;&quot;</span>
@@ -583,9 +583,9 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
 <span class="n">p</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/subplot_plot.png">png</a>, <a class="reference external" href="../samples/subplot_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/subplot_plot.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/subplots.png">png</a>, <a class="reference external" href="../samples/subplots.hires.png">hires.png</a>, <a class="reference external" href="../samples/subplots.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/subplot_plot.png" src="../_images/subplot_plot.png" />
+<img alt="../_images/subplots.png" src="../_images/subplots.png" />
 </div>
 </div>
 </div>
@@ -635,22 +635,20 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
   <h4>Next topic</h4>
   <p class="topless"><a href="analysisfile.html"
                         title="next chapter">Analysing Data Files</a></p>
-<div class="sourcelink">
-  <a href="../_sources/UserGuide/plotfile.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/plotfile.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -677,9 +675,9 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

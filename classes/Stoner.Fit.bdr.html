@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>bdr &#8212; Stoner Pacakge API Documentation</title>
+    <title>BDR &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="blochGrueneisen" href="Stoner.Fit.blochGrueneisen.html" />
-    <link rel="prev" title="arrhenius" href="Stoner.Fit.arrhenius.html" />
+    <link rel="next" title="BlochGrueneisen" href="Stoner.Fit.BlochGrueneisen.html" />
+    <link rel="prev" title="Arrhenius" href="Stoner.Fit.Arrhenius.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
   <body>
@@ -37,10 +37,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.arrhenius.html" title="Previous document">arrhenius</a>
+          <a href="Stoner.Fit.Arrhenius.html" title="Previous document">Arrhenius</a>
         </li>
         <li>
-          <a href="Stoner.Fit.blochGrueneisen.html" title="Next document">blochGrueneisen</a>
+          <a href="Stoner.Fit.BlochGrueneisen.html" title="Next document">BlochGrueneisen</a>
           &rarr;
         </li>
     </ul>
@@ -49,7 +49,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -61,11 +61,12 @@
           <div class="body" role="main">
             
   <div class="section" id="bdr">
-<h1>bdr<a class="headerlink" href="#bdr" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.Fit.bdr">
-<code class="descclassname">Stoner.Fit.</code><code class="descname">bdr</code><span class="sig-paren">(</span><em>V</em>, <em>A</em>, <em>phi</em>, <em>dphi</em>, <em>d</em>, <em>mass</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#bdr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.bdr" title="Permalink to this definition">¶</a></dt>
-<dd><p>BDR model tunnelling.</p>
+<h1>BDR<a class="headerlink" href="#bdr" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Fit.BDR">
+<em class="property">class </em><code class="descclassname">Stoner.Fit.</code><code class="descname">BDR</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#BDR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.BDR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></code></p>
+<p>BDR model tunnelling.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -126,18 +127,29 @@
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/BDR.png">png</a>, <a class="reference external" href="../samples/Fitting/BDR.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/BDR.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/Fitting/bdr-class.png">png</a>, <a class="reference external" href="../samples/Fitting/bdr-class.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/bdr-class.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/BDR.png" src="../_images/BDR.png" />
+<img alt="../_images/bdr-class.png" src="../_images/bdr-class.png" />
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Include-source:</th><td class="field-body"></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.BDR.guess" title="Stoner.Fit.BDR.guess"><code class="xref py py-obj docutils literal"><span class="pre">guess</span></code></a>(data[,&nbsp;V])</td>
+<td>Just set the A, phi,dphi,d and mass values to typical answers for a small tunnel junction</td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.Fit.BDR.guess">
+<code class="descname">guess</code><span class="sig-paren">(</span><em>data</em>, <em>V=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#BDR.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.BDR.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Just set the A, phi,dphi,d and mass values to typical answers for a small tunnel junction</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -152,27 +164,25 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.arrhenius.html"
-                        title="previous chapter">arrhenius</a></p>
+  <p class="topless"><a href="Stoner.Fit.Arrhenius.html"
+                        title="previous chapter">Arrhenius</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Fit.blochGrueneisen.html"
-                        title="next chapter">blochGrueneisen</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Fit.bdr.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <p class="topless"><a href="Stoner.Fit.BlochGrueneisen.html"
+                        title="next chapter">BlochGrueneisen</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Fit.BDR.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -182,10 +192,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.arrhenius.html" title="Previous document">arrhenius</a>
+          <a href="Stoner.Fit.Arrhenius.html" title="Previous document">Arrhenius</a>
         </li>
         <li>
-          <a href="Stoner.Fit.blochGrueneisen.html" title="Next document">blochGrueneisen</a>
+          <a href="Stoner.Fit.BlochGrueneisen.html" title="Next document">BlochGrueneisen</a>
           &rarr;
         </li>
     </ul>
@@ -194,14 +204,14 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

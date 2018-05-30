@@ -157,7 +157,7 @@ illustrates this by fitting a plane to a collection of points in 3D space.</p>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">column_stack</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">column_stack</span><span class="p">,</span><span class="n">row_stack</span>
 <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="kn">as</span> <span class="nn">cmap</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
@@ -175,11 +175,11 @@ illustrates this by fitting a plane to a collection of points in 3D space.</p>
 
 <span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span><span class="s2">&quot;Z&quot;</span><span class="p">]</span>
 <span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s2">&quot;scatter&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s2">&quot;scatter&quot;</span><span class="p">)</span>
 
-<span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
+<span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy.z&quot;</span>
+
 <span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">)</span>
 
 <span class="n">txt</span><span class="o">=</span><span class="s2">&quot;$z=c-ax+by$</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -189,6 +189,10 @@ illustrates this by fitting a plane to a collection of points in 3D space.</p>
 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="n">txt</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/curvefit_plane2.png">png</a>, <a class="reference external" href="../samples/curvefit_plane2.hires.png">hires.png</a>, <a class="reference external" href="../samples/curvefit_plane2.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/curvefit_plane2.png" src="../_images/curvefit_plane2.png" />
 </div>
 </div>
 <div class="section" id="fitting-to-minimize-a-function">
@@ -253,9 +257,9 @@ For example:</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/sphere_fit.png">png</a>, <a class="reference external" href="../samples/sphere_fit.hires.png">hires.png</a>, <a class="reference external" href="../samples/sphere_fit.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/curvefit_sphere_2.png">png</a>, <a class="reference external" href="../samples/curvefit_sphere_2.hires.png">hires.png</a>, <a class="reference external" href="../samples/curvefit_sphere_2.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/sphere_fit.png" src="../_images/sphere_fit.png" />
+<img alt="../_images/curvefit_sphere_2.png" src="../_images/curvefit_sphere_2.png" />
 </div>
 </div>
 </div>
@@ -297,7 +301,7 @@ useful to map the data to a matrix.:</p>
 <p>The start of the script follows the previous section, however this time in the
 for loop the addition operator is used to add a single row to the temporary
 <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> <em>t</em>. In this case we are using the utility method
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.find_col()</span></code></a> to find the index of the column with the current
+<code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.find_col()</span></code> to find the index of the column with the current
 data. After the <strong>for</strong> loop we set the column headers in <em>t</em> and then insert
 an additional column at the start with the gate voltage values.</p>
 <p>The matrix generated by this code is suitable for feeding directly into
@@ -386,22 +390,20 @@ to quickly examine the output data:</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="developer.html"
                         title="next chapter">Developer’s Guide</a></p>
-<div class="sourcelink">
-  <a href="../_sources/UserGuide/cookbook.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/cookbook.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -428,9 +430,9 @@ to quickly examine the output data:</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

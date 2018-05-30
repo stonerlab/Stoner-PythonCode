@@ -1,0 +1,60 @@
+Stoner.DataFolder
+=================
+
+.. currentmodule:: Stoner
+
+.. autoclass:: DataFolder
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.DataFolder.__init__
+      ~Stoner.DataFolder.add_group
+      ~Stoner.DataFolder.append
+      ~Stoner.DataFolder.clear
+      ~Stoner.DataFolder.concatentate
+      ~Stoner.DataFolder.count
+      ~Stoner.DataFolder.extend
+      ~Stoner.DataFolder.extract
+      ~Stoner.DataFolder.file
+      ~Stoner.DataFolder.filter
+      ~Stoner.DataFolder.filterout
+      ~Stoner.DataFolder.flatten
+      ~Stoner.DataFolder.gather
+      ~Stoner.DataFolder.get
+      ~Stoner.DataFolder.getlist
+      ~Stoner.DataFolder.group
+      ~Stoner.DataFolder.index
+      ~Stoner.DataFolder.insert
+      ~Stoner.DataFolder.items
+      ~Stoner.DataFolder.keys
+      ~Stoner.DataFolder.make_name
+      ~Stoner.DataFolder.next
+      ~Stoner.DataFolder.pop
+      ~Stoner.DataFolder.popitem
+      ~Stoner.DataFolder.prune
+      ~Stoner.DataFolder.remove
+      ~Stoner.DataFolder.reverse
+      ~Stoner.DataFolder.save
+      ~Stoner.DataFolder.select
+      ~Stoner.DataFolder.setdefault
+      ~Stoner.DataFolder.slice_metadata
+      ~Stoner.DataFolder.sort
+      ~Stoner.DataFolder.unflatten
+      ~Stoner.DataFolder.unload
+      ~Stoner.DataFolder.update
+      ~Stoner.DataFolder.values
+      ~Stoner.DataFolder.walk_groups
+      ~Stoner.DataFolder.zip_groups
+
+   
+   
+
+   
+   
+   

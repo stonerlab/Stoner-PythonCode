@@ -21,6 +21,7 @@ Stoner.FileFormats.BNLFile
       ~Stoner.FileFormats.BNLFile.columns
       ~Stoner.FileFormats.BNLFile.count
       ~Stoner.FileFormats.BNLFile.del_column
+      ~Stoner.FileFormats.BNLFile.del_nan
       ~Stoner.FileFormats.BNLFile.del_rows
       ~Stoner.FileFormats.BNLFile.dir
       ~Stoner.FileFormats.BNLFile.filter

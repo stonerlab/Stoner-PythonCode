@@ -42,6 +42,7 @@ PlotMixin
       ~PlotMixin.plot_xyzuvw
       ~PlotMixin.quiver_plot
       ~PlotMixin.subplot
+      ~PlotMixin.subplot2grid
       ~PlotMixin.x2
       ~PlotMixin.y2
 
@@ -77,5 +78,6 @@ PlotMixin
    .. automethod:: plot_xyzuvw
    .. automethod:: quiver_plot
    .. automethod:: subplot
+   .. automethod:: subplot2grid
    .. automethod:: x2
    .. automethod:: y2

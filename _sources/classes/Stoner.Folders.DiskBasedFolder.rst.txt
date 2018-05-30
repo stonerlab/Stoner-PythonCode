@@ -1,0 +1,33 @@
+DiskBasedFolder
+===============
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: DiskBasedFolder
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~DiskBasedFolder.basenames
+      ~DiskBasedFolder.pattern
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~DiskBasedFolder.getlist
+      ~DiskBasedFolder.save
+      ~DiskBasedFolder.unload
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: basenames
+   .. autoattribute:: pattern
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: getlist
+   .. automethod:: save
+   .. automethod:: unload

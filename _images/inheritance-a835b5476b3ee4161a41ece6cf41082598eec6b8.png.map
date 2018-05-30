@@ -1,0 +1,11 @@
+<map id="inheritance1d24d23e3a" name="inheritance1d24d23e3a">
+<area shape="rect" id="node1" href="classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" target="_top" title="A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods." alt="" coords="596,49,695,61"/>
+<area shape="rect" id="node5" href="classes/Stoner.Data.html#Stoner.Data" target="_top" title="A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`" alt="" coords="718,49,765,61"/>
+<area shape="rect" id="node2" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" target="_top" title=":py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers." alt="" coords="609,72,682,84"/>
+<area shape="rect" id="node3" href="classes/Stoner.Core.metadataObject.html#Stoner.Core.metadataObject" target="_top" title="Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object." alt="" coords="471,72,568,84"/>
+<area shape="rect" id="node6" href="classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" target="_top" title="A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality." alt="" coords="601,2,689,14"/>
+<area shape="rect" id="node7" href="classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" target="_top" title="Provide an interface to manipulating lots of data files stored within a directory structure on disc." alt="" coords="601,25,690,37"/>
+<area shape="rect" id="node8" href="classes/Stoner.Folders.DiskBasedFolder.html#Stoner.Folders.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="466,49,573,61"/>
+<area shape="rect" id="node9" href="classes/Stoner.Folders.baseFolder.html#Stoner.Folders.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="475,25,564,37"/>
+<area shape="rect" id="node16" title="All the operations on a read&#45;only sequence." alt="" coords="223,33,310,45"/>
+</map>

@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>powerLaw &#8212; Stoner Pacakge API Documentation</title>
+    <title>PowerLaw &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -24,7 +24,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="nDimArrhenius" href="Stoner.Fit.nDimArrhenius.html" />
+    <link rel="next" title="Quadratic" href="Stoner.Fit.Quadratic.html" />
+    <link rel="prev" title="NDimArrhenius" href="Stoner.Fit.NDimArrhenius.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
   <body>
@@ -36,7 +37,11 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.nDimArrhenius.html" title="Previous document">nDimArrhenius</a>
+          <a href="Stoner.Fit.NDimArrhenius.html" title="Previous document">NDimArrhenius</a>
+        </li>
+        <li>
+          <a href="Stoner.Fit.Quadratic.html" title="Next document">Quadratic</a>
+          &rarr;
         </li>
     </ul>
   </nav>
@@ -44,7 +49,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -56,11 +61,12 @@
           <div class="body" role="main">
             
   <div class="section" id="powerlaw">
-<h1>powerLaw<a class="headerlink" href="#powerlaw" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.Fit.powerLaw">
-<code class="descclassname">Stoner.Fit.</code><code class="descname">powerLaw</code><span class="sig-paren">(</span><em>x</em>, <em>A</em>, <em>k</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#powerLaw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.powerLaw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Power Law Fitting Equation.</p>
+<h1>PowerLaw<a class="headerlink" href="#powerlaw" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Fit.PowerLaw">
+<em class="property">class </em><code class="descclassname">Stoner.Fit.</code><code class="descname">PowerLaw</code><span class="sig-paren">(</span><em>independent_vars=['x'], prefix='', missing=None, name=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#PowerLaw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.PowerLaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">lmfit.models.PowerLawModel</span></code></p>
+<p>Power Law Fitting Equation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -102,25 +108,17 @@
 <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x..y&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">SF</span><span class="o">.</span><span class="n">PowerLaw</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">1.5E-1</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;PowerLawModel&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">SF</span><span class="o">.</span><span class="n">PowerLaw</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">1.5E-1</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;PowerLaw&quot;</span><span class="p">)</span>
 
 <span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Powerlaw Test Fit&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Rate&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Temperature (K)&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/Powerlaw.png">png</a>, <a class="reference external" href="../samples/Fitting/Powerlaw.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/Powerlaw.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/Fitting/powerlaw-class.png">png</a>, <a class="reference external" href="../samples/Fitting/powerlaw-class.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/powerlaw-class.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/Powerlaw.png" src="../_images/Powerlaw.png" />
+<img alt="../_images/powerlaw-class.png" src="../_images/powerlaw-class.png" />
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Include-source:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 </div>
@@ -135,24 +133,25 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.nDimArrhenius.html"
-                        title="previous chapter">nDimArrhenius</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Fit.powerLaw.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <p class="topless"><a href="Stoner.Fit.NDimArrhenius.html"
+                        title="previous chapter">NDimArrhenius</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Fit.Quadratic.html"
+                        title="next chapter">Quadratic</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Fit.PowerLaw.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -162,7 +161,11 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.nDimArrhenius.html" title="Previous document">nDimArrhenius</a>
+          <a href="Stoner.Fit.NDimArrhenius.html" title="Previous document">NDimArrhenius</a>
+        </li>
+        <li>
+          <a href="Stoner.Fit.Quadratic.html" title="Next document">Quadratic</a>
+          &rarr;
         </li>
     </ul>
   </nav>
@@ -170,14 +173,14 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -21,6 +21,7 @@ Stoner.FileFormats.RigakuFile
       ~Stoner.FileFormats.RigakuFile.columns
       ~Stoner.FileFormats.RigakuFile.count
       ~Stoner.FileFormats.RigakuFile.del_column
+      ~Stoner.FileFormats.RigakuFile.del_nan
       ~Stoner.FileFormats.RigakuFile.del_rows
       ~Stoner.FileFormats.RigakuFile.dir
       ~Stoner.FileFormats.RigakuFile.filter

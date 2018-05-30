@@ -13,11 +13,16 @@ Condensed Matter Physics Group at the University of Leeds.
 Getting the Stoner Package
 --------------------------
 
-The easiest way to get and install the package is to make use of the EGG
-package on PyPi. This will install a reasonably stable release into your
-Python setup. Open a command prompt and run::
+We recommend the use of Ananconda Python for use with the Stoner package and provide
+conda packages for Stoner and its non-standard dependencies. To install the Stoner package
+in an Anaconda Python environment, simply do::
 
-    easy_install Stoner
+    conda install -c phygbu Stoner
+    
+If you are not using Ananconda python, then we also make Python wheels available that may be installed
+using pip::
+
+    pip install Stoner
 
 The advantage of getting the package this way is that it is installed into your Python path properly.
 The disadvantage is that you don't get this user guide and the version may not be the most
@@ -42,6 +47,17 @@ The Stoner Package currently depends on a number of other modules. These are ins
 machines that have Python installed. Primarily these are Numpy, SciPy and Matplotlib.  The easiest way to get a Python
 installation with all the necessary dependencies for the Stoner Package is to install the *Enthought Python Distribution*,
 Canopy*. Installers for Windows, MacOS and Linux are kept in ``\\stonerlab\data\software\Python``
+
+The canonical source of the latest version is the master branch of the github archive. If you have git installed on your
+machine then::
+
+    pip install git+https://github.com/gb119/Stoner-PythonCode.git
+    
+should install the current master branch. Otherwise download the zip file from the github site and do::
+
+    python setup.py install
+    
+to insatall it locally.
 
 Using the Development Version of the Stoner Package
 ===================================================
@@ -88,4 +104,14 @@ summarises the examples in this user guide in the github repository.
    The code is still under active development to fix bugs and add features. Generally things don't
    get deliberately broken, but accidents happen, so if something stops working, please either fix and
    commit the code or tell Gavin.
+   
+Package Options
+===============
+
+The Stoner package supports a set of package level options to control preferences such as whether to show objects using 'rich'
+representations such as png or html output formats.::
+
+    from Stoner import set_option
+    set_option("short_repr",True) # set_option(options,True/False)
+    
 

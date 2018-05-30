@@ -16,19 +16,7 @@ regexpDict
 
    .. autosummary::
 
-      ~regexpDict.clear
-      ~regexpDict.copy
-      ~regexpDict.fromkeys
-      ~regexpDict.get
       ~regexpDict.has_key
-      ~regexpDict.items
-      ~regexpDict.keys
-      ~regexpDict.move_to_end
-      ~regexpDict.pop
-      ~regexpDict.popitem
-      ~regexpDict.setdefault
-      ~regexpDict.update
-      ~regexpDict.values
 
    .. rubric:: Attributes Documentation
 
@@ -36,16 +24,4 @@ regexpDict
 
    .. rubric:: Methods Documentation
 
-   .. automethod:: clear
-   .. automethod:: copy
-   .. automethod:: fromkeys
-   .. automethod:: get
    .. automethod:: has_key
-   .. automethod:: items
-   .. automethod:: keys
-   .. automethod:: move_to_end
-   .. automethod:: pop
-   .. automethod:: popitem
-   .. automethod:: setdefault
-   .. automethod:: update
-   .. automethod:: values

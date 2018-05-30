@@ -21,6 +21,7 @@ Stoner.FileFormats.QDFile
       ~Stoner.FileFormats.QDFile.columns
       ~Stoner.FileFormats.QDFile.count
       ~Stoner.FileFormats.QDFile.del_column
+      ~Stoner.FileFormats.QDFile.del_nan
       ~Stoner.FileFormats.QDFile.del_rows
       ~Stoner.FileFormats.QDFile.dir
       ~Stoner.FileFormats.QDFile.filter

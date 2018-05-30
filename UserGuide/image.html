@@ -62,64 +62,145 @@
             
   <div class="section" id="working-with-images">
 <h1>Working with Images<a class="headerlink" href="#working-with-images" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../Stoner.html#module-Stoner.Image" title="Stoner.Image"><code class="xref py py-mod docutils literal"><span class="pre">Stoner.Image</span></code></a> package provides a means to carry out image processing functions in a smilar way that <a class="reference internal" href="../Stoner.html#module-Stoner.Core" title="Stoner.Core"><code class="xref py py-mod docutils literal"><span class="pre">Stoner.Core</span></code></a> and <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Data</span></code></a> and
+<a class="reference internal" href="../classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.DataFolder</span></code></a> do. The <code class="xref py py-mod docutils literal"><span class="pre">Stomner.Image.core</span></code> module contains the key classes for achieving this.</p>
+</div>
+<div class="section" id="imagefile">
+<h2><code class="xref py py-class docutils literal"><span class="pre">ImageFile</span></code><a class="headerlink" href="#imagefile" title="Permalink to this headline">¶</a></h2>
+<p>This class inherits from <a class="reference internal" href="../classes/Stoner.Core.metadataObject.html#Stoner.Core.metadataObject" title="Stoner.Core.metadataObject"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.metadataObject</span></code></a> and is analagous to <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Data</span></code></a> but focussed on handling and manipulating grey scale
+images. The data is stored internally as an <code class="xref py py-class docutils literal"><span class="pre">ImageArray</span></code> attribute which inherits itself from numpy.ndarray type.
+<code class="xref py py-class docutils literal"><span class="pre">ImageFile</span></code> provides the same metadata faciltities as the general <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Data</span></code></a> and also contains load routines that allow it to extract
+certain metadata stored in image files.</p>
 <div class="section" id="loading-an-image">
-<h2>Loading an Image<a class="headerlink" href="#loading-an-image" title="Permalink to this headline">¶</a></h2>
-<p>Stoner now has classes available to work with data images. The class is inspired by skimage has pass through
-ability to most of the skimage functions. The images also have a metadata parameter similar to DataFile. To
-load an image:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">ImageArray</span>
-<span class="n">im</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="s1">&#39;my_image.png&#39;</span><span class="p">)</span>
-<span class="n">im2</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;myarray&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+<h3>Loading an Image<a class="headerlink" href="#loading-an-image" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="xref py py-class docutils literal"><span class="pre">ImageFile</span></code> constructor supports taking a string argument which is interpreted as a filename of an image format recognised by PIL. The resulting
+image data is used to form the contents of the <code class="xref py py-attr docutils literal"><span class="pre">ImageFile.image</span></code> which holds the image data.</p>
+<blockquote>
+<div>from Stoner.Image import ImageFile
+im = ImageFile(‘my_image.png’)</div></blockquote>
+<p>Like <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Data</span></code></a> <code class="xref py py-class docutils literal"><span class="pre">ImageFile</span></code> supports image metadata. Where this can be stored in the file, e.g. in png and tiff images, this is read in
+automatically. This metadata is stored as a <a class="reference internal" href="../classes/Stoner.Core.typeHintedDict.html#Stoner.Core.typeHintedDict" title="Stoner.Core.typeHintedDict"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.typeHintedDict</span></code></a> dictionary. This metadata can be set directly in the
+construction of the <code class="xref py py-class docutils literal"><span class="pre">ImageFile</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;myarray&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
 </pre></div>
 </div>
-<p>ImageArray inherits from numpy.ndarray and can be used in much the same way as a normal array. On top
-of this are added specific image functions</p>
 </div>
 <div class="section" id="examining-and-manipulating-the-imagearray">
-<h2>Examining and manipulating the ImageArray<a class="headerlink" href="#examining-and-manipulating-the-imagearray" title="Permalink to this headline">¶</a></h2>
+<h3>Examining and manipulating the ImageArray<a class="headerlink" href="#examining-and-manipulating-the-imagearray" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="local-functions-and-properties">
-<h3>Local functions and properties<a class="headerlink" href="#local-functions-and-properties" title="Permalink to this headline">¶</a></h3>
+<h4>Local functions and properties<a class="headerlink" href="#local-functions-and-properties" title="Permalink to this headline">¶</a></h4>
 <p>Typical start functions might be to convert the image into floating point form which is more precise than
 integer format and crop the image:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">asfloat</span><span class="p">()</span>
-<span class="n">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span> <span class="c1">#(xmin, xmax, ymin, ymax)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span><span class="o">.</span><span class="n">asfloat</span><span class="p">()</span>
+<span class="n">im</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span> <span class="c1">#(xmin, xmax, ymin, ymax)</span>
 <span class="n">copyofim</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">clone</span> <span class="c1">#behaviour similar to data file</span>
 </pre></div>
 </div>
-<p>Set a metadata item:</p>
+<p>#get a metadata item:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span><span class="p">[</span><span class="s1">&#39;mymeta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
 </pre></div>
 </div>
 <p>Then view parts of the array:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span><span class="p">[:,</span><span class="mi">10</span><span class="p">:</span><span class="mi">50</span><span class="p">]</span>
 <span class="n">im</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-<span class="n">im</span><span class="o">.</span><span class="n">imshow</span><span class="p">()</span>
+<span class="n">im</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Note that as with numpy arrays im[:,10:50] is a view onto the same memory space, so if you change stuff with this it will
-change in the ImageArray.</p>
 </div>
 <div class="section" id="further-functions">
-<h3>Further functions<a class="headerlink" href="#further-functions" title="Permalink to this headline">¶</a></h3>
-<p>Any functions called for that are not in the main class are searched for in imagefuncs and then passed through
-to the skimage library.</p>
+<h4>Further functions<a class="headerlink" href="#further-functions" title="Permalink to this headline">¶</a></h4>
 <p>Further functions that could be useful:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span><span class="o">.</span><span class="n">threshold_minmax</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.8</span><span class="p">)</span> <span class="c1">#returns a binary image</span>
-<span class="n">im</span><span class="o">.</span><span class="n">plot_histogram</span><span class="p">()</span> <span class="c1">#plot a histogram of the pixel intensities</span>
-<span class="n">im</span><span class="o">.</span><span class="n">level_image</span><span class="p">()</span> <span class="c1">#flatten a skewed image</span>
-<span class="n">im</span><span class="o">.</span><span class="n">subtract_image</span><span class="p">(</span><span class="n">otherim</span><span class="p">)</span> <span class="c1">#subtract another image and enhance contrast</span>
-<span class="n">im</span><span class="o">.</span><span class="n">correct_drift</span><span class="p">(</span><span class="n">otherim</span><span class="p">)</span> <span class="c1">#translate image to line up with other im</span>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="first docutils">
+<dt>im.threshold_minmax(0.2,0.8)</dt>
+<dd>Returns a binary image</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>im.plot_histogram()</dt>
+<dd>Plot a histogram of the pixel intensities</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>im.level_image()</dt>
+<dd>Flatten a skewed image background</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>im.subtract_image(otherim)</dt>
+<dd>Subtract another image and enhance contrast</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>im.align(otherim)</dt>
+<dd>Translate image to line up with other im</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="scikit-image-scipy-ndimage-functions">
+<h4>Scikit-Image &amp; scipy.ndimage Functions<a class="headerlink" href="#scikit-image-scipy-ndimage-functions" title="Permalink to this headline">¶</a></h4>
+<p>While many local analysis functions have been added to ImageFile one of the big benefits is that function proxy methods have been added to make the entire
+scikit-image library and scipy routines available. Function requests will first search local image functions and secondly look up any function from the external
+libraries. The proxy will pass the <code class="xref py py-attr docutils literal"><span class="pre">ImageFile.image</span></code> attribute as the first argument to any external call to a scikit-image or scipy function. The return value for such
+calls is handled a bit carefully:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><dl class="first docutils">
+<dt>If the return value is a 2d numpy.ndarray like type that has the same size as the original, or if the <em>_</em> keyword argument is set to <strong>True</strong> then the original</dt>
+<dd><code class="xref py py-attr docutils literal"><span class="pre">ImageFile.image</span></code> is replaced with the returned result.</dd>
+</dl>
+</li>
+<li>If the return value is anything else then it is simply passed back to the calling program.</li>
+</ol>
+</div></blockquote>
+<p>In this way, many operations can be carried out ‘in-place’ on a <code class="xref py py-class docutils literal"><span class="pre">ImageFile</span></code>. For example:</p>
+</div>
+</div>
+<div class="section" id="imagefile-representation">
+<h3>ImageFile Representation<a class="headerlink" href="#imagefile-representation" title="Permalink to this headline">¶</a></h3>
+<p>By default, the representation of an ImageFile is just a short textual description, however if the <em>short_repr&amp; and *short_img_repr</em> options
+are both set to False and a graphical console is in use with an ipython kernel, then th special _repr_png_ method will show a picture of the
+contents of the ImageFile instead.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>i = Stopner.Image.ImageFile(&quot;kermit.png&quot;)
+i
+&gt;&gt;&gt; kermit.png(&lt;class &#39;Stoner.Image.core.ImageFile&#39;&gt;) of shape (479, 359) (uint16) and 53 items of metadata
+from Stoner import set_option
+set_option(&quot;short_repr&quot;,False)
+set_option(&quot;shoft_img_repr&quot;,False)
+i
+&gt;&gt;&gt;
 </pre></div>
 </div>
+<img alt="../_images/kermit.png" src="../_images/kermit.png" />
+<p>Alternatively the <code class="xref py py-meth docutils literal"><span class="pre">ImageArray.imshow()</span></code> method (accessible to <code class="xref py py-class docutils literal"><span class="pre">ImagerFile</span></code>) will show the image data in a matplotlib window.</p>
 </div>
-<div class="section" id="skimage-functions">
-<h3>skimage functions<a class="headerlink" href="#skimage-functions" title="Permalink to this headline">¶</a></h3>
-<p>If we still haven’t had a hit the function is passed through to the skimage library and our image
-is given in as the first argument. For example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span><span class="o">.</span><span class="n">threshold_otsu</span><span class="p">(</span><span class="n">nbins</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span> <span class="c1">#pass through to skimage.filters.threshold_otsu</span>
+</div>
+<div class="section" id="imagearray-a-numpy-array-like-class">
+<h2><code class="xref py py-class docutils literal"><span class="pre">ImageArray</span></code>: A numpy array like class<a class="headerlink" href="#imagearray-a-numpy-array-like-class" title="Permalink to this headline">¶</a></h2>
+<p>Somewhat analogous to <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataArray</span></code></a>, the <code class="xref py py-class docutils literal"><span class="pre">ImageArray</span></code> is a specialised subclass of <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a> used to
+store the image data in ImageFile. The numpy.ndarray like data can be accessed at any point via either <code class="xref py py-attr docutils literal"><span class="pre">ImageFile.image</span></code> or <code class="xref py py-attr docutils literal"><span class="pre">ImageFile.data</span></code>
+and will be accepted by functions that take an numpy.ndarray as an argument.</p>
+</div>
+<div class="section" id="working-with-lots-of-images-imagefolder-and-imagestack2">
+<h2>Working with Lots of Images: <code class="xref py py-class docutils literal"><span class="pre">ImageFolder</span></code> and <code class="xref py py-class docutils literal"><span class="pre">ImageStack2</span></code><a class="headerlink" href="#working-with-lots-of-images-imagefolder-and-imagestack2" title="Permalink to this headline">¶</a></h2>
+<p>Just as <a class="reference internal" href="../classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.DataFolder</span></code></a> allows you to efficiently process lots of separate <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Data</span></code></a> files, <code class="xref py py-class docutils literal"><span class="pre">ImageFolder</span></code> does the same for lots
+of <code class="xref py py-class docutils literal"><span class="pre">ImageFile</span></code> files. It is based on the same parent <code class="xref py py-class docutils literal"><span class="pre">Stoner.Fodlers.baseFolder</span></code> class - so has similar abilities to iterate, form into
+sub-folders and so on. In addition, an <code class="xref py py-class docutils literal"><span class="pre">Imagefolder</span></code> has additional attributes and methods for working with multiple images.</p>
+<p>Due to the potentially large amount of data involved in processing images it is good to take advantage of native numpy’s speed wherever possible. To this end
+<a class="reference internal" href="../classes/Stoner.Image.ImageStack2.html#Stoner.Image.ImageStack2" title="Stoner.Image.ImageStack2"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Image.ImageStack2</span></code></a> is now available. This works very similarly to ImageFolder but internally represents the image stack as a 3d numpy array.
+For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">imst</span> <span class="o">=</span> <span class="n">ImageStack2</span><span class="p">(</span><span class="s1">&#39;pathtomyfolder&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.tif&#39;</span><span class="p">)</span> <span class="c1">#directory is held in memory but images are not loaded yet</span>
+<span class="n">imst</span> <span class="o">=</span> <span class="n">imst</span><span class="p">[</span><span class="s1">&#39;subfolder&#39;</span><span class="p">]</span> <span class="c1">#take advantage of :class:`DiskBasedFolder` grouping abilities</span>
+<span class="n">imst</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="c1">#instantiate the stack and translate all images</span>
 </pre></div>
 </div>
-</div>
+<p>You can request and manipulate this 3d array directly with the imarray property, alternatively you can ask for any function accepted by the underlying ImageFile
+(including the scikit-image and scipy library).</p>
 </div>
 </div>
 
@@ -135,13 +216,20 @@ is given in as the first argument. For example:</p>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Working with Images</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#imagefile"><code class="docutils literal"><span class="pre">ImageFile</span></code></a><ul>
 <li><a class="reference internal" href="#loading-an-image">Loading an Image</a></li>
 <li><a class="reference internal" href="#examining-and-manipulating-the-imagearray">Examining and manipulating the ImageArray</a><ul>
 <li><a class="reference internal" href="#local-functions-and-properties">Local functions and properties</a></li>
 <li><a class="reference internal" href="#further-functions">Further functions</a></li>
-<li><a class="reference internal" href="#skimage-functions">skimage functions</a></li>
+<li><a class="reference internal" href="#scikit-image-scipy-ndimage-functions">Scikit-Image &amp; scipy.ndimage Functions</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#imagefile-representation">ImageFile Representation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#imagearray-a-numpy-array-like-class"><code class="docutils literal"><span class="pre">ImageArray</span></code>: A numpy array like class</a></li>
+<li><a class="reference internal" href="#working-with-lots-of-images-imagefolder-and-imagestack2">Working with Lots of Images: <code class="docutils literal"><span class="pre">ImageFolder</span></code> and <code class="docutils literal"><span class="pre">ImageStack2</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -152,22 +240,20 @@ is given in as the first argument. For example:</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="cookbook.html"
                         title="next chapter">Cookbook</a></p>
-<div class="sourcelink">
-  <a href="../_sources/UserGuide/image.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/image.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -194,9 +280,9 @@ is given in as the first argument. For example:</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

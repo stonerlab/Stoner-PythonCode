@@ -40,6 +40,9 @@
       <li><a href="../../index.html">Stoner Package</a></li>
       <li>
         <a href="../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -52,19 +55,19 @@
             
   <h1>Source code for Stoner.Util</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Stoner.Utils - a module of some slightly experimental routines that use the Stoner classes</span>
+<span class="sd">&quot;&quot;&quot;Stoner.Utils - a module of some slightly experimental routines that use the Stoner classes</span>
 
 <span class="sd">Created on Tue Oct 08 20:14:34 2013</span>
 
 <span class="sd">@author: phygbu</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;split_up_down&quot;</span><span class="p">,</span><span class="s2">&quot;ordinal&quot;</span><span class="p">,</span><span class="s2">&quot;hysteresis_correct&quot;</span><span class="p">]</span>
 <span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="n">int_types</span>
 <span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="n">format_error</span>
-<span class="kn">import</span> <span class="nn">Stoner.Core</span>  <span class="k">as</span> <span class="nn">_SC_</span>
+<span class="kn">import</span> <span class="nn">Stoner.Core</span>  <span class="k">as</span> <span class="nn">_SC_</span>  <span class="c1"># pylint: disable=import-error</span>
 <span class="kn">from</span> <span class="nn">.Folders</span> <span class="k">import</span> <span class="n">DataFolder</span> <span class="k">as</span> <span class="n">_SF_</span>
 <span class="kn">from</span> <span class="nn">.Fit</span> <span class="k">import</span> <span class="n">linear</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="nb">max</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">diag</span><span class="p">,</span> <span class="n">argmax</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span><span class="n">array</span> <span class="c1">#pylint: disable=redefined-builtin</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">sem</span>
 
@@ -88,61 +91,6 @@
         <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;rising&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span> <span class="c1">#hack due to bug in sort wiping the setas info</span>
     <span class="k">return</span> <span class="n">ret</span>
 
-
-
-
-<div class="viewcode-block" id="split"><a class="viewcode-back" href="../../classes/Stoner.Util.split.html#Stoner.Util.split">[docs]</a><span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spliton</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Splits the DataFile data into several files where the column *col* is either rising or falling</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        data (:py:class:`Stoner.Core.DataFile`): object containign the data to be sorted</span>
-<span class="sd">        col (index): is something that :py:meth:`Stoner.Core.DataFile.find_col` can use</span>
-<span class="sd">        folder (:py:class:`Stoner.Folders.DataFolder` or None): if this is an instance of :py:class:`Stoner.Folders.DataFolder` then add</span>
-<span class="sd">            rising and falling files to groups of this DataFolder, otherwise create a new one</span>
-<span class="sd">        spliton (str or float): Define where to split the data, &#39;peak&#39; to split on peaks, &#39;trough&#39; to split</span>
-<span class="sd">            on troughs, &#39;both&#39; to split on peaks and troughs or number to split at that number</span>
-<span class="sd">        rising (bool): whether to split on threshold crossing when data is rising</span>
-<span class="sd">        falling (bool): whether to split on threshold crossing when data is falling</span>
-<span class="sd">        skip (int): skip this number of splitons each time. eg skip=1 picks out odd crossings</span>
-<span class="sd">    Returns:</span>
-<span class="sd">        A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">col</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
-    <span class="n">d</span><span class="o">=</span><span class="n">_SC_</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">_SF_</span><span class="p">):</span>  <span class="c1"># Create a new DataFolder object</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">_SF_</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">folder</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spliton</span><span class="p">,</span> <span class="n">int_types</span><span class="o">+</span><span class="p">(</span><span class="nb">float</span><span class="p">,)):</span>
-        <span class="n">spl</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">spliton</span><span class="p">),</span><span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span><span class="n">rising</span><span class="o">=</span><span class="n">rising</span><span class="p">,</span><span class="n">falling</span><span class="o">=</span><span class="n">falling</span><span class="p">,</span><span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="k">elif</span> <span class="n">spliton</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;peaks&#39;</span><span class="p">,</span><span class="s1">&#39;troughs&#39;</span><span class="p">,</span><span class="s1">&#39;both&#39;</span><span class="p">]:</span>
-        <span class="n">width</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span>
-        <span class="k">if</span> <span class="n">width</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Ensure the window for Satvisky Golay filter is odd</span>
-            <span class="n">width</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="n">spliton</span><span class="o">==</span><span class="s1">&#39;peaks&#39;</span><span class="p">:</span>
-            <span class="n">spl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">spliton</span><span class="o">==</span><span class="s1">&#39;troughs&#39;</span><span class="p">:</span>
-            <span class="n">spl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">spl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Did not recognise spliton&#39;</span><span class="p">)</span>
-
-    <span class="n">spl</span> <span class="o">=</span> <span class="p">[</span><span class="n">spl</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spl</span><span class="p">))</span> <span class="k">if</span> <span class="n">i</span><span class="o">%</span><span class="p">(</span><span class="n">skip</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">spl</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)])</span>
-    <span class="n">spl</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spl</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">tmp</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">clone</span>
-        <span class="n">tmp</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">tmp</span><span class="p">[</span><span class="n">spl</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span><span class="n">spl</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]]</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">output</span></div>
-
-
-
 <div class="viewcode-block" id="split_up_down"><a class="viewcode-back" href="../../classes/Stoner.Util.split_up_down.html#Stoner.Util.split_up_down">[docs]</a><span class="k">def</span> <span class="nf">split_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Splits the DataFile data into several files where the column *col* is either rising or falling</span>
 
@@ -155,7 +103,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">_SC_</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">_col_args</span><span class="p">()</span>
         <span class="n">col</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span>
@@ -164,14 +112,14 @@
         <span class="n">width</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="n">setas</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
     <span class="n">a</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
-    <span class="n">peaks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
-    <span class="n">troughs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">peaks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">ycol</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span><span class="n">full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">troughs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">ycol</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
     <span class="n">a</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">setas</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">troughs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1">#Ok more than up down here</span>
+    <span class="k">if</span> <span class="n">peaks</span> <span class="ow">and</span> <span class="n">troughs</span><span class="p">:</span>  <span class="c1">#Ok more than up down here</span>
         <span class="n">order</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">troughs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1">#Rise then fall</span>
+    <span class="k">elif</span> <span class="n">peaks</span><span class="p">:</span>  <span class="c1">#Rise then fall</span>
         <span class="n">order</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">troughs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Fall then rise</span>
+    <span class="k">elif</span> <span class="n">troughs</span><span class="p">:</span>  <span class="c1"># Fall then rise</span>
         <span class="n">order</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1">#No peaks or troughs so just return a single rising</span>
         <span class="n">ret</span><span class="o">=</span><span class="n">_SF_</span><span class="p">(</span><span class="n">readlist</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -250,7 +198,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_SC_</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="vm">__class__</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="bp">cls</span> <span class="o">=</span> <span class="n">_SC_</span><span class="o">.</span><span class="n">Data</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">Data</span>
     <span class="n">data</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="s2">&quot;setas&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span> <span class="c1"># Allow us to override the setas variable</span>
@@ -377,17 +325,13 @@
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+<form class="search" action="../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -402,13 +346,16 @@
       <li><a href="../../index.html">Stoner Package</a></li>
       <li>
         <a href="../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="PlotFolder" href="Stoner.Folders.PlotFolder.html" />
-    <link rel="prev" title="baseFolder" href="Stoner.Folders.baseFolder.html" />
+    <link rel="prev" title="DiskBasedFolder" href="Stoner.Folders.DiskBasedFolder.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
   <body>
@@ -37,7 +37,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Folders.baseFolder.html" title="Previous document">baseFolder</a>
+          <a href="Stoner.Folders.DiskBasedFolder.html" title="Previous document">DiskBasedFolder</a>
         </li>
         <li>
           <a href="Stoner.Folders.PlotFolder.html" title="Next document">PlotFolder</a>
@@ -49,7 +49,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -65,7 +65,17 @@
 <dl class="class">
 <dt id="Stoner.Folders.DataFolder">
 <em class="property">class </em><code class="descclassname">Stoner.Folders.</code><code class="descname">DataFolder</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#DataFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.DataFolder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DiskBssedFolder</span></code>, <a class="reference internal" href="Stoner.Folders.baseFolder.html#Stoner.Folders.baseFolder" title="Stoner.Folders.baseFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.baseFolder</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="Stoner.Folders.DiskBasedFolder.html#Stoner.Folders.DiskBasedFolder" title="Stoner.Folders.DiskBasedFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DiskBasedFolder</span></code></a>, <a class="reference internal" href="Stoner.Folders.baseFolder.html#Stoner.Folders.baseFolder" title="Stoner.Folders.baseFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.baseFolder</span></code></a></p>
+<p>Provide an interface to manipulating lots of data files stored within a directory structure on disc.</p>
+<p>By default, the members of the DataFolder are isntances of <a class="reference internal" href="Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Data</span></code></a>. The DataFolder emplys a lazy open strategy, so that
+files are only read in from disc when actually needed.</p>
+<img src="../_images/inheritance-13041374ebb3cc7cb1e53decf1d858c9bfa0bb6f.png" alt="Inheritance diagram of DataFolder" usemap="#inheritancebd3fb28729" class="inheritance"/>
+<map id="inheritancebd3fb28729" name="inheritancebd3fb28729">
+<area shape="rect" id="node1" href="#Stoner.Folders.DataFolder" target="_top" title="Provide an interface to manipulating lots of data files stored within a directory structure on disc." alt="" coords="665,29,765,43"/>
+<area shape="rect" id="node2" href="Stoner.Folders.DiskBasedFolder.html#Stoner.Folders.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="521,16,640,29"/>
+<area shape="rect" id="node3" href="Stoner.Folders.baseFolder.html#Stoner.Folders.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="530,42,630,55"/>
+<area shape="rect" id="node9" title="All the operations on a read&#45;only sequence." alt="" coords="249,42,346,55"/>
+</map>
 </dd></dl>
 
 </div>
@@ -80,27 +90,25 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Folders.baseFolder.html"
-                        title="previous chapter">baseFolder</a></p>
+  <p class="topless"><a href="Stoner.Folders.DiskBasedFolder.html"
+                        title="previous chapter">DiskBasedFolder</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Folders.PlotFolder.html"
                         title="next chapter">PlotFolder</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Folders.DataFolder.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Folders.DataFolder.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -110,7 +118,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Folders.baseFolder.html" title="Previous document">baseFolder</a>
+          <a href="Stoner.Folders.DiskBasedFolder.html" title="Previous document">DiskBasedFolder</a>
         </li>
         <li>
           <a href="Stoner.Folders.PlotFolder.html" title="Next document">PlotFolder</a>
@@ -122,14 +130,14 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -21,6 +21,7 @@ Stoner.FileFormats.VSMFile
       ~Stoner.FileFormats.VSMFile.columns
       ~Stoner.FileFormats.VSMFile.count
       ~Stoner.FileFormats.VSMFile.del_column
+      ~Stoner.FileFormats.VSMFile.del_nan
       ~Stoner.FileFormats.VSMFile.del_rows
       ~Stoner.FileFormats.VSMFile.dir
       ~Stoner.FileFormats.VSMFile.filter

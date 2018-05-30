@@ -25,6 +25,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="hist" href="Stoner.Image.imagefuncs.hist.html" />
+    <link rel="prev" title="filter_image" href="Stoner.Image.imagefuncs.filter_image.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head>
   <body>
@@ -35,6 +36,10 @@
   <nav id="rellinks">
     <ul>
         <li>
+          &larr;
+          <a href="Stoner.Image.imagefuncs.filter_image.html" title="Previous document">filter_image</a>
+        </li>
+        <li>
           <a href="Stoner.Image.imagefuncs.hist.html" title="Next document">hist</a>
           &rarr;
         </li>
@@ -44,7 +49,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -60,7 +65,7 @@
 <dl class="function">
 <dt id="Stoner.Image.imagefuncs.gridimage">
 <code class="descclassname">Stoner.Image.imagefuncs.</code><code class="descname">gridimage</code><span class="sig-paren">(</span><em>im</em>, <em>points=None</em>, <em>xi=None</em>, <em>method='linear'</em>, <em>fill_value=1.0</em>, <em>rescale=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#gridimage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.gridimage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html#scipy.interpolate.griddata" title="(in SciPy v1.0.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.interpolate.griddata()</span></code></a> to shift the image to a regular grid of co-ordinates.</p>
+<dd><p>Use <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html#scipy.interpolate.griddata" title="(in SciPy v1.1.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.interpolate.griddata()</span></code></a> to shift the image to a regular grid of co-ordinates.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -76,7 +81,7 @@
 <li><strong>method</strong> (<em>&quot;linear&quot;</em><em>,</em><em>&quot;cubic&quot;</em><em>,</em><em>&quot;nearest&quot;</em>) – how to interpolate, default is linear</li>
 <li><strong>fill_value</strong> (<em>folat</em>) – What to put when the co-ordinates go out of range (default is 1.0). May be a callable in which
 case the initial image is presented as the only argument</li>
-<li><strong>rescale</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If the x and y co-ordinates are very different in scale, set this to True.</li>
+<li><strong>rescale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – If the x and y co-ordinates are very different in scale, set this to True.</li>
 </ul>
 </td>
 </tr>
@@ -105,25 +110,26 @@ after it has been corrected once.</p>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Image.imagefuncs.filter_image.html"
+                        title="previous chapter">filter_image</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Image.imagefuncs.hist.html"
                         title="next chapter">hist</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Image.imagefuncs.gridimage.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Image.imagefuncs.gridimage.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -131,6 +137,10 @@ after it has been corrected once.</p>
   <div class="related bottom">
   <nav id="rellinks">
     <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Image.imagefuncs.filter_image.html" title="Previous document">filter_image</a>
+        </li>
         <li>
           <a href="Stoner.Image.imagefuncs.hist.html" title="Next document">hist</a>
           &rarr;
@@ -141,14 +151,14 @@ after it has been corrected once.</p>
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

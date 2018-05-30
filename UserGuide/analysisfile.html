@@ -108,7 +108,7 @@ This is typically used to calculate asymmetry parameters.:</p>
 </pre></div>
 </div>
 <p>Of course, these elementary operations might look rather pointless given how easy it is to extract single columns of data and then add them to a
-<a class="reference internal" href="../classes/Stoner.Core.Data.html#Stoner.Core.Data" title="Stoner.Core.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code></a> object, however if the cahnnels are specified as a <strong>tuple</strong> of two elements, then it is taken as a channel of data and a
+<code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code> object, however if the cahnnels are specified as a <strong>tuple</strong> of two elements, then it is taken as a channel of data and a
 second channel of uncertainities. The uncertainity calculation is then propagated correctly for the maths operations. This is particularly useful for the
 <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.diffsum" title="Stoner.Analysis.AnalysisMixin.diffsum"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.diffsum()</span></code></a> method where the error propagation is not entirely trivial.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Demonstrate Channel math operations.&quot;&quot;&quot;</span>
@@ -174,7 +174,7 @@ the Stoner package. The routine will fit multiple columns if <em>column_y</em>
 is a list or slice. The <em>polynomial_order</em> parameter should be a simple integer
 greater or equal to 1 to define the degree of polynomial to fit. The <em>bounds</em>
 function follows the same rules as the <em>bounds</em> function in
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.search()</span></code></a> to restrict the fitting to a limited range of rows. The
+<code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.search()</span></code> to restrict the fitting to a limited range of rows. The
 method returns a list of coefficients with the highest power first. If
 <em>column_y</em> was a list, then a 2D array of coefficients is returned.</p>
 <p>If <em>result</em> is specified then a new column with the header given by the <em>result</em> parameter will be
@@ -206,7 +206,7 @@ and <em>header</em> parameters. If <em>result</em> is a string or integer it is 
 index at which the fitted data will be inserted (<em>replace</em> <strong>False</strong>) or overwritten over the existing data (<em>replace</em> <strong>True</strong>).
 The fitted data will be given the column header <em>header</em> unless <em>header</em> is not a string, in which ase the column
 will be called ‘Fitted with ‘ and the name of the function <em>func</em>.</p>
-<p>The utility method of the <a class="reference internal" href="../classes/Stoner.Core.Data.html#Stoner.Core.Data" title="Stoner.Core.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code></a>, <code class="xref py py-meth docutils literal"><span class="pre">Stoner.Util.Data.annotate_fit()</span></code> is useful
+<p>The utility method of the <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">Stoner.Util.Data.annotate_fit()</span></code> is useful
 for adding appropriately formatted details of the fit to the plot.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;USe curve_fit to fit a straight line.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
@@ -234,7 +234,7 @@ points in x,y,z space are fitted to a plane.</p>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">column_stack</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">column_stack</span><span class="p">,</span><span class="n">row_stack</span>
 <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="kn">as</span> <span class="nn">cmap</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
@@ -252,11 +252,11 @@ points in x,y,z space are fitted to a plane.</p>
 
 <span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span><span class="s2">&quot;Z&quot;</span><span class="p">]</span>
 <span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s2">&quot;scatter&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s2">&quot;scatter&quot;</span><span class="p">)</span>
 
-<span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
+<span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy.z&quot;</span>
+
 <span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">)</span>
 
 <span class="n">txt</span><span class="o">=</span><span class="s2">&quot;$z=c-ax+by$</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -266,6 +266,10 @@ points in x,y,z space are fitted to a plane.</p>
 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="n">txt</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/curvefit_plane.png">png</a>, <a class="reference external" href="../samples/curvefit_plane.hires.png">hires.png</a>, <a class="reference external" href="../samples/curvefit_plane.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/curvefit_plane.png" src="../_images/curvefit_plane.png" />
 </div>
 <p>Finally, by you can sepcify the <em>y-data</em> to fit to as a numpy array. This can be used to fit functions that
 don’t themseleves return values that can be matched up to existing data. An example of doing this is fitting a
@@ -324,16 +328,16 @@ sphere to a set of <span class="math">\((x,y,z)\)</span> data points.</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/sphere_fit.png">png</a>, <a class="reference external" href="../samples/sphere_fit.hires.png">hires.png</a>, <a class="reference external" href="../samples/sphere_fit.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/curvefit_sphere.png">png</a>, <a class="reference external" href="../samples/curvefit_sphere.hires.png">hires.png</a>, <a class="reference external" href="../samples/curvefit_sphere.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/sphere_fit.png" src="../_images/sphere_fit.png" />
+<img alt="../_images/curvefit_sphere.png" src="../_images/curvefit_sphere.png" />
 </div>
 <p>See also <a class="reference internal" href="cookbook.html#fitting-tricks"><span class="std std-ref">Fitting Tricks</span></a></p>
 </div>
 <div class="section" id="fitting-with-limits">
 <span id="id1"></span><h3>Fitting with limits<a class="headerlink" href="#fitting-with-limits" title="Permalink to this headline">¶</a></h3>
 <p>The Stoner package has a number of alternative fitting mechanisms that supplement the standard
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v1.0.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.curve_fit()</span></code></a> function. New in version 0.2 onwards of the Package is an interface to the
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v1.1.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.curve_fit()</span></code></a> function. New in version 0.2 onwards of the Package is an interface to the
 <em>lmfit</em> module.</p>
 <div class="section" id="non-linear-curve-fitting-with-lmfit">
 <h4>Non-linear curve fitting with lmfit<a class="headerlink" href="#non-linear-curve-fitting-with-lmfit" title="Permalink to this headline">¶</a></h4>
@@ -637,7 +641,7 @@ defined by the window function. This is handled by the <a class="reference inter
 </pre></div>
 </div>
 <p>In both these examples, the data to be smoothed is determined from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.
-The first argument is passed to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.0.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
+The first argument is passed to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.1.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
 can either be an integer to sepcify the number of rows in the window, or a float to specify the size of the window in
 terms of the x data. In the latter case, the data is first reinterpolated to an evenly space set in terms of the x-column
 and then smoothed and then reinterpolated back to the original x data co-ordinates.</p>
@@ -646,7 +650,7 @@ and then smoothed and then reinterpolated back to the original x data co-ordinat
 <p class="last">This will fail for hysteretic data. In this case it would be better to use an integer size argument and to ensure
 the data is evenly spaced to start with.</p>
 </div>
-<p>The <em>result</em> and <em>replace</em> arguments are passed through to <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.add_column()</span></code></a> unless <em>replace</em>
+<p>The <em>result</em> and <em>replace</em> arguments are passed through to <code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.add_column()</span></code> unless <em>replace</em>
 is <strong>False</strong> in which case, the smoothed data is passed back as the return value and the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>
 is left unmodified.</p>
 </div></blockquote>
@@ -708,9 +712,9 @@ and effective, but does reduce the length of the data !</p>
 <span class="n">d2</span><span class="o">.</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.4</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Smoothing_Data.png">png</a>, <a class="reference external" href="../samples/Smoothing_Data.hires.png">hires.png</a>, <a class="reference external" href="../samples/Smoothing_Data.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/smooth.png">png</a>, <a class="reference external" href="../samples/smooth.hires.png">hires.png</a>, <a class="reference external" href="../samples/smooth.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/Smoothing_Data.png" src="../_images/Smoothing_Data.png" />
+<img alt="../_images/smooth.png" src="../_images/smooth.png" />
 </div>
 </div>
 <div class="section" id="stitching-datasets-together">
@@ -903,9 +907,9 @@ less equal significance. By default, only peaks are returned in order of x posit
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/peaks_example.png">png</a>, <a class="reference external" href="../samples/peaks_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/peaks_example.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/peaks.png">png</a>, <a class="reference external" href="../samples/peaks.hires.png">hires.png</a>, <a class="reference external" href="../samples/peaks.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/peaks_example.png" src="../_images/peaks_example.png" />
+<img alt="../_images/peaks.png" src="../_images/peaks.png" />
 </div>
 </div>
 </div>
@@ -959,22 +963,20 @@ less equal significance. By default, only peaks are returned in order of x posit
   <h4>Next topic</h4>
   <p class="topless"><a href="datafolder.html"
                         title="next chapter">Working with Lots of Files</a></p>
-<div class="sourcelink">
-  <a href="../_sources/UserGuide/analysisfile.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/analysisfile.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -1001,9 +1003,9 @@ less equal significance. By default, only peaks are returned in order of x posit
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.6.6
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

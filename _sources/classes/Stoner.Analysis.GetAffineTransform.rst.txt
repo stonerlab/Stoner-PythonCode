@@ -1,0 +1,6 @@
+GetAffineTransform
+==================
+
+.. currentmodule:: Stoner.Analysis
+
+.. autofunction:: GetAffineTransform

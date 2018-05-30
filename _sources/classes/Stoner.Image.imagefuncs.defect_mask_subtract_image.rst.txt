@@ -1,6 +1,0 @@
-defect_mask_subtract_image
-==========================
-
-.. currentmodule:: Stoner.Image.imagefuncs
-
-.. autofunction:: defect_mask_subtract_image
