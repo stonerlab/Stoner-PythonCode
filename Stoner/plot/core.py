@@ -1407,6 +1407,20 @@ class PlotMixin(object):
             self._subplots.extend([None for i in range(rows * cols - len(self._subplots))])
         self._subplots[index - 1] = sp
         return sp
+    
+    def subplot2grid(self,*args,**kargs):
+        
+        """Pass through to :py:func:`matplotlib.pyplot.subplot2grid`."""
+       
+        if self.__figure is None:
+            self.figure()
+
+        figure, ax = self.template.new_figure(self.__figure.number)
+        
+        plt.figure(figure.number)
+        ret=plt.subplot2grid(*args,**kargs)
+        return ret
+        
 
     def x2(self):
         """Generate a new set of axes with a second x-scale.
