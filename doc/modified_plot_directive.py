@@ -468,11 +468,9 @@ def out_of_date(original, derived):
     Returns True if derivative is out-of-date wrt original,
     both of which are full file paths.
     """
-    ret=(not os.path.exists(derived) or
-            (os.path.exists(original) and
-             os.stat(derived).st_mtime < os.stat(original).st_mtime))
+    ret=not os.path.exists(derived) or "READTHEDOCS" not in os.environ
     if ret:
-        print("{} out of data from {}".format(original,derived))
+        print("{} out of date from {}".format(original,derived))
     return ret
 
 

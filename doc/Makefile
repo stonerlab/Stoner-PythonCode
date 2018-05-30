@@ -48,6 +48,8 @@ html: readme
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+	find $(BUILDDIR)/plot_directive/ -type f -exec cp {} plot_cache \;
+	git add plot_cache/*
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
