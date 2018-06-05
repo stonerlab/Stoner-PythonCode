@@ -16,4 +16,6 @@ fit=d.odr(model,result=True,header="odr")
 d.plot_xy(0,[2,1],["r-","bo"]) # plot the data
 d.annotate_fit(model,x=-25,y=1.02,fontdict={"size":"x-small"})
 
-fit.pprint()
+fit=d.lmfit(model,result=True,header="lmfit")
+d.plot_xy(0, "lmfit","g-")
+d.annotate_fit(model,x=-25,y=1.05,fontdict={"size":"x-small"})

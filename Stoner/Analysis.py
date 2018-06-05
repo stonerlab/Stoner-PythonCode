@@ -61,6 +61,7 @@ class _odr_Model(odrModel):
             model=model()
         if isinstance(model,Model):
             self.model=model
+            self.func=model.func
             model=lambda beta,x,**kargs: self.model.func(x,*beta,**kargs)
             meta["param_names"]=self.model.param_names
             meta["name"]=self.model.__class__.__name__
@@ -71,9 +72,11 @@ class _odr_Model(odrModel):
             meta["param_names"]=list(arguments[1:])
             #print(arguments,carargs,jeywords,defaults)
             func=model
+            self.func=model
             def model(beta,x,**_): # pylint: disable=E0102
                 """Warapper for model function."""
                 return func(x,*beta)
+        meta["__name__"]=meta["name"]
         p0=kargs.pop("p0",kargs.pop("estimate",None))
         if p0 is None or len(p0)!=len(meta["param_names"]):
             p0=list()
@@ -150,8 +153,6 @@ def _prep_lmfit_model(model,p0,kargs):
         raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
 
     prefix = str(kargs.pop("prefix",  model.__class__.__name__))
-    if prefix!="":
-        prefix+=":"
 
     return model,p0,prefix
 
@@ -552,15 +553,15 @@ class AnalysisMixin(object):
             popt=[x.value for x in fit.params.values()]
             perr=[x.stderr for x in fit.params.values()]
             
-            self._record_curve_fit_result(model,popt,perr,xcol,header,result,replace,residuals,ydata)
+            self._record_curve_fit_result(model,popt,perr,xcol,header,result,replace,residuals,ydata,prefix=prefix)
 
             for p in fit.params:
                 row.extend([fit.params[p].value, fit.params[p].stderr])
                 ch.extend([p,"{}.stderr".format(p)])
-            self["{}chi^2".format(prefix)] = fit.chisqr
+            self["{}:chi^2".format(prefix)] = fit.redchi
             ch.append("$\\chi^2$")
-            row.append(fit.chisqr)
-            self["{}nfev".format(prefix)] = fit.nfev
+            row.append(fit.redchi)
+            self["{}nfev:".format(prefix)] = fit.nfev
             retval = {"fit": fit, "row": DataArray(row,column_headers=ch), "full": (fit, row),"data":self}
             if output not in retval:
                 raise RuntimeError("Failed to recognise output format:{}".format(output))
@@ -569,13 +570,21 @@ class AnalysisMixin(object):
         else:
             raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
 
-    def _record_curve_fit_result(self,func,popt,perr,xcol,header,result,replace,residuals=False,ydata=None):
+    def _record_curve_fit_result(self,func,popt,perr,xcol,header,result,replace,residuals=False,ydata=None,prefix=None):
         """Annotate the DataFile object with the curve_fit result."""
-        if isinstance(func,lmfit.Model):
+        if isinstance(func,(lmfit.Model)):
             f_name=func.__class__.__name__
+            func=func.func
+        elif isclass(func) and issubclass(func,lmfit.Model):
+            f_name=func.__name__
+            func=func.func
+        elif isinstance(func,(_sp_.odr.Model)):
+            f_name=func.__name__
             func=func.func
         else:
             f_name=func.__name__
+        if prefix is not None:
+            f_name=prefix
         args = getfullargspec(func)[0] # pylint: disable=W1505
 
         for val,err,name in zip(popt,perr,args[1:]):
@@ -602,12 +611,20 @@ class AnalysisMixin(object):
             new_col=func(self.column(xcol),*popt)
         self.add_column(new_col,index=result, replace=replace, header=header)
         if residuals:
-            residuals=ydata-new_col
-            if result is not None:
-                result=self.find_col(result)+1
-            self.add_column(residuals,index=result, replace=replace, header=header+":residuals")
+            residual_vals=ydata-new_col
+            if isinstance(residuals,bool) and residuals:
+                if result is None:
+                    residuals_idx=None
+                else:
+                    residuals_idx=self.find_col(result)+1
+            else:
+                residuals_idx=residuals
+            self.add_column(residual_vals,index=residuals_idx, replace=False, header=header+":residuals")
             self["{}:mean residual".format(func.__name__)]=_np_.mean(residuals)
             self["{}:std residual".format(func.__name__)] = _np_.std(residuals)
+            chi2=(residual_vals**2).sum()
+            nfree=len(self)-len(popt)
+            self["{}chi^2".format(func.__name__)] = chi2/nfree
                 
         self.mask=tmp_mask
 
@@ -929,6 +946,7 @@ class AnalysisMixin(object):
         replace = kargs.pop("replace", False)
         header = kargs.pop("header", None)
         residuals = kargs.pop("residuals",False)
+        prefix=kargs.pop("prefix",None)
 
         #Support either scale_covar or absolute_sigma, the latter wins if both supplied
         #If neither are specified, then if sigma is not given, absolute sigma will be False.
@@ -969,7 +987,7 @@ class AnalysisMixin(object):
                 popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs)
             perr=_np_.sqrt(_np_.diag(pcov))
             if result is not None:
-                self._record_curve_fit_result(func,popt,perr,xcol,header,result,replace,residuals=residuals,ydata=ydata)
+                self._record_curve_fit_result(func,popt,perr,xcol,header,result,replace,residuals=residuals,ydata=ydata,prefix=prefix)
             row = _np_.array([])
             for val,err in zip(popt,perr):
                 row = _np_.append(row, [val,err])
@@ -1767,6 +1785,7 @@ class AnalysisMixin(object):
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
         header = kargs.pop("header", None)
+        residuals=kargs.pop("residuals",False)
         # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
         absolute_sigma = kargs.pop("absolute_sigma", True)
         kargs.pop("scale_covar", not absolute_sigma)
@@ -1789,7 +1808,6 @@ class AnalysisMixin(object):
             prefix=str(model.name)
         else:
             prefix=str(prefix)
-        prefix="{}:".format(prefix)
         #Get the inital guess if possible
         kargs.pop("p0",getattr(model,"p0",None))
 
@@ -1826,6 +1844,9 @@ class AnalysisMixin(object):
         delta,eps=fit_result.delta,fit_result.eps
         chi_square=_np_.sum(delta**2/_np_.abs(fit_result.xplus))+_np_.sum(eps**2/_np_.abs(fit_result.y))
 
+        self._record_curve_fit_result(model,popt,perr,_.xcol,header,result,replace,residuals,ydata,prefix=prefix)
+
+
         row = []
         # Store our current mask, calculate new column's mask and turn off mask
         tmp_mask=self.mask
@@ -1847,10 +1868,7 @@ class AnalysisMixin(object):
         if param_names is None:
             param_names=["Parameter {}".format(i+1) for i in range(len(popt))]
         for i,p in enumerate(param_names):
-            self["{}{}".format(prefix, p)] = popt[i]
-            self["{}{} err".format(prefix, p)] = perr[i]
             row.extend([popt[i],perr[i]])
-        self["{}chi^2".format(prefix)]=chi_square
         row.append(chi_square)
         retval = {"fit": fit_result, "row": row, "full": (fit_result, row),"data":self}
         if output not in retval:
