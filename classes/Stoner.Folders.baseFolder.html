@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>baseFolder &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -27,8 +19,7 @@
     <link rel="next" title="DiskBasedFolder" href="Stoner.Folders.DiskBasedFolder.html" />
     <link rel="prev" title="errorfill" href="Stoner.plot.utils.errorfill.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  </head>
-  <body>
+  </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
         Stoner Pacakge API Documentation
     </a></h1></header>
@@ -49,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -65,7 +56,7 @@
 <dl class="class">
 <dt id="Stoner.Folders.baseFolder">
 <em class="property">class </em><code class="descclassname">Stoner.Folders.</code><code class="descname">baseFolder</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#baseFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.baseFolder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableSequence" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">collections.abc.MutableSequence</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableSequence" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableSequence</span></code></a></p>
 <p>A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.</p>
 <dl class="attribute">
 <dt id="Stoner.Folders.baseFolder.groups">
@@ -100,7 +91,7 @@ type (subclass of metadtaObject): the class of objects sotred in this folder</dd
 </dl>
 <p class="rubric">Notes</p>
 <p>A baseFolder is a multable sequence object that should store a mapping of instances of some sort of data object (typically a
-<code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.metadataobject</span></code>) which can be iterated over in a reproducible and predicatable way as well as being accessed by a key. The
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataobject</span></code>) which can be iterated over in a reproducible and predicatable way as well as being accessed by a key. The
 other requirement is that it stores a mapping to objects of its own type to allow an in-memory tree object to be constructed.</p>
 <p>Additional functionality is built in by providing mixin classes that override the accessors for the data object store. Minimally this should include</p>
 <ul class="simple">
@@ -167,14 +158,14 @@ other requirement is that it stores a mapping to objects of its own type to allo
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.6
+      1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

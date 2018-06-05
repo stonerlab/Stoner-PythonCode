@@ -55,4 +55,27 @@ Stoner.FileFormats.BNLFile
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.BNLFile.T
+      ~Stoner.FileFormats.BNLFile.basename
+      ~Stoner.FileFormats.BNLFile.clone
+      ~Stoner.FileFormats.BNLFile.column_headers
+      ~Stoner.FileFormats.BNLFile.data
+      ~Stoner.FileFormats.BNLFile.dict_records
+      ~Stoner.FileFormats.BNLFile.dims
+      ~Stoner.FileFormats.BNLFile.dtype
+      ~Stoner.FileFormats.BNLFile.filename
+      ~Stoner.FileFormats.BNLFile.mask
+      ~Stoner.FileFormats.BNLFile.metadata
+      ~Stoner.FileFormats.BNLFile.mime_type
+      ~Stoner.FileFormats.BNLFile.patterns
+      ~Stoner.FileFormats.BNLFile.priority
+      ~Stoner.FileFormats.BNLFile.records
+      ~Stoner.FileFormats.BNLFile.setas
+      ~Stoner.FileFormats.BNLFile.shape
+      ~Stoner.FileFormats.BNLFile.subclasses
+   
    

@@ -55,4 +55,27 @@ Stoner.FileFormats.EasyPlotFile
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.EasyPlotFile.T
+      ~Stoner.FileFormats.EasyPlotFile.basename
+      ~Stoner.FileFormats.EasyPlotFile.clone
+      ~Stoner.FileFormats.EasyPlotFile.column_headers
+      ~Stoner.FileFormats.EasyPlotFile.data
+      ~Stoner.FileFormats.EasyPlotFile.dict_records
+      ~Stoner.FileFormats.EasyPlotFile.dims
+      ~Stoner.FileFormats.EasyPlotFile.dtype
+      ~Stoner.FileFormats.EasyPlotFile.filename
+      ~Stoner.FileFormats.EasyPlotFile.mask
+      ~Stoner.FileFormats.EasyPlotFile.metadata
+      ~Stoner.FileFormats.EasyPlotFile.mime_type
+      ~Stoner.FileFormats.EasyPlotFile.patterns
+      ~Stoner.FileFormats.EasyPlotFile.priority
+      ~Stoner.FileFormats.EasyPlotFile.records
+      ~Stoner.FileFormats.EasyPlotFile.setas
+      ~Stoner.FileFormats.EasyPlotFile.shape
+      ~Stoner.FileFormats.EasyPlotFile.subclasses
+   
    

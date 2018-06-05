@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>PlotMixin &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -27,8 +19,7 @@
     <link rel="next" title="TexFormatter" href="Stoner.plot.formats.TexFormatter.html" />
     <link rel="prev" title="PlotFile" href="Stoner.plot.PlotFile.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  </head>
-  <body>
+  </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
         Stoner Pacakge API Documentation
     </a></h1></header>
@@ -49,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -65,14 +56,14 @@
 <dl class="class">
 <dt id="Stoner.plot.PlotMixin">
 <em class="property">class </em><code class="descclassname">Stoner.plot.</code><code class="descname">PlotMixin</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>A mixin class that works with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> to add additional plotting functionality.</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A mixin class that works with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> to add additional plotting functionality.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>args</strong> (<em>tuple</em>) – Arguements to pass to <code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.__init__()</span></code></li>
+<li><strong>args</strong> (<em>tuple</em>) – Arguements to pass to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.__init__()</span></code></li>
 <li><strong>kargs</strong> (<em>dict</em>) – keyword arguments to pass to  DataFile.__init__</li>
 </ul>
 </td>
@@ -124,7 +115,7 @@
 <dl class="attribute">
 <dt id="Stoner.plot.PlotMixin.template">
 <code class="descname">template</code><a class="headerlink" href="#Stoner.plot.PlotMixin.template" title="Permalink to this definition">¶</a></dt>
-<dd><p><code class="xref py py-class docutils literal"><span class="pre">Sonter.plot.formats.DefaultPlotStyle</span></code> or instance – A plot style template subclass or object that determines the format and appearance of plots.</p>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Sonter.plot.formats.DefaultPlotStyle</span></code> or instance – A plot style template subclass or object that determines the format and appearance of plots.</p>
 </dd></dl>
 
 <p class="rubric">Attributes Summary</p>
@@ -134,40 +125,40 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.ax" title="Stoner.plot.PlotMixin.ax"><code class="xref py py-obj docutils literal"><span class="pre">ax</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.ax" title="Stoner.plot.PlotMixin.ax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ax</span></code></a></td>
 <td>Return the current axis number.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.axes" title="Stoner.plot.PlotMixin.axes"><code class="xref py py-obj docutils literal"><span class="pre">axes</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.axes" title="Stoner.plot.PlotMixin.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axes</span></code></a></td>
 <td>Return  the current axes object.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.fig" title="Stoner.plot.PlotMixin.fig"><code class="xref py py-obj docutils literal"><span class="pre">fig</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.fig" title="Stoner.plot.PlotMixin.fig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fig</span></code></a></td>
 <td>Get the current figure.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.fignum" title="Stoner.plot.PlotMixin.fignum"><code class="xref py py-obj docutils literal"><span class="pre">fignum</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.fignum" title="Stoner.plot.PlotMixin.fignum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fignum</span></code></a></td>
 <td>Return the current figure number.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.labels" title="Stoner.plot.PlotMixin.labels"><code class="xref py py-obj docutils literal"><span class="pre">labels</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.labels" title="Stoner.plot.PlotMixin.labels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">labels</span></code></a></td>
 <td>Return the labels for the plot columns</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.legend" title="Stoner.plot.PlotMixin.legend"><code class="xref py py-obj docutils literal"><span class="pre">legend</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.legend" title="Stoner.plot.PlotMixin.legend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">legend</span></code></a></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.multiple" title="Stoner.plot.PlotMixin.multiple"><code class="xref py py-obj docutils literal"><span class="pre">multiple</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.multiple" title="Stoner.plot.PlotMixin.multiple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiple</span></code></a></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.no_fmt" title="Stoner.plot.PlotMixin.no_fmt"><code class="xref py py-obj docutils literal"><span class="pre">no_fmt</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.no_fmt" title="Stoner.plot.PlotMixin.no_fmt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">no_fmt</span></code></a></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.positional_fmt" title="Stoner.plot.PlotMixin.positional_fmt"><code class="xref py py-obj docutils literal"><span class="pre">positional_fmt</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.positional_fmt" title="Stoner.plot.PlotMixin.positional_fmt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">positional_fmt</span></code></a></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.showfig" title="Stoner.plot.PlotMixin.showfig"><code class="xref py py-obj docutils literal"><span class="pre">showfig</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.showfig" title="Stoner.plot.PlotMixin.showfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showfig</span></code></a></td>
 <td>Returns either the current figure or self or None, depeding on whether the attribute is True or False or None.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.subplots" title="Stoner.plot.PlotMixin.subplots"><code class="xref py py-obj docutils literal"><span class="pre">subplots</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.subplots" title="Stoner.plot.PlotMixin.subplots"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplots</span></code></a></td>
 <td>Return the subplot instances.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.template" title="Stoner.plot.PlotMixin.template"><code class="xref py py-obj docutils literal"><span class="pre">template</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.template" title="Stoner.plot.PlotMixin.template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">template</span></code></a></td>
 <td>Return the current plot template.</td>
 </tr>
 </tbody>
@@ -179,58 +170,58 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.add_column" title="Stoner.plot.PlotMixin.add_column"><code class="xref py py-obj docutils literal"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;header,&nbsp;index])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.add_column" title="Stoner.plot.PlotMixin.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;header,&nbsp;index])</td>
 <td>Appends a column of data or inserts a column to a datafile instance.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.colormap_xyz" title="Stoner.plot.PlotMixin.colormap_xyz"><code class="xref py py-obj docutils literal"><span class="pre">colormap_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.colormap_xyz" title="Stoner.plot.PlotMixin.colormap_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colormap_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol])</td>
 <td>An xyz plot that forces the use of plt.contour.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.contour_xyz" title="Stoner.plot.PlotMixin.contour_xyz"><code class="xref py py-obj docutils literal"><span class="pre">contour_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.contour_xyz" title="Stoner.plot.PlotMixin.contour_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contour_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;…])</td>
 <td>An xyz plot that forces the use of plt.contour.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.figure" title="Stoner.plot.PlotMixin.figure"><code class="xref py py-obj docutils literal"><span class="pre">figure</span></code></a>([figure,&nbsp;projection])</td>
-<td>Set the figure used by <a class="reference internal" href="#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal"><span class="pre">Stoner.plot.PlotMixin</span></code></a>.</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.figure" title="Stoner.plot.PlotMixin.figure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">figure</span></code></a>([figure,&nbsp;projection])</td>
+<td>Set the figure used by <a class="reference internal" href="#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin</span></code></a>.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.griddata" title="Stoner.plot.PlotMixin.griddata"><code class="xref py py-obj docutils literal"><span class="pre">griddata</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.griddata" title="Stoner.plot.PlotMixin.griddata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">griddata</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;…])</td>
 <td>Function to convert xyz data onto a regular grid.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.image_plot" title="Stoner.plot.PlotMixin.image_plot"><code class="xref py py-obj docutils literal"><span class="pre">image_plot</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;ylim])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.image_plot" title="Stoner.plot.PlotMixin.image_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">image_plot</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;ylim])</td>
 <td>Grid up the three columns of data and plot.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.inset" title="Stoner.plot.PlotMixin.inset"><code class="xref py py-obj docutils literal"><span class="pre">inset</span></code></a>([parent,&nbsp;loc,&nbsp;width,&nbsp;height])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.inset" title="Stoner.plot.PlotMixin.inset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inset</span></code></a>([parent,&nbsp;loc,&nbsp;width,&nbsp;height])</td>
 <td>Add a new set of axes as an inset to the current plot.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-obj docutils literal"><span class="pre">plot</span></code></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>Try to make an appropriate plot based on the defined column assignments.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_matrix" title="Stoner.plot.PlotMixin.plot_matrix"><code class="xref py py-obj docutils literal"><span class="pre">plot_matrix</span></code></a>([xvals,&nbsp;yvals,&nbsp;rectang,&nbsp;cmap,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_matrix" title="Stoner.plot.PlotMixin.plot_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_matrix</span></code></a>([xvals,&nbsp;yvals,&nbsp;rectang,&nbsp;cmap,&nbsp;…])</td>
 <td>Plots a surface plot by assuming that the current dataset represents a regular matrix of points.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-obj docutils literal"><span class="pre">plot_xy</span></code></a>([xcol,&nbsp;ycol,&nbsp;fmt,&nbsp;xerr,&nbsp;yerr])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xy</span></code></a>([xcol,&nbsp;ycol,&nbsp;fmt,&nbsp;xerr,&nbsp;yerr])</td>
 <td>Makes a simple X-Y plot of the specified data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyuv" title="Stoner.plot.PlotMixin.plot_xyuv"><code class="xref py py-obj docutils literal"><span class="pre">plot_xyuv</span></code></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyuv" title="Stoner.plot.PlotMixin.plot_xyuv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyuv</span></code></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
 <td>Makes an overlaid image and quiver plot.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-obj docutils literal"><span class="pre">plot_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;…])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;…])</td>
 <td>Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyzuvw" title="Stoner.plot.PlotMixin.plot_xyzuvw"><code class="xref py py-obj docutils literal"><span class="pre">plot_xyzuvw</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyzuvw" title="Stoner.plot.PlotMixin.plot_xyzuvw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyzuvw</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
 <td>Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.quiver_plot" title="Stoner.plot.PlotMixin.quiver_plot"><code class="xref py py-obj docutils literal"><span class="pre">quiver_plot</span></code></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.quiver_plot" title="Stoner.plot.PlotMixin.quiver_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quiver_plot</span></code></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol])</td>
 <td>Make a 2D Quiver plot from the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.subplot" title="Stoner.plot.PlotMixin.subplot"><code class="xref py py-obj docutils literal"><span class="pre">subplot</span></code></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.subplot" title="Stoner.plot.PlotMixin.subplot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplot</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>Pass throuygh for plt.subplot().</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.subplot2grid" title="Stoner.plot.PlotMixin.subplot2grid"><code class="xref py py-obj docutils literal"><span class="pre">subplot2grid</span></code></a>(*args,&nbsp;**kargs)</td>
-<td>Pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot2grid.html#matplotlib.pyplot.subplot2grid" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal"><span class="pre">matplotlib.pyplot.subplot2grid()</span></code></a>.</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.subplot2grid" title="Stoner.plot.PlotMixin.subplot2grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplot2grid</span></code></a>(*args,&nbsp;**kargs)</td>
+<td>Pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot2grid.html#matplotlib.pyplot.subplot2grid" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.subplot2grid()</span></code></a>.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.x2" title="Stoner.plot.PlotMixin.x2"><code class="xref py py-obj docutils literal"><span class="pre">x2</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.x2" title="Stoner.plot.PlotMixin.x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x2</span></code></a>()</td>
 <td>Generate a new set of axes with a second x-scale.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.y2" title="Stoner.plot.PlotMixin.y2"><code class="xref py py-obj docutils literal"><span class="pre">y2</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.PlotMixin.y2" title="Stoner.plot.PlotMixin.y2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y2</span></code></a>()</td>
 <td>Generate a new set of axes with a second y-scale.</td>
 </tr>
 </tbody>
@@ -313,7 +304,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>column_data</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code> or list or callable) – Data to append or insert or a callable function that will generate new data</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>column_data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.array</span></code> or list or callable) – Data to append or insert or a callable function that will generate new data</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
@@ -324,18 +315,18 @@ if not supplied then defaults to ‘col#’</li>
 <li><strong>func_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – If column_data is a callable object, then this argument
 can be used to supply a dictionary of function arguments to the callable object.</li>
 <li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Replace the data or insert the data (default)</li>
-<li><strong>setas</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Set the type of column (x,y,z data etc - see <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a>)</li>
+<li><strong>setas</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Set the type of column (x,y,z data etc - see <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a>)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> instance with the additonal column inserted.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> instance with the additonal column inserted.</p>
 </td>
 </tr>
 </tbody>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Like most <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> methods, this method operates in-place in that it also modifies
+<p class="last">Like most <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> methods, this method operates in-place in that it also modifies
 the original DataFile Instance as well as returning it.</p>
 </div>
 </dd></dl>
@@ -414,7 +405,7 @@ the original DataFile Instance as well as returning it.</p>
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.figure">
 <code class="descname">figure</code><span class="sig-paren">(</span><em>figure=None</em>, <em>projection='rectilinear'</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.figure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the figure used by <a class="reference internal" href="#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal"><span class="pre">Stoner.plot.PlotMixin</span></code></a>.</p>
+<dd><p>Set the figure used by <a class="reference internal" href="#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -759,7 +750,7 @@ otherwise it will default to using the last figure used by this DataFile object.
 </tr>
 </tbody>
 </table>
-<p>Keyword arguments are all passed through to <code class="xref py py-func docutils literal"><span class="pre">matplotlib.plt.quiver()</span></code>.</p>
+<p>Keyword arguments are all passed through to <code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.plt.quiver()</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -791,7 +782,7 @@ function maintains a list of the current sub-plot axes via the subplots attribut
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.subplot2grid">
 <code class="descname">subplot2grid</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.subplot2grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.subplot2grid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot2grid.html#matplotlib.pyplot.subplot2grid" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal"><span class="pre">matplotlib.pyplot.subplot2grid()</span></code></a>.</p>
+<dd><p>Pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot2grid.html#matplotlib.pyplot.subplot2grid" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.subplot2grid()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -876,14 +867,14 @@ function maintains a list of the current sub-plot axes via the subplots attribut
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.6
+      1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

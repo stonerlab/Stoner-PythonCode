@@ -55,4 +55,27 @@ Stoner.FileFormats.OpenGDAFile
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.OpenGDAFile.T
+      ~Stoner.FileFormats.OpenGDAFile.basename
+      ~Stoner.FileFormats.OpenGDAFile.clone
+      ~Stoner.FileFormats.OpenGDAFile.column_headers
+      ~Stoner.FileFormats.OpenGDAFile.data
+      ~Stoner.FileFormats.OpenGDAFile.dict_records
+      ~Stoner.FileFormats.OpenGDAFile.dims
+      ~Stoner.FileFormats.OpenGDAFile.dtype
+      ~Stoner.FileFormats.OpenGDAFile.filename
+      ~Stoner.FileFormats.OpenGDAFile.mask
+      ~Stoner.FileFormats.OpenGDAFile.metadata
+      ~Stoner.FileFormats.OpenGDAFile.mime_type
+      ~Stoner.FileFormats.OpenGDAFile.patterns
+      ~Stoner.FileFormats.OpenGDAFile.priority
+      ~Stoner.FileFormats.OpenGDAFile.records
+      ~Stoner.FileFormats.OpenGDAFile.setas
+      ~Stoner.FileFormats.OpenGDAFile.shape
+      ~Stoner.FileFormats.OpenGDAFile.subclasses
+   
    

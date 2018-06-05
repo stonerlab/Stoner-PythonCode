@@ -57,4 +57,27 @@ Stoner.DataFolder
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.DataFolder.basenames
+      ~Stoner.DataFolder.clone
+      ~Stoner.DataFolder.depth
+      ~Stoner.DataFolder.each
+      ~Stoner.DataFolder.files
+      ~Stoner.DataFolder.groups
+      ~Stoner.DataFolder.instance
+      ~Stoner.DataFolder.key
+      ~Stoner.DataFolder.loaded
+      ~Stoner.DataFolder.ls
+      ~Stoner.DataFolder.lsgrp
+      ~Stoner.DataFolder.metadata
+      ~Stoner.DataFolder.mindepth
+      ~Stoner.DataFolder.not_empty
+      ~Stoner.DataFolder.objects
+      ~Stoner.DataFolder.pattern
+      ~Stoner.DataFolder.shape
+      ~Stoner.DataFolder.type
+   
    

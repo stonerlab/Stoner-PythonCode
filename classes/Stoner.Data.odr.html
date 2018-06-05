@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Data.odr &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -27,8 +19,7 @@
     <link rel="next" title="Data.outlier_detection" href="Stoner.Data.outlier_detection.html" />
     <link rel="prev" title="Data.normalise" href="Stoner.Data.normalise.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  </head>
-  <body>
+  </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
         Stoner Pacakge API Documentation
     </a></h1></header>
@@ -49,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -76,9 +67,9 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>model</strong> (<em>scipy.odr.Model, lmfit.models.Model or callable</em>) – Tje model that describes the data. See below for more details.</li>
 <li><strong>xcol</strong> (<em>index or None</em>) – Columns to be used for the x  data for the fitting. If not givem defaults to the
-<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> x column</li>
+<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> x column</li>
 <li><strong>ycol</strong> (<em>index or None</em>) – Columns to be used for the  y data for the fitting. If not givem defaults to the
-<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> y column</li>
+<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> y column</li>
 </ul>
 </td>
 </tr>
@@ -100,11 +91,11 @@ Default to None for not adding fitted data</li>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
 <dt>The return value is determined by the <em>output</em> parameter. Options are</dt>
 <dd><ul class="first last simple">
-<li>”fit”    just the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Output.html#scipy.odr.Output" title="(in SciPy v1.1.0)"><code class="xref py py-class docutils literal"><span class="pre">scipy.odr.Output</span></code></a> instance (default)</li>
+<li>”fit”    just the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Output.html#scipy.odr.Output" title="(in SciPy v1.1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Output</span></code></a> instance (default)</li>
 <li>”row”     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties</li>
 <li>”full”    a tuple of the fit instance and the row.</li>
 <li><dl class="first docutils">
-<dt>”data”    a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> object with the fit recorded in the emtadata and optinally</dt>
+<dt>”data”    a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> object with the fit recorded in the emtadata and optinally</dt>
 <dd>as a column of data.</dd>
 </dl>
 </li>
@@ -120,20 +111,20 @@ Default to None for not adding fitted data</li>
 <p>The function tries to make use of whatever model you give it. Specifically, it accepts:</p>
 <blockquote>
 <div><ul class="simple">
-<li>A subclass or an instance of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.1.0)"><code class="xref py py-class docutils literal"><span class="pre">scipy.odr.Model</span></code></a> : this is the native model type for the underlying scipy
+<li>A subclass or an instance of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> : this is the native model type for the underlying scipy
 odr package.</li>
-<li>A subclass or instance of an lmfit.models.Model: the <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></code></a> module has a number of useful prebuilt
+<li>A subclass or instance of an lmfit.models.Model: the <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Fit</span></code></a> module has a number of useful prebuilt
 lmfit models that can be used directly
 by this function.</li>
 <li>A callable function which should have a signature f(x,parameter1,parameter2…) and <em>not</em> the scip.odr stadnard f(beta,x)</li>
 </ul>
 </div></blockquote>
 <dl class="docutils">
-<dt>This function ois designed to be as compatible as possible with <code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code> and</dt>
-<dd><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code> to facilitate easy of switching between them.</dd>
+<dt>This function ois designed to be as compatible as possible with <code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code> and</dt>
+<dd><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.lmfit()</span></code> to facilitate easy of switching between them.</dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple use of lmfit to fit data.&quot;&quot;&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple use of lmfit to fit data.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">exp</span><span class="p">,</span><span class="n">random</span>
 
@@ -166,14 +157,10 @@ by this function.</li>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="sa">u</span><span class="s2">&quot;Levenberg-Marquardt Fit&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/lmfit3.png">png</a>, <a class="reference external" href="../samples/lmfit3.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit3.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/lmfit3.png" src="../_images/lmfit3.png" />
-</div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code>
-<code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code>
+<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code>
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.lmfit()</span></code>
 User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#fitting-with-limits"><span class="std std-ref">Fitting with limits</span></a></p>
 </div>
 </dd></dl>
@@ -230,7 +217,7 @@ User guide section <a class="reference internal" href="../UserGuide/analysisfile
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -238,9 +225,9 @@ User guide section <a class="reference internal" href="../UserGuide/analysisfile
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.6
+      1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

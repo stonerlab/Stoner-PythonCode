@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Loading and Examining Data &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -27,8 +19,7 @@
     <link rel="next" title="Plotting Data" href="plotfile.html" />
     <link rel="prev" title="Installation of Stoner Package" href="install.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  </head>
-  <body>
+  </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
         Stoner Pacakge API Documentation
     </a></h1></header>
@@ -66,49 +57,49 @@
 <h2>Loading a data file<a class="headerlink" href="#loading-a-data-file" title="Permalink to this headline">¶</a></h2>
 <p>The first step in using the Stoner module is to load some data from a
 measurement.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s1">&#39;my_data.txt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In this example we have loaded data from <code class="docutils literal"><span class="pre">my_data.txt</span></code> which should be in the
+<p>In this example we have loaded data from <code class="docutils literal notranslate"><span class="pre">my_data.txt</span></code> which should be in the
 current directory</p>
-<p>The <strong>Stoner.Data</strong> class is actually a shorthand for importing the <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code>
+<p>The <strong>Stoner.Data</strong> class is actually a shorthand for importing the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.Data</span></code>
 class which in turn is a superset of the classes in the Stoner package. This includes code to automatically
 detect the format of many of the measurement files that we use in our research.</p>
 <p>The native file format for the Stoner package is known as the <em>TDI 1.5</em> format - a tab delimited text file
-that stores arbitary metadata and a single 2D data set. It closely matches the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> class of the
-<a class="reference internal" href="../Stoner.html#module-Stoner.Core" title="Stoner.Core"><code class="xref py py-mod docutils literal"><span class="pre">Stoner.Core</span></code></a> module.</p>
+that stores arbitary metadata and a single 2D data set. It closely matches the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> class of the
+<a class="reference internal" href="../Stoner.html#module-Stoner.Core" title="Stoner.Core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Core</span></code></a> module.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last"><a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> will also read a related text format where the first column of the first line contains the string <em>TDI Fromat=Text 1.0</em>
+<p class="last"><a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> will also read a related text format where the first column of the first line contains the string <em>TDI Fromat=Text 1.0</em>
 which are produced by some of the LabVIEW rigs used by the Device Materials Group in Cambridge.</p>
 </div>
 <div class="section" id="the-various-flavours-of-the-datafile-class">
-<h3>The Various Flavours of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> Class<a class="headerlink" href="#the-various-flavours-of-the-datafile-class" title="Permalink to this headline">¶</a></h3>
+<h3>The Various Flavours of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> Class<a class="headerlink" href="#the-various-flavours-of-the-datafile-class" title="Permalink to this headline">¶</a></h3>
 <p>To support a variety of different input file formats, the Stoner package provides a slew of subclasses of the base
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> class. Each subclass typically provides its own version of the <code class="xref py py-meth docutils literal"><span class="pre">DataFile._load()</span></code> method that
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> class. Each subclass typically provides its own version of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile._load()</span></code> method that
 understands how to reqad the relevant file.</p>
 <div class="section" id="base-classes-and-generic-formats">
 <h4>Base Classes and Generic Formats<a class="headerlink" href="#base-classes-and-generic-formats" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><dl class="docutils">
-<dt><a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a></dt>
 <dd>Tagged Data Interchange Format 1.5 – the default format produced by the LabVIEW measurement rigs in the CM Physics group in Leeds</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile" title="Stoner.FileFormats.CSVFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.CSVFile</span></code></a></dt>
-<dd>Reads a generic comma separated value file. The <a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.load.html#Stoner.FileFormats.CSVFile.load" title="Stoner.FileFormats.CSVFile.load"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.FileFormats.CSVFile.load()</span></code></a>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile" title="Stoner.FileFormats.CSVFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.CSVFile</span></code></a></dt>
+<dd>Reads a generic comma separated value file. The <a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.load.html#Stoner.FileFormats.CSVFile.load" title="Stoner.FileFormats.CSVFile.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.FileFormats.CSVFile.load()</span></code></a>
 routine takes four additional parameters to the constructor and load methods. In
 addition to the two extra arguments used for the <em>BigBlue&amp; variant, a
 further two parameters specify the deliminators for the data and header rows. :py:class:`Stoner.FileFormats.CSVFile`
 also offers a **save*</em> method to allow data to be saved in a simple deliminated text way (see Section <a class="reference internal" href="#save"><span class="std std-ref">Saving Data</span></a> for details).</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.SPCFile.html#Stoner.FileFormats.SPCFile" title="Stoner.FileFormats.SPCFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.SPCFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.SPCFile.html#Stoner.FileFormats.SPCFile" title="Stoner.FileFormats.SPCFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.SPCFile</span></code></a></dt>
 <dd>Loads a Raman scan file (.spc format) produced by the Rensihaw and Horiba
 Raman spectrometers. This may also work for other instruments that produce spc files,
 but has not been extensively tested.</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.TDMSFile.html#Stoner.FileFormats.TDMSFile" title="Stoner.FileFormats.TDMSFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.TDMSFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.TDMSFile.html#Stoner.FileFormats.TDMSFile" title="Stoner.FileFormats.TDMSFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.TDMSFile</span></code></a></dt>
 <dd>Loads a file saved in the National Instruments TDMS format</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.QDFile.html#Stoner.FileFormats.QDFile" title="Stoner.FileFormats.QDFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.QDFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.QDFile.html#Stoner.FileFormats.QDFile" title="Stoner.FileFormats.QDFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.QDFile</span></code></a></dt>
 <dd>Loads data from various Quantum Design instruments, cincluding PPMS, MPMS and  SQUID VSM.</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.OVFFile.html#Stoner.FileFormats.OVFFile" title="Stoner.FileFormats.OVFFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.OVFFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.OVFFile.html#Stoner.FileFormats.OVFFile" title="Stoner.FileFormats.OVFFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.OVFFile</span></code></a></dt>
 <dd>OVF files are output by a variety of micomagnetics simulators. The standard was designed for the OOMMF code. This class will handle rectangualr mesh files with text or binary formats, versions 1.0 and 2.0</dd>
 </dl>
 </div></blockquote>
@@ -117,21 +108,21 @@ but has not been extensively tested.</dd>
 <h4>Classes for Specifc Instruments (Mainly ones owned by the CM Physics Group in Leeds)<a class="headerlink" href="#classes-for-specifc-instruments-mainly-ones-owned-by-the-cm-physics-group-in-leeds" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><dl class="docutils">
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.VSMFile.html#Stoner.FileFormats.VSMFile" title="Stoner.FileFormats.VSMFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.VSMFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.VSMFile.html#Stoner.FileFormats.VSMFile" title="Stoner.FileFormats.VSMFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.VSMFile</span></code></a></dt>
 <dd>The text files produced by the group’s Oxford Instruments VSM</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code></a></dt>
 <dd>Datafiles produced by VB Code running on the Big Blue cryostat. The
-<a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code></a> version of the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.load()</span></code> and <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> constructors takes
+<a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code></a> version of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.load()</span></code> and <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> constructors takes
 two additional parameters that specify the row on which the column headers will
 be found and the row on which the data starts.</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.XRDFile.html#Stoner.FileFormats.XRDFile" title="Stoner.FileFormats.XRDFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.XRDFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.XRDFile.html#Stoner.FileFormats.XRDFile" title="Stoner.FileFormats.XRDFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.XRDFile</span></code></a></dt>
 <dd>Loads a scan file produced by Arkengarthdale - the group’s Brucker D8
 XRD Machine.</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.MokeFile.html#Stoner.FileFormats.MokeFile" title="Stoner.FileFormats.MokeFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.MokeFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.MokeFile.html#Stoner.FileFormats.MokeFile" title="Stoner.FileFormats.MokeFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.MokeFile</span></code></a></dt>
 <dd>Loads a file from Leeds Condensed Matter Physics MOKE system.</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.FmokeFile.html#Stoner.FileFormats.FmokeFile" title="Stoner.FileFormats.FmokeFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.FmokeFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.FmokeFile.html#Stoner.FileFormats.FmokeFile" title="Stoner.FileFormats.FmokeFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.FmokeFile</span></code></a></dt>
 <dd>Loads a file from Dan Allwood’s Focussed MOKE System in Sheffield.</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.LSTemperatureFile.html#Stoner.FileFormats.LSTemperatureFile" title="Stoner.FileFormats.LSTemperatureFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.LSTemperatureFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.LSTemperatureFile.html#Stoner.FileFormats.LSTemperatureFile" title="Stoner.FileFormats.LSTemperatureFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.LSTemperatureFile</span></code></a></dt>
 <dd>Loads and saves data from Lakeshore inc’s .340 Temperature Calibration file format.</dd>
 </dl>
 </div></blockquote>
@@ -140,22 +131,22 @@ XRD Machine.</dd>
 <h4>Classes for Instruments at Major Facilities<a class="headerlink" href="#classes-for-instruments-at-major-facilities" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><dl class="docutils">
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.BNLFile.html#Stoner.FileFormats.BNLFile" title="Stoner.FileFormats.BNLFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BNLFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.BNLFile.html#Stoner.FileFormats.BNLFile" title="Stoner.FileFormats.BNLFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.BNLFile</span></code></a></dt>
 <dd>Loads a SPEC file from Brookhaven (so far only tested on u4b files but may well work with
 other synchrotron data). Produces metadata Snumber: Scan number, Stype: Type of scan, Sdatetime: date time stamp for the measurement, Smotor: z motor position.</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.OpenGDAFile.html#Stoner.FileFormats.OpenGDAFile" title="Stoner.FileFormats.OpenGDAFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.OpenGDAFile</span></code></a> Reads an ascii  scan file generated by OpenGDA – a software</dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.OpenGDAFile.html#Stoner.FileFormats.OpenGDAFile" title="Stoner.FileFormats.OpenGDAFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.OpenGDAFile</span></code></a> Reads an ascii  scan file generated by OpenGDA – a software</dt>
 <dd>suite used for synchrotron such as Diamond.</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.RasorFile.html#Stoner.FileFormats.RasorFile" title="Stoner.FileFormats.RasorFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.RasorFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.RasorFile.html#Stoner.FileFormats.RasorFile" title="Stoner.FileFormats.RasorFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.RasorFile</span></code></a></dt>
 <dd>Simply an alias for OpenGDAFile used for the RASOR instrument on I10 at Diamond.</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.SNSFile.html#Stoner.FileFormats.SNSFile" title="Stoner.FileFormats.SNSFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.SNSFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.SNSFile.html#Stoner.FileFormats.SNSFile" title="Stoner.FileFormats.SNSFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.SNSFile</span></code></a></dt>
 <dd>Reads the ascii export file format from <a class="reference external" href="http://sourceforge.net/projects/quicknxs/">QuickNXS</a>
 the data reduction software used on the BL-4A Beam Line at the SNS in Oak Ridge.</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.MDAASCIIFile.html#Stoner.FileFormats.MDAASCIIFile" title="Stoner.FileFormats.MDAASCIIFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.MDAASCIIFile</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.MDAASCIIFile.html#Stoner.FileFormats.MDAASCIIFile" title="Stoner.FileFormats.MDAASCIIFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.MDAASCIIFile</span></code></a></dt>
 <dd>This class will read some variants of the output of mda2ascii as used at the APS in Argonne.</dd>
 </dl>
 </div></blockquote>
 <p>These classes can be used directly to load data from the appropriate format.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Stoner</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Stoner</span>
 <span class="kn">import</span> <span class="nn">stoner.FileFormats</span> <span class="k">as</span> <span class="nn">SFF</span>
 <span class="n">d</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span>
 <span class="n">d</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;my_data.txt&#39;</span><span class="p">)</span>
@@ -171,8 +162,8 @@ the Datafile object <strong>as well as</strong> modifying the object itself. The
 advantage of this is that it is then possible to chain several methods into one
 command</p>
 </div>
-<p>Sometimes you won’t know exactly which subclass of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> is the one
-to use. Unfortunately, there is no sure fire way of telling, but <code class="xref py py-meth docutils literal"><span class="pre">DataFile.load()</span></code> will try to do
+<p>Sometimes you won’t know exactly which subclass of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> is the one
+to use. Unfortunately, there is no sure fire way of telling, but <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.load()</span></code> will try to do
 the best it can and will try all of the subclasses in memory in turn to see if one will
 load the file without throwing an error. If this succeeds then the actual type of file that
 worked is stored in the metadata of the loaded file.</p>
@@ -181,37 +172,37 @@ worked is stored in the metadata of the loaded file.</p>
 <p class="last">The automatic loading assumes that each load routine does sufficient sanity checking that it will
 throw and error if it gets bad data. Whilst one might wish this was always true it relies on
 whoever writes the load method to make sure of this ! If you want to stop the automatic guessing
-from happening use the <code class="docutils literal"><span class="pre">auto_load=False</span></code> keyword in the <em>load()</em> method.</p>
+from happening use the <code class="docutils literal notranslate"><span class="pre">auto_load=False</span></code> keyword in the <em>load()</em> method.</p>
 </div>
 </div>
 </div>
 <div class="section" id="loading-data-from-a-string-or-iterable-object">
 <h3>Loading Data from a string or iterable object<a class="headerlink" href="#loading-data-from-a-string-or-iterable-object" title="Permalink to this headline">¶</a></h3>
-<p>In some circumstances you may have a string representation of a <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object and want to
-transform this into a proper <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object. This might be, for example, from transmitting
+<p>In some circumstances you may have a string representation of a <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object and want to
+transform this into a proper <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object. This might be, for example, from transmitting
 the data over a network connection or receiving it from another program. In these situations the
-<em>left shift operator</em> <code class="docutils literal"><span class="pre">&lt;&lt;</span></code> can be used.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">string_of_data</span>
+<em>left shift operator</em> <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code> can be used.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">string_of_data</span>
 <span class="n">data</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">iterable_object</span>
 </pre></div>
 </div>
 <p>The second example would allow any object that can be iterated (i.e. has a <em>next()</em> method that returns lines
-of the data file, to be used as the source of the data. The <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-meth docutils literal"><span class="pre">DataFile()</span></code></a> creates an empty object so
-that the left shift operator calls the method in <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> to read the data in. It also
-determines the type of the object <code class="docutils literal"><span class="pre">data</span></code>. This also provides an alternative syntax for reading a file
+of the data file, to be used as the source of the data. The <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile()</span></code></a> creates an empty object so
+that the left shift operator calls the method in <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> to read the data in. It also
+determines the type of the object <code class="docutils literal notranslate"><span class="pre">data</span></code>. This also provides an alternative syntax for reading a file
 from disk:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;File on Disk.txt&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;File on Disk.txt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="constructing-datafile-s-from-scratch">
-<h3>Constructing <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> s from Scratch<a class="headerlink" href="#constructing-datafile-s-from-scratch" title="Permalink to this headline">¶</a></h3>
-<p>The constructor <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>, <code class="xref py py-meth docutils literal"><span class="pre">DataFile.__init__()</span></code> will try its best to guess what your intention
+<h3>Constructing <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> s from Scratch<a class="headerlink" href="#constructing-datafile-s-from-scratch" title="Permalink to this headline">¶</a></h3>
+<p>The constructor <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.__init__()</span></code> will try its best to guess what your intention
 was in constructing a new instance of a DataFile. First of all a constructor function is called based on the number of positional
 arguments were passed:</p>
 <div class="section" id="single-argument-constructor">
 <h4>Single Argument Constructor<a class="headerlink" href="#single-argument-constructor" title="Permalink to this headline">¶</a></h4>
-<p>A single argument passed to <code class="xref py py-meth docutils literal"><span class="pre">DataFile.__init__()</span></code> is interpreted as follows:</p>
+<p>A single argument passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.__init__()</span></code> is interpreted as follows:</p>
 <ul class="simple">
 <li>A string is assumed to be a filename, and therefore a DataFile is created by loading a file.</li>
 <li>A 2 numpy array is taken as the numeric data for the new DataFile</li>
@@ -239,7 +230,7 @@ attribute.</p>
 </div>
 <div class="section" id="examples">
 <h4>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h4>
-<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Load a file from disc, set the setas attribute and column headers</span>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load a file from disc, set the setas attribute and column headers</span>
 <span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">(</span><span class="s2">&quot;filename.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X-Data&quot;</span><span class="p">,</span><span class="s2">&quot;Y-Data&quot;</span><span class="p">])</span>
 <span class="c1"># Create a DataFile from a dictionary:</span>
 <span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">({</span><span class="s2">&quot;Temperature&quot;</span><span class="p">:</span><span class="n">temp_array</span><span class="p">,</span><span class="s2">&quot;Resistance&quot;</span><span class="p">:</span><span class="n">res_data</span><span class="p">})</span>
@@ -261,7 +252,7 @@ Internally, data is represented as a 2D numpy masked array of floating point num
 along with a list of column headers and a dictionary that keeps the metadata and
 also keeps track of the expected type of the metadata (ie the meta-metadata).
 These can be accessed like so:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">data</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">data</span>
 <span class="n">d</span><span class="o">.</span><span class="n">column_headers</span>
 <span class="n">d</span><span class="o">.</span><span class="n">metadata</span>
 </pre></div>
@@ -273,8 +264,8 @@ These can be accessed like so:</p>
 This can be useful to temporarily discount parts of your data when, for example, fitting a curve or calculating a mean
 value or plotting some data. One could, of course, simply ignore the masking option and use the data as is,
 however, masking does have a number of practical uses.</p>
-<p>The data mask can be accessed via the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.mask" title="Stoner.Core.DataFile.mask"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.mask</span></code></a> attribute of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
+<p>The data mask can be accessed via the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.mask" title="Stoner.Core.DataFile.mask"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.mask</span></code></a> attribute of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
 <span class="nb">print</span> <span class="n">d</span><span class="o">.</span><span class="n">mask</span>
 <span class="n">d</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="kc">False</span>
 <span class="n">d</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="n">ma</span><span class="o">.</span><span class="n">nomask</span>
@@ -288,12 +279,12 @@ symbol. The second line will simply print the current mask. The next two example
 i.e. make the values visible and usable. The next example illustrates using a numpy array of booleans to
 set the mask - every element in the mask array that evaluates as a boolean True will be masked and every
 False value unmasked. So far the semantics here are the same as if one had accessed the mask directly on
-the data via <code class="docutils literal"><span class="pre">d.data.mask</span></code> but the final two examples illustrate an extension that setting the
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> mask attribute allows. If you pass a callable object to the mask attribute it will
+the data via <code class="docutils literal notranslate"><span class="pre">d.data.mask</span></code> but the final two examples illustrate an extension that setting the
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> mask attribute allows. If you pass a callable object to the mask attribute it will
 be executed, passing each row of the data array to the user supplied function as a numpy array. The user
 supplied function can then either return a single boolean value – in which case it will be used to mask
 the entire row – or a list of boolean values to mask individual cells in the current row.</p>
-<p>By default when the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object is printed or saved, data values that have been masked are replaced
+<p>By default when the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object is printed or saved, data values that have been masked are replaced
 with a “fill” value of 10^20.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
@@ -302,7 +293,7 @@ chance that you will need the masked data values again later !</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Strictgly speaking, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code></a> attribute is a sub-class of the numpy masked array, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>.
+<p class="last">Strictgly speaking, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.data</span></code></a> attribute is a sub-class of the numpy masked array, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code></a>.
 This works the same way as a masked array, but supports some additional magic indexing and attributes discussed below.</p>
 </div>
 </div>
@@ -311,26 +302,26 @@ This works the same way as a masked array, but supports some additional magic in
 <span id="setas"></span><h3>Marking Columns as Dimensions: the magic <em>setas</em> attribute<a class="headerlink" href="#marking-columns-as-dimensions-the-magic-setas-attribute" title="Permalink to this headline">¶</a></h3>
 <p>Often in a calculation with some data you will be using one column for ‘x’ values and one or more ‘y’ columns
 or indeed having ‘z’ column data and uncertainties in all of these (conventionally we call these ‘d’, ‘e’ and ‘f’ columns
-so that ‘e’ data is the error in the y data). <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> has a concept of marking a column as containing such data and
+so that ‘e’ data is the error in the y data). <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> has a concept of marking a column as containing such data and
 will then use these by default in many methods when appropriate to have ‘x’ and ‘y’ data.</p>
 <p>In addition to identifying columns as ‘x’,’y’, or ‘z’, for data that describes a vector field, you can mark the columns as containing
 ‘u’, ‘v’, ‘w’ data where (u,v,w) is the vector value at  the point (x,y,z). There’s no support at present for uncertainities in (u,v,w) being marked.</p>
 <div class="section" id="setting-column-types">
 <h4>Setting Column Types<a class="headerlink" href="#setting-column-types" title="Permalink to this headline">¶</a></h4>
-<p>To set which columns contain ‘x’,’y’ etc data use the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute. This attribute can take
+<p>To set which columns contain ‘x’,’y’ etc data use the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> attribute. This attribute can take
 a list of single character strings from the set ‘x’,’y’,’z’,’d’,’e’, ‘f’, ‘u’, ‘v’, ‘w’ or ‘.’ where each element of the list refers to
 the columns of data in order. To specify that a column has unmarked data use the ‘.’ string. The string ‘-‘ can also be used - this
 indicats that the current assignment is to be left as is.</p>
-<p>Alternately, you can pass <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> a string. In the simplest case, the string is just read in the same way that
+<p>Alternately, you can pass <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> a string. In the simplest case, the string is just read in the same way that
 the list would have been  - each character corresponds to one column. However, if the string contains an integer, then the next
 non-numeric character will be interpreted that many times, so:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;3.xy&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;3.xy&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;...xy&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>There are still more ways of setting column types with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">seetas</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;x&quot;</span>
+<p>There are still more ways of setting column types with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> attribute:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">seetas</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;x&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">3</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="s2">&quot;3.xy&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">([</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">])</span>
@@ -339,16 +330,16 @@ non-numeric character will be interpreted that many times, so:</p>
 </div>
 <p>All achieve the same effect of setting the same columns as containing x and y data.</p>
 <p>Once you have identified columns for the various types, you also have access to utility attributes to access those columns:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;3.xye&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;3.xye&#39;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">e</span> <span class="o">==</span> <span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Note that if <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> is not set then attempting to use the quick access column attributes will
-result in an exception. Once the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute is set, a further set of <em>virtual</em> or <em>derived</em> column attributes
+<p>Note that if <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> is not set then attempting to use the quick access column attributes will
+result in an exception. Once the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> attribute is set, a further set of <em>virtual</em> or <em>derived</em> column attributes
 become available.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">r</span> <span class="c1"># The magnitude of the point x,y,z</span>
 <span class="n">d</span><span class="o">.</span><span class="n">q</span> <span class="c1"># The angle in the x-y plane relative to the x axis</span>
 <span class="n">d</span><span class="o">.</span><span class="n">p</span> <span class="c1"># The angle relative to the z axis</span>
@@ -361,20 +352,20 @@ become available.:</p>
 <p>Where fewer than 3 or 6 dimensions are specified, these virtual columns fallback to working with the appropriate
 reduced number dimensions.</p>
 <p>There are some more convenience ways to set which columns to use as x,y,z etc.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span> <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">:</span><span class="s2">&quot;Y Column title&quot;</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">:</span><span class="s2">&quot;Y Column title&quot;</span><span class="p">}</span>
  <span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span>
  <span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Y Column title&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;Temperature&quot;</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;y&quot;</span>
 </pre></div>
 </div>
-<p>In each of these cases, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> will try to work out what you intended to achieve for maximum flexibility
+<p>In each of these cases, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> will try to work out what you intended to achieve for maximum flexibility
 and convenience when writing code. However it can be fooled if one of your columns is called ‘x’ or ‘y’ !</p>
 </div>
 <div class="section" id="reading-column-types">
 <h4>Reading Column Types<a class="headerlink" href="#reading-column-types" title="Permalink to this headline">¶</a></h4>
-<p>The normal representation of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> is as a list, but it also has a string conversion available. You can also find which column
-has been assigned as ‘x’, ‘y’ etc. by treating the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> as a dictionary:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;One&quot;</span><span class="p">,</span><span class="s2">&quot;Two&quot;</span><span class="p">,</span><span class="s2">&quot;three&quot;</span><span class="p">,</span><span class="s2">&quot;Four&quot;</span><span class="p">]</span>
+<p>The normal representation of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> is as a list, but it also has a string conversion available. You can also find which column
+has been assigned as ‘x’, ‘y’ etc. by treating the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> as a dictionary:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;One&quot;</span><span class="p">,</span><span class="s2">&quot;Two&quot;</span><span class="p">,</span><span class="s2">&quot;three&quot;</span><span class="p">,</span><span class="s2">&quot;Four&quot;</span><span class="p">]</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy.z&quot;</span>
 
 <span class="nb">print</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span> <span class="c1">#[&#39;x&#39;,&#39;y&#39;,&#39;.&#39;,&#39;z&#39;]</span>
@@ -383,9 +374,9 @@ has been assigned as ‘x’, ‘y’ etc. by treating the <a class="reference i
 <span class="nb">print</span> <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;#x&quot;</span><span class="p">]</span> <span class="c1"># 0</span>
 </pre></div>
 </div>
-<p>Note that the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute supports reading keys that are either the single letter t get the name of the column or the letter
+<p>Note that the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> attribute supports reading keys that are either the single letter t get the name of the column or the letter
 preceded by a # character to get the number of the column.</p>
-<p>Alternatively, and equivalently, you can access the column indexes via attributes of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a>:</p>
+<p>Alternatively, and equivalently, you can access the column indexes via attributes of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a>:</p>
 <blockquote>
 <div>d.setas.has_xcol # True
 d.setas.has_ucol # False
@@ -394,8 +385,8 @@ d.setas.xcol # 0</div></blockquote>
 </div>
 <div class="section" id="implied-column-assignments">
 <h4>Implied Column Assignments<a class="headerlink" href="#implied-column-assignments" title="Permalink to this headline">¶</a></h4>
-<p>If you do not specify the column types via the setas attributes, then <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> will try to guess sensible columns assignments based on the number
-of columns in your data file. These default assignments are only done at the point at which the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute is consulted. The default
+<p>If you do not specify the column types via the setas attributes, then <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> will try to guess sensible columns assignments based on the number
+of columns in your data file. These default assignments are only done at the point at which the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> attribute is consulted. The default
 assignments are:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -428,10 +419,10 @@ assignments are:</p>
 </div>
 <div class="section" id="swapping-and-rotating-column-assignments">
 <h4>Swapping and Rotating Column Assignments<a class="headerlink" href="#swapping-and-rotating-column-assignments" title="Permalink to this headline">¶</a></h4>
-<p>Finally, if the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute has been set with <em>x</em>, <em>y</em> (and <em>z</em>) columns then these assingments can be
+<p>Finally, if the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> attribute has been set with <em>x</em>, <em>y</em> (and <em>z</em>) columns then these assingments can be
 swapped around by the <strong>invert</strong> operator <strong>~</strong>. This either swaps <em>x</em> and <em>y</em> with eir associated errorbars for 2-D datasets, or rotates
 <em>x</em> to <em>y</em>, <em>y</em> to <em>z</em> and <em>z</em> to <em>x</em> )again with their associated errors bars.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span>
 <span class="nb">print</span> <span class="n">d</span><span class="o">.</span><span class="n">setas</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">]</span>
 <span class="n">e</span><span class="o">=~</span><span class="n">d</span>
@@ -442,12 +433,12 @@ swapped around by the <strong>invert</strong> operator <strong>~</strong>. This 
 </div>
 </div>
 <div class="section" id="printing-the-complete-datafile">
-<h3>Printing the Complete <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a><a class="headerlink" href="#printing-the-complete-datafile" title="Permalink to this headline">¶</a></h3>
-<p>If the optional <em>tabulate</em> package is installed, then a pretty formatted representation of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> can be generated using:</p>
+<h3>Printing the Complete <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a><a class="headerlink" href="#printing-the-complete-datafile" title="Permalink to this headline">¶</a></h3>
+<p>If the optional <em>tabulate</em> package is installed, then a pretty formatted representation of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> can be generated using:</p>
 <blockquote>
 <div>print(repr(d))</div></blockquote>
 <p>This will give something like:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">================================</span>  <span class="o">=============</span>  <span class="o">============</span>  <span class="o">===========</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">================================</span>  <span class="o">=============</span>  <span class="o">============</span>  <span class="o">===========</span>
 <span class="n">TDI</span> <span class="n">Format</span> <span class="mf">1.5</span>                    <span class="n">Temperature</span>    <span class="n">Resistance</span>     <span class="n">Column</span> <span class="mi">2</span>
 <span class="n">index</span>                                  <span class="mi">0</span>              <span class="mi">1</span>             <span class="mi">2</span>
 <span class="o">================================</span>  <span class="o">=============</span>  <span class="o">============</span>  <span class="o">===========</span>
@@ -462,11 +453,11 @@ swapped around by the <strong>invert</strong> operator <strong>~</strong>. This 
                                   <span class="mf">291.6</span>          <span class="mf">4.78789</span>       <span class="mf">8.57829</span>
 </pre></div>
 </div>
-<p>If more columns exist in the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> then the <em>repr</em> method attempts to pick ‘interesting’ columns. Thealgorithm will prioritise showing columns
-that have been assigned a meaning with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute. If there are space for further columns, then the last column will be shown
-and other columns that follow from any that are marked in <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a>. If no columns are marked as interesting, then the first n-2 columns and
+<p>If more columns exist in the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> then the <em>repr</em> method attempts to pick ‘interesting’ columns. Thealgorithm will prioritise showing columns
+that have been assigned a meaning with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> attribute. If there are space for further columns, then the last column will be shown
+and other columns that follow from any that are marked in <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a>. If no columns are marked as interesting, then the first n-2 columns and
 the last column will be shown.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">====================</span>  <span class="o">=====================</span>  <span class="o">=====================</span>  <span class="o">====================</span>  <span class="o">===================</span>  <span class="o">=============</span>  <span class="o">==============</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">====================</span>  <span class="o">=====================</span>  <span class="o">=====================</span>  <span class="o">====================</span>  <span class="o">===================</span>  <span class="o">=============</span>  <span class="o">==============</span>
 <span class="n">TDI</span> <span class="n">Format</span> <span class="mf">1.5</span>        <span class="n">Magnetic</span> <span class="n">Field</span> <span class="p">(</span><span class="n">Oe</span><span class="p">)</span>       <span class="n">Moment</span> <span class="p">(</span><span class="n">emu</span><span class="p">)</span>        <span class="n">M</span><span class="o">.</span> <span class="n">Std</span><span class="o">.</span> <span class="n">Err</span><span class="o">.</span> <span class="p">(</span><span class="n">emu</span><span class="p">)</span>     <span class="n">Transport</span> <span class="n">Action</span>           <span class="o">....</span>          <span class="n">Map</span> <span class="mi">16</span>
 <span class="n">index</span>                        <span class="mi">3</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>                  <span class="mi">4</span> <span class="p">(</span><span class="n">y</span><span class="p">)</span>                    <span class="mi">5</span>                     <span class="mi">6</span>                                  <span class="mi">71</span>
 <span class="o">====================</span>  <span class="o">=====================</span>  <span class="o">=====================</span>  <span class="o">====================</span>  <span class="o">===================</span>  <span class="o">=============</span>  <span class="o">==============</span>
@@ -478,12 +469,12 @@ the last column will be shown.:</p>
 <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&#39;3540392668.062   1.49902403354645       -5.81961870971478e-06  1.04490646832536e-08  1.0                  ...            nan</span>
 </pre></div>
 </div>
-<p>The table header lists the column titles, numerical indices for each column and the assignment in the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute.</p>
+<p>The table header lists the column titles, numerical indices for each column and the assignment in the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> attribute.</p>
 <p>If the file has more than 256 rowns, then the first 128 rows and last 128 rows will be shown with a row of <em>…</em> to show the split.</p>
-<p>Many of the methods in the Stoner package return a copy of the current <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Data</span></code></a> object and in ipython consoles and jupyter notebooks
+<p>Many of the methods in the Stoner package return a copy of the current <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> object and in ipython consoles and jupyter notebooks
 these will get printed out using the table formats above. This may be more than is required, in which case you can set options in the Stoner
 package to control the output format.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>from Stoner import set_option
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>from Stoner import set_option
 set_option(&quot;short_data_repr&quot;,True) # or &quot;short_repr&quot; for short representations of all objects.
 print(repr(d))
 &gt;&gt;&gt; TDI_Format_RT.txt(&lt;class &#39;Stoner.Data&#39;&gt;) of shape (1676, 3) (xy.) and 6 items of metadata
@@ -494,7 +485,7 @@ print(repr(d))
 <h3>Working with columns of data<a class="headerlink" href="#working-with-columns-of-data" title="Permalink to this headline">¶</a></h3>
 <p>This is all very well, but often you want to examine a particular column of data
 or a particular row:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">([</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
@@ -506,13 +497,13 @@ searched using <em>Temperature</em> as a regular expression. This would then
 match <em>Temperature (K)</em> or <em>Sample Temperature</em>.  The third
 example results in a 2 dimensional numpy array containing two columns in the
 order that they appear in the list (ie not the order that they are in the data
-file). For completeness, the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code> method also allows one to
+file). For completeness, the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.column()</span></code> method also allows one to
 pass slices to select columns and should do the expected thing.</p>
 <p>There are a couple of convenient short cuts. Firstly the <em>floormod</em> operator //
-is an alias for the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code> method and secondly for working
+is an alias for the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.column()</span></code> method and secondly for working
 with cases where the column headers are not the same as the names of any of the attributes
-of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">//</span><span class="s2">&quot;Temperature&quot;</span>
+of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">//</span><span class="s2">&quot;Temperature&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">Temperature</span>
 <span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
 </pre></div>
@@ -533,7 +524,7 @@ is tried as a match. If multiple columns match then only the first is returned.<
 <dd>expression in directly with any extra options (like case insensitivity flags) set.</dd>
 </dl>
 </li>
-<li>As a slice object (ee.g. <code class="docutils literal"><span class="pre">0:10:2</span></code>) this is expanded to a list of integers.</li>
+<li>As a slice object (ee.g. <code class="docutils literal notranslate"><span class="pre">0:10:2</span></code>) this is expanded to a list of integers.</li>
 <li><dl class="first docutils">
 <dt>As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and</dt>
 <dd>the final result would be to use a list of column indices.</dd>
@@ -551,7 +542,7 @@ d.column(col)</dd>
 <div class="section" id="working-with-complete-rows-of-data">
 <h3>Working with complete rows of data<a class="headerlink" href="#working-with-complete-rows-of-data" title="Permalink to this headline">¶</a></h3>
 <p>Rows don’t have labels, so are accessed directly by number:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -561,18 +552,18 @@ rows, or directly pull out the last fews rows in the file.</p>
 </div>
 <div class="section" id="special-magic-when-working-with-subsets-of-data">
 <h3>Special Magic When Working with Subsets of Data<a class="headerlink" href="#special-magic-when-working-with-subsets-of-data" title="Permalink to this headline">¶</a></h3>
-<p>As mentioned above, the data in a <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> is a sepcial siubclass of numpy’s Masked Array - <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>.
+<p>As mentioned above, the data in a <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> is a sepcial siubclass of numpy’s Masked Array - <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code></a>.
 A DataArray understands that columns can have names and can be assigned to hold specific types of data - x,y,z values etc. In
-fact, the logic used for the column names and setas attribute in a <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> is actually supplied by the
-<a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>. Whn you index a DataFile or it’s data, the resulting data remembers it’s column names and assignments
+fact, the logic used for the column names and setas attribute in a <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> is actually supplied by the
+<a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code></a>. Whn you index a DataFile or it’s data, the resulting data remembers it’s column names and assignments
 and these can be used directly:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
 <span class="nb">print</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="o">.</span><span class="n">y</span>
 </pre></div>
 </div>
-<p>In addition to the column assignments, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> also keeps a track of the row numbers and makes them available via
+<p>In addition to the column assignments, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code></a> also keeps a track of the row numbers and makes them available via
 the <em>i</em> attribute.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">i</span> <span class="c1"># [0,1,2,3...,len(d)]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">i</span> <span class="c1"># [0,1,2,3...,len(d)]</span>
 <span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
 <span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="c1"># 10</span>
 <span class="n">r</span><span class="o">.</span><span class="n">column_headers</span>
@@ -580,7 +571,7 @@ the <em>i</em> attribute.:</p>
 </div>
 <p>You can reset the row numbers by assiging a value to the <em>i</em> attribute.</p>
 <p>A single column of data also gains a <em>.name</em> attribute that matches its column_header:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">=</span><span class="n">d</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">=</span><span class="n">d</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">c</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#True</span>
 </pre></div>
 </div>
@@ -588,19 +579,19 @@ the <em>i</em> attribute.:</p>
 <div class="section" id="manipulating-the-metadata">
 <h3>Manipulating the metadata<a class="headerlink" href="#manipulating-the-metadata" title="Permalink to this headline">¶</a></h3>
 <p>What happens if you use a string and not a number in the above examples ?:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;User&#39;</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;User&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>in this case, it is assumed that you meant the metadata with key <em>User</em>.
 To get a list of possible keys in the metadata, you can do:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span>
 <span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">(</span><span class="s1">&#39;Option\:.*&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In the first case, all of the keys will be returned in a list. In the second,
 only keys matching the pattern will be returned – all keys containing
-<em>Option:</em>. For compatibility with normal opython semantics: <code class="xref py py-meth docutils literal"><span class="pre">DataFile.keys()</span></code> is
-synonymous with <code class="xref py py-meth docutils literal"><span class="pre">DataFile.dir()</span></code>.</p>
+<em>Option:</em>. For compatibility with normal opython semantics: <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.keys()</span></code> is
+synonymous with <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.dir()</span></code>.</p>
 <p>If the string you supply to get the metadata item does not exactly match an item of
 metadata, then it is interpreted as a regular expression to try and match against all the
 items of metadata. In this case, rather than returning a single item, all of the
@@ -609,23 +600,23 @@ as the item name also has the same effect - this is useful if the regular expres
 you want to match is also an exact match to one particular metadata name.</p>
 <p>We mentioned above that the metadata also keeps a note of the expected type of
 the data. You can get at the metadata type for a particular key like this:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="s1">&#39;User&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="s1">&#39;User&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>to get a dictionary of all of the types associated with each key you could do:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">(),</span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">())))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">(),</span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">())))</span>
 </pre></div>
 </div>
-<p>but an easier way would be to use the <a class="reference internal" href="../classes/Stoner.Core.typeHintedDict.html#Stoner.Core.typeHintedDict.types" title="Stoner.Core.typeHintedDict.types"><code class="xref py py-attr docutils literal"><span class="pre">typeHintedDict.types</span></code></a> attribute:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">types</span>
+<p>but an easier way would be to use the <a class="reference internal" href="../classes/Stoner.Core.typeHintedDict.html#Stoner.Core.typeHintedDict.types" title="Stoner.Core.typeHintedDict.types"><code class="xref py py-attr docutils literal notranslate"><span class="pre">typeHintedDict.types</span></code></a> attribute:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">types</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="more-on-indexing-the-data">
 <h3>More on Indexing the data<a class="headerlink" href="#more-on-indexing-the-data" title="Permalink to this headline">¶</a></h3>
-<p>There are a number o other forms of indexing supported for <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>
+<p>There are a number o other forms of indexing supported for <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a>
 objects.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">d</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span>
 <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">,[</span><span class="s1">&#39;Voltage&#39;</span><span class="p">,</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span>
@@ -639,20 +630,20 @@ multiplerows and columns – in this case the first 10 values of the Voltage and
 Temp columns.</p>
 <p>You might think of the data as being a list of records, where each column is a
 field in the record. Numpy supports this type of structured record view of data
-and the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object provides the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.records" title="Stoner.Core.DataFile.records"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.records</span></code></a>
+and the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object provides the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.records" title="Stoner.Core.DataFile.records"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.records</span></code></a>
 attribute to d this. This read-only attribute is just providing an alternative
 view of the same data.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">records</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">records</span>
 </pre></div>
 </div>
-<p>Finally the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.dict_records" title="Stoner.Core.DataFile.dict_records"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.dict_records</span></code></a> atrtibute does the same thing, but presetns the data as an array of dictionaries, where the
+<p>Finally the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.dict_records" title="Stoner.Core.DataFile.dict_records"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.dict_records</span></code></a> atrtibute does the same thing, but presetns the data as an array of dictionaries, where the
 keys are the column names and each dictionary represents a single row.</p>
 <div class="section" id="selecting-individual-rows-and-columns-of-data">
 <h4>Selecting Individual rows and columns of data<a class="headerlink" href="#selecting-individual-rows-and-columns-of-data" title="Permalink to this headline">¶</a></h4>
 <p>Many of the function in the Stoner module index columns by searching the column
 headings. If one wishes to find the numeric index of a column then the
-<code class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></code> method can be used:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">index</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.find_col()</span></code> method can be used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">index</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">index</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
 <span class="n">index</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="s1">&#39;Temp.*&#39;</span><span class="p">)</span>
 <span class="n">index</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
@@ -661,7 +652,7 @@ headings. If one wishes to find the numeric index of a column then the
 <span class="n">index</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[A-Z]&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
-<p><code class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></code> takes a number of different forms. If the argument
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.find_col()</span></code> takes a number of different forms. If the argument
 is an integer then it returns (trivially) the same integer, a string argument is
 first checked to see if it exactly matches one of the column headers in which
 case the number of the matching column heading is returned. If no exact match is
@@ -677,13 +668,13 @@ passing a compiled regular expression will return a list of all columns that
 match. This distinction allows you to use a unique partial string to match just
 one column - but if you really want all possible columns that would match the
 pattern, then you can compile the regular expression and pass that instead.</p>
-<p>This is the function that is used internally by <code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code>,
-<code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code> etc and for this reason the trivial integer and slice
+<p>This is the function that is used internally by <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.column()</span></code>,
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.search()</span></code> etc and for this reason the trivial integer and slice
 forms are implemented to allow these other functions to work with multiple
 columns.</p>
 <p>Sometimes you may want to iterate over all of the rows or columns in a data set.
 This can be done quite easily:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
       <span class="nb">print</span> <span class="n">row</span>
 
 <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">columns</span><span class="p">():</span>
@@ -692,15 +683,15 @@ This can be done quite easily:</p>
 </pre></div>
 </div>
 <p>If there is no mask set, then the first example could also have been written more compactly as:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
       <span class="nb">print</span> <span class="n">row</span>
 <span class="o">......</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.rows()</span></code> and <code class="xref py py-meth docutils literal"><span class="pre">DataFile.columns()</span></code> both take an optional parameter <em>not_masked</em>. If this is True then these iterator
-methods will skip over any rows/columns with masked out data values. When iterating over the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> instance directly the
+<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.rows()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.columns()</span></code> both take an optional parameter <em>not_masked</em>. If this is True then these iterator
+methods will skip over any rows/columns with masked out data values. When iterating over the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> instance directly the
 masked rows are skipped over.</p>
 </div>
 </div>
@@ -710,14 +701,14 @@ masked rows are skipped over.</p>
 <h5>Searching<a class="headerlink" href="#searching" title="Permalink to this headline">¶</a></h5>
 <p>In many cases you do not know which rows in the data file are of interest - in
 this case you want to search the data.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="mf">4.2</span><span class="p">,</span><span class="n">accuracy</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="mf">4.2</span><span class="p">,</span><span class="n">accuracy</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="mf">4.2</span><span class="p">,[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="s1">&#39;Resistance&#39;</span><span class="p">])</span>
 <span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">10</span> <span class="ow">and</span> <span class="n">x</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">10</span> <span class="ow">and</span>
               <span class="n">x</span><span class="o">&lt;</span><span class="mi">1000</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">1000</span><span class="p">,[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="s1">&#39;Resistance&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>The general form is <code class="docutils literal"><span class="pre">DataFile.search(&lt;search</span> <span class="pre">column&gt;,&lt;search</span> <span class="pre">term&gt;[,&lt;listof</span> <span class="pre">return</span> <span class="pre">columns&gt;])</span></code></p>
+<p>The general form is <code class="docutils literal notranslate"><span class="pre">DataFile.search(&lt;search</span> <span class="pre">column&gt;,&lt;search</span> <span class="pre">term&gt;[,&lt;listof</span> <span class="pre">return</span> <span class="pre">columns&gt;])</span></code></p>
 <p>The first example will return all the rows where the value of the
 <em>Tenperature</em> column is 4.2. The second example is the same, but only
 returns the values from the <em>Temperature</em>, and <em>Resistance</em>
@@ -734,7 +725,7 @@ first parameter while the second parameter contains a list of all of the values
 in the row to be returned. If the search function returns True, then the row is
 returned, otherwise it isn’t. In thr last example, the final parameter can
 either be a list of columns or a single column. The rules for indexing columns
-are the same as used for the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></code> method.</p>
+are the same as used for the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.find_col()</span></code> method.</p>
 <p>The ‘accuracy’ keyword parameter sets the level of accuracy to accept when testing
 equality or ranges (i.e. when the value parameter is a float or a tuple) - this avoids
 the problem of rounding errors with floating point arithmetic. The default is accuracy is 0.0.</p>
@@ -744,8 +735,8 @@ the problem of rounding errors with floating point arithmetic. The default is ac
 <p>Sometimes you may want not to get the rows of data that you are looking for as a
 separate array, but merely mark them for inclusion (or exclusion) from subsequent
 operations. This is where the masked array (see ‘<a class="reference internal" href="#maskeddata"><span class="std std-ref">Masked Data and Why You Care</span></a>) comes into its own.
-To select which rows of data have been masked off, use the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.filter()</span></code> method.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">)</span>
+To select which rows of data have been masked off, use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.filter()</span></code> method.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">,[</span><span class="s1">&#39;Temp&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -757,9 +748,9 @@ of things which can be used to index a column (ie strings, integers, regular exp
 </div>
 <div class="section" id="selecting">
 <h5>Selecting<a class="headerlink" href="#selecting" title="Permalink to this headline">¶</a></h5>
-<p>A very powerful way to get at just the dat rows you want is to make use of the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.select()</span></code> method.
+<p>A very powerful way to get at just the dat rows you want is to make use of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.select()</span></code> method.
 This offers a simple way to query which rows have columns matching some criteria.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__ge</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">T1__lt</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">T2__lt</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Res__between</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">))</span>
 </pre></div>
@@ -770,30 +761,30 @@ ORed. The result of chaining together two separate calls to select will, however
 the, first line will assume an implicit equality test and give only those rows with a column <em>Temp</em> equal to 250. The second line gives an
 explicit greather than or equal to test for the same column. The third line will select first those rows that have column T1 less than 4.2 <em>or</em>
 column T2 less than 5 and then from those select those rows which have a column Res between 100 and 200. The full list of operators is given in
-<code class="xref py py-meth docutils literal"><span class="pre">Stoner.Folders.baseFolder.select()</span></code>.</p>
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Folders.baseFolder.select()</span></code>.</p>
 </div>
 <div class="section" id="sectioning">
 <h5>Sectioning<a class="headerlink" href="#sectioning" title="Permalink to this headline">¶</a></h5>
 <p>Another option is to construct a new <cite>DataFile</cite> object from a section of the data - this is
 particularly useful where the <cite>DataFile</cite> represents data correspondi ng to a set of (x,y,z)
 points. For this case the :py:,eth:<cite>DataFile.section</cite> method can be used:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x..y.z.&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x..y.z.&quot;</span>
 <span class="n">slab</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">5.2</span><span class="p">)</span>
 <span class="n">line</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">4.7</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">thick_slab</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">6.0</span><span class="p">))</span>
 <span class="n">arbitary</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="o">+</span><span class="n">z</span><span class="o">-</span><span class="mi">4</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>After the x, y, z data columns are identified, the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.section()</span></code> method works with
+<p>After the x, y, z data columns are identified, the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.section()</span></code> method works with
 ‘x’, ‘y’ and ‘z’ keyword arguments which ar then used to search for matching data rows (the arguments to
-these keyword arguments follow the same rules as the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code> method).</p>
+these keyword arguments follow the same rules as the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.search()</span></code> method).</p>
 <p>A final way of searching data is to look for the closest row to a given value. For this the eponymous method may be used:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">closest</span><span class="p">(</span><span class="mf">10.3</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;Search Col&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">closest</span><span class="p">(</span><span class="mf">10.3</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;Search Col&quot;</span><span class="p">)</span>
 <span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">closest</span><span class="p">(</span><span class="mf">10.3</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>If the <em>xcol</em> parameter is not supplied, the value from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute is used. Since the returned row
-is an instance of the <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> that has been taken from the original data, it will know what row number it was and
+<p>If the <em>xcol</em> parameter is not supplied, the value from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> attribute is used. Since the returned row
+is an instance of the <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code></a> that has been taken from the original data, it will know what row number it was and
 will make that available via it’s <em>i</em> attribute.</p>
 </div>
 </div>
@@ -803,13 +794,13 @@ will make that available via it’s <em>i</em> attribute.</p>
 values of data in a given column (or set of columns). The Python numpy
 package has a function to do this and we have a direct pass through
 from the DataFile object for this:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s1">&#39;Temp&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s1">&#39;Temp&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">column</span><span class="p">,</span><span class="n">return_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The two optional keywords cause the numpy routine to return the
 indices of the unique and all non-unique values in the array. The
-column is specified in the same way as the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code>
+column is specified in the same way as the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.column()</span></code>
 method does.</p>
 </div>
 <div class="section" id="copying-data">
@@ -818,13 +809,13 @@ method does.</p>
 programming languages is that assignments and argument passing is by reference
 and not by value. This can lead to unexpected results as you can end up modifying variables
 you were not expecting ! To help with creating genuine copies of data Python provides the copy module.
-Whilst this works with DataFile objects, for convenience, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.clone" title="Stoner.Core.DataFile.clone"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.clone</span></code></a> atribute is
+Whilst this works with DataFile objects, for convenience, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.clone" title="Stoner.Core.DataFile.clone"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.clone</span></code></a> atribute is
 provided to make a deep copy of a DataFile object.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This is an attribute not a method, so there are no brackets here !</p>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">t</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">clone</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">t</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">clone</span>
 </pre></div>
 </div>
 </div>
@@ -835,9 +826,9 @@ provided to make a deep copy of a DataFile object.</p>
 <div class="section" id="appending-data">
 <h3>Appending data<a class="headerlink" href="#appending-data" title="Permalink to this headline">¶</a></h3>
 <p>The simplest way to modify some data might be to append some columns or rows.
-The Stoner module redefines two standard operators, <code class="docutils literal"><span class="pre">+</span></code> and <code class="docutils literal"><span class="pre">&amp;</span></code> to
+The Stoner module redefines two standard operators, <code class="docutils literal notranslate"><span class="pre">+</span></code> and <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> to
 have special meanings:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">DataFile</span><span class="p">(</span><span class="s1">&#39;some_new_data.txt&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">DataFile</span><span class="p">(</span><span class="s1">&#39;some_new_data.txt&#39;</span><span class="p">)</span>
 <span class="n">add_rows</span><span class="o">=</span><span class="n">d</span><span class="o">+</span><span class="n">a</span>
 <span class="n">add_columns</span><span class="o">=</span><span class="n">d</span><span class="o">&amp;</span><span class="n">a</span>
 </pre></div>
@@ -854,7 +845,7 @@ data from <em>d</em>. In this case, there is a requirement that the two DataFile
 objects have the same number of rows.</p>
 <p>These operators are not limited just to DataFile objects, you can also add numpy
 arrays to the DataFile object to append additional data.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 <span class="n">new_data</span><span class="o">=</span><span class="n">d</span><span class="o">+</span><span class="n">x</span>
 <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">13</span><span class="p">],[</span><span class="mi">21</span><span class="p">,</span><span class="mi">22</span><span class="p">,</span><span class="mi">23</span><span class="p">],[</span><span class="mi">31</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mi">33</span><span class="p">]])</span>
@@ -871,10 +862,10 @@ assumes that the number of elements in the array matches the number of columns
 in the data file. The second example is similar but this time appends a 2
 dimensional numpy array to the data. The third example demonstrates adding data from a dictioary.
 In this case the keys of the dictionary are used to determine which column the values are added
-to. If their columns that don’t match one of the dictionary keys, then a <code class="docutils literal"><span class="pre">NaN</span></code> is inserted. If there
-are keys that don’t match columns labels, then new columns are added to the data set, filled with <code class="docutils literal"><span class="pre">NaN</span></code>.
+to. If their columns that don’t match one of the dictionary keys, then a <code class="docutils literal notranslate"><span class="pre">NaN</span></code> is inserted. If there
+are keys that don’t match columns labels, then new columns are added to the data set, filled with <code class="docutils literal notranslate"><span class="pre">NaN</span></code>.
 In the fourth example, each element in the list is added in turn to <em>d</em>. A similar effect would be achieved by doing
-<code class="docutils literal"><span class="pre">new_data=d+x+y+z</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">new_data=d+x+y+z</span></code>.</p>
 <p>The last example appends a numpy array as
 a column to <em>d</em>. In this case the requirement is that the numpy array has
 the same or fewer rows of data as <em>d</em>.</p>
@@ -883,12 +874,12 @@ the same or fewer rows of data as <em>d</em>.</p>
 <h3>Working with Columns of Data<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="changing-individual-columns-of-data">
 <h4>Changing Individual Columns of Data<a class="headerlink" href="#changing-individual-columns-of-data" title="Permalink to this headline">¶</a></h4>
-<p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code></a> attribute is not simply a 2D numpy array, but a special subclass <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>, but still
-can be directly modified like any other numpy array like class might be. If, however, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute has
+<p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.data</span></code></a> attribute is not simply a 2D numpy array, but a special subclass <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code></a>, but still
+can be directly modified like any other numpy array like class might be. If, however, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> attribute has
 been used to identify columns as containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written
 to as well as read to directly modify the data without having to keep track any further of which column(s) is indexed.
 Thus the following will work:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x..y..z&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x..y..z&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">-</span><span class="mf">5.0</span><span class="o">*</span><span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">/</span><span class="n">d</span><span class="o">.</span><span class="n">z</span>
 <span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span>
 <span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
@@ -898,33 +889,33 @@ Thus the following will work:</p>
 try to spot and correct if the array needs to be transposed first). If you specify more than one column has a particular type
 then you should supply a 2D array with the corresponding number of columns of data setting the attribute.</p>
 <p>In order to preserve the behaviour that allows you to set the column assingments by setting the attribute to an index type, the
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> checks to see if you are setting something that might be a column index or a numpy array. Thus the following
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> checks to see if you are setting something that might be a column index or a numpy array. Thus the following
 also works:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Temp&quot;</span> <span class="c1"># Set the Temp column to be x data</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Temp&quot;</span> <span class="c1"># Set the Temp column to be x data</span>
 <span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="c1"># And set the column to contain a linear array of values from 0 to 300.</span>
 </pre></div>
 </div>
 <p>You cannot set the p,q, or r attributes like this as they are calculated on the fly from the cartesian co-ordinates.
 On the otherhand you can do an efficient conversion to polar co-ordinates with:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span>
 <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">)</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">p</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">q</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">r</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="rearranging-columns-of-data">
 <h4>Rearranging Columns of Data<a class="headerlink" href="#rearranging-columns-of-data" title="Permalink to this headline">¶</a></h4>
-<p>Sometimes it is useful to rearrange columns of data. <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> offers a couple of methods to help with this.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">(</span><span class="s1">&#39;Resistance&#39;</span><span class="p">,</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
+<p>Sometimes it is useful to rearrange columns of data. <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> offers a couple of methods to help with this.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">(</span><span class="s1">&#39;Resistance&#39;</span><span class="p">,</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">(</span><span class="s1">&#39;Resistance&#39;</span><span class="p">,</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="n">headers_too</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">setas_too</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="s1">&#39;Temp&#39;</span><span class="p">,</span><span class="s1">&#39;Volt&#39;</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="s1">&#39;Curr&#39;</span><span class="p">)])</span>
 <span class="n">d</span><span class="o">.</span><span class="n">reorder_columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;Volt&#39;</span><span class="p">,</span><span class="s1">&#39;Temp&#39;</span><span class="p">])</span>
 <span class="n">d</span><span class="o">.</span><span class="n">reorder_columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;Volt&#39;</span><span class="p">,</span><span class="s1">&#39;Temp&#39;</span><span class="p">],</span><span class="n">header_too</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">setas_too</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <code class="xref py py-meth docutils literal"><span class="pre">DataFile.swap_column()</span></code> method takes either a either a tuple (or just a pair of arguments) of column names, indices or a list of such
-tuples and swaps the columns accordingly, whilst the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.reorder_columns()</span></code> method takes a
+<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.swap_column()</span></code> method takes either a either a tuple (or just a pair of arguments) of column names, indices or a list of such
+tuples and swaps the columns accordingly, whilst the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.reorder_columns()</span></code> method takes a
 list of column labels or indices and constructs a new data matrix out of those columns in the new order.
-The <code class="docutils literal"><span class="pre">headers_too=False</span></code> options, as the name suggests, cause the column headers not be rearranged.</p>
+The <code class="docutils literal notranslate"><span class="pre">headers_too=False</span></code> options, as the name suggests, cause the column headers not be rearranged.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">The addition of the setas_too keyword to swap the column assignments around as well is new in 0.5rc1</p>
@@ -932,8 +923,8 @@ The <code class="docutils literal"><span class="pre">headers_too=False</span></c
 </div>
 <div class="section" id="renaming-columns-of-data">
 <h4>Renaming Columns of Data<a class="headerlink" href="#renaming-columns-of-data" title="Permalink to this headline">¶</a></h4>
-<p>As a convenience, <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> also offers a useful method to rename data columns:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;old_name&#39;</span><span class="p">,</span><span class="s1">&#39;new_name&#39;</span><span class="p">)</span>
+<p>As a convenience, <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> also offers a useful method to rename data columns:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;old_name&#39;</span><span class="p">,</span><span class="s1">&#39;new_name&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;new_name&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -943,8 +934,8 @@ The <code class="docutils literal"><span class="pre">headers_too=False</span></c
 <h4>Inserting Columns of Data<a class="headerlink" href="#inserting-columns-of-data" title="Permalink to this headline">¶</a></h4>
 <p>The append columns operator <strong>&amp;</strong> will only add columns to the end of a
 dataset. If you want to add a column of data in the middle of the data set then
-you should use the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.add_column()</span></code> method.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;Column Header&#39;</span><span class="p">)</span>
+you should use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.add_column()</span></code> method.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;Column Header&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">Index</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">func_args</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
@@ -952,20 +943,20 @@ you should use the <code class="xref py py-meth docutils literal"><span class="p
 <p>The first example simply adds a column of data to the end of the dataset and
 sets the new column headers. The second variant  inserts the new column before
 column <em>Index</em>. <em>Index</em> follows the same rules as for the
-<code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code> method. In the third example, the new column data is
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.column()</span></code> method. In the third example, the new column data is
 generated by applying the specified function. The function is passed s dingle
 row as a 1D numpy array and any of the keyword, argument pairs passed in a
 dictionary to the optional <em>func_args</em> argument.</p>
-<p>The <code class="xref py py-meth docutils literal"><span class="pre">DataFile.add_column()</span></code> method returns a copy of the DataFile object
+<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.add_column()</span></code> method returns a copy of the DataFile object
 itself as well as modifying the object. This is to allow the metod to be chained
 up with other methods for more compact code writing.</p>
 </div>
 </div>
 <div class="section" id="deleting-rows-of-data">
 <h3>Deleting Rows of Data<a class="headerlink" href="#deleting-rows-of-data" title="Permalink to this headline">¶</a></h3>
-<p>Removing complete rows of data is achieved using the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code>
+<p>Removing complete rows of data is achieved using the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.del_rows()</span></code>
 method.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">100</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="s1">&#39;X Col&#39;</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="s1">&#39;X Col&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">300</span><span class="p">)</span>
@@ -975,14 +966,14 @@ method.:</p>
 </div>
 <p>The first variant will delete row 10 from the data set (where the first row will
 be row 0). You can also supply a list or slice (as in the second example) to
-<code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code> to delete multiple rows.</p>
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.del_rows()</span></code> to delete multiple rows.</p>
 <p>If you do not know in advance which row to delete, then the remiaining
 variants provide more advanced options. The third variant searches for and
 deletes all rows in which the specified column contains <em>value</em>. The
 fourth variant selects which ros to delete by calling a user supplied function
 for each row. The user supplied function is the same in form and definitition as
-that used for the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code> method:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">user_func</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span><span class="n">row_as_array</span><span class="p">):</span>
+that used for the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.search()</span></code> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">user_func</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span><span class="n">row_as_array</span><span class="p">):</span>
     <span class="k">return</span> <span class="kc">True</span> <span class="ow">or</span> <span class="kc">False</span>
 </pre></div>
 </div>
@@ -990,15 +981,15 @@ that used for the <code class="xref py py-meth docutils literal"><span class="pr
 use of the <em>invert</em> keyword argument to reverse the sense used to selkect tows. In both cases
 rows are deleted(kept for <em>invert</em> = True) if the specified column lies between the maximum and minimum
 values of the tuple. The test is done inclusively. Any length two iterable object can be used
-for specifying the bounds. Fianlly, if you call <code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code> with no arguments at all, then
+for specifying the bounds. Fianlly, if you call <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.del_rows()</span></code> with no arguments at all, then
 it removes all rows where at least one column of data is masked out.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">50</span><span class="p">)</span> <span class="c1"># Mask all rows where the first column is greater than 50</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">50</span><span class="p">)</span> <span class="c1"># Mask all rows where the first column is greater than 50</span>
 <span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">()</span> <span class="c1"># Then delete them.</span>
 </pre></div>
 </div>
 <p>For simple caases where the row to be delted can be expressed as an integer or list of integers,
 the subtration operator can be used.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">-</span><span class="mi">2</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">-</span><span class="mi">2</span>
 <span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">-</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
 <span class="n">d</span><span class="o">-=-</span><span class="mi">1</span>
 </pre></div>
@@ -1009,14 +1000,14 @@ the subtration operator can be used.:</p>
 <h3>Deleting Columns of Data<a class="headerlink" href="#deleting-columns-of-data" title="Permalink to this headline">¶</a></h3>
 <p>Deleting whole columns of data can be done by referring to a column by index or
 column header - the indexing rules are the same as used for the
-<code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code> method.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.column()</span></code> method.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Again, there is an operator that can be used to achieve the same effect, in this
 case the modulus operator %.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">%</span><span class="s2">&quot;temperature&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">%</span><span class="s2">&quot;temperature&quot;</span>
 <span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">%</span><span class="mi">1</span>
 <span class="n">d</span><span class="o">%=-</span><span class="mi">1</span>
 </pre></div>
@@ -1027,7 +1018,7 @@ case the modulus operator %.:</p>
 <p>Data can be sorted by one or more columns, specifying the columns as a number or
 string for single columns or a list or tuple of strings or numbers for multiple
 columns. Currently only ascending sorts are supported.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;Temp&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;Temp&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">sort</span><span class="p">([</span><span class="s1">&#39;Temp&#39;</span><span class="p">,</span><span class="s1">&#39;Gate&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -1036,7 +1027,7 @@ columns. Currently only ascending sorts are supported.:</p>
 <span id="save"></span><h3>Saving Data<a class="headerlink" href="#saving-data" title="Permalink to this headline">¶</a></h3>
 <p>Only saving data in the <em>TDI format</em> and as comma or tab deliminated formats is supported.</p>
 <p>For example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 <span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 <span class="n">d</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
@@ -1047,12 +1038,12 @@ columns. Currently only ascending sorts are supported.:</p>
 filename attribute of the DataFile object. This will have been set when the
 filewas loaded from disc.</p>
 <p>If the filename attribute has not been set eg if the DataFile object was
-created from scratch, then the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.save()</span></code> method will cause a dialogue
+created from scratch, then the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.save()</span></code> method will cause a dialogue
 box to be raised so that the user can supply a filename.</p>
 <p>In the second variant, the supplied filename is used and the filename attribute
-is changed to match this ie <code class="docutils literal"><span class="pre">d.filename</span></code> will always return the last
+is changed to match this ie <code class="docutils literal notranslate"><span class="pre">d.filename</span></code> will always return the last
 filename used for a load or save operation.</p>
-<p>The third is similar but convert the file to <code class="docutils literal"><span class="pre">cvs</span></code> format while the fourth also
+<p>The third is similar but convert the file to <code class="docutils literal notranslate"><span class="pre">cvs</span></code> format while the fourth also
 specifies that the eliminator is a tab character.</p>
 </div>
 </div>
@@ -1071,14 +1062,14 @@ specifies that the eliminator is a tab character.</p>
   <ul>
 <li><a class="reference internal" href="#">Loading and Examining Data</a><ul>
 <li><a class="reference internal" href="#loading-a-data-file">Loading a data file</a><ul>
-<li><a class="reference internal" href="#the-various-flavours-of-the-datafile-class">The Various Flavours of the <code class="docutils literal"><span class="pre">DataFile</span></code> Class</a><ul>
+<li><a class="reference internal" href="#the-various-flavours-of-the-datafile-class">The Various Flavours of the <code class="docutils literal notranslate"><span class="pre">DataFile</span></code> Class</a><ul>
 <li><a class="reference internal" href="#base-classes-and-generic-formats">Base Classes and Generic Formats</a></li>
 <li><a class="reference internal" href="#classes-for-specifc-instruments-mainly-ones-owned-by-the-cm-physics-group-in-leeds">Classes for Specifc Instruments (Mainly ones owned by the CM Physics Group in Leeds)</a></li>
 <li><a class="reference internal" href="#classes-for-instruments-at-major-facilities">Classes for Instruments at Major Facilities</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#loading-data-from-a-string-or-iterable-object">Loading Data from a string or iterable object</a></li>
-<li><a class="reference internal" href="#constructing-datafile-s-from-scratch">Constructing <code class="docutils literal"><span class="pre">DataFile</span></code> s from Scratch</a><ul>
+<li><a class="reference internal" href="#constructing-datafile-s-from-scratch">Constructing <code class="docutils literal notranslate"><span class="pre">DataFile</span></code> s from Scratch</a><ul>
 <li><a class="reference internal" href="#single-argument-constructor">Single Argument Constructor</a></li>
 <li><a class="reference internal" href="#two-argument-constructor">Two Argument Constructor</a></li>
 <li><a class="reference internal" href="#many-argument-constructor">Many Argument Constructor</a></li>
@@ -1101,7 +1092,7 @@ specifies that the eliminator is a tab character.</p>
 <li><a class="reference internal" href="#swapping-and-rotating-column-assignments">Swapping and Rotating Column Assignments</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#printing-the-complete-datafile">Printing the Complete <code class="docutils literal"><span class="pre">DataFile</span></code></a></li>
+<li><a class="reference internal" href="#printing-the-complete-datafile">Printing the Complete <code class="docutils literal notranslate"><span class="pre">DataFile</span></code></a></li>
 <li><a class="reference internal" href="#working-with-columns-of-data">Working with columns of data</a></li>
 <li><a class="reference internal" href="#working-with-complete-rows-of-data">Working with complete rows of data</a></li>
 <li><a class="reference internal" href="#special-magic-when-working-with-subsets-of-data">Special Magic When Working with Subsets of Data</a></li>
@@ -1186,9 +1177,9 @@ specifies that the eliminator is a tab character.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.6
+      1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

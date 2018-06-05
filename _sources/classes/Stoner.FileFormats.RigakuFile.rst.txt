@@ -56,4 +56,27 @@ Stoner.FileFormats.RigakuFile
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.RigakuFile.T
+      ~Stoner.FileFormats.RigakuFile.basename
+      ~Stoner.FileFormats.RigakuFile.clone
+      ~Stoner.FileFormats.RigakuFile.column_headers
+      ~Stoner.FileFormats.RigakuFile.data
+      ~Stoner.FileFormats.RigakuFile.dict_records
+      ~Stoner.FileFormats.RigakuFile.dims
+      ~Stoner.FileFormats.RigakuFile.dtype
+      ~Stoner.FileFormats.RigakuFile.filename
+      ~Stoner.FileFormats.RigakuFile.mask
+      ~Stoner.FileFormats.RigakuFile.metadata
+      ~Stoner.FileFormats.RigakuFile.mime_type
+      ~Stoner.FileFormats.RigakuFile.patterns
+      ~Stoner.FileFormats.RigakuFile.priority
+      ~Stoner.FileFormats.RigakuFile.records
+      ~Stoner.FileFormats.RigakuFile.setas
+      ~Stoner.FileFormats.RigakuFile.shape
+      ~Stoner.FileFormats.RigakuFile.subclasses
+   
    

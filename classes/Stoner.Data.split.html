@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Data.split &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -27,8 +19,7 @@
     <link rel="next" title="Data.stitch" href="Stoner.Data.stitch.html" />
     <link rel="prev" title="Data.spline" href="Stoner.Data.spline.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  </head>
-  <body>
+  </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
         Stoner Pacakge API Documentation
     </a></h1></header>
@@ -49,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -68,15 +59,15 @@
 <dl class="method">
 <dt id="Stoner.Data.split">
 <code class="descclassname">Data.</code><code class="descname">split</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.split" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recursively splits the current <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> object into a <code class="xref py py-class docutils literal"><span class="pre">Stoner.Forlders.DataFolder</span></code> objects where each one contains the rows from the original object which had the same value of a given column(s) or function.</p>
+<dd><p>Recursively splits the current <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> object into a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Forlders.DataFolder</span></code> objects where each one contains the rows from the original object which had the same value of a given column(s) or function.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*args</strong> (<em>column index or function</em>) – Each argument is used in turn to find key values for the files in the DataFolder</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>Stoner.Folders.DataFolder</em> – A <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> object containing the individual
-<code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code> objects</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>Stoner.Folders.DataFolder</em> – A <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> object containing the individual
+<code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code> objects</td>
 </tr>
 </tbody>
 </table>
@@ -85,7 +76,7 @@
 <p>On each iteration the first argument is called. If it is a column type then rows which amtch each unique value are collated
 together and made into a separate file. If the argument is a callable, then it is called for each row, passing the row
 as a single 1D array and the return result is used to group lines together. The return value should be hashable.</p>
-<p>Once this is done and the <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> exists, if there are remaining argument, then the method is
+<p>Once this is done and the <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> exists, if there are remaining argument, then the method is
 called recusivelyt for each file and the resulkting DataFolder added into the root DataFolder and the file is removed.</p>
 <p>Thus, when all of the arguments are evaluated, the resulting DataFolder is a multi-level tree.</p>
 <div class="last admonition warning">
@@ -147,7 +138,7 @@ called recusivelyt for each file and the resulkting DataFolder added into the ro
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -155,9 +146,9 @@ called recusivelyt for each file and the resulkting DataFolder added into the ro
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.6
+      1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

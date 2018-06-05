@@ -55,4 +55,27 @@ Stoner.FileFormats.FmokeFile
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.FmokeFile.T
+      ~Stoner.FileFormats.FmokeFile.basename
+      ~Stoner.FileFormats.FmokeFile.clone
+      ~Stoner.FileFormats.FmokeFile.column_headers
+      ~Stoner.FileFormats.FmokeFile.data
+      ~Stoner.FileFormats.FmokeFile.dict_records
+      ~Stoner.FileFormats.FmokeFile.dims
+      ~Stoner.FileFormats.FmokeFile.dtype
+      ~Stoner.FileFormats.FmokeFile.filename
+      ~Stoner.FileFormats.FmokeFile.mask
+      ~Stoner.FileFormats.FmokeFile.metadata
+      ~Stoner.FileFormats.FmokeFile.mime_type
+      ~Stoner.FileFormats.FmokeFile.patterns
+      ~Stoner.FileFormats.FmokeFile.priority
+      ~Stoner.FileFormats.FmokeFile.records
+      ~Stoner.FileFormats.FmokeFile.setas
+      ~Stoner.FileFormats.FmokeFile.shape
+      ~Stoner.FileFormats.FmokeFile.subclasses
+   
    

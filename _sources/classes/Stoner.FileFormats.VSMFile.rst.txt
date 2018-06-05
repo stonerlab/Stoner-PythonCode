@@ -55,4 +55,27 @@ Stoner.FileFormats.VSMFile
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.VSMFile.T
+      ~Stoner.FileFormats.VSMFile.basename
+      ~Stoner.FileFormats.VSMFile.clone
+      ~Stoner.FileFormats.VSMFile.column_headers
+      ~Stoner.FileFormats.VSMFile.data
+      ~Stoner.FileFormats.VSMFile.dict_records
+      ~Stoner.FileFormats.VSMFile.dims
+      ~Stoner.FileFormats.VSMFile.dtype
+      ~Stoner.FileFormats.VSMFile.filename
+      ~Stoner.FileFormats.VSMFile.mask
+      ~Stoner.FileFormats.VSMFile.metadata
+      ~Stoner.FileFormats.VSMFile.mime_type
+      ~Stoner.FileFormats.VSMFile.patterns
+      ~Stoner.FileFormats.VSMFile.priority
+      ~Stoner.FileFormats.VSMFile.records
+      ~Stoner.FileFormats.VSMFile.setas
+      ~Stoner.FileFormats.VSMFile.shape
+      ~Stoner.FileFormats.VSMFile.subclasses
+   
    

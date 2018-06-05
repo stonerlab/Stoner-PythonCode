@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>AnalysisMixin &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -27,8 +19,7 @@
     <link rel="next" title="hsl2rgb" href="Stoner.plot.hsl2rgb.html" />
     <link rel="prev" title="ApplyAffineTransform" href="Stoner.Analysis.ApplyAffineTransform.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  </head>
-  <body>
+  </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
         Stoner Pacakge API Documentation
     </a></h1></header>
@@ -49,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -65,8 +56,8 @@
 <dl class="class">
 <dt id="Stoner.Analysis.AnalysisMixin">
 <em class="property">class </em><code class="descclassname">Stoner.Analysis.</code><code class="descname">AnalysisMixin</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>A mixin calss designed to work with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> to provide additional analysis methods.</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A mixin calss designed to work with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> to provide additional analysis methods.</p>
 <p class="rubric">Methods Summary</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -74,94 +65,94 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.SG_Filter" title="Stoner.Analysis.AnalysisMixin.SG_Filter"><code class="xref py py-obj docutils literal"><span class="pre">SG_Filter</span></code></a>([col,&nbsp;points,&nbsp;poly,&nbsp;order,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.SG_Filter" title="Stoner.Analysis.AnalysisMixin.SG_Filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SG_Filter</span></code></a>([col,&nbsp;points,&nbsp;poly,&nbsp;order,&nbsp;…])</td>
 <td>Implements Savitsky-Golay filtering of data for smoothing and differentiating data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.add" title="Stoner.Analysis.AnalysisMixin.add"><code class="xref py py-obj docutils literal"><span class="pre">add</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.add" title="Stoner.Analysis.AnalysisMixin.add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Add one column, number or array (b) to another column (a).</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.apply" title="Stoner.Analysis.AnalysisMixin.apply"><code class="xref py py-obj docutils literal"><span class="pre">apply</span></code></a>(func[,&nbsp;col,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.apply" title="Stoner.Analysis.AnalysisMixin.apply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code></a>(func[,&nbsp;col,&nbsp;replace,&nbsp;header])</td>
 <td>Applies the given function to each row in the data set and adds to the data set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.bin" title="Stoner.Analysis.AnalysisMixin.bin"><code class="xref py py-obj docutils literal"><span class="pre">bin</span></code></a>([xcol,&nbsp;ycol,&nbsp;bins,&nbsp;mode,&nbsp;clone])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.bin" title="Stoner.Analysis.AnalysisMixin.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a>([xcol,&nbsp;ycol,&nbsp;bins,&nbsp;mode,&nbsp;clone])</td>
 <td>Bin x-y data into new values of x with an error bar.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.clip" title="Stoner.Analysis.AnalysisMixin.clip"><code class="xref py py-obj docutils literal"><span class="pre">clip</span></code></a>(clipper[,&nbsp;column])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.clip" title="Stoner.Analysis.AnalysisMixin.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>(clipper[,&nbsp;column])</td>
 <td>Clips the data based on the column and the clipper value.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-obj docutils literal"><span class="pre">curve_fit</span></code></a>(func[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">curve_fit</span></code></a>(func[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma])</td>
 <td>General curve fitting function passed through from scipy.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.decompose" title="Stoner.Analysis.AnalysisMixin.decompose"><code class="xref py py-obj docutils literal"><span class="pre">decompose</span></code></a>([xcol,&nbsp;ycol,&nbsp;sym,&nbsp;asym,&nbsp;replace])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.decompose" title="Stoner.Analysis.AnalysisMixin.decompose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decompose</span></code></a>([xcol,&nbsp;ycol,&nbsp;sym,&nbsp;asym,&nbsp;replace])</td>
 <td>Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.diffsum" title="Stoner.Analysis.AnalysisMixin.diffsum"><code class="xref py py-obj docutils literal"><span class="pre">diffsum</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
-<td>Calculate <span class="math">\(\frac{a-b}{a+b}\)</span> for the two columns <em>a</em> and <em>b</em>.</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.diffsum" title="Stoner.Analysis.AnalysisMixin.diffsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diffsum</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<td>Calculate <span class="math notranslate nohighlight">\(\frac{a-b}{a+b}\)</span> for the two columns <em>a</em> and <em>b</em>.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.divide" title="Stoner.Analysis.AnalysisMixin.divide"><code class="xref py py-obj docutils literal"><span class="pre">divide</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.divide" title="Stoner.Analysis.AnalysisMixin.divide"><code class="xref py py-obj docutils literal notranslate"><span class="pre">divide</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Divide one column (a) by  another column, number or array (b).</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.extrapolate" title="Stoner.Analysis.AnalysisMixin.extrapolate"><code class="xref py py-obj docutils literal"><span class="pre">extrapolate</span></code></a>(new_x[,&nbsp;xcol,&nbsp;ycol,&nbsp;yerr,&nbsp;…])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.extrapolate" title="Stoner.Analysis.AnalysisMixin.extrapolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extrapolate</span></code></a>(new_x[,&nbsp;xcol,&nbsp;ycol,&nbsp;yerr,&nbsp;…])</td>
 <td>Extrapolate data based on local fit to x,y data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.integrate" title="Stoner.Analysis.AnalysisMixin.integrate"><code class="xref py py-obj docutils literal"><span class="pre">integrate</span></code></a>([xcol,&nbsp;ycol,&nbsp;result,&nbsp;result_name,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.integrate" title="Stoner.Analysis.AnalysisMixin.integrate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integrate</span></code></a>([xcol,&nbsp;ycol,&nbsp;result,&nbsp;result_name,&nbsp;…])</td>
 <td>Inegrate a column of data, optionally returning the cumulative integral.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.interpolate" title="Stoner.Analysis.AnalysisMixin.interpolate"><code class="xref py py-obj docutils literal"><span class="pre">interpolate</span></code></a>(newX[,&nbsp;kind,&nbsp;xcol,&nbsp;replace])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.interpolate" title="Stoner.Analysis.AnalysisMixin.interpolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate</span></code></a>(newX[,&nbsp;kind,&nbsp;xcol,&nbsp;replace])</td>
 <td>Interpolate a dataset to get a new set of values for a given set of x data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-obj docutils literal"><span class="pre">lmfit</span></code></a>(model[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lmfit</span></code></a>(model[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma])</td>
 <td>Wrapper around lmfit module fitting.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.make_bins" title="Stoner.Analysis.AnalysisMixin.make_bins"><code class="xref py py-obj docutils literal"><span class="pre">make_bins</span></code></a>(xcol,&nbsp;bins[,&nbsp;mode])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.make_bins" title="Stoner.Analysis.AnalysisMixin.make_bins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_bins</span></code></a>(xcol,&nbsp;bins[,&nbsp;mode])</td>
 <td>Utility method to generate bin boundaries and centres along an axis.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.max" title="Stoner.Analysis.AnalysisMixin.max"><code class="xref py py-obj docutils literal"><span class="pre">max</span></code></a>([column,&nbsp;bounds])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.max" title="Stoner.Analysis.AnalysisMixin.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>([column,&nbsp;bounds])</td>
 <td>Find maximum value and index in a column of data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.mean" title="Stoner.Analysis.AnalysisMixin.mean"><code class="xref py py-obj docutils literal"><span class="pre">mean</span></code></a>([column,&nbsp;sigma,&nbsp;bounds])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.mean" title="Stoner.Analysis.AnalysisMixin.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([column,&nbsp;sigma,&nbsp;bounds])</td>
 <td>Find mean value of a data column.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.min" title="Stoner.Analysis.AnalysisMixin.min"><code class="xref py py-obj docutils literal"><span class="pre">min</span></code></a>([column,&nbsp;bounds])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.min" title="Stoner.Analysis.AnalysisMixin.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>([column,&nbsp;bounds])</td>
 <td>Find minimum value and index in a column of data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.multiply" title="Stoner.Analysis.AnalysisMixin.multiply"><code class="xref py py-obj docutils literal"><span class="pre">multiply</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.multiply" title="Stoner.Analysis.AnalysisMixin.multiply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiply</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Multiply one column (a) by  another column, number or array (b).</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.normalise" title="Stoner.Analysis.AnalysisMixin.normalise"><code class="xref py py-obj docutils literal"><span class="pre">normalise</span></code></a>([target,&nbsp;base,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.normalise" title="Stoner.Analysis.AnalysisMixin.normalise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalise</span></code></a>([target,&nbsp;base,&nbsp;replace,&nbsp;header])</td>
 <td>Normalise data columns by dividing through by a base column value.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.odr" title="Stoner.Analysis.AnalysisMixin.odr"><code class="xref py py-obj docutils literal"><span class="pre">odr</span></code></a>(model[,&nbsp;xcol,&nbsp;ycol,&nbsp;sigma_x,&nbsp;sigma_y])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.odr" title="Stoner.Analysis.AnalysisMixin.odr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">odr</span></code></a>(model[,&nbsp;xcol,&nbsp;ycol,&nbsp;sigma_x,&nbsp;sigma_y])</td>
 <td>Wrapper around scipy.odr orthogonal distance regression fitting.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.outlier_detection" title="Stoner.Analysis.AnalysisMixin.outlier_detection"><code class="xref py py-obj docutils literal"><span class="pre">outlier_detection</span></code></a>([column,&nbsp;window,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.outlier_detection" title="Stoner.Analysis.AnalysisMixin.outlier_detection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outlier_detection</span></code></a>([column,&nbsp;window,&nbsp;…])</td>
 <td>Function to detect outliers in a column of data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.peaks" title="Stoner.Analysis.AnalysisMixin.peaks"><code class="xref py py-obj docutils literal"><span class="pre">peaks</span></code></a>(**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.peaks" title="Stoner.Analysis.AnalysisMixin.peaks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">peaks</span></code></a>(**kargs)</td>
 <td>Locates peaks and/or troughs in a column of data by using SG-differentiation.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.polyfit" title="Stoner.Analysis.AnalysisMixin.polyfit"><code class="xref py py-obj docutils literal"><span class="pre">polyfit</span></code></a>([xcol,&nbsp;ycol,&nbsp;polynomial_order,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.polyfit" title="Stoner.Analysis.AnalysisMixin.polyfit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">polyfit</span></code></a>([xcol,&nbsp;ycol,&nbsp;polynomial_order,&nbsp;…])</td>
 <td>Pass through to numpy.polyfit.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.scale" title="Stoner.Analysis.AnalysisMixin.scale"><code class="xref py py-obj docutils literal"><span class="pre">scale</span></code></a>(other[,&nbsp;xcol,&nbsp;ycol])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.scale" title="Stoner.Analysis.AnalysisMixin.scale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scale</span></code></a>(other[,&nbsp;xcol,&nbsp;ycol])</td>
 <td>Scale the x and y data in this DataFile to match the x and y data in another DataFile.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.smooth" title="Stoner.Analysis.AnalysisMixin.smooth"><code class="xref py py-obj docutils literal"><span class="pre">smooth</span></code></a>([window,&nbsp;xcol,&nbsp;ycol,&nbsp;size])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.smooth" title="Stoner.Analysis.AnalysisMixin.smooth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smooth</span></code></a>([window,&nbsp;xcol,&nbsp;ycol,&nbsp;size])</td>
 <td>Smooth data by convoluting with a window.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.span" title="Stoner.Analysis.AnalysisMixin.span"><code class="xref py py-obj docutils literal"><span class="pre">span</span></code></a>([column,&nbsp;bounds])</td>
-<td>Returns a tuple of the maximum and minumum values within the given column and bounds by calling into <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.max" title="Stoner.Analysis.AnalysisMixin.max"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.max()</span></code></a> and <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.min" title="Stoner.Analysis.AnalysisMixin.min"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.min()</span></code></a>.</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.span" title="Stoner.Analysis.AnalysisMixin.span"><code class="xref py py-obj docutils literal notranslate"><span class="pre">span</span></code></a>([column,&nbsp;bounds])</td>
+<td>Returns a tuple of the maximum and minumum values within the given column and bounds by calling into <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.max" title="Stoner.Analysis.AnalysisMixin.max"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.max()</span></code></a> and <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.min" title="Stoner.Analysis.AnalysisMixin.min"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.min()</span></code></a>.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.spline" title="Stoner.Analysis.AnalysisMixin.spline"><code class="xref py py-obj docutils literal"><span class="pre">spline</span></code></a>([xcol,&nbsp;ycol,&nbsp;sigma])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.spline" title="Stoner.Analysis.AnalysisMixin.spline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spline</span></code></a>([xcol,&nbsp;ycol,&nbsp;sigma])</td>
 <td>Construct a spline through x and y data and replace, add new data or return spline function.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.stitch" title="Stoner.Analysis.AnalysisMixin.stitch"><code class="xref py py-obj docutils literal"><span class="pre">stitch</span></code></a>(other[,&nbsp;xcol,&nbsp;ycol,&nbsp;overlap,&nbsp;…])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.stitch" title="Stoner.Analysis.AnalysisMixin.stitch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stitch</span></code></a>(other[,&nbsp;xcol,&nbsp;ycol,&nbsp;overlap,&nbsp;…])</td>
 <td>Apply a scaling to this data set to make it stich to another dataset.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.subtract" title="Stoner.Analysis.AnalysisMixin.subtract"><code class="xref py py-obj docutils literal"><span class="pre">subtract</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.subtract" title="Stoner.Analysis.AnalysisMixin.subtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Subtract one column, number or array (b) from another column (a).</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.threshold" title="Stoner.Analysis.AnalysisMixin.threshold"><code class="xref py py-obj docutils literal"><span class="pre">threshold</span></code></a>(threshold,&nbsp;**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.threshold" title="Stoner.Analysis.AnalysisMixin.threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold</span></code></a>(threshold,&nbsp;**kargs)</td>
 <td>Finds partial indices where the data in column passes the threshold, rising or falling.</td>
 </tr>
 </tbody>
@@ -197,9 +188,9 @@ Otherwise, a copy of the modified AnalysisMixin object is returned.</p>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>If col is not specified or is None then the <code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> column assignments are used
+<p>If col is not specified or is None then the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code> column assignments are used
 to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
-for differentiating data. This is now a pass through to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.savgol_filter.html#scipy.signal.savgol_filter" title="(in SciPy v1.1.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.signal.savgol_filter()</span></code></a></p>
+for differentiating data. This is now a pass through to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.savgol_filter.html#scipy.signal.savgol_filter" title="(in SciPy v1.1.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.savgol_filter()</span></code></a></p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last">User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#smoothing-guide"><span class="std std-ref">Smoothing and Filtering Data</span></a></p>
@@ -227,7 +218,7 @@ for differentiating data. This is now a pass through to <a class="reference exte
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</p>
 </td>
 </tr>
 </tbody>
@@ -258,7 +249,7 @@ additional column with the uncertainites will be added to the data.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</p>
 </td>
 </tr>
 </tbody>
@@ -325,14 +316,14 @@ used as the clip limits</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</p>
 </td>
 </tr>
 </tbody>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If column is not defined (or is None) the <code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> column
+<p class="last">If column is not defined (or is None) the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code> column
 assignments are used.</p>
 </div>
 </dd></dl>
@@ -382,16 +373,16 @@ for the fitting parameters.</p>
 <li>“fit”    (tuple of popt,pcov)</li>
 <li>“row”     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties</li>
 <li>“full”    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).</li>
-<li>“data”   a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> object with fit recorded in the metadata and optionally as a new column.</li>
+<li>“data”   a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> object with fit recorded in the metadata and optionally as a new column.</li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>If the columns are not specified (or set to None) then the X and Y data are taken using the
-<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.</p>
+<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.</p>
 <p>The fitting function should have prototype y=f(x,p[0],p[1],p[2]…)
-The x-column and y-column can be anything that <code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.find_col()</span></code> can use as an index
+The x-column and y-column can be anything that <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.find_col()</span></code> can use as an index
 but typucally either strings to be matched against column headings or integers.
 The initial parameter values and weightings default to None which corresponds to all parameters starting
 at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
@@ -404,7 +395,7 @@ based on these values.</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Analysis.AnalysisMixin.lmfit()</span></code></a>
+<p class="last"><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin.lmfit()</span></code></a>
 User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#curve-fit-guide"><span class="std std-ref">Curve Fitting</span></a></p>
 </div>
 </dd></dl>
@@ -427,13 +418,13 @@ User guide section <a class="reference internal" href="../UserGuide/analysisfile
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</p>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Decompose Example&quot;&quot;&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Decompose Example&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">format_val</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">reshape</span><span class="p">,</span><span class="n">array</span>
@@ -462,7 +453,7 @@ User guide section <a class="reference internal" href="../UserGuide/analysisfile
 <dl class="method">
 <dt id="Stoner.Analysis.AnalysisMixin.diffsum">
 <code class="descname">diffsum</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>replace=False</em>, <em>header=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.diffsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.diffsum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate <span class="math">\(\frac{a-b}{a+b}\)</span> for the two columns <em>a</em> and <em>b</em>.</p>
+<dd><p>Calculate <span class="math notranslate nohighlight">\(\frac{a-b}{a+b}\)</span> for the two columns <em>a</em> and <em>b</em>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -480,7 +471,7 @@ User guide section <a class="reference internal" href="../UserGuide/analysisfile
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</p>
 </td>
 </tr>
 </tbody>
@@ -511,7 +502,7 @@ additional column with the uncertainites will be added to the data.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</p>
 </td>
 </tr>
 </tbody>
@@ -555,7 +546,7 @@ callable, then represents a function to be fitted to the data.</li>
 to estimate the values. If the new_x values are within the span of the x-data then the portion of the data
 centred about the point and overlap points long will be used to interpolate a value.</p>
 <p class="last">If <em>kind</em> is callable, it should take x values in the first parameter and free fitting parameters as the other
-parameters (i.e. as with <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>).</p>
+parameters (i.e. as with <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>).</p>
 </div>
 </dd></dl>
 
@@ -592,7 +583,7 @@ or True to add a new column or None to not store the cumulative result.</li>
 <p class="first admonition-title">Note</p>
 <p class="last">This is a pass through to the scipy.integrate.cumtrapz routine which just uses trapezoidal integration. A better alternative would be
 to offer a variety of methods including simpson’s rule and interpolation of data. If xcol or ycol are not specified then
-the current values from the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute are used.</p>
+the current values from the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute are used.</p>
 </div>
 </dd></dl>
 
@@ -668,7 +659,7 @@ Default to None for not adding fitted data</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The lmfit module will refurn an instance of the <code class="xref py py-class docutils literal"><span class="pre">lmfit.models.ModelFit</span></code> class that contains all
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The lmfit module will refurn an instance of the <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.models.ModelFit</span></code> class that contains all
 relevant information about the fit.</p>
 </td>
 </tr>
@@ -677,27 +668,27 @@ relevant information about the fit.</p>
 <dl class="docutils">
 <dt>The return value is determined by the <em>output</em> parameter. Options are</dt>
 <dd><ul class="first last simple">
-<li>“ffit”    just the <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.ModelFit</span></code> instance</li>
+<li>“ffit”    just the <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.ModelFit</span></code> instance</li>
 <li>“row”     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties</li>
 <li>“full”    a tuple of the fit instance and the row.</li>
-<li>“data”    a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> object with the fit recorded in the emtadata and optinally as a column of data.</li>
+<li>“data”    a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> object with the fit recorded in the emtadata and optinally as a column of data.</li>
 </ul>
 </dd>
 </dl>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>
+<p class="last"><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>
 User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#fitting-with-limits"><span class="std std-ref">Fitting with limits</span></a></p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If <em>p0</em> is fed a 2D array, then it assumed that you want to calculate <span class="math">\(\chi^2\)</span> for different starting parameters
+<p class="last">If <em>p0</em> is fed a 2D array, then it assumed that you want to calculate <span class="math notranslate nohighlight">\(\chi^2\)</span> for different starting parameters
 with some variables fixed. In this mode, fitting is carried out repeatedly with each row representing one attempt with different
 values of the parameters. In this mode the return value is a 2D array whose rows correspond to the inputs to the rows of p0, the
-columns are the fitted values of the parameters with an additional column for <span class="math">\(\chi^2\)</span>.</p>
+columns are the fitted values of the parameters with an additional column for <span class="math notranslate nohighlight">\(\chi^2\)</span>.</p>
 </div>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple use of lmfit to fit data.&quot;&quot;&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple use of lmfit to fit data.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">exp</span><span class="p">,</span><span class="n">random</span>
 
@@ -729,10 +720,6 @@ columns are the fitted values of the parameters with an additional column for <s
 <span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">text</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="sa">u</span><span class="s2">&quot;Levenberg-Marquardt Fit&quot;</span>
 </pre></div>
-</div>
-<p>(<a class="reference external" href="../samples/lmfit2.png">png</a>, <a class="reference external" href="../samples/lmfit2.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit2.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/lmfit2.png" src="../_images/lmfit2.png" />
 </div>
 </dd></dl>
 
@@ -786,7 +773,7 @@ numbers representing one row, and returns True for all rows to search in.</td>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If column is not defined (or is None) the <code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> column
+<p class="last">If column is not defined (or is None) the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code> column
 assignments are used.</p>
 </div>
 </dd></dl>
@@ -817,12 +804,12 @@ numbers representing one row, and returns True for all rows to search in.</li>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If column is not defined (or is None) the <code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> column
+<p class="last">If column is not defined (or is None) the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code> column
 assignments are used.</p>
 </div>
 <div class="admonition-todo admonition" id="index-0">
 <p class="first admonition-title">Todo</p>
-<p class="last">Fix the row index when the bounds function is used - see note of <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.max" title="Stoner.Analysis.AnalysisMixin.max"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.max()</span></code></a></p>
+<p class="last">Fix the row index when the bounds function is used - see note of <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.max" title="Stoner.Analysis.AnalysisMixin.max"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.max()</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -846,7 +833,7 @@ numbers representing one row, and returns True for all rows to search in.</td>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If column is not defined (or is None) the <code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> column
+<p class="last">If column is not defined (or is None) the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code> column
 assignments are used.</p>
 </div>
 </dd></dl>
@@ -872,7 +859,7 @@ assignments are used.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</p>
 </td>
 </tr>
 </tbody>
@@ -905,7 +892,7 @@ to the range (-1,+1) or (0,1) depending on whether the input is bipolar or not.<
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</p>
 </td>
 </tr>
 </tbody>
@@ -926,9 +913,9 @@ additional column with the uncertainites will be added to the data.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>model</strong> (<em>scipy.odr.Model, lmfit.models.Model or callable</em>) – Tje model that describes the data. See below for more details.</li>
 <li><strong>xcol</strong> (<em>index or None</em>) – Columns to be used for the x  data for the fitting. If not givem defaults to the
-<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> x column</li>
+<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> x column</li>
 <li><strong>ycol</strong> (<em>index or None</em>) – Columns to be used for the  y data for the fitting. If not givem defaults to the
-<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> y column</li>
+<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> y column</li>
 </ul>
 </td>
 </tr>
@@ -950,11 +937,11 @@ Default to None for not adding fitted data</li>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
 <dt>The return value is determined by the <em>output</em> parameter. Options are</dt>
 <dd><ul class="first last simple">
-<li>”fit”    just the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Output.html#scipy.odr.Output" title="(in SciPy v1.1.0)"><code class="xref py py-class docutils literal"><span class="pre">scipy.odr.Output</span></code></a> instance (default)</li>
+<li>”fit”    just the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Output.html#scipy.odr.Output" title="(in SciPy v1.1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Output</span></code></a> instance (default)</li>
 <li>”row”     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties</li>
 <li>”full”    a tuple of the fit instance and the row.</li>
 <li><dl class="first docutils">
-<dt>”data”    a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> object with the fit recorded in the emtadata and optinally</dt>
+<dt>”data”    a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> object with the fit recorded in the emtadata and optinally</dt>
 <dd>as a column of data.</dd>
 </dl>
 </li>
@@ -970,20 +957,20 @@ Default to None for not adding fitted data</li>
 <p>The function tries to make use of whatever model you give it. Specifically, it accepts:</p>
 <blockquote>
 <div><ul class="simple">
-<li>A subclass or an instance of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.1.0)"><code class="xref py py-class docutils literal"><span class="pre">scipy.odr.Model</span></code></a> : this is the native model type for the underlying scipy
+<li>A subclass or an instance of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> : this is the native model type for the underlying scipy
 odr package.</li>
-<li>A subclass or instance of an lmfit.models.Model: the <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></code></a> module has a number of useful prebuilt
+<li>A subclass or instance of an lmfit.models.Model: the <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Fit</span></code></a> module has a number of useful prebuilt
 lmfit models that can be used directly
 by this function.</li>
 <li>A callable function which should have a signature f(x,parameter1,parameter2…) and <em>not</em> the scip.odr stadnard f(beta,x)</li>
 </ul>
 </div></blockquote>
 <dl class="docutils">
-<dt>This function ois designed to be as compatible as possible with <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a> and</dt>
-<dd><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a> to facilitate easy of switching between them.</dd>
+<dt>This function ois designed to be as compatible as possible with <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code></a> and</dt>
+<dd><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.lmfit()</span></code></a> to facilitate easy of switching between them.</dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple use of lmfit to fit data.&quot;&quot;&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple use of lmfit to fit data.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">exp</span><span class="p">,</span><span class="n">random</span>
 
@@ -1016,14 +1003,10 @@ by this function.</li>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="sa">u</span><span class="s2">&quot;Levenberg-Marquardt Fit&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/lmfit3.png">png</a>, <a class="reference external" href="../samples/lmfit3.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit3.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/lmfit3.png" src="../_images/lmfit3.png" />
-</div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>
-<a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.lmfit()</span></code></a>
+<p class="last"><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>
+<a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.lmfit()</span></code></a>
 User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#fitting-with-limits"><span class="std std-ref">Fitting with limits</span></a></p>
 </div>
 </dd></dl>
@@ -1054,7 +1037,7 @@ User guide section <a class="reference internal" href="../UserGuide/analysisfile
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</p>
 </td>
 </tr>
 </tbody>
@@ -1066,14 +1049,14 @@ of d, also will perform action depending on request eg ‘mask’, ‘delete’
 to see if the current data point falls certainty * std deviations away from
 data average.</p>
 <p>The outlier detection function has the signatrure:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">outlier</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">column</span><span class="p">,</span><span class="n">window</span><span class="p">,</span><span class="n">certainity</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">outlier</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">column</span><span class="p">,</span><span class="n">window</span><span class="p">,</span><span class="n">certainity</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
     <span class="c1">#code</span>
     <span class="k">return</span> <span class="kc">True</span> <span class="c1"># or False</span>
 </pre></div>
 </div>
 <p>All extra keyword arguments are passed to the outlier detector.</p>
 <p>IF <em>action</em> is a callable function then it should take the form of:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">column</span><span class="p">,</span><span class="n">row</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">column</span><span class="p">,</span><span class="n">row</span><span class="p">):</span>
     <span class="k">pass</span>
 </pre></div>
 </div>
@@ -1082,7 +1065,7 @@ and <em>row</em> is the data for the row.</p>
 <p>In all cases the indices of the outlier rows are added to the ;outlier’ metadata.</p>
 <dl class="docutils">
 <dt>Example</dt>
-<dd><div class="first highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Detect outlying points from a lione.&quot;&quot;&quot;</span>
+<dd><div class="first highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Detect outlying points from a lione.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
@@ -1223,7 +1206,7 @@ giving the standard error in the transformation matrix components and  <em>new_x
 </tbody>
 </table>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example of using scale to overlap data&quot;&quot;&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example of using scale to overlap data&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">sin</span><span class="p">,</span><span class="n">exp</span><span class="p">,</span><span class="n">pi</span><span class="p">,</span><span class="n">dstack</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
@@ -1264,12 +1247,12 @@ giving the standard error in the transformation matrix components and  <em>new_x
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>window</strong> (<em>string or tuple</em>) – Defines the window type to use by passing to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.1.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.signal.get_window()</span></code></a>.</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>window</strong> (<em>string or tuple</em>) – Defines the window type to use by passing to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.1.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.get_window()</span></code></a>.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>xcol</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – Data to use as x data if needed to define a window. If None, use <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a></li>
+<li><strong>xcol</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – Data to use as x data if needed to define a window. If None, use <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a></li>
 <li><strong>ycvol</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – Data to be smoothed</li>
 <li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – If int, then the number of points to use in the smoothing window. If float, then the size in x-data to be used.</li>
 <li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em> or </em><em>column index</em>) – Whether to add the smoothed data to the dataset and if so where.</li>
@@ -1294,7 +1277,7 @@ to the original x values.</p>
 <dl class="method">
 <dt id="Stoner.Analysis.AnalysisMixin.span">
 <code class="descname">span</code><span class="sig-paren">(</span><em>column=None</em>, <em>bounds=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.span"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.span" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a tuple of the maximum and minumum values within the given column and bounds by calling into <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.max" title="Stoner.Analysis.AnalysisMixin.max"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.max()</span></code></a> and <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.min" title="Stoner.Analysis.AnalysisMixin.min"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.min()</span></code></a>.</p>
+<dd><p>Returns a tuple of the maximum and minumum values within the given column and bounds by calling into <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.max" title="Stoner.Analysis.AnalysisMixin.max"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.max()</span></code></a> and <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.min" title="Stoner.Analysis.AnalysisMixin.min"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.min()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1311,7 +1294,7 @@ numbers representing one row, and returns True for all rows to search in.</td>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If column is not defined (or is None) the <code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> column
+<p class="last">If column is not defined (or is None) the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code> column
 assignments are used.</p>
 </div>
 </dd></dl>
@@ -1372,21 +1355,21 @@ if left as None, thenthe common overlap of the x data is used.</li>
 <li><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – If you know that overlap must be bigger than a certain amount, the bounds between the two
 data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.</li>
 <li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</li>
-<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – a stitching function that transforms <span class="math">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – a stitching function that transforms <span class="math notranslate nohighlight">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
 functions defined by <em>mode</em></li>
 <li><strong>p0</strong> (<em>iterable</em>) – if func is not None then p0 should be the starting values for the stitching function parameters</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – A copy of the current <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a> with the x and y data columns adjusted to stitch</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – A copy of the current <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a> with the x and y data columns adjusted to stitch</p>
 </td>
 </tr>
 </tbody>
 </table>
 <p>To stitch the data together, the x and y data in the current data file is transforms so that
-<span class="math">\(x'=x+A\)</span> and <span class="math">\(y'=By+C\)</span> where <span class="math">\(A,B,C\)</span> are constants and <span class="math">\((x',y')\)</span> are close matches to the
-<span class="math">\((x,y)\)</span> data in <em>other</em>. The algorithm assumes that the overlap region contains equal
-numbers of <span class="math">\((x,y)\)</span> points <em>mode</em> controls whether A,B, and C are fixed or adjustable</p>
+<span class="math notranslate nohighlight">\(x'=x+A\)</span> and <span class="math notranslate nohighlight">\(y'=By+C\)</span> where <span class="math notranslate nohighlight">\(A,B,C\)</span> are constants and <span class="math notranslate nohighlight">\((x',y')\)</span> are close matches to the
+<span class="math notranslate nohighlight">\((x,y)\)</span> data in <em>other</em>. The algorithm assumes that the overlap region contains equal
+numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <em>mode</em> controls whether A,B, and C are fixed or adjustable</p>
 <blockquote>
 <div><ul class="simple">
 <li>“All” - all three parameters adjustable</li>
@@ -1425,7 +1408,7 @@ numbers of <span class="math">\((x,y)\)</span> points <em>mode</em> controls whe
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</p>
 </td>
 </tr>
 </tbody>
@@ -1468,7 +1451,7 @@ have been done via the setas attribute</li>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">If you don’t sepcify a col value or set it to None, then the assigned columns via the
-<code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> attribute will be used.</p>
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code> attribute will be used.</p>
 </div>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
@@ -1531,14 +1514,14 @@ argument list. In order to support the use of assigned columns, this has been sw
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.6
+      1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Data.lmfit &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -27,8 +19,7 @@
     <link rel="next" title="Data.load" href="Stoner.Data.load.html" />
     <link rel="prev" title="Data.keys" href="Stoner.Data.keys.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  </head>
-  <body>
+  </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
         Stoner Pacakge API Documentation
     </a></h1></header>
@@ -49,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -97,7 +88,7 @@ Default to None for not adding fitted data</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The lmfit module will refurn an instance of the <code class="xref py py-class docutils literal"><span class="pre">lmfit.models.ModelFit</span></code> class that contains all
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The lmfit module will refurn an instance of the <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.models.ModelFit</span></code> class that contains all
 relevant information about the fit.</p>
 </td>
 </tr>
@@ -106,27 +97,27 @@ relevant information about the fit.</p>
 <dl class="docutils">
 <dt>The return value is determined by the <em>output</em> parameter. Options are</dt>
 <dd><ul class="first last simple">
-<li>“ffit”    just the <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.ModelFit</span></code> instance</li>
+<li>“ffit”    just the <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.ModelFit</span></code> instance</li>
 <li>“row”     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties</li>
 <li>“full”    a tuple of the fit instance and the row.</li>
-<li>“data”    a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> object with the fit recorded in the emtadata and optinally as a column of data.</li>
+<li>“data”    a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> object with the fit recorded in the emtadata and optinally as a column of data.</li>
 </ul>
 </dd>
 </dl>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">AnalysisMixin.curve_fit()</span></code>
+<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code>
 User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#fitting-with-limits"><span class="std std-ref">Fitting with limits</span></a></p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If <em>p0</em> is fed a 2D array, then it assumed that you want to calculate <span class="math">\(\chi^2\)</span> for different starting parameters
+<p class="last">If <em>p0</em> is fed a 2D array, then it assumed that you want to calculate <span class="math notranslate nohighlight">\(\chi^2\)</span> for different starting parameters
 with some variables fixed. In this mode, fitting is carried out repeatedly with each row representing one attempt with different
 values of the parameters. In this mode the return value is a 2D array whose rows correspond to the inputs to the rows of p0, the
-columns are the fitted values of the parameters with an additional column for <span class="math">\(\chi^2\)</span>.</p>
+columns are the fitted values of the parameters with an additional column for <span class="math notranslate nohighlight">\(\chi^2\)</span>.</p>
 </div>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple use of lmfit to fit data.&quot;&quot;&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple use of lmfit to fit data.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">exp</span><span class="p">,</span><span class="n">random</span>
 
@@ -158,10 +149,6 @@ columns are the fitted values of the parameters with an additional column for <s
 <span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">text</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="sa">u</span><span class="s2">&quot;Levenberg-Marquardt Fit&quot;</span>
 </pre></div>
-</div>
-<p>(<a class="reference external" href="../samples/lmfit2.png">png</a>, <a class="reference external" href="../samples/lmfit2.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit2.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/lmfit2.png" src="../_images/lmfit2.png" />
 </div>
 </dd></dl>
 
@@ -217,7 +204,7 @@ columns are the fitted values of the parameters with an additional column for <s
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -225,9 +212,9 @@ columns are the fitted values of the parameters with an additional column for <s
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.6
+      1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

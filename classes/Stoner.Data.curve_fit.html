@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Data.curve_fit &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -27,8 +19,7 @@
     <link rel="next" title="Data.decompose" href="Stoner.Data.decompose.html" />
     <link rel="prev" title="Data.count" href="Stoner.Data.count.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  </head>
-  <body>
+  </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
         Stoner Pacakge API Documentation
     </a></h1></header>
@@ -49,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -110,16 +101,16 @@ for the fitting parameters.</p>
 <li>“fit”    (tuple of popt,pcov)</li>
 <li>“row”     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties</li>
 <li>“full”    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).</li>
-<li>“data”   a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> object with fit recorded in the metadata and optionally as a new column.</li>
+<li>“data”   a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> object with fit recorded in the metadata and optionally as a new column.</li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>If the columns are not specified (or set to None) then the X and Y data are taken using the
-<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.</p>
+<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.</p>
 <p>The fitting function should have prototype y=f(x,p[0],p[1],p[2]…)
-The x-column and y-column can be anything that <code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.find_col()</span></code> can use as an index
+The x-column and y-column can be anything that <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.find_col()</span></code> can use as an index
 but typucally either strings to be matched against column headings or integers.
 The initial parameter values and weightings default to None which corresponds to all parameters starting
 at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
@@ -132,7 +123,7 @@ based on these values.</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Analysis.AnalysisMixin.lmfit()</span></code></a>
+<p class="last"><a class="reference internal" href="Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin.lmfit()</span></code></a>
 User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#curve-fit-guide"><span class="std std-ref">Curve Fitting</span></a></p>
 </div>
 </dd></dl>
@@ -189,7 +180,7 @@ User guide section <a class="reference internal" href="../UserGuide/analysisfile
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -197,9 +188,9 @@ User guide section <a class="reference internal" href="../UserGuide/analysisfile
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.6
+      1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

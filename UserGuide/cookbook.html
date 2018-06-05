@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Cookbook &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -27,8 +19,7 @@
     <link rel="next" title="Developer’s Guide" href="developer.html" />
     <link rel="prev" title="Working with Images" href="image.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  </head>
-  <body>
+  </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
         Stoner Pacakge API Documentation
     </a></h1></header>
@@ -66,38 +57,38 @@
 done with the Stoner python module in just a few lines.</p>
 <div class="section" id="the-util-module">
 <h2>The Util module<a class="headerlink" href="#the-util-module" title="Permalink to this headline">¶</a></h2>
-<p>The <strong>Stoner</strong> package comes with an extra <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></code> module that includes some handy utility
+<p>The <strong>Stoner</strong> package comes with an extra <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Util</span></code> module that includes some handy utility
 functions.</p>
 <div class="section" id="the-data-class">
-<h3>The <code class="xref py py-class docutils literal"><span class="pre">Data</span></code> Class<a class="headerlink" href="#the-data-class" title="Permalink to this headline">¶</a></h3>
-<p>In practice, one often requires both the analysis functions of <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Analysis.AnalysisMixin</span></code></a> and
-the plotting functions of <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal"><span class="pre">Stoner.plot.PlotMixin</span></code></a>. This can be done easily by creating a
-subclass that inherits from both, but for convenience, the <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></code> module provides the <code class="xref py py-class docutils literal"><span class="pre">Data</span></code>
+<h3>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code> Class<a class="headerlink" href="#the-data-class" title="Permalink to this headline">¶</a></h3>
+<p>In practice, one often requires both the analysis functions of <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin</span></code></a> and
+the plotting functions of <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin</span></code></a>. This can be done easily by creating a
+subclass that inherits from both, but for convenience, the <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Util</span></code> module provides the <code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>
 class that does this for you.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">Data</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;File-of-data.txt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="splitting-data-into-rising-and-falling-values">
 <h3>Splitting Data into rising and falling values<a class="headerlink" href="#splitting-data-into-rising-and-falling-values" title="Permalink to this headline">¶</a></h3>
-<p>So far the module just contains one function that will take a single <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a>
-object and split it into a series of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> objects where one column is either
+<p>So far the module just contains one function that will take a single <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a>
+object and split it into a series of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> objects where one column is either
 rising or falling. This is designed to help deal with analysis problems involving hysteretic data.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">split_up_down</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">split_up_down</span>
 <span class="n">folder</span><span class="o">=</span><span class="n">split_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">column</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In this example <em>folder</em> is a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> instance with two groups, one for rising values of the column
-and one for falling values of the column. The <a class="reference internal" href="../classes/Stoner.Util.split_up_down.html#Stoner.Util.split_up_down" title="Stoner.Util.split_up_down"><code class="xref py py-func docutils literal"><span class="pre">split_up_down()</span></code></a> will take an optional third parameter
-which is an existing <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFolder</span></code> instance to which the new groups (if they
+<p>In this example <em>folder</em> is a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> instance with two groups, one for rising values of the column
+and one for falling values of the column. The <a class="reference internal" href="../classes/Stoner.Util.split_up_down.html#Stoner.Util.split_up_down" title="Stoner.Util.split_up_down"><code class="xref py py-func docutils literal notranslate"><span class="pre">split_up_down()</span></code></a> will take an optional third parameter
+which is an existing <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFolder</span></code> instance to which the new groups (if they
 don’t already exist) and files will be added.</p>
 </div>
 <div class="section" id="analysis-of-hysteresis-loops">
 <h3>Analysis of Hysteresis Loops<a class="headerlink" href="#analysis-of-hysteresis-loops" title="Permalink to this headline">¶</a></h3>
-<p>Since much of our group’s work is concerned with measuring magnetic hystersis loops, the <a class="reference internal" href="../classes/Stoner.Util.hysteresis_correct.html#Stoner.Util.hysteresis_correct" title="Stoner.Util.hysteresis_correct"><code class="xref py py-func docutils literal"><span class="pre">hysteresis_correct()</span></code></a> function
+<p>Since much of our group’s work is concerned with measuring magnetic hystersis loops, the <a class="reference internal" href="../classes/Stoner.Util.hysteresis_correct.html#Stoner.Util.hysteresis_correct" title="Stoner.Util.hysteresis_correct"><code class="xref py py-func docutils literal notranslate"><span class="pre">hysteresis_correct()</span></code></a> function
 provides a handy way to correct some instrumental artifacts and measure properties of hysteresis loops.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">hysteresis_correct</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">hysteresis_correct</span>
 <span class="n">d</span><span class="o">=</span><span class="n">hysteresis_correct</span><span class="p">(</span><span class="s1">&#39;QD-SQUID-VSM.dat&#39;</span><span class="p">,</span><span class="n">correct_background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">correct_H</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">e</span><span class="o">=</span><span class="n">hysteresis_correct</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 
@@ -128,9 +119,9 @@ extrema in H). The keyword parameter <em>saturation_fraction</em> controls the e
 <h3>Formatting Error Values<a class="headerlink" href="#formatting-error-values" title="Permalink to this headline">¶</a></h3>
 <p>In experimental physics, the usual practice (unless one has good reason to do otherwise) is to quote uncertainties in
 a measurement to one signficant figure, and then quote the value to the same number of decimal places. Whilst doing this
-might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></code> module
-provides the <code class="xref py py-func docutils literal"><span class="pre">Stoner.Util.format_error()</span></code> function.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">format_error</span>
+might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Util</span></code> module
+provides the <code class="xref py py-func docutils literal notranslate"><span class="pre">Stoner.Util.format_error()</span></code> function.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">format_error</span>
 <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="k">import</span> <span class="n">hbar</span><span class="p">,</span><span class="n">m_e</span><span class="p">,</span><span class="n">m_u</span>
 <span class="nb">print</span> <span class="n">format_error</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">error</span><span class="p">)</span>
 <span class="nb">print</span> <span class="n">format_error</span><span class="p">(</span><span class="n">m_e</span><span class="p">,</span><span class="n">hbar</span><span class="p">,</span><span class="n">latex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -149,11 +140,11 @@ default, option does no particular scaling. Finally the units keyword allows the
 <span id="id1"></span><h2>Fitting Tricks<a class="headerlink" href="#fitting-tricks" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="fitting-3d-data">
 <h3>Fitting 3D Data<a class="headerlink" href="#fitting-3d-data" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Analysis.AnalysisMixin.curve_fit()</span></code></a> can also be used to fit 3D (or higher order) data - i.e. where there are two independent
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin.curve_fit()</span></code></a> can also be used to fit 3D (or higher order) data - i.e. where there are two independent
 variables. In order to do this, the <em>xcol</em> parameter needs to be an iterable (e.g. list or tuple or array), and
 the function to be fitted needs to take a tuple of scalars or arrays as the first argument. The following example
 illustrates this by fitting a plane to a collection of points in 3D space.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Use curve_fit to fit a plane to some data.&quot;&quot;&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Use curve_fit to fit a plane to some data.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
@@ -199,11 +190,11 @@ illustrates this by fitting a plane to a collection of points in 3D space.</p>
 <h3>Fitting to Minimize a Function<a class="headerlink" href="#fitting-to-minimize-a-function" title="Permalink to this headline">¶</a></h3>
 <p>If <em>ycol</em> is a numpy array of the same length as the data then the values of ycol are
 assumed to be the points to fit rather than index of a column. This is useful if
-the function you want to fit can be written as <span class="math">\(f(x_1,x_2,\cdots ,x_n)=0\)</span>.
-In thus case pass <em>xcol</em> a list or tuple of columns that make up <span class="math">\(x_1,x_2,\cdots ,x_n\)</span>
+the function you want to fit can be written as <span class="math notranslate nohighlight">\(f(x_1,x_2,\cdots ,x_n)=0\)</span>.
+In thus case pass <em>xcol</em> a list or tuple of columns that make up <span class="math notranslate nohighlight">\(x_1,x_2,\cdots ,x_n\)</span>
 and make your function take a tuple of 1D-arrays and pass <em>ycol</em> as an array of zeros.
 For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Fit a sphere with curve_fit.&quot;&quot;&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Fit a sphere with curve_fit.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span><span class="n">cos</span><span class="p">,</span><span class="n">pi</span><span class="p">,</span><span class="n">column_stack</span><span class="p">,</span><span class="n">zeros_like</span><span class="p">,</span><span class="n">ones_like</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">linspace</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span><span class="p">,</span><span class="n">uniform</span>
@@ -271,7 +262,7 @@ For example:</p>
 Z and one wishes to extract X-Y as a function of constant Z. For example, <em>I-V</em>
 sweeps as a function of gate voltage <em>V:sub:G</em>. Assuming we have a data file with
 columns <em>Current</em>, <em>Voltage</em>,*Gate*:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">(</span><span class="s1">&#39;data.txt&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">(</span><span class="s1">&#39;data.txt&#39;</span><span class="p">)</span>
 <span class="n">t</span><span class="o">=</span><span class="n">d</span>
 <span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s1">&#39;Gate&#39;</span><span class="p">):</span>
     <span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Gate&#39;</span><span class="p">,</span><span class="n">gate</span><span class="p">)</span>
@@ -279,7 +270,7 @@ columns <em>Current</em>, <em>Voltage</em>,*Gate*:</p>
 </pre></div>
 </div>
 <p>The first line opens the data file containing the <em>I-V(V_G)</em> data. The second
-creates a temporary copy of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> object - ensuring that we get a copy of
+creates a temporary copy of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> object - ensuring that we get a copy of
 all metadata and column headers. The <strong>for</strong> loop iterates over all unique
 values of the data in the gate column and then inside the for loop, searches for
 the corresponding <em>I-V</em> data, sets it as the data of the temporary DataFile and
@@ -290,7 +281,7 @@ then saves it.</p>
 <p>In a similar fashion to the previous section, where data has been recorded with
 fixed values of <em>X</em> and <em>Y</em> eg <em>I</em> measured for fixed <em>V</em> and <em>V_</em>, it can be
 useful to map the data to a matrix.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">(</span><span class="s1">&#39;Data,.txt&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">(</span><span class="s1">&#39;Data,.txt&#39;</span><span class="p">)</span>
 <span class="n">t</span><span class="o">=</span><span class="n">d</span>
 <span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s1">&#39;Gate&#39;</span><span class="p">):</span>
    <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="o">+</span><span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Gate&#39;</span><span class="p">,</span><span class="n">gate</span><span class="p">)[:,</span><span class="n">d</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="s1">&#39;Current&#39;</span><span class="p">)]</span>
@@ -300,21 +291,21 @@ useful to map the data to a matrix.:</p>
 </div>
 <p>The start of the script follows the previous section, however this time in the
 for loop the addition operator is used to add a single row to the temporary
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> <em>t</em>. In this case we are using the utility method
-<code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.find_col()</span></code> to find the index of the column with the current
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> <em>t</em>. In this case we are using the utility method
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.find_col()</span></code> to find the index of the column with the current
 data. After the <strong>for</strong> loop we set the column headers in <em>t</em> and then insert
 an additional column at the start with the gate voltage values.</p>
 <p>The matrix generated by this code is suitable for feeding directly into
-<a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_matrix" title="Stoner.plot.PlotMixin.plot_matrix"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.plot.PlotMixin.plot_matrix()</span></code></a>, however, the same plot could be generated
-directly from the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.plot.PlotMixin.plot_xyz()</span></code></a> method too.</p>
+<a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_matrix" title="Stoner.plot.PlotMixin.plot_matrix"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin.plot_matrix()</span></code></a>, however, the same plot could be generated
+directly from the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin.plot_xyz()</span></code></a> method too.</p>
 </div>
 <div class="section" id="sampling-a-a-3d-surface-function">
 <h3>Sampling a A 3D Surface function<a class="headerlink" href="#sampling-a-a-3d-surface-function" title="Permalink to this headline">¶</a></h3>
 <p>Suppose you have a function Z(x,y) that is defined over a range -X0..+X0 and
 -Y0..y0 and want to quickly get a view of the surface. This problem can be easily done
 by creating a random distribution of (x,y) points, evaluating the function and then
-using the <code class="xref py py-class docutils literal"><span class="pre">PlotFile</span></code> methods to generate the surface.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
+using the <code class="xref py py-class docutils literal notranslate"><span class="pre">PlotFile</span></code> methods to generate the surface.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">uniform</span>
 
 <span class="n">samples</span><span class="o">=</span><span class="mi">5000</span>
@@ -335,7 +326,7 @@ using the <code class="xref py py-class docutils literal"><span class="pre">Plot
 modelling codes, such OOMMF or MuMax. When modelling a 3D system, it is often useful to
 be able to examine a cross-section of the simulation. The Stoner package provides tools
 to quickly examine the output data:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.FileFormats</span> <span class="k">import</span> <span class="n">OVFFile</span> <span class="c1"># reads OOMMF vector field files</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.FileFormats</span> <span class="k">import</span> <span class="n">OVFFile</span> <span class="c1"># reads OOMMF vector field files</span>
 <span class="kn">import</span> <span class="nn">Stoner.plot</span>
 <span class="n">p</span><span class="o">=</span><span class="n">SP</span><span class="o">.</span><span class="n">PlotFile</span><span class="p">(</span><span class="s1">&#39;my_simulation.ovf&#39;</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyzuvw&quot;</span>
@@ -362,7 +353,7 @@ to quickly examine the output data:</p>
   <ul>
 <li><a class="reference internal" href="#">Cookbook</a><ul>
 <li><a class="reference internal" href="#the-util-module">The Util module</a><ul>
-<li><a class="reference internal" href="#the-data-class">The <code class="docutils literal"><span class="pre">Data</span></code> Class</a></li>
+<li><a class="reference internal" href="#the-data-class">The <code class="docutils literal notranslate"><span class="pre">Data</span></code> Class</a></li>
 <li><a class="reference internal" href="#splitting-data-into-rising-and-falling-values">Splitting Data into rising and falling values</a></li>
 <li><a class="reference internal" href="#analysis-of-hysteresis-loops">Analysis of Hysteresis Loops</a></li>
 <li><a class="reference internal" href="#formatting-error-values">Formatting Error Values</a></li>
@@ -430,9 +421,9 @@ to quickly examine the output data:</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.6
+      1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

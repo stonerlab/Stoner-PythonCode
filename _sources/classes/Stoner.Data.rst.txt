@@ -104,4 +104,39 @@ Stoner.Data
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Data.T
+      ~Stoner.Data.ax
+      ~Stoner.Data.axes
+      ~Stoner.Data.basename
+      ~Stoner.Data.clone
+      ~Stoner.Data.column_headers
+      ~Stoner.Data.data
+      ~Stoner.Data.dict_records
+      ~Stoner.Data.dims
+      ~Stoner.Data.dtype
+      ~Stoner.Data.fig
+      ~Stoner.Data.fignum
+      ~Stoner.Data.filename
+      ~Stoner.Data.labels
+      ~Stoner.Data.legend
+      ~Stoner.Data.mask
+      ~Stoner.Data.metadata
+      ~Stoner.Data.mime_type
+      ~Stoner.Data.multiple
+      ~Stoner.Data.no_fmt
+      ~Stoner.Data.patterns
+      ~Stoner.Data.positional_fmt
+      ~Stoner.Data.priority
+      ~Stoner.Data.records
+      ~Stoner.Data.setas
+      ~Stoner.Data.shape
+      ~Stoner.Data.showfig
+      ~Stoner.Data.subclasses
+      ~Stoner.Data.subplots
+      ~Stoner.Data.template
+   
    

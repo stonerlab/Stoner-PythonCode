@@ -55,4 +55,27 @@ Stoner.FileFormats.LSTemperatureFile
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.LSTemperatureFile.T
+      ~Stoner.FileFormats.LSTemperatureFile.basename
+      ~Stoner.FileFormats.LSTemperatureFile.clone
+      ~Stoner.FileFormats.LSTemperatureFile.column_headers
+      ~Stoner.FileFormats.LSTemperatureFile.data
+      ~Stoner.FileFormats.LSTemperatureFile.dict_records
+      ~Stoner.FileFormats.LSTemperatureFile.dims
+      ~Stoner.FileFormats.LSTemperatureFile.dtype
+      ~Stoner.FileFormats.LSTemperatureFile.filename
+      ~Stoner.FileFormats.LSTemperatureFile.mask
+      ~Stoner.FileFormats.LSTemperatureFile.metadata
+      ~Stoner.FileFormats.LSTemperatureFile.mime_type
+      ~Stoner.FileFormats.LSTemperatureFile.patterns
+      ~Stoner.FileFormats.LSTemperatureFile.priority
+      ~Stoner.FileFormats.LSTemperatureFile.records
+      ~Stoner.FileFormats.LSTemperatureFile.setas
+      ~Stoner.FileFormats.LSTemperatureFile.shape
+      ~Stoner.FileFormats.LSTemperatureFile.subclasses
+   
    

@@ -55,4 +55,27 @@ Stoner.FileFormats.TDMSFile
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.TDMSFile.T
+      ~Stoner.FileFormats.TDMSFile.basename
+      ~Stoner.FileFormats.TDMSFile.clone
+      ~Stoner.FileFormats.TDMSFile.column_headers
+      ~Stoner.FileFormats.TDMSFile.data
+      ~Stoner.FileFormats.TDMSFile.dict_records
+      ~Stoner.FileFormats.TDMSFile.dims
+      ~Stoner.FileFormats.TDMSFile.dtype
+      ~Stoner.FileFormats.TDMSFile.filename
+      ~Stoner.FileFormats.TDMSFile.mask
+      ~Stoner.FileFormats.TDMSFile.metadata
+      ~Stoner.FileFormats.TDMSFile.mime_type
+      ~Stoner.FileFormats.TDMSFile.patterns
+      ~Stoner.FileFormats.TDMSFile.priority
+      ~Stoner.FileFormats.TDMSFile.records
+      ~Stoner.FileFormats.TDMSFile.setas
+      ~Stoner.FileFormats.TDMSFile.shape
+      ~Stoner.FileFormats.TDMSFile.subclasses
+   
    

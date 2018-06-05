@@ -55,4 +55,27 @@ Stoner.FileFormats.BigBlueFile
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.BigBlueFile.T
+      ~Stoner.FileFormats.BigBlueFile.basename
+      ~Stoner.FileFormats.BigBlueFile.clone
+      ~Stoner.FileFormats.BigBlueFile.column_headers
+      ~Stoner.FileFormats.BigBlueFile.data
+      ~Stoner.FileFormats.BigBlueFile.dict_records
+      ~Stoner.FileFormats.BigBlueFile.dims
+      ~Stoner.FileFormats.BigBlueFile.dtype
+      ~Stoner.FileFormats.BigBlueFile.filename
+      ~Stoner.FileFormats.BigBlueFile.mask
+      ~Stoner.FileFormats.BigBlueFile.metadata
+      ~Stoner.FileFormats.BigBlueFile.mime_type
+      ~Stoner.FileFormats.BigBlueFile.patterns
+      ~Stoner.FileFormats.BigBlueFile.priority
+      ~Stoner.FileFormats.BigBlueFile.records
+      ~Stoner.FileFormats.BigBlueFile.setas
+      ~Stoner.FileFormats.BigBlueFile.shape
+      ~Stoner.FileFormats.BigBlueFile.subclasses
+   
    

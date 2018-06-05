@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>ImageFolderMixin &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -27,8 +19,7 @@
     <link rel="next" title="ImageFolder" href="Stoner.Image.folders.ImageFolder.html" />
     <link rel="prev" title="_generator" href="Stoner.Image.folders._generator.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  </head>
-  <body>
+  </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
         Stoner Pacakge API Documentation
     </a></h1></header>
@@ -49,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -65,13 +56,13 @@
 <dl class="class">
 <dt id="Stoner.Image.folders.ImageFolderMixin">
 <em class="property">class </em><code class="descclassname">Stoner.Image.folders.</code><code class="descname">ImageFolderMixin</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/folders.html#ImageFolderMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.folders.ImageFolderMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Mixin to provide a folder object for images.</p>
 <p>ImageFolderMixin is designed to behave pretty much like DataFolder but with
 functions and loaders appropriate for image based files.</p>
 <blockquote>
 <div><p>Attributes:
-type (<a class="reference internal" href="Stoner.Image.ImageArray.html#Stoner.Image.ImageArray" title="Stoner.Image.core.ImageArray"><code class="docutils literal"><span class="pre">Stoner.Image.ImageArray</span></code></a>) the type ob object to sotre in the folder (defaults to <code class="xref py py-class docutils literal"><span class="pre">Stoner.Cire.Data</span></code>)</p>
+type (<a class="reference internal" href="Stoner.Image.ImageArray.html#Stoner.Image.ImageArray" title="Stoner.Image.core.ImageArray"><code class="docutils literal notranslate"><span class="pre">Stoner.Image.ImageArray</span></code></a>) the type ob object to sotre in the folder (defaults to <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Cire.Data</span></code>)</p>
 <p>extra_args (dict): Extra arguments to use when instantiatoing the contents of the folder from a file on disk.</p>
 <dl class="docutils">
 <dt>pattern (str or regexp): A filename globbing pattern that matches the contents of the folder. If a regular expression is provided then</dt>
@@ -82,7 +73,7 @@ type (<a class="reference internal" href="Stoner.Image.ImageArray.html#Stoner.Im
 <p>recursive (bool): Specifies whether to search recurisvely in a whole directory tree. Default is True.</p>
 <dl class="docutils">
 <dt>flatten (bool): Specify where to present subdirectories as spearate groups in the folder (False) or as a single group (True). Default is False.</dt>
-<dd>The <code class="xref py py-meth docutils literal"><span class="pre">DiskBasedFolder.flatten()</span></code> method has the equivalent effect and <code class="xref py py-meth docutils literal"><span class="pre">DiskBasedFolder.unflatten()</span></code> reverses it.</dd>
+<dd>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">DiskBasedFolder.flatten()</span></code> method has the equivalent effect and <code class="xref py py-meth docutils literal notranslate"><span class="pre">DiskBasedFolder.unflatten()</span></code> reverses it.</dd>
 </dl>
 <p>directory (str): The root directory on disc for the folder - by default this is the current working directory.</p>
 <p>multifile (boo): Whether to select individual files manually that are not (necessarily) in  a common directory structure.</p>
@@ -95,10 +86,10 @@ type (<a class="reference internal" href="Stoner.Image.ImageArray.html#Stoner.Im
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.images" title="Stoner.Image.folders.ImageFolderMixin.images"><code class="xref py py-obj docutils literal"><span class="pre">images</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.images" title="Stoner.Image.folders.ImageFolderMixin.images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">images</span></code></a></td>
 <td>A generator that iterates over just the images in the Folder.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.size" title="Stoner.Image.folders.ImageFolderMixin.size"><code class="xref py py-obj docutils literal"><span class="pre">size</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.size" title="Stoner.Image.folders.ImageFolderMixin.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
 <td>Return the size of an individual image or False if not all images are the same size.</td>
 </tr>
 </tbody>
@@ -110,28 +101,28 @@ type (<a class="reference internal" href="Stoner.Image.ImageArray.html#Stoner.Im
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.apply_all" title="Stoner.Image.folders.ImageFolderMixin.apply_all"><code class="xref py py-obj docutils literal"><span class="pre">apply_all</span></code></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.apply_all" title="Stoner.Image.folders.ImageFolderMixin.apply_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_all</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>apply function to all images in the stack</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.as_stack" title="Stoner.Image.folders.ImageFolderMixin.as_stack"><code class="xref py py-obj docutils literal"><span class="pre">as_stack</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.as_stack" title="Stoner.Image.folders.ImageFolderMixin.as_stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_stack</span></code></a>()</td>
 <td>Return a ImageStack of the images in the current group.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.average" title="Stoner.Image.folders.ImageFolderMixin.average"><code class="xref py py-obj docutils literal"><span class="pre">average</span></code></a>([weights,&nbsp;_box])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.average" title="Stoner.Image.folders.ImageFolderMixin.average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average</span></code></a>([weights,&nbsp;_box])</td>
 <td>Get an array of average pixel values for the stack.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.loadgroup" title="Stoner.Image.folders.ImageFolderMixin.loadgroup"><code class="xref py py-obj docutils literal"><span class="pre">loadgroup</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.loadgroup" title="Stoner.Image.folders.ImageFolderMixin.loadgroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadgroup</span></code></a>()</td>
 <td>Load all files from this group into memory</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.mean" title="Stoner.Image.folders.ImageFolderMixin.mean"><code class="xref py py-obj docutils literal"><span class="pre">mean</span></code></a>([_box])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.mean" title="Stoner.Image.folders.ImageFolderMixin.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([_box])</td>
 <td>Calculate the mean value of all the images in the stack.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.stddev" title="Stoner.Image.folders.ImageFolderMixin.stddev"><code class="xref py py-obj docutils literal"><span class="pre">stddev</span></code></a>([weights])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.stddev" title="Stoner.Image.folders.ImageFolderMixin.stddev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stddev</span></code></a>([weights])</td>
 <td>Calculate weighted standard deviation for stack</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.stderr" title="Stoner.Image.folders.ImageFolderMixin.stderr"><code class="xref py py-obj docutils literal"><span class="pre">stderr</span></code></a>([weights])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.stderr" title="Stoner.Image.folders.ImageFolderMixin.stderr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stderr</span></code></a>([weights])</td>
 <td>Standard error in the stack average</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.view" title="Stoner.Image.folders.ImageFolderMixin.view"><code class="xref py py-obj docutils literal"><span class="pre">view</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.view" title="Stoner.Image.folders.ImageFolderMixin.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>()</td>
 <td>Create a matplotlib animated view of the contents.</td>
 </tr>
 </tbody>
@@ -272,14 +263,14 @@ type (<a class="reference internal" href="Stoner.Image.ImageArray.html#Stoner.Im
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on May 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.6
+      1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

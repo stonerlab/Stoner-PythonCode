@@ -55,4 +55,27 @@ Stoner.FileFormats.QDFile
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.QDFile.T
+      ~Stoner.FileFormats.QDFile.basename
+      ~Stoner.FileFormats.QDFile.clone
+      ~Stoner.FileFormats.QDFile.column_headers
+      ~Stoner.FileFormats.QDFile.data
+      ~Stoner.FileFormats.QDFile.dict_records
+      ~Stoner.FileFormats.QDFile.dims
+      ~Stoner.FileFormats.QDFile.dtype
+      ~Stoner.FileFormats.QDFile.filename
+      ~Stoner.FileFormats.QDFile.mask
+      ~Stoner.FileFormats.QDFile.metadata
+      ~Stoner.FileFormats.QDFile.mime_type
+      ~Stoner.FileFormats.QDFile.patterns
+      ~Stoner.FileFormats.QDFile.priority
+      ~Stoner.FileFormats.QDFile.records
+      ~Stoner.FileFormats.QDFile.setas
+      ~Stoner.FileFormats.QDFile.shape
+      ~Stoner.FileFormats.QDFile.subclasses
+   
    
