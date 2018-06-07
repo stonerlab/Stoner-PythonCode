@@ -36,6 +36,10 @@ API Reference guide. The `github repository`_ also contains some example scripts
 Getting this Code
 ==================
 
+.. image:: https://i.imgur.com/h4mWwM0.png
+    :target: https://www.youtube.com/watch?v=uZ_yKs11W18
+    :alt: Introduction and Installation Guide to Stoner Pythin Package
+
 The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies on blist, filemagic, npTDMS, imreg_dft
 and numba.
 
