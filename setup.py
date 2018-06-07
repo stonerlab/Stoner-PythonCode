@@ -1,9 +1,18 @@
 import os
 from setuptools import setup, find_packages
-import Stoner
 import re
 import sys, io
 
+
+def get_version():
+    with open("Stoner/__init__.py","r") as init:
+        for line in init:
+            line=line.strip()
+            if line.startswith("__version_info__"):
+                parts=line.split("=")
+                __version_info__=eval(parts[1].strip())
+                return '.'.join(__version_info__)
+    return None
 
 def yield_sphinx_only_markup(lines):
     """
@@ -74,7 +83,7 @@ def requires(fname):
 
 setup(
     name = "Stoner",
-    version = str(Stoner.__version__),
+    version = str(get_version()),
     author = "Gavin Burnell",
     author_email = "g.burnell@leeds.ac.uk",
     description = "Library to help write data analysis tools for experimental condensed matter physics.",
@@ -92,7 +101,7 @@ setup(
                        "numba":["numba"],
                        "cv2":["cv2"],
                        "image_alignment":["imreg_dft","image_registration"]},
-    long_description= ''.join(yield_sphinx_only_markup(read('doc/readme.rst'))),
+    long_description= ''.join(yield_sphinx_only_markup(read('README.rst'))),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
@@ -100,7 +109,7 @@ setup(
         "Topic :: Scientific/Engineering :: Physics",
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
-        'Operating System :: POSIX',        
+        'Operating System :: POSIX',
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
