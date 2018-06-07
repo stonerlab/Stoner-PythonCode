@@ -133,9 +133,9 @@
     <span class="k">return</span> <span class="n">model</span>
 
 
-<span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">):</span>
+<div class="viewcode-block" id="linear"><a class="viewcode-back" href="../../classes/Stoner.Fit.linear.html#Stoner.Fit.linear">[docs]</a><span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simple linear function&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">intercept</span>
+    <span class="k">return</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">intercept</span></div>
 
 <div class="viewcode-block" id="Linear"><a class="viewcode-back" href="../../classes/Stoner.Fit.Linear.html#Stoner.Fit.Linear">[docs]</a><span class="k">class</span> <span class="nc">Linear</span><span class="p">(</span><span class="n">_Linear</span><span class="p">):</span>
 
@@ -288,7 +288,7 @@
     <span class="n">msh</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="n">msh</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">model</span><span class="p">,</span><span class="n">msh</span></div>
 
-<span class="k">def</span> <span class="nf">arrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">):</span>
+<div class="viewcode-block" id="arrhenius"><a class="viewcode-back" href="../../classes/Stoner.Fit.arrhenius.html#Stoner.Fit.arrhenius">[docs]</a><span class="k">def</span> <span class="nf">arrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Arrhenius Equation without T dependendent prefactor.</span>
 
 <span class="sd">    Args:</span>
@@ -309,7 +309,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_kb</span> <span class="o">=</span> <span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s1">&#39;Boltzmann constant&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s1">&#39;elementary charge&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">DE</span> <span class="o">/</span> <span class="p">(</span><span class="n">_kb</span> <span class="o">*</span> <span class="n">x</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">DE</span> <span class="o">/</span> <span class="p">(</span><span class="n">_kb</span> <span class="o">*</span> <span class="n">x</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="Arrhenius"><a class="viewcode-back" href="../../classes/Stoner.Fit.Arrhenius.html#Stoner.Fit.Arrhenius">[docs]</a><span class="k">class</span> <span class="nc">Arrhenius</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -351,7 +351,7 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">nDimArrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="nDimArrhenius"><a class="viewcode-back" href="../../classes/Stoner.Fit.nDimArrhenius.html#Stoner.Fit.nDimArrhenius">[docs]</a><span class="k">def</span> <span class="nf">nDimArrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Arrhenius Equation without T dependendent prefactor for various dimensions.</span>
 
 <span class="sd">    Args:</span>
@@ -371,7 +371,7 @@
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: nDimarrehenius</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">arrhenius</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="n">n</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">arrhenius</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="n">n</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="NDimArrhenius"><a class="viewcode-back" href="../../classes/Stoner.Fit.NDimArrhenius.html#Stoner.Fit.NDimArrhenius">[docs]</a><span class="k">class</span> <span class="nc">NDimArrhenius</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -413,7 +413,7 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">modArrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="modArrhenius"><a class="viewcode-back" href="../../classes/Stoner.Fit.modArrhenius.html#Stoner.Fit.modArrhenius">[docs]</a><span class="k">def</span> <span class="nf">modArrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Arrhenius Equation with a variable T power dependent prefactor.</span>
 
 <span class="sd">    Args:</span>
@@ -433,7 +433,7 @@
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: modarrhenius</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">arrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">arrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ModArrhenius"><a class="viewcode-back" href="../../classes/Stoner.Fit.ModArrhenius.html#Stoner.Fit.ModArrhenius">[docs]</a><span class="k">class</span> <span class="nc">ModArrhenius</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -475,7 +475,7 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">powerLaw</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<div class="viewcode-block" id="powerLaw"><a class="viewcode-back" href="../../classes/Stoner.Fit.powerLaw.html#Stoner.Fit.powerLaw">[docs]</a><span class="k">def</span> <span class="nf">powerLaw</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Power Law Fitting Equation.</span>
 
 <span class="sd">    Args:</span>
@@ -493,7 +493,7 @@
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: powerlaw</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="n">k</span>
+    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="n">k</span></div>
 
 <div class="viewcode-block" id="PowerLaw"><a class="viewcode-back" href="../../classes/Stoner.Fit.PowerLaw.html#Stoner.Fit.PowerLaw">[docs]</a><span class="k">class</span> <span class="nc">PowerLaw</span><span class="p">(</span><span class="n">_PowerLaw</span><span class="p">):</span>
 
@@ -518,7 +518,7 @@
     <span class="k">pass</span></div>
 
 
-<span class="k">def</span> <span class="nf">quadratic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<div class="viewcode-block" id="quadratic"><a class="viewcode-back" href="../../classes/Stoner.Fit.quadratic.html#Stoner.Fit.quadratic">[docs]</a><span class="k">def</span> <span class="nf">quadratic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A Simple quadratic fitting function.</span>
 
 <span class="sd">    Args:</span>
@@ -537,7 +537,7 @@
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: quadratic</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span></div>
 
 <div class="viewcode-block" id="Quadratic"><a class="viewcode-back" href="../../classes/Stoner.Fit.Quadratic.html#Stoner.Fit.Quadratic">[docs]</a><span class="k">class</span> <span class="nc">Quadratic</span><span class="p">(</span><span class="n">_Quadratic</span><span class="p">):</span>
 
@@ -562,7 +562,7 @@
 
     <span class="k">pass</span></div>
 
-<span class="k">def</span> <span class="nf">simmons</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<div class="viewcode-block" id="simmons"><a class="viewcode-back" href="../../classes/Stoner.Fit.simmons.html#Stoner.Fit.simmons">[docs]</a><span class="k">def</span> <span class="nf">simmons</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simmons model of electron tunnelling.</span>
 
 <span class="sd">    Args:</span>
@@ -585,7 +585,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">I</span> <span class="o">=</span> <span class="mf">6.2e6</span> <span class="o">*</span> <span class="n">A</span> <span class="o">/</span> <span class="n">d</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="n">phi</span> <span class="o">-</span> <span class="n">V</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">1.025</span> <span class="o">*</span> <span class="n">d</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi</span> <span class="o">-</span> <span class="n">V</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="o">-</span>
                               <span class="p">(</span><span class="n">phi</span> <span class="o">+</span> <span class="n">V</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">1.025</span> <span class="o">*</span> <span class="n">d</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi</span> <span class="o">+</span> <span class="n">V</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)))</span>
-    <span class="k">return</span> <span class="n">I</span>
+    <span class="k">return</span> <span class="n">I</span></div>
 
 
 <div class="viewcode-block" id="Simmons"><a class="viewcode-back" href="../../classes/Stoner.Fit.Simmons.html#Stoner.Fit.Simmons">[docs]</a><span class="k">class</span> <span class="nc">Simmons</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -623,7 +623,7 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">bdr</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">dphi</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">mass</span><span class="p">):</span>
+<div class="viewcode-block" id="bdr"><a class="viewcode-back" href="../../classes/Stoner.Fit.bdr.html#Stoner.Fit.bdr">[docs]</a><span class="k">def</span> <span class="nf">bdr</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">dphi</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">mass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;BDR model tunnelling.</span>
 
 <span class="sd">    Args:</span>
@@ -650,7 +650,7 @@
     <span class="n">d</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
     <span class="n">I</span> <span class="o">=</span> <span class="mf">3.16e10</span> <span class="o">*</span> <span class="n">A</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">/</span> <span class="n">d</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">1.028</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
         <span class="n">V</span> <span class="o">-</span> <span class="mf">0.0214</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span> <span class="o">*</span> <span class="n">d</span> <span class="o">*</span> <span class="n">dphi</span> <span class="o">/</span> <span class="n">phi</span> <span class="o">**</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">V</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">0.0110</span> <span class="o">*</span> <span class="n">mass</span> <span class="o">*</span> <span class="n">d</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">phi</span> <span class="o">*</span> <span class="n">V</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">I</span>
+    <span class="k">return</span> <span class="n">I</span></div>
 
 
 <div class="viewcode-block" id="BDR"><a class="viewcode-back" href="../../classes/Stoner.Fit.BDR.html#Stoner.Fit.BDR">[docs]</a><span class="k">class</span> <span class="nc">BDR</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -688,7 +688,7 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">fowlerNordheim</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<div class="viewcode-block" id="fowlerNordheim"><a class="viewcode-back" href="../../classes/Stoner.Fit.fowlerNordheim.html#Stoner.Fit.fowlerNordheim">[docs]</a><span class="k">def</span> <span class="nf">fowlerNordheim</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Fowler Nordhiem Model of electron tunnelling.</span>
 
 <span class="sd">    Args:</span>
@@ -706,7 +706,7 @@
 <span class="sd">            :outname: fowlernordheim</span>
 <span class="sd">        &quot;&quot;&quot;</span>
     <span class="n">I</span> <span class="o">=</span> <span class="n">V</span> <span class="o">/</span> <span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.38e6</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">V</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">d</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.689</span> <span class="o">*</span> <span class="n">phi</span> <span class="o">**</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">d</span> <span class="o">/</span> <span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">I</span>
+    <span class="k">return</span> <span class="n">I</span></div>
 
 
 <div class="viewcode-block" id="FowlerNordheim"><a class="viewcode-back" href="../../classes/Stoner.Fit.FowlerNordheim.html#Stoner.Fit.FowlerNordheim">[docs]</a><span class="k">class</span> <span class="nc">FowlerNordheim</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -774,7 +774,7 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">wlfit</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">DS</span><span class="p">,</span> <span class="n">B1</span><span class="p">,</span> <span class="n">B2</span><span class="p">):</span>
+<div class="viewcode-block" id="wlfit"><a class="viewcode-back" href="../../classes/Stoner.Fit.wlfit.html#Stoner.Fit.wlfit">[docs]</a><span class="k">def</span> <span class="nf">wlfit</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">DS</span><span class="p">,</span> <span class="n">B1</span><span class="p">,</span> <span class="n">B2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Weak localisation</span>
 
@@ -820,7 +820,7 @@
         <span class="n">cond</span><span class="p">[</span><span class="n">tt</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">WLpt1</span> <span class="o">-</span> <span class="n">WLpt2</span> <span class="o">-</span> <span class="n">WLpt3</span><span class="p">)</span>
     <span class="c1">#cond = s0*cond / min(cond)</span>
     <span class="n">cond</span> <span class="o">=</span> <span class="n">s0</span> <span class="o">+</span> <span class="n">DS</span> <span class="o">*</span> <span class="n">cond</span>
-    <span class="k">return</span> <span class="n">cond</span>
+    <span class="k">return</span> <span class="n">cond</span></div>
 
 
 <div class="viewcode-block" id="WLfit"><a class="viewcode-back" href="../../classes/Stoner.Fit.WLfit.html#Stoner.Fit.WLfit">[docs]</a><span class="k">class</span> <span class="nc">WLfit</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -939,7 +939,7 @@
     <span class="k">return</span> <span class="n">cond</span>
 
 
-<span class="k">def</span> <span class="nf">strijkers</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
+<div class="viewcode-block" id="strijkers"><a class="viewcode-back" href="../../classes/Stoner.Fit.strijkers.html#Stoner.Fit.strijkers">[docs]</a><span class="k">def</span> <span class="nf">strijkers</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;strijkers Model for point-contact Andreev Reflection Spectroscopy.</span>
 
 <span class="sd">    Args:</span>
@@ -963,7 +963,7 @@
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: strijkers</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_strijkers_core</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_strijkers_core</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Strijkers"><a class="viewcode-back" href="../../classes/Stoner.Fit.Strijkers.html#Stoner.Fit.Strijkers">[docs]</a><span class="k">class</span> <span class="nc">Strijkers</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -1004,7 +1004,7 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">fluchsSondheimer</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">sigma_0</span><span class="p">):</span>
+<div class="viewcode-block" id="fluchsSondheimer"><a class="viewcode-back" href="../../classes/Stoner.Fit.fluchsSondheimer.html#Stoner.Fit.fluchsSondheimer">[docs]</a><span class="k">def</span> <span class="nf">fluchsSondheimer</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">sigma_0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Evaluate a Fluchs-Sondheumer model function for conductivity.</span>
 
 <span class="sd">    Args:</span>
@@ -1034,7 +1034,7 @@
         <span class="n">ret1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">v</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">v</span><span class="p">))</span>
         <span class="n">ret2</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">v</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">ret1</span><span class="o">*</span><span class="n">ret2</span>
-    <span class="k">return</span> <span class="n">result</span> <span class="o">/</span> <span class="n">sigma_0</span>
+    <span class="k">return</span> <span class="n">result</span> <span class="o">/</span> <span class="n">sigma_0</span></div>
 
 
 <div class="viewcode-block" id="FluchsSondheimer"><a class="viewcode-back" href="../../classes/Stoner.Fit.FluchsSondheimer.html#Stoner.Fit.FluchsSondheimer">[docs]</a><span class="k">class</span> <span class="nc">FluchsSondheimer</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -1076,7 +1076,7 @@
     <span class="k">return</span> <span class="n">x</span> <span class="o">**</span> <span class="n">n</span> <span class="o">/</span> <span class="p">((</span><span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)))</span>
 
 
-<span class="k">def</span> <span class="nf">blochGrueneisen</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">thetaD</span><span class="p">,</span> <span class="n">rho0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="blochGrueneisen"><a class="viewcode-back" href="../../classes/Stoner.Fit.blochGrueneisen.html#Stoner.Fit.blochGrueneisen">[docs]</a><span class="k">def</span> <span class="nf">blochGrueneisen</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">thetaD</span><span class="p">,</span> <span class="n">rho0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;BlochGrueneiseen Function for fitting R(T).</span>
 
 <span class="sd">    Args:</span>
@@ -1098,7 +1098,7 @@
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
         <span class="n">intg</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">_bgintegrand</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">thetaD</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho0</span> <span class="o">+</span> <span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span> <span class="o">/</span> <span class="n">thetaD</span><span class="p">)</span> <span class="o">**</span> <span class="n">n</span> <span class="o">*</span> <span class="n">intg</span>
-    <span class="k">return</span> <span class="n">ret</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
 
 
 <div class="viewcode-block" id="BlochGrueneisen"><a class="viewcode-back" href="../../classes/Stoner.Fit.BlochGrueneisen.html#Stoner.Fit.BlochGrueneisen">[docs]</a><span class="k">class</span> <span class="nc">BlochGrueneisen</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -1133,7 +1133,7 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">langevin</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">M_s</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+<div class="viewcode-block" id="langevin"><a class="viewcode-back" href="../../classes/Stoner.Fit.langevin.html#Stoner.Fit.langevin">[docs]</a><span class="k">def</span> <span class="nf">langevin</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">M_s</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;&quot;The Langevin function for paramagnetic M-H loops/</span>
 
 <span class="sd">    Args:</span>
@@ -1158,7 +1158,7 @@
     <span class="n">x</span> <span class="o">=</span> <span class="n">mu_0</span> <span class="o">*</span> <span class="n">H</span><span class="o">*</span><span class="n">m</span> <span class="o">/</span> <span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">T</span><span class="p">)</span>
     <span class="n">n</span><span class="o">=</span><span class="n">M_s</span><span class="o">/</span><span class="n">m</span>
 
-    <span class="k">return</span> <span class="n">m</span><span class="o">*</span><span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">_np_</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mf">1.0</span><span class="o">/</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">m</span><span class="o">*</span><span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">_np_</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mf">1.0</span><span class="o">/</span><span class="n">x</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Langevin"><a class="viewcode-back" href="../../classes/Stoner.Fit.Langevin.html#Stoner.Fit.Langevin">[docs]</a><span class="k">class</span> <span class="nc">Langevin</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 
@@ -1210,7 +1210,7 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">vftEquation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">,</span> <span class="n">x_0</span><span class="p">):</span>
+<div class="viewcode-block" id="vftEquation"><a class="viewcode-back" href="../../classes/Stoner.Fit.vftEquation.html#Stoner.Fit.vftEquation">[docs]</a><span class="k">def</span> <span class="nf">vftEquation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">,</span> <span class="n">x_0</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.</span>
 
 <span class="sd">    Args:</span>
@@ -1231,7 +1231,7 @@
 <span class="sd">            :outname: vft</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_kb</span> <span class="o">=</span> <span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s1">&#39;Boltzmann constant&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s1">&#39;elementary charge&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">DE</span> <span class="o">/</span> <span class="p">(</span><span class="n">_kb</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">DE</span> <span class="o">/</span> <span class="p">(</span><span class="n">_kb</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)))</span></div>
 
 
 <div class="viewcode-block" id="VFTEquation"><a class="viewcode-back" href="../../classes/Stoner.Fit.VFTEquation.html#Stoner.Fit.VFTEquation">[docs]</a><span class="k">class</span> <span class="nc">VFTEquation</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -1276,7 +1276,7 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">stretchedExp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">x_0</span><span class="p">):</span>
+<div class="viewcode-block" id="stretchedExp"><a class="viewcode-back" href="../../classes/Stoner.Fit.stretchedExp.html#Stoner.Fit.stretchedExp">[docs]</a><span class="k">def</span> <span class="nf">stretchedExp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">x_0</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A stretched exponential fuinction.</span>
 
 <span class="sd">    Args:</span>
@@ -1290,7 +1290,7 @@
 
 <span class="sd">    The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="n">beta</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StretchedExp"><a class="viewcode-back" href="../../classes/Stoner.Fit.StretchedExp.html#Stoner.Fit.StretchedExp">[docs]</a><span class="k">class</span> <span class="nc">StretchedExp</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -1331,7 +1331,7 @@
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
-<span class="k">def</span> <span class="nf">kittelEquation</span><span class="p">(</span><span class="n">H</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">M_s</span><span class="p">,</span><span class="n">H_k</span><span class="p">):</span>
+<div class="viewcode-block" id="kittelEquation"><a class="viewcode-back" href="../../classes/Stoner.Fit.kittelEquation.html#Stoner.Fit.kittelEquation">[docs]</a><span class="k">def</span> <span class="nf">kittelEquation</span><span class="p">(</span><span class="n">H</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">M_s</span><span class="p">,</span><span class="n">H_k</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</span>
 
 <span class="sd">    Args:</span>
@@ -1351,9 +1351,9 @@
 <span class="sd">            :outname: kittel</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">gamma</span><span class="o">=</span><span class="n">g</span><span class="o">*</span><span class="n">cnst</span><span class="o">.</span><span class="n">e</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">cnst</span><span class="o">.</span><span class="n">m_e</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">consts</span><span class="o">.</span><span class="n">mu0</span><span class="o">*</span><span class="n">gamma</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">H</span><span class="o">+</span><span class="n">H_k</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">H</span><span class="o">+</span><span class="n">H_k</span><span class="o">+</span><span class="n">M_s</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">consts</span><span class="o">.</span><span class="n">mu0</span><span class="o">*</span><span class="n">gamma</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">H</span><span class="o">+</span><span class="n">H_k</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">H</span><span class="o">+</span><span class="n">H_k</span><span class="o">+</span><span class="n">M_s</span><span class="p">))</span></div>
 
-<span class="k">def</span> <span class="nf">inverse_kittel</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">M_s</span><span class="p">,</span><span class="n">H_k</span><span class="p">):</span>
+<div class="viewcode-block" id="inverse_kittel"><a class="viewcode-back" href="../../classes/Stoner.Fit.inverse_kittel.html#Stoner.Fit.inverse_kittel">[docs]</a><span class="k">def</span> <span class="nf">inverse_kittel</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">M_s</span><span class="p">,</span><span class="n">H_k</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency</span>
 
 <span class="sd">    Args:</span>
@@ -1374,7 +1374,7 @@
 <span class="sd">       :math:`H_{res}=- H_{k} - \frac{M_{s}}{2} + \frac{1}{2 \gamma \mu_{0}} \sqrt{M_{s}^{2} \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">gamma</span><span class="o">=</span><span class="n">g</span><span class="o">*</span><span class="n">cnst</span><span class="o">.</span><span class="n">e</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">cnst</span><span class="o">.</span><span class="n">m_e</span><span class="p">)</span>
-    <span class="k">return</span> <span class="o">-</span><span class="n">H_k</span> <span class="o">-</span> <span class="n">M_s</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">M_s</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">gamma</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">cnst</span><span class="o">.</span><span class="n">mu_0</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">16</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">f</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">gamma</span><span class="o">*</span><span class="n">cnst</span><span class="o">.</span><span class="n">mu_0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">H_k</span> <span class="o">-</span> <span class="n">M_s</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">M_s</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">gamma</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">cnst</span><span class="o">.</span><span class="n">mu_0</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">16</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">f</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">gamma</span><span class="o">*</span><span class="n">cnst</span><span class="o">.</span><span class="n">mu_0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="KittelEquation"><a class="viewcode-back" href="../../classes/Stoner.Fit.KittelEquation.html#Stoner.Fit.KittelEquation">[docs]</a><span class="k">class</span> <span class="nc">KittelEquation</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 
@@ -1457,7 +1457,7 @@
         <span class="n">pars</span><span class="p">[</span><span class="s2">&quot;H_k&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="o">=</span><span class="n">M_s</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
-<span class="k">def</span> <span class="nf">lorentzian_diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">sigma</span><span class="p">,</span><span class="n">mu</span><span class="p">):</span>
+<div class="viewcode-block" id="lorentzian_diff"><a class="viewcode-back" href="../../classes/Stoner.Fit.lorentzian_diff.html#Stoner.Fit.lorentzian_diff">[docs]</a><span class="k">def</span> <span class="nf">lorentzian_diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">sigma</span><span class="p">,</span><span class="n">mu</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implement a differential form of a Lorentzian peak.</span>
 
 <span class="sd">    Args:</span>
@@ -1469,7 +1469,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">            :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">A</span><span class="o">*</span><span class="n">sigma</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">mu</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="n">mu</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">A</span><span class="o">*</span><span class="n">sigma</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">mu</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="n">mu</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Lorentzian_diff"><a class="viewcode-back" href="../../classes/Stoner.Fit.Lorentzian_diff.html#Stoner.Fit.Lorentzian_diff">[docs]</a><span class="k">class</span> <span class="nc">Lorentzian_diff</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;lmfit Model rerprenting the differential form of a Lorentzian Peak.</span>
@@ -1512,7 +1512,7 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">fmr_power</span><span class="p">(</span><span class="n">H</span><span class="p">,</span><span class="n">H_res</span><span class="p">,</span><span class="n">Delta_H</span><span class="p">,</span><span class="n">K_1</span><span class="p">,</span><span class="n">K_2</span><span class="p">):</span>
+<div class="viewcode-block" id="fmr_power"><a class="viewcode-back" href="../../classes/Stoner.Fit.fmr_power.html#Stoner.Fit.fmr_power">[docs]</a><span class="k">def</span> <span class="nf">fmr_power</span><span class="p">(</span><span class="n">H</span><span class="p">,</span><span class="n">H_res</span><span class="p">,</span><span class="n">Delta_H</span><span class="p">,</span><span class="n">K_1</span><span class="p">,</span><span class="n">K_2</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</span>
 
 <span class="sd">    Args:</span>
@@ -1526,7 +1526,7 @@
 
 <span class="sd">    :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="n">Delta_H</span><span class="o">*</span><span class="n">K_1</span><span class="o">*</span><span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="n">H_res</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Delta_H</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="n">H_res</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">K_2</span><span class="o">*</span><span class="p">(</span><span class="n">Delta_H</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="n">H_res</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Delta_H</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="n">H_res</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="n">Delta_H</span><span class="o">*</span><span class="n">K_1</span><span class="o">*</span><span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="n">H_res</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Delta_H</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="n">H_res</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">K_2</span><span class="o">*</span><span class="p">(</span><span class="n">Delta_H</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="n">H_res</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Delta_H</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="n">H_res</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span></div>
 
 <div class="viewcode-block" id="FMR_Power"><a class="viewcode-back" href="../../classes/Stoner.Fit.FMR_Power.html#Stoner.Fit.FMR_Power">[docs]</a><span class="k">class</span> <span class="nc">FMR_Power</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</span>
@@ -1583,12 +1583,17 @@
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
-<form class="search" action="../../search.html" method="get">
-  <input type="text" name="q"
-   placeholder="type to search" />
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -1611,7 +1616,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 07, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

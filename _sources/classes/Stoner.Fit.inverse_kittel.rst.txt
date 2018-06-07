@@ -1,27 +1,6 @@
-Inverse_Kittel
+inverse_kittel
 ==============
 
 .. currentmodule:: Stoner.Fit
 
-.. autoclass:: Inverse_Kittel
-   :show-inheritance:
-
-   .. rubric:: Attributes Summary
-
-   .. autosummary::
-
-      ~Inverse_Kittel.display_names
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-
-      ~Inverse_Kittel.guess
-
-   .. rubric:: Attributes Documentation
-
-   .. autoattribute:: display_names
-
-   .. rubric:: Methods Documentation
-
-   .. automethod:: guess
+.. autofunction:: inverse_kittel

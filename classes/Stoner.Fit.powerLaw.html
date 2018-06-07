@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>PowerLaw &#8212; Stoner Pacakge API Documentation</title>
+    <title>powerLaw &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="../_static/documentation_options.js"></script>
@@ -16,8 +16,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Quadratic" href="Stoner.Fit.Quadratic.html" />
-    <link rel="prev" title="NDimArrhenius" href="Stoner.Fit.NDimArrhenius.html" />
+    <link rel="next" title="quadratic" href="Stoner.Fit.quadratic.html" />
+    <link rel="prev" title="nDimArrhenius" href="Stoner.Fit.nDimArrhenius.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -28,10 +28,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.NDimArrhenius.html" title="Previous document">NDimArrhenius</a>
+          <a href="Stoner.Fit.nDimArrhenius.html" title="Previous document">nDimArrhenius</a>
         </li>
         <li>
-          <a href="Stoner.Fit.Quadratic.html" title="Next document">Quadratic</a>
+          <a href="Stoner.Fit.quadratic.html" title="Next document">quadratic</a>
           &rarr;
         </li>
     </ul>
@@ -52,12 +52,11 @@
           <div class="body" role="main">
             
   <div class="section" id="powerlaw">
-<h1>PowerLaw<a class="headerlink" href="#powerlaw" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="Stoner.Fit.PowerLaw">
-<em class="property">class </em><code class="descclassname">Stoner.Fit.</code><code class="descname">PowerLaw</code><span class="sig-paren">(</span><em>independent_vars=['x'], prefix='', missing=None, name=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#PowerLaw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.PowerLaw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.models.PowerLawModel</span></code></p>
-<p>Power Law Fitting Equation.</p>
+<h1>powerLaw<a class="headerlink" href="#powerlaw" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="Stoner.Fit.powerLaw">
+<code class="descclassname">Stoner.Fit.</code><code class="descname">powerLaw</code><span class="sig-paren">(</span><em>x</em>, <em>A</em>, <em>k</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#powerLaw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.powerLaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Power Law Fitting Equation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -106,6 +105,10 @@
 <span class="n">d</span><span class="o">.</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Temperature (K)&quot;</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../samples/Fitting/powerlaw.png">png</a>, <a class="reference external" href="../samples/Fitting/powerlaw.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/powerlaw.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/powerlaw.png" src="../_images/powerlaw.png" />
+</div>
 </dd></dl>
 
 </div>
@@ -120,24 +123,27 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.NDimArrhenius.html"
-                        title="previous chapter">NDimArrhenius</a></p>
+  <p class="topless"><a href="Stoner.Fit.nDimArrhenius.html"
+                        title="previous chapter">nDimArrhenius</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Fit.Quadratic.html"
-                        title="next chapter">Quadratic</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.Fit.PowerLaw.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<form class="search" action="../search.html" method="get">
-  <input type="text" name="q"
-   placeholder="type to search" />
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
+  <p class="topless"><a href="Stoner.Fit.quadratic.html"
+                        title="next chapter">quadratic</a></p>
+<div class="sourcelink">
+  <a href="../_sources/classes/Stoner.Fit.powerLaw.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -148,10 +154,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.NDimArrhenius.html" title="Previous document">NDimArrhenius</a>
+          <a href="Stoner.Fit.nDimArrhenius.html" title="Previous document">nDimArrhenius</a>
         </li>
         <li>
-          <a href="Stoner.Fit.Quadratic.html" title="Next document">Quadratic</a>
+          <a href="Stoner.Fit.quadratic.html" title="Next document">quadratic</a>
           &rarr;
         </li>
     </ul>
@@ -165,7 +171,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 07, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

@@ -43,10 +43,12 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 135%;
 }
 
-.body .section:first-child > :first-child,
-.sphinxsidebarwrapper > :first-child,
-.sphinxsidebar .search:first-child
-{
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child,
+h5:first-child,
+h6:first-child {
     margin-top: 1rem;
 }
 
@@ -59,18 +61,18 @@ h6 { font-size: 1rem; font-weight: normal; }
 
 /* page-level layout of containers */
 
-header#pageheader, footer#pagefooter, .related, .document {
+header#pageheader, footer#pagefooter, div.related, div.document {
     width: 100%;
     max-width: 60rem;
     margin: auto;
 }
 
-.documentwrapper {
+div.documentwrapper {
     float: left;
     width: 100%;
 }
 
-.bodywrapper {
+div.bodywrapper {
     margin: 0 0 0 15rem;
 }
 
@@ -120,7 +122,7 @@ pre {
 
 tt {
     padding: 0 1px 0 1px;
-    font-family: Consolas, Monaco, monospace;
+    font-size: 1.2rem;
 }
 
 /* API doc styles */
@@ -136,27 +138,27 @@ dl.classmethod {
 
 /* relbar */
 
-.related {
+div.related {
     line-height: 30px;
     width: 100%;
     font-size: 0.9rem;
 }
 
-.related.top {
+div.related.top {
     border-bottom: 1px solid #aaa;
 }
 
-.related.bottom {
+div.related.bottom {
     border-top: 1px solid #aaa;
 }
 
-.related ul {
+div.related ul {
     padding: 0;
     margin: 0;
     list-style: none;
 }
 
-.related li {
+div.related li {
     display: inline;
 }
 
@@ -174,85 +176,71 @@ nav#breadcrumbs li+li:before {
 
 /* sidebar */
 
-.sphinxsidebarwrapper {
+div.sphinxsidebarwrapper {
     padding: 0 1rem 0 0;
 }
 
-.sphinxsidebar {
+div.sphinxsidebar {
     width: 15rem;
     margin-left: -100%;
     font-size: 0.9rem;
     float: left;
 }
 
-.sphinxsidebar h3 a {
+div.sphinxsidebar h3 a {
     color: #000000;
 }
 
-.sphinxsidebar p.topless {
+div.sphinxsidebar p.topless {
     margin: 5px 10px 10px 10px;
 }
 
-.sphinxsidebar ul {
+div.sphinxsidebar ul {
     margin: 0;
     padding: 0;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     list-style: none;
 }
 
-.sphinxsidebar ul ul,
-.sphinxsidebar ul.want-points {
+div.sphinxsidebar ul ul,
+div.sphinxsidebar ul.want-points {
     margin-left: 20px;
     list-style: square;
 }
 
-.sphinxsidebar ul ul {
+div.sphinxsidebar ul ul {
     margin-top: 0;
     margin-bottom: 0;
 }
 
-.sphinxsidebar input {
+div.sphinxsidebar input {
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     height: 1.5rem;
-    font-size: 0.9rem;
+    font-size: 1rem;
     margin: 0;
-
-    background-color: white;
-    border: 1px solid #ccc;
-    color: #555;
 }
 
-.sphinxsidebar .search {
+div.sourcelink {
     margin-top: 2rem;
-}
-
-.sphinxsidebar .search input[type=text] {
-    width: 90%;
-    display: inline-block;
-}
-
-.sphinxsidebar .search input[type=submit] {
-    width: 4rem;
-    display: inline-block;
 }
 
 /* paragraph-level markup */
 
-.admonition p.admonition-title + p {
+div.admonition p.admonition-title + p {
     display: inline;
 }
 
-.admonition p {
+div.admonition p {
     margin-bottom: 5px;
 }
 
-.admonition pre {
+div.admonition pre {
     margin-bottom: 5px;
 }
 
-.admonition ul, .admonition ol {
+div.admonition ul, div.admonition ol {
     margin-bottom: 5px;
 }
 
@@ -265,21 +253,21 @@ p.admonition-title:after {
     content: ":";
 }
 
-.note {
+div.note {
     background-color: #eee;
     border: 1px solid #ccc;
 }
 
-.seealso {
+div.seealso {
     background-color: #ffc;
     border: 1px solid #ff6;
 }
 
-.topic {
+div.topic {
     background-color: #eee;
 }
 
-.warning {
+div.warning {
     background-color: #ffe4e4;
     border: 1px solid #f66;
 }
@@ -292,7 +280,7 @@ p.admonition-title:after {
     background: #d6d6d6;
 }
 
-.viewcode-block:target {
+div.viewcode-block:target {
     background-color: #f4debf;
     border-top: 1px solid #ac9;
     border-bottom: 1px solid #ac9;
@@ -301,14 +289,16 @@ p.admonition-title:after {
 /* responsive styles */
 
 @media (max-width: 820px) {
-    /* kill the sidebar */
-    .bodywrapper { margin: 0; }
-    .sphinxsidebar {
-        display: none;
-    }
-    header#pageheader, footer#pagefooter, .related, .document {
-        margin: 0 1rem;
-        width: calc(100% - 2rem);
-        width: -webkit-calc(100% - 2rem);
-    }
+  /* don't float sidebar */
+  div.bodywrapper { margin: 0; }
+  div.sphinxsidebar {
+    float: none;
+    margin: 0;
+  }
+
+  /* margins on body */
+  header#pageheader, footer#pagefooter, div.related, div.document {
+    margin: 0 1rem;
+    width: calc(100% - 2rem);
+  }
 }

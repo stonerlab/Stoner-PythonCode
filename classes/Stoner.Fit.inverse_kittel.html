@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Inverse_Kittel &#8212; Stoner Pacakge API Documentation</title>
+    <title>inverse_kittel &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="../_static/documentation_options.js"></script>
@@ -16,8 +16,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="KittelEquation" href="Stoner.Fit.KittelEquation.html" />
-    <link rel="prev" title="FowlerNordheim" href="Stoner.Fit.FowlerNordheim.html" />
+    <link rel="next" title="kittelEquation" href="Stoner.Fit.kittelEquation.html" />
+    <link rel="prev" title="fowlerNordheim" href="Stoner.Fit.fowlerNordheim.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -28,10 +28,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.FowlerNordheim.html" title="Previous document">FowlerNordheim</a>
+          <a href="Stoner.Fit.fowlerNordheim.html" title="Previous document">fowlerNordheim</a>
         </li>
         <li>
-          <a href="Stoner.Fit.KittelEquation.html" title="Next document">KittelEquation</a>
+          <a href="Stoner.Fit.kittelEquation.html" title="Next document">kittelEquation</a>
           &rarr;
         </li>
     </ul>
@@ -52,19 +52,18 @@
           <div class="body" role="main">
             
   <div class="section" id="inverse-kittel">
-<h1>Inverse_Kittel<a class="headerlink" href="#inverse-kittel" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="Stoner.Fit.Inverse_Kittel">
-<em class="property">class </em><code class="descclassname">Stoner.Fit.</code><code class="descname">Inverse_Kittel</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#Inverse_Kittel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.Inverse_Kittel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></p>
-<p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p>
+<h1>inverse_kittel<a class="headerlink" href="#inverse-kittel" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="Stoner.Fit.inverse_kittel">
+<code class="descclassname">Stoner.Fit.</code><code class="descname">inverse_kittel</code><span class="sig-paren">(</span><em>f</em>, <em>g</em>, <em>M_s</em>, <em>H_k</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#inverse_kittel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.inverse_kittel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>H</strong> (<em>array</em>) – Magnetic fields in A/m</li>
-<li><strong>g</strong> (<em>float</em>) – h g factor for the gyromagnetic radius</li>
+<li><strong>f</strong> (<em>array</em>) – Resonance Frequency in Hz</li>
+<li><strong>g</strong> (<em>float</em>) – g factor for the gyromagnetic radius</li>
 <li><strong>M_s</strong> (<em>float</em>) – Magnetisation of sample in A/m</li>
 <li><strong>H_k</strong> (<em>float</em>) – Anisotropy field term (including demagnetising factors) in A/m</li>
 </ul>
@@ -75,44 +74,13 @@
 </tr>
 </tbody>
 </table>
-<p><span class="math notranslate nohighlight">\(f = \frac{\gamma \mu_{0}}{2 \pi} \sqrt{\left(H + H_{k}\right) \left(H + H_{k} + M_{s}\right)}\)</span></p>
-<p class="rubric">Attributes Summary</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.Inverse_Kittel.display_names" title="Stoner.Fit.Inverse_Kittel.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods Summary</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.Inverse_Kittel.guess" title="Stoner.Fit.Inverse_Kittel.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[,&nbsp;x])</td>
-<td>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
-<dt id="Stoner.Fit.Inverse_Kittel.display_names">
-<code class="descname">display_names</code><em class="property"> = ['g', 'M_s', 'H_k']</em><a class="headerlink" href="#Stoner.Fit.Inverse_Kittel.display_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p class="rubric">Methods Documentation</p>
-<dl class="method">
-<dt id="Stoner.Fit.Inverse_Kittel.guess">
-<code class="descname">guess</code><span class="sig-paren">(</span><em>data</em>, <em>x=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#Inverse_Kittel.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.Inverse_Kittel.guess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p>
-</dd></dl>
-
+<p class="rubric">Notes</p>
+<p>In practice one often measures FMR by sweepign field for constant frequency and then locates the
+peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a <span class="math notranslate nohighlight">\(H_{res}\pm \Delta H_{res}\)</span>
+In order to make use of this data with <a class="reference internal" href="Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin.lmfit()</span></code></a> or <a class="reference internal" href="Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin.curve_fit()</span></code></a>
+it makes more sense to fit the Kittel Equation written in terms of H than frequency.</p>
+<blockquote>
+<div><span class="math notranslate nohighlight">\(H_{res}=- H_{k} - \frac{M_{s}}{2} + \frac{1}{2 \gamma \mu_{0}} \sqrt{M_{s}^{2} \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}\)</span></div></blockquote>
 </dd></dl>
 
 </div>
@@ -127,24 +95,27 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.FowlerNordheim.html"
-                        title="previous chapter">FowlerNordheim</a></p>
+  <p class="topless"><a href="Stoner.Fit.fowlerNordheim.html"
+                        title="previous chapter">fowlerNordheim</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Fit.KittelEquation.html"
-                        title="next chapter">KittelEquation</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.Fit.Inverse_Kittel.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<form class="search" action="../search.html" method="get">
-  <input type="text" name="q"
-   placeholder="type to search" />
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
+  <p class="topless"><a href="Stoner.Fit.kittelEquation.html"
+                        title="next chapter">kittelEquation</a></p>
+<div class="sourcelink">
+  <a href="../_sources/classes/Stoner.Fit.inverse_kittel.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -155,10 +126,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.FowlerNordheim.html" title="Previous document">FowlerNordheim</a>
+          <a href="Stoner.Fit.fowlerNordheim.html" title="Previous document">fowlerNordheim</a>
         </li>
         <li>
-          <a href="Stoner.Fit.KittelEquation.html" title="Next document">KittelEquation</a>
+          <a href="Stoner.Fit.kittelEquation.html" title="Next document">kittelEquation</a>
           &rarr;
         </li>
     </ul>
@@ -172,7 +143,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 07, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

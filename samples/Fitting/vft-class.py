@@ -22,7 +22,6 @@ p0=params
 d.lmfit(fit,p0=p0,result=True,header="lmfit")
 
 d.setas="xyeyyy"
-d.figure(dpi=300)
 d.plot(fmt=["k+","r-","b-"])
 d.yscale="log"
 d.ylim=(1E-35,1E10)

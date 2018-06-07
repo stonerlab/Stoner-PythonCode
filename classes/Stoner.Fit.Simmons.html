@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Simmons &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -25,15 +17,19 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="StretchedExp" href="Stoner.Fit.StretchedExp.html" />
+    <link rel="prev" title="Quadratic" href="Stoner.Fit.Quadratic.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  </head>
-  <body>
+  </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
         Stoner Pacakge API Documentation
     </a></h1></header>
   <div class="related top">
   <nav id="rellinks">
     <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Fit.Quadratic.html" title="Previous document">Quadratic</a>
+        </li>
         <li>
           <a href="Stoner.Fit.StretchedExp.html" title="Next document">StretchedExp</a>
           &rarr;
@@ -44,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -60,7 +56,7 @@
 <dl class="class">
 <dt id="Stoner.Fit.Simmons">
 <em class="property">class </em><code class="descclassname">Stoner.Fit.</code><code class="descname">Simmons</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#Simmons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.Simmons" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></p>
 <p>Simmons model of electron tunnelling.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -84,7 +80,7 @@
 <p class="last">Simmons model from Simmons J. App. Phys. 34 6 1963</p>
 </div>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example of nDimArrhenius Fit.&quot;&quot;&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example of nDimArrhenius Fit.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">import</span> <span class="nn">Stoner.Fit</span> <span class="kn">as</span> <span class="nn">SF</span>
 <span class="kn">from</span>  <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">ones_like</span>
@@ -115,18 +111,10 @@
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/Simmons.png">png</a>, <a class="reference external" href="../samples/Fitting/Simmons.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/Simmons.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/Fitting/simmons-class.png">png</a>, <a class="reference external" href="../samples/Fitting/simmons-class.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/simmons-class.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/Simmons.png" src="../_images/Simmons.png" />
+<img alt="../_images/simmons-class.png" src="../_images/simmons-class.png" />
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Include-source:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
 <p class="rubric">Attributes Summary</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -134,7 +122,7 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.Simmons.display_names" title="Stoner.Fit.Simmons.display_names"><code class="xref py py-obj docutils literal"><span class="pre">display_names</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.Simmons.display_names" title="Stoner.Fit.Simmons.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></td>
 <td></td>
 </tr>
 </tbody>
@@ -146,7 +134,7 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.Simmons.guess" title="Stoner.Fit.Simmons.guess"><code class="xref py py-obj docutils literal"><span class="pre">guess</span></code></a>(data[,&nbsp;V])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.Simmons.guess" title="Stoner.Fit.Simmons.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[,&nbsp;V])</td>
 <td>Just set the A, phi and d values to typical answers for a small tunnel junction</td>
 </tr>
 </tbody>
@@ -177,6 +165,9 @@
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Fit.Quadratic.html"
+                        title="previous chapter">Quadratic</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Fit.StretchedExp.html"
                         title="next chapter">StretchedExp</a></p>
@@ -187,15 +178,16 @@
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -203,6 +195,10 @@
   <div class="related bottom">
   <nav id="rellinks">
     <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Fit.Quadratic.html" title="Previous document">Quadratic</a>
+        </li>
         <li>
           <a href="Stoner.Fit.StretchedExp.html" title="Next document">StretchedExp</a>
           &rarr;
@@ -213,14 +209,14 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html">Stoner Package</a>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 09, 2017.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 07, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.6.5
+      1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

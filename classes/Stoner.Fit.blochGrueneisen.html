@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>BlochGrueneisen &#8212; Stoner Pacakge API Documentation</title>
+    <title>blochGrueneisen &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="../_static/documentation_options.js"></script>
@@ -16,8 +16,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="FMR_Power" href="Stoner.Fit.FMR_Power.html" />
-    <link rel="prev" title="BDR" href="Stoner.Fit.BDR.html" />
+    <link rel="next" title="cfg_data_from_ini" href="Stoner.Fit.cfg_data_from_ini.html" />
+    <link rel="prev" title="bdr" href="Stoner.Fit.bdr.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -28,10 +28,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.BDR.html" title="Previous document">BDR</a>
+          <a href="Stoner.Fit.bdr.html" title="Previous document">bdr</a>
         </li>
         <li>
-          <a href="Stoner.Fit.FMR_Power.html" title="Next document">FMR_Power</a>
+          <a href="Stoner.Fit.cfg_data_from_ini.html" title="Next document">cfg_data_from_ini</a>
           &rarr;
         </li>
     </ul>
@@ -52,12 +52,11 @@
           <div class="body" role="main">
             
   <div class="section" id="blochgrueneisen">
-<h1>BlochGrueneisen<a class="headerlink" href="#blochgrueneisen" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="Stoner.Fit.BlochGrueneisen">
-<em class="property">class </em><code class="descclassname">Stoner.Fit.</code><code class="descname">BlochGrueneisen</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#BlochGrueneisen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.BlochGrueneisen" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></p>
-<p>BlochGrueneiseen Function for fitting R(T).</p>
+<h1>blochGrueneisen<a class="headerlink" href="#blochgrueneisen" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="Stoner.Fit.blochGrueneisen">
+<code class="descclassname">Stoner.Fit.</code><code class="descname">blochGrueneisen</code><span class="sig-paren">(</span><em>T</em>, <em>thetaD</em>, <em>rho0</em>, <em>A</em>, <em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#blochGrueneisen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.blochGrueneisen" title="Permalink to this definition">¶</a></dt>
+<dd><p>BlochGrueneiseen Function for fitting R(T).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -105,43 +104,10 @@
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="rubric">Attributes Summary</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.BlochGrueneisen.display_names" title="Stoner.Fit.BlochGrueneisen.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods Summary</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.BlochGrueneisen.guess" title="Stoner.Fit.BlochGrueneisen.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[,&nbsp;t])</td>
-<td>Guess some starting values - not very clever</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
-<dt id="Stoner.Fit.BlochGrueneisen.display_names">
-<code class="descname">display_names</code><em class="property"> = ['\\theta_D', '\\rho_0', 'A', 'n']</em><a class="headerlink" href="#Stoner.Fit.BlochGrueneisen.display_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p class="rubric">Methods Documentation</p>
-<dl class="method">
-<dt id="Stoner.Fit.BlochGrueneisen.guess">
-<code class="descname">guess</code><span class="sig-paren">(</span><em>data</em>, <em>t=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#BlochGrueneisen.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.BlochGrueneisen.guess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Guess some starting values - not very clever</p>
-</dd></dl>
-
+<p>(<a class="reference external" href="../samples/Fitting/blochgruneisen.png">png</a>, <a class="reference external" href="../samples/Fitting/blochgruneisen.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/blochgruneisen.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/blochgruneisen.png" src="../_images/blochgruneisen.png" />
+</div>
 </dd></dl>
 
 </div>
@@ -156,24 +122,27 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.BDR.html"
-                        title="previous chapter">BDR</a></p>
+  <p class="topless"><a href="Stoner.Fit.bdr.html"
+                        title="previous chapter">bdr</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Fit.FMR_Power.html"
-                        title="next chapter">FMR_Power</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.Fit.BlochGrueneisen.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<form class="search" action="../search.html" method="get">
-  <input type="text" name="q"
-   placeholder="type to search" />
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
+  <p class="topless"><a href="Stoner.Fit.cfg_data_from_ini.html"
+                        title="next chapter">cfg_data_from_ini</a></p>
+<div class="sourcelink">
+  <a href="../_sources/classes/Stoner.Fit.blochGrueneisen.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -184,10 +153,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.BDR.html" title="Previous document">BDR</a>
+          <a href="Stoner.Fit.bdr.html" title="Previous document">bdr</a>
         </li>
         <li>
-          <a href="Stoner.Fit.FMR_Power.html" title="Next document">FMR_Power</a>
+          <a href="Stoner.Fit.cfg_data_from_ini.html" title="Next document">cfg_data_from_ini</a>
           &rarr;
         </li>
     </ul>
@@ -201,7 +170,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 05, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 07, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

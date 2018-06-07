@@ -1,27 +1,6 @@
-KittelEquation
+kittelEquation
 ==============
 
 .. currentmodule:: Stoner.Fit
 
-.. autoclass:: KittelEquation
-   :show-inheritance:
-
-   .. rubric:: Attributes Summary
-
-   .. autosummary::
-
-      ~KittelEquation.display_names
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-
-      ~KittelEquation.guess
-
-   .. rubric:: Attributes Documentation
-
-   .. autoattribute:: display_names
-
-   .. rubric:: Methods Documentation
-
-   .. automethod:: guess
+.. autofunction:: kittelEquation

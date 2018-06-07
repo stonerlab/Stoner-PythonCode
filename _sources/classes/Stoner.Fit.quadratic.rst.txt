@@ -1,7 +1,6 @@
-Quadratic
+quadratic
 =========
 
 .. currentmodule:: Stoner.Fit
 
-.. autoclass:: Quadratic
-   :show-inheritance:
+.. autofunction:: quadratic

@@ -1,6 +1,6 @@
 <map id="inheritancebd3fb28729" name="inheritancebd3fb28729">
-<area shape="rect" id="node1" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" target="_top" title="Provide an interface to manipulating lots of data files stored within a directory structure on disc." alt="" coords="665,29,765,43"/>
-<area shape="rect" id="node2" href="Stoner.Folders.DiskBasedFolder.html#Stoner.Folders.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="521,16,640,29"/>
-<area shape="rect" id="node3" href="Stoner.Folders.baseFolder.html#Stoner.Folders.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="530,42,630,55"/>
-<area shape="rect" id="node9" title="All the operations on a read&#45;only sequence." alt="" coords="249,42,346,55"/>
+<area shape="rect" id="node1" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" target="_top" title="Provide an interface to manipulating lots of data files stored within a directory structure on disc." alt="" coords="665,30,765,43"/>
+<area shape="rect" id="node2" href="Stoner.Folders.DiskBasedFolder.html#Stoner.Folders.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="521,16,640,30"/>
+<area shape="rect" id="node3" href="Stoner.Folders.baseFolder.html#Stoner.Folders.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="531,42,630,56"/>
+<area shape="rect" id="node9" title="All the operations on a read&#45;only sequence." alt="" coords="248,42,346,56"/>
 </map>

@@ -1,17 +1,6 @@
-Langevin
+langevin
 ========
 
 .. currentmodule:: Stoner.Fit
 
-.. autoclass:: Langevin
-   :show-inheritance:
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-
-      ~Langevin.guess
-
-   .. rubric:: Methods Documentation
-
-   .. automethod:: guess
+.. autofunction:: langevin

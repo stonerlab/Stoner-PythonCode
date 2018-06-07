@@ -1,13 +1,13 @@
 <map id="inheritancef5f7c35bff" name="inheritancef5f7c35bff">
-<area shape="rect" id="node5" href="classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" target="_top" title="A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name." alt="" coords="292,165,363,186"/>
-<area shape="rect" id="node6" title="An array class with possibly masked values." alt="" coords="153,165,239,186"/>
-<area shape="rect" id="node7" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" target="_top" title=":py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers." alt="" coords="703,246,764,267"/>
-<area shape="rect" id="node8" href="classes/Stoner.Core.metadataObject.html#Stoner.Core.metadataObject" target="_top" title="Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object." alt="" coords="559,246,663,267"/>
-<area shape="rect" id="node10" title="ndarray(shape, dtype=float, buffer=None, offset=0," alt="" coords="29,165,88,186"/>
-<area shape="rect" id="node12" title="Dictionary that remembers insertion order" alt="" coords="19,125,99,146"/>
-<area shape="rect" id="node16" href="classes/Stoner.Core.regexpDict.html#Stoner.Core.regexpDict" target="_top" title="An ordered dictionary that permits looks up by regular expression." alt="" coords="159,125,233,146"/>
-<area shape="rect" id="node13" href="classes/Stoner.Core.StonerLoadError.html#Stoner.Core.StonerLoadError" target="_top" title="An exception thrown by the file loading routines in the Stoner Package." alt="" coords="7,85,111,105"/>
-<area shape="rect" id="node14" href="classes/Stoner.Core.StonerSetasError.html#Stoner.Core.StonerSetasError" target="_top" title="An exception tjrown when we try to access a column in data without setas being set." alt="" coords="4,44,113,65"/>
-<area shape="rect" id="node15" href="classes/Stoner.Core._setas.html#Stoner.Core._setas" target="_top" title="A Class that provides a mechanism for managing the column assignments in a DataFile like object." alt="" coords="29,4,88,25"/>
-<area shape="rect" id="node17" href="classes/Stoner.Core.typeHintedDict.html#Stoner.Core.typeHintedDict" target="_top" title="Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains." alt="" coords="279,125,375,146"/>
+<area shape="rect" id="node5" href="classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" target="_top" title="A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name." alt="" coords="292,167,364,188"/>
+<area shape="rect" id="node6" title="An array class with possibly masked values." alt="" coords="154,167,240,188"/>
+<area shape="rect" id="node7" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" target="_top" title=":py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers." alt="" coords="703,248,764,269"/>
+<area shape="rect" id="node8" href="classes/Stoner.Core.metadataObject.html#Stoner.Core.metadataObject" target="_top" title="Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object." alt="" coords="560,248,664,269"/>
+<area shape="rect" id="node10" title="ndarray(shape, dtype=float, buffer=None, offset=0," alt="" coords="30,167,89,188"/>
+<area shape="rect" id="node12" title="Dictionary that remembers insertion order" alt="" coords="19,126,100,147"/>
+<area shape="rect" id="node16" href="classes/Stoner.Core.regexpDict.html#Stoner.Core.regexpDict" target="_top" title="An ordered dictionary that permits looks up by regular expression." alt="" coords="160,126,234,147"/>
+<area shape="rect" id="node13" href="classes/Stoner.Core.StonerLoadError.html#Stoner.Core.StonerLoadError" target="_top" title="An exception thrown by the file loading routines in the Stoner Package." alt="" coords="7,86,111,106"/>
+<area shape="rect" id="node14" href="classes/Stoner.Core.StonerSetasError.html#Stoner.Core.StonerSetasError" target="_top" title="An exception tjrown when we try to access a column in data without setas being set." alt="" coords="4,45,114,66"/>
+<area shape="rect" id="node15" href="classes/Stoner.Core._setas.html#Stoner.Core._setas" target="_top" title="A Class that provides a mechanism for managing the column assignments in a DataFile like object." alt="" coords="30,4,89,25"/>
+<area shape="rect" id="node17" href="classes/Stoner.Core.typeHintedDict.html#Stoner.Core.typeHintedDict" target="_top" title="Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains." alt="" coords="280,126,376,147"/>
 </map>
