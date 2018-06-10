@@ -10,6 +10,7 @@ import copy
 import warnings
 import os.path as path
 import inspect as _inspect_
+from textwrap import TextWrapper
 from ast import literal_eval
 import itertools
 from collections import OrderedDict,MutableMapping
@@ -21,6 +22,13 @@ import numpy.ma as _ma_
 
 from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,bytes2str
 from .tools import isNone,all_size,all_type,_attribute_store,operator,isiterable,typedList,islike_list,get_option
+
+try:
+    from tabulate import tabulate
+    tabulate.PRESERVE_WHITESPACE = True
+except ImportError:
+    tabulate=None
+
 
 try:
     assert not python_v3 # blist doesn't seem entirely reliable in 3.5 :-(
@@ -1666,6 +1674,7 @@ class DataFile(metadataObject):
         filename (string): The current filename of the data if loaded from or
                            already saved to disc. This is the default filename used by the :py:meth:`Stoner.Core.DataFile.load`
                            and :py:meth:`Stoner.Core.DataFile.save`.
+        header (string): A readonly property that returns a pretty formatted string giving the header of tabular representation.
         mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask.
         mime_type (list of str): The possible mime-types of data files represented by each matching filename pattern in :py:attr:`Datafile.pattern`.
         patterns (list): A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (*.txt and *.dat")
@@ -1961,6 +1970,42 @@ class DataFile(metadataObject):
     def filename(self,filename):
         """Store the DataFile filename."""
         self._filename=filename
+
+    @property
+    def header(self):
+        """Make a pretty header string that looks like the tabular representation."""
+        if tabulate is None:
+            raise ImportError("No tabulate.")
+        fmt="rst"
+        lb="<br/>" if fmt=="html" else "\n"
+        rows,cols=self._repr_limits
+        r,c=self.shape
+        interesting,col_assignments,cols=self._interesting_cols(cols)
+        c=min(c,cols)
+        c_w=max([len(self.column_headers[x]) for x in interesting if x>-1])
+        wrapper=TextWrapper(subsequent_indent="\t",width=max(20,max(20,(80-c_w*c))))
+        if r>rows:
+            shorten=[True,False]
+            r=rows+rows%2
+        else:
+            shorten=[False,False]
+
+        shorten[1]=c>cols
+        r=max(len(self.metadata),r)
+
+        outp=_np_.zeros((1,c+1),dtype=object)
+        outp[:,:]="..."
+        ch=[self.column_headers[ix] if ix>=0 else "...." for ix in interesting]
+
+        for ix,(h,i) in enumerate(zip(ch,col_assignments)):
+            ch[ix]="{}{}{}".format(h,lb,i)
+            if self.debug: print(len(spaces1),len(spaces2))
+        outp[0,1:]=ch
+        #outp[1,1:]=col_assignments
+        outp[0,0]="TDI Format 1.5{}index".format(lb)
+        ret=tabulate(outp,tablefmt=fmt,numalign="decimal",stralign="center")
+        return ret
+
 
     @property
     def mask(self):
@@ -2954,9 +2999,8 @@ class DataFile(metadataObject):
 
     def _repr_table_(self,fmt="rst"):
         """Convert the DataFile to a 2D array and then feed to tabulate."""
-        from tabulate import tabulate
-        tabulate.PRESERVE_WHITESPACE = True
-        from textwrap import TextWrapper
+        if tabulate is None:
+            raise ImportError("No tabulate.")
         lb="<br/>" if fmt=="html" else "\n"
         rows,cols=self._repr_limits
         r,c=self.shape
