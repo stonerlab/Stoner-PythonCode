@@ -94,6 +94,39 @@ class _odr_Model(odrModel):
 
         super(_odr_Model,self).__init__(model,*args,**kargs)
 
+class _curve_fit_result(object):
+    
+    """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit` as a class to make handling easier."""
+    
+    def __init__(self,popt,pcov,infodict,mesg,ier):
+        """Store the results of the curve fit full_output fit."""
+        self.popt=popt
+        self.pcov=pcov
+        self.perr=_np_.sqrt(_np_.diag(pcov))
+        self.infordict=infodict
+        self.mesg=mesg
+        self.ier=ier
+
+    #Following peroperties used to return desired information
+
+    @property
+    def full(self):
+        return self.popt,self.pcov,self.perr,self.infodict,self.mesg,self.ier
+    
+    @property
+    def row(self):
+        ret=_np_.zeros(self.popt.size*2)
+        ret[0::2]=self.popt
+        ret[1::2]=self.perr
+        return ret
+    
+    @property
+    def fit(self):
+        return (self.popt,self.pcov)
+    
+    @property
+    def report(self):
+        return self
 
 def _lmfit_p0_dict(p0,model):
     """Works out an initial starting value dictionary for lmfit.
@@ -549,11 +582,8 @@ class AnalysisMixin(object):
             DataArray=self.data.__class__
             row = []
             ch=[]
-           
-            popt=[x.value for x in fit.params.values()]
-            perr=[x.stderr for x in fit.params.values()]
-            
-            self._record_curve_fit_result(model,popt,perr,xcol,header,result,replace,residuals,ydata,prefix=prefix)
+                       
+            self._record_curve_fit_result(model,fit,xcol,header,result,replace,residuals,ydata,prefix=prefix)
 
             for p in fit.params:
                 row.extend([fit.params[p].value, fit.params[p].stderr])
@@ -570,7 +600,7 @@ class AnalysisMixin(object):
         else:
             raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
 
-    def _record_curve_fit_result(self,func,popt,perr,xcol,header,result,replace,residuals=False,ydata=None,prefix=None):
+    def _record_curve_fit_result(self,func,fit,xcol,header,result,replace,residuals=False,ydata=None,prefix=None):
         """Annotate the DataFile object with the curve_fit result."""
         if isinstance(func,(lmfit.Model)):
             f_name=func.__class__.__name__
@@ -585,9 +615,24 @@ class AnalysisMixin(object):
             f_name=func.__name__
         if prefix is not None:
             f_name=prefix
-        args = getfullargspec(func)[0] # pylint: disable=W1505
 
-        for val,err,name in zip(popt,perr,args[1:]):
+        args = getfullargspec(func)[0] # pylint: disable=W1505
+        del args[0]            
+        if isinstance(fit,_curve_fit_result): # Come from curve_fit
+            popt=fit.popt
+            perr=fit.perr
+        elif isinstance(fit,lmfit.model.ModelResult): # Come form an lmfit operation
+            popt=[fit.params[x].value for x in args]
+            perr=[fit.params[x].stderr for x in args]
+        elif isinstance(fit,_sp_.odr.Output):
+            popt=fit.beta
+            perr=fit.sd_beta
+        else:
+            raise RuntimeError("Unable to understand {} as a fitting result".format(type(fit)))            
+            
+            
+
+        for val,err,name in zip(popt,perr,args):
             self['{}:{}'.format(f_name,name)] = val
             self['{}:{} err'.format(f_name,name)] = err
             self['{}:{} label'.format(f_name,name)]=name
@@ -956,8 +1001,7 @@ class AnalysisMixin(object):
         #Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
-        if output == "full":
-            kargs["full_output"] = True
+        kargs["full_output"] = True
 
         if not isinstance(ycol,list):
             ycol=[ycol,]
@@ -979,23 +1023,16 @@ class AnalysisMixin(object):
             else:
                 s=sigma
 
-            ret=()
-            if output == "full":
-                popt,pcov,infodict,mesg,ier = curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs)
-                ret = (popt,pcov,infodict,mesg,ier)
-            else:
-                popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs)
-            perr=_np_.sqrt(_np_.diag(pcov))
+            report=_curve_fit_result(*curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs))
+            report.func=func
+            report.data=self
+
             if result is not None:
-                self._record_curve_fit_result(func,popt,perr,xcol,header,result,replace,residuals=residuals,ydata=ydata,prefix=prefix)
-            row = _np_.array([])
-            for val,err in zip(popt,perr):
-                row = _np_.append(row, [val,err])
-            ret = (pcov,popt,row)
-            retval = {"fit": (popt, pcov), "row": row, "full": ret, "data": self}
-            if output not in retval:
+                self._record_curve_fit_result(func,report,xcol,header,result,replace,residuals=residuals,ydata=ydata,prefix=prefix)
+            try:
+                retvals.append(getattr(report,output))
+            except AttributeError:
                 raise RuntimeError("Specified output: {}, from curve_fit not recognised".format(kargs["output"]))
-            retvals.append(retval[output])
         if i==0:
             retvals=retvals[0]
         return retvals
@@ -1844,7 +1881,7 @@ class AnalysisMixin(object):
         delta,eps=fit_result.delta,fit_result.eps
         chi_square=_np_.sum(delta**2/_np_.abs(fit_result.xplus))+_np_.sum(eps**2/_np_.abs(fit_result.y))
 
-        self._record_curve_fit_result(model,popt,perr,_.xcol,header,result,replace,residuals,ydata,prefix=prefix)
+        self._record_curve_fit_result(model,fit_result,_.xcol,header,result,replace,residuals,ydata,prefix=prefix)
 
 
         row = []
