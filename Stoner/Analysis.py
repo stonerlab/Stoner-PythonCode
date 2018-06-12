@@ -103,9 +103,10 @@ class _curve_fit_result(object):
         self.popt=popt
         self.pcov=pcov
         self.perr=_np_.sqrt(_np_.diag(pcov))
-        self.infordict=infodict
         self.mesg=mesg
         self.ier=ier
+        for k in infodict:
+            setattr(self,k,infodict[k])
 
     #Following peroperties used to return desired information
 
@@ -577,22 +578,12 @@ class AnalysisMixin(object):
         header=kargs.pop("header","")
         residuals=kargs.pop("residuals",False)
         output=kargs.pop("output","row")
+        ycol=kargs.pop("ycol",None)
         fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
         if fit.success:
-            DataArray=self.data.__class__
-            row = []
-            ch=[]
-                       
-            self._record_curve_fit_result(model,fit,xcol,header,result,replace,residuals,ydata,prefix=prefix)
+            row=self._record_curve_fit_result(model,fit,xcol,header,result,replace,residuals=residuals,prefix=prefix,ycol=ycol)
 
-            for p in fit.params:
-                row.extend([fit.params[p].value, fit.params[p].stderr])
-                ch.extend([p,"{}.stderr".format(p)])
-            self["{}:chi^2".format(prefix)] = fit.redchi
-            ch.append("$\\chi^2$")
-            row.append(fit.redchi)
-            self["{}nfev:".format(prefix)] = fit.nfev
-            retval = {"fit": fit, "row": DataArray(row,column_headers=ch), "full": (fit, row),"data":self}
+            retval = {"fit": fit, "row": row, "full": (fit, row),"data":self}
             if output not in retval:
                 raise RuntimeError("Failed to recognise output format:{}".format(output))
             else:
@@ -600,7 +591,7 @@ class AnalysisMixin(object):
         else:
             raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
 
-    def _record_curve_fit_result(self,func,fit,xcol,header,result,replace,residuals=False,ydata=None,prefix=None):
+    def _record_curve_fit_result(self,func,fit,xcol,header,result,replace,residuals=False,ycol=None,prefix=None):
         """Annotate the DataFile object with the curve_fit result."""
         if isinstance(func,(lmfit.Model)):
             f_name=func.__class__.__name__
@@ -621,12 +612,20 @@ class AnalysisMixin(object):
         if isinstance(fit,_curve_fit_result): # Come from curve_fit
             popt=fit.popt
             perr=fit.perr
+            nfev=fit.nfev
+            chisq=fit.chisq
         elif isinstance(fit,lmfit.model.ModelResult): # Come form an lmfit operation
             popt=[fit.params[x].value for x in args]
             perr=[fit.params[x].stderr for x in args]
+            nfev=fit.nfev
+            chisq=fit.redchi
         elif isinstance(fit,_sp_.odr.Output):
             popt=fit.beta
             perr=fit.sd_beta
+            delta,eps=fit.delta,fit.eps
+            nfree=len(delta)-len(popt)
+            chisq=_np_.sum((delta**2+eps**2))/nfree
+            nfev=None
         else:
             raise RuntimeError("Unable to understand {} as a fitting result".format(type(fit)))            
             
@@ -656,7 +655,7 @@ class AnalysisMixin(object):
             new_col=func(self.column(xcol),*popt)
         self.add_column(new_col,index=result, replace=replace, header=header)
         if residuals:
-            residual_vals=ydata-new_col
+            residual_vals=self.column(ycol)-new_col
             if isinstance(residuals,bool) and residuals:
                 if result is None:
                     residuals_idx=None
@@ -665,13 +664,27 @@ class AnalysisMixin(object):
             else:
                 residuals_idx=residuals
             self.add_column(residual_vals,index=residuals_idx, replace=False, header=header+":residuals")
-            self["{}:mean residual".format(func.__name__)]=_np_.mean(residuals)
-            self["{}:std residual".format(func.__name__)] = _np_.std(residuals)
-            chi2=(residual_vals**2).sum()
-            nfree=len(self)-len(popt)
-            self["{}chi^2".format(func.__name__)] = chi2/nfree
+            self["{}:mean residual".format(f_name)]=_np_.mean(residual_vals)
+            self["{}:std residual".format(f_name)] = _np_.std(residual_vals)
+            self["{}:chi^2".format(f_name)] = chisq
+            self["{}:chi^2 err".format(f_name)] = _np_.sqrt(2/len(residual_vals))*chisq
+        if nfev is not None:
+            self["{}:nfev".format(f_name)]=nfev
+            
                 
         self.mask=tmp_mask
+        #Make row object
+        row=[]
+        ch=[]
+        for v,e,a in zip(popt,perr,args):
+            row.extend([v,e])
+            ch.extend([a,"{} stderr".format(a)])
+        row.append(chisq)
+        ch.append("$\\chi^2$")
+        cls=self.data.__class__
+        row=cls(row)
+        row.column_headers=ch
+        return row
 
     def __threshold(self, threshold, data, rising=True, falling=False):
         """Internal function that implements the threshold method - also used in peak-finder
@@ -1026,9 +1039,14 @@ class AnalysisMixin(object):
             report=_curve_fit_result(*curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs))
             report.func=func
             report.data=self
+            report.residual_vals=ydata-report.fvec
+            report.chisq=(report.residual_vals**2).sum()
+            report.nfree=len(self)-len(report.popt)
+            report.chisq/=report.nfree
+
 
             if result is not None:
-                self._record_curve_fit_result(func,report,xcol,header,result,replace,residuals=residuals,ydata=ydata,prefix=prefix)
+                self._record_curve_fit_result(func,report,xcol,header,result,replace,residuals=residuals,ycol=ycol,prefix=prefix)
             try:
                 retvals.append(getattr(report,output))
             except AttributeError:
@@ -1477,14 +1495,14 @@ class AnalysisMixin(object):
         if single_fit:
             p0[xvar] = xdata
 
-            ret_val=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix,result=result,header=header,replace=replace,output=output,residuals=residuals)
+            ret_val=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix,result=result,header=header,replace=replace,output=output,residuals=residuals,ycol=_.ycol)
         else: # chi^2 mode
             pn=p0
             ret_val=_np_.zeros((pn.shape[0],pn.shape[1]*2+1))
             for i,pn_i in enumerate(pn): # iterate over every row in the supplied p0 values
                 pn_i=_lmfit_p0_dict(pn_i,model)
                 pn_i[xvar] = xdata
-                ret_val[i,:]=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,pn_i,prefix)
+                ret_val[i,:]=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,pn_i,prefix,ycol=_.ycol)
         return ret_val
 
 
@@ -1877,36 +1895,19 @@ class AnalysisMixin(object):
         except _sp_.odr.OdrStop as err:
             print(err)
             return None
-        popt,perr=fit_result.beta,fit_result.sd_beta
-        delta,eps=fit_result.delta,fit_result.eps
-        chi_square=_np_.sum(delta**2/_np_.abs(fit_result.xplus))+_np_.sum(eps**2/_np_.abs(fit_result.y))
-
-        self._record_curve_fit_result(model,fit_result,_.xcol,header,result,replace,residuals,ydata,prefix=prefix)
+        self._record_curve_fit_result(model,fit_result,_.xcol,header,result,replace,residuals,ycol=_.ycol,prefix=prefix)
 
 
         row = []
         # Store our current mask, calculate new column's mask and turn off mask
-        tmp_mask=self.mask
-        col_mask=_np_.any(tmp_mask,axis=1)
-        self.mask=False
-
-        if (isinstance(result, bool) and result): # Appending data and mask
-            self.add_column(model.fcn(popt,self.column(_.xcol)), header=header, index=None)
-            tmp_mask=_np_.column_stack((tmp_mask,col_mask))
-        elif isinstance(result, index_types): # Inserting data and mask
-            self.add_column(model.fcn(popt,self.column(_.xcol)), header=header, index=result, replace=replace)
-            tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
-        elif result is not None: # Oops restore mask and bail
-            self.mask=tmp_mask
-            raise RuntimeError("Didn't recognize result as an index type or True")
-        self.mask=tmp_mask #Restore mask
 
         param_names=getattr(model,"param_names",None)
-        if param_names is None:
-            param_names=["Parameter {}".format(i+1) for i in range(len(popt))]
         for i,p in enumerate(param_names):
-            row.extend([popt[i],perr[i]])
-        row.append(chi_square)
+            row.extend([fit_result.beta[i],fit_result.sd_beta[i]])
+        delta,eps=fit_result.delta,fit_result.eps
+        nfree=len(xdata)-len(fit_result.beta)
+        chisq=_np_.sum(delta**2/_np_.abs(fit_result.xplus))+_np_.sum(eps**2/_np_.abs(fit_result.y))/nfree
+        row.append(chisq)
         retval = {"fit": fit_result, "row": row, "full": (fit_result, row),"data":self}
         if output not in retval:
             raise RuntimeError("Failed to recognise output format:{}".format(output))

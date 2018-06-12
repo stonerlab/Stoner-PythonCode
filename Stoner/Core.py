@@ -180,6 +180,16 @@ class _setas(object):
         self._column_headers=typedList(string_types,value)
 
     @property
+    def not_set(self):
+        """Return a boolean array if not set."""
+        return _np_.array([x=="." for x in self._setas])
+    
+    @property
+    def set(self):
+        """Return a boolean array if column is set."""
+        return ~self.not_set
+
+    @property
     def setas(self):
         """Guard the setas attribute."""
         c=self._size
@@ -1495,6 +1505,8 @@ class DataArray(_ma_.MaskedArray):
             ix=tuple(ix)
         elif isinstance(ix,tuple) and ix and isiterable(ix[-1]): # indexing with a list of columns
             ix=list(ix)
+            if all_type(ix[-1],bool):
+                ix[-1]=_np_.arange(len(ix[-1]))[ix[-1]]
             ix[-1]=[self._setas.find_col(c) for c in ix[-1]]
             ix=tuple(ix)
         elif isinstance(ix,tuple) and ix and isinstance(ix[0],string_types): # oops! backwards indexing
@@ -2005,7 +2017,6 @@ class DataFile(metadataObject):
         outp[0,0]="TDI Format 1.5{}index".format(lb)
         ret=tabulate(outp,tablefmt=fmt,numalign="decimal",stralign="center")
         return ret
-
 
     @property
     def mask(self):
@@ -3311,7 +3322,7 @@ class DataFile(metadataObject):
         """Deletes a column from the current :py:class:`DataFile` object.
 
         Args:
-            col (int, string, list or re): is the column index as defined for :py:meth:`DataFile.find_col` to the column to be deleted
+            col (int, string, iterable of booleans, list or re): is the column index as defined for :py:meth:`DataFile.find_col` to the column to be deleted
 
         Keyword Arguments:
             duplicates (bool): (default False) look for duplicated columns
@@ -3324,6 +3335,7 @@ class DataFile(metadataObject):
             - if col is not None and duplicates is True then all duplicates of the specified column are removed.
             - If duplicates is False then *col* must not be None otherwise a RuntimeError is raised.
             - If col is a list (duplicates should not be None) then the all the matching columns are found.
+            - If col is an iterable of booleans, then all columns whose elements are False are deleted.
             - If col is None and duplicates is None, then all columns with at least one elelemtn masked
                     will be deleted
         """
@@ -3345,13 +3357,20 @@ class DataFile(metadataObject):
                         break
             return self.del_column(dups, duplicates=False)
         else:
-            if col is None:
+            if col is None: # Without defining col we just compress by the mask
                 self.data = _ma_.mask_cols(self.data)
                 t = DataArray(self.column_headers)
                 t.mask = self.mask[0]
                 self.column_headers = list(_ma_.compressed(t))
                 self.data = _ma_.compress_cols(self.data)
-            else:
+            elif isiterable(col) and all_type(col,bool): # If col is an iterable of booleans then we index by that
+                col=~_np_.array(col)
+                new_setas=_np_.array(self.setas)[col]
+                new_column_headers=_np_.array(self.column_headers)[col]
+                self.data=self.data[:,col]
+                self.column_headers=new_column_headers
+                self.setas=new_setas
+            else: # Otherwise find individual columns
                 c = self.find_col(col)
                 ch=self.column_headers
                 self.data = DataArray(_np_.delete(self.data, c, 1), mask=_np_.delete(self.data.mask, c, 1))

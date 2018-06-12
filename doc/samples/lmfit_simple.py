@@ -28,7 +28,7 @@ d.xticklabels=[[]]
 d.xlabel=""
 
 # Annotate plot with fitting parameters
-d.annotate_fit(func,prefix="Model",x=7.2,y=3.45,fontdict={"size":"x-small"})
+d.annotate_fit(func,prefix="Model",x=7.2,y=3,fontdict={"size":"x-small"})
 text=r"$y=A+Be^{-x/C}$"+"\n\n"
 d.text(7.2,3.9,text,fontdict={"size":"x-small"})
 d.title=u"Levenberg-Marquardt Fit"

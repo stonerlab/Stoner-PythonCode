@@ -146,6 +146,12 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
             pass
 
         text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex",mode=mode) for k in model.param_names])
+        try:
+            self["{}chi^2 label".format(prefix)]=r"\chi^2"
+            text+="\n"+self.format("{}chi^2".format(prefix),fmt="latex",mode=mode)
+        except KeyError:
+            pass
+            
         if not text_only:
             ax=self.fig.gca()
             if "zlim" in ax.properties():
