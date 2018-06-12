@@ -68,6 +68,7 @@ Stoner.FileFormats.VSMFile
       ~Stoner.FileFormats.VSMFile.dims
       ~Stoner.FileFormats.VSMFile.dtype
       ~Stoner.FileFormats.VSMFile.filename
+      ~Stoner.FileFormats.VSMFile.header
       ~Stoner.FileFormats.VSMFile.mask
       ~Stoner.FileFormats.VSMFile.metadata
       ~Stoner.FileFormats.VSMFile.mime_type

@@ -68,6 +68,7 @@ Stoner.FileFormats.SNSFile
       ~Stoner.FileFormats.SNSFile.dims
       ~Stoner.FileFormats.SNSFile.dtype
       ~Stoner.FileFormats.SNSFile.filename
+      ~Stoner.FileFormats.SNSFile.header
       ~Stoner.FileFormats.SNSFile.mask
       ~Stoner.FileFormats.SNSFile.metadata
       ~Stoner.FileFormats.SNSFile.mime_type

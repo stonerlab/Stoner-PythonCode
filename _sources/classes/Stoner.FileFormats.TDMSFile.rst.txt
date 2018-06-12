@@ -68,6 +68,7 @@ Stoner.FileFormats.TDMSFile
       ~Stoner.FileFormats.TDMSFile.dims
       ~Stoner.FileFormats.TDMSFile.dtype
       ~Stoner.FileFormats.TDMSFile.filename
+      ~Stoner.FileFormats.TDMSFile.header
       ~Stoner.FileFormats.TDMSFile.mask
       ~Stoner.FileFormats.TDMSFile.metadata
       ~Stoner.FileFormats.TDMSFile.mime_type

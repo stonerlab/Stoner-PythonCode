@@ -69,6 +69,7 @@ Stoner.FileFormats.RigakuFile
       ~Stoner.FileFormats.RigakuFile.dims
       ~Stoner.FileFormats.RigakuFile.dtype
       ~Stoner.FileFormats.RigakuFile.filename
+      ~Stoner.FileFormats.RigakuFile.header
       ~Stoner.FileFormats.RigakuFile.mask
       ~Stoner.FileFormats.RigakuFile.metadata
       ~Stoner.FileFormats.RigakuFile.mime_type

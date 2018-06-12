@@ -68,6 +68,7 @@ Stoner.FileFormats.SPCFile
       ~Stoner.FileFormats.SPCFile.dims
       ~Stoner.FileFormats.SPCFile.dtype
       ~Stoner.FileFormats.SPCFile.filename
+      ~Stoner.FileFormats.SPCFile.header
       ~Stoner.FileFormats.SPCFile.mask
       ~Stoner.FileFormats.SPCFile.metadata
       ~Stoner.FileFormats.SPCFile.mime_type

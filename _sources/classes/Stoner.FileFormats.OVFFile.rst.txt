@@ -68,6 +68,7 @@ Stoner.FileFormats.OVFFile
       ~Stoner.FileFormats.OVFFile.dims
       ~Stoner.FileFormats.OVFFile.dtype
       ~Stoner.FileFormats.OVFFile.filename
+      ~Stoner.FileFormats.OVFFile.header
       ~Stoner.FileFormats.OVFFile.mask
       ~Stoner.FileFormats.OVFFile.metadata
       ~Stoner.FileFormats.OVFFile.mime_type

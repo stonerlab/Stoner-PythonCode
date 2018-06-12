@@ -68,6 +68,7 @@ Stoner.FileFormats.BigBlueFile
       ~Stoner.FileFormats.BigBlueFile.dims
       ~Stoner.FileFormats.BigBlueFile.dtype
       ~Stoner.FileFormats.BigBlueFile.filename
+      ~Stoner.FileFormats.BigBlueFile.header
       ~Stoner.FileFormats.BigBlueFile.mask
       ~Stoner.FileFormats.BigBlueFile.metadata
       ~Stoner.FileFormats.BigBlueFile.mime_type

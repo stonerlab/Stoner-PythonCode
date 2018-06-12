@@ -65,7 +65,7 @@
 <span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="n">format_error</span><span class="p">,</span><span class="n">set_option</span><span class="p">,</span><span class="n">get_option</span>
 
 <span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">path</span> <span class="k">as</span> <span class="n">_path_</span>
-<span class="n">__version_info__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;8&#39;</span><span class="p">,</span> <span class="s1">&#39;0rc7&#39;</span><span class="p">)</span>
+<span class="n">__version_info__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;8&#39;</span><span class="p">,</span> <span class="s1">&#39;0rc8&#39;</span><span class="p">)</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__version_info__</span><span class="p">)</span>
 
 <span class="n">__home__</span><span class="o">=</span><span class="n">_path_</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">_path_</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
@@ -190,6 +190,12 @@
             <span class="k">pass</span>
 
         <span class="n">text</span><span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span><span class="n">k</span><span class="p">),</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">param_names</span><span class="p">])</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">chi^2 label&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)]</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\chi^2&quot;</span>
+            <span class="n">text</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">chi^2&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">),</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+            
         <span class="k">if</span> <span class="ow">not</span> <span class="n">text_only</span><span class="p">:</span>
             <span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
             <span class="k">if</span> <span class="s2">&quot;zlim&quot;</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">properties</span><span class="p">():</span>
@@ -247,7 +253,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 07, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 12, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

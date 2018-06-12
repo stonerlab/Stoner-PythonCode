@@ -68,6 +68,7 @@ Stoner.FileFormats.EasyPlotFile
       ~Stoner.FileFormats.EasyPlotFile.dims
       ~Stoner.FileFormats.EasyPlotFile.dtype
       ~Stoner.FileFormats.EasyPlotFile.filename
+      ~Stoner.FileFormats.EasyPlotFile.header
       ~Stoner.FileFormats.EasyPlotFile.mask
       ~Stoner.FileFormats.EasyPlotFile.metadata
       ~Stoner.FileFormats.EasyPlotFile.mime_type

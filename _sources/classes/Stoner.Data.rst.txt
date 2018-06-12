@@ -121,6 +121,7 @@ Stoner.Data
       ~Stoner.Data.fig
       ~Stoner.Data.fignum
       ~Stoner.Data.filename
+      ~Stoner.Data.header
       ~Stoner.Data.labels
       ~Stoner.Data.legend
       ~Stoner.Data.mask

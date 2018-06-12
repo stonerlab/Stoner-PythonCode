@@ -68,6 +68,7 @@ Stoner.FileFormats.FmokeFile
       ~Stoner.FileFormats.FmokeFile.dims
       ~Stoner.FileFormats.FmokeFile.dtype
       ~Stoner.FileFormats.FmokeFile.filename
+      ~Stoner.FileFormats.FmokeFile.header
       ~Stoner.FileFormats.FmokeFile.mask
       ~Stoner.FileFormats.FmokeFile.metadata
       ~Stoner.FileFormats.FmokeFile.mime_type

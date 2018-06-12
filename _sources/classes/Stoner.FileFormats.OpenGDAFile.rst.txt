@@ -68,6 +68,7 @@ Stoner.FileFormats.OpenGDAFile
       ~Stoner.FileFormats.OpenGDAFile.dims
       ~Stoner.FileFormats.OpenGDAFile.dtype
       ~Stoner.FileFormats.OpenGDAFile.filename
+      ~Stoner.FileFormats.OpenGDAFile.header
       ~Stoner.FileFormats.OpenGDAFile.mask
       ~Stoner.FileFormats.OpenGDAFile.metadata
       ~Stoner.FileFormats.OpenGDAFile.mime_type

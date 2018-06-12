@@ -68,6 +68,7 @@ Stoner.FileFormats.MDAASCIIFile
       ~Stoner.FileFormats.MDAASCIIFile.dims
       ~Stoner.FileFormats.MDAASCIIFile.dtype
       ~Stoner.FileFormats.MDAASCIIFile.filename
+      ~Stoner.FileFormats.MDAASCIIFile.header
       ~Stoner.FileFormats.MDAASCIIFile.mask
       ~Stoner.FileFormats.MDAASCIIFile.metadata
       ~Stoner.FileFormats.MDAASCIIFile.mime_type

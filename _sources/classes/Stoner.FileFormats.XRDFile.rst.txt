@@ -69,6 +69,7 @@ Stoner.FileFormats.XRDFile
       ~Stoner.FileFormats.XRDFile.dims
       ~Stoner.FileFormats.XRDFile.dtype
       ~Stoner.FileFormats.XRDFile.filename
+      ~Stoner.FileFormats.XRDFile.header
       ~Stoner.FileFormats.XRDFile.mask
       ~Stoner.FileFormats.XRDFile.metadata
       ~Stoner.FileFormats.XRDFile.mime_type

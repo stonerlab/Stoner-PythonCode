@@ -68,6 +68,7 @@ Stoner.FileFormats.RasorFile
       ~Stoner.FileFormats.RasorFile.dims
       ~Stoner.FileFormats.RasorFile.dtype
       ~Stoner.FileFormats.RasorFile.filename
+      ~Stoner.FileFormats.RasorFile.header
       ~Stoner.FileFormats.RasorFile.mask
       ~Stoner.FileFormats.RasorFile.metadata
       ~Stoner.FileFormats.RasorFile.mime_type

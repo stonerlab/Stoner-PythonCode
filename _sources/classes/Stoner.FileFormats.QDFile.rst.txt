@@ -68,6 +68,7 @@ Stoner.FileFormats.QDFile
       ~Stoner.FileFormats.QDFile.dims
       ~Stoner.FileFormats.QDFile.dtype
       ~Stoner.FileFormats.QDFile.filename
+      ~Stoner.FileFormats.QDFile.header
       ~Stoner.FileFormats.QDFile.mask
       ~Stoner.FileFormats.QDFile.metadata
       ~Stoner.FileFormats.QDFile.mime_type

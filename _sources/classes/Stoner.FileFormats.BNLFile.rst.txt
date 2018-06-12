@@ -68,6 +68,7 @@ Stoner.FileFormats.BNLFile
       ~Stoner.FileFormats.BNLFile.dims
       ~Stoner.FileFormats.BNLFile.dtype
       ~Stoner.FileFormats.BNLFile.filename
+      ~Stoner.FileFormats.BNLFile.header
       ~Stoner.FileFormats.BNLFile.mask
       ~Stoner.FileFormats.BNLFile.metadata
       ~Stoner.FileFormats.BNLFile.mime_type

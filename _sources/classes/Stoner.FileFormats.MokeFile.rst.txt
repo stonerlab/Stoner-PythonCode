@@ -68,6 +68,7 @@ Stoner.FileFormats.MokeFile
       ~Stoner.FileFormats.MokeFile.dims
       ~Stoner.FileFormats.MokeFile.dtype
       ~Stoner.FileFormats.MokeFile.filename
+      ~Stoner.FileFormats.MokeFile.header
       ~Stoner.FileFormats.MokeFile.mask
       ~Stoner.FileFormats.MokeFile.metadata
       ~Stoner.FileFormats.MokeFile.mime_type

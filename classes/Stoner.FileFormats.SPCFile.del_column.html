@@ -64,7 +64,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>col</strong> (<em>int, string, list or re</em>) – is the column index as defined for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.find_col()</span></code> to the column to be deleted</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>col</strong> (<em>int, string, iterable of booleans, list or re</em>) – is the column index as defined for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.find_col()</span></code> to the column to be deleted</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>duplicates</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – (default False) look for duplicated columns</td>
@@ -80,6 +80,7 @@
 <li>if col is not None and duplicates is True then all duplicates of the specified column are removed.</li>
 <li>If duplicates is False then <em>col</em> must not be None otherwise a RuntimeError is raised.</li>
 <li>If col is a list (duplicates should not be None) then the all the matching columns are found.</li>
+<li>If col is an iterable of booleans, then all columns whose elements are False are deleted.</li>
 <li><dl class="first docutils">
 <dt>If col is None and duplicates is None, then all columns with at least one elelemtn masked</dt>
 <dd>will be deleted</dd>
@@ -152,7 +153,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 07, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 12, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
