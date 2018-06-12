@@ -766,7 +766,7 @@ class AnalysisMixin(object):
             err_calc = None
         adata, aname = self.__get_math_val(a)
         bdata, bname = self.__get_math_val(b)
-        if isinstance(header, tuple) and not header:
+        if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
             header = "{}+{}".format(aname, bname)
@@ -1138,7 +1138,7 @@ class AnalysisMixin(object):
             err_calc = None
         adata, aname = self.__get_math_val(a)
         bdata, bname = self.__get_math_val(b)
-        if isinstance(header, tuple) and not header:
+        if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
             header = "({}-{})/({}+{})".format(aname, bname, aname, bname)
@@ -1182,7 +1182,7 @@ class AnalysisMixin(object):
             err_calc = None
         adata, aname = self.__get_math_val(a)
         bdata, bname = self.__get_math_val(b)
-        if isinstance(header, tuple) and not header:
+        if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
             header = "{}/{}".format(aname, bname)
@@ -1723,7 +1723,7 @@ class AnalysisMixin(object):
             err_calc = None
         adata, aname = self.__get_math_val(a)
         bdata, bname = self.__get_math_val(b)
-        if isinstance(header, tuple) and not header:
+        if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
             header = "{}*{}".format(aname, bname)
@@ -2539,7 +2539,7 @@ class AnalysisMixin(object):
             err_calc = None
         adata, aname = self.__get_math_val(a)
         bdata, bname = self.__get_math_val(b)
-        if isinstance(header, tuple) and not header:
+        if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
             header = "{}-{}".format(aname, bname)
