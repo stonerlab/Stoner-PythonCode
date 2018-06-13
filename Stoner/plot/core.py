@@ -227,6 +227,9 @@ class PlotMixin(object):
             kwords["label"] = self._col_label(iy)
         x = self.column(ix)
         y = self.column(iy)
+        mask=x.mask | y.mask
+        x=x[~mask]
+        y=y[~mask]
         if plotter in self.positional_fmt:  #plots with positional fmt
             if fmt is None:
                 plotter(x, y, figure=figure, **kwords)
@@ -1407,20 +1410,20 @@ class PlotMixin(object):
             self._subplots.extend([None for i in range(rows * cols - len(self._subplots))])
         self._subplots[index - 1] = sp
         return sp
-    
+
     def subplot2grid(self,*args,**kargs):
-        
+
         """Pass through to :py:func:`matplotlib.pyplot.subplot2grid`."""
-       
+
         if self.__figure is None:
             self.figure()
 
         figure, ax = self.template.new_figure(self.__figure.number)
-        
+
         plt.figure(figure.number)
         ret=plt.subplot2grid(*args,**kargs)
         return ret
-        
+
 
     def x2(self):
         """Generate a new set of axes with a second x-scale.

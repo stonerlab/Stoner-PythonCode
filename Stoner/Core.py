@@ -183,7 +183,7 @@ class _setas(object):
     def not_set(self):
         """Return a boolean array if not set."""
         return _np_.array([x=="." for x in self._setas])
-    
+
     @property
     def set(self):
         """Return a boolean array if column is set."""
@@ -3051,10 +3051,14 @@ class DataFile(metadataObject):
         for ic,c in enumerate(interesting):
             if c>=0:
                 if shorten[0]:
-                    outp[1:r//2,ic+1]=self.data[:r//2-1,c].astype(str)
-                    outp[r//2+1:r+1,ic+1]=self.data[-r//2:,c].astype(str)
+
+                    col_out=_np_.where(self.mask[:r//2-1,c],"#####",self.data[:r//2-1,c].astype(str))
+                    outp[1:r//2,ic+1]=col_out
+                    col_out=_np_.where(self.mask[-r//2:,c],"#####",self.data[-r//2:,c].astype(str))
+                    outp[r//2+1:r+1,ic+1]=col_out
                 else:
-                    outp[1:len(self.data)+1,ic+1]=self.data[:,c].astype(str)
+                    col_out=_np_.where(self.mask[:,c],"#####",self.data[:,c].astype(str))
+                    outp[1:len(self.data)+1,ic+1]=col_out
         return tabulate(outp[1:],outp[0],tablefmt=fmt,numalign="decimal",stralign="left")
 
     def __search_index(self, xcol, value, accuracy):

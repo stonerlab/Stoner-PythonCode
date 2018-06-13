@@ -214,6 +214,12 @@ These can be accessed like so::
   d.column_headers
   d.metadata
 
+.. image:: https://i.imgur.com/2wBGSYh.png
+    :target: https://www.youtube.com/watch?v=D67-VZeg7gc
+    :alt: Data, column headers and metadata
+    :width: 320
+
+
 
 .. _maskeddata:
 
@@ -352,7 +358,7 @@ Alternatively, and equivalently, you can access the column indexes via attribute
     d.setas.has_ucol # False
     d.setas.ycol # [1]
     d.setas.xcol # 0
-    
+
 Implied Column Assignments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -368,8 +374,8 @@ Number of Columns  Assignments
 4                  x, d, y, e
 5                  x, y, u, v, w
 6                  x, y, z, u, v, w
-=================  ================        
-        
+=================  ================
+
 Swapping and Rotating Column Assignments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -435,7 +441,7 @@ package to control the output format.::
     set_option("short_data_repr",True) # or "short_repr" for short representations of all objects.
     print(repr(d))
     >>> TDI_Format_RT.txt(<class 'Stoner.Data'>) of shape (1676, 3) (xy.) and 6 items of metadata
-    
+
 
 Working with columns of data
 -----------------------------
