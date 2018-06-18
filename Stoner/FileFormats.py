@@ -1507,9 +1507,9 @@ class PinkLibFile(_SC_.DataFile):
             column_headers = f[header_line].strip('#\t ').split('\t')
         data = _np_.genfromtxt(self.filename, dtype='float', delimiter='\t', invalid_raise=False, comments='#')
         self.data=data[:,0:-2] #Deal with an errant tab at the end of each line
+        self.column_headers=column_headers
         if _np_.all([h in column_headers for h in ('T (C)', 'R (Ohm)')]):
             self.setas(x='T (C)', y='R (Ohm)')
-        self.column_headers=column_headers
         return self
 
 class KermitPNGFile(_SC_.DataFile):

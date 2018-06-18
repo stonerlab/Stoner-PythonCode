@@ -21,7 +21,7 @@ from numpy import NaN # pylint: disable=unused-import
 import numpy.ma as _ma_
 
 from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,bytes2str
-from .tools import isNone,all_size,all_type,_attribute_store,operator,isiterable,typedList,islike_list,get_option
+from .tools import isNone,all_size,all_type,_attribute_store,operator,isiterable,typedList,islike_list,get_option,istuple
 
 try:
     from tabulate import tabulate
@@ -125,6 +125,37 @@ class _setas(object):
         elif kargs:
             self(**kargs)
 
+
+    def _prepare_call(self,args,kargs):
+        """Extract a value to be used to evaluate the setas attribute during a call."""
+        reset=kargs.pop("reset",True)
+        if not isinstance(reset,bool):
+            reset=True
+
+        if args:
+            value = args[0]
+            if isinstance(value, string_types):  # expand the number-code combos in value
+                if reset:
+                    self.setas=[]
+                pattern = re.compile("[^0-9]*(([0-9]+?)(x|y|z|d|e|f|u|v|w|\.|\-))")
+                while True:
+                    res = pattern.match(value)
+                    if res is None:
+                        break
+                    (total, count, code) = res.groups()
+                    if count == "":
+                        count = 1
+                    else:
+                        count = int(count)
+                    value = value.replace(total, code * count, 1)
+            elif isinstance(value, _setas):
+                value = value.setas
+        else:
+            value = kargs
+            if reset:
+                self.setas=[]
+        return value
+
     @property
     def _size(self):
         """Calculate a size of the setas attribute."""
@@ -138,6 +169,16 @@ class _setas(object):
             c=len(self._column_headers)
         return c
 
+    @property
+    def _unique_headers(self):
+        """Return either a column header or an index if the column_header is duplicated."""
+        ret=[]
+        for i,ch in enumerate(self.column_headers):
+            if ch not in ret:
+                ret.append(ch)
+            else:
+                ret.append(i)
+        return ret
 
     @property
     def clone(self):
@@ -229,79 +270,35 @@ class _setas(object):
         setas(["x"],["y"],["z"],["u"],["v"],["w"])
         setas(x="column_1",y=3,column4="z")
         """
-        try:
-            assert len(args) <= 1
-            if args:
-                assert isinstance(args[0], string_types+(_setas,)) or isiterable(args[0])
-            else:
-                assert kargs
-        except AssertionError:
-            raise SyntaxError("setas must be called with a single argument - string or other iterable")
+        if not (args  or kargs): #New - bare call to setas will return the current value.
+            return self.setas
+        if len(args)==1 and not (isinstance(args[0], string_types+(_setas,)) or isiterable(args[0])):
+            raise SyntaxError("setas should be called with eother a string, iterable object or setas object, not a {}".format(type(args[0])))
 
         #If reset is neither in kargs nor a False boolean, then clear the existing setas assignments
-        reset=kargs.get("reset",True)
-        if not isinstance(reset,bool):
-            reset=True
-        if reset:
-            self.setas=[]
-
-        if len(self.setas) < len(self.column_headers):
-            self.setas.extend(list("." * (len(self.column_headers) - len(self.setas))))
-
-        if args:
-            value = args[0]
-            if isinstance(value, string_types):  # expand the number-code combos in value
-                pattern = re.compile("[^0-9]*(([0-9]+?)(x|y|z|d|e|f|u|v|w|\.|\-))")
-                while True:
-                    res = pattern.match(value)
-                    if res is None:
-                        break
-                    (total, count, code) = res.groups()
-                    if count == "":
-                        count = 1
-                    else:
-                        count = int(count)
-                    value = value.replace(total, code * count, 1)
-            elif isinstance(value, _setas):
-                value = value.setas
-        else:
-            value = kargs
+        value=self._prepare_call(args,kargs)
+        _=self.setas # Forxce setas to be the right length
         if isinstance(value, dict):
-            alt_vals = dict()
-            for k, v in value.items():
-                if v not in alt_vals:
-                    alt_vals[v] = [k]
+            for k,v in value.items():
+                if isinstance(k,string_types) and len(k)==1 and k in "xyzuvwdef": #of the form x:column_name
+                    for v_item in self.find_col(v,force_list=True):
+                        try:
+                            self._setas[v_item]=k
+                        except:
+                            print(len(self._setas),v,v_item,k)
+                elif isinstance(k, index_types) and isinstance(v,string_types) and len(v)==1 and v in "xyzuvwdef": #of the form column_name:x
+                    k=self.find_col(k)
+                    self._setas[k]=v
                 else:
-                    alt_vals[v].append(k)
-
-            for typ in "xyzdefuvw.-":
-                if typ in value:
-                    try:
-                        if typ in value and value[typ] is None: #x=None deletes all assignments to x
-                            while True: # This will stop when we run out of column type x in self.setas and throw a ValueError
-                                ix=self.setas.index(typ)
-                                self.setas[ix]="."
-                        else:
-                            for c in self.find_col(value[typ], True):  #x="Col1" type
-                                self.setas[c] = typ
-                    except (ValueError,KeyError):
-                        pass
-                if typ in alt_vals:
-                    try:
-                        for c in self.find_col(alt_vals[typ], True):  #col1="x" type
-                            self.setas[c] = typ
-                    except KeyError:
-                        pass
+                    raise IndexError("Unable to workout what do with {}:{} when setting the setas attribute.".format(k,v))
         elif isiterable(value):
             if len(value) > self._size:
                 value = value[:self._size]
             elif len(value) < self._size:
                 value = [v for v in value]  # Ensure value is now a list
-                value.extend(list("." * (len(self.column_headers) - len(value))))
-            if len(self.setas)<self._size:
-                self.setas.extend("."*(self._size-len(self.setas)))
-            value=value[:len(self.setas)]
-            for i, v in enumerate(list(value)):
+                value.extend(list("." * (self._size - len(value))))
+            value=value[:self._size]
+            for i, v in enumerate(value):
                 if v.lower() not in "xyzedfuvw.-":
                     raise ValueError("Set as column element is invalid: {}".format(v))
                 if v != "-":
@@ -386,7 +383,8 @@ class _setas(object):
                 for n in name:
                     self._setas[n]=value
         elif isinstance(name, string_types) and len(name) == 1 and name in "xyzuvwdef.-": #indexing by single letter
-            self({name: value},reset=False)
+            for c in self.find_col(value,force_list=True):
+                self._setas[c]=name
         else: #try indexing by integer
             try:
                 name = int(name)
@@ -430,13 +428,15 @@ class _setas(object):
         """Allow the user to add a dictionary to setas to add extra columns."""
         if isinstance(other,_setas): #Deal with the other value being a setas attribute already.
             other=other.to_dict()
+        elif istuple(other,index_types,string_types) or istuple(other,string_types,index_types):
+            other={other[0]:other[1]}
         if not isinstance(other,dict):
             return NotImplemented
         for k,v in other.items():
-            if len(k)==1 and k in "xyzuvwdef": #of the form x:column_name
-                v=new.find_col(v)
-                new._setas[v]=k
-            elif len(v)==1 and v in "xyzuvwdef": #of the form column_name:x
+            if isinstance(k,string_types) and len(k)==1 and k in "xyzuvwdef": #of the form x:column_name
+                for v in new.find_col(v,force_list=True):
+                    new._setas[v]=k
+            elif isinstance(k, index_types) and isinstance(v,string_types) and len(v)==1 and v in "xyzuvwdef": #of the form column_name:x
                 k=new.find_col(k)
                 new._setas[k]=v
             else:
@@ -447,6 +447,44 @@ class _setas(object):
         """Jump to the core."""
         new=self.clone
         return self.__add_core__(new,other)
+
+    def __iadd__(self,other):
+        """Jump to the core."""
+        new=self
+        return self.__add_core__(new,other)
+
+    def __sub_core__(self,new,other):
+        """Implement subtracting either column indices or x,y,z,d,e,f,u,v,w for the current setas."""
+        if isinstance(other,string_types) and len(other)==1 and other in "xyzuvwdef":
+            while True:
+                try:
+                    new._setas[new._setas.index(other)]="."
+                except ValueError:
+                    break
+        elif isinstance(other,index_types):
+            try:
+                new._setas[new.find_col(other)]="."
+            except KeyError:
+                pass
+        elif isiterable(other):
+            for o in other:
+                new=self.__sub_core__(new,o)
+                if new is NotImplemented:
+                    return NotImplemented
+        else:
+            return NotImplemented
+        return new
+
+
+    def __sub__(self,other):
+        """Jump to the core."""
+        new=self.clone
+        return self.__sub_core__(new,other)
+
+    def __isub__(self,other):
+        """Jump to the core."""
+        new=self
+        return self.__sub_core__(new,other)
 
     def find_col(self, col, force_list=False):
         """Indexes the column headers in order to locate a column of data.shape.
@@ -518,6 +556,26 @@ class _setas(object):
         self._setas=["."]*self.shape[1]
         return self
 
+    def unset(self,what=None):
+        """Remove column settings from the setas attribute in  method call.
+
+        Parameters:
+            what (str,iterable,dict or None): What to unset.
+
+        Notes:
+            The *what* parameter determines what to unset, possible values are:
+
+            -   A single lets from *xyzuvwdef* - all column assignments of the corresponding type are unset
+            -   A column index type - all matching columns are unset
+            -   A list or other iterable of the above - all matching entries are unset
+            -   None - all setas assignments are cleared.
+        """
+        if what is None:
+            self.setas=[]
+            _=self.setas
+        else:
+            self.setas-=what
+
     def update(self,other):
         """Replace any assignments in self with assignments from other."""
         if isinstance(other,_setas):
@@ -544,13 +602,20 @@ class _setas(object):
         return self
 
     def to_dict(self):
-        """Return the setas attribute as a dictionary."""
+        """Return the setas attribute as a dictionary.
+
+        If multiple columns are assigned to the same type, then the column names are
+        returned as a list. If column headers are duplicated"""
         ret=dict()
-        for k in "xyzuvwdef":
-            try:
-                ret[k]=self[k]
-            except IndexError:
-                pass
+        for i,(k,ch) in enumerate(zip(self._setas,self._unique_headers)):
+            if k!=".":
+                if k in ret:
+                    ret[k].append(ch)
+                else:
+                    ret[k]=[ch]
+        for k in ret:
+            if len(ret[k])==1:
+                ret[k]=ret[k][0]
         return ret
 
     def _get_cols(self, what=None, startx=0,no_guess=False):
@@ -2677,7 +2742,7 @@ class DataFile(metadataObject):
         - data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
         """
         if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
-            object.__setattr__(self,name, value)
+            super(DataFile, self).__setattr__(name, value)
         elif len(name) == 1 and name in "xyzuvwdef" and self.setas[name]:
             self.__setattr_col(name, value)
         else:
