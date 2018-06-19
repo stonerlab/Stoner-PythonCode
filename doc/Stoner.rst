@@ -11,7 +11,7 @@
     DataFolder
 
 Class Inheritance Diagram
-~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. inheritance-diagram:: Data DataFolder
 
