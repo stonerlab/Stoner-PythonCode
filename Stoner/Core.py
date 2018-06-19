@@ -100,9 +100,10 @@ class _setas(MutableMapping):
 
     Implements a MutableMapping bsed on the column_headers as the keys (with a few tweaks!).
 
-    Notes:
+    Note:
         Iterating over setas will return the column assignments rather than the standard mapping behaviour of iterating over the keys. Otherwise
-        the interface is essentially as a Mapping class."""
+        the interface is essentially as a Mapping class.
+    """
 
     _col_defaults={2: {"axes":2,"xcol":0,"ycol":1,"zcol":None,"ucol":None,"vcol":None,"wcol":None,"xerr":None,"yerr":None,"zerr":None}, # xy
                   3: {"axes":2,"xcol":0,"ycol":1,"zcol":None,"ucol":None,"vcol":None,"wcol":None,"xerr":None,"yerr":2,"zerr":None}, # xye
