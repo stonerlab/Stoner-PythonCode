@@ -8,7 +8,6 @@ import os
 import io
 import copy
 import warnings
-from collections.abc import MutableMapping
 import os.path as path
 import inspect as _inspect_
 from textwrap import TextWrapper
@@ -341,8 +340,6 @@ class _setas(MutableMapping):
         """Try to see if attribute name is a key in self.cols and return that instead."""
         if name in self.cols:
             return self.cols[name]
-        elif name in self:
-            return self[name]
         return super(_setas,self).__getattr__(name)
 
     def __getitem__(self, name):
