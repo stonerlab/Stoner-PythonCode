@@ -67,6 +67,4 @@ class Analysis_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Analysis_test("test_functions")
     test.setUp()
-    test.test_functions()
-    test.test_peaks()
-    test.test_threshold()
+    unittest.main()

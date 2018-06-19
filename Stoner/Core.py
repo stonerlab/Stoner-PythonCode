@@ -8,6 +8,7 @@ import os
 import io
 import copy
 import warnings
+from collections.abc import MutableMapping
 import os.path as path
 import inspect as _inspect_
 from textwrap import TextWrapper
@@ -93,9 +94,15 @@ class _tab_delimited(csv.Dialect):
     lineterminator = "\r\n"
 
 
-class _setas(object):
+class _setas(MutableMapping):
 
-    """A Class that provides a mechanism for managing the column assignments in a DataFile like object."""
+    """A Class that provides a mechanism for managing the column assignments in a DataFile like object.
+
+    Implements a MutableMapping bsed on the column_headers as the keys (with a few tweaks!).
+
+    Notes:
+        Iterating over setas will return the column assignments rather than the standard mapping behaviour of iterating over the keys. Otherwise
+        the interface is essentially as a Mapping class."""
 
     _col_defaults={2: {"axes":2,"xcol":0,"ycol":1,"zcol":None,"ucol":None,"vcol":None,"wcol":None,"xerr":None,"yerr":None,"zerr":None}, # xy
                   3: {"axes":2,"xcol":0,"ycol":1,"zcol":None,"ucol":None,"vcol":None,"wcol":None,"xerr":None,"yerr":2,"zerr":None}, # xye
@@ -124,7 +131,6 @@ class _setas(object):
             self(initial_val)
         elif kargs:
             self(**kargs)
-
 
     def _prepare_call(self,args,kargs):
         """Extract a value to be used to evaluate the setas attribute during a call."""
@@ -259,8 +265,6 @@ class _setas(object):
         else:
             raise AttributeError("shape attribute should be a 2-tuple not a {}-tuple".format(len(value)))
 
-
-
     def __call__(self, *args, **kargs):
         """Treat the current instance as a callable object and assign columns accordingly.
 
@@ -307,11 +311,37 @@ class _setas(object):
             raise ValueError("Set as column string ended with a number")
         self.cols.update(self._get_cols())
 
+    def __contains__(self,item):
+        """Use getitem to test for membership. Either column assignments or column index types are tested."""
+        try:
+            _=self[item]
+        except (IndexError,KeyError,ValueError):
+            return False
+        return True
+
+    def __delitem__(self,name):
+        """Unset either by column index or column assignment.
+
+        Equivalent to unsetting the same object."""
+        self.unset(name)
+
+    def __eq__(self,other):
+        """Checks to see if this is the same object, or has the same headers and the same setas values."""
+        ret=False
+        if not isinstance(other,_setas):
+            ret=False
+        elif id(self)==id(other):
+            ret=True
+        else:
+            ret=(self.column_headers==other.column_headers and self.setas==other.setas)
+        return ret
+
     def __getattr__(self,name):
         """Try to see if attribute name is a key in self.cols and return that instead."""
         if name in self.cols:
             return self.cols[name]
-
+        elif name in self:
+            return self[name]
         return super(_setas,self).__getattr__(name)
 
     def __getitem__(self, name):
@@ -333,6 +363,8 @@ class _setas(object):
             while name in self._setas[s:]:
                 s=self._setas.index(name)+1
                 ret.append(self.column_headers[s-1])
+            if len(ret)==1:
+                ret=ret[0]
         elif isinstance(name, string_types) and len(name) == 2 and name[0]=="#" and name[1] in "xyzuvwdef.-":
             ret = list()
             name=name[1]
@@ -340,6 +372,10 @@ class _setas(object):
             while name in self._setas[s:]:
                 s=self._setas.index(name)+1
                 ret.append(s-1)
+            if len(ret)==1:
+                ret=ret[0]
+        elif isinstance(name,index_types):
+            ret=self.setas[self.find_col(name)]
         elif isinstance(name, slice):
             indices = name.indices(len(self.setas))
             name = range(*indices)
@@ -347,24 +383,23 @@ class _setas(object):
         elif isiterable(name):
             ret=[self[x] for x  in name]
         else:
-            try:
-                name = int(name)
-                ret = [self.setas[name]]
-            except ValueError:
-                raise IndexError("Index should be a number, slice or x,y,z,u,v,w,e,d of f")
-        if len(ret) == 1:
-            ret = ret[0]
-        elif len(ret) == 0:
             raise IndexError("{} was not found in the setas attribute.".format(name))
         return ret
 
+    def __iter__(self):
+        """Iterate over thew column assignments.
 
-#    def __setattr__(self, name, value):
-#        """Wrapper to handle some special linked attributes."""
-#        if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
-#            object.__setattr__(self,name, value)
-#        else:
-#            object.__setattr__(self,name, value)
+        .. warn::
+
+            This class does not follow standard Mapping semantics - iterating iterates over the values and not the items.
+        """
+        _=self.setas #Force setas to fix size
+        for c in self._setas:
+            yield c
+
+    def __ne__(self,other):
+        """!= is the same as no ==."""
+        return not self.__eq__(other)
 
     def __setitem__(self, name, value):
         """Allow setting of the setas variable like a dictionary or a list.
@@ -381,43 +416,24 @@ class _setas(object):
                     self._setas[n]=v
             else:
                 for n in name:
-                    self._setas[n]=value
+                    self[n]=value
         elif isinstance(name, string_types) and len(name) == 1 and name in "xyzuvwdef.-": #indexing by single letter
             for c in self.find_col(value,force_list=True):
                 self._setas[c]=name
-        else: #try indexing by integer
-            try:
-                name = int(name)
-                if len(value) == 1 and value in "xyzuvwdef.":
-                    self.setas[name] = value
-                elif value == "-":
-                    pass
-                else:
-                    raise ValueError("Column types can only be set to x,y,z,u,v,w,d,e, or f, not to {}".format(value))
-            except ValueError:
-                kargs = {name: value}
-                kargs["reset"]=kargs.get("reset",False)
-                self(**kargs)
+        elif isinstance(name,index_types) and isinstance(value,string_types) and len(value)==1 and value in "xyzuvwdef.-":
+            for c in self.find_col(name,force_list=True):
+                self.setas[c]=value
 
     def __len__(self):
-        return len(self.setas)
+        """Return our own length."""
+        return self._size
 
     def __repr__(self):
-        if len(self.setas) > len(self.column_headers):
-            self.setas = self.setas[:len(self.column_headers)]
-        elif len(self.setas) < len(self.column_headers):
-            self.setas.extend(list("." * (len(self.column_headers) - len(self.setas))))
+        """Our representation is as a list of the values."""
         return self.setas.__repr__()
 
-    def __contains__(self,item):
-        """Use getitem to test for membership."""
-        try:
-            _=self[item]
-        except IndexError:
-            return False
-        return True
-
     def __str__(self):
+        """Our string representation is just fromed by joing the assingments together."""
         #Quick string conversion routine
         return "".join(self.setas)
 
@@ -552,9 +568,66 @@ class _setas(object):
         return col
 
     def clear(self):
-        """"Clear the current setas attrbute."""
-        self._setas=["."]*self.shape[1]
-        return self
+        """"Clear the current setas attrbute.
+
+        Notes:
+            Equivalent to doing :py:meth:`_setas.unset` with no argument.
+        """
+        self.unset()
+
+    def get(self,name,default=None):
+        """Implement a get method."""
+        try:
+            return self[name]
+        except (IndexError,KeyError):
+            if default is not None:
+                return default
+            else:
+                raise KeyError("{} is not in setas and no default was given.".format(name))
+
+    def keys(self):
+        """Mapping keys are the same as iterating over the unique headers"""
+        for c in self._unique_headers:
+            yield c
+
+    def values(self):
+        """Mapping values are the same as iterating over setas."""
+        for v in self.setas:
+            yield v
+
+    def items(self):
+        """Mapping items iterates over keys and values."""
+        for k,v in zip(self._unique_headers,self.setas):
+            yield k,v
+
+    def pop(self,name,default=None):
+        """Implement a get method."""
+        try:
+            ret=self[name]
+            self.unset(name)
+            return ret
+        except (IndexError,KeyError):
+            if default is not None:
+                return default
+            else:
+                raise KeyError("{} is not in setas and no default was given.".format(name))
+
+    def popitem(self):
+        for c in "xdyezfuvw":
+            if c in self:
+                v=self[c]
+                self.unset(c)
+                return (c,v)
+        else:
+            raise KeyError("No columns set in setas!")
+
+    def setdefault(self,name,default=None):
+        """Implement a setdefault method."""
+        try:
+            return self[name]
+        except (IndexError,KeyError):
+            self[name]=default
+            return default
 
     def unset(self,what=None):
         """Remove column settings from the setas attribute in  method call.

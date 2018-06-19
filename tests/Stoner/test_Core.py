@@ -353,4 +353,5 @@ class typeHintedDictTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Datatest("test_operators")
     test.setUp()
-    unittest.main()
+    test.test_setas()
+#    unittest.main()
