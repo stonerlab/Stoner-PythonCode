@@ -132,6 +132,21 @@ class _setas(MutableMapping):
         elif kargs:
             self(**kargs)
 
+    def _decode_string(self,value):
+        """Expands a string of column assignments, replacing numbers with repeated characters."""
+        pattern = re.compile("[^0-9]*(([0-9]+?)(x|y|z|d|e|f|u|v|w|\.|\-))")
+        while True:
+            res = pattern.match(value)
+            if res is None:
+                break
+            (total, count, code) = res.groups()
+            if count == "":
+                count = 1
+            else:
+                count = int(count)
+            value = value.replace(total, code * count, 1)
+        return value
+
     def _prepare_call(self,args,kargs):
         """Extract a value to be used to evaluate the setas attribute during a call."""
         reset=kargs.pop("reset",True)
@@ -143,17 +158,7 @@ class _setas(MutableMapping):
             if isinstance(value, string_types):  # expand the number-code combos in value
                 if reset:
                     self.setas=[]
-                pattern = re.compile("[^0-9]*(([0-9]+?)(x|y|z|d|e|f|u|v|w|\.|\-))")
-                while True:
-                    res = pattern.match(value)
-                    if res is None:
-                        break
-                    (total, count, code) = res.groups()
-                    if count == "":
-                        count = 1
-                    else:
-                        count = int(count)
-                    value = value.replace(total, code * count, 1)
+                value=self._decode_string(value)
             elif isinstance(value, _setas):
                 value = value.setas
         else:
@@ -328,8 +333,20 @@ class _setas(MutableMapping):
     def __eq__(self,other):
         """Checks to see if this is the same object, or has the same headers and the same setas values."""
         ret=False
-        if not isinstance(other,_setas):
-            ret=False
+        if isinstance(other,string_types): # Expand strings and convert to list
+            other=[c for c in self._decode_string(other)]
+        if not isinstance(other,_setas): # Ok, need to check whether items match
+            if isiterable(other) and len(other)<=self._size:
+                for m in self.setas[len(other):]: #Check that if other is short we don't have assignments there
+                    if m!=".":
+                        return False
+                for o,m in zip(other,self.setas):
+                    if o!=m: # Look for mis-matched assignments
+                        return False
+                else:
+                    return True
+            else: # If other is longer then we can't matchj
+                return False
         elif id(self)==id(other):
             ret=True
         else:
@@ -645,7 +662,7 @@ class _setas(MutableMapping):
             self.setas=[]
             _=self.setas
         else:
-            self.setas-=what
+            self-=what
 
     def update(self,other):
         """Replace any assignments in self with assignments from other."""
@@ -1595,9 +1612,10 @@ class DataArray(_ma_.MaskedArray):
             else:
                 ret = None
         else:
-            ix=len(self._setas.cols[col])
-            if ix > 0:
+            if isiterable(self._setas.cols[col]) and len(self._setas.cols[col])>0:
                 indexer[-1]=self._setas.cols[col][0]
+            elif isiterable(self._setas.cols[col]):
+                indexer[-1]=self._setas.cols[col]
             else:
                 return None
             ret = self[tuple(indexer)]
