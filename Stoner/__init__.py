@@ -21,7 +21,7 @@ from .compat import _lmfit,Model
 from .tools import format_error,set_option,get_option
 
 from os import path as _path_
-__version_info__ = ('0', '8', '0')
+__version_info__ = ('0', '9', '0dev')
 __version__ = '.'.join(__version_info__)
 
 __home__=_path_.realpath(_path_.dirname(__file__))
@@ -151,7 +151,7 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
             text+="\n"+self.format("{}chi^2".format(prefix),fmt="latex",mode=mode)
         except KeyError:
             pass
-            
+
         if not text_only:
             ax=self.fig.gca()
             if "zlim" in ax.properties():
