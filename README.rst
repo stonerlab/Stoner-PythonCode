@@ -146,7 +146,12 @@ making beta packages available.
 Development Version
 -------------------
 
-The next development version will be on version 0.9. This will be started after the current 0.8 version is given a final release.
+The next development version will be on version 0.9. Features expected in 0.9 include:
+
+    *   Refactoring of the Core module into a more granual core package with submodules
+    *   Overhaul of the documentation and user guide
+    *   Dropping support for the older Stoner.Image.stack.ImageStack class
+    *   Droppping support for matplotlib<2.0
 
 Online documentation for all versions can be found on the ReadTheDocs pages `online documentation`_
 
@@ -166,17 +171,18 @@ encourage any users to cite this package via that doi.
 Stable Versions
 ---------------
 
-Version 0.8 is now in release-candidate phase. The main new features are
+Version 0.8 is the current stable release. The main new features are
 
     *   Reworking of the ImageArray, ImageFile and ImageFolder with many updates and new features.
     *   New mixin based ImageStack2 that can manipulate a large number of images in a 3D numpy array
     *   Continued re-factoring of DataFolder using the mixin approach
     *   Further increases to unit-test coverage, bug fixes and refactoring of some parts of the code.
+    *   _setas objects implement a more complete MutableMapping interface and also support +/- operators.
     *   conda packages now being prepared as the preferred package format
 
-    After release 0.8 will continue to receive bug fixes and updates.
+0.8.x will continue to have bug fix releases and back-ports of anything very useful until 0.9 is released.
 
-The current stable version is 0.7. Features of 0.7 include
+The old stable version is 0.7.2. Features of 0.7.2 include
 
     *   Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin
     *   Addition of Stoner.Image package to handle image analysis
@@ -185,22 +191,10 @@ The current stable version is 0.7. Features of 0.7 include
     *   DataFolder has an options to skip iterating over empty Data files
     *   Further improvements to :py:attr:`Stoner.Core.DataFile.setas` handline.
 
-0.7 will continue to have bug fix releases and back-ports of anything very useful until 0.8 is released.
+No further relases will be made to 0.7.x.
 
-The old stable version was 0.6. This features
-
-    *   Some major changes in the architecture,
-    *   Switching from a numpy MaskedArray as the main data store to a custom sub-class that contains most of the logic
-        for indexing data by column name and designation.
-    *   The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.
-    *   Other underlying changes are a switch to using properties rather than straight attribute access.
-
-0.6 now also makes use of filemagic to work out the mime type of files to be loaded to try and improve the resilience of the automatic
-file format detection on platforms where this is supported and adds some extra methods to AnalyseFile for extrapolation.
-
-No further relases will be made to 0.6.
-
-0.6 and 0.7 should work on Python 2.7 and 3.5
+0.6, 0.7 should work on Python 2.7 and 3.5
+0.8 is also tested on Python 3.6
 
 .. _online documentation: http://stoner-pythoncode.readthedocs.io/en/latest/
 .. _github repository: http://www.github.com/gb119/Stoner-PythonCode/
