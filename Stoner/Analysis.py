@@ -1177,7 +1177,7 @@ class AnalysisMixin(object):
             e2data = self.__get_math_val(e2)[0]
             err_header = None
             err_calc = lambda adata, bdata, e1data, e2data: _np_.sqrt((e1data / adata) ** 2 +
-                                                                      (e2data / bdata) ** 2) * adata * bdata
+                                                                      (e2data / bdata) ** 2) * adata / bdata
         else:
             err_calc = None
         adata, aname = self.__get_math_val(a)
