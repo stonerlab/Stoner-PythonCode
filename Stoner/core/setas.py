@@ -293,11 +293,7 @@ class _setas(MutableMapping):
             list mode, or a single coliumn name or list of names if used in dictionary mode.
         """
         if isinstance(name, string_types) and len(name) == 1 and name in "xyzuvwdef.-":
-            ret = list()
-            s=0
-            while name in self._setas[s:]:
-                s=self._setas.index(name)+1
-                ret.append(self.column_headers[s-1])
+            ret=self.to_dict()[name]
             if len(ret)==1:
                 ret=ret[0]
         elif isinstance(name, string_types) and len(name) == 2 and name[0]=="#" and name[1] in "xyzuvwdef.-":
@@ -597,7 +593,7 @@ class _setas(MutableMapping):
                 try:
                     c=self[k]
                     self[c]="."
-                except IndexError:
+                except (KeyError,IndexError):
                     pass
                 self[k]=other[k]
             elif k in vals:
