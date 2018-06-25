@@ -319,9 +319,12 @@ class QDFile(_SC_.DataFile):
                 column_headers = f.next().strip().split(',')
                 if ',' not in f.next():
                     raise _SC_.StonerLoadError("No data in file!")
-            self.data = _np_.genfromtxt([str2bytes(l) for l in f],
+            data = _np_.genfromtxt([str2bytes(l) for l in f],
                                         dtype='float', delimiter=',',
                                         invalid_raise=False)
+            if data.shape[1]!=len(column_headers): #Trap for buggy QD software not giving ewnough columns of data
+                data=_np_.append(data,_np_.ones((data.shape[0],len(column_headers)-data.shape[1]))*_np_.NaN,axis=1)
+            self.data=data
         self.column_headers=column_headers
         s=self.setas
         for k in setas:
