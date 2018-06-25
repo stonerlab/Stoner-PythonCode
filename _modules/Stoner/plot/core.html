@@ -274,6 +274,9 @@
             <span class="n">kwords</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_label</span><span class="p">(</span><span class="n">iy</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">iy</span><span class="p">)</span>
+        <span class="n">mask</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">mask</span> <span class="o">|</span> <span class="n">y</span><span class="o">.</span><span class="n">mask</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">plotter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">positional_fmt</span><span class="p">:</span>  <span class="c1">#plots with positional fmt</span>
             <span class="k">if</span> <span class="n">fmt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">plotter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">figure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwords</span><span class="p">)</span>
@@ -1454,20 +1457,20 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_subplots</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rows</span> <span class="o">*</span> <span class="n">cols</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subplots</span><span class="p">))])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subplots</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sp</span>
         <span class="k">return</span> <span class="n">sp</span></div>
-    
+
 <div class="viewcode-block" id="PlotMixin.subplot2grid"><a class="viewcode-back" href="../../../classes/Stoner.plot.PlotMixin.html#Stoner.PlotMixin.subplot2grid">[docs]</a>    <span class="k">def</span> <span class="nf">subplot2grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        
+
         <span class="sd">&quot;&quot;&quot;Pass through to :py:func:`matplotlib.pyplot.subplot2grid`.&quot;&quot;&quot;</span>
-       
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 
         <span class="n">figure</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">new_figure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
-        
+
         <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figure</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
         <span class="n">ret</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span></div>
-        
+
 
 <div class="viewcode-block" id="PlotMixin.x2"><a class="viewcode-back" href="../../../classes/Stoner.plot.PlotMixin.html#Stoner.PlotMixin.x2">[docs]</a>    <span class="k">def</span> <span class="nf">x2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate a new set of axes with a second x-scale.</span>
@@ -1575,7 +1578,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 12, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

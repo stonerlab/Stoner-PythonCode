@@ -60,7 +60,7 @@
 </div>
 <div class="section" id="imagefile">
 <h2><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFile</span></code><a class="headerlink" href="#imagefile" title="Permalink to this headline">¶</a></h2>
-<p>This class inherits from <a class="reference internal" href="../classes/Stoner.Core.metadataObject.html#Stoner.Core.metadataObject" title="Stoner.Core.metadataObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code></a> and is analagous to <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> but focussed on handling and manipulating grey scale
+<p>This class inherits from <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> and is analagous to <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> but focussed on handling and manipulating grey scale
 images. The data is stored internally as an <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageArray</span></code> attribute which inherits itself from numpy.ndarray type.
 <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFile</span></code> provides the same metadata faciltities as the general <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> and also contains load routines that allow it to extract
 certain metadata stored in image files.</p>
@@ -72,7 +72,7 @@ image data is used to form the contents of the <code class="xref py py-attr docu
 <div>from Stoner.Image import ImageFile
 im = ImageFile(‘my_image.png’)</div></blockquote>
 <p>Like <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFile</span></code> supports image metadata. Where this can be stored in the file, e.g. in png and tiff images, this is read in
-automatically. This metadata is stored as a <a class="reference internal" href="../classes/Stoner.Core.typeHintedDict.html#Stoner.Core.typeHintedDict" title="Stoner.Core.typeHintedDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.typeHintedDict</span></code></a> dictionary. This metadata can be set directly in the
+automatically. This metadata is stored as a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.typeHintedDict</span></code> dictionary. This metadata can be set directly in the
 construction of the <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFile</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">im</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;myarray&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
 </pre></div>
@@ -274,7 +274,7 @@ For example:</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 12, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

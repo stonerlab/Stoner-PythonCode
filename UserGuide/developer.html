@@ -112,7 +112,7 @@ much of the meta data as possible. The function terminates by returning a copy o
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="bp">self</span>
 </pre></div>
 </div>
-<p>One useful function for reading metadata from files is <a class="reference internal" href="../classes/Stoner.Core.typeHintedDict.html#Stoner.Core.typeHintedDict.string_to_type" title="Stoner.Core.typeHintedDict.string_to_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">typeHintedDict.string_to_type()</span></code></a> which will try to convert a
+<p>One useful function for reading metadata from files is <code class="xref py py-meth docutils literal notranslate"><span class="pre">typeHintedDict.string_to_type()</span></code> which will try to convert a
 string representation of data into a sensible Python type.</p>
 <p>There are two class attributes, <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.priority" title="Stoner.Core.DataFile.priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.priority</span></code></a> that can be used to tweak the automatic file
 importing code.:</p>
@@ -134,7 +134,7 @@ will match the expected filenames for this format:</p>
 </pre></div>
 </div>
 <p>Any custome data class <strong>should</strong> try to identify if the file is the correct format and if so it <strong>must</strong> raise a
-<a class="reference internal" href="../classes/Stoner.Core.StonerLoadError.html#Stoner.Core.StonerLoadError" title="Stoner.Core.StonerLoadError"><code class="xref py py-class docutils literal notranslate"><span class="pre">StonerLoadError</span></code></a> exception in order that the autoloading code will known to try a different subclass of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a>.</p>
+<code class="xref py py-class docutils literal notranslate"><span class="pre">StonerLoadError</span></code> exception in order that the autoloading code will known to try a different subclass of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a>.</p>
 <p>If you need to write any additional methods please make sure that they have Google code-style document
 strings so that the API documentation is picked up correctly.</p>
 </div>
@@ -207,7 +207,7 @@ strings so that the API documentation is picked up correctly.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 12, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

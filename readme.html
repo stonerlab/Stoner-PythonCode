@@ -141,7 +141,15 @@ making beta packages available.</p>
 </div>
 <div class="section" id="development-version">
 <h2>Development Version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h2>
-<p>The next development version will be on version 0.9. This will be started after the current 0.8 version is given a final release.</p>
+<p>The next development version will be on version 0.9. Features expected in 0.9 include:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Refactoring of the Core module into a more granual core package with submodules</li>
+<li>Overhaul of the documentation and user guide</li>
+<li>Dropping support for the older Stoner.Image.stack.ImageStack class</li>
+<li>Droppping support for matplotlib&lt;2.0</li>
+</ul>
+</div></blockquote>
 <p>Online documentation for all versions can be found on the ReadTheDocs pages <a class="reference external" href="http://stoner-pythoncode.readthedocs.io/en/latest/">online documentation</a></p>
 <div class="section" id="build-status">
 <h3>Build Status<a class="headerlink" href="#build-status" title="Permalink to this headline">¶</a></h3>
@@ -157,18 +165,19 @@ encourage any users to cite this package via that doi.</p>
 </div>
 <div class="section" id="stable-versions">
 <h2>Stable Versions<a class="headerlink" href="#stable-versions" title="Permalink to this headline">¶</a></h2>
-<p>Version 0.8 is now in release-candidate phase. The main new features are</p>
+<p>Version 0.8 is the current stable release. The main new features are</p>
 <blockquote>
 <div><ul class="simple">
 <li>Reworking of the ImageArray, ImageFile and ImageFolder with many updates and new features.</li>
 <li>New mixin based ImageStack2 that can manipulate a large number of images in a 3D numpy array</li>
 <li>Continued re-factoring of DataFolder using the mixin approach</li>
 <li>Further increases to unit-test coverage, bug fixes and refactoring of some parts of the code.</li>
+<li>_setas objects implement a more complete MutableMapping interface and also support +/- operators.</li>
 <li>conda packages now being prepared as the preferred package format</li>
 </ul>
-<p>After release 0.8 will continue to receive bug fixes and updates.</p>
 </div></blockquote>
-<p>The current stable version is 0.7. Features of 0.7 include</p>
+<p>0.8.x will continue to have bug fix releases and back-ports of anything very useful until 0.9 is released.</p>
+<p>The old stable version is 0.7.2. Features of 0.7.2 include</p>
 <blockquote>
 <div><ul class="simple">
 <li>Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin</li>
@@ -179,21 +188,9 @@ encourage any users to cite this package via that doi.</p>
 <li>Further improvements to <a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> handline.</li>
 </ul>
 </div></blockquote>
-<p>0.7 will continue to have bug fix releases and back-ports of anything very useful until 0.8 is released.</p>
-<p>The old stable version was 0.6. This features</p>
-<blockquote>
-<div><ul class="simple">
-<li>Some major changes in the architecture,</li>
-<li>Switching from a numpy MaskedArray as the main data store to a custom sub-class that contains most of the logic
-for indexing data by column name and designation.</li>
-<li>The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.</li>
-<li>Other underlying changes are a switch to using properties rather than straight attribute access.</li>
-</ul>
-</div></blockquote>
-<p>0.6 now also makes use of filemagic to work out the mime type of files to be loaded to try and improve the resilience of the automatic
-file format detection on platforms where this is supported and adds some extra methods to AnalyseFile for extrapolation.</p>
-<p>No further relases will be made to 0.6.</p>
-<p>0.6 and 0.7 should work on Python 2.7 and 3.5</p>
+<p>No further relases will be made to 0.7.x.</p>
+<p>0.6, 0.7 should work on Python 2.7 and 3.5
+0.8 is also tested on Python 3.6</p>
 </div>
 </div>
 
@@ -262,7 +259,7 @@ file format detection on platforms where this is supported and adds some extra m
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 12, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

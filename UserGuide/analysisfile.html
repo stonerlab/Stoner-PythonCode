@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Working with Lots of Files" href="datafolder.html" />
-    <link rel="prev" title="Plotting Data" href="plotfile.html" />
+    <link rel="prev" title="Curve Fitting in the Stoner Pacakge" href="curve_fitting.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -28,7 +28,7 @@
     <ul>
         <li>
           &larr;
-          <a href="plotfile.html" title="Previous document">Plotting Data</a>
+          <a href="curve_fitting.html" title="Previous document">Curve Fitting in the Stoner Pacakge</a>
         </li>
         <li>
           <a href="datafolder.html" title="Next document">Working with Lots of Files</a>
@@ -149,366 +149,6 @@ would each contain the rows from the original data that had each unique value of
 produce a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> object containing two <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a> objects for the rows with temperature above and below 100.
 The final example will result in a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> object that has two groups each of which contains
 <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a> objects for each polarisation value.</p>
-</div>
-<div class="section" id="curve-fitting">
-<span id="curve-fit-guide"></span><h2>Curve Fitting<a class="headerlink" href="#curve-fitting" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="simple-polynomial-fits">
-<h3>Simple polynomial Fits<a class="headerlink" href="#simple-polynomial-fits" title="Permalink to this headline">¶</a></h3>
-<p>Simple least squares fitting of polynomial functions is handled by the
-<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.polyfit" title="Stoner.Analysis.AnalysisMixin.polyfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.polyfit()</span></code></a> method:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">column_x</span><span class="p">,</span><span class="n">column_y</span><span class="p">,</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="s2">&quot;New Column&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>This is a simple pass through to the numpy routine of the same name. The x and y
-columns are specified in the first two arguments using the usual index rules for
-the Stoner package. The routine will fit multiple columns if <em>column_y</em>
-is a list or slice. The <em>polynomial_order</em> parameter should be a simple integer
-greater or equal to 1 to define the degree of polynomial to fit. The <em>bounds</em>
-function follows the same rules as the <em>bounds</em> function in
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.search()</span></code> to restrict the fitting to a limited range of rows. The
-method returns a list of coefficients with the highest power first. If
-<em>column_y</em> was a list, then a 2D array of coefficients is returned.</p>
-<p>If <em>result</em> is specified then a new column with the header given by the <em>result</em> parameter will be
-created and the fitted polynomial evaluated at each point.</p>
-</div>
-<div class="section" id="simple-function-fitting">
-<h3>Simple function fitting<a class="headerlink" href="#simple-function-fitting" title="Permalink to this headline">¶</a></h3>
-<p>For more general curve fitting operations the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>
-method can be employed. Again, this is a pass through to the numpy routine of
-the same name.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>  <span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;New Column&quot;</span> <span class="p">)</span>
-</pre></div>
-</div>
-<p>The first parameter is the fitting function. This should have prototype
-<code class="docutils literal notranslate"><span class="pre">y=func(x,p[0],p[1],p[2]...)</span></code>: where <em>p</em> is a list of fitting parameters.
-The <em>p0</em> parameter contains the initial guesses at the fitting
-parameters, the default value is 1. <em>xcol</em> and <em>ycol</em> are the x
-and y columns to fit. This method cannot handle multiple y columns.
-<em>sigma</em>, if present, provides the weightings for each datapoint and so
-should also be an array of the same length as the x and y data. Fianlly, the
-<em>bounds</em> function can be used to restrict the fitting to only a subset of the rows
-of data.</p>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code></a> returns a list of two arrays <code class="docutils literal notranslate"><span class="pre">[popt,pcov]</span></code>:
-where <em>popt</em> is an array of the optimal fitting parameters and
-<em>pcov</em> is a 2D array of the co-variances between the parameters.</p>
-<p>If <em>result</em> is not <strong>None</strong> then the fitted data is added to the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>
-object. Where it is added depends on the combination of the <em>result</em>, <em>replace</em>
-and <em>header</em> parameters. If <em>result</em> is a string or integer it is interpreted as a column
-index at which the fitted data will be inserted (<em>replace</em> <strong>False</strong>) or overwritten over the existing data (<em>replace</em> <strong>True</strong>).
-The fitted data will be given the column header <em>header</em> unless <em>header</em> is not a string, in which ase the column
-will be called ‘Fitted with ‘ and the name of the function <em>func</em>.</p>
-<p>The utility method of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.Data</span></code>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Util.Data.annotate_fit()</span></code> is useful
-for adding appropriately formatted details of the fit to the plot.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;USe curve_fit to fit a straight line.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-
-<span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Straight line function.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">m</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="n">c</span>
-
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;curve_fit_data.dat&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">)</span>
-<span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x..y&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;b-&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>(<a class="reference external" href="../samples/curve_fit_line.png">png</a>, <a class="reference external" href="../samples/curve_fit_line.hires.png">hires.png</a>, <a class="reference external" href="../samples/curve_fit_line.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/curve_fit_line.png" src="../_images/curve_fit_line.png" />
-</div>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code></a> can also be used to fit more complex problems. In the example below, a set of
-points in x,y,z space are fitted to a plane.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Use curve_fit to fit a plane to some data.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
-<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">column_stack</span><span class="p">,</span><span class="n">row_stack</span>
-<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="kn">as</span> <span class="nn">cmap</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-
-
-
-<span class="k">def</span> <span class="nf">plane</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Function to define a plane&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">c</span><span class="o">-</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">a</span><span class="o">+</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">b</span><span class="p">)</span>
-
-<span class="n">coeefs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">col</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
-<span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="n">col</span><span class="p">)</span>
-<span class="n">Z</span><span class="o">=</span><span class="n">plane</span><span class="p">((</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">),</span><span class="o">*</span><span class="n">coeefs</span><span class="p">)</span><span class="o">+</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">7.0</span><span class="p">)</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Z</span><span class="o">.</span><span class="n">ravel</span><span class="p">())),</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;Fitting a Plane&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span><span class="p">)</span>
-
-<span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span><span class="s2">&quot;Z&quot;</span><span class="p">]</span>
-<span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s2">&quot;scatter&quot;</span><span class="p">)</span>
-
-<span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy.z&quot;</span>
-
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">)</span>
-
-<span class="n">txt</span><span class="o">=</span><span class="s2">&quot;$z=c-ax+by$</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="n">txt</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;plane:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="s2">&quot;c&quot;</span><span class="p">]])</span>
-
-<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="n">txt</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>(<a class="reference external" href="../samples/curvefit_plane.png">png</a>, <a class="reference external" href="../samples/curvefit_plane.hires.png">hires.png</a>, <a class="reference external" href="../samples/curvefit_plane.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/curvefit_plane.png" src="../_images/curvefit_plane.png" />
-</div>
-<p>Finally, by you can sepcify the <em>y-data</em> to fit to as a numpy array. This can be used to fit functions that
-don’t themseleves return values that can be matched up to existing data. An example of doing this is fitting a
-sphere to a set of <span class="math notranslate nohighlight">\((x,y,z)\)</span> data points.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Fit a sphere with curve_fit.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span><span class="n">cos</span><span class="p">,</span><span class="n">pi</span><span class="p">,</span><span class="n">column_stack</span><span class="p">,</span><span class="n">zeros_like</span><span class="p">,</span><span class="n">ones_like</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">linspace</span>
-<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span><span class="p">,</span><span class="n">uniform</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-
-<span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Converts from spherical to cartesian co-ordinates.&quot;&quot;&quot;</span>
-    <span class="n">x</span><span class="o">=</span><span class="n">r</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-    <span class="n">y</span><span class="o">=</span><span class="n">r</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-    <span class="n">z</span><span class="o">=</span><span class="n">r</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span>
-
-<span class="k">def</span> <span class="nf">sphere</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns zero if (x,y,z) lies on a sphere centred at (a,b,c) with radius r.&quot;&quot;&quot;</span>
-    <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">coords</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">b</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="n">c</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span>
-
-<span class="c1"># Create some points approximately spherical distribution</span>
-<span class="n">p</span><span class="o">=</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">high</span><span class="o">=</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
-<span class="n">q</span><span class="o">=</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="n">pi</span><span class="p">,</span><span class="n">high</span><span class="o">=</span><span class="n">pi</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
-<span class="n">r</span><span class="o">=</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-
-<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">transform</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">p</span><span class="p">)</span>
-
-<span class="n">x</span><span class="o">+=</span><span class="mf">3.0</span>
-<span class="n">y</span><span class="o">-=</span><span class="mf">4.0</span>
-<span class="n">z</span><span class="o">+=</span><span class="mf">2.0</span>
-
-<span class="c1"># Construct the  DataFile object</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)),</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;Best fit sphere&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_width</span><span class="o">=</span><span class="mf">5.2</span>
-<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_height</span><span class="o">=</span><span class="mf">5.0</span> <span class="c1"># Square aspect ratio</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s2">&quot;scatter&quot;</span><span class="p">)</span>
-
-<span class="c1">#curve_fit does the hard work</span>
-<span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">sphere</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
-
-<span class="c1"># This manually constructs the best fit sphere</span>
-<span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="n">popt</span>
-<span class="n">p</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span>
-<span class="n">q</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span><span class="n">pi</span><span class="p">,</span><span class="mi">31</span><span class="p">)</span>
-<span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="o">=</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">)</span>
-<span class="n">R</span><span class="o">=</span><span class="n">ones_like</span><span class="p">(</span><span class="n">P</span><span class="p">)</span><span class="o">*</span><span class="n">r</span>
-<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">transform</span><span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="n">Q</span><span class="p">,</span><span class="n">P</span><span class="p">)</span>
-<span class="n">x</span><span class="o">+=</span><span class="n">a</span>
-<span class="n">y</span><span class="o">+=</span><span class="n">b</span>
-<span class="n">z</span><span class="o">+=</span><span class="n">c</span>
-
-<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">rstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">cstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.25</span><span class="p">),</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>(<a class="reference external" href="../samples/curvefit_sphere.png">png</a>, <a class="reference external" href="../samples/curvefit_sphere.hires.png">hires.png</a>, <a class="reference external" href="../samples/curvefit_sphere.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/curvefit_sphere.png" src="../_images/curvefit_sphere.png" />
-</div>
-<p>See also <a class="reference internal" href="cookbook.html#fitting-tricks"><span class="std std-ref">Fitting Tricks</span></a></p>
-</div>
-<div class="section" id="fitting-with-limits">
-<span id="id1"></span><h3>Fitting with limits<a class="headerlink" href="#fitting-with-limits" title="Permalink to this headline">¶</a></h3>
-<p>The Stoner package has a number of alternative fitting mechanisms that supplement the standard
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v1.1.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.curve_fit()</span></code></a> function. New in version 0.2 onwards of the Package is an interface to the
-<em>lmfit</em> module.</p>
-<div class="section" id="non-linear-curve-fitting-with-lmfit">
-<h4>Non-linear curve fitting with lmfit<a class="headerlink" href="#non-linear-curve-fitting-with-lmfit" title="Permalink to this headline">¶</a></h4>
-<p>lmfit provides a flexible way to fit complex models to experimental data in a pythonesque object-orientated fashion.
-A full description of the lmfit module is given in the <a class="reference external" href="href=http://lmfit.github.io/lmfit-py/">lmffit documentation</a>. . The
-<a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.lmfit()</span></code></a> method is used to interact with lmfit.</p>
-<p>In order to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.lmfit()</span></code></a>, one requires a <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code> instance. This describes a function
-and its independent and fittable parameters, whether they have limits and what the limits are. The <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Fit</span></code></a> module contains
-a series of <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code> subclasses that represent various models used in condensed matter physics.</p>
-<p>The operation of <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.lmfit()</span></code></a> is very similar to that of <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="k">import</span> <span class="n">Arrehenius</span>
-<span class="n">model</span><span class="o">=</span><span class="n">Arrehenius</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="mf">1E7</span><span class="p">,</span><span class="n">DE</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-<span class="n">fit</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;Temp&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;Cond&quot;</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">)</span>
-<span class="nb">print</span> <span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">()</span>
-<span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="s2">&quot;Arrehenius:A&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;Arrehenius:A err&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;chi^2&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;nfev&quot;</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>In this example we would be fitting an Arrehenius model to data contained inthe ‘Temp’ and ‘Cond’ columns. The resulting
-fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</p>
-<p>The <em>model</em> argument to <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.lmfit()</span></code></a> can be either an instance of the model class, or just the class itself (in which case it will be
-instantiated as required), or just a bare callable, in which case a model class will be created around it. The latter is approximately equivalent to
-a simple call to <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>.</p>
-<p>The return value from <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.lmfit()</span></code></a> is controlled by the <em>output</em> keyword parameter. By default it is the <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.ModelFit</span></code>
-instance. This contains all the information about the fit and fitting process.</p>
-<p>You can pass the model as a subclass of model, if you don’t pass initial values either via the <em>p0</em> parameter or as keyword arguements, then the model’s
-<em>guess</em> method is called (e.g. <a class="reference internal" href="../classes/Stoner.Fit.Arrhenius.html#Stoner.Fit.Arrhenius.guess" title="Stoner.Fit.Arrhenius.guess"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Fit.Arrhenius.guess()</span></code></a>) to determine parameters fromt he data. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example of using lmfit to do a bounded fit.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">StretchedExp</span>
-
-<span class="c1">#Load dat and plot</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;lmfit_data.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
-
-<span class="c1"># Do the fit</span>
-<span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">StretchedExp</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-<span class="c1"># plot</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyy&quot;</span>
-
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="p">,</span><span class="s2">&quot;-&quot;</span><span class="p">])</span>
-<span class="c1"># Make apretty label using Stoner.Util methods</span>
-<span class="n">text</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$y=A e^{-\left(\frac{x}{x_0}\right)^\beta}$&quot;</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="n">text</span><span class="o">+=</span><span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">StretchedExp</span><span class="p">,</span><span class="n">text_only</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mf">4E4</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
-<span class="c1">#Adjust layout NB pass-through method to pyplot used here</span>
-<span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>(<a class="reference external" href="../samples/lmfit_example.png">png</a>, <a class="reference external" href="../samples/lmfit_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit_example.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/lmfit_example.png" src="../_images/lmfit_example.png" />
-</div>
-</div>
-<div class="section" id="non-linear-curve-fitting-with-initialisation-file">
-<h4>Non-linear curve fitting with initialisation file<a class="headerlink" href="#non-linear-curve-fitting-with-initialisation-file" title="Permalink to this headline">¶</a></h4>
-<p>For writing general purpose fitting codes, it can be useful to drive the fitting code from a separate intialisation file so that users do not have to
-edit the source code. <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.lmfit()</span></code></a> and <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Fit</span></code></a> provide some mechanisms to enable this.</p>
-<p>Firstly, the initialisation file should take the form like so.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Options</span><span class="p">]</span>
-<span class="n">model</span><span class="p">:</span> <span class="n">Stoner</span><span class="o">.</span><span class="n">Fit</span><span class="o">.</span><span class="n">Strijkers</span>
-<span class="c1"># Controls whether the data and fit are plotted or not.</span>
-<span class="n">show_plot</span><span class="p">:</span> <span class="kc">True</span>
-<span class="c1"># Sets whether to print a nice report to the console</span>
-<span class="n">print_report</span><span class="p">:</span> <span class="kc">True</span>
-<span class="c1"># Save the final result ?</span>
-<span class="n">save_fit</span><span class="p">:</span> <span class="kc">False</span>
-<span class="c1">#</span>
-<span class="c1"># These are optional options that turn on various (experimental) bits of code</span>
-<span class="c1">#</span>
-<span class="c1">#This turns on the normalisation</span>
-<span class="n">normalise</span><span class="p">:</span> <span class="kc">False</span>
-<span class="c1"># This turns on the fitting a quadratic to the outer 10% to determine the normalisation</span>
-<span class="c1"># Don&#39;t use it unless you know why this might be sensible for your data !</span>
-<span class="n">fancy_normaliser</span><span class="p">:</span> <span class="kc">False</span>
-<span class="c1"># Turns on rescaling the V axis into mV</span>
-<span class="c1"># Only use if data not already correctly scaled.</span>
-<span class="n">rescale_v</span><span class="p">:</span> <span class="kc">False</span>
-<span class="c1"># Tries to find and remove an offset in V by looking for peaks within 5 Delta</span>
-<span class="c1"># Warning, this may go badly wrong with certain DC waveforms</span>
-<span class="n">remove_offset</span><span class="p">:</span> <span class="kc">False</span>
-<span class="c1"># Be clever about annotating the result on the plots</span>
-<span class="n">fancy_result</span><span class="p">:</span> <span class="kc">True</span>
-
-
-<span class="c1"># These settings will read old style files directly</span>
-<span class="p">[</span><span class="n">Data</span><span class="p">]</span>
-<span class="n">x</span><span class="p">:</span> <span class="n">V</span>
-<span class="n">y</span><span class="p">:</span> <span class="n">G</span>
-<span class="c1"># This will load from a csv file, comment out to have it guess the file type</span>
-<span class="nb">type</span><span class="p">:</span> <span class="n">Stoner</span><span class="o">.</span><span class="n">FileFormats</span><span class="o">.</span><span class="n">CSVFile</span>
-<span class="n">header_line</span><span class="p">:</span><span class="mi">1</span>
-<span class="n">start_line</span><span class="p">:</span><span class="mi">2</span>
-<span class="n">separator</span><span class="p">:</span> <span class="p">,</span>
-<span class="c1"># Only need v_scale if rescale_v is true</span>
-<span class="n">v_scale</span><span class="p">:</span><span class="mi">1000</span>
-<span class="c1"># Only need this if normalise is True and fancy_normaliser is False</span>
-<span class="n">Normal_conductance</span><span class="p">:</span> <span class="mf">0.0</span>
-<span class="c1"># Set true to discard data at high bias</span>
-<span class="n">discard</span><span class="p">:</span> <span class="kc">False</span>
-<span class="c1"># Bias limit to discard at</span>
-<span class="n">v_limit</span><span class="p">:</span> <span class="mf">10.0</span>
-
-
-<span class="c1"># The next four sections set the parameters up</span>
-<span class="p">[</span><span class="n">omega</span><span class="p">]</span>
-<span class="c1">#starting value</span>
-<span class="n">value</span><span class="p">:</span><span class="mf">0.55</span>
-<span class="c1"># Allow this parameter to vary in the fix</span>
-<span class="n">vary</span><span class="p">:</span> <span class="kc">True</span>
-<span class="c1">#Lower bound is set</span>
-<span class="nb">min</span><span class="p">:</span> <span class="mf">0.0</span>
-<span class="c1"># Would give upper limit if it were constrained</span>
-<span class="c1"># Just comment out limits which are not set</span>
-<span class="c1">#max: None</span>
-<span class="c1"># Symbol for plot annotations</span>
-<span class="n">label</span><span class="p">:</span> \<span class="n">omega</span>
-<span class="c1"># Default step size 0 . Use in conjunction with vary,min and max when mapping a parameter</span>
-<span class="n">step</span><span class="p">:</span> <span class="mf">0.0</span>
-<span class="c1"># Defines the units label for the plots</span>
-<span class="n">units</span><span class="p">:</span> <span class="n">meV</span>
-
-<span class="p">[</span><span class="n">delta</span><span class="p">]</span>
-<span class="n">value</span><span class="p">:</span> <span class="mf">1.5</span>
-<span class="n">vary</span><span class="p">:</span> <span class="kc">False</span>
-<span class="nb">min</span><span class="p">:</span> <span class="mf">0.5</span>
-<span class="nb">max</span><span class="p">:</span> <span class="mf">2.0</span>
-<span class="n">label</span><span class="p">:</span> \<span class="n">Delta</span>
-<span class="n">step</span><span class="p">:</span> <span class="mf">0.2</span>
-<span class="n">units</span><span class="p">:</span> <span class="n">meV</span>
-
-<span class="p">[</span><span class="n">P</span><span class="p">]</span>
-<span class="n">value</span><span class="p">:</span> <span class="mf">0.5</span>
-<span class="n">vary</span><span class="p">:</span> <span class="kc">True</span>
-<span class="nb">min</span><span class="p">:</span> <span class="mf">0.2</span>
-<span class="nb">max</span><span class="p">:</span> <span class="mf">0.7</span>
-<span class="n">label</span><span class="p">:</span> <span class="n">P</span>
-<span class="n">step</span><span class="p">:</span> <span class="mf">0.05</span>
-
-<span class="p">[</span><span class="n">Z</span><span class="p">]</span>
-<span class="n">value</span><span class="p">:</span> <span class="mf">0.17</span>
-<span class="n">vary</span><span class="p">:</span> <span class="kc">True</span>
-<span class="nb">min</span><span class="p">:</span> <span class="mf">0.0</span>
-<span class="c1">#max: None</span>
-<span class="n">label</span><span class="p">:</span> <span class="n">Z</span>
-<span class="n">step</span><span class="p">:</span> <span class="mf">0.0</span>
-</pre></div>
-</div>
-<p>This initialisation file can be passed to <a class="reference internal" href="../classes/Stoner.Fit.cfg_data_from_ini.html#Stoner.Fit.cfg_data_from_ini" title="Stoner.Fit.cfg_data_from_ini"><code class="xref py py-func docutils literal notranslate"><span class="pre">Stoner.Fit.cfg_data_from_ini()</span></code></a> which will use the information in the [Data]
-section to read in the data file and identify the x and y columns.</p>
-<p>The initialisation file can then be passed to <code class="xref py py-func docutils literal notranslate"><span class="pre">Stoner.Fit.cfg_mode_from_ini()</span></code> which will use the configuration file to
-setup the model and parameter hints. The configuration file should have one section for eac parameter in the model. This function
-returns the configured model and also a 2D array of values to feed as the starting values to <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.lmfit()</span></code></a>. Depending
-on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe code will either perform a single fitting attempt, or do a mapping of the
-<span class="math notranslate nohighlight">\(\\chi^2\)</span> goodeness of fit.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Demo of new Stoner.Analysis.AnalyseFile.lmfit</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
-<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">__home__</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
-<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">cfg_data_from_ini</span><span class="p">,</span><span class="n">cfg_model_from_ini</span>
-
-<span class="n">config</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="s2">&quot;scripts&quot;</span><span class="p">,</span><span class="s2">&quot;PCAR-New.ini&quot;</span><span class="p">)</span>
-<span class="n">datafile</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="s2">&quot;sample-data&quot;</span><span class="p">,</span><span class="s2">&quot;PCAR Co Data.csv&quot;</span><span class="p">)</span>
-
-<span class="n">d</span><span class="o">=</span><span class="n">cfg_data_from_ini</span><span class="p">(</span><span class="n">config</span><span class="p">,</span><span class="n">datafile</span><span class="p">)</span>
-<span class="n">model</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">cfg_model_from_ini</span><span class="p">(</span><span class="n">config</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
-
-<span class="n">fit</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
-
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="s2">&quot;r-&quot;</span><span class="p">,</span><span class="s2">&quot;bo&quot;</span><span class="p">])</span> <span class="c1"># plot the data</span>
-<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=-</span><span class="mi">25</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">1.02</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
-
-<span class="k">print</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">())</span>
-</pre></div>
-</div>
-<p>(<a class="reference external" href="../samples/lmfit_demo.png">png</a>, <a class="reference external" href="../samples/lmfit_demo.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit_demo.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/lmfit_demo.png" src="../_images/lmfit_demo.png" />
-</div>
-</div>
-</div>
 </div>
 <div class="section" id="more-analysismixin-functions">
 <h2>More AnalysisMixin Functions<a class="headerlink" href="#more-analysismixin-functions" title="Permalink to this headline">¶</a></h2>
@@ -641,7 +281,7 @@ and then smoothed and then reinterpolated back to the original x data co-ordinat
 <p class="last">This will fail for hysteretic data. In this case it would be better to use an integer size argument and to ensure
 the data is evenly spaced to start with.</p>
 </div>
-<p>The <em>result</em> and <em>replace</em> arguments are passed through to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.add_column()</span></code> unless <em>replace</em>
+<p>The <em>result</em> and <em>replace</em> arguments are passed through to <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.add_column()</span></code></a> unless <em>replace</em>
 is <strong>False</strong> in which case, the smoothed data is passed back as the return value and the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>
 is left unmodified.</p>
 </div></blockquote>
@@ -866,7 +506,7 @@ the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin
 <em>header</em>. The nature of the local fitting means that the first and last <em>poly</em>/2 points are not valid.</p>
 </div>
 <div class="section" id="peak-finding">
-<span id="id2"></span><h3>Peak Finding<a class="headerlink" href="#peak-finding" title="Permalink to this headline">¶</a></h3>
+<span id="id1"></span><h3>Peak Finding<a class="headerlink" href="#peak-finding" title="Permalink to this headline">¶</a></h3>
 <p>Peak finding is a tricky and often required task in experimental data analysis. When a functional form is known,
 it is possible to fit the data to this functional form. However, often a more numerical approach is required.
 The <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.peaks" title="Stoner.Analysis.AnalysisMixin.peaks"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.peaks()</span></code></a> provides a relatively simple and effective method for doing this:</p>
@@ -920,16 +560,6 @@ less equal significance. By default, only peaks are returned in order of x posit
 <li><a class="reference internal" href="#">Analysing Data Files</a><ul>
 <li><a class="reference internal" href="#normalising-and-basic-maths-operations">Normalising and Basic Maths Operations</a></li>
 <li><a class="reference internal" href="#splitting-data-up">Splitting Data Up</a></li>
-<li><a class="reference internal" href="#curve-fitting">Curve Fitting</a><ul>
-<li><a class="reference internal" href="#simple-polynomial-fits">Simple polynomial Fits</a></li>
-<li><a class="reference internal" href="#simple-function-fitting">Simple function fitting</a></li>
-<li><a class="reference internal" href="#fitting-with-limits">Fitting with limits</a><ul>
-<li><a class="reference internal" href="#non-linear-curve-fitting-with-lmfit">Non-linear curve fitting with lmfit</a></li>
-<li><a class="reference internal" href="#non-linear-curve-fitting-with-initialisation-file">Non-linear curve fitting with initialisation file</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li><a class="reference internal" href="#more-analysismixin-functions">More AnalysisMixin Functions</a><ul>
 <li><a class="reference internal" href="#applying-an-arbitary-function-through-the-data">Applying an arbitary function through the data</a></li>
 <li><a class="reference internal" href="#basic-data-inspection">Basic Data Inspection</a></li>
@@ -949,8 +579,8 @@ less equal significance. By default, only peaks are returned in order of x posit
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="plotfile.html"
-                        title="previous chapter">Plotting Data</a></p>
+  <p class="topless"><a href="curve_fitting.html"
+                        title="previous chapter">Curve Fitting in the Stoner Pacakge</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="datafolder.html"
                         title="next chapter">Working with Lots of Files</a></p>
@@ -980,7 +610,7 @@ less equal significance. By default, only peaks are returned in order of x posit
     <ul>
         <li>
           &larr;
-          <a href="plotfile.html" title="Previous document">Plotting Data</a>
+          <a href="curve_fitting.html" title="Previous document">Curve Fitting in the Stoner Pacakge</a>
         </li>
         <li>
           <a href="datafolder.html" title="Next document">Working with Lots of Files</a>
@@ -997,7 +627,7 @@ less equal significance. By default, only peaks are returned in order of x posit
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 12, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

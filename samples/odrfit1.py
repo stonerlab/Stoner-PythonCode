@@ -8,9 +8,12 @@ y=2+4*exp(-x/1.7)+random.normal(scale=0.2,size=101)
 
 d=Data(x,y,column_headers=["Time","Signal"],setas="xy")
 
-#Do the fitting and plot the result
+d.plot(fmt="ro") # plot our data
+
 func=lambda x,A,B,C:A+B*exp(-x/C)
-fit = d.lmfit(func,result=True,header="Fit",A=1,B=1,C=1,residuals=True)
+
+#Do the fitting and plot the result
+fit = d.odr(func,result=True,header="Fit",A=1,B=1,C=1,prefix="Model",residuals=True)
 
 #Reset labels
 d.labels=[]
@@ -28,7 +31,7 @@ d.xticklabels=[[]]
 d.xlabel=""
 
 # Annotate plot with fitting parameters
-d.annotate_fit(func,prefix="Model",x=7.2,y=3,fontdict={"size":"x-small"})
+d.annotate_fit(func,prefix="Model",x=7.2,y=3.0,fontdict={"size":"x-small"})
 text=r"$y=A+Be^{-x/C}$"+"\n\n"
 d.text(7.2,3.9,text,fontdict={"size":"x-small"})
-d.title=u"Levenberg-Marquardt Fit"
+d.title=u"Orthogonal Distance Regression  Fit"

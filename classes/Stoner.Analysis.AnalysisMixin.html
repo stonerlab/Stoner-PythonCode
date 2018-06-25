@@ -382,7 +382,7 @@ for the fitting parameters.</p>
 <p>If the columns are not specified (or set to None) then the X and Y data are taken using the
 <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.</p>
 <p>The fitting function should have prototype y=f(x,p[0],p[1],p[2]…)
-The x-column and y-column can be anything that <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.find_col()</span></code> can use as an index
+The x-column and y-column can be anything that <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.find_col()</span></code></a> can use as an index
 but typucally either strings to be matched against column headings or integers.
 The initial parameter values and weightings default to None which corresponds to all parameters starting
 at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
@@ -396,7 +396,7 @@ based on these values.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin.lmfit()</span></code></a>
-User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#curve-fit-guide"><span class="std std-ref">Curve Fitting</span></a></p>
+User guide section <a class="reference internal" href="../UserGuide/curve_fitting.html#curve-fit-guide"><span class="std std-ref">Curve Fitting in the Stoner Pacakge</span></a></p>
 </div>
 </dd></dl>
 
@@ -678,7 +678,7 @@ relevant information about the fit.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>
-User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#fitting-with-limits"><span class="std std-ref">Fitting with limits</span></a></p>
+User guide section <a class="reference internal" href="../UserGuide/curve_fitting.html#fitting-with-limits"><span class="std std-ref">Fitting with limits</span></a></p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -987,9 +987,12 @@ by this function.</li>
 
 <span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span><span class="s2">&quot;Signal&quot;</span><span class="p">],</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 
-<span class="c1">#Do the fitting and plot the result</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">)</span> <span class="c1"># plot our data</span>
+
 <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">:</span><span class="n">A</span><span class="o">+</span><span class="n">B</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="n">C</span><span class="p">)</span>
-<span class="n">fit</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span><span class="n">A</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">B</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">C</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">residuals</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c1">#Do the fitting and plot the result</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">odr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span><span class="n">A</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">B</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">C</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;Model&quot;</span><span class="p">,</span><span class="n">residuals</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 <span class="c1">#Reset labels</span>
 <span class="n">d</span><span class="o">.</span><span class="n">labels</span><span class="o">=</span><span class="p">[]</span>
@@ -1007,21 +1010,21 @@ by this function.</li>
 <span class="n">d</span><span class="o">.</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
 
 <span class="c1"># Annotate plot with fitting parameters</span>
-<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;Model&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mf">7.2</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;Model&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mf">7.2</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 <span class="n">text</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$y=A+Be^{-x/C}$&quot;</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">7.2</span><span class="p">,</span><span class="mf">3.9</span><span class="p">,</span><span class="n">text</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
-<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="sa">u</span><span class="s2">&quot;Levenberg-Marquardt Fit&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="sa">u</span><span class="s2">&quot;Orthogonal Distance Regression  Fit&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/lmfit3.png">png</a>, <a class="reference external" href="../samples/lmfit3.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit3.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href="../samples/odrfit1.png">png</a>, <a class="reference external" href="../samples/odrfit1.hires.png">hires.png</a>, <a class="reference external" href="../samples/odrfit1.pdf">pdf</a>)</p>
 <div class="figure">
-<img alt="../_images/lmfit3.png" src="../_images/lmfit3.png" />
+<img alt="../_images/odrfit1.png" src="../_images/odrfit1.png" />
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>
 <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.lmfit()</span></code></a>
-User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#fitting-with-limits"><span class="std std-ref">Fitting with limits</span></a></p>
+User guide section <a class="reference internal" href="../UserGuide/curve_fitting.html#fitting-with-limits"><span class="std std-ref">Fitting with limits</span></a></p>
 </div>
 </dd></dl>
 
@@ -1536,7 +1539,7 @@ argument list. In order to support the use of assigned columns, this has been sw
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 12, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
