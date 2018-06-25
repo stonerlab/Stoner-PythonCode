@@ -276,6 +276,12 @@ will then use these by default in many methods when appropriate to have 'x' and 
 In addition to identifying columns as 'x','y', or 'z', for data that describes a vector field, you can mark the columns as containing
 'u', 'v', 'w' data where (u,v,w) is the vector value at  the point (x,y,z). There's no support at present for uncertainities in (u,v,w) being marked.
 
+.. image:: https://i.imgur.com/vwBUO25.png
+    :target: https://www.youtube.com/watch?v=LbSIqxTD9Xc
+    :alt: Data, column headers and metadata
+    :width: 320
+
+
 Setting Column Types
 ^^^^^^^^^^^^^^^^^^^^
 
