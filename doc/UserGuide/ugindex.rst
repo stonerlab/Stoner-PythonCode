@@ -13,7 +13,8 @@
    Introduction and Installation <install>
    Loading and Examining Data <datafile>
    Plotting Data <plotfile>
-   Manipulating and Analysing Data <analysisfile>
+   Curve Fitting Data <curve_fitting>
+   Further Manipulating and Analysis of Data <analysisfile>
    Working with Lots of Data Files <datafolder>
    Working with images <image>
    Cookbook <cookbook>

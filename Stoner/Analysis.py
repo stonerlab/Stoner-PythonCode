@@ -95,9 +95,9 @@ class _odr_Model(odrModel):
         super(_odr_Model,self).__init__(model,*args,**kargs)
 
 class _curve_fit_result(object):
-    
+
     """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit` as a class to make handling easier."""
-    
+
     def __init__(self,popt,pcov,infodict,mesg,ier):
         """Store the results of the curve fit full_output fit."""
         self.popt=popt
@@ -113,18 +113,18 @@ class _curve_fit_result(object):
     @property
     def full(self):
         return self.popt,self.pcov,self.perr,self.infodict,self.mesg,self.ier
-    
+
     @property
     def row(self):
         ret=_np_.zeros(self.popt.size*2)
         ret[0::2]=self.popt
         ret[1::2]=self.perr
         return ret
-    
+
     @property
     def fit(self):
         return (self.popt,self.pcov)
-    
+
     @property
     def report(self):
         return self
@@ -608,7 +608,7 @@ class AnalysisMixin(object):
             f_name=prefix
 
         args = getfullargspec(func)[0] # pylint: disable=W1505
-        del args[0]            
+        del args[0]
         if isinstance(fit,_curve_fit_result): # Come from curve_fit
             popt=fit.popt
             perr=fit.perr
@@ -627,9 +627,9 @@ class AnalysisMixin(object):
             chisq=_np_.sum((delta**2+eps**2))/nfree
             nfev=None
         else:
-            raise RuntimeError("Unable to understand {} as a fitting result".format(type(fit)))            
-            
-            
+            raise RuntimeError("Unable to understand {} as a fitting result".format(type(fit)))
+
+
 
         for val,err,name in zip(popt,perr,args):
             self['{}:{}'.format(f_name,name)] = val
@@ -670,8 +670,8 @@ class AnalysisMixin(object):
             self["{}:chi^2 err".format(f_name)] = _np_.sqrt(2/len(residual_vals))*chisq
         if nfev is not None:
             self["{}:nfev".format(f_name)]=nfev
-            
-                
+
+
         self.mask=tmp_mask
         #Make row object
         row=[]
@@ -1826,9 +1826,9 @@ class AnalysisMixin(object):
                 :py:meth:`AnalysisMixin.lmfit` to facilitate easy of switching between them.
 
         Example:
-            .. plot:: samples/lmfit_simple.py
+            .. plot:: samples/odr_simple.py
                  :include-source:
-                 :outname: lmfit3
+                 :outname: odrfit1
 
 
         See Also:
