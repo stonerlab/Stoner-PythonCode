@@ -2352,8 +2352,8 @@ class AnalysisMixin(object):
         """
         _=self._col_args(xcol=xcol,ycol=ycol)
         if sigma is None and (isNone(_.yerr) or _.yerr):
-            if not isNone(_.yerr) and _.yerr[0] is not None:
-                sigma=1.0/(self//_.yerr[0])
+            if not isNone(_.yerr):
+                sigma=1.0/(self//_.yerr)
             else:
                 sigma=_np_.ones(len(self))
         replace=kargs.pop("replace",True)
