@@ -9,7 +9,7 @@ Curve Fitting in the Stoner Pacakge
 Intropduction
 =============
 
-Many data analysis tasks make use of curve fitting at some pojnt - the process of fitting a model to as set of data points and
+Many data analysis tasks make use of curve fitting at some point - the process of fitting a model to as set of data points and
 determining the co-efficients of the model that give the best fit. Since this is such a ubiquitous task, it will be no surprise that
 the Stoner package provides a variety of different algorithms.
 
@@ -83,6 +83,8 @@ he output of the three methods used to fit arbitary functions  depend on the key
         us returned. This is useful when analysing a large number of similar data sets in order to build a table of fitting results.
     -   *output="report"*
         A python object representing the fitting reult is returned.
+    -   *output="data"*
+        A copy for the data file itself is returned - this is most useful when used in conjunction with :py:class:`Stoner.DataFolder`
     -   *oputput="full"*
         As much infromation about the fit as can be extracted from the fitting algorithm is returned.
 
@@ -92,6 +94,10 @@ the default is to use a prefix derived from the name of the model that was fitte
 to the :py:class:`Data` obhject. If *replace* is **True** then it is added to the end of the :py:class:`Data` object and *replace* is ignored. Otherwise,
 *result* is interpreted as something that can be used as a column index and *replace* determines whether the new data is inserted after that column, or
 overwrites it.
+
+If *residuals* is not None or False then as well as calculating the best fit values, the difference between these and the data points is found. The value
+of *residuals* is either a column index to store the residuals at (or in if *replace* is **True**) or if **True**, then the column after the one
+specofied by *result* is used.
 
 In all cases *header* specifies the name of the new header - if omitted, it will default to 'Fitted with {model name}'.
 
@@ -104,8 +110,14 @@ for adding appropriately formatted details of the fit to the plot (in this case 
 
 The *bounds* function can be used to restrict the fitting to only a subset of the rows
 of data. Any callable object which will take a float and an array of floats, representing the one x-value and one complete row and rturn
-True if the row is to be included in the fit and False if not.
+True if the row is to be included in the fit and False if not. e.g.::
 
+    def bounds_func(x,row):
+    """Keep only data points between (100,5) and (200,20) in x and y.
+
+    x (float): x data value
+    row (DataArray): complete row of data."""
+        return 100<x<200 and 5<row.y<20
 
 Simple function fitting
 -----------------------
@@ -198,12 +210,16 @@ routine. The essential point is that it seeks to minimize the **vertical** dista
 in the vertical poisition (ie. *y* co-ordinate) only. If your data has peaks that may change position and/or uncertanities in the horizontal (*x*) position of
 the data points, you may be better off using an orthogonal distance regression.
 
-THe :py:meth:`Data.odr` method wraps the :py:mod:`scipy.odr` module and tries to make it function as much like :py:mod:`lmfit` as possible. In fact, in most
+The :py:meth:`Data.odr` method wraps the :py:mod:`scipy.odr` module and tries to make it function as much like :py:mod:`lmfit` as possible. In fact, in most
 cases it can be used as a drop-in replacement:
 
 .. plot:: samples/odr_simple.py
      :include-source:
      :outname: odrfit2
+
+The :py:meth:`Data.odr` method allows uncertainities in *x* and *y* to be specified via the *sigma_x* and *sigma_y*  parameters. If either are not specified, and
+a *sigma* parameter is given, then that is used instead. If they are either explictly set to **None** or not given, then the :py:attr:`Data.setas` attribute is
+used instead.
 
 
 Fitting In More than 1D
@@ -249,11 +265,7 @@ returns the configured model and also a 2D array of values to feed as the starti
 on the presence and values of the *vary* and *step* keys, tnhe code will either perform a single fitting attempt, or do a mapping of the
 :math:`\\chi^2` goodeness of fit.
 
-.. plot:: samples/lmfit_demo.py
-    :include-source:
-    :outname: lmfit_demo
-
-and the same problem using orthogonal distance regression:
+Since the :py:meth:`Data.odr` supports the same interface, it can be used as a drop-in replacement as well.
 
 .. plot:: samples/odr_demo.py
     :include-source:

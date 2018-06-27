@@ -19,7 +19,7 @@ for fname in  ["Sample_Image_2017-10-15_100.hdf5","Sample_Image_2017-10-15_101.h
 #Align the two images
 imgs[1].align(imgs[0],method="scharr")
 
-#Calculate the XMCD image and normalise it    
+#Calculate the XMCD image and normalise it
 xmcd=imgs[0]//imgs[1]
 xmcd.normalise()
 
@@ -68,16 +68,16 @@ def guess(self,data,**kwargs):
     params=self.make_params()
     for k, p in zip(params,[0.25,x[i1],data[i1]/np.sqrt(2),0.5,data[i1],
                             0.25,x[i2],data[i2]/np.sqrt(2),0.5,data[i2]]):
-        params[k].value=p       
+        params[k].value=p
     return params
 
 #This shows how to replace the default guess (which is useless) with our function guess
 double_peak.guess=MethodType(guess,double_peak)
 
 #Set the initial values with sensible starting points guessed from the data
-    
+
 #Fit the intensity values and add to thedata file
-res=hist.lmfit(double_peak)
+res=hist.lmfit(double_peak,output="report")
 hist.add_column(res.init_fit,header="Initial Fit")
 hist.add_column(res.best_fit,header="Best Fit")
 

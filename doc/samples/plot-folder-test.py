@@ -34,7 +34,7 @@ def extra(i,j,d):
     d.plt_legend(loc=3)
     d.annotate_fit(FMR_Power,fontdict={"size":8},x=0,y=1000)
 
-#Load data    
+#Load data
 d=Data(join(__home__,"..","sample-data","FMR-data.txt"))
 #Rename columns and reset plot labels
 d.rename("multi[1]:y","Field").rename("multi[0]:y","Frequency").rename("Absorption::X","FMR")
@@ -67,28 +67,28 @@ for s in fldr.groups:# Fit each FMR spectra
         res.column_headers=ch+["Frequency (Hz)","Field Sign"]
         result+=res
         f.setas[-1]="y"
-    
+
     #Now plot all the fits
     subfldr.plots_per_page=6 # Plot results
     subfldr.plot(figsize=(8,8),extra=extra)
-    
+
     #Work with the overall results
     result.setas(y="H_res",e="H_res.stderr",x="Freq")
     result.y=result.y/mu_0 #Convert to A/m
     result.e=result.e/mu_0
-    
+
     resfldr+=result#Stash the results
-    
+
 # Merge the two field signs into a single file, taking care of the error columns too
 result=resfldr[0].clone
 for c in [0,2,4,6,8,9,10]:
     result.data[:,c]=(resfldr[1][:,c]+resfldr[0][:,c])/2.0
 for c in [1,3,5,7]:
-    result.data[:,c]=gmean((resfldr[0][:,c],resfldr[1][:,c]),axis=0)         
+    result.data[:,c]=gmean((resfldr[0][:,c],resfldr[1][:,c]),axis=0)
 
 # Doing the Kittel fit with an orthogonal distance regression as we have x errors not y errors
 p0=[2,200E3,10E3]# Some sensible guesses
-result.lmfit(Inverse_Kittel,p0=p0,result=True,header="Kittel Fit")
+result.lmfit(Inverse_Kittel,p0=p0,result=True,header="Kittel Fit",output="report")
 result.setas[-1]="y"
 
 result.template.yformatter=TexEngFormatter
@@ -107,7 +107,7 @@ result.subplot(212)
 result.setas(y="Delta_H",e="Delta_H.stderr",x="Freq")
 result.y/=mu_0
 result.e/=mu_0
-result.lmfit(Linear,result=True,header="Width")
+result.lmfit(Linear,result=True,header="Width",output="report")
 result.setas[-1]="y"
 result.plot(fmt=["r.","b-"])
 result.annotate_fit(Linear,x=5.5E9,y=2.8E3,fontdict={"size":8})

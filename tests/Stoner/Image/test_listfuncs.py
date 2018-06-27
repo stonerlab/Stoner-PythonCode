@@ -18,13 +18,13 @@ def mag(x):
     return np.sqrt(np.dot(x,x))
 
 class FuncsTest(unittest.TestCase):
-    
+
     def setUp(self):
         self.a=ImageArray(join(thisdir,'coretestdata/im2_noannotations.png'))
         self.a1=ImageArray(join(thisdir,'coretestdata/im1_annotated.png'))
         self.a2=STXMImage(join(thisdir,"..","..","..","sample-data","Sample_Image_2017-10-15_100.hdf5"))
         self.a3=STXMImage(join(thisdir,"..","..","..","sample-data","Sample_Image_2017-10-15_101.hdf5"))
-        
+
 
     def test_imagefile_ops(self):
         self.a2.gridimage()
@@ -53,18 +53,18 @@ class FuncsTest(unittest.TestCase):
         g2=np.argmax(self.hist.y[100:])+100
         for k, p in zip(params,[0.25,self.hist.x[g1],self.hist.y[g1]/np.sqrt(2),0.5,self.hist.y[g1],
             0.25,self.hist.x[g2],self.hist.y[g2]/np.sqrt(2),0.5,self.hist.y[g2]]):
-            params[k].value=p        
+            params[k].value=p
         print(g1,g2,params)
-        self.res=self.hist.lmfit(double_peak,p0=params)
+        self.res=self.hist.lmfit(double_peak,p0=params,output="report")
         self.hist.add_column(self.res.init_fit,header="Initial Fit")
         self.hist.add_column(self.res.best_fit,header="Best Fit")
         self.hist.setas="xyyy"
         self.hist.plot(fmt=["b+","b--","r-"])
         plt.close("all")
-    
-        
+
+
         #self.b.adnewjust_contrast((0.1,0.9),percent=True)z
-        
+
     def test_funcs(self):
         b=self.a.translate((2.5,3))
         self.c=b.correct_drift(ref=self.a)
@@ -80,7 +80,7 @@ class FuncsTest(unittest.TestCase):
 #        print(self.a.metadata)
 #        print(self.a1.metadata)
 #        print(all([k in self.a.metadata.keys() for k in self.a1.metadata.keys()]))
-                
+
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=FuncsTest("test_funcs")
     test.setUp()

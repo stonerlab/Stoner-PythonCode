@@ -112,7 +112,7 @@ class _curve_fit_result(object):
 
     @property
     def full(self):
-        return self.popt,self.pcov,self.perr,self.infodict,self.mesg,self.ier
+        return self,self.row
 
     @property
     def row(self):
@@ -124,6 +124,14 @@ class _curve_fit_result(object):
     @property
     def fit(self):
         return (self.popt,self.pcov)
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self,data):
+        self._data=data
 
     @property
     def report(self):
@@ -583,7 +591,7 @@ class AnalysisMixin(object):
         if fit.success:
             row=self._record_curve_fit_result(model,fit,xcol,header,result,replace,residuals=residuals,prefix=prefix,ycol=ycol)
 
-            retval = {"fit": fit, "row": row, "full": (fit, row),"data":self}
+            retval = {"fit":(row[::2],fit.covar),"report": fit, "row": row, "full": (fit, row),"data":self}
             if output not in retval:
                 raise RuntimeError("Failed to recognise output format:{}".format(output))
             else:
@@ -1782,7 +1790,7 @@ class AnalysisMixin(object):
                 self.setas=setas
         return self
 
-    def odr(self, model, xcol=None, ycol=None, sigma_x=None,sigma_y=None,**kargs):
+    def odr(self, model, xcol=None, ycol=None, **kargs):
         """Wrapper around scipy.odr orthogonal distance regression fitting.
 
         Args:
@@ -1841,6 +1849,11 @@ class AnalysisMixin(object):
         replace = kargs.pop("replace", False)
         header = kargs.pop("header", None)
         residuals=kargs.pop("residuals",False)
+        #First of all check for a sigma keyword
+        sigma=kargs.pop("sigma",None)
+        #Now check for sigma_y and sigma_x and have them default to sigma (which in turn defaults to None)
+        sigma_y=kargs.pop("sigma_y",sigma)
+        sigma_x=kargs.pop("sigma_x",sigma)
         # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
         absolute_sigma = kargs.pop("absolute_sigma", True)
         kargs.pop("scale_covar", not absolute_sigma)
@@ -1908,7 +1921,7 @@ class AnalysisMixin(object):
         nfree=len(xdata)-len(fit_result.beta)
         chisq=_np_.sum(delta**2/_np_.abs(fit_result.xplus))+_np_.sum(eps**2/_np_.abs(fit_result.y))/nfree
         row.append(chisq)
-        retval = {"fit": fit_result, "row": row, "full": (fit_result, row),"data":self}
+        retval = {"fit":(row[::2],fit_result.cov_beta),"report": fit_result, "row": row, "full": (fit_result, row),"data":self}
         if output not in retval:
             raise RuntimeError("Failed to recognise output format:{}".format(output))
         else:
