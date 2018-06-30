@@ -31,4 +31,7 @@ docbuild: FORCE
 	( cd ../gh-pages; git pull )
 	rsync -rcm --perms --chmod=ugo=rwX --delete  --filter="P .git" --filter="P .nojekyll" doc/_build/html/ ../gh-pages/
 
+rtdbuild: export READTHEDOCS=1
+rtdbuild: docbuild
+
 FORCE:
