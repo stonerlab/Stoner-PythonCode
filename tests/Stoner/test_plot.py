@@ -31,10 +31,11 @@ class Plottest(unittest.TestCase):
 
     def test_set_no_figs(self):
         self.assertTrue(get_option("no_figs"),"Default setting for no_figs option is incorrect.")
-        set_option("no_figs",False)
+        set_option("no_figs",True)
         e=self.d.clone
         ret=e.plot()
-        self.assertTrue(ret is None,"Output of Data.plot() was not None when no_figs is True ({})".format(type(ret)))
+        self.assertTrue(ret is None,"Output of Data.plot() was not None when no_figs is True  and showfig is not set({})".format(type(ret)))
+        set_option("no_figs",False)
         e.showfig=False
         ret=e.plot()
         self.assertTrue(isinstance(ret,Data),"Return value of Data.plot() was not self when Data.showfig=False ({})".format(type(ret)))

@@ -663,19 +663,22 @@ class AnalysisMixin(object):
             new_col=func(self.column(xcol),*popt)
         self.add_column(new_col,index=result, replace=replace, header=header)
         if residuals:
-            residual_vals=self.column(ycol)-new_col
-            if isinstance(residuals,bool) and residuals:
-                if result is None:
-                    residuals_idx=None
+            if not islike_list(ycol):
+                ycol=[ycol]
+            for yc in ycol:
+                residual_vals=self.column(yc)-new_col
+                if isinstance(residuals,bool) and residuals:
+                    if result is None:
+                        residuals_idx=None
+                    else:
+                        residuals_idx=self.find_col(result)+1
                 else:
-                    residuals_idx=self.find_col(result)+1
-            else:
-                residuals_idx=residuals
-            self.add_column(residual_vals,index=residuals_idx, replace=False, header=header+":residuals")
-            self["{}:mean residual".format(f_name)]=_np_.mean(residual_vals)
-            self["{}:std residual".format(f_name)] = _np_.std(residual_vals)
-            self["{}:chi^2".format(f_name)] = chisq
-            self["{}:chi^2 err".format(f_name)] = _np_.sqrt(2/len(residual_vals))*chisq
+                    residuals_idx=residuals
+                self.add_column(residual_vals,index=residuals_idx, replace=False, header=header+":residuals")
+                self["{}:mean residual".format(f_name)]=_np_.mean(residual_vals)
+                self["{}:std residual".format(f_name)] = _np_.std(residual_vals)
+                self["{}:chi^2".format(f_name)] = chisq
+                self["{}:chi^2 err".format(f_name)] = _np_.sqrt(2/len(residual_vals))*chisq
         if nfev is not None:
             self["{}:nfev".format(f_name)]=nfev
 
@@ -947,7 +950,7 @@ class AnalysisMixin(object):
         self = self.del_rows(col, lambda x, y: x < clipper[0] or x > clipper[1])
         return self
 
-    def curve_fit(self, func, xcol=None, ycol=None, p0=None, sigma=None, **kargs):
+    def curve_fit(self, func, xcol=None, ycol=None, sigma=None, **kargs):
         """General curve fitting function passed through from scipy.
 
         Args:
@@ -1029,6 +1032,28 @@ class AnalysisMixin(object):
 
         xdat,ydata,sigma = self._get_curve_fit_data(xcol,ycol, bounds,sigma)
 
+        #Support any of our alternatives for the fitting function
+        if isinstance(func,type) and issubclass(func,(Model,_sp_.odr.Model)):
+            func=func()
+        if isinstance(func,_sp_.odr.Model): # scipy othrothogonal model hack
+            def _func(x,*beta):
+                return func.fcn(beta,x)
+            p0=kargs.pop("p0",func.estimate)
+        elif isinstance(func,Model):
+            _func=func.func
+            try:
+                if "p0" not in kargs: #Avoid expensive guess if we have a p0
+                    pguess=func.guess(ydata,xdata)
+                else:
+                    pguess=None
+            except:
+                pguess=None
+            p0=kargs.pop("p0",pguess)
+        elif callable(func):
+            _func=func
+            p0=kargs.pop("p0",None)
+        else:
+            raise TypeError("curve_fit parameter 1 must be either a Model class from lmfit or scipy.odr, or a callable, not a {}".format(type(func)))
 
         retvals=[]
         i=None
@@ -1044,7 +1069,7 @@ class AnalysisMixin(object):
             else:
                 s=sigma
 
-            report=_curve_fit_result(*curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs))
+            report=_curve_fit_result(*curve_fit(_func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs))
             report.func=func
             report.data=self
             report.residual_vals=ydata-report.fvec

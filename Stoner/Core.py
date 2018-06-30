@@ -2067,7 +2067,7 @@ class DataFile(metadataObject):
 
         if isinstance(column_data, _np_.ndarray):
             if len(_np_.shape(column_data)) != 1:
-                raise ValueError('Column data must be 1 dimensional')
+                raise ValueError('Column data must be 1 dimensional not {}'.format(column_data.shape))
             else:
                 _np__data = column_data
         elif callable(column_data):
@@ -2114,6 +2114,17 @@ class DataFile(metadataObject):
                 self.setas(old_setas)  # [ylint: disable=not-callable]
                 columns.insert(index,header)
                 self.column_headers=columns
+        return self
+
+    def adjust_setas(self,*args,**kargs):
+        """Adjust the setas of this object and return ourselves.
+
+        Returns:
+            This DataFile object
+
+        This method is useful when chaining methods together to change the setas assignments on the fly.
+        """
+        self.setas(*args,**kargs)
         return self
 
     def closest(self,value,xcol=None):

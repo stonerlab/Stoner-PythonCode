@@ -87,7 +87,7 @@ class PlotMixin(object):
             "title": string_types,
             "xlabel": string_types,
             "ylabel": string_types,
-            "showfig": bool
+            "_showfig": bool
         }
         super(PlotMixin,self).__init__(*args,**kargs)
         self._labels = typedList(string_types,[])
