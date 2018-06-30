@@ -53,9 +53,9 @@
             
   <div class="section" id="curve-fitting-in-the-stoner-pacakge">
 <span id="curve-fit-guide"></span><h1>Curve Fitting in the Stoner Pacakge<a class="headerlink" href="#curve-fitting-in-the-stoner-pacakge" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="intropduction">
-<h2>Intropduction<a class="headerlink" href="#intropduction" title="Permalink to this headline">¶</a></h2>
-<p>Many data analysis tasks make use of curve fitting at some pojnt - the process of fitting a model to as set of data points and
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Many data analysis tasks make use of curve fitting at some point - the process of fitting a model to as set of data points and
 determining the co-efficients of the model that give the best fit. Since this is such a ubiquitous task, it will be no surprise that
 the Stoner package provides a variety of different algorithms.</p>
 <p>The choice of algorithm depends to a large part on the features of the model, the constraints on the problem and the nature of the data points
@@ -96,8 +96,9 @@ parameters in the metadata for retrieval later. Since this is done in a consiste
 </ol>
 </div></blockquote>
 </div>
+</div>
 <div class="section" id="simple-polynomial-fits">
-<h3>Simple polynomial Fits<a class="headerlink" href="#simple-polynomial-fits" title="Permalink to this headline">¶</a></h3>
+<h2>Simple polynomial Fits<a class="headerlink" href="#simple-polynomial-fits" title="Permalink to this headline">¶</a></h2>
 <p>Simple least squares fitting of polynomial functions is handled by the
 <a class="reference internal" href="../classes/Stoner.Data.polyfit.html#Stoner.Data.polyfit" title="Stoner.Data.polyfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.polyfit()</span></code></a> method:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">column_x</span><span class="p">,</span><span class="n">column_y</span><span class="p">,</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="s2">&quot;New Column&quot;</span><span class="p">)</span>
@@ -115,6 +116,8 @@ method returns a list of coefficients with the highest power first. If
 <p>If <em>result</em> is specified then a new column with the header given by the <em>result</em> parameter will be
 created and the fitted polynomial evaluated at each point.</p>
 </div>
+<div class="section" id="fitting-arbitary-functions">
+<h2>Fitting Arbitary Functions<a class="headerlink" href="#fitting-arbitary-functions" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="common-features-of-the-function-fitting-methods">
 <h3>Common features of the Function Fitting Methods<a class="headerlink" href="#common-features-of-the-function-fitting-methods" title="Permalink to this headline">¶</a></h3>
 <p>he output of the three methods used to fit arbitary functions  depend on the keyword parameters <em>output</em>, <em>result</em> <em>replace</em> and <em>header</em> in the method call.</p>
@@ -127,6 +130,8 @@ A 1D numpy array of optimal values and standard errors interleaved (i.e. p_opt[0
 us returned. This is useful when analysing a large number of similar data sets in order to build a table of fitting results.</li>
 <li><em>output=”report”</em>
 A python object representing the fitting reult is returned.</li>
+<li><em>output=”data”</em>
+A copy for the data file itself is returned - this is most useful when used in conjunction with <a class="reference internal" href="../classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.DataFolder</span></code></a></li>
 <li><em>oputput=”full”</em>
 As much infromation about the fit as can be extracted from the fitting algorithm is returned.</li>
 </ul>
@@ -137,6 +142,9 @@ the default is to use a prefix derived from the name of the model that was fitte
 to the <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> obhject. If <em>replace</em> is <strong>True</strong> then it is added to the end of the <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> object and <em>replace</em> is ignored. Otherwise,
 <em>result</em> is interpreted as something that can be used as a column index and <em>replace</em> determines whether the new data is inserted after that column, or
 overwrites it.</p>
+<p>If <em>residuals</em> is not None or False then as well as calculating the best fit values, the difference between these and the data points is found. The value
+of <em>residuals</em> is either a column index to store the residuals at (or in if <em>replace</em> is <strong>True</strong>) or if <strong>True</strong>, then the column after the one
+specofied by <em>result</em> is used.</p>
 <p>In all cases <em>header</em> specifies the name of the new header - if omitted, it will default to ‘Fitted with {model name}’.</p>
 <p>The utility method of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.Data</span></code>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Util.Data.annotate_fit()</span></code> is useful
 for adding appropriately formatted details of the fit to the plot (in this case for the case of <a class="reference internal" href="#simple-function-fitting">Simple function fitting</a>).</p>
@@ -162,7 +170,15 @@ for adding appropriately formatted details of the fit to the plot (in this case 
 </div>
 <p>The <em>bounds</em> function can be used to restrict the fitting to only a subset of the rows
 of data. Any callable object which will take a float and an array of floats, representing the one x-value and one complete row and rturn
-True if the row is to be included in the fit and False if not.</p>
+True if the row is to be included in the fit and False if not. e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bounds_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">row</span><span class="p">):</span>
+<span class="sd">&quot;&quot;&quot;Keep only data points between (100,5) and (200,20) in x and y.</span>
+
+<span class="sd">x (float): x data value</span>
+<span class="sd">row (DataArray): complete row of data.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">100</span><span class="o">&lt;</span><span class="n">x</span><span class="o">&lt;</span><span class="mi">200</span> <span class="ow">and</span> <span class="mi">5</span><span class="o">&lt;</span><span class="n">row</span><span class="o">.</span><span class="n">y</span><span class="o">&lt;</span><span class="mi">20</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="simple-function-fitting">
 <h3>Simple function fitting<a class="headerlink" href="#simple-function-fitting" title="Permalink to this headline">¶</a></h3>
@@ -201,8 +217,6 @@ that the parameters are not properly independent in the model.</p>
 <p>The Stoner package has a number of alternative fitting mechanisms that supplement the standard
 <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v1.1.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.curve_fit()</span></code></a> function. New in version 0.2 onwards of the Package is an interface to the
 <em>lmfit</em> module.</p>
-<div class="section" id="non-linear-curve-fitting-with-lmfit">
-<h4>Non-linear curve fitting with lmfit<a class="headerlink" href="#non-linear-curve-fitting-with-lmfit" title="Permalink to this headline">¶</a></h4>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">lmfit</span></code> provides a flexible way to fit complex models to experimental data in a pythonesque object-orientated fashion.
 A full description of the lmfit module is given in the <a class="reference external" href="href=http://lmfit.github.io/lmfit-py/">lmffit documentation</a>. . The
 <a class="reference internal" href="../classes/Stoner.Data.lmfit.html#Stoner.Data.lmfit" title="Stoner.Data.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.lmfit()</span></code></a> method is used to interact with lmfit.</p>
@@ -252,14 +266,13 @@ instance. This contains all the information about the fit and fitting process.</
 <img alt="../_images/lmfit_example.png" src="../_images/lmfit_example.png" />
 </div>
 </div>
-</div>
 <div class="section" id="orthogonal-distance-regression">
 <h3>Orthogonal distance regression<a class="headerlink" href="#orthogonal-distance-regression" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference internal" href="../classes/Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.curve_fit()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Data.lmfit.html#Stoner.Data.lmfit" title="Stoner.Data.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.lmfit()</span></code></a> are both essentially based on a Levenberg-Marquardt fitting algorithm which is a non-linear least squares
 routine. The essential point is that it seeks to minimize the <strong>vertical</strong> distance between the model and the data points, taking into account the uncertainity
 in the vertical poisition (ie. <em>y</em> co-ordinate) only. If your data has peaks that may change position and/or uncertanities in the horizontal (<em>x</em>) position of
 the data points, you may be better off using an orthogonal distance regression.</p>
-<p>THe <a class="reference internal" href="../classes/Stoner.Data.odr.html#Stoner.Data.odr" title="Stoner.Data.odr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.odr()</span></code></a> method wraps the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/odr.html#module-scipy.odr" title="(in SciPy v1.1.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scipy.odr</span></code></a> module and tries to make it function as much like <code class="xref py py-mod docutils literal notranslate"><span class="pre">lmfit</span></code> as possible. In fact, in most
+<p>The <a class="reference internal" href="../classes/Stoner.Data.odr.html#Stoner.Data.odr" title="Stoner.Data.odr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.odr()</span></code></a> method wraps the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/odr.html#module-scipy.odr" title="(in SciPy v1.1.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scipy.odr</span></code></a> module and tries to make it function as much like <code class="xref py py-mod docutils literal notranslate"><span class="pre">lmfit</span></code> as possible. In fact, in most
 cases it can be used as a drop-in replacement:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple use of lmfit to fit data.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
@@ -304,7 +317,111 @@ cases it can be used as a drop-in replacement:</p>
 <div class="figure">
 <img alt="../_images/odrfit2.png" src="../_images/odrfit2.png" />
 </div>
+<p>The <a class="reference internal" href="../classes/Stoner.Data.odr.html#Stoner.Data.odr" title="Stoner.Data.odr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.odr()</span></code></a> method allows uncertainities in <em>x</em> and <em>y</em> to be specified via the <em>sigma_x</em> and <em>sigma_y</em>  parameters. If either are not specified, and
+a <em>sigma</em> parameter is given, then that is used instead. If they are either explictly set to <strong>None</strong> or not given, then the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.setas</span></code> attribute is
+used instead.</p>
 </div>
+</div>
+<div class="section" id="included-fitting-models">
+<h2>Included Fitting Models<a class="headerlink" href="#included-fitting-models" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Fit</span></code></a> module provides a number of standard fitting models suitable for solida state physics. Each model is provided either as an
+<code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code> and callable function. The former case often also provides a means to guess initial values from the data.</p>
+<div class="section" id="elementary-models">
+<h3>Elementary Models<a class="headerlink" href="#elementary-models" title="Permalink to this headline">¶</a></h3>
+<p>Amongst the incluided models are very generic model functions including:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="../classes/Stoner.Fit.Linear.html#Stoner.Fit.Linear" title="Stoner.Fit.Linear"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.Linear</span></code></a> - straight line fit <span class="math notranslate nohighlight">\(y=mx+c\)</span></li>
+<li><a class="reference internal" href="../classes/Stoner.Fit.Quadratic.html#Stoner.Fit.Quadratic" title="Stoner.Fit.Quadratic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.Quadratic</span></code></a> - 2nd order polynomial <span class="math notranslate nohighlight">\(y=ax^2+bx+c\)</span></li>
+<li><a class="reference internal" href="../classes/Stoner.Fit.PowerLaw.html#Stoner.Fit.PowerLaw" title="Stoner.Fit.PowerLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.PowerLaw</span></code></a> - A general powerlaw expression <span class="math notranslate nohighlight">\(y=Ax^k\)</span></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="thermal-physics-models">
+<h3>Thermal Physics Models<a class="headerlink" href="#thermal-physics-models" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Fit</span></code></a> module also supports a range of models suitable for various thermal physics related expressions:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="../classes/Stoner.Fit.Arrhenius.html#Stoner.Fit.Arrhenius" title="Stoner.Fit.Arrhenius"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.Arrhenius</span></code></a> - The Arrhenius expression is used to describe processes whose rate is controlled by a thermal distribution,
+it is essentially an exponential decay <span class="math notranslate nohighlight">\(y=A\exp\left(\frac{-\Delta E}{k_Bx}\eight)\)</span>.</li>
+<li><a class="reference internal" href="../classes/Stoner.Fit.ModArrhenius.html#Stoner.Fit.ModArrhenius" title="Stoner.Fit.ModArrhenius"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.ModArrhenius</span></code></a> - The modified Arrhenous expresses <span class="math notranslate nohighlight">\(\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)\)</span> is used when the
+prefactor in the regular Arrhenius theory has a temperature dependence. Typically the prefactor exponent ranges for <span class="math notranslate nohighlight">\(-1&lt;n&lt;1\)</span>.</li>
+<li><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.StretchedExponential</span></code> is a standard exponential decay with an additional power <span class="math notranslate nohighlight">\(\beta\)</span> -
+<span class="math notranslate nohighlight">\(y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]\)</span></li>
+<li><code class="xref py py-class docutils literal notranslate"><span class="pre">NDimArrhenius</span></code> is suitable for thermally activated transport in more than 1 dimension, or in variable range hopping processes -
+<span class="math notranslate nohighlight">\(\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)\)</span></li>
+<li><code class="xref py py-class docutils literal notranslate"><span class="pre">VFTEquation</span></code> - the Vogel-Flucher-Tammann Equation is another modification of the Arrhenius equiation which can apply when a process
+has both an activation energy and a threshold temperature (duue to a phase transition for example) and is given by
+<span class="math notranslate nohighlight">\(\tau = A\exp\left(\frac{\Delta E}{x-x_0}\right)\)</span></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="peak-models">
+<h3>Peak Models<a class="headerlink" href="#peak-models" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">lmfit</span></code> package comes with several common peak function models built in which can be used firectly. The Stoner package adds a coouple more to the
+selection:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="../classes/Stoner.Fit.Lorentzian_diff.html#Stoner.Fit.Lorentzian_diff" title="Stoner.Fit.Lorentzian_diff"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.Lorentzian_diff</span></code></a> - the <code class="xref py py-mod docutils literal notranslate"><span class="pre">lmfit</span></code> module incluides built in classes for Lorentzian peaks - but this model is the differential
+of a Lorentzian peak.</li>
+<li><a class="reference internal" href="../classes/Stoner.Fit.FMR_Power.html#Stoner.Fit.FMR_Power" title="Stoner.Fit.FMR_Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.FMR_Power</span></code></a> - although this model is usually used specifically for calculating the absorption spectrum for a Ferromagnetic Resonance
+process, it is in fact a generic combination of both Lorentzian peak and differential forms.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="tunnelling-electron-transport-models">
+<h3>Tunnelling Electron Transport Models<a class="headerlink" href="#tunnelling-electron-transport-models" title="Permalink to this headline">¶</a></h3>
+<p>We also have a number of models for electron tunnelling processes built into the library:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="../classes/Stoner.Fit.Simmons.html#Stoner.Fit.Simmons" title="Stoner.Fit.Simmons"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.Simmons</span></code></a> - the Simmons model describes tunneling through a square barrer potential for the limit where the barrier height
+is comparable to the junction bias.</li>
+<li><a class="reference internal" href="../classes/Stoner.Fit.BDR.html#Stoner.Fit.BDR" title="Stoner.Fit.BDR"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.BDR</span></code></a> - this model introduces a trapezoidal barrier where the barrier height is different between the two electrondes - e.g. where the
+electrodes are composed of different materials.</li>
+<li><a class="reference internal" href="../classes/Stoner.Fit.FowlerNordheim.html#Stoner.Fit.FowlerNordheim" title="Stoner.Fit.FowlerNordheim"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.FowlerNordheim</span></code></a> - this is another simplified model of electron tunneling that has a single barrier heigt and width parameters.</li>
+<li><a class="reference internal" href="../classes/Stoner.Fit.TersoffHammann.html#Stoner.Fit.TersoffHammann" title="Stoner.Fit.TersoffHammann"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.TersoffHammann</span></code></a> - this model just treats tunneling as a linear I-V process and is applicable when the barrier height is large compared
+to the bias across the tunnel barrier.</li>
+<li><a class="reference internal" href="../classes/Stoner.Fit.Strijkers.html#Stoner.Fit.Strijkers" title="Stoner.Fit.Strijkers"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.Strijkers</span></code></a> - this tunnel model describes electrons passing from a superconductor to a non-superconductor with a potential step or
+barrier between the two. In one limit it describes Andreev reflection in a clean interface and in the other, a Giaever Junction (S-I-N).</li>
+<li><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">todo:</th><td class="field-body">Resistively Shunted Josephson junctiuons, under-damped Josephson Junctions</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="magnetism-related-models">
+<h3>Magnetism Related Models<a class="headerlink" href="#magnetism-related-models" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="../classes/Stoner.Fit.Langevin.html#Stoner.Fit.Langevin" title="Stoner.Fit.Langevin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.Langevin</span></code></a> model is used to describe the magnetic momement versus field of a paramagnet.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="other-electrical-transport-models">
+<h3>Other Electrical Transport Models<a class="headerlink" href="#other-electrical-transport-models" title="Permalink to this headline">¶</a></h3>
+<p>Finally we incliudde some other common electrical transport models for solid-state physics.</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="../classes/Stoner.Fit.BlochGrueneisen.html#Stoner.Fit.BlochGrueneisen" title="Stoner.Fit.BlochGrueneisen"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.BlochGrueneisen</span></code></a> - this model describes electrical resistivity of a metal as a function of temperature and can be used to
+extract the Debye temperature <span class="math notranslate nohighlight">\(\Theta_D\)</span>.</li>
+<li><a class="reference internal" href="../classes/Stoner.Fit.FluchsSondheimer.html#Stoner.Fit.FluchsSondheimer" title="Stoner.Fit.FluchsSondheimer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.FluchsSondheimer</span></code></a> - this model describes the electrical resistivity of a thin film as a function of its thickness and can
+be used to extract a mean free path :math:  <cite>lambda_{mfp}</cite> and intrinsic conductivity.</li>
+<li><a class="reference internal" href="../classes/Stoner.Fit.WLfit.html#Stoner.Fit.WLfit" title="Stoner.Fit.WLfit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.WLfit</span></code></a> - the weak localisation fit can be used to describe rthe magnetoconductance of a system with sufficient scattering that
+weak-localisation effects appear,</li>
+<li><a class="reference internal" href="../classes/Stoner.Fit.KittelEquation.html#Stoner.Fit.KittelEquation" title="Stoner.Fit.KittelEquation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.KittelEquation</span></code></a> and <a class="reference internal" href="../classes/Stoner.Fit.Inverse_Kittel.html#Stoner.Fit.Inverse_Kittel" title="Stoner.Fit.Inverse_Kittel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fit.Inverse_Kittel</span></code></a> - the Kittel equation is used to described the magnetic field and frequency
+reponse of the ferromagnetic resonance peak.</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="advanced-fitting-topics">
+<h2>Advanced Fitting Topics<a class="headerlink" href="#advanced-fitting-topics" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="fitting-in-more-than-1d">
 <h3>Fitting In More than 1D<a class="headerlink" href="#fitting-in-more-than-1d" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference internal" href="../classes/Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.curve_fit()</span></code></a> can also be used to fit more complex problems. In the example below, a set of
@@ -516,32 +633,7 @@ setup the model and parameter hints. The configuration file should have one sect
 returns the configured model and also a 2D array of values to feed as the starting values to <a class="reference internal" href="../classes/Stoner.Data.lmfit.html#Stoner.Data.lmfit" title="Stoner.Data.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.lmfit()</span></code></a>. Depending
 on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe code will either perform a single fitting attempt, or do a mapping of the
 <span class="math notranslate nohighlight">\(\\chi^2\)</span> goodeness of fit.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Demo of new Stoner.Analysis.AnalyseFile.lmfit</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
-<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">__home__</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
-<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">cfg_data_from_ini</span><span class="p">,</span><span class="n">cfg_model_from_ini</span>
-
-<span class="n">config</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="s2">&quot;scripts&quot;</span><span class="p">,</span><span class="s2">&quot;PCAR-New.ini&quot;</span><span class="p">)</span>
-<span class="n">datafile</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="s2">&quot;sample-data&quot;</span><span class="p">,</span><span class="s2">&quot;PCAR Co Data.csv&quot;</span><span class="p">)</span>
-
-<span class="n">d</span><span class="o">=</span><span class="n">cfg_data_from_ini</span><span class="p">(</span><span class="n">config</span><span class="p">,</span><span class="n">datafile</span><span class="p">)</span>
-<span class="n">model</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">cfg_model_from_ini</span><span class="p">(</span><span class="n">config</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
-
-<span class="n">fit</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
-
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="s2">&quot;r-&quot;</span><span class="p">,</span><span class="s2">&quot;bo&quot;</span><span class="p">])</span> <span class="c1"># plot the data</span>
-<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=-</span><span class="mi">25</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">1.02</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
-
-<span class="k">print</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">())</span>
-</pre></div>
-</div>
-<p>(<a class="reference external" href="../samples/lmfit_demo.png">png</a>, <a class="reference external" href="../samples/lmfit_demo.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit_demo.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/lmfit_demo.png" src="../_images/lmfit_demo.png" />
-</div>
-<p>and the same problem using orthogonal distance regression:</p>
+<p>Since the <a class="reference internal" href="../classes/Stoner.Data.odr.html#Stoner.Data.odr" title="Stoner.Data.odr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.odr()</span></code></a> supports the same interface, it can be used as a drop-in replacement as well.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Demo of new Stoner.Analysis.AnalyseFile.lmfit</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
@@ -585,16 +677,28 @@ on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe cod
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Curve Fitting in the Stoner Pacakge</a><ul>
-<li><a class="reference internal" href="#intropduction">Intropduction</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
 <li><a class="reference internal" href="#why-use-the-stoner-package-fitting-wrappers">Why Use the Stoner Package Fitting Wrappers?</a></li>
-<li><a class="reference internal" href="#simple-polynomial-fits">Simple polynomial Fits</a></li>
-<li><a class="reference internal" href="#common-features-of-the-function-fitting-methods">Common features of the Function Fitting Methods</a></li>
-<li><a class="reference internal" href="#simple-function-fitting">Simple function fitting</a></li>
-<li><a class="reference internal" href="#fitting-with-limits">Fitting with limits</a><ul>
-<li><a class="reference internal" href="#non-linear-curve-fitting-with-lmfit">Non-linear curve fitting with lmfit</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#simple-polynomial-fits">Simple polynomial Fits</a></li>
+<li><a class="reference internal" href="#fitting-arbitary-functions">Fitting Arbitary Functions</a><ul>
+<li><a class="reference internal" href="#common-features-of-the-function-fitting-methods">Common features of the Function Fitting Methods</a></li>
+<li><a class="reference internal" href="#simple-function-fitting">Simple function fitting</a></li>
+<li><a class="reference internal" href="#fitting-with-limits">Fitting with limits</a></li>
 <li><a class="reference internal" href="#orthogonal-distance-regression">Orthogonal distance regression</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#included-fitting-models">Included Fitting Models</a><ul>
+<li><a class="reference internal" href="#elementary-models">Elementary Models</a></li>
+<li><a class="reference internal" href="#thermal-physics-models">Thermal Physics Models</a></li>
+<li><a class="reference internal" href="#peak-models">Peak Models</a></li>
+<li><a class="reference internal" href="#tunnelling-electron-transport-models">Tunnelling Electron Transport Models</a></li>
+<li><a class="reference internal" href="#magnetism-related-models">Magnetism Related Models</a></li>
+<li><a class="reference internal" href="#other-electrical-transport-models">Other Electrical Transport Models</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#advanced-fitting-topics">Advanced Fitting Topics</a><ul>
 <li><a class="reference internal" href="#fitting-in-more-than-1d">Fitting In More than 1D</a></li>
 <li><a class="reference internal" href="#non-linear-curve-fitting-with-initialisation-file">Non-linear curve fitting with initialisation file</a></li>
 </ul>
@@ -652,7 +756,7 @@ on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe cod
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

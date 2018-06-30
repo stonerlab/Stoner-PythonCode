@@ -56,7 +56,7 @@
 <dl class="class">
 <dt id="Stoner.Image.stack.ImageStackMixin">
 <em class="property">class </em><code class="descclassname">Stoner.Image.stack.</code><code class="descname">ImageStackMixin</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/stack.html#ImageStackMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.stack.ImageStackMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Implement an interface for a baseFolder to store images in a 3D numpy array for faster access.</p>
 <p class="rubric">Attributes Summary</p>
 <table border="1" class="longtable docutils">
@@ -142,9 +142,9 @@ If clip_negative then clip values outside the range 0,1</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
-<li><strong>normalise</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – normalise the image to the max value of current int type</li>
-<li><strong>clip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – clip resulting range to values between -1 and 1</li>
-<li><strong>clip_negative</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – clip range further to 0,1</li>
+<li><strong>normalise</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – normalise the image to the max value of current int type</li>
+<li><strong>clip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – clip resulting range to values between -1 and 1</li>
+<li><strong>clip_negative</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – clip range further to 0,1</li>
 </ul>
 </td>
 </tr>
@@ -171,8 +171,8 @@ If clip_negative then clip values outside the range 0,1</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
-<li><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – see ImageArray.correct_drift</li>
-<li><strong>upsample_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – see ImageArray.correct_drift</li>
+<li><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – see ImageArray.correct_drift</li>
+<li><strong>upsample_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – see ImageArray.correct_drift</li>
 <li><strong>box</strong> – see ImageArray.correct_drift</li>
 </ul>
 </td>
@@ -207,7 +207,7 @@ Crops to the box given</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><strong>clip_negative</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – If True, clip the negative range (i.e. return 0 for min intensity)
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><strong>clip_negative</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If True, clip the negative range (i.e. return 0 for min intensity)
 even if the image dtype allows negative values.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(imin,imax) (tuple)</em> –     Lower and upper intensity limits.</td>
@@ -284,7 +284,7 @@ even if the image dtype allows negative values.</td>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

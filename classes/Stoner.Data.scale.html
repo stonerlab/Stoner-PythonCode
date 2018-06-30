@@ -73,11 +73,11 @@
 <li><strong>ycol</strong> (<em>column index</em>) – Column with ypoints in it, default to None to use setas attribute value</li>
 <li><strong>xmode</strong> (<em>'affine'</em><em>, </em><em>'linear'</em><em>,</em><em>'scale'</em><em>,</em><em>'offset'</em>) – How to manipulate the x-data to match up</li>
 <li><strong>ymode</strong> (<em>'linear'</em><em>,</em><em>'scale'</em><em>,</em><em>'offset'</em>) – How to manipulate the y-data to match up.</li>
-<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Used to identiyf the set of (x,y) points to be used for scaling. Defaults to the whole data set if not speicifed.</li>
-<li><strong>otherbounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Used to detemrine the set of (x,y) points in the other data file. Defaults to bounds if not given.</li>
-<li><strong>use_estimate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em> or </em><em>3x2 array</em>) – Specifies whether to estimate an initial transformation value or to use the provided one, or
+<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – Used to identiyf the set of (x,y) points to be used for scaling. Defaults to the whole data set if not speicifed.</li>
+<li><strong>otherbounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – Used to detemrine the set of (x,y) points in the other data file. Defaults to bounds if not given.</li>
+<li><strong>use_estimate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em> or </em><em>3x2 array</em>) – Specifies whether to estimate an initial transformation value or to use the provided one, or
 start with an identity transformation.</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true) or to just return
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true) or to just return
 the results of the scaling.</li>
 <li><strong>headers</strong> (<em>2-element list</em><em> or </em><em>tuple of strings</em>) – new column headers to use if replace is True.</li>
 </ul>
@@ -187,7 +187,7 @@ giving the standard error in the transformation matrix components and  <em>new_x
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

@@ -56,7 +56,7 @@
 <dl class="class">
 <dt id="Stoner.plot.PlotMixin">
 <em class="property">class </em><code class="descclassname">Stoner.plot.</code><code class="descname">PlotMixin</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A mixin class that works with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> to add additional plotting functionality.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -309,13 +309,13 @@
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>column_header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – The text to set the column header to,
+<li><strong>column_header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – The text to set the column header to,
 if not supplied then defaults to ‘col#’</li>
-<li><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – The  index (numeric or string) to insert (or replace) the data</li>
-<li><strong>func_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – If column_data is a callable object, then this argument
+<li><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – The  index (numeric or string) to insert (or replace) the data</li>
+<li><strong>func_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – If column_data is a callable object, then this argument
 can be used to supply a dictionary of function arguments to the callable object.</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Replace the data or insert the data (default)</li>
-<li><strong>setas</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Set the type of column (x,y,z data etc - see <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a>)</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Replace the data or insert the data (default)</li>
+<li><strong>setas</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Set the type of column (x,y,z data etc - see <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a>)</li>
 </ul>
 </td>
 </tr>
@@ -349,14 +349,14 @@ the original DataFile Instance as well as returning it.</p>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
 <li><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.</li>
-<li><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – The xlimits, defaults to automatically determined from data</li>
-<li><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – The ylimits, defaults to automatically determined from data</li>
+<li><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – The xlimits, defaults to automatically determined from data</li>
+<li><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – The ylimits, defaults to automatically determined from data</li>
 <li><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.contour</li>
-<li><strong>colorbar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Draw the z-scale color bar beside the plot (True by default)</li>
-<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</li>
-<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – If set to a string, save the plot with this filename</li>
+<li><strong>colorbar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Draw the z-scale color bar beside the plot (True by default)</li>
+<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</li>
+<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If set to a string, save the plot with this filename</li>
 <li><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v2.2.2)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</li>
-<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</li>
+<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</li>
 </ul>
 </td>
 </tr>
@@ -385,13 +385,13 @@ the original DataFile Instance as well as returning it.</p>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
 <li><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.</li>
-<li><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – The xlimits, defaults to automatically determined from data</li>
-<li><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – The ylimits, defaults to automatically determined from data</li>
+<li><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – The xlimits, defaults to automatically determined from data</li>
+<li><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – The ylimits, defaults to automatically determined from data</li>
 <li><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.contour</li>
-<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</li>
-<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – If set to a string, save the plot with this filename</li>
+<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</li>
+<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If set to a string, save the plot with this filename</li>
 <li><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v2.2.2)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</li>
-<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</li>
+<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</li>
 </ul>
 </td>
 </tr>
@@ -433,9 +433,9 @@ zcol (index): column to be used for the Z-data - default value is the column to 
 <tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
 <li><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.</li>
-<li><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – The xlimits</li>
-<li><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – </li>
-<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Type of interploation to use, default is linear</li>
+<li><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – The xlimits</li>
+<li><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – </li>
+<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Type of interploation to use, default is linear</li>
 </ul>
 </td>
 </tr>
@@ -465,16 +465,16 @@ zcol (index): column to be used for the Z-data - default value is the column to 
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
 <li><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.</li>
-<li><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – The xlimits, defaults to automatically determined from data</li>
-<li><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – The ylimits, defaults to automatically determined from data</li>
-<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – </li>
-<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</li>
-<li><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</li>
+<li><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – The xlimits, defaults to automatically determined from data</li>
+<li><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – The ylimits, defaults to automatically determined from data</li>
+<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – </li>
+<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</li>
+<li><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</li>
 <li><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.contour</li>
-<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</li>
-<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – If set to a string, save the plot with this filename</li>
+<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</li>
+<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If set to a string, save the plot with this filename</li>
 <li><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v2.2.2)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</li>
-<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</li>
+<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</li>
 </ul>
 </td>
 </tr>
@@ -496,8 +496,8 @@ zcol (index): column to be used for the Z-data - default value is the column to 
 <tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
 <li><strong>parent</strong> (<em>matplotlib axes</em>) – Which set of axes to add inset to, defaults to the current set</li>
-<li><strong>loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Inset location - can be a string like <em>top right</em> or <em>upper right</em> or a number.</li>
-<li><strong>width</strong><strong>,</strong><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – </li>
+<li><strong>loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Inset location - can be a string like <em>top right</em> or <em>upper right</em> or a number.</li>
+<li><strong>width</strong><strong>,</strong><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – </li>
 <li><strong>kargs</strong> (<em>dictionary</em>) – all other keywords are passed through to inset_locator.inset_axes</li>
 </ul>
 </td>
@@ -537,15 +537,15 @@ columns) of data to be used for the z0data matrix</li>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
 <li><strong>cmap</strong> (<em>matplotlib colour map</em>) – Surface colour map - defaults to the jet colour map</li>
-<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – True Turns on interactive plot control</li>
-<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</li>
-<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – </li>
-<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</li>
-<li><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</li>
+<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – True Turns on interactive plot control</li>
+<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</li>
+<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – </li>
+<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</li>
+<li><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</li>
 <li><strong>figure</strong> (<em>matplotlib figure</em>) – Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is
 always used, otherwise it will default to using the last figure used by this DataFile object.</li>
-<li><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx</li>
-<li><strong>kwords</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</li>
+<li><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx</li>
+<li><strong>kwords</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</li>
 </ul>
 </td>
 </tr>
@@ -574,15 +574,15 @@ always used, otherwise it will default to using the last figure used by this Dat
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
 <li><strong>fmt</strong> (<em>strong</em><em> or </em><em>sequence of strings</em>) – Specifies the format for the plot - see matplotlib documentation for details</li>
 <li><strong>xerr</strong><strong>,</strong><strong>yerr</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Columns of data to get x and y errorbars from. Setting these turns the default plotter to plt.errorbar</li>
-<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – </li>
-<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</li>
-<li><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</li>
-<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</li>
+<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – </li>
+<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</li>
+<li><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</li>
+<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</li>
 <li><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.plot unless error bars are set</li>
-<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</li>
-<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – If set to a string, save the plot with this filename</li>
+<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</li>
+<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If set to a string, save the plot with this filename</li>
 <li><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v2.2.2)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</li>
-<li><strong>multiple</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – <p>how to handle multiple y-axes with a common x axis. Options are:</p>
+<li><strong>multiple</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – <p>how to handle multiple y-axes with a common x axis. Options are:</p>
 <ul>
 <li><em>common</em> single y-axis (default)</li>
 <li><em>panels</em> panels sharing common x axis</li>
@@ -590,7 +590,7 @@ always used, otherwise it will default to using the last figure used by this Dat
 <li><em>y2</em> single axes with 2 y scales</li>
 </ul>
 </li>
-<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</li>
+<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</li>
 </ul>
 </td>
 </tr>
@@ -621,13 +621,13 @@ always used, otherwise it will default to using the last figure used by this Dat
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
-<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – True Turns on interactive plot control</li>
-<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</li>
-<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Filename used to save the plot</li>
+<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – True Turns on interactive plot control</li>
+<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</li>
+<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Filename used to save the plot</li>
 <li><strong>figure</strong> (<em>matplotlib figure</em>) – Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is
 always used, otherwise it will default to using the last figure used by this DataFile object.</li>
-<li><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.</li>
-<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</li>
+<li><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.</li>
+<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</li>
 </ul>
 </td>
 </tr>
@@ -652,19 +652,19 @@ always used, otherwise it will default to using the last figure used by this Dat
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate
+<li><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate
 these from the data provided</li>
-<li><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – Defines the x-axis limits and grid of the data to be plotted</li>
-<li><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – </li>
+<li><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – Defines the x-axis limits and grid of the data to be plotted</li>
+<li><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – </li>
 <li><strong>cmap</strong> (<em>matplotlib colour map</em>) – Surface colour map - defaults to the jet colour map</li>
-<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – True Turns on interactive plot control</li>
-<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</li>
-<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Filename used to save the plot</li>
+<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – True Turns on interactive plot control</li>
+<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</li>
+<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Filename used to save the plot</li>
 <li><strong>figure</strong> (<em>matplotlib figure</em>) – Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is
 always used, otherwise it will default to using the last figure used by this DataFile object.</li>
-<li><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.</li>
-<li><strong>projection</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – Whether to use a 3D projection or regular 2D axes (deault is 3D)</li>
-<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</li>
+<li><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.</li>
+<li><strong>projection</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – Whether to use a 3D projection or regular 2D axes (deault is 3D)</li>
+<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</li>
 </ul>
 </td>
 </tr>
@@ -695,14 +695,14 @@ always used, otherwise it will default to using the last figure used by this Dat
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>colormap</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Vector field colour map - defaults to the jet colour map</li>
+<li><strong>colormap</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Vector field colour map - defaults to the jet colour map</li>
 <li><strong>colors</strong> (<em>column index</em><em> or </em><em>numpy array</em>) – Values used to map the colors of the resultant file.</li>
-<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – glyph type, default is “cone”</li>
-<li><strong>scale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Scale-size of glyphs.</li>
+<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – glyph type, default is “cone”</li>
+<li><strong>scale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Scale-size of glyphs.</li>
 <li><strong>figure</strong> (<em>mlab figure</em>) – Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new figure is always used,
 otherwise it will default to using the last figure used by this DataFile object.</li>
-<li><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx</li>
-<li><strong>kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</li>
+<li><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx</li>
+<li><strong>kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</li>
 </ul>
 </td>
 </tr>
@@ -733,15 +733,15 @@ otherwise it will default to using the last figure used by this DataFile object.
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – </li>
-<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</li>
-<li><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</li>
+<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – </li>
+<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</li>
+<li><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</li>
 <li><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.contour</li>
-<li><strong>headlength</strong><strong>,</strong><strong>headwidth</strong><strong>,</strong><strong>headaxislength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Controls the size of the quiver heads</li>
-<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</li>
-<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – If set to a string, save the plot with this filename</li>
+<li><strong>headlength</strong><strong>,</strong><strong>headwidth</strong><strong>,</strong><strong>headaxislength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Controls the size of the quiver heads</li>
+<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</li>
+<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If set to a string, save the plot with this filename</li>
 <li><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v2.2.2)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</li>
-<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</li>
+<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</li>
 </ul>
 </td>
 </tr>
@@ -875,7 +875,7 @@ function maintains a list of the current sub-plot axes via the subplots attribut
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

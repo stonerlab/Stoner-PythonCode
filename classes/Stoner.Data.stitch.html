@@ -72,12 +72,12 @@
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>overlap</strong> (<em>tuple of</em><em> (</em><em>lower</em><em>,</em><em>higher</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – The band of x values that are used in both data sets to match,
+<li><strong>overlap</strong> (<em>tuple of</em><em> (</em><em>lower</em><em>,</em><em>higher</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – The band of x values that are used in both data sets to match,
 if left as None, thenthe common overlap of the x data is used.</li>
-<li><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – If you know that overlap must be bigger than a certain amount, the bounds between the two
+<li><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – If you know that overlap must be bigger than a certain amount, the bounds between the two
 data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.</li>
-<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</li>
-<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – a stitching function that transforms <span class="math notranslate nohighlight">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
+<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</li>
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – a stitching function that transforms <span class="math notranslate nohighlight">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
 functions defined by <em>mode</em></li>
 <li><strong>p0</strong> (<em>iterable</em>) – if func is not None then p0 should be the starting values for the stitching function parameters</li>
 </ul>
@@ -172,7 +172,7 @@ numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <e
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

@@ -76,14 +76,14 @@ will find sharper peaks more accurately but at the risk of finding more false po
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>significance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
+<li><strong>significance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
 of the data. Bigger means less sensistive, smaller means more likely to detect noise.</li>
-<li><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – name or index of data column that p[rovides the x-coordinate (default None)</li>
-<li><strong>peaks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – select whether to measure peaks in data (default True)</li>
-<li><strong>troughs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – select whether to measure troughs in data (default False)</li>
-<li><strong>sort</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Sor the results by significance of peak</li>
+<li><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – name or index of data column that p[rovides the x-coordinate (default None)</li>
+<li><strong>peaks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – select whether to measure peaks in data (default True)</li>
+<li><strong>troughs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – select whether to measure troughs in data (default False)</li>
+<li><strong>sort</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Sor the results by significance of peak</li>
 <li><strong>modify</strong> (<em>book</em>) – If true, then the returned object is a copy of self with only the peaks/troughs left in the data.</li>
-<li><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – If True (default) then all columns of the data at which peaks in the <em>ycol</em> column are found. <em>modify</em> true implies
+<li><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If True (default) then all columns of the data at which peaks in the <em>ycol</em> column are found. <em>modify</em> true implies
 <em>full_data</em> is also true. If <em>full_data</em> is False, then only the x-column values of the peaks are returned.</li>
 </ul>
 </td>
@@ -165,7 +165,7 @@ returns a 1D array of the x positions of the peaks/troughs.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

@@ -10,7 +10,7 @@ d=Data(x,y,column_headers=["Time","Signal"],setas="xy")
 
 #Do the fitting and plot the result
 func=lambda x,A,B,C:A+B*exp(-x/C)
-fit = d.lmfit(func,result=True,header="Fit",A=1,B=1,C=1,residuals=True)
+fit = d.lmfit(func,result=True,header="Fit",A=1,B=1,C=1,residuals=True,output="report")
 
 #Reset labels
 d.labels=[]

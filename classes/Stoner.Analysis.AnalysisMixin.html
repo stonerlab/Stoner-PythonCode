@@ -56,7 +56,7 @@
 <dl class="class">
 <dt id="Stoner.Analysis.AnalysisMixin">
 <em class="property">class </em><code class="descclassname">Stoner.Analysis.</code><code class="descname">AnalysisMixin</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A mixin calss designed to work with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> to provide additional analysis methods.</p>
 <p class="rubric">Methods Summary</p>
 <table border="1" class="longtable docutils">
@@ -122,7 +122,7 @@
 <tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.normalise" title="Stoner.Analysis.AnalysisMixin.normalise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalise</span></code></a>([target,&nbsp;base,&nbsp;replace,&nbsp;header])</td>
 <td>Normalise data columns by dividing through by a base column value.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.odr" title="Stoner.Analysis.AnalysisMixin.odr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">odr</span></code></a>(model[,&nbsp;xcol,&nbsp;ycol,&nbsp;sigma_x,&nbsp;sigma_y])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.odr" title="Stoner.Analysis.AnalysisMixin.odr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">odr</span></code></a>(model[,&nbsp;xcol,&nbsp;ycol])</td>
 <td>Wrapper around scipy.odr orthogonal distance regression fitting.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.outlier_detection" title="Stoner.Analysis.AnalysisMixin.outlier_detection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outlier_detection</span></code></a>([column,&nbsp;window,&nbsp;…])</td>
@@ -174,10 +174,10 @@
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>poly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Order of polynomial to fit to the data. Must be equal or greater than order (default 1)</li>
-<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Order of differentiation to carry out. Default=0 meaning smooth the data only.</li>
-<li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><em>True</em></a><em>, or </em><em>column_index</em>) – If not None, column index to insert new data, or True to append as last column</li>
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – Header for new column if result is not None. If header is Nne, a suitable column header is generated.</li>
+<li><strong>poly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of polynomial to fit to the data. Must be equal or greater than order (default 1)</li>
+<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of differentiation to carry out. Default=0 meaning smooth the data only.</li>
+<li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><em>True</em></a><em>, or </em><em>column_index</em>) – If not None, column index to insert new data, or True to append as last column</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – Header for new column if result is not None. If header is Nne, a suitable column header is generated.</li>
 </ul>
 </td>
 </tr>
@@ -213,8 +213,8 @@ for differentiating data. This is now a pass through to <a class="reference exte
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – new column header  (defaults to a-b</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Replace the a column with the new data</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – new column header  (defaults to a-b</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Replace the a column with the new data</li>
 </ul>
 </td>
 </tr>
@@ -244,8 +244,8 @@ additional column with the uncertainites will be added to the data.</p>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Isnert a new data column (False) or replace the data column (True, default)</li>
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – The new column header (defaults to the name of the function func</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Isnert a new data column (False) or replace the data column (True, default)</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – The new column header (defaults to the name of the function func</li>
 </ul>
 </td>
 </tr>
@@ -275,9 +275,9 @@ additional column with the uncertainites will be added to the data.</p>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
 <li><strong>yerr</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Column with y-error data if present.</li>
-<li><strong>bin_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Manually override the minimum bin value</li>
-<li><strong>bin_stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Manually override the maximum bin value</li>
-<li><strong>clone</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Return a clone of the current AnalysisMixin with binned data (True)
+<li><strong>bin_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Manually override the minimum bin value</li>
+<li><strong>bin_stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Manually override the maximum bin value</li>
+<li><strong>clone</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Return a clone of the current AnalysisMixin with binned data (True)
 or just the numbers (False).</li>
 </ul>
 </td>
@@ -347,17 +347,17 @@ for each one. In this case the return value is a list of what would be returned 
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – A vector of initial parameter values to try</li>
+<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a>) – A vector of initial parameter values to try</li>
 <li><strong>sigma</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The index of the column with the y-error bars</li>
-<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
-<li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
+<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
+<li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
 the last column will be used. If result is a string or an integer then it is used as a column index.
 Default to None for not adding fitted data</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)</li>
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – If this is a string then it is used as the name of the fitted data. (default None)</li>
-<li><strong>absolute_sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – If False, <cite>sigma</cite> denotes relative weights of the data points. The default True means that
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If this is a string then it is used as the name of the fitted data. (default None)</li>
+<li><strong>absolute_sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If False, <cite>sigma</cite> denotes relative weights of the data points. The default True means that
 the sigma parameter is the reciprocal of the absoluate standard deviation.</li>
-<li><strong>output</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>default &quot;fit&quot;</em>) – Specifiy what to return.</li>
+<li><strong>output</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>default &quot;fit&quot;</em>) – Specifiy what to return.</li>
 </ul>
 </td>
 </tr>
@@ -414,7 +414,7 @@ User guide section <a class="reference internal" href="../UserGuide/curve_fittin
 <li><strong>ycol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><em>list of indices</em>) – indices of y column(s) data</li>
 <li><strong>sym</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Index of column to place symmetric data in default, append to end of data</li>
 <li><strong>asym</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Index of column for asymmetric part of ata. Defaults to appending to end of data</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Overwrite data with output (true)</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Overwrite data with output (true)</li>
 </ul>
 </td>
 </tr>
@@ -466,8 +466,8 @@ User guide section <a class="reference internal" href="../UserGuide/curve_fittin
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – new column header  (defaults to a-b</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Replace the a column with the new data</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – new column header  (defaults to a-b</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Replace the a column with the new data</li>
 </ul>
 </td>
 </tr>
@@ -497,8 +497,8 @@ additional column with the uncertainites will be added to the data.</p>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – new column header  (defaults to a-b</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Replace the a column with the new data</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – new column header  (defaults to a-b</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Replace the a column with the new data</li>
 </ul>
 </td>
 </tr>
@@ -525,12 +525,12 @@ additional column with the uncertainites will be added to the data.</p>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>xcol</strong> (<em>column index</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – column containing x-data or None to use setas attribute</li>
-<li><strong>ycol</strong> (<em>column index</em><em>(</em><em>es</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – column(s) containing the y-data or None to use setas attribute.</li>
-<li><strong>yerr</strong> (<em>column index</em><em>(</em><em>es</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – y error data column or None to use setas attribute</li>
-<li><strong>overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – range of x-data used for the local fit for extrapolating. If int then overlap number of
+<li><strong>xcol</strong> (<em>column index</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – column containing x-data or None to use setas attribute</li>
+<li><strong>ycol</strong> (<em>column index</em><em>(</em><em>es</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – column(s) containing the y-data or None to use setas attribute.</li>
+<li><strong>yerr</strong> (<em>column index</em><em>(</em><em>es</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – y error data column or None to use setas attribute</li>
+<li><strong>overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – range of x-data used for the local fit for extrapolating. If int then overlap number of
 points is used, if float then that range x-axis space is used.</li>
-<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Determines local fitting function. If string should be “linear”, “quadratic” or “cubic” if
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – Determines local fitting function. If string should be “linear”, “quadratic” or “cubic” if
 callable, then represents a function to be fitted to the data.</li>
 </ul>
 </td>
@@ -566,10 +566,10 @@ parameters (i.e. as with <a class="reference internal" href="#Stoner.Analysis.An
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>result</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – Either a column index (or header) to overwrite with the cumulative data,
+<li><strong>result</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – Either a column index (or header) to overwrite with the cumulative data,
 or True to add a new column or None to not store the cumulative result.</li>
-<li><strong>result_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – The new column header for the results column (if specified)</li>
-<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – A function that evaluates for each row to determine if the data should be integrated over.</li>
+<li><strong>result_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – The new column header for the results column (if specified)</li>
+<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A function that evaluates for each row to determine if the data should be integrated over.</li>
 <li><strong>kargs</strong> – Other keyword arguements are fed direct to the scipy.integrate.cumtrapz method</li>
 </ul>
 </td>
@@ -605,9 +605,9 @@ the current values from the <a class="reference internal" href="Stoner.Core.Data
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Type of interpolation function to use - does a pass through from numpy. Default is linear.</li>
-<li><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – If true, then the current AnalysisMixin’s data is replaced with the  newly interpolated data and the current AnalysisMixin is
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Type of interpolation function to use - does a pass through from numpy. Default is linear.</li>
+<li><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If true, then the current AnalysisMixin’s data is replaced with the  newly interpolated data and the current AnalysisMixin is
 returned.</li>
 </ul>
 </td>
@@ -646,16 +646,16 @@ an array of xvalues.</p>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – A vector of initial parameter values to try.</li>
+<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a>) – A vector of initial parameter values to try.</li>
 <li><strong>sigma</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The index of the column with the y-error bars</li>
-<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
-<li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
+<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
+<li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
 the last column will be used. If result is a string or an integer then it is used as a column index.
 Default to None for not adding fitted data</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)</li>
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – If this is a string then it is used as the name of the fitted data. (default None)</li>
-<li><strong>scale_covar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – whether to automatically scale covariance matrix (leastsq only)</li>
-<li><strong>output</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>default &quot;fit&quot;</em>) – Specifiy what to return.</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If this is a string then it is used as the name of the fitted data. (default None)</li>
+<li><strong>scale_covar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – whether to automatically scale covariance matrix (leastsq only)</li>
+<li><strong>output</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>default &quot;fit&quot;</em>) – Specifiy what to return.</li>
 </ul>
 </td>
 </tr>
@@ -700,7 +700,7 @@ columns are the fitted values of the parameters with an additional column for <s
 
 <span class="c1">#Do the fitting and plot the result</span>
 <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">:</span><span class="n">A</span><span class="o">+</span><span class="n">B</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="n">C</span><span class="p">)</span>
-<span class="n">fit</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span><span class="n">A</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">B</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">C</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">residuals</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span><span class="n">A</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">B</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">C</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">residuals</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">output</span><span class="o">=</span><span class="s2">&quot;report&quot;</span><span class="p">)</span>
 
 <span class="c1">#Reset labels</span>
 <span class="n">d</span><span class="o">.</span><span class="n">labels</span><span class="o">=</span><span class="p">[]</span>
@@ -747,8 +747,8 @@ columns are the fitted values of the parameters with an additional column for <s
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>bin_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Override minimum bin value</li>
-<li><strong>bin_stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Override the maximum bin value</li>
+<li><strong>bin_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Override minimum bin value</li>
+<li><strong>bin_stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Override the maximum bin value</li>
 </ul>
 </td>
 </tr>
@@ -771,7 +771,7 @@ boundaries and centres for each bin.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>column</strong> (<em>index</em>) – Column to look for the maximum in</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – A callable function that takes a single argument list of
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable function that takes a single argument list of
 numbers representing one row, and returns True for all rows to search in.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(float,int)</em> – (maximum value,row index of max value)</td>
@@ -798,8 +798,8 @@ assignments are used.</p>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>sigma</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – The uncertainity noted for each value in the mean</li>
-<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – A callable function that takes a single argument list of
+<li><strong>sigma</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a>) – The uncertainity noted for each value in the mean</li>
+<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable function that takes a single argument list of
 numbers representing one row, and returns True for all rows to search in.</li>
 </ul>
 </td>
@@ -831,7 +831,7 @@ assignments are used.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>column</strong> (<em>index</em>) – Column to look for the maximum in</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – A callable function that takes a single argument list of
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable function that takes a single argument list of
 numbers representing one row, and returns True for all rows to search in.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(float,int)</em> – (minimum value,row index of min value)</td>
@@ -861,8 +861,8 @@ assignments are used.</p>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – new column header  (defaults to a-b</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Replace the a column with the new data</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – new column header  (defaults to a-b</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Replace the a column with the new data</li>
 </ul>
 </td>
 </tr>
@@ -894,8 +894,8 @@ to the range (-1,+1) or (0,1) depending on whether the input is bipolar or not.<
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Set True(default) to overwrite  the target data columns</li>
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – The new column header - default is target name(norm)</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Set True(default) to overwrite  the target data columns</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – The new column header - default is target name(norm)</li>
 </ul>
 </td>
 </tr>
@@ -911,7 +911,7 @@ additional column with the uncertainites will be added to the data.</p>
 
 <dl class="method">
 <dt id="Stoner.Analysis.AnalysisMixin.odr">
-<code class="descname">odr</code><span class="sig-paren">(</span><em>model</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>sigma_x=None</em>, <em>sigma_y=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.odr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.odr" title="Permalink to this definition">¶</a></dt>
+<code class="descname">odr</code><span class="sig-paren">(</span><em>model</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.odr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.odr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper around scipy.odr orthogonal distance regression fitting.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -928,16 +928,16 @@ additional column with the uncertainites will be added to the data.</p>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – A vector of initial parameter values to try.</li>
+<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a>) – A vector of initial parameter values to try.</li>
 <li><strong>sigma_x</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The index of the column with the x-error bars</li>
 <li><strong>sigma_y</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The index of the column with the x-error bars</li>
-<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
-<li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
+<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
+<li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
 the last column will be used. If result is a string or an integer then it is used as a column index.
 Default to None for not adding fitted data</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)</li>
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – If this is a string then it is used as the name of the fitted data. (default None)</li>
-<li><strong>output</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>default &quot;fit&quot;</em>) – Specifiy what to return.</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If this is a string then it is used as the name of the fitted data. (default None)</li>
+<li><strong>output</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>default &quot;fit&quot;</em>) – Specifiy what to return.</li>
 </ul>
 </td>
 </tr>
@@ -1041,16 +1041,16 @@ User guide section <a class="reference internal" href="../UserGuide/curve_fittin
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – data window for anomoly detection</li>
-<li><strong>certainty</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – eg 3 detects data 3 standard deviations from average</li>
-<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – what to do with outlying points, options are
+<li><strong>window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – data window for anomoly detection</li>
+<li><strong>certainty</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – eg 3 detects data 3 standard deviations from average</li>
+<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – what to do with outlying points, options are
 * ‘mask’ outlier points are masked (default)
 * ‘mask row’ outlier rows are masked
 * ‘delete’  outlier rows are deleted
 * callable  the value of the action keyword is called with the outlier row
 * anything else defaults to do nothing.</li>
 <li><strong>width</strong> (<em>odd integer</em>) – Number of rows that an outliing spike could occupy. Defaults to 1.</li>
-<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – A function that determines if the current row is an outlier.</li>
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A function that determines if the current row is an outlier.</li>
 </ul>
 </td>
 </tr>
@@ -1131,14 +1131,14 @@ will find sharper peaks more accurately but at the risk of finding more false po
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>significance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
+<li><strong>significance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
 of the data. Bigger means less sensistive, smaller means more likely to detect noise.</li>
-<li><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – name or index of data column that p[rovides the x-coordinate (default None)</li>
-<li><strong>peaks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – select whether to measure peaks in data (default True)</li>
-<li><strong>troughs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – select whether to measure troughs in data (default False)</li>
-<li><strong>sort</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Sor the results by significance of peak</li>
+<li><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – name or index of data column that p[rovides the x-coordinate (default None)</li>
+<li><strong>peaks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – select whether to measure peaks in data (default True)</li>
+<li><strong>troughs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – select whether to measure troughs in data (default False)</li>
+<li><strong>sort</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Sor the results by significance of peak</li>
 <li><strong>modify</strong> (<em>book</em>) – If true, then the returned object is a copy of self with only the peaks/troughs left in the data.</li>
-<li><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – If True (default) then all columns of the data at which peaks in the <em>ycol</em> column are found. <em>modify</em> true implies
+<li><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If True (default) then all columns of the data at which peaks in the <em>ycol</em> column are found. <em>modify</em> true implies
 <em>full_data</em> is also true. If <em>full_data</em> is False, then only the x-column values of the peaks are returned.</li>
 </ul>
 </td>
@@ -1205,11 +1205,11 @@ returns a 1D array of the x positions of the peaks/troughs.</p>
 <li><strong>ycol</strong> (<em>column index</em>) – Column with ypoints in it, default to None to use setas attribute value</li>
 <li><strong>xmode</strong> (<em>'affine'</em><em>, </em><em>'linear'</em><em>,</em><em>'scale'</em><em>,</em><em>'offset'</em>) – How to manipulate the x-data to match up</li>
 <li><strong>ymode</strong> (<em>'linear'</em><em>,</em><em>'scale'</em><em>,</em><em>'offset'</em>) – How to manipulate the y-data to match up.</li>
-<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Used to identiyf the set of (x,y) points to be used for scaling. Defaults to the whole data set if not speicifed.</li>
-<li><strong>otherbounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Used to detemrine the set of (x,y) points in the other data file. Defaults to bounds if not given.</li>
-<li><strong>use_estimate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em> or </em><em>3x2 array</em>) – Specifies whether to estimate an initial transformation value or to use the provided one, or
+<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – Used to identiyf the set of (x,y) points to be used for scaling. Defaults to the whole data set if not speicifed.</li>
+<li><strong>otherbounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – Used to detemrine the set of (x,y) points in the other data file. Defaults to bounds if not given.</li>
+<li><strong>use_estimate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em> or </em><em>3x2 array</em>) – Specifies whether to estimate an initial transformation value or to use the provided one, or
 start with an identity transformation.</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true) or to just return
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true) or to just return
 the results of the scaling.</li>
 <li><strong>headers</strong> (<em>2-element list</em><em> or </em><em>tuple of strings</em>) – new column headers to use if replace is True.</li>
 </ul>
@@ -1269,12 +1269,12 @@ giving the standard error in the transformation matrix components and  <em>new_x
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>xcol</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – Data to use as x data if needed to define a window. If None, use <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a></li>
-<li><strong>ycvol</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – Data to be smoothed</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – If int, then the number of points to use in the smoothing window. If float, then the size in x-data to be used.</li>
-<li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em> or </em><em>column index</em>) – Whether to add the smoothed data to the dataset and if so where.</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Replace the exiting data or insert as a new column.</li>
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – New column header for the new data.</li>
+<li><strong>xcol</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – Data to use as x data if needed to define a window. If None, use <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a></li>
+<li><strong>ycvol</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – Data to be smoothed</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – If int, then the number of points to use in the smoothing window. If float, then the size in x-data to be used.</li>
+<li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em> or </em><em>column index</em>) – Whether to add the smoothed data to the dataset and if so where.</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Replace the exiting data or insert as a new column.</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – New column header for the new data.</li>
 </ul>
 </td>
 </tr>
@@ -1302,7 +1302,7 @@ to the original x values.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>column</strong> (<em>index</em>) – Column to look for the maximum in</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – A callable function that takes a single argument list of
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable function that takes a single argument list of
 numbers representing one row, and returns True for all rows to search in.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(float,float)</em> – A tuple of (min value, max value)</td>
@@ -1329,15 +1329,15 @@ assignments are used.</p>
 <li><strong>xcol</strong> (<em>column index</em>) – Column with x data or if None, use setas attribute.</li>
 <li><strong>ycol</strong> (<em>column index</em>) – Column with y data or if None, use the setas attribute</li>
 <li><strong>sigma</strong> (<em>column index</em><em>, or </em><em>array of data</em>) – Column with weights, or if None use the 1/yerr column.</li>
-<li><strong>replace</strong> (<em>Boolean</em><em> or </em><em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – If True then the y-column data is repalced, if a column index then the
+<li><strong>replace</strong> (<em>Boolean</em><em> or </em><em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If True then the y-column data is repalced, if a column index then the
 new data is added after the specified index, if False then the new y-data is returned and if None, then
 spline object is returned.</li>
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – If <em>replace</em> is True or a column index then use this string as the new column header.</li>
-<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The order of spline to use (1-5)</li>
-<li><strong>smoothing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – The smoothing factor to use when fitting the spline. A value of zero will create an
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – If <em>replace</em> is True or a column index then use this string as the new column header.</li>
+<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The order of spline to use (1-5)</li>
+<li><strong>smoothing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – The smoothing factor to use when fitting the spline. A value of zero will create an
 interpolating spline.</li>
 <li><strong>bbox</strong> (<em>tuple of length 2</em>) – Bounding box for the spline - defaults to range of x values</li>
-<li><strong>ext</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – How to extrapolate, default is “extrapolate”, but can also be “raise”,”zeros” or “const”.</li>
+<li><strong>ext</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – How to extrapolate, default is “extrapolate”, but can also be “raise”,”zeros” or “const”.</li>
 </ul>
 </td>
 </tr>
@@ -1367,12 +1367,12 @@ function.</p>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>overlap</strong> (<em>tuple of</em><em> (</em><em>lower</em><em>,</em><em>higher</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – The band of x values that are used in both data sets to match,
+<li><strong>overlap</strong> (<em>tuple of</em><em> (</em><em>lower</em><em>,</em><em>higher</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – The band of x values that are used in both data sets to match,
 if left as None, thenthe common overlap of the x data is used.</li>
-<li><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – If you know that overlap must be bigger than a certain amount, the bounds between the two
+<li><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – If you know that overlap must be bigger than a certain amount, the bounds between the two
 data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.</li>
-<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</li>
-<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – a stitching function that transforms <span class="math notranslate nohighlight">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
+<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</li>
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – a stitching function that transforms <span class="math notranslate nohighlight">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
 functions defined by <em>mode</em></li>
 <li><strong>p0</strong> (<em>iterable</em>) – if func is not None then p0 should be the starting values for the stitching function parameters</li>
 </ul>
@@ -1420,8 +1420,8 @@ numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <e
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – new column header  (defaults to a-b</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Replace the a column with the new data</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – new column header  (defaults to a-b</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Replace the a column with the new data</li>
 </ul>
 </td>
 </tr>
@@ -1449,14 +1449,14 @@ additional column with the uncertainites will be added to the data.</p>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
 <li><strong>col</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Column index to look for data in</li>
-<li><strong>rising</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – look for case where the data is increasing in value (defaukt True)</li>
-<li><strong>falling</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – look for case where data is fallinh in value (default False)</li>
-<li><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><em>None</em></a>) – rather than returning a fractional row index, return the
+<li><strong>rising</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – look for case where the data is increasing in value (defaukt True)</li>
+<li><strong>falling</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – look for case where data is fallinh in value (default False)</li>
+<li><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – rather than returning a fractional row index, return the
 interpolated value in column xcol. If xcol is False, then return a complete row
 all_vals (bool): return all crossing points of the threshold or just the first. (default False)</li>
 <li><strong>transpose</strong> (<em>bbool</em>) – Swap the x and y columns around - this is most useful when the column assignments
 have been done via the setas attribute</li>
-<li><strong>all_vals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Return all values that match the criteria, or just the first in the file.</li>
+<li><strong>all_vals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Return all values that match the criteria, or just the first in the file.</li>
 </ul>
 </td>
 </tr>
@@ -1539,7 +1539,7 @@ argument list. In order to support the use of assigned columns, this has been sw
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">

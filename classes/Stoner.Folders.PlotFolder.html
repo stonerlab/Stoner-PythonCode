@@ -149,7 +149,7 @@
 
 <span class="c1"># Doing the Kittel fit with an orthogonal distance regression as we have x errors not y errors</span>
 <span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mf">200E3</span><span class="p">,</span><span class="mf">10E3</span><span class="p">]</span><span class="c1"># Some sensible guesses</span>
-<span class="n">result</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">Inverse_Kittel</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Kittel Fit&quot;</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">Inverse_Kittel</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Kittel Fit&quot;</span><span class="p">,</span><span class="n">output</span><span class="o">=</span><span class="s2">&quot;report&quot;</span><span class="p">)</span>
 <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;y&quot;</span>
 
 <span class="n">result</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">yformatter</span><span class="o">=</span><span class="n">TexEngFormatter</span>
@@ -168,7 +168,7 @@
 <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Delta_H&quot;</span><span class="p">,</span><span class="n">e</span><span class="o">=</span><span class="s2">&quot;Delta_H.stderr&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Freq&quot;</span><span class="p">)</span>
 <span class="n">result</span><span class="o">.</span><span class="n">y</span><span class="o">/=</span><span class="n">mu_0</span>
 <span class="n">result</span><span class="o">.</span><span class="n">e</span><span class="o">/=</span><span class="n">mu_0</span>
-<span class="n">result</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">Linear</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Width&quot;</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">Linear</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Width&quot;</span><span class="p">,</span><span class="n">output</span><span class="o">=</span><span class="s2">&quot;report&quot;</span><span class="p">)</span>
 <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;y&quot;</span>
 <span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r.&quot;</span><span class="p">,</span><span class="s2">&quot;b-&quot;</span><span class="p">])</span>
 <span class="n">result</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">Linear</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mf">5.5E9</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">2.8E3</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="mi">8</span><span class="p">})</span>
@@ -264,7 +264,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 25, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
