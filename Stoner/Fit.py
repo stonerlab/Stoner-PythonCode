@@ -378,7 +378,7 @@ def modArrhenius(x, A, DE, n):
     Return:
         Typically a rate corresponding to the given temperature values.
 
-    The Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
+    The modified Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
 
     Example:
