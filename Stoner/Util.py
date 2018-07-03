@@ -158,7 +158,7 @@ def hysteresis_correct(data, **kargs):
     #Get other keyword arguments
     correct_background=kargs.pop("correct_background",True)
     correct_H=kargs.pop("correct_H",True)
-    saturation_fraction=kargs.pop("saturation_fraction",0.2)
+    saturation_fraction=kargs.pop("saturated_fraction",0.2)
 
     while True:
         up,down=_up_down(data)
