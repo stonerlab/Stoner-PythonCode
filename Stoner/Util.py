@@ -169,12 +169,12 @@ def hysteresis_correct(data, **kargs):
         mix = min(data.x) * (1 - saturation_fraction)
 
 
-        up._push_mask(lambda x, r: x >= mix)
+        up._push_mask(up.x >= mix)
         pts=up.x.count()
         up._pop_mask()
         assert pts>=3,"Not enough points in the negative saturation state.(mix={},pts={},x={})".format(mix,pts,up.x)
 
-        down._push_mask(lambda x, r: x <= mx)
+        down._push_mask(down.x <= mx)
         pts=down.x.count()
         down._pop_mask()
         assert pts>=3,"Not enough points in the positive saturation state(mx={},pts={},x={})".format(mx,pts,down.x)
