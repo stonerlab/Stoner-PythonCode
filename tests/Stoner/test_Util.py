@@ -37,7 +37,7 @@ class Utils_test(unittest.TestCase):
 
     def test_hysteresis(self):
         """Test the hysteresis analysis code."""
-        x=SU.hysteresis_correct(path.join(pth,"./sample-data/QD-SQUID-VSM.dat"),setas="3.xy")
+        x=SU.hysteresis_correct(path.join(pth,"./sample-data/QD-SQUID-VSM.dat"),setas="3.xy",saturated_fraction=0.3)
         self.assertTrue("Hc" in x and "Area" in x and
                        "Hsat" in x and "BH_Max" in x and
                        "BH_Max_H" in x,"Hystersis loop analysis keys not present.")
