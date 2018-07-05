@@ -53,8 +53,8 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(fldr[::2]),ceil(len(fldr)/2.0),"Failed to get the correct number of elements in a folder slice")
 
     def test_discard_earlier(self):
-        self.assertEqual(len(self.fldr2),1,"Folder created with disacrd_earlier has wrong length ({})".format(len(test.fldr2)))
-        self.assertEqual(len(self.fldr3),5,"Folder created without disacrd_earlier has wrong length ({})".format(len(test.fldr3)))
+        self.assertEqual(len(self.fldr2),1,"Folder created with disacrd_earlier has wrong length ({})".format(len(self.fldr2)))
+        self.assertEqual(len(self.fldr3),5,"Folder created without disacrd_earlier has wrong length ({})".format(len(self.fldr3)))
         self.fldr3.keep_latest()
         self.assertEqual(list(self.fldr2.ls),list(self.fldr3.ls),"Folder.keep_latest didn't do the same as discard_earliest in constructor.")
 
