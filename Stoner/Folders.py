@@ -187,7 +187,7 @@ class _combined_metadata_proxy(object):
         else:
             keys=set()
         return sorted(list(keys))
-    
+
     @property
     def common_metadata(self):
         """Return a dictionary of the common_keys that have common values."""
@@ -1859,6 +1859,9 @@ class DiskBasedFolder(object):
         flatten (bool): Specify where to present subdirectories as spearate groups in the folder (False) or as a single group (True). Default is False.
             The :py:meth:`DiskBasedFolder.flatten` method has the equivalent effect and :py:meth:`DiskBasedFolder.unflatten` reverses it.
 
+        discard_earlier (bool): IF there are several files with the same filename apart from !#### being appended just before the extension, then discard
+            all except the one with the largest value of #### when collecting the list of files.
+
         directory (str): The root directory on disc for the folder - by default this is the current working directory.
 
         multifile (boo): Whether to select individual files manually that are not (necessarily) in  a common directory structure.
@@ -1876,6 +1879,7 @@ class DiskBasedFolder(object):
               "directory":None,
               "multifile":False,
               "readlist":True,
+              "discard_earlier":False,
               }
 
 
@@ -2056,6 +2060,32 @@ class DiskBasedFolder(object):
                 files.append(f)
         return dirs,files
 
+    def _discard_earlier(self,files):
+        """Helper function to discard files where a similar named file with !#### exists."""
+        search=re.compile(r"^(?P<basename>.*)\!(?P<rev>\d+)(?P<ext>\.[^\.]*)$")
+        dups=OrderedDict()
+        ret=[]
+        for f in files:
+            match=search.match(f)
+            if match:
+                fname="{basename}{ext}".format(**match.groupdict())
+                rev=int(match.groupdict()["rev"])
+                if fname in dups:
+                    try:
+                        if dups[fname]>rev:
+                            continue
+                    except TypeError:
+                        pass
+                dups[fname]=rev
+            else:
+                dups[f]=None
+        for f,rev in dups.items():
+            if rev is None:
+                ret.append(f)
+            else:
+                base,ext=os.path.splitext(f)
+                ret.append("{}!{:04d}{}".format(base,rev,ext))
+        return ret
 
     @property
     def basenames(self):
@@ -2081,7 +2111,7 @@ class DiskBasedFolder(object):
             raise ValueError("pattern should be a string, regular expression or iterable object not a {}".format(type(value)))
 
 
-    def getlist(self, recursive=None, directory=None,flatten=None):
+    def getlist(self, recursive=None, directory=None,flatten=None, discard_earlier=None):
         """Scans the current directory, optionally recursively to build a list of filenames
 
         Keyword Arguments:
@@ -2100,6 +2130,8 @@ class DiskBasedFolder(object):
         self.__clear__()
         if recursive is None:
             recursive=self.recursive
+        if discard_earlier is None:
+            discard_earlier=self.discard_earlier
         if flatten is None:
             flatten=getattr(self,"flat",False) #ImageFolders don't have flat because it clashes with a numpy attribute
         if isinstance(directory,  bool) and not directory:
@@ -2112,6 +2144,8 @@ class DiskBasedFolder(object):
             self.directory=os.getcwd()
         root=self.directory
         dirs,files=self._scan_dir(root)
+        if discard_earlier:
+            files=self._discard_earlier(files)
         for p in self.exclude: #Remove excluded files
             if isinstance(p,string_types):
                 for f in list(fnmatch.filter(files,p)):
@@ -2163,6 +2197,23 @@ class DiskBasedFolder(object):
             for n,o in zip(relpaths,self.__names__()):
                 self.__setter__(n,self.__getter__(o))
                 self.__deleter__(o)
+        return self
+
+    def keep_latest(self):
+        """Filter out earlier revisions of files with the same name.
+
+        The CM group LabVIEW software will avoid overwirting files when measuring by inserting !#### where #### is an integer revision number just before the
+        filename extension. This method will look for instances of several files which differ in name only by the presence of the revision number and will
+        kepp only the highest revision number. This is useful if several measurements of the same experiment have been carried out, but only the last file is
+        the correct one.
+
+        Returns:
+            A copy of the DataFolder.
+        """
+        files=list(self.ls)
+        keep=set(self._discard_earlier(files))
+        for f in list(set(files)-keep):
+            self.__deleter__(self.__lookup__(f))
         return self
 
     def save(self,root=None):

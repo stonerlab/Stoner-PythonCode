@@ -37,6 +37,8 @@ class Folders_test(unittest.TestCase):
 
     def setUp(self):
         self.fldr=SF.DataFolder(self.datadir,debug=False)
+        self.fldr2=SF.DataFolder(path.join(pth,"tests/Stoner/folder_data"),pattern="*.dat",discard_earlier=True)
+        self.fldr3=SF.DataFolder(path.join(pth,"tests/Stoner/folder_data"),pattern="*.dat")
 
     def test_Folders(self):
         self.setUp()
@@ -49,6 +51,12 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(fldr.count(fldr[-1].filename),1,"Failed to count filename with string")
         self.assertEqual(fldr.count("*.dat"),len(datfiles),"Count with a glob pattern failed")
         self.assertEqual(len(fldr[::2]),ceil(len(fldr)/2.0),"Failed to get the correct number of elements in a folder slice")
+
+    def test_discard_earlier(self):
+        self.assertEqual(len(self.fldr2),1,"Folder created with disacrd_earlier has wrong length ({})".format(len(test.fldr2)))
+        self.assertEqual(len(self.fldr3),5,"Folder created without disacrd_earlier has wrong length ({})".format(len(test.fldr3)))
+        self.fldr3.keep_latest()
+        self.assertEqual(list(self.fldr2.ls),list(self.fldr3.ls),"Folder.keep_latest didn't do the same as discard_earliest in constructor.")
 
     def test_Operators(self):
         self.setUp()
@@ -165,7 +173,7 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-    test.test_Folders()
-    #unittest.main()
+    #test.test_Folders()
+    unittest.main()
     #test.test_grouping()
     #test.fldr.each.title
