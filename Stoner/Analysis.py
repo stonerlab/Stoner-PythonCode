@@ -1769,25 +1769,28 @@ class AnalysisMixin(object):
             self.add_column(err_data, header=err_header, index=a + 1, replace=False)
         return self
 
-    def normalise(self, target=None, base=None, replace=True, header=None):
+    def normalise(self, target=None, base=None, replace=True, header=None,scale=None,limits=(0.0,1.0)):
         """Normalise data columns by dividing through by a base column value.
 
         Args:
             target (index): One or more target columns to normalise can be a string, integer or list of strings or integers.
                 If None then the default 'y' column is used.
-            base (index): The column to normalise to, can be an integer or string. If None then the target column is normalised
-                to the range (-1,+1) or (0,1) depending on whether the input is bipolar or not.
 
         Keyword Arguments:
+            base (index): The column to normalise to, can be an integer or string. **Depricated** can also be a tuple (low,high) being the output range
             replace (bool): Set True(default) to overwrite  the target data columns
             header (string or None): The new column header - default is target name(norm)
+            scale (None or tuple of float,float): Output range after normalising - low,high or None to map to -1,1
+            limits (low,high): Take the input range from the *high* and *low* fraction of the input when sorted.
 
         Returns:
             self: The newly modified :py:class:`AnalysisMixin`.
 
-        If a and b are tuples of length two, then the firstelement is assumed to be the value and
-        the second element an uncertainty in the value. The uncertainties will then be propagated and an
-        additional column with the uncertainites will be added to the data.
+        Notes:
+
+            The *limits* parameter is used to set the input scale being normalised from - if the data has a few outliers then
+            this setting can be used to clip the input range before normalising. The parameters in the limit are the values at
+            the *low* and *high* fractions of the cumulative distribution function of the data.
         """
         _=self._col_args(scalar=True,ycol=target)
 
@@ -1802,16 +1805,27 @@ class AnalysisMixin(object):
             if not istuple(base,float,float) and base is not None:
                 self.divide(t, base, header=header, replace=replace)
             else:
-                i_range=(_np_.nanmin(self[:,t]),_np_.nanmax(self[:,t]))
                 if istuple(base,float,float):
-                    o_range=base
-                elif i_range[0]<0 and i_range[1]>0: #range (-1,1)
-                    o_range=(-1,1)
+                    scale=base
+                elif scale is None:
+                    scale=(-1.0,1.0)
+                if not istuple(scale,float,float):
+                    raise ValueError("limit parameter is either None, or limit or base is a tuple of two floats.")
+                data=self.column(t).ravel()
+                data=_np_.sort(data[~_np_.isnan(data)])
+                if limits!=(0.,1.):
+                    low,high=limits
+                    low=data[int(low*data.size)]
+                    high=data[int(high*data.size)]
                 else:
-                    o_range=(0,1)
-                col=(((self[:,t]-i_range[0])/(i_range[1]-i_range[0]))*(o_range[1]-o_range[0])+o_range[0])
+                    high=data.max()
+                    low=data.min()
+                data=_np_.copy(self.data[:,t])
+                data=_np_.where(data>high,high,_np_.where(data<low,low,data))
+                scl,sch=scale
+                data=(data-low)/(high-low)*(sch-scl)+scl
                 setas=self.setas.clone
-                self.add_column(col,index=t,replace=replace,header=header)
+                self.add_column(data,index=t,replace=replace,header=header)
                 self.setas=setas
         return self
 
