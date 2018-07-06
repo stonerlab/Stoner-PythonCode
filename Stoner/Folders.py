@@ -2078,7 +2078,8 @@ class DiskBasedFolder(object):
                         pass
                 dups[fname]=rev
             else:
-                dups[f]=None
+                if f not in dups:
+                    dups[f]=None
         for f,rev in dups.items():
             if rev is None:
                 ret.append(f)
