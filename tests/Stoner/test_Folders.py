@@ -79,7 +79,7 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
         fldr.flatten()
         if python_v3:
-            (hysteresis_correct@self.fldr4)(setas="3.xy",saturated_fraction=0.25)
+            eval('(hysteresis_correct@self.fldr4)(setas="3.xy",saturated_fraction=0.25)')
             self.assertTrue("Hc" in self.fldr4[0],"Matrix multiplication of callable by DataFolder failed test.")
 
 
