@@ -1057,7 +1057,7 @@ class baseFolder(MutableSequence):
         """
         if not callable(other):
             return NotImplemented
-        return other@self.each #Just bounce it onto the each object
+        return self.each.__rmatmul__(other)  #Just bounce it onto the each object
 
     def __sub__(self,other):
         """Implement the addition operator for baseFolder and metadataObjects."""
