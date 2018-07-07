@@ -53,6 +53,44 @@ class _each_item(object):
 
         self._folder=folder
 
+    def __call__(self,func,*args,**kargs):
+        """Iterate over the baseFolder, calling func on each item.
+
+        Args:
+            func (callable): A Callable object that must take a metadataObject type instance as it's first argument.
+
+        Keyword Args:
+            _return (None, bool or str): Controls how the return value from *func* is added to the DataFolder
+
+        Returns:
+            A list of the results of evaluating *func* for each item in the folder.
+
+        Notes:
+            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is storing, then
+            the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the :py:class:`baseFolder`.
+            If *_result* is True the return value is added to the :py:class:`Stoner.Core.metadataObject`'s metadata under the name
+            of the function. If *_result* is a string. then return result is stored in the corresponding name.
+        """
+        retvals=[]
+        _return=kargs.pop("_return",None)
+        for ix,f in enumerate(self._folder):
+            ret = f.clone
+            ret=func(f,*args,**kargs)
+            retvals.append(ret)
+            if isinstance(ret,self._folder._type) and _return is None:
+                try: #Check if ret has same data type, otherwise will not overwrite well
+                    if ret.data.dtype!=f.data.dtype:
+                        continue
+                except AttributeError:
+                    pass
+                self._folder[ix]=ret
+            elif _return is not None:
+                if isinstance(_return,bool) and _return:
+                    _return=func.__name__
+                self._folder[ix][_return]=ret
+        return retvals
+
+
     def __dir__(self):
         """Return a list of the common set of attributes of the instances in the folder."""
         if len(self._folder)!=0:
