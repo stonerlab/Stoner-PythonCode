@@ -9,6 +9,7 @@ from matplotlib.ticker import AutoLocator
 from os.path import join, dirname, realpath,exists
 from numpy.random import normal
 from inspect import getfile
+from collections import MutableMapping,Mapping
 
 try:
     import seaborn as sns
@@ -108,7 +109,7 @@ class TexEngFormatter(EngFormatter):
 
 
 
-class DefaultPlotStyle(object):
+class DefaultPlotStyle(MutableMapping):
 
     """Produces a default plot style.
 
@@ -197,6 +198,16 @@ class DefaultPlotStyle(object):
             if nk in plt.rcParams:
                 super(DefaultPlotStyle, self).__setattr__("template_{}".format(k), kargs[ok])
 
+    def __delitem__(self,name):
+        if hasattr(self,name):
+            default=getattr(self.__class__(),name)
+            setattr(self,name,default)
+        elif name in plt.rcParams:
+            plt.rcParams[name]=plt.rcdefaults[name]
+            super(DefaultPlotStyle,self).__delattr__("template_{}".format(name.replace(".","_")))
+        else:
+            raise KeyError("{} is not recognised as part of the template".format(name))
+
     def __getattr__(self, name):
         """Provide magic to read certain attributes of the template."""
         if name.startswith("template_"):  #Magic conversion to rcParams
@@ -210,6 +221,27 @@ class DefaultPlotStyle(object):
         else:
             return super(DefaultPlotStyle, self).__getattribute__(name)
 
+    def __getitem__(self,name):
+        try:
+            return self.__getattr__(name)
+        except AttributeError:
+            pass
+        if name in plt.rcParams:
+            return plt.rcParams[name]
+        else:
+            raise KeyError("{} is not recognised as part of the template".format(name))
+
+    def __iter__(self):
+        attrs=[x for x in dir(self) if not callable(x) and not x.startswith("template_")]
+        attrs+=list(plt.rcParams.keys())
+        for f in attrs:
+            yield f
+
+    def __len__(self):
+        attrs=[x for x in dir(self) if not callable(x) and not x.startswith("template_")]
+        attrs+=list(plt.rcParams.keys())
+        return len(attrs)
+
     def __setattr__(self, name, value):
         """Ensure stylesheet can't be overwritten and provide magic for template attributes."""
         if name.startswith("template_"):
@@ -218,6 +250,17 @@ class DefaultPlotStyle(object):
             super(DefaultPlotStyle, self).__setattr__(name, value)
         else:
             super(DefaultPlotStyle, self).__setattr__(name, value)
+
+    def __setitem__(self,name,value):
+        if hasattr(self,name):
+            setattr(self,name,value)
+        else:
+            if name in plt.rcParams:
+                plt.rcParams[name]=value
+                name="template_{}".format(name.replace(".","_"))
+                super(DefaultPlotStyle, self).__setattr__(name, value)
+            else:
+                raise KeyError("{} is not recognised as part of the template".format(name))
 
 
     @property
@@ -229,7 +272,7 @@ class DefaultPlotStyle(object):
         sheets=[]
         classes=[]
         for c in levels: # Iterate through all possible parent classes and build a list of stylesheets
-            if c is self.__class__ or c in classes:
+            if c is self.__class__ or c in classes or not isinstance(c,DefaultPlotStyle):
                 continue
             for f in [join(realpath(dirname(getfile(c))), c.stylename + ".mplstyle"),
                       join(dirname(realpath(getfile(c))), "stylelib",c.stylename + ".mplstyle"),
@@ -260,7 +303,6 @@ class DefaultPlotStyle(object):
     def stylesheet(self,value):
         """Just stop the stylesheet from being set."""
         raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
-
 
     def update(self, **kargs):
         """Update the template with new attributes from keyword arguments.

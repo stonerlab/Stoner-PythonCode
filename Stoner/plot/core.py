@@ -199,16 +199,13 @@ class PlotMixin(object):
     @template.setter
     def template(self,value):
         """Set the current template."""
-        if type(value) == type(object) and issubclass(value, DefaultPlotStyle):
+        if isinstance(value,type) and issubclass(value, DefaultPlotStyle):
             value = value()
         if isinstance(value, DefaultPlotStyle):
             self._template = value
         else:
-            raise ValueError("Template is not of the right class")
+            raise ValueError("Template is not of the right class:{}".format(type(value)))
         self._template.apply()
-
-
-
 
     def _Plot(self, ix, iy, fmt, plotter, figure, **kwords):
         """Private method for plotting a single plot to a figure.
