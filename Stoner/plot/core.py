@@ -219,7 +219,7 @@ class PlotMixin(object):
             **kwords (dict): Other keyword arguments to pass through
 
         """
-
+        kwords=copy.copy(kwords) # Make sure we don;t mutate kwords by accident
         if "label" not in kwords:
             kwords["label"] = self._col_label(iy)
         x = self.column(ix)
@@ -235,9 +235,9 @@ class PlotMixin(object):
         elif plotter in self.no_fmt:
             plotter(x, y, figure=figure, **kwords)
         else:
-            if fmt is None:
-                fmt = "-"
-            plotter(x, y, fmt=fmt, figure=figure, **kwords)
+            if fmt is not None:
+                kwords["fmt"]=fmt
+            plotter(x, y, figure=figure, **kwords)
         for ax in figure.axes:
             self.template.customise_axes(ax, self)
 
@@ -1079,10 +1079,7 @@ class PlotMixin(object):
                 temp_kwords["yerr"] = kargs["yerr"][ix]
             # Call plot
 
-            if fmt_t is None:
-                self._Plot(c.xcol, c.ycol[ix], fmt_t, nonkargs["plotter"], self.__figure, **temp_kwords)
-            else:
-                self._Plot(c.xcol, c.ycol[ix], fmt_t, nonkargs["plotter"], self.__figure, **temp_kwords)
+            self._Plot(c.xcol, c.ycol[ix], fmt_t, nonkargs["plotter"], self.__figure, **temp_kwords)
             self._fix_titles(ix, multiple, **nonkargs)
             if ix > 0:  # Hooks for multiple subplots
                 if multiple == "panels":
