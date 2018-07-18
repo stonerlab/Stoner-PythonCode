@@ -21,6 +21,7 @@ d.figure()
 d.subplot(211)
 # Pkot with our customised defaults
 d.plot()
+d.grid(True,color="green",linestyle="-.")
 d.title="Customised Plot settings"
 #Reset the template to defaults and switch to next subplot
 d.template.clear()
@@ -29,5 +30,6 @@ d.subplot(212)
 d.plot()
 d.title="Style Default settings"
 #Fuixup layout
+d.figwidth=8
 d.tight_layout()
 

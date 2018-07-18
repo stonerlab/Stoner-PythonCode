@@ -9,13 +9,15 @@ Classes:
 
 __all__ = ["PlotMixin","hsl2rgb"]
 from Stoner.compat import python_v3,string_types,index_types
-from Stoner.tools import _attribute_store, isNone,isAnyNone,all_type,isiterable,typedList,get_option
+from Stoner.tools import _attribute_store, isNone,isAnyNone,all_type,isiterable,typedList,get_option,fix_signature
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 
 import numpy as _np_
 from scipy.interpolate import griddata
 import os
+from collections import Mapping
+from functools import wraps
 
 import platform
 import copy
@@ -119,6 +121,14 @@ class PlotMixin(object):
         else:
             ret = None
         return ret
+    
+    @property
+    def cmap(self):
+        return plt.get_cmap()
+    
+    @cmap.setter
+    def cmap(self,cmap):
+        return plt.set_cmap(cmap)
 
     @property
     def fig(self):
@@ -457,24 +467,68 @@ class PlotMixin(object):
 
                 All other attrbiutes are passed over to the parent class
                 """
-        if name.startswith("plt_") and hasattr(plt,name[4:]):
-            return getattr(plt,name[4:])
+        func=None
+        o_name=name
+        mapping={"plt_":(plt,"pyplot"),"ax_":(plt.Axes,"axes"),"fig_":(plt.Figure,"figure")}
+
         try:
-            return super(PlotMixin, self).__getattr__(name)
+            return object.__getattribute__(self,o_name)
         except AttributeError:
-            if not isinstance(self.__figure, mplfig.Figure):
-                raise AttributeError("Unknown attribute {}".format(name))
-            ax = self.__figure.axes
-            if "get_{}".format(name) in dir(ax):
-                func = ax.__getattribute__("get_{}".format(name))
-                ret = func()
-            elif name in plt.__dict__:  # Sort of a universal pass through to plt
-                ret = plt.__dict__[name]
-            elif name in dir(ax):  # Sort of a universal pass through to plt
-                ret = ax.__getattribute__(name)
-            else:
-                raise AttributeError("Unknown attribute {}".format(name))
+            pass
+        
+        #First look for a function in the pyplot package
+        for prefix,(obj,key) in mapping.items():
+            name=o_name[len(prefix):] if o_name.startswith(prefix) else o_name
+            if name in dir(obj):
+                return self._pyplot_proxy(name,key)
+
+        #Nowcheck for prefixed access on axes and figures with get_
+        if name.startswith("ax_") and "get_{}".format(name[3:]) in dir(plt.Axes):
+            name=name[3:]
+        if "get_{}".format(name) in dir(plt.Axes) and self.__figure:
+            tfig = plt.gcf()
+            tax = tfig.gca()  # protect the current axes and figure
+            if self.fig is None: # oops we need a figure first!
+                self.figure()
+            ax = self.fig.gca()
+            func = ax.__getattribute__("get_{}".format(name))
+        if name.startswith("fig_") and "get_{}".format(name[4:]) in dir(plt.Figure):
+            name=name[4:]
+        if "get_{}".format(name) in dir(plt.Figure) and self.__figure:
+            tfig = plt.gcf()
+            tax = tfig.gca()  # protect the current axes and figure
+            if self.fig is None: # oops we need a figure first!
+                self.figure()
+            fig=self.fig
+            func = fig.__getattribute__("get_{}".format(name))
+            
+        if func is None: #Ok Fallback to lookinf again at parent class
+            return super(PlotMixin, self).__getattr__(o_name)
+
+        #If we're still here then we're calling a proxy from that figure or axes                
+        ret=func()
+        plt.figure(tfig.number)
+        plt.sca(tax)        
         return ret
+
+    def _pyplot_proxy(self,name,what):
+        if what not in ["axes","figure","pyplot"]:
+            raise SyntaxError("pyplot proxy can't figure out what to get proxy from.")
+        if what=="pyplot":
+            obj=plt
+        elif what=="figure" and self.__figure:
+            obj=self.__figure
+        elif what=="aces" and self.__figure:
+            obj=self.__figure.gca()
+        else:
+            raise AttributeError("Attempting to manipulate the methods on a figure or axes before a figure has been created for this Data.")
+        func=getattr(obj,name)
+        
+        @wraps(func)
+        def _proxy(*args,**kargs):
+            ret=func(*args,**kargs)
+            return ret
+        return fix_signature(_proxy,func)
 
     def __setattr__(self, name, value):
         """Sets the specified attribute.
@@ -492,25 +546,45 @@ class PlotMixin(object):
             Only "fig" is supported in this class - everything else drops through to the parent class
             value (any): The value of the attribute to set.
         """
-        try:
-            super(PlotMixin, self).__setattr__(name, value)
-        except AttributeError:
-            pass
-        if "set_{}".format(name) in dir(plt.Axes):
+        func=None
+        o_name=name
+
+        if name.startswith("ax_") and "set_{}".format(name[3:]) in dir(plt.Axes):
+            name=name[3:]
+        if "set_{}".format(name) in dir(plt.Axes) and self.__figure:
             tfig = plt.gcf()
             tax = tfig.gca()  # protect the current axes and figure
+
             if self.fig is None: # oops we need a figure first!
                 self.figure()
             ax = self.fig.gca()
-            if not isiterable(value) or isinstance(value, string_types):
-                value = (value, )
             func = ax.__getattribute__("set_{}".format(name))
-            if isinstance(value, dict):
-                func(**value)
-            else:
-                func(*value)
-            plt.figure(tfig.number)
-            plt.sca(tax)
+        if name.startswith("fig_") and "set_{}".format(name[4:]) in dir(plt.Figure):
+            name=name[4:]
+        if "set_{}".format(name) in dir(plt.Figure) and self.__figure:
+            tfig = plt.gcf()
+            tax = tfig.gca()  # protect the current axes and figure
+
+            if self.fig is None: # oops we need a figure first!
+                self.figure()
+            fig=self.fig
+            func = fig.__getattribute__("set_{}".format(name))
+        try:
+            return super(PlotMixin, self).__setattr__(o_name, value)
+        except AttributeError:
+            pass
+        
+        if func is None:
+            raise AttributeError("Unable to set attribute {}".format(o_name))
+
+        if not isiterable(value) or isinstance(value, string_types):
+            value = (value, )
+        if isinstance(value, Mapping):
+            func(**value)
+        else:
+            func(*value)
+        plt.figure(tfig.number)
+        plt.sca(tax)        
 
     def add_column(self, column_data, header=None, index=None, **kargs):
         """Appends a column of data or inserts a column to a datafile instance.
@@ -1200,6 +1274,8 @@ class PlotMixin(object):
         fig = self.quiver_plot(c.xcol, c.ycol, c.ucol, c.vcol, **kargs)
 
         return fig
+    
+    plot_xyuvw = plot_xyuv
 
     def plot_xyzuvw(self, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None, wcol=None, **kargs):
         """Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.

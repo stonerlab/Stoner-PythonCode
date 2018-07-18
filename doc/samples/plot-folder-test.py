@@ -28,9 +28,9 @@ def field_sign(r):
 #Function for customising each individual plot
 def extra(i,j,d):
     d.axvline(x=d["cut"],ls="--")
-    d.title(r"$\nu={:.1f}\,$GHz".format(d.mean("Frequency")/1E9))
-    d.xlabel(r"Field $\mu_0H\,$")
-    d.ylabel("Abs. (arb)")
+    d.title=r"$\nu={:.1f}\,$GHz".format(d.mean("Frequency")/1E9)
+    d.xlabel=r"Field $\mu_0H\,$"
+    d.ylabel="Abs. (arb)"
     d.plt_legend(loc=3)
     d.annotate_fit(FMR_Power,fontdict={"size":8},x=0,y=1000)
 
@@ -43,12 +43,11 @@ d.labels=None
 #Deine x and y columns and normalise to a big number
 d.setas(x="Field",y="FMR")
 d.normalise(base=(-1E6,1E6))
+fldr=d.split(field_sign,"Frequency")
 
 #Split the data file into separate files by frequencies and sign of field
-fldr=PlotFolder(d.split(field_sign,"Frequency")) # Convert to a PlotFolder
+fldr=PlotFolder(fldr) # Convert to a PlotFolder
 fldr.template=template # Set my custom plot template
-
-
 for f in fldr[-1]: # Invert the negative field side
     f.x=-f.x[::-1]
     f.y=-f.y[::-1]
@@ -69,6 +68,7 @@ for s in fldr.groups:# Fit each FMR spectra
         f.setas[-1]="y"
 
     #Now plot all the fits
+
     subfldr.plots_per_page=6 # Plot results
     subfldr.plot(figsize=(8,8),extra=extra)
 
@@ -100,7 +100,6 @@ result.plot(fmt=["r.","b-"])
 result.annotate_fit(Inverse_Kittel,x=7E9,y=1E5,fontdict={"size":8})
 result.ylabel="$H_{res} \\mathrm{(Am^{-1})}$"
 result.title="Inverse Kittel Fit"
-
 
 #Get alpha
 result.subplot(212)

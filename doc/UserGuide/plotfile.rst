@@ -12,20 +12,17 @@ Quick Plots
 
 The :py:class:`Data` class is intended to help you make plots that look reasonably good with as little hassle as possible.
 In common with many graph plotting programmes, it has a concept of declaring columns of data to be used for 'x', 'y' axes and
-for containing error bars. This is done with the :py:attr:`Data.setas` attribute (see :ref:`setas` for full details). Once this is done, the plotting
-methods will use these to try to make a sensible plot.::
+for containing error bars. This is done with the :py:attr:`Data.setas` attribute (see :ref:`setas` for full details). 
+Once this is done, the plotting methods will use these to try to make a sensible plot.::
 
-   p.setas="xye"
-   p.setas=["x","y","e"]
-   print(p.setas)
+    p.setas="xye"
+    p.plot()
 
+:py:meth:`Data.plot` is simply a wrapper that insepects the available columns and calls either :py:meth:`Data.plot_xy` or 
+:py:meth:`Data.plot_xyz` as appropriate. All keyword arguments to :py:meth:`Data.plot` are passed on to the actual plotting method.
 
-Once the columns are identified, the :py:meth:`Data.plot` method can be used to do the actual plotting. This is simply a wrapper that insepects the
-available columns and calls either :py:meth:`Data.plot_xy` or :py:meth:`Data.plot_xyz` as appropriate. All keyword arguments to :
-py:meth:`Data.plot` are passed on to the actual plotting method.
-
-Each :py:class:`Data` instance maintains it's own :py:class:`matplotlib.pyplot.Figure` in the :py:attr:`Data.fig` attribute, if no figure is set when the
-:py:meth:`Data.plot` method is called, a new figure will be created.
+Each :py:class:`Data` instance maintains it's own :py:class:`matplotlib.pyplot.Figure` in the :py:attr:`Data.fig` attribute, if no 
+figure is set when the :py:meth:`Data.plot` method is called, a new figure will be created.
 
 Types of Plot
 =============
@@ -33,13 +30,14 @@ Types of Plot
 :py:meth:`Data.plot` will try to make the msot sensible choice of plot depending on which columns you have specified and
 the number of axes represetned.
 
-    * x-y, x-y+-e, x-y-e-y-e etc. data will default to a 2D scatter plot with error bars
-    * x-y-z data will be converted to a grid and plotted as a 3D surface plot.
+    * x-y, x-y+-e, x-y-e-y-e etc. data will default to a 2D scatter plot with error bars and call :py:meth:`data.plot)xy`
+    * x-y-z data will be converted to a grid and plotted as a 3D surface plot and call :py:meth:`Data.plot_xyz`
     * x-y-u-v (i.e. 2D vectro fields) and x-y-u-v-w (3D vectros on a 2D plane) will be plotted as a colour image
         where the colour is mapped to hue-saturation-luminescence scale. The hue gives the in plane ange while the luminescene gives
-        the out of plane component of the vector field.
+        the out of plane component of the vector field. These are handdled with :py:meth:`Data.plot_xyuv`
     * x-y-z-u-v-w data (i.e. 3D vector field on a 3D grid) is represented as a 3D quiver plot with coloured quivers (using the same H-S-L
-        colour space mapping as above) assuming mayavi is importable.
+        colour space mapping as above) assuming mayavi is importable, otherwise using a 3D quiver plot from matplotlib's 3D toolkit.
+        :py:meth:`Data.plot_xyzuvw` handles the work for this case.
 
 An alternative plot type for data with errorbars in :py:func:`plotutils.errorfill`. This uses a shaded line as an
 alternative to the error bars, where the shading of the line varies from intense to transparent the further one
@@ -68,11 +66,11 @@ through to the relevant plotting function. The final example illustrates a conve
 plots. By default, :py:meth:`Data.plot_xy` uses the **pyplot.plot** function to produce linear scaler plots. There
 are a number of useful plotter functions that will work like this
 
-*   [pyplot.semilogx,pyplot.semilogy] These two plotting functions will produce log-linear plots, with semilogx making
-    the x-axes the log one and semilogy the y-axis.
-*   [pyplot.loglog] Liek the semi-log plots, this will produce a log-log plot.
-*   [pyplot.errorbar] this particularly useful plotting function will draw error bars. The values for the error bars are
-    passed as keyword arguments, *xerr* or *yerr*. In standard matplotlib, these can be numpy arrays or constants.
+*   [:py:func:`matplotlib.pyplot.semilogx`,:py:func:`matplotlib.pyplot.semilogy`] These two plotting functions will produce 
+    log-linear plots, with semilogx making the x-axes the log one and semilogy the y-axis.
+*   [:py:func:`matplotlib.pyplot.loglog`] Like the semi-log plots, this will produce a log-log plot.
+*   [:py:func:`matplotlib.pyplot.errorbar`] this particularly useful plotting function will draw error bars. The values for 
+    the error bars are passed as keyword arguments, *xerr* or *yerr*. In standard matplotlib, these can be numpy arrays or constants.
     :py:meth:`Data.plot_xy` extends this by intercepting these arguements and offering some short cuts::
 
          p.plot_xy(x,y,plotter=errorbar,yerr='dResistance',xerr=[5,'dTemp+'])
@@ -197,7 +195,7 @@ Very Quick Plotting
 ===================
 
 For convenience, a :py:meth:`Data.plot` method is defined that will try to work out the necessary details. In combination
-with the :py:attr:`Stoner.Core.Data.setas` attribute it allows very quick plots to be constructed.
+with the :py:attr:`Data.setas` attribute it allows very quick plots to be constructed.
 
 .. plot:: samples/single_plot.py
     :include-source:
@@ -215,7 +213,7 @@ combined in a single figure.::
     p2.plot_xy(0,1,'bo',figure=p1.fig)
 
 Likewise the :py:attr:`Data.axes` attribute returns the current axes object of the current figure in use by the :py:class:`Data`
-instance.
+instance. :py:attr:`Data.axes` will always return a list of :py:class:`matplotlib.axes.Axes` instances, one for each sub-plot on the figure.
 
 There's a couple of extra methods that just pass through to the pyplot equivalents::
 
@@ -226,9 +224,11 @@ Setting Axes Labels, Plot Titles and Legends
 --------------------------------------------
 
 :py:class:`Data` provides some useful attributes for setting specific aspects of the figures. Any
-*get_* and *set_* method of :py:class:`pyplot.Axes` can be read or written as a :py:class:`Data` attribute.
-Internally this is implemented by calling the corresponding method on the current axes of the :py:class:`Data`'s
-figure. When setting the attribute, lists and tuples will be assumed to contain positional arguments and dictionaries
+*get_* and *set_* method of :py:class:`matplotlib.pyplot.Axes` or :py:class:`matplotlib.pyplot.Figure` can be read or 
+written as a :py:class:`Data` attribute.
+
+Internally this is implemented by calling the corresponding method on the current axes or fgiure of the :py:class:`Data` 
+instance. When setting the attribute, lists and tuples will be assumed to contain positional arguments and dictionaries
 keyword arguments. If you want to pass a single tuple, list or dictionary, then you should wrap it in a single
 element tuple.
 
@@ -243,9 +243,9 @@ Particualrly useful attributes include:
         header is used instead. If a column header is changed, then the :py:attr:`Data.labels` attribute will
         be overwritten.
 
-In addition, you can read any method of :py:class:`pyplot.Axes` as an attribute of :py:class:`Data`. This allows
-one to call the methods directly on the Data instance without needing to extract a reference to the current
-axes.::
+In addition, you can read any function of :py:mod:`matplotlib.pyplot`, or method of :py:class:`matplotlib.pyplot.Axes`, or 
+:py:class:`matplotlib.pyplot.Figure`  as an attribute of :py:class:`Data`. This allows one to call the methods directly on 
+the Data instance without needing to extract a reference to the current axes or figure.::
 
     p.xlabel="My X Axis"
     p.set_xlabel("My X Axis")
@@ -253,7 +253,7 @@ axes.::
 are both equivalent, but the latter form allows access to the full keyword arguments of the x axis label control.
 
 Plotting on Second Y (or X) Axes
-================================
+--------------------------------
 
 To plot a second curve using the same x axis, but a different y axis scale, the :py:meth:`Data.y2` method is
 provided. This produces a second axes object with a common x-axis, but independent y-axis on the right of the plot.
@@ -276,7 +276,7 @@ To work out which set of axes you are current working with the :py:attr:`Data.ax
 
 
 Plot Templates
---------------
+==============
 
 .. currentmodule:: Stoner.plot.formats
 
@@ -309,10 +309,6 @@ You can also copy the style template from one plot to the next.
     q=Data()
     q.template=p.template
 
-The possible attributes that can be passed over to the template are essentially all the rc parameters for matplotlib
-(see :py:func:`matplotlib.pyplot.rcParams`) except that periods '.' are replced with underscores '_' and single underscores
-are replaced with double underscores.
-
 Matplotlib makes use of stylesheets - essentially separate files of matplotlibrc entries. The template classes have a stylename
 parameter that controls which stylesheet is used. This can be either one of the built in styles (see :py:attr:`matplotlib.pyplot.styles.available`)
 or refer to a file on disc. The template will search for the file (named *<stylename>*.mplstyle) in.
@@ -330,7 +326,18 @@ the paths to the stylesheets. You can also do any in-place modifications to the 
 Further customisation is possible by creating a subclass of :py:class:`DefaultPlotStyle` and overriding the
 :py:meth:`DefaultPlotStyle.customise` method and :py:meth:`DefaultPlotStyle.customise_axes` method.
 
-The seaborn paclage offers many options for producing visually appealing plots with a higher level abstraction of the matplotlib api/
+One-off changes in the template can also be done. The :py:class:`DefaultPlotStyle` behaves like a dictionary - the keys of the dictionary
+correspond to settings of the :py:class:`matplotlib.RcParams`. Reading the keys of the :py:class:`DefaultPlotStyle` returns the current settings,
+setting them changes the underlying :py:class:`matplotlib.RcParams` and deleting them resets the settings back to defaults. The
+:py:class:`DefaultPlotStyle` otherwise behaves like a standard mutable-mapping object, supporting the expected methods such as *get*, *pop*,
+*keys*, *values* etc. It is also possible to access the settings as attributes of the template except that they are prefixed with *template_* and 
+periods '.' are replced with double underscores '__'.
+
+.. plot:: samples/plotstyles/customising.py
+    :include-source:
+    :outname:  customising
+
+The seaborn package offers many options for producing visually appealing plots with a higher level abstraction of the matplotlib api/
 The :py:class:`SeabornPlotStyle` template class offers a quick interface to using this. It takes attributes :py:attr:`SeabornPlotStyle.stylename`,
 :py:attr:`SeabornPlotStyle.context` and :py:attr:`SeabornPlotStyle.palette` to set the corresponding seaborn settings.
 
