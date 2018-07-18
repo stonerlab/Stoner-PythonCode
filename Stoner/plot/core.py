@@ -16,7 +16,7 @@ from .utils import errorfill
 import numpy as _np_
 from scipy.interpolate import griddata
 import os
-from collections import Mapping
+from collections import Mapping,OrderedDict
 from functools import wraps
 
 import platform
@@ -469,7 +469,9 @@ class PlotMixin(object):
                 """
         func=None
         o_name=name
-        mapping={"plt_":(plt,"pyplot"),"ax_":(plt.Axes,"axes"),"fig_":(plt.Figure,"figure")}
+        mapping=OrderedDict([("plt_",(plt,"pyplot")), # Need to be explicit in 2.7!
+                            ("ax_",(plt.Axes,"axes")),
+                            ("fig_",(plt.Figure,"figure"))])
 
         try:
             return object.__getattribute__(self,o_name)
