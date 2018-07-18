@@ -1,5 +1,6 @@
+**************************
 :mod:`Stoner` Package
-=======================
+**************************
 
 .. module:: Stoner
 
@@ -15,11 +16,20 @@ Class Inheritance Diagram
 
 .. inheritance-diagram:: Data DataFolder
 
+Core Classes
+============
+
 .. automodapi:: Stoner.Core
     :inherited-members:
 
+Analysis Module
+===============
+
 .. automodapi:: Stoner.Analysis
     :no-inheritance-diagram:
+
+Plot Module and Sub-packages
+============================
 
 .. automodapi:: Stoner.plot
     :no-inheritance-diagram:
@@ -29,8 +39,10 @@ Class Inheritance Diagram
 .. automodapi:: Stoner.plot.utils
    :no-main-docstr:
 
-
+Folders Module
+==============
 .. automodapi:: Stoner.Folders
+    :inherited-members:
 
 :mod:`FileFormats` Module
 =========================
@@ -85,15 +97,21 @@ Facility Outputs
 
 The following modules offer specialised file and foler formats.
 
+HDF Support
+-----------
 
 .. automodapi:: Stoner.HDF5
    :no-main-docstr:
 
+Zip File Support
+----------------
 
 .. automodapi:: Stoner.Zip
    :no-main-docstr:
 
 
+Utility Functions
+=================
 
 .. automodapi:: Stoner.Util
    :no-main-docstr:
@@ -101,8 +119,8 @@ The following modules offer specialised file and foler formats.
 .. automodapi:: Stoner.tools
    :allowed-package-names: Stoner.tools
 
-Subpackages
-===========
+Image Subpackage
+================
 
 .. automodapi:: Stoner.Image
 

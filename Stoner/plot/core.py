@@ -199,16 +199,13 @@ class PlotMixin(object):
     @template.setter
     def template(self,value):
         """Set the current template."""
-        if type(value) == type(object) and issubclass(value, DefaultPlotStyle):
+        if isinstance(value,type) and issubclass(value, DefaultPlotStyle):
             value = value()
         if isinstance(value, DefaultPlotStyle):
             self._template = value
         else:
-            raise ValueError("Template is not of the right class")
+            raise ValueError("Template is not of the right class:{}".format(type(value)))
         self._template.apply()
-
-
-
 
     def _Plot(self, ix, iy, fmt, plotter, figure, **kwords):
         """Private method for plotting a single plot to a figure.
@@ -222,7 +219,7 @@ class PlotMixin(object):
             **kwords (dict): Other keyword arguments to pass through
 
         """
-
+        kwords=copy.copy(kwords) # Make sure we don;t mutate kwords by accident
         if "label" not in kwords:
             kwords["label"] = self._col_label(iy)
         x = self.column(ix)
@@ -238,9 +235,9 @@ class PlotMixin(object):
         elif plotter in self.no_fmt:
             plotter(x, y, figure=figure, **kwords)
         else:
-            if fmt is None:
-                fmt = "-"
-            plotter(x, y, fmt=fmt, figure=figure, **kwords)
+            if fmt is not None:
+                kwords["fmt"]=fmt
+            plotter(x, y, figure=figure, **kwords)
         for ax in figure.axes:
             self.template.customise_axes(ax, self)
 
@@ -1082,10 +1079,7 @@ class PlotMixin(object):
                 temp_kwords["yerr"] = kargs["yerr"][ix]
             # Call plot
 
-            if fmt_t is None:
-                self._Plot(c.xcol, c.ycol[ix], fmt_t, nonkargs["plotter"], self.__figure, **temp_kwords)
-            else:
-                self._Plot(c.xcol, c.ycol[ix], fmt_t, nonkargs["plotter"], self.__figure, **temp_kwords)
+            self._Plot(c.xcol, c.ycol[ix], fmt_t, nonkargs["plotter"], self.__figure, **temp_kwords)
             self._fix_titles(ix, multiple, **nonkargs)
             if ix > 0:  # Hooks for multiple subplots
                 if multiple == "panels":

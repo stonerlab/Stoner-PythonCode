@@ -9,6 +9,7 @@ from matplotlib.ticker import AutoLocator
 from os.path import join, dirname, realpath,exists
 from numpy.random import normal
 from inspect import getfile
+from collections import MutableMapping,Mapping
 
 try:
     import seaborn as sns
@@ -108,7 +109,7 @@ class TexEngFormatter(EngFormatter):
 
 
 
-class DefaultPlotStyle(object):
+class DefaultPlotStyle(MutableMapping):
 
     """Produces a default plot style.
 
@@ -178,29 +179,39 @@ class DefaultPlotStyle(object):
         }
     }
 
-    def __init__(self, **kargs):
+    def __init__(self, *args,**kargs):
         """Create a template instance of this template.
 
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
-        may be specified, with .'s replaced with _ and )_ replaced with __.
+        may be specified, with .'s replaced with __. A Mapping type object may be supplied as the first argument
+        which will be used to upodate the rcParams first.
         """
         self._stylesheet=None
         self.update(**kargs)
 
     def __call__(self, **kargs):
         """Calling the template object can manipulate the rcParams that will be set."""
-        for k in kargs:
-            ok=k
+        for k,v in kargs.items():
             if k.startswith("template_"):
-                k=k[9:]
-            nk = k.replace("_", ".").replace("..", "_")
-            if nk in plt.rcParams:
-                super(DefaultPlotStyle, self).__setattr__("template_{}".format(k), kargs[ok])
+                nk = k[:9].replace("__", ".").replace("..", "__")
+                if nk in plt.rcParams:
+                    super(DefaultPlotStyle, self).__setattr__(k,v)
+                    self[k]=v
+
+    def __delitem__(self,name):
+        if hasattr(self,name):
+            default=getattr(self.__class__(),name)
+            setattr(self,name,default)
+        elif name in plt.rcParams:
+            plt.rcParams[name]=plt.rcdefaults[name]
+            super(DefaultPlotStyle,self).__delattr__("template_{}".format(name.replace(".","__")))
+        else:
+            raise KeyError("{} is not recognised as part of the template".format(name))
 
     def __getattr__(self, name):
         """Provide magic to read certain attributes of the template."""
         if name.startswith("template_"):  #Magic conversion to rcParams
-            attrname = name[9:].replace("_", ".").replace("..", "_")
+            attrname = name[9:].replace("__", ".").replace("..", "__")
             if attrname in plt.rcParams:
                 return plt.rcParams[attrname]
             else:
@@ -210,15 +221,54 @@ class DefaultPlotStyle(object):
         else:
             return super(DefaultPlotStyle, self).__getattribute__(name)
 
+    def __getitem__(self,name):
+        try:
+            return self.__getattr__(name)
+        except AttributeError:
+            pass
+        if name in plt.rcParams:
+            return plt.rcParams[name]
+        else:
+            raise KeyError("{} is not recognised as part of the template".format(name))
+
+    def __iter__(self):
+        attrs=[x for x in dir(self) if self._allowed_attr(x)]
+        attrs+=list(plt.rcParams.keys())
+        attrs.sort()
+        for f in attrs:
+            yield f
+
+    def __len__(self):
+        i=-1
+        for i,x in enumerate(self):
+            pass
+        return i+1
+
     def __setattr__(self, name, value):
         """Ensure stylesheet can't be overwritten and provide magic for template attributes."""
         if name.startswith("template_"):
-            attrname = name[9:].replace("_", ".").replace("..", "_")
+            attrname = name[9:].replace("__", ".").replace("..", "__")
             plt.rcParams[attrname] = value
             super(DefaultPlotStyle, self).__setattr__(name, value)
         else:
             super(DefaultPlotStyle, self).__setattr__(name, value)
 
+    def __setitem__(self,name,value):
+        if hasattr(self,name):
+            setattr(self,name,value)
+        else:
+            if name in plt.rcParams:
+                plt.rcParams[name]=value
+                name="template_{}".format(name.replace(".","__"))
+                super(DefaultPlotStyle, self).__setattr__(name, value)
+            else:
+                raise KeyError("{} is not recognised as part of the template".format(name))
+
+    def _allowed_attr(self,x,template=False):
+        return ( not x.startswith("_") and
+                (not template)^x.startswith("template_") and
+                not callable(x) and
+                not isinstance(getattr(type(self),x,None),property) )
 
     @property
     def stylesheet(self):
@@ -229,7 +279,7 @@ class DefaultPlotStyle(object):
         sheets=[]
         classes=[]
         for c in levels: # Iterate through all possible parent classes and build a list of stylesheets
-            if c is self.__class__ or c in classes:
+            if c is self.__class__ or c in classes or not isinstance(c,DefaultPlotStyle):
                 continue
             for f in [join(realpath(dirname(getfile(c))), c.stylename + ".mplstyle"),
                       join(dirname(realpath(getfile(c))), "stylelib",c.stylename + ".mplstyle"),
@@ -261,13 +311,29 @@ class DefaultPlotStyle(object):
         """Just stop the stylesheet from being set."""
         raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
 
+    def clear(self):
+        """Custom clear method that resets everything back o defaults."""
+        attrs=[x for x in dir(self) if self._allowed_attr(x)]
+        defaults=self.__class__()
+        for attr in attrs:
+            setattr(self,attr,getattr(defaults,attr))
+        plt.rcdefaults()
+        attrs=[x for x in dir(self) if self._allowed_attr(x,template=True)]
+        for attr in attrs:
+            delattr(self,attr)
 
-    def update(self, **kargs):
+    def update(self, *args,**kargs):
         """Update the template with new attributes from keyword arguments.
+
+        Up to one positional argument may be supplied
 
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
+        if len(args)==1 and isinstance(args[0],Mapping):
+            super(DefaultPlotStyle,self).update(args[0])
+        elif len(args)>0:
+            raise SyntaxError("Only one posotional argument which should be a Mapping subclass can be supplied toi update.")
         for k in kargs:
             if k in dir(self) and not callable(self.__getattr__(k)):
                 self.__setattr__(k,kargs[k])
@@ -286,16 +352,16 @@ class DefaultPlotStyle(object):
         if "fig_ratio" in dir(self) and "fig_width" in dir(self):
             self.fig_height = self.fig_width / self.fig_ratio
         if "fig_width" and "fig_height" in self.__dict__:
-            self.template_figure_figsize = (self.fig_width, self.fig_height)
+            self.template_figure__figsize = (self.fig_width, self.fig_height)
         for attr in dir(self):
             if attr.startswith("template_"):
-                attrname = attr[9:].replace("_", ".").replace("..", "_")
+                attrname = attr[9:].replace("__", ".").replace("..", "__")
                 value = self.__getattribute__(attr)
                 if attrname in plt.rcParams.keys():
                     params[attrname] = value
         plt.rcParams.update(params)  # Apply these parameters
         projection=kargs.pop("projection","rectilinear")
-        self.template_figure_figsize=kargs.pop("figsize",self.template_figure_figsize)
+        self.template_figure__figsize=kargs.pop("figsize",self.template_figure__figsize)
         if "ax" in kargs: # Giving an axis instance in kargs means we can use that as out figure
             ax=kargs.get("ax")
             plt.sca(ax)
@@ -303,7 +369,7 @@ class DefaultPlotStyle(object):
         if isinstance(figure, bool) and not figure:
             ret = None
         elif figure is not None:
-            fig = plt.figure(figure, figsize=self.template_figure_figsize)
+            fig = plt.figure(figure, figsize=self.template_figure__figsize)
             if len(fig.axes) == 0:
                 rect = [plt.rcParams["figure.subplot.{}".format(i)] for i in ["left", "bottom", "right", "top"]]
                 rect[2] = rect[2] - rect[0]
@@ -321,15 +387,22 @@ class DefaultPlotStyle(object):
             ret = fig
         else:
             if projection == "3d":
-                ret = plt.figure(figsize=self.template_figure_figsize, **kargs)
+                ret = plt.figure(figsize=self.template_figure__figsize, **kargs)
                 ax = ret.add_subplot(111, projection="3d")
             else:
-                ret, ax = plt.subplots(figsize=self.template_figure_figsize, **kargs)
+                ret, ax = plt.subplots(figsize=self.template_figure__figsize, **kargs)
         return ret, ax
 
     def apply(self):
         """Scan for all attributes that start template_ and build them into a dictionary to update matplotlib settings with."""
         plt.style.use(self.stylesheet)
+        for attr in dir(self):
+            v=getattr(self,attr)
+            if not attr.startswith("template_"):
+                continue
+            attr=attr[9:].replace("__",".").replace("..","__")
+            if attr in plt.rcParams:
+                plt.rcParams[attr]=v
 
         self.customise()
 
@@ -353,8 +426,8 @@ class DefaultPlotStyle(object):
         """
         ax.xaxis.set_major_locator(self.xlocater())
         ax.yaxis.set_major_locator(self.ylocater())
-        ax.set_xticklabels(ax.get_xticks(), size=self.template_xtick_labelsize)
-        ax.set_yticklabels(ax.get_yticks(), size=self.template_ytick_labelsize)
+        ax.set_xticklabels(ax.get_xticks(), size=self.template_xtick__labelsize)
+        ax.set_yticklabels(ax.get_yticks(), size=self.template_ytick__labelsize)
         if isinstance(self.xformatter, Formatter):
             xformatter = self.xformatter
         else:
@@ -368,7 +441,7 @@ class DefaultPlotStyle(object):
         ax.yaxis.set_major_formatter(yformatter)
         if "zaxis" in dir(ax):
             ax.zaxis.set_major_locator(self.zlocater())
-            ax.set_zticklabels(ax.get_zticks(), size=self.template_ztick_labelsize)
+            ax.set_zticklabels(ax.get_zticks(), size=self.template_ztick__labelsize)
             ax.zaxis.set_major_formatter(self.zformatter())
 
     def annotate(self, ix, multiple, plot, **kargs):
@@ -391,11 +464,11 @@ class DefaultPlotStyle(object):
             settings = {"xlabel": True, "ylabel": True, "zlabel": True, "title": True}
         try:
             if "xlabel" in kargs and self.show_xlabel and settings["xlabel"]:
-                plt.xlabel(str(kargs["xlabel"]), size=self.template_axes_labelsize)
+                plt.xlabel(str(kargs["xlabel"]), size=self.template_axes__labelsize)
             if "ylabel" in kargs and self.show_ylabel and settings["ylabel"]:
-                plt.ylabel(str(kargs["ylabel"]), size=self.template_axes_labelsize)
+                plt.ylabel(str(kargs["ylabel"]), size=self.template_axes__labelsize)
             if "zlabel" in kargs and self.show_zlabel and settings["zlabel"]:
-                plot.fig.axes[0].set_zlabel(kargs["zlabel"], size=self.template_axes_labelsize)
+                plot.fig.axes[0].set_zlabel(kargs["zlabel"], size=self.template_axes__labelsize)
             if "title" in kargs and self.show_title and settings["title"]:
                 plt.title(kargs["title"])
             if self.showlegend:

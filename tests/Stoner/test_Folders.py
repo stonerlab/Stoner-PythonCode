@@ -22,6 +22,7 @@ import Stoner.HDF5 as SH
 import Stoner.Zip as SZ
 
 from Stoner import Data
+from Stoner.Util import hysteresis_correct
 
 import matplotlib.pyplot as plt
 
@@ -39,6 +40,8 @@ class Folders_test(unittest.TestCase):
         self.fldr=SF.DataFolder(self.datadir,debug=False)
         self.fldr2=SF.DataFolder(path.join(pth,"tests/Stoner/folder_data"),pattern="*.dat",discard_earlier=True)
         self.fldr3=SF.DataFolder(path.join(pth,"tests/Stoner/folder_data"),pattern="*.dat")
+        self.fldr4=SF.DataFolder(self.datadir,pattern="QD-SQUID-VSM.dat")
+        self.fldr5=self.fldr4.clone
 
     def test_Folders(self):
         self.setUp()
@@ -76,6 +79,12 @@ class Folders_test(unittest.TestCase):
         fldr/="Loaded as"
         self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
         fldr.flatten()
+        if python_v3:
+            eval('(hysteresis_correct@self.fldr4)(setas="3.xy",saturated_fraction=0.25)')
+            self.assertTrue("Hc" in self.fldr4[0],"Matrix multiplication of callable by DataFolder failed test.")
+        self.fldr5.each(hysteresis_correct,setas="3.xy",saturated_fraction=0.25)
+        self.assertTrue("Hc" in self.fldr5[0],"Call on DataFolder.each() failed to apply function to folder")
+
 
     def test_Properties(self):
         self.setUp()

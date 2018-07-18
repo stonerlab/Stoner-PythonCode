@@ -53,6 +53,44 @@ class _each_item(object):
 
         self._folder=folder
 
+    def __call__(self,func,*args,**kargs):
+        """Iterate over the baseFolder, calling func on each item.
+
+        Args:
+            func (callable): A Callable object that must take a metadataObject type instance as it's first argument.
+
+        Keyword Args:
+            _return (None, bool or str): Controls how the return value from *func* is added to the DataFolder
+
+        Returns:
+            A list of the results of evaluating *func* for each item in the folder.
+
+        Notes:
+            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is storing, then
+            the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the :py:class:`baseFolder`.
+            If *_result* is True the return value is added to the :py:class:`Stoner.Core.metadataObject`'s metadata under the name
+            of the function. If *_result* is a string. then return result is stored in the corresponding name.
+        """
+        retvals=[]
+        _return=kargs.pop("_return",None)
+        for ix,f in enumerate(self._folder):
+            ret = f.clone
+            ret=func(f,*args,**kargs)
+            retvals.append(ret)
+            if isinstance(ret,self._folder._type) and _return is None:
+                try: #Check if ret has same data type, otherwise will not overwrite well
+                    if ret.data.dtype!=f.data.dtype:
+                        continue
+                except AttributeError:
+                    pass
+                self._folder[ix]=ret
+            elif _return is not None:
+                if isinstance(_return,bool) and _return:
+                    _return=func.__name__
+                self._folder[ix][_return]=ret
+        return retvals
+
+
     def __dir__(self):
         """Return a list of the common set of attributes of the instances in the folder."""
         if len(self._folder)!=0:
@@ -128,7 +166,7 @@ class _each_item(object):
                             continue
                     except AttributeError:
                         pass
-                    self[ix]=ret
+                    self._folder[ix]=ret
                 elif _return is not None:
                     if isinstance(_return,bool) and _return:
                         _return=meth.__name__
@@ -137,6 +175,46 @@ class _each_item(object):
         #Ok that's the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
 
+    def __rmatmul__(self,other):
+        """Implement callable@DataFolder as a generic iterate a function over DataFolder members.
+
+        Returns:
+            An object that supports __call__ and knows about this DataFolder.
+        """
+        if not callable(other):
+            return NotImplemented
+
+        @wraps(other)
+        def _wrapper_(*args,**kargs):
+            """Wraps a call to the metadataObject type for magic method calling.
+
+            Keyword Arguments:
+                _return (index types or None): specify to store the return value in the individual object's metadata
+
+            Note:
+                This relies on being defined inside the enclosure of the objectFolder method
+                so we have access to self and item
+            """
+            retvals=[]
+            _return=kargs.pop("_return",None)
+            for ix,f in enumerate(self._folder):
+                ret = f.clone
+                ret=other(f,*args,**kargs)
+                retvals.append(ret)
+                if isinstance(ret,self._folder._type) and _return is None:
+                    try: #Check if ret has same data type, otherwise will not overwrite well
+                        if ret.data.dtype!=f.data.dtype:
+                            continue
+                    except AttributeError:
+                        pass
+                    self._folder[ix]=ret
+                elif _return is not None:
+                    if isinstance(_return,bool) and _return:
+                        _return=other.__name__
+                    self._folder[ix][_return]=ret
+            return retvals
+        #Ok that's the wrapper function, now return  it for the user to mess around with.
+        return _wrapper_
 
 class _combined_metadata_proxy(object):
 
@@ -1009,6 +1087,15 @@ class baseFolder(MutableSequence):
         for n in self.__names__():
             yield self.__getter__(n,instantiate=True)
 
+    def __rmatmul__(self,other):
+        """Implement callable@DataFolder as a generic iterate a function over DataFolder members.
+
+        Returns:
+            An object that supports __call__ and knows about this DataFolder.
+        """
+        if not callable(other):
+            return NotImplemented
+        return self.each.__rmatmul__(other)  #Just bounce it onto the each object
 
     def __sub__(self,other):
         """Implement the addition operator for baseFolder and metadataObjects."""
@@ -2078,7 +2165,8 @@ class DiskBasedFolder(object):
                         pass
                 dups[fname]=rev
             else:
-                dups[f]=None
+                if f not in dups:
+                    dups[f]=None
         for f,rev in dups.items():
             if rev is None:
                 ret.append(f)
