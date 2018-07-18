@@ -6,10 +6,10 @@ Working with Lots of Files
 
 A common case is that you have measured lots of data curves and now have a large stack of data
 files sitting in a tree of directories on disc and now need to process all of them with some code.
-The :py:mod:`Stoner.Folders` contains classes to make this job easy. 
+The :py:mod:`Stoner.Folders` contains classes to make this job easy.
 
-For the end-user, the top level class is :py:class:`DataFolder` and is designed to complement the :py:class:`Stoner.Core.Data` 
-as a one stop solution for most cases. Like :py:class:`Stoner.Core.Data`, :py:class:`Stoner.Folders.DataFolder` is 
+For the end-user, the top level class is :py:class:`DataFolder` and is designed to complement the :py:class:`Stoner.Core.Data`
+as a one stop solution for most cases. Like :py:class:`Stoner.Core.Data`, :py:class:`Stoner.Folders.DataFolder` is
 exported directly from the :py:mod:`Stoner` package.
 
 :py:class:`DataFolder` and it's friends are essentially containers for :py:class:`Stoner.Core.Data` (or similar classes from the
@@ -37,10 +37,10 @@ the :py:class:`Stoner.Core.Data` general class, if they are in some other format
 
    from Stoner.FileFormats import XRDFile
    f=DataFolder(type=XRDFile,pattern='*.dql')
-   
+
 Strictly, the class pointed to be a the *type* keyword should be a sub class of :py:class:`Stoner.Core.metadataObject`
 and should have a constructor that undersatands the initial string parameter to be a filename to load the object from. The class
-is then available via the :py:attr:`DataFolder.type` attribute and a default instance of the class is available via the 
+is then available via the :py:attr:`DataFolder.type` attribute and a default instance of the class is available via the
 :py:attr:`DataFolder.instance` attribute.
 
 Additional parameters needed for the class's constructor can be passed via a dictionary to the *extra_args* keyword of the
@@ -82,21 +82,21 @@ no data files in them.::
 
 	f.prune()
 	f.flatten()
-    
+
 You can also use the sorted filenames in a :py:class:`DataFolder` to reconstruct the directory structure as
 groups by using the :py:meth:`DataFolder.unflatten` method. Alternatively the *invert* operator ~ will
 flatten and unflatten a :py:class:`DataFolder`::
 
     g=~f # Flatten (if f has groups) or unflatten (if f has no groups)
     f.unlatten()
-    
+
 .. note::
 
     The unary invert operator ~ will always create a new :py:class:`DataFolder` before doing the :py:meth:`DataFolder.flatten` or
     :py:meth:`DataFolder.unflatten` - so that the original :py:class:`DataFolder` is left unchanged. In contrast the
     :py:meth:`DataFolder.flatten` and :py:meth:`DataFolder.unflatten` methods will change the :py:class:`DataFolder` as well as return a
     copy of the changed :py:class:`DataFolder`.
-    
+
 If you need to combine multiple :py:class:`DataFolder` objects or add :py:class:`Stoner.Core.Data`
 objects to an existing :py:class:`DataFolder` then the arithmetic addition operator can be used::
 
@@ -108,12 +108,12 @@ objects to an existing :py:class:`DataFolder` then the arithmetic addition opera
 
 This will firstly combine all the files and then recursively merge the groups. If each :py:class:`DataFolder` instance has the same
 groups, then they are merged with the addition operator.
-    
+
 .. note::
 
     Strictly, the last example is adding an instance of the :py:attr:`DataFolder.type` to the :py:class:`DataFolder` - type checking
     is carried out to ensure that this is so.
-    
+
 
 Getting a List of Files
 -----------------------
@@ -124,13 +124,13 @@ via the :py:attr:`DataFolder.lsgrp` generator fumnction.::
 
     list(f.ls)
     list(f.lsgrp)
-    
+
 .. note::
 
     Both the :py:attr:`DataFolder.ls` and the :py:attr:`DataFolder.lsgrp` are generators, so they only return enties as they
     are iterated over. This is (roughly) in line with the Python 3 way of doing things - if you actually want the whole list
     then you should wrap them in a *list()*.
-    
+
 If you just need the actual filename part and not the directory portion of the filename, the generator :py:attr:`DataFile.basenames`
 will do this.
 
@@ -139,7 +139,7 @@ This will return a list of either instances of the stored :py:class:`Stoner.Core
 or the filename if they haven't been loaded into memory yet.::
 
    f.files
-   
+
 The various subfolder are stored in a dictionary in the :py:attr:`DataFolder.groups` attribute.
 
    f.groups
@@ -152,7 +152,7 @@ tiems - for setting items an exact name or integer index is required.
 Controlling the Gathering of the List of Files
 ----------------------------------------------
 
-The current root directory and pattern are set in the *directory* and *pattern* keywords and stored in the similarly named attributes. 
+The current root directory and pattern are set in the *directory* and *pattern* keywords and stored in the similarly named attributes.
 The :py:meth:`DataFolder.getlist` method can be used to force a new listing of files.::
 
    f.dirctory='/home/phygbu/Data'
@@ -183,6 +183,19 @@ the metadata when the file was read.
 The loading process will also add the metadata key ''Loaded From'' to the file which will give you a
 note of the filename used to read the data. If the attribute :py:attr:`DataFoilder.read_means` is set to **True**
 then additional metadata is set for each file that contains the mean value and standard deviation of each column of data.
+
+Dealing With Revision Numbers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The Leeds CM Physics LabVIEW maeasurement software (aka 'The One Code') has a feature that adds a *revision number* into the filename when it is asked to
+overwrite a saved data file. This revision number is incremented until a non-colliding filename is created - thus ensuring that data isn't accidentally
+overwritten. The downside of this is that sometimes only the latest revision number actually contains the most useful data - in this case the option
+*discard_earlier* in the :py:meth:`DataFolder.__init__` constructor can be useful, or equivalently the :py:meth:`DataFolder.keep_latest` method::
+
+    f=DataFolder(".",discard_earlier=true)
+    # is equivalent to....
+    f=DataFolder(".")
+    f.keep_latest()
 
 Doing Something With Each File
 ------------------------------
@@ -219,6 +232,46 @@ return value, then the user is returned a list of all of those return values. CF
     ret=folder.span("Resistance")
     # ret is a list of tuples as the return value of Data.span() is a tuple
 
+There are two cases where this might not quite do the trick:
+
+    1.  If there is a name collision between the method of the item in the :py:class:`DataFolder` and the :py:class:`DataFolder` itself. To work around this,
+        the :py:attr:`DataFolder.each` attribute allows you to loop implicitly through the contents of the :py:class:`DataFolder`. :py:attr:`DataFolder.each`
+        is actually an instance of a special class :py:class:`Stoner.Folders.each_item` that handles all the magic. Thus the following are equivalent::
+
+            f=DataFolder(",",pattern="*.txt")
+            f.normalise('mac116','mac119')
+            # and
+            f.each.normalise('mac116','mac119')
+
+    2.  What happens if the anaylysis routine you want to run through all the items in :py:class:`DataFolder` is not a method of the :py:class:`Stoner.Data`
+        class, but an arbitary function written by you? In this case, so long as you write your custom analysis function so that the first positional argument
+        is the :py:class:`Stoner.Data` to be analysed, then the following syntax can be used::
+
+            def my_analysis(data,arg1,arg2,karg=True)
+                """Some sort of analysis function with some arguments and keyword argument that works
+                on some data *data*."""
+                return data.modified()
+
+            f.each(my_analysis,arg1,arg2,karg=False)
+
+        If the return value of the function is another instance of :py:class:`Stoner.Data` (or whatever is being stored as the items in the
+        :py:class:`DataFolder`) then it will replace the items inside the :py:class:`DataFolder`. The call to :py:attr:`DataFolder.each` will also return a
+        simple list of the return values. If the function retuns something else, then you can have it added to the metadata of each item in the
+        :py:class:`DataFolder` by adding a *_return* keyword that can either be True to use the function name as the metadata name or a string to specify
+        the name of the metadata to store the return value explicitly.
+
+        Thus, if your analysis function calcualtes some parameter that you want to call *beta* you might use the following::
+
+            f=DataFolder(",",pattern="*.txt")
+            f.each(my_analysis,arg1,arg2,karg=False,_return="beta")
+
+        Finally if you are using Python 3.5+, then you can do the same thing as calling :py:attr:`Datafolder.each` with the matrix multiplication oeprator @::
+
+            (my_analysis@f)(arg1,arg2,karg=False)
+
+        *(my_analysis@f)* creates the callable object that iterates *my_analysis* over f, the second set of parenthesis above jsut calls this iterating object.
+
+
 :py:class:`DataFolder` is also indexable and has a length::
 
    f=DataFolder()
@@ -229,6 +282,7 @@ return value, then the user is returned a list of all of those return values. CF
 For the second case of indexing, the code will search the list of file names for a matching file
 and return that (roughly equivalent to doing *f.files.index("filename")]*) But see :ref:`groups`
 for creating a sub DataFolder with a named index.
+
 
 .. _groups:
 
@@ -288,14 +342,14 @@ based on metadata values.::
     f.select(user__contains="phygbu",user__contains="phyma")
     f.select(user__contains="phygbu").select(project__icontains="superconduct")
     f.select({"temp:T1":4.2})
-    
+
 The basic pattern of the :py:meth:`DataFolder.select` method is that each keyword argument determines both the name of the metadata to use
 as the asis of the selection and also the operation to be performed. The value of the keyword argument is the value use to check. The oepration is
 seperated from the column name by a double underscore.
 
 In the first example, only those files with a metadata value "temperature_T1" which is 4.2 will be selected, here there is no operator specified,
-so for a single scalar value it is assumed to be ''__eq'' for equals. For a tuple it would be ''__between'' and for a longer list ''__in''. 
-In the second example, the ''__gt'' (greater than) operator is used and in the third it is ''__between'', but in addition, this is inverted with 
+so for a single scalar value it is assumed to be ''__eq'' for equals. For a tuple it would be ''__between'' and for a longer list ''__in''.
+In the second example, the ''__gt'' (greater than) operator is used and in the third it is ''__between'', but in addition, this is inverted with
 '__not''. The fourth option illustrates a test with memtadata whose values are strings. In addition, the use of the two keyword arguments is the
 logical OR of testing for either. The equiavblant process for a logical AND is shown in the sixth example with successive selects (the ''__icontains''
 operator is a case insenesitive match). The final example uses a dictionary passed as a non-keyword argument to show how to select memtadata keys

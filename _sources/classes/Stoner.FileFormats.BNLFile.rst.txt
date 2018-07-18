@@ -15,6 +15,7 @@ Stoner.FileFormats.BNLFile
    
       ~Stoner.FileFormats.BNLFile.__init__
       ~Stoner.FileFormats.BNLFile.add_column
+      ~Stoner.FileFormats.BNLFile.adjust_setas
       ~Stoner.FileFormats.BNLFile.clear
       ~Stoner.FileFormats.BNLFile.closest
       ~Stoner.FileFormats.BNLFile.column

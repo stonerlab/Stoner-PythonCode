@@ -32,6 +32,7 @@ Stoner.DataFolder
       ~Stoner.DataFolder.index
       ~Stoner.DataFolder.insert
       ~Stoner.DataFolder.items
+      ~Stoner.DataFolder.keep_latest
       ~Stoner.DataFolder.keys
       ~Stoner.DataFolder.make_name
       ~Stoner.DataFolder.next

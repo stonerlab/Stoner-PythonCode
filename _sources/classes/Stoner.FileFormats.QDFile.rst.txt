@@ -15,6 +15,7 @@ Stoner.FileFormats.QDFile
    
       ~Stoner.FileFormats.QDFile.__init__
       ~Stoner.FileFormats.QDFile.add_column
+      ~Stoner.FileFormats.QDFile.adjust_setas
       ~Stoner.FileFormats.QDFile.clear
       ~Stoner.FileFormats.QDFile.closest
       ~Stoner.FileFormats.QDFile.column

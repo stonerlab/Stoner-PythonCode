@@ -9,7 +9,7 @@
     <title>DiskBasedFolder &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -105,6 +105,13 @@ The <a class="reference internal" href="#Stoner.Folders.DiskBasedFolder.flatten"
 </dd></dl>
 
 <dl class="attribute">
+<dt id="Stoner.Folders.DiskBasedFolder.discard_earlier">
+<code class="descname">discard_earlier</code><a class="headerlink" href="#Stoner.Folders.DiskBasedFolder.discard_earlier" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> – IF there are several files with the same filename apart from !#### being appended just before the extension, then discard
+all except the one with the largest value of #### when collecting the list of files.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="Stoner.Folders.DiskBasedFolder.directory">
 <code class="descname">directory</code><a class="headerlink" href="#Stoner.Folders.DiskBasedFolder.directory" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>str</em> – The root directory on disc for the folder - by default this is the current working directory.</p>
@@ -144,13 +151,16 @@ The <a class="reference internal" href="#Stoner.Folders.DiskBasedFolder.flatten"
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.DiskBasedFolder.getlist" title="Stoner.Folders.DiskBasedFolder.getlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getlist</span></code></a>([recursive,&nbsp;directory,&nbsp;flatten])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.DiskBasedFolder.getlist" title="Stoner.Folders.DiskBasedFolder.getlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getlist</span></code></a>([recursive,&nbsp;directory,&nbsp;flatten,&nbsp;…])</td>
 <td>Scans the current directory, optionally recursively to build a list of filenames</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.DiskBasedFolder.save" title="Stoner.Folders.DiskBasedFolder.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.DiskBasedFolder.keep_latest" title="Stoner.Folders.DiskBasedFolder.keep_latest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keep_latest</span></code></a>()</td>
+<td>Filter out earlier revisions of files with the same name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.DiskBasedFolder.save" title="Stoner.Folders.DiskBasedFolder.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</td>
 <td>Save the entire data folder out to disc using the groups as a directory tree, calling the save method for each file in turn.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.DiskBasedFolder.unload" title="Stoner.Folders.DiskBasedFolder.unload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unload</span></code></a>(name)</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.DiskBasedFolder.unload" title="Stoner.Folders.DiskBasedFolder.unload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unload</span></code></a>(name)</td>
 <td>Removes the instance from memory without losing the name in the Folder.</td>
 </tr>
 </tbody>
@@ -171,7 +181,7 @@ The <a class="reference internal" href="#Stoner.Folders.DiskBasedFolder.flatten"
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="Stoner.Folders.DiskBasedFolder.getlist">
-<code class="descname">getlist</code><span class="sig-paren">(</span><em>recursive=None</em>, <em>directory=None</em>, <em>flatten=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#DiskBasedFolder.getlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.DiskBasedFolder.getlist" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getlist</code><span class="sig-paren">(</span><em>recursive=None</em>, <em>directory=None</em>, <em>flatten=None</em>, <em>discard_earlier=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#DiskBasedFolder.getlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.DiskBasedFolder.getlist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scans the current directory, optionally recursively to build a list of filenames</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -200,6 +210,24 @@ directory is used.</li>
 </table>
 <p>getlist() scans a directory tree finding files that match the pattern. By default it will recurse through the entire
 directory tree finding sub directories and creating groups in the data folder for each sub directory.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.Folders.DiskBasedFolder.keep_latest">
+<code class="descname">keep_latest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#DiskBasedFolder.keep_latest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.DiskBasedFolder.keep_latest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter out earlier revisions of files with the same name.</p>
+<p>The CM group LabVIEW software will avoid overwirting files when measuring by inserting !#### where #### is an integer revision number just before the
+filename extension. This method will look for instances of several files which differ in name only by the presence of the revision number and will
+kepp only the highest revision number. This is useful if several measurements of the same experiment have been carried out, but only the last file is
+the correct one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A copy of the DataFolder.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -298,9 +326,9 @@ diretory attribute will be used.</td>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.4
+      1.7.5
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

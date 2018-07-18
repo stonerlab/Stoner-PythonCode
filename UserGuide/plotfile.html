@@ -9,7 +9,7 @@
     <title>Plotting Data &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -53,52 +53,53 @@
             
   <div class="section" id="plotting-data">
 <h1>Plotting Data<a class="headerlink" href="#plotting-data" title="Permalink to this headline">¶</a></h1>
-<p>Data plotting and visualisation is handled by the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotMixin</span></code></a> sub-class of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a>.
+<p>Data plotting and visualisation is handled by the <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> sub-class of <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.Data</span></code>.
 The purpose of the methods detailed here is to provide quick and convenient ways to plot data rather than providing
-publication ready figures. The <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotMixin</span></code></a> is included as apart of the Data class:</p>
+publication ready figures. The <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> is included as apart of the Data class:</p>
 <div class="section" id="quick-plots">
 <h2>Quick Plots<a class="headerlink" href="#quick-plots" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotMixin</span></code></a> class is intended to help you make plots that look reasonably good with as little hassle as possible.
+<p>The <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> class is intended to help you make plots that look reasonably good with as little hassle as possible.
 In common with many graph plotting programmes, it has a concept of declaring columns of data to be used for ‘x’, ‘y’ axes and
-for containing error bars. This is done with the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code> attribute (see <a class="reference internal" href="datafile.html#setas"><span class="std std-ref">Marking Columns as Dimensions: the magic setas attribute</span></a> for full details). Once this is done, the plotting
-methods will use these to try to make a sensible plot.:</p>
+for containing error bars. This is done with the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.setas</span></code> attribute (see <a class="reference internal" href="datafile.html#setas"><span class="std std-ref">Marking Columns as Dimensions: the magic setas attribute</span></a> for full details).
+Once this is done, the plotting methods will use these to try to make a sensible plot.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span>
-<span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="s2">&quot;e&quot;</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Once the columns are identified, the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot()</span></code></a> method can be used to do the actual plotting. This is simply a wrapper that insepects the
-available columns and calls either <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xy()</span></code></a> or <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xyz()</span></code></a> as appropriate. All keyword arguments to :
-py:meth:<cite>PlotMixin.plot</cite> are passed on to the actual plotting method.</p>
+<p><a class="reference internal" href="../classes/Stoner.Data.plot.html#Stoner.Data.plot" title="Stoner.Data.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot()</span></code></a> is simply a wrapper that insepects the available columns and calls either <a class="reference internal" href="../classes/Stoner.Data.plot_xy.html#Stoner.Data.plot_xy" title="Stoner.Data.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xy()</span></code></a> or
+<a class="reference internal" href="../classes/Stoner.Data.plot_xyz.html#Stoner.Data.plot_xyz" title="Stoner.Data.plot_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xyz()</span></code></a> as appropriate. All keyword arguments to <a class="reference internal" href="../classes/Stoner.Data.plot.html#Stoner.Data.plot" title="Stoner.Data.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot()</span></code></a> are passed on to the actual plotting method.</p>
+<p>Each <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> instance maintains it’s own <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.Figure</span></code> in the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.fig</span></code> attribute, if no
+figure is set when the <a class="reference internal" href="../classes/Stoner.Data.plot.html#Stoner.Data.plot" title="Stoner.Data.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot()</span></code></a> method is called, a new figure will be created.</p>
 </div>
 <div class="section" id="types-of-plot">
 <h2>Types of Plot<a class="headerlink" href="#types-of-plot" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot()</span></code></a> will try to make the msot sensible choice of plot depending on which columns you have specified and
+<p><a class="reference internal" href="../classes/Stoner.Data.plot.html#Stoner.Data.plot" title="Stoner.Data.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot()</span></code></a> will try to make the msot sensible choice of plot depending on which columns you have specified and
 the number of axes represetned.</p>
 <blockquote>
 <div><ul class="simple">
-<li>x-y, x-y+-e, x-y-e-y-e etc. data will default to a 2D scatter plot with error bars</li>
-<li>x-y-z data will be converted to a grid and plotted as a 3D surface plot.</li>
+<li>x-y, x-y+-e, x-y-e-y-e etc. data will default to a 2D scatter plot with error bars and call <code class="xref py py-meth docutils literal notranslate"><span class="pre">data.plot)xy()</span></code></li>
+<li>x-y-z data will be converted to a grid and plotted as a 3D surface plot and call <a class="reference internal" href="../classes/Stoner.Data.plot_xyz.html#Stoner.Data.plot_xyz" title="Stoner.Data.plot_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xyz()</span></code></a></li>
 <li><dl class="first docutils">
 <dt>x-y-u-v (i.e. 2D vectro fields) and x-y-u-v-w (3D vectros on a 2D plane) will be plotted as a colour image</dt>
 <dd>where the colour is mapped to hue-saturation-luminescence scale. The hue gives the in plane ange while the luminescene gives
-the out of plane component of the vector field.</dd>
+the out of plane component of the vector field. These are handdled with <a class="reference internal" href="../classes/Stoner.Data.plot_xyuv.html#Stoner.Data.plot_xyuv" title="Stoner.Data.plot_xyuv"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xyuv()</span></code></a></dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>x-y-z-u-v-w data (i.e. 3D vector field on a 3D grid) is represented as a 3D quiver plot with coloured quivers (using the same H-S-L</dt>
-<dd>colour space mapping as above) assuming mayavi is importable.</dd>
+<dd>colour space mapping as above) assuming mayavi is importable, otherwise using a 3D quiver plot from matplotlib’s 3D toolkit.
+<a class="reference internal" href="../classes/Stoner.Data.plot_xyzuvw.html#Stoner.Data.plot_xyzuvw" title="Stoner.Data.plot_xyzuvw"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xyzuvw()</span></code></a> handles the work for this case.</dd>
 </dl>
 </li>
 </ul>
 </div></blockquote>
 <p>An alternative plot type for data with errorbars in <code class="xref py py-func docutils literal notranslate"><span class="pre">plotutils.errorfill()</span></code>. This uses a shaded line as an
 alternative to the error bars, where the shading of the line varies from intense to transparent the further one
-gets from the mean value. For 3D x-y-z plotting there is a <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.contour_xyz" title="Stoner.plot.PlotMixin.contour_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.contour_xyz()</span></code></a> and a <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.image_plot" title="Stoner.plot.PlotMixin.image_plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.image_plot()</span></code></a>
+gets from the mean value. For 3D x-y-z plotting there is a <a class="reference internal" href="../classes/Stoner.Data.contour_xyz.html#Stoner.Data.contour_xyz" title="Stoner.Data.contour_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.contour_xyz()</span></code></a> and a <a class="reference internal" href="../classes/Stoner.Data.image_plot.html#Stoner.Data.image_plot" title="Stoner.Data.image_plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.image_plot()</span></code></a>
 methods available. These give contonour plots and 2D colour map plots respectively.</p>
 <div class="section" id="plotting-2d-data">
 <h3>Plotting 2D data<a class="headerlink" href="#plotting-2d-data" title="Permalink to this headline">¶</a></h3>
-<p><em>x-y</em> plots are produced by the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xy()</span></code></a> method:</p>
+<p><em>x-y</em> plots are produced by the <a class="reference internal" href="../classes/Stoner.Data.plot_xy.html#Stoner.Data.plot_xy" title="Stoner.Data.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xy()</span></code></a> method:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="n">column_x</span><span class="p">,</span> <span class="n">column_y</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="n">column_x</span><span class="p">,</span> <span class="p">[</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">])</span>
 <span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="s1">&#39;ro&#39;</span><span class="p">)</span>
@@ -108,23 +109,23 @@ methods available. These give contonour plots and 2D colour map plots respective
 <span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">plotter</span><span class="o">=</span><span class="n">pyplot</span><span class="o">.</span><span class="n">semilogy</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The examples above demonstrate several use cases of the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xy()</span></code></a> method. The first parameter is always
+<p>The examples above demonstrate several use cases of the <a class="reference internal" href="../classes/Stoner.Data.plot_xy.html#Stoner.Data.plot_xy" title="Stoner.Data.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xy()</span></code></a> method. The first parameter is always
 the x column that contains the data, the second is the y-data either as a single column or list of columns.
 The third parameter is the style of the plot (lines, points, colours etc) and can either be a list if the y-column data
 is a list or a single string. Finally additional parameters can be given to specify a title and to control which figure
 is used for the plot. All matplotlib keyword parameters can be specified as additional keyword arguments and are passed
 through to the relevant plotting function. The final example illustrates a convenient way to produce log-linear and log-log
-plots. By default, <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xy()</span></code></a> uses the <strong>pyplot.plot</strong> function to produce linear scaler plots. There
+plots. By default, <a class="reference internal" href="../classes/Stoner.Data.plot_xy.html#Stoner.Data.plot_xy" title="Stoner.Data.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xy()</span></code></a> uses the <strong>pyplot.plot</strong> function to produce linear scaler plots. There
 are a number of useful plotter functions that will work like this</p>
 <ul>
-<li><p class="first">[pyplot.semilogx,pyplot.semilogy] These two plotting functions will produce log-linear plots, with semilogx making
-the x-axes the log one and semilogy the y-axis.</p>
+<li><p class="first">[<a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.semilogx.html#matplotlib.pyplot.semilogx" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.semilogx()</span></code></a>,:py:func:<cite>matplotlib.pyplot.semilogy</cite>] These two plotting functions will produce
+log-linear plots, with semilogx making the x-axes the log one and semilogy the y-axis.</p>
 </li>
-<li><p class="first">[pyplot.loglog] Liek the semi-log plots, this will produce a log-log plot.</p>
+<li><p class="first">[<a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.loglog.html#matplotlib.pyplot.loglog" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.loglog()</span></code></a>] Like the semi-log plots, this will produce a log-log plot.</p>
 </li>
-<li><p class="first">[pyplot.errorbar] this particularly useful plotting function will draw error bars. The values for the error bars are
-passed as keyword arguments, <em>xerr</em> or <em>yerr</em>. In standard matplotlib, these can be numpy arrays or constants.
-<a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xy()</span></code></a> extends this by intercepting these arguements and offering some short cuts:</p>
+<li><p class="first">[<a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.errorbar.html#matplotlib.pyplot.errorbar" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.errorbar()</span></code></a>] this particularly useful plotting function will draw error bars. The values for
+the error bars are passed as keyword arguments, <em>xerr</em> or <em>yerr</em>. In standard matplotlib, these can be numpy arrays or constants.
+<a class="reference internal" href="../classes/Stoner.Data.plot_xy.html#Stoner.Data.plot_xy" title="Stoner.Data.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xy()</span></code></a> extends this by intercepting these arguements and offering some short cuts:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorbar</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="s1">&#39;dResistance&#39;</span><span class="p">,</span><span class="n">xerr</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="s1">&#39;dTemp+&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -140,7 +141,7 @@ passed as keyword arguments, <em>xerr</em> or <em>yerr</em>. In standard matplot
 <div class="section" id="plotting-3d-data">
 <h3>Plotting 3D Data<a class="headerlink" href="#plotting-3d-data" title="Permalink to this headline">¶</a></h3>
 <p>A number of the measurement rigs will produce data in the form of rows of $x,y,z$ values. Often it is desirable to plot
-these on a surface plot or 3D plot. The <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xyz()</span></code></a> method can be used for this.</p>
+these on a surface plot or 3D plot. The <a class="reference internal" href="../classes/Stoner.Data.plot_xyz.html#Stoner.Data.plot_xyz" title="Stoner.Data.plot_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xyz()</span></code></a> method can be used for this.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;3D surface plot example.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -184,13 +185,13 @@ these on a surface plot or 3D plot. The <a class="reference internal" href="../c
 <div class="figure">
 <img alt="../_images/colormap.png" src="../_images/colormap.png" />
 </div>
-<p>By default the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xyz()</span></code></a> will produce a 3D surface plot with the z-axis coded with a rainbow colour-map
+<p>By default the <a class="reference internal" href="../classes/Stoner.Data.plot_xyz.html#Stoner.Data.plot_xyz" title="Stoner.Data.plot_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xyz()</span></code></a> will produce a 3D surface plot with the z-axis coded with a rainbow colour-map
 (specifically, the matplotlib provided <em>matplotlib.cm.jet</em> colour-map. This can be overriden with the <em>cmap</em> keyword
 parameter. If a simple 2D surface plot is required, then the <em>plotter</em> parameter should be set to a suitable function
 such as <strong>pyplot.pcolor</strong>.</p>
-<p>Like <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xy()</span></code></a>, a <em>figure</em> parameter can be used to control the figure being used and any additional
+<p>Like <a class="reference internal" href="../classes/Stoner.Data.plot_xy.html#Stoner.Data.plot_xy" title="Stoner.Data.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xy()</span></code></a>, a <em>figure</em> parameter can be used to control the figure being used and any additional
 keywords are passed through to the plotting function. The axes labels are set from the corresponding column labels.</p>
-<p>Another option is a contour plot based on <code class="docutils literal notranslate"><span class="pre">(x,y,z)</span></code> data points. This can be done with the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.contour_xyz" title="Stoner.plot.PlotMixin.contour_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.contour_xyz()</span></code></a>
+<p>Another option is a contour plot based on <code class="docutils literal notranslate"><span class="pre">(x,y,z)</span></code> data points. This can be done with the <a class="reference internal" href="../classes/Stoner.Data.contour_xyz.html#Stoner.Data.contour_xyz" title="Stoner.Data.contour_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.contour_xyz()</span></code></a>
 method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Plot 3D data on a contour plot.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
@@ -214,8 +215,8 @@ method.</p>
 <div class="figure">
 <img alt="../_images/contour.png" src="../_images/contour.png" />
 </div>
-<p>Both <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xyz()</span></code></a> and <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.contour_xyz" title="Stoner.plot.PlotMixin.contour_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.contour_xyz()</span></code></a> make use of a call to <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.griddata" title="Stoner.plot.PlotMixin.griddata"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.griddata()</span></code></a>
-which is a utility method of the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotMixin</span></code></a> – essentially this is just a pass through method to the underlying
+<p>Both <a class="reference internal" href="../classes/Stoner.Data.plot_xyz.html#Stoner.Data.plot_xyz" title="Stoner.Data.plot_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xyz()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Data.contour_xyz.html#Stoner.Data.contour_xyz" title="Stoner.Data.contour_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.contour_xyz()</span></code></a> make use of a call to <a class="reference internal" href="../classes/Stoner.Data.griddata.html#Stoner.Data.griddata" title="Stoner.Data.griddata"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.griddata()</span></code></a>
+which is a utility method of the <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> – essentially this is just a pass through method to the underlying
 <em>scipy.interpolate.griddata*</em> function. The shape of the grid is determined through a combination of the <em>xlim</em>, <em>ylim</em>
 and <em>shape</em> arguments.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">griddata</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
@@ -228,7 +229,7 @@ parameter. If the <em>xlim</em> or <em>ylim</em> parameters are not presents, th
 If no <em>shape</em> information is provided, the default is to make the shape a square of sidelength given by the square root of the
 number of points.</p>
 <blockquote>
-<div>Alternatively, if your data is already in the form of a matrix, you can use the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_matrix" title="Stoner.plot.PlotMixin.plot_matrix"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_matrix()</span></code></a> method.</div></blockquote>
+<div>Alternatively, if your data is already in the form of a matrix, you can use the <a class="reference internal" href="../classes/Stoner.Data.plot_matrix.html#Stoner.Data.plot_matrix" title="Stoner.Data.plot_matrix"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_matrix()</span></code></a> method.</div></blockquote>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Plot data defined on a matrix.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -257,7 +258,7 @@ either from the meta data item ‘ylabel or to ‘Y Data’. Likewise the z axis
 item or defaults to ‘Z Data;. In the second form these parameters are all set explicitly. The <em>xvals</em> parameter can be
 either a column index (integer or sring) or a list, tuple or numpy array. The <em>yvals</em> parameter can be either a row number
 (integer) or list,tuple or numpy array. Other parameters (including <em>plotter</em>, <em>figure</em> etc) work as for the
-<a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xyz()</span></code></a> method. The <em>rectang</em> parameter is used to select only part of the data array to use as the matrix.
+<a class="reference internal" href="../classes/Stoner.Data.plot_xyz.html#Stoner.Data.plot_xyz" title="Stoner.Data.plot_xyz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xyz()</span></code></a> method. The <em>rectang</em> parameter is used to select only part of the data array to use as the matrix.
 It may be 2-tuple in which case it specifies just the origin as (row,column) or a 4-tuple in which case the third and forth
 elements are the number of rows and columns to include. If <em>xvals</em> or <em>yvals</em> specify particular column or rows then the
 origin of the matrix is moved to be one column further over and one row further down (ie the matrix is to the right and
@@ -271,7 +272,7 @@ fields are visualised by using quiver plots, where a small arrow points in the d
 is proportional to the magnitude. This can also be suplemented by colour information - in one scheme a hue-saturation-luminence
 space is used, where hue described a direction in the x-y plane, the luminence describes the vertical component and the
 saturation, the relative magnitude. This is a common scheme in micro-magnetics, so is supported in the Stoner package.
-Following the naming convention above, the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xyzuvw" title="Stoner.plot.PlotMixin.plot_xyzuvw"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xyzuvw()</span></code></a> method handles these plots.:</p>
+Following the naming convention above, the <a class="reference internal" href="../classes/Stoner.Data.plot_xyzuvw.html#Stoner.Data.plot_xyzuvw" title="Stoner.Data.plot_xyzuvw"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xyzuvw()</span></code></a> method handles these plots.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">plot_xyzuvw</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">ucol</span><span class="p">,</span><span class="n">vcol</span><span class="p">,</span><span class="n">wcol</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">plot_xyzuvw</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">ucol</span><span class="p">,</span><span class="n">vcol</span><span class="p">,</span><span class="n">wcol</span><span class="p">,</span><span class="n">colors</span><span class="o">=</span><span class="s2">&quot;color_data&quot;</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">plot_xyzuvw</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">ucol</span><span class="p">,</span><span class="n">vcol</span><span class="p">,</span><span class="n">wcol</span><span class="p">,</span><span class="n">colors</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
@@ -280,7 +281,7 @@ Following the naming convention above, the <a class="reference internal" href=".
 <span class="n">p</span><span class="o">.</span><span class="n">plot_xyzuvw</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">ucol</span><span class="p">,</span><span class="n">vcol</span><span class="p">,</span><span class="n">wcol</span><span class="p">,</span><span class="n">plotter</span><span class="o">=</span><span class="n">myplotfunc</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xyzuvw" title="Stoner.plot.PlotMixin.plot_xyzuvw"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xyzuvw()</span></code></a> method uses a default vector field plot function that is based on mayavi from
+<p>The <a class="reference internal" href="../classes/Stoner.Data.plot_xyzuvw.html#Stoner.Data.plot_xyzuvw" title="Stoner.Data.plot_xyzuvw"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xyzuvw()</span></code></a> method uses a default vector field plot function that is based on mayavi from
 Enthought. The import is done when the plot is required to speed loading times for the <a class="reference internal" href="../Stoner.html#module-Stoner.plot" title="Stoner.plot"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.plot</span></code></a> when
 2D plotting only is required. If the mayavi package is not available, then matplotlib’s 3D quiver plot is used as a fall back.</p>
 <p>The first example above will result in a plot using flat arroiws coloured according to the vector magnitude. The second
@@ -325,8 +326,8 @@ default in this function.</p>
 </div>
 <div class="section" id="very-quick-plotting">
 <h2>Very Quick Plotting<a class="headerlink" href="#very-quick-plotting" title="Permalink to this headline">¶</a></h2>
-<p>For convenience, a <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot()</span></code></a> method is defined that will try to work out the necessary details. In combination
-with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute it allows very quick plots to be constructed.</p>
+<p>For convenience, a <a class="reference internal" href="../classes/Stoner.Data.plot.html#Stoner.Data.plot" title="Stoner.Data.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot()</span></code></a> method is defined that will try to work out the necessary details. In combination
+with the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.setas</span></code> attribute it allows very quick plots to be constructed.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple plot in 2 lines.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
@@ -341,15 +342,15 @@ with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.htm
 </div>
 <div class="section" id="getting-more-control-on-the-figure">
 <h2>Getting More Control on the Figure<a class="headerlink" href="#getting-more-control-on-the-figure" title="Permalink to this headline">¶</a></h2>
-<p>It is useful to be able to get access to the matplotlib figure that is used for each <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotMixin</span></code></a> instance. The
-<a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.fig" title="Stoner.plot.PlotMixin.fig"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.fig</span></code></a> attribute can do this, thus allowing plots from multiple <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotMixin</span></code></a> instances to be
+<p>It is useful to be able to get access to the matplotlib figure that is used for each <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> instance. The
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.fig</span></code> attribute can do this, thus allowing plots from multiple <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> instances to be
 combined in a single figure.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p1</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;r-&#39;</span><span class="p">)</span>
 <span class="n">p2</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span><span class="n">figure</span><span class="o">=</span><span class="n">p1</span><span class="o">.</span><span class="n">fig</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Likewise the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.axes" title="Stoner.plot.PlotMixin.axes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.axes</span></code></a> attribute returns the current axes object of the current figure in use by the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotMixin</span></code></a>
-instance.</p>
+<p>Likewise the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.axes</span></code> attribute returns the current axes object of the current figure in use by the <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a>
+instance. <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.axes</span></code> will always return a list of <a class="reference external" href="https://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code></a> instances, one for each sub-plot on the figure.</p>
 <p>There’s a couple of extra methods that just pass through to the pyplot equivalents:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 <span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -357,39 +358,39 @@ instance.</p>
 </div>
 <div class="section" id="setting-axes-labels-plot-titles-and-legends">
 <h3>Setting Axes Labels, Plot Titles and Legends<a class="headerlink" href="#setting-axes-labels-plot-titles-and-legends" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotMixin</span></code></a> provides some useful attributes for setting specific aspects of the figures. Any
-<em>get_</em> and <em>set_</em> method of <code class="xref py py-class docutils literal notranslate"><span class="pre">pyplot.Axes</span></code> can be read or written as a <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotMixin</span></code></a> attribute.
-Internally this is implemented by calling the corresponding method on the current axes of the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotMixin</span></code></a>’s
-figure. When setting the attribute, lists and tuples will be assumed to contain positional arguments and dictionaries
+<p><a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> provides some useful attributes for setting specific aspects of the figures. Any
+<em>get_</em> and <em>set_</em> method of <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.Axes</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.Figure</span></code> can be read or
+written as a <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> attribute.</p>
+<p>Internally this is implemented by calling the corresponding method on the current axes or fgiure of the <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a>
+instance. When setting the attribute, lists and tuples will be assumed to contain positional arguments and dictionaries
 keyword arguments. If you want to pass a single tuple, list or dictionary, then you should wrap it in a single
 element tuple.</p>
 <p>Particualrly useful attributes include:</p>
 <ul class="simple">
-<li><code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.xlabel</span></code>, <code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.ylabel</span></code> will set the x and y axes labels</li>
-<li><code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.title</span></code> will set the plot title</li>
-<li><code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.xlim</span></code>, <code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.ylim</span></code> will accept a tuple to set the x- and y-axes limits.</li>
+<li><code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.xlabel</span></code>, <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.ylabel</span></code> will set the x and y axes labels</li>
+<li><code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.title</span></code> will set the plot title</li>
+<li><code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.xlim</span></code>, <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.ylim</span></code> will accept a tuple to set the x- and y-axes limits.</li>
 <li><dl class="first docutils">
-<dt><a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.labels" title="Stoner.plot.PlotMixin.labels"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.labels</span></code></a> sets a list of strings that are the preferred name for each column. This is to</dt>
+<dt><code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.labels</span></code> sets a list of strings that are the preferred name for each column. This is to</dt>
 <dd>allow the plotting routines to provide a default name for an axis label that can be different from the
 name of the column used for indexing purposes. If the label for a column is not set, then the column
-header is used instead. If a column header is changed, then the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.labels" title="Stoner.plot.PlotMixin.labels"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.labels</span></code></a> attribute will
+header is used instead. If a column header is changed, then the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.labels</span></code> attribute will
 be overwritten.</dd>
 </dl>
 </li>
 </ul>
-<p>In addition, you can read any method of <code class="xref py py-class docutils literal notranslate"><span class="pre">pyplot.Axes</span></code> as an attribute of <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotMixin</span></code></a>. This allows
-one to call the methods directly on the PlotMixin instance without needing to extract a reference to the current
-axes.:</p>
+<p>In addition, you can read any function of <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.html#module-matplotlib.pyplot" title="(in Matplotlib v2.2.2)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib.pyplot</span></code></a>, or method of <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.Axes</span></code>, or
+<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.Figure</span></code>  as an attribute of <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a>. This allows one to call the methods directly on
+the Data instance without needing to extract a reference to the current axes or figure.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;My X Axis&quot;</span>
 <span class="n">p</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;My X Axis&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>are both equivalent, but the latter form allows access to the full keyword arguments of the x axis label control.</p>
 </div>
-</div>
 <div class="section" id="plotting-on-second-y-or-x-axes">
-<h2>Plotting on Second Y (or X) Axes<a class="headerlink" href="#plotting-on-second-y-or-x-axes" title="Permalink to this headline">¶</a></h2>
-<p>To plot a second curve using the same x axis, but a different y axis scale, the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.y2" title="Stoner.plot.PlotMixin.y2"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.y2()</span></code></a> method is
+<h3>Plotting on Second Y (or X) Axes<a class="headerlink" href="#plotting-on-second-y-or-x-axes" title="Permalink to this headline">¶</a></h3>
+<p>To plot a second curve using the same x axis, but a different y axis scale, the <a class="reference internal" href="../classes/Stoner.Data.y2.html#Stoner.Data.y2" title="Stoner.Data.y2"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.y2()</span></code></a> method is
 provided. This produces a second axes object with a common x-axis, but independent y-axis on the right of the plot.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Plot data using two y-axes.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
@@ -404,8 +405,8 @@ provided. This produces a second axes object with a common x-axis, but independe
 <div class="figure">
 <img alt="../_images/double_y.png" src="../_images/double_y.png" />
 </div>
-<p>There is an equivalent <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.x2" title="Stoner.plot.PlotMixin.x2"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.x2()</span></code></a> method to create a second set of axes with a common y scale but different x scales.</p>
-<p>To work out which set of axes you are current working with the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.ax" title="Stoner.plot.PlotMixin.ax"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.ax</span></code></a> attribute can be read or set.:</p>
+<p>There is an equivalent <a class="reference internal" href="../classes/Stoner.Data.x2.html#Stoner.Data.x2" title="Stoner.Data.x2"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.x2()</span></code></a> method to create a second set of axes with a common y scale but different x scales.</p>
+<p>To work out which set of axes you are current working with the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.ax</span></code> attribute can be read or set.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">y2</span><span class="p">()</span>
 <span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
@@ -415,12 +416,14 @@ provided. This produces a second axes object with a common x-axis, but independe
 <span class="n">p</span><span class="o">.</span><span class="n">yabel</span><span class="o">=</span><span class="s2">&quot;Plot 2&quot;</span>
 </pre></div>
 </div>
+</div>
+</div>
 <div class="section" id="plot-templates">
-<h3>Plot Templates<a class="headerlink" href="#plot-templates" title="Permalink to this headline">¶</a></h3>
+<h2>Plot Templates<a class="headerlink" href="#plot-templates" title="Permalink to this headline">¶</a></h2>
 <p>Frequently one wishes to create many plots that have a similar set of formatting options - for example
 in a thesis or to conform to a journal’s specifications. The <a class="reference internal" href="../Stoner.html#module-Stoner.plot.formats" title="Stoner.plot.formats"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.plot.formats</span></code></a> in conjunctions with
-the <code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.template</span></code> attribute can help here.</p>
-<p>A <code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.template</span></code> template is a set of instructions that controls the default settings for many
+the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.template</span></code> attribute can help here.</p>
+<p>A <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.template</span></code> template is a set of instructions that controls the default settings for many
 aspects of a matplotlib figure’s style. In addition the template allows for pyplot formatting commands to be
 executed during the process of plotting a figure.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Customising a template for plotting.&quot;&quot;&quot;</span>
@@ -457,9 +460,6 @@ prefix the translated rcParam key with <em>template_</em>.</p>
 <blockquote>
 <div>q=Data()
 q.template=p.template</div></blockquote>
-<p>The possible attributes that can be passed over to the template are essentially all the rc parameters for matplotlib
-(see <code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.rcParams()</span></code>) except that periods ‘.’ are replced with underscores ‘_’ and single underscores
-are replaced with double underscores.</p>
 <p>Matplotlib makes use of stylesheets - essentially separate files of matplotlibrc entries. The template classes have a stylename
 parameter that controls which stylesheet is used. This can be either one of the built in styles (see <code class="xref py py-attr docutils literal notranslate"><span class="pre">matplotlib.pyplot.styles.available</span></code>)
 or refer to a file on disc. The template will search for the file (named <em>&lt;stylename&gt;</em>.mplstyle) in.</p>
@@ -475,18 +475,63 @@ class heirarchy.</p>
 <p>Changing the value of Lpy:attr:<cite>DefaultPlotStyle.stylename</cite> will force the tempalte to recalculate the stylesheet heirarchy, refidning
 the paths to the stylesheets. You can also do any in-place modifications to the template stylesheet list (e.g. appending or extending it).</p>
 <p>Further customisation is possible by creating a subclass of <a class="reference internal" href="../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle" title="Stoner.plot.formats.DefaultPlotStyle"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultPlotStyle</span></code></a> and overriding the
-<a class="reference internal" href="../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle.customise" title="Stoner.plot.formats.DefaultPlotStyle.customise"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DefaultPlotStyle.customise()</span></code></a> method and <a class="reference internal" href="../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle.customise_axes" title="Stoner.plot.formats.DefaultPlotStyle.customise_axes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DefaultPlotStyle.customise_axes()</span></code></a> method.</p>
-<p>The seaborn paclage offers many options for producing visually appealing plots with a higher level abstraction of the matplotlib api/
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">DefaultPlotStyle.customise()</span></code> method and <code class="xref py py-meth docutils literal notranslate"><span class="pre">DefaultPlotStyle.customise_axes()</span></code> method.</p>
+<p>One-off changes in the template can also be done. The <a class="reference internal" href="../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle" title="Stoner.plot.formats.DefaultPlotStyle"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultPlotStyle</span></code></a> behaves like a dictionary - the keys of the dictionary
+correspond to settings of the <a class="reference external" href="https://matplotlib.org/api/matplotlib_configuration_api.html#matplotlib.RcParams" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.RcParams</span></code></a>. Reading the keys of the <a class="reference internal" href="../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle" title="Stoner.plot.formats.DefaultPlotStyle"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultPlotStyle</span></code></a> returns the current settings,
+setting them changes the underlying <a class="reference external" href="https://matplotlib.org/api/matplotlib_configuration_api.html#matplotlib.RcParams" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.RcParams</span></code></a> and deleting them resets the settings back to defaults. The
+<a class="reference internal" href="../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle" title="Stoner.plot.formats.DefaultPlotStyle"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultPlotStyle</span></code></a> otherwise behaves like a standard mutable-mapping object, supporting the expected methods such as <em>get</em>, <em>pop</em>,
+<em>keys</em>, <em>values</em> etc. It is also possible to access the settings as attributes of the template except that they are prefixed with <em>template_</em> and
+periods ‘.’ are replced with double underscores ‘__’.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example customising a plot using default style.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span><span class="n">__home__</span>
+<span class="kn">from</span> <span class="nn">Stoner.plot.formats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="kn">as</span> <span class="nn">path</span>
+<span class="kn">from</span> <span class="nn">cycler</span> <span class="kn">import</span> <span class="n">cycler</span>
+<span class="n">filename</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span><span class="s2">&quot;samples&quot;</span><span class="p">,</span><span class="s2">&quot;sample.txt&quot;</span><span class="p">))</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyy&quot;</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="n">DefaultPlotStyle</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">10.</span><span class="p">))</span> <span class="c1"># Just to keep the plot sane!</span>
+
+<span class="c1">#Change the color and line style cycles</span>
+<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="p">[</span><span class="s2">&quot;axes.prop_cycle&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">cycler</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Blue&quot;</span><span class="p">,</span><span class="s2">&quot;Purple&quot;</span><span class="p">])</span><span class="o">+</span><span class="n">cycler</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">,</span><span class="s2">&quot;--&quot;</span><span class="p">]))</span>
+
+<span class="c1">#Can also access as an attribute</span>
+<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">template_lines__linewidth</span><span class="o">=</span><span class="mf">1.5</span>
+
+<span class="c1">#Set the default figure size</span>
+<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span>
+<span class="c1"># Make figure (before using subplot method) and select first subplot</span>
+<span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+<span class="c1"># Pkot with our customised defaults</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-.&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Customised Plot settings&quot;</span>
+<span class="c1">#Reset the template to defaults and switch to next subplot</span>
+<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">)</span>
+<span class="c1">#Plot with defaults</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Style Default settings&quot;</span>
+<span class="c1">#Fuixup layout</span>
+<span class="n">d</span><span class="o">.</span><span class="n">figwidth</span><span class="o">=</span><span class="mi">8</span>
+<span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/plotstyles/customising.png">png</a>, <a class="reference external" href="../samples/plotstyles/customising.hires.png">hires.png</a>, <a class="reference external" href="../samples/plotstyles/customising.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/customising.png" src="../_images/customising.png" />
+</div>
+<p>The seaborn package offers many options for producing visually appealing plots with a higher level abstraction of the matplotlib api/
 The <a class="reference internal" href="../classes/Stoner.plot.formats.SeabornPlotStyle.html#Stoner.plot.formats.SeabornPlotStyle" title="Stoner.plot.formats.SeabornPlotStyle"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeabornPlotStyle</span></code></a> template class offers a quick interface to using this. It takes attributes <a class="reference internal" href="../classes/Stoner.plot.formats.SeabornPlotStyle.html#Stoner.plot.formats.SeabornPlotStyle.stylename" title="Stoner.plot.formats.SeabornPlotStyle.stylename"><code class="xref py py-attr docutils literal notranslate"><span class="pre">SeabornPlotStyle.stylename</span></code></a>,
 <a class="reference internal" href="../classes/Stoner.plot.formats.SeabornPlotStyle.html#Stoner.plot.formats.SeabornPlotStyle.context" title="Stoner.plot.formats.SeabornPlotStyle.context"><code class="xref py py-attr docutils literal notranslate"><span class="pre">SeabornPlotStyle.context</span></code></a> and <a class="reference internal" href="../classes/Stoner.plot.formats.SeabornPlotStyle.html#Stoner.plot.formats.SeabornPlotStyle.palette" title="Stoner.plot.formats.SeabornPlotStyle.palette"><code class="xref py py-attr docutils literal notranslate"><span class="pre">SeabornPlotStyle.palette</span></code></a> to set the corresponding seaborn settings.</p>
-</div>
 <div class="section" id="making-multi-plot-figures">
 <h3>Making Multi-plot Figures<a class="headerlink" href="#making-multi-plot-figures" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="adding-an-inset-to-a-figure">
 <h4>Adding an Inset to a Figure<a class="headerlink" href="#adding-an-inset-to-a-figure" title="Permalink to this headline">¶</a></h4>
-<p>The <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.inset" title="Stoner.plot.PlotMixin.inset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.inset()</span></code></a> method can be used to creagte an inset in the current figure. Subsequent plots
+<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.inset()</span></code> method can be used to creagte an inset in the current figure. Subsequent plots
 will be to the inset until a new set of axes are chosen. The <code class="xref py py-class docutils literal notranslate"><span class="pre">pyplot.Axes</span></code> instance of the inset is appended to the
-<a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.axes" title="Stoner.plot.PlotMixin.axes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.axes</span></code></a> attribute.</p>
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.axes</span></code> attribute.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Add an inset to a plot.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
@@ -521,7 +566,7 @@ inset.</p>
 </div>
 <div class="section" id="handling-more-than-one-column-of-y-data">
 <h4>Handling More than One Column of Y Data<a class="headerlink" href="#handling-more-than-one-column-of-y-data" title="Permalink to this headline">¶</a></h4>
-<p>By default if <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xy()</span></code></a> is given more than one column of y data, it will plot all
+<p>By default if <code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xy()</span></code> is given more than one column of y data, it will plot all
 of the data on a single y-axis scale. If the y data to be plotted is not of a similar order of mangitude
 this can result in a less than helpful plot.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Plot data on a single y-axis.&quot;&quot;&quot;</span>
@@ -535,7 +580,7 @@ this can result in a less than helpful plot.</p>
 <div class="figure">
 <img alt="../_images/common_y.png" src="../_images/common_y.png" />
 </div>
-<p>The <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot_xy()</span></code></a> method (and also the <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PlotMixin.plot()</span></code></a> method when doing 2D plots) will take
+<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot_xy()</span></code> method (and also the <code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.plot()</span></code> method when doing 2D plots) will take
 a keyword argument <em>multiple</em> that can offer a number of alternatives. If you have just two y columns, or the the
 second and subsequent ones can fit on a common scale, then a double-y axis plot might be appropriate.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Double y axis plot.&quot;&quot;&quot;</span>
@@ -605,10 +650,10 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
 <li><a class="reference internal" href="#very-quick-plotting">Very Quick Plotting</a></li>
 <li><a class="reference internal" href="#getting-more-control-on-the-figure">Getting More Control on the Figure</a><ul>
 <li><a class="reference internal" href="#setting-axes-labels-plot-titles-and-legends">Setting Axes Labels, Plot Titles and Legends</a></li>
+<li><a class="reference internal" href="#plotting-on-second-y-or-x-axes">Plotting on Second Y (or X) Axes</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#plotting-on-second-y-or-x-axes">Plotting on Second Y (or X) Axes</a><ul>
-<li><a class="reference internal" href="#plot-templates">Plot Templates</a></li>
+<li><a class="reference internal" href="#plot-templates">Plot Templates</a><ul>
 <li><a class="reference internal" href="#making-multi-plot-figures">Making Multi-plot Figures</a><ul>
 <li><a class="reference internal" href="#adding-an-inset-to-a-figure">Adding an Inset to a Figure</a></li>
 <li><a class="reference internal" href="#handling-more-than-one-column-of-y-data">Handling More than One Column of Y Data</a></li>
@@ -669,9 +714,9 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.4
+      1.7.5
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

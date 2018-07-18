@@ -9,7 +9,7 @@
     <title>Stoner.Core &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
@@ -2114,7 +2114,7 @@
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">column_data</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Column data must be 1 dimensional&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Column data must be 1 dimensional not </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column_data</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">_np__data</span> <span class="o">=</span> <span class="n">column_data</span>
         <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">column_data</span><span class="p">):</span>
@@ -2161,6 +2161,17 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">old_setas</span><span class="p">)</span>  <span class="c1"># [ylint: disable=not-callable]</span>
                 <span class="n">columns</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">header</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">columns</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="DataFile.adjust_setas"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.adjust_setas">[docs]</a>    <span class="k">def</span> <span class="nf">adjust_setas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adjust the setas of this object and return ourselves.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            This DataFile object</span>
+
+<span class="sd">        This method is useful when chaining methods together to change the setas assignments on the fly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="DataFile.closest"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.closest">[docs]</a>    <span class="k">def</span> <span class="nf">closest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -3231,9 +3242,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.4
+      1.7.5
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

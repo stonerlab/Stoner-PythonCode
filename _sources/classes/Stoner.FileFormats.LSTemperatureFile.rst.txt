@@ -15,6 +15,7 @@ Stoner.FileFormats.LSTemperatureFile
    
       ~Stoner.FileFormats.LSTemperatureFile.__init__
       ~Stoner.FileFormats.LSTemperatureFile.add_column
+      ~Stoner.FileFormats.LSTemperatureFile.adjust_setas
       ~Stoner.FileFormats.LSTemperatureFile.clear
       ~Stoner.FileFormats.LSTemperatureFile.closest
       ~Stoner.FileFormats.LSTemperatureFile.column

@@ -15,6 +15,7 @@ Stoner.FileFormats.MokeFile
    
       ~Stoner.FileFormats.MokeFile.__init__
       ~Stoner.FileFormats.MokeFile.add_column
+      ~Stoner.FileFormats.MokeFile.adjust_setas
       ~Stoner.FileFormats.MokeFile.clear
       ~Stoner.FileFormats.MokeFile.closest
       ~Stoner.FileFormats.MokeFile.column

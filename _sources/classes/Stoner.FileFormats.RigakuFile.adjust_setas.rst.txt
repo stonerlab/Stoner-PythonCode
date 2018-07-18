@@ -1,0 +1,8 @@
+
+
+RigakuFile.adjust_setas
+==========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: RigakuFile.adjust_setas

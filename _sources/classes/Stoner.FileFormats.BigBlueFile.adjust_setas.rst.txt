@@ -1,0 +1,8 @@
+
+
+BigBlueFile.adjust_setas
+===========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BigBlueFile.adjust_setas

@@ -5,25 +5,3 @@ JTBinsetStyle
 
 .. autoclass:: JTBinsetStyle
    :show-inheritance:
-
-   .. rubric:: Attributes Summary
-
-   .. autosummary::
-
-      ~JTBinsetStyle.show_title
-      ~JTBinsetStyle.stylename
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-
-      ~JTBinsetStyle.customise_axes
-
-   .. rubric:: Attributes Documentation
-
-   .. autoattribute:: show_title
-   .. autoattribute:: stylename
-
-   .. rubric:: Methods Documentation
-
-   .. automethod:: customise_axes

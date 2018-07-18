@@ -36,6 +36,7 @@ DataFile
 
       ~DataFile.__call__
       ~DataFile.add_column
+      ~DataFile.adjust_setas
       ~DataFile.clear
       ~DataFile.closest
       ~DataFile.column
@@ -97,6 +98,7 @@ DataFile
 
    .. automethod:: __call__
    .. automethod:: add_column
+   .. automethod:: adjust_setas
    .. automethod:: clear
    .. automethod:: closest
    .. automethod:: column

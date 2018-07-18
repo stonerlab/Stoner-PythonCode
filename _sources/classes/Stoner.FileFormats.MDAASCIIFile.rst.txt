@@ -15,6 +15,7 @@ Stoner.FileFormats.MDAASCIIFile
    
       ~Stoner.FileFormats.MDAASCIIFile.__init__
       ~Stoner.FileFormats.MDAASCIIFile.add_column
+      ~Stoner.FileFormats.MDAASCIIFile.adjust_setas
       ~Stoner.FileFormats.MDAASCIIFile.clear
       ~Stoner.FileFormats.MDAASCIIFile.closest
       ~Stoner.FileFormats.MDAASCIIFile.column

@@ -15,6 +15,7 @@ Stoner.FileFormats.BigBlueFile
    
       ~Stoner.FileFormats.BigBlueFile.__init__
       ~Stoner.FileFormats.BigBlueFile.add_column
+      ~Stoner.FileFormats.BigBlueFile.adjust_setas
       ~Stoner.FileFormats.BigBlueFile.clear
       ~Stoner.FileFormats.BigBlueFile.closest
       ~Stoner.FileFormats.BigBlueFile.column

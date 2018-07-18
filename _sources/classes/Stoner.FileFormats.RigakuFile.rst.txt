@@ -15,6 +15,7 @@ Stoner.FileFormats.RigakuFile
    
       ~Stoner.FileFormats.RigakuFile.__init__
       ~Stoner.FileFormats.RigakuFile.add_column
+      ~Stoner.FileFormats.RigakuFile.adjust_setas
       ~Stoner.FileFormats.RigakuFile.clear
       ~Stoner.FileFormats.RigakuFile.closest
       ~Stoner.FileFormats.RigakuFile.column

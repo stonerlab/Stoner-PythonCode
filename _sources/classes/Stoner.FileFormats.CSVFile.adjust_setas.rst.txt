@@ -1,0 +1,8 @@
+
+
+CSVFile.adjust_setas
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: CSVFile.adjust_setas

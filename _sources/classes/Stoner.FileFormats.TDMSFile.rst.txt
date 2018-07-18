@@ -15,6 +15,7 @@ Stoner.FileFormats.TDMSFile
    
       ~Stoner.FileFormats.TDMSFile.__init__
       ~Stoner.FileFormats.TDMSFile.add_column
+      ~Stoner.FileFormats.TDMSFile.adjust_setas
       ~Stoner.FileFormats.TDMSFile.clear
       ~Stoner.FileFormats.TDMSFile.closest
       ~Stoner.FileFormats.TDMSFile.column

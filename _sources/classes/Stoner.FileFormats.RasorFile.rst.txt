@@ -15,6 +15,7 @@ Stoner.FileFormats.RasorFile
    
       ~Stoner.FileFormats.RasorFile.__init__
       ~Stoner.FileFormats.RasorFile.add_column
+      ~Stoner.FileFormats.RasorFile.adjust_setas
       ~Stoner.FileFormats.RasorFile.clear
       ~Stoner.FileFormats.RasorFile.closest
       ~Stoner.FileFormats.RasorFile.column

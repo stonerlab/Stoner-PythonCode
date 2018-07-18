@@ -1,0 +1,8 @@
+
+
+MokeFile.adjust_setas
+========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.adjust_setas

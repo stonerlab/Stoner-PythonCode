@@ -1,0 +1,8 @@
+
+
+TDMSFile.adjust_setas
+========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.adjust_setas

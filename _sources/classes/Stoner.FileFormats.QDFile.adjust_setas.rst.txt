@@ -1,0 +1,8 @@
+
+
+QDFile.adjust_setas
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.adjust_setas

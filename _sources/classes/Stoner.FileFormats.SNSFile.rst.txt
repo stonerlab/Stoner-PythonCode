@@ -15,6 +15,7 @@ Stoner.FileFormats.SNSFile
    
       ~Stoner.FileFormats.SNSFile.__init__
       ~Stoner.FileFormats.SNSFile.add_column
+      ~Stoner.FileFormats.SNSFile.adjust_setas
       ~Stoner.FileFormats.SNSFile.clear
       ~Stoner.FileFormats.SNSFile.closest
       ~Stoner.FileFormats.SNSFile.column

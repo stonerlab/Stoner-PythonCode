@@ -9,7 +9,7 @@
     <title>Stoner.Data &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -79,151 +79,157 @@ analysis on data files.</p>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Data.add_column.html#Stoner.Data.add_column" title="Stoner.Data.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;header,&nbsp;index])</td>
 <td>Appends a column of data or inserts a column to a datafile instance.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.annotate_fit.html#Stoner.Data.annotate_fit" title="Stoner.Data.annotate_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_fit</span></code></a>(model[,&nbsp;x,&nbsp;y,&nbsp;z,&nbsp;text_only])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.adjust_setas.html#Stoner.Data.adjust_setas" title="Stoner.Data.adjust_setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjust_setas</span></code></a>(*args,&nbsp;**kargs)</td>
+<td>Adjust the setas of this object and return ourselves.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.annotate_fit.html#Stoner.Data.annotate_fit" title="Stoner.Data.annotate_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_fit</span></code></a>(model[,&nbsp;x,&nbsp;y,&nbsp;z,&nbsp;text_only])</td>
 <td>Annotate a plot with some information about a fit.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.apply.html#Stoner.Data.apply" title="Stoner.Data.apply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code></a>(func[,&nbsp;col,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.apply.html#Stoner.Data.apply" title="Stoner.Data.apply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code></a>(func[,&nbsp;col,&nbsp;replace,&nbsp;header])</td>
 <td>Applies the given function to each row in the data set and adds to the data set.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.bin.html#Stoner.Data.bin" title="Stoner.Data.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a>([xcol,&nbsp;ycol,&nbsp;bins,&nbsp;mode,&nbsp;clone])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.bin.html#Stoner.Data.bin" title="Stoner.Data.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a>([xcol,&nbsp;ycol,&nbsp;bins,&nbsp;mode,&nbsp;clone])</td>
 <td>Bin x-y data into new values of x with an error bar.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.clear.html#Stoner.Data.clear" title="Stoner.Data.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.clear.html#Stoner.Data.clear" title="Stoner.Data.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.clip.html#Stoner.Data.clip" title="Stoner.Data.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>(clipper[,&nbsp;column])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.clip.html#Stoner.Data.clip" title="Stoner.Data.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>(clipper[,&nbsp;column])</td>
 <td>Clips the data based on the column and the clipper value.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.closest.html#Stoner.Data.closest" title="Stoner.Data.closest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">closest</span></code></a>(value[,&nbsp;xcol])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.closest.html#Stoner.Data.closest" title="Stoner.Data.closest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">closest</span></code></a>(value[,&nbsp;xcol])</td>
 <td>Return the row in a data file which has an x-column value closest to the given value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.colormap_xyz.html#Stoner.Data.colormap_xyz" title="Stoner.Data.colormap_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colormap_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.colormap_xyz.html#Stoner.Data.colormap_xyz" title="Stoner.Data.colormap_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colormap_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol])</td>
 <td>An xyz plot that forces the use of plt.contour.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.column.html#Stoner.Data.column" title="Stoner.Data.column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column</span></code></a>(col)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.column.html#Stoner.Data.column" title="Stoner.Data.column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column</span></code></a>(col)</td>
 <td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.columns.html#Stoner.Data.columns" title="Stoner.Data.columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columns</span></code></a>([not_masked])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.columns.html#Stoner.Data.columns" title="Stoner.Data.columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columns</span></code></a>([not_masked])</td>
 <td>Generator method that will iterate over the columns of data int he datafile.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.contour_xyz.html#Stoner.Data.contour_xyz" title="Stoner.Data.contour_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contour_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.contour_xyz.html#Stoner.Data.contour_xyz" title="Stoner.Data.contour_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contour_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;…])</td>
 <td>An xyz plot that forces the use of plt.contour.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.count.html#Stoner.Data.count" title="Stoner.Data.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>([axis])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.count.html#Stoner.Data.count" title="Stoner.Data.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>([axis])</td>
 <td>Count the number of un-masked elements in the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code>.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">curve_fit</span></code></a>(func[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">curve_fit</span></code></a>(func[,&nbsp;xcol,&nbsp;ycol,&nbsp;sigma])</td>
 <td>General curve fitting function passed through from scipy.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.decompose.html#Stoner.Data.decompose" title="Stoner.Data.decompose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decompose</span></code></a>([xcol,&nbsp;ycol,&nbsp;sym,&nbsp;asym,&nbsp;replace])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.decompose.html#Stoner.Data.decompose" title="Stoner.Data.decompose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decompose</span></code></a>([xcol,&nbsp;ycol,&nbsp;sym,&nbsp;asym,&nbsp;replace])</td>
 <td>Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.del_column.html#Stoner.Data.del_column" title="Stoner.Data.del_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_column</span></code></a>([col,&nbsp;duplicates])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.del_column.html#Stoner.Data.del_column" title="Stoner.Data.del_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_column</span></code></a>([col,&nbsp;duplicates])</td>
 <td>Deletes a column from the current <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> object.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.del_nan.html#Stoner.Data.del_nan" title="Stoner.Data.del_nan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_nan</span></code></a>([col,&nbsp;clone])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.del_nan.html#Stoner.Data.del_nan" title="Stoner.Data.del_nan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_nan</span></code></a>([col,&nbsp;clone])</td>
 <td>Remove rows that have nan in them.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.del_rows.html#Stoner.Data.del_rows" title="Stoner.Data.del_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_rows</span></code></a>([col,&nbsp;val,&nbsp;invert])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.del_rows.html#Stoner.Data.del_rows" title="Stoner.Data.del_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_rows</span></code></a>([col,&nbsp;val,&nbsp;invert])</td>
 <td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.diffsum.html#Stoner.Data.diffsum" title="Stoner.Data.diffsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diffsum</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.diffsum.html#Stoner.Data.diffsum" title="Stoner.Data.diffsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diffsum</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Calculate <span class="math notranslate nohighlight">\(\frac{a-b}{a+b}\)</span> for the two columns <em>a</em> and <em>b</em>.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.dir.html#Stoner.Data.dir" title="Stoner.Data.dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dir</span></code></a>([pattern])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.dir.html#Stoner.Data.dir" title="Stoner.Data.dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dir</span></code></a>([pattern])</td>
 <td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.divide.html#Stoner.Data.divide" title="Stoner.Data.divide"><code class="xref py py-obj docutils literal notranslate"><span class="pre">divide</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.divide.html#Stoner.Data.divide" title="Stoner.Data.divide"><code class="xref py py-obj docutils literal notranslate"><span class="pre">divide</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Divide one column (a) by  another column, number or array (b).</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.extrapolate.html#Stoner.Data.extrapolate" title="Stoner.Data.extrapolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extrapolate</span></code></a>(new_x[,&nbsp;xcol,&nbsp;ycol,&nbsp;yerr,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.extrapolate.html#Stoner.Data.extrapolate" title="Stoner.Data.extrapolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extrapolate</span></code></a>(new_x[,&nbsp;xcol,&nbsp;ycol,&nbsp;yerr,&nbsp;…])</td>
 <td>Extrapolate data based on local fit to x,y data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.figure.html#Stoner.Data.figure" title="Stoner.Data.figure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">figure</span></code></a>([figure,&nbsp;projection])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.figure.html#Stoner.Data.figure" title="Stoner.Data.figure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">figure</span></code></a>([figure,&nbsp;projection])</td>
 <td>Set the figure used by <a class="reference internal" href="Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin</span></code></a>.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.filter.html#Stoner.Data.filter" title="Stoner.Data.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.filter.html#Stoner.Data.filter" title="Stoner.Data.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>([func,&nbsp;cols,&nbsp;reset])</td>
 <td>Sets the mask on rows of data by evaluating a function for each row.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.find_col.html#Stoner.Data.find_col" title="Stoner.Data.find_col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.find_col.html#Stoner.Data.find_col" title="Stoner.Data.find_col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
 <td>Indexes the column headers in order to locate a column of data.shape.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.format.html#Stoner.Data.format" title="Stoner.Data.format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format</span></code></a>(key,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.format.html#Stoner.Data.format" title="Stoner.Data.format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format</span></code></a>(key,&nbsp;**kargs)</td>
 <td>Return the contents of key pretty formatted using <code class="xref py py-func docutils literal notranslate"><span class="pre">format_error()</span></code>.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.get.html#Stoner.Data.get" title="Stoner.Data.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(item[,&nbsp;default])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.get.html#Stoner.Data.get" title="Stoner.Data.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(item[,&nbsp;default])</td>
 <td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.get_filename.html#Stoner.Data.get_filename" title="Stoner.Data.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a>(mode)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.get_filename.html#Stoner.Data.get_filename" title="Stoner.Data.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a>(mode)</td>
 <td>Forces the user to choose a new filename using a system dialog box.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.griddata.html#Stoner.Data.griddata" title="Stoner.Data.griddata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">griddata</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;…])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.griddata.html#Stoner.Data.griddata" title="Stoner.Data.griddata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">griddata</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;…])</td>
 <td>Function to convert xyz data onto a regular grid.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.image_plot.html#Stoner.Data.image_plot" title="Stoner.Data.image_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">image_plot</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;ylim])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.image_plot.html#Stoner.Data.image_plot" title="Stoner.Data.image_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">image_plot</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;ylim])</td>
 <td>Grid up the three columns of data and plot.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.insert_rows.html#Stoner.Data.insert_rows" title="Stoner.Data.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(row,&nbsp;new_data)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.insert_rows.html#Stoner.Data.insert_rows" title="Stoner.Data.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(row,&nbsp;new_data)</td>
 <td>Insert new_data into the data array at position row.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.inset.html#Stoner.Data.inset" title="Stoner.Data.inset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inset</span></code></a>([parent,&nbsp;loc,&nbsp;width,&nbsp;height])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.inset.html#Stoner.Data.inset" title="Stoner.Data.inset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inset</span></code></a>([parent,&nbsp;loc,&nbsp;width,&nbsp;height])</td>
 <td>Add a new set of axes as an inset to the current plot.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.integrate.html#Stoner.Data.integrate" title="Stoner.Data.integrate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integrate</span></code></a>([xcol,&nbsp;ycol,&nbsp;result,&nbsp;result_name,&nbsp;…])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.integrate.html#Stoner.Data.integrate" title="Stoner.Data.integrate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integrate</span></code></a>([xcol,&nbsp;ycol,&nbsp;result,&nbsp;result_name,&nbsp;…])</td>
 <td>Inegrate a column of data, optionally returning the cumulative integral.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.interpolate.html#Stoner.Data.interpolate" title="Stoner.Data.interpolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate</span></code></a>(newX[,&nbsp;kind,&nbsp;xcol,&nbsp;replace])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.interpolate.html#Stoner.Data.interpolate" title="Stoner.Data.interpolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate</span></code></a>(newX[,&nbsp;kind,&nbsp;xcol,&nbsp;replace])</td>
 <td>Interpolate a dataset to get a new set of values for a given set of x data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.items.html#Stoner.Data.items" title="Stoner.Data.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.items.html#Stoner.Data.items" title="Stoner.Data.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.keys.html#Stoner.Data.keys" title="Stoner.Data.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.keys.html#Stoner.Data.keys" title="Stoner.Data.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</td>
 <td>An alias for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.dir(None)()</span></code> .</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.lmfit.html#Stoner.Data.lmfit" title="Stoner.Data.lmfit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lmfit</span></code></a>(model[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.lmfit.html#Stoner.Data.lmfit" title="Stoner.Data.lmfit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lmfit</span></code></a>(model[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma])</td>
 <td>Wrapper around lmfit module fitting.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.load.html#Stoner.Data.load" title="Stoner.Data.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.load.html#Stoner.Data.load" title="Stoner.Data.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
 <td>Loads the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> in from disc guessing a better subclass if necessary.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.make_bins.html#Stoner.Data.make_bins" title="Stoner.Data.make_bins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_bins</span></code></a>(xcol,&nbsp;bins[,&nbsp;mode])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.make_bins.html#Stoner.Data.make_bins" title="Stoner.Data.make_bins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_bins</span></code></a>(xcol,&nbsp;bins[,&nbsp;mode])</td>
 <td>Utility method to generate bin boundaries and centres along an axis.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.max.html#Stoner.Data.max" title="Stoner.Data.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>([column,&nbsp;bounds])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.max.html#Stoner.Data.max" title="Stoner.Data.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>([column,&nbsp;bounds])</td>
 <td>Find maximum value and index in a column of data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.mean.html#Stoner.Data.mean" title="Stoner.Data.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([column,&nbsp;sigma,&nbsp;bounds])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.mean.html#Stoner.Data.mean" title="Stoner.Data.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([column,&nbsp;sigma,&nbsp;bounds])</td>
 <td>Find mean value of a data column.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.min.html#Stoner.Data.min" title="Stoner.Data.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>([column,&nbsp;bounds])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.min.html#Stoner.Data.min" title="Stoner.Data.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>([column,&nbsp;bounds])</td>
 <td>Find minimum value and index in a column of data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.multiply.html#Stoner.Data.multiply" title="Stoner.Data.multiply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiply</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.multiply.html#Stoner.Data.multiply" title="Stoner.Data.multiply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiply</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Multiply one column (a) by  another column, number or array (b).</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.normalise.html#Stoner.Data.normalise" title="Stoner.Data.normalise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalise</span></code></a>([target,&nbsp;base,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.normalise.html#Stoner.Data.normalise" title="Stoner.Data.normalise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalise</span></code></a>([target,&nbsp;base,&nbsp;replace,&nbsp;header,&nbsp;…])</td>
 <td>Normalise data columns by dividing through by a base column value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.odr.html#Stoner.Data.odr" title="Stoner.Data.odr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">odr</span></code></a>(model[,&nbsp;xcol,&nbsp;ycol])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.odr.html#Stoner.Data.odr" title="Stoner.Data.odr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">odr</span></code></a>(model[,&nbsp;xcol,&nbsp;ycol])</td>
 <td>Wrapper around scipy.odr orthogonal distance regression fitting.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.outlier_detection.html#Stoner.Data.outlier_detection" title="Stoner.Data.outlier_detection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outlier_detection</span></code></a>([column,&nbsp;window,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.outlier_detection.html#Stoner.Data.outlier_detection" title="Stoner.Data.outlier_detection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outlier_detection</span></code></a>([column,&nbsp;window,&nbsp;…])</td>
 <td>Function to detect outliers in a column of data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.peaks.html#Stoner.Data.peaks" title="Stoner.Data.peaks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">peaks</span></code></a>(**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.peaks.html#Stoner.Data.peaks" title="Stoner.Data.peaks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">peaks</span></code></a>(**kargs)</td>
 <td>Locates peaks and/or troughs in a column of data by using SG-differentiation.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.plot.html#Stoner.Data.plot" title="Stoner.Data.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.plot.html#Stoner.Data.plot" title="Stoner.Data.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>Try to make an appropriate plot based on the defined column assignments.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.plot_matrix.html#Stoner.Data.plot_matrix" title="Stoner.Data.plot_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_matrix</span></code></a>([xvals,&nbsp;yvals,&nbsp;rectang,&nbsp;cmap,&nbsp;…])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.plot_matrix.html#Stoner.Data.plot_matrix" title="Stoner.Data.plot_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_matrix</span></code></a>([xvals,&nbsp;yvals,&nbsp;rectang,&nbsp;cmap,&nbsp;…])</td>
 <td>Plots a surface plot by assuming that the current dataset represents a regular matrix of points.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.plot_xy.html#Stoner.Data.plot_xy" title="Stoner.Data.plot_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xy</span></code></a>([xcol,&nbsp;ycol,&nbsp;fmt,&nbsp;xerr,&nbsp;yerr])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.plot_xy.html#Stoner.Data.plot_xy" title="Stoner.Data.plot_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xy</span></code></a>([xcol,&nbsp;ycol,&nbsp;fmt,&nbsp;xerr,&nbsp;yerr])</td>
 <td>Makes a simple X-Y plot of the specified data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.plot_xyuv.html#Stoner.Data.plot_xyuv" title="Stoner.Data.plot_xyuv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyuv</span></code></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Data.plot_xyuv.html#Stoner.Data.plot_xyuv" title="Stoner.Data.plot_xyuv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyuv</span></code></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
+<td>Makes an overlaid image and quiver plot.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.plot_xyuvw.html#Stoner.Data.plot_xyuvw" title="Stoner.Data.plot_xyuvw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyuvw</span></code></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
 <td>Makes an overlaid image and quiver plot.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Data.plot_xyz.html#Stoner.Data.plot_xyz" title="Stoner.Data.plot_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;…])</td>
@@ -346,82 +352,85 @@ analysis on data files.</p>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></td>
 <td>Gets a deep copy of the current DataFile.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">column_headers</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmap</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">column_headers</span></code></td>
 <td>Pass through to the setas attribute.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></td>
 <td>Property Accessors for the main numerical data.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict_records</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict_records</span></code></td>
 <td>Return the data as a dictionary of single columns with column headers for the keys.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">dims</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">dims</span></code></td>
 <td>An alias for self.data.axes</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></td>
 <td>Return the _np_ dtype attribute of the data</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fig</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fig</span></code></td>
 <td>Get the current figure.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fignum</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fignum</span></code></td>
 <td>Return the current figure number.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">filename</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">filename</span></code></td>
 <td>Return DataFile filename, or make one up.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">header</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">header</span></code></td>
 <td>Make a pretty header string that looks like the tabular representation.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">labels</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">labels</span></code></td>
 <td>Return the labels for the plot columns</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">legend</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">legend</span></code></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></td>
 <td>Returns the mask of the data array.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></td>
 <td>Read the metadata dictionary.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">mime_type</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">mime_type</span></code></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiple</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiple</span></code></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">no_fmt</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">no_fmt</span></code></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">patterns</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">patterns</span></code></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">positional_fmt</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">positional_fmt</span></code></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">priority</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">priority</span></code></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">records</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">records</span></code></td>
 <td>Returns the data as a _np_ structured data array.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></td>
 <td>Get the list of column assignments.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></td>
 <td>Pass through the numpy shape attribute of the data.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">showfig</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">showfig</span></code></td>
 <td>Returns either the current figure or self or None, depeding on whether the attribute is True or False or None.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">subclasses</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">subclasses</span></code></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplots</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplots</span></code></td>
 <td>Return the subplot instances.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">template</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">template</span></code></td>
 <td>Return the current plot template.</td>
 </tr>
 </tbody>
@@ -488,9 +497,9 @@ analysis on data files.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.4
+      1.7.5
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -9,7 +9,7 @@
     <title>Stoner.DataFolder &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -113,7 +113,7 @@ files are only read in from disc when actually needed.</p>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.get.html#Stoner.DataFolder.get" title="Stoner.DataFolder.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(name[,&nbsp;default])</td>
 <td>Return either a sub-group or named object from this folder.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.getlist.html#Stoner.DataFolder.getlist" title="Stoner.DataFolder.getlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getlist</span></code></a>([recursive,&nbsp;directory,&nbsp;flatten])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.getlist.html#Stoner.DataFolder.getlist" title="Stoner.DataFolder.getlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getlist</span></code></a>([recursive,&nbsp;directory,&nbsp;flatten,&nbsp;…])</td>
 <td>Scans the current directory, optionally recursively to build a list of filenames</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.group.html#Stoner.DataFolder.group" title="Stoner.DataFolder.group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">group</span></code></a>(key)</td>
@@ -128,61 +128,64 @@ files are only read in from disc when actually needed.</p>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.items.html#Stoner.DataFolder.items" title="Stoner.DataFolder.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</td>
 <td>Return the key,value pairs for the subbroups of this folder.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.keys.html#Stoner.DataFolder.keys" title="Stoner.DataFolder.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.keep_latest.html#Stoner.DataFolder.keep_latest" title="Stoner.DataFolder.keep_latest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keep_latest</span></code></a>()</td>
+<td>Filter out earlier revisions of files with the same name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.keys.html#Stoner.DataFolder.keys" title="Stoner.DataFolder.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</td>
 <td>Return the keys used to access the sub-=groups of this folder.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.make_name.html#Stoner.DataFolder.make_name" title="Stoner.DataFolder.make_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_name</span></code></a>([value])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.make_name.html#Stoner.DataFolder.make_name" title="Stoner.DataFolder.make_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_name</span></code></a>([value])</td>
 <td>Construct a name from the value object if possible.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.next.html#Stoner.DataFolder.next" title="Stoner.DataFolder.next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.next.html#Stoner.DataFolder.next" title="Stoner.DataFolder.next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code></a>()</td>
 <td>Python 2.7 style iterator function.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.pop.html#Stoner.DataFolder.pop" title="Stoner.DataFolder.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>([name,&nbsp;default])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.pop.html#Stoner.DataFolder.pop" title="Stoner.DataFolder.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>([name,&nbsp;default])</td>
 <td>Return and remove either a subgroup or named object from this folder.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.popitem.html#Stoner.DataFolder.popitem" title="Stoner.DataFolder.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.popitem.html#Stoner.DataFolder.popitem" title="Stoner.DataFolder.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</td>
 <td>Return the most recent subgroup from this folder.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.prune.html#Stoner.DataFolder.prune" title="Stoner.DataFolder.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.prune.html#Stoner.DataFolder.prune" title="Stoner.DataFolder.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>()</td>
 <td>Remove any groups from the objectFolder (and subgroups).</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.remove.html#Stoner.DataFolder.remove" title="Stoner.DataFolder.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.remove.html#Stoner.DataFolder.remove" title="Stoner.DataFolder.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</td>
 <td>S.remove(value) – remove first occurrence of value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.reverse.html#Stoner.DataFolder.reverse" title="Stoner.DataFolder.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.reverse.html#Stoner.DataFolder.reverse" title="Stoner.DataFolder.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code></a>()</td>
 <td>S.reverse() – reverse <em>IN PLACE</em></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.save.html#Stoner.DataFolder.save" title="Stoner.DataFolder.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.save.html#Stoner.DataFolder.save" title="Stoner.DataFolder.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</td>
 <td>Save the entire data folder out to disc using the groups as a directory tree, calling the save method for each file in turn.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.select.html#Stoner.DataFolder.select" title="Stoner.DataFolder.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.select.html#Stoner.DataFolder.select" title="Stoner.DataFolder.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>A generator that can be used to select particular data files from the objectFolder</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.setdefault.html#Stoner.DataFolder.setdefault" title="Stoner.DataFolder.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[,&nbsp;d])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.setdefault.html#Stoner.DataFolder.setdefault" title="Stoner.DataFolder.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[,&nbsp;d])</td>
 <td>Return or set a subgroup or named object.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.slice_metadata.html#Stoner.DataFolder.slice_metadata" title="Stoner.DataFolder.slice_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_metadata</span></code></a>(key[,&nbsp;output])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.slice_metadata.html#Stoner.DataFolder.slice_metadata" title="Stoner.DataFolder.slice_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_metadata</span></code></a>(key[,&nbsp;output])</td>
 <td>Return an array of the metadata values for each item/file in the top level group</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.sort.html#Stoner.DataFolder.sort" title="Stoner.DataFolder.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>([key,&nbsp;reverse])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.sort.html#Stoner.DataFolder.sort" title="Stoner.DataFolder.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>([key,&nbsp;reverse])</td>
 <td>Sort the files by some key</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.unflatten.html#Stoner.DataFolder.unflatten" title="Stoner.DataFolder.unflatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unflatten</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.unflatten.html#Stoner.DataFolder.unflatten" title="Stoner.DataFolder.unflatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unflatten</span></code></a>()</td>
 <td>Takes a file list an unflattens them according to the file paths.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.unload.html#Stoner.DataFolder.unload" title="Stoner.DataFolder.unload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unload</span></code></a>(name)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.unload.html#Stoner.DataFolder.unload" title="Stoner.DataFolder.unload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unload</span></code></a>(name)</td>
 <td>Removes the instance from memory without losing the name in the Folder.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.update.html#Stoner.DataFolder.update" title="Stoner.DataFolder.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(other)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.update.html#Stoner.DataFolder.update" title="Stoner.DataFolder.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(other)</td>
 <td>Update this folder with a dictionary or another folder.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.values.html#Stoner.DataFolder.values" title="Stoner.DataFolder.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.values.html#Stoner.DataFolder.values" title="Stoner.DataFolder.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</td>
 <td>Return the sub-groups of this folder.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.walk_groups.html#Stoner.DataFolder.walk_groups" title="Stoner.DataFolder.walk_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk_groups</span></code></a>(walker,&nbsp;**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.walk_groups.html#Stoner.DataFolder.walk_groups" title="Stoner.DataFolder.walk_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk_groups</span></code></a>(walker,&nbsp;**kargs)</td>
 <td>Walks through a heirarchy of groups and calls walker for each file.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.DataFolder.zip_groups.html#Stoner.DataFolder.zip_groups" title="Stoner.DataFolder.zip_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zip_groups</span></code></a>(groups)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.DataFolder.zip_groups.html#Stoner.DataFolder.zip_groups" title="Stoner.DataFolder.zip_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zip_groups</span></code></a>(groups)</td>
 <td>Return a list of tuples of metadataObjects drawn from the specified groups</td>
 </tr>
 </tbody>
@@ -312,9 +315,9 @@ files are only read in from disc when actually needed.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.4
+      1.7.5
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

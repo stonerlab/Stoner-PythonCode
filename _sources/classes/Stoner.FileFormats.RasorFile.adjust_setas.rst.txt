@@ -1,0 +1,8 @@
+
+
+RasorFile.adjust_setas
+=========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: RasorFile.adjust_setas

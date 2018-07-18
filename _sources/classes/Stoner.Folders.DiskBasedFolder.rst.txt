@@ -18,6 +18,7 @@ DiskBasedFolder
    .. autosummary::
 
       ~DiskBasedFolder.getlist
+      ~DiskBasedFolder.keep_latest
       ~DiskBasedFolder.save
       ~DiskBasedFolder.unload
 
@@ -29,5 +30,6 @@ DiskBasedFolder
    .. rubric:: Methods Documentation
 
    .. automethod:: getlist
+   .. automethod:: keep_latest
    .. automethod:: save
    .. automethod:: unload

@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.adjust_setas
+===========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: OpenGDAFile.adjust_setas

@@ -12,6 +12,7 @@ PlotMixin
 
       ~PlotMixin.ax
       ~PlotMixin.axes
+      ~PlotMixin.cmap
       ~PlotMixin.fig
       ~PlotMixin.fignum
       ~PlotMixin.labels
@@ -38,6 +39,7 @@ PlotMixin
       ~PlotMixin.plot_matrix
       ~PlotMixin.plot_xy
       ~PlotMixin.plot_xyuv
+      ~PlotMixin.plot_xyuvw
       ~PlotMixin.plot_xyz
       ~PlotMixin.plot_xyzuvw
       ~PlotMixin.quiver_plot
@@ -50,6 +52,7 @@ PlotMixin
 
    .. autoattribute:: ax
    .. autoattribute:: axes
+   .. autoattribute:: cmap
    .. autoattribute:: fig
    .. autoattribute:: fignum
    .. autoattribute:: labels
@@ -74,6 +77,7 @@ PlotMixin
    .. automethod:: plot_matrix
    .. automethod:: plot_xy
    .. automethod:: plot_xyuv
+   .. automethod:: plot_xyuvw
    .. automethod:: plot_xyz
    .. automethod:: plot_xyzuvw
    .. automethod:: quiver_plot

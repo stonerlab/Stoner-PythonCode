@@ -9,7 +9,7 @@
     <title>Stoner.Folders &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
@@ -100,6 +100,44 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">=</span><span class="n">folder</span>
 
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">func</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over the baseFolder, calling func on each item.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            func (callable): A Callable object that must take a metadataObject type instance as it&#39;s first argument.</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            _return (None, bool or str): Controls how the return value from *func* is added to the DataFolder</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of the results of evaluating *func* for each item in the folder.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is storing, then</span>
+<span class="sd">            the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the :py:class:`baseFolder`.</span>
+<span class="sd">            If *_result* is True the return value is added to the :py:class:`Stoner.Core.metadataObject`&#39;s metadata under the name</span>
+<span class="sd">            of the function. If *_result* is a string. then return result is stored in the corresponding name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">retvals</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">_return</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_return&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">clone</span>
+            <span class="n">ret</span><span class="o">=</span><span class="n">func</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="n">retvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">_type</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_return</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span> <span class="c1">#Check if ret has same data type, otherwise will not overwrite well</span>
+                    <span class="k">if</span> <span class="n">ret</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">!=</span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">=</span><span class="n">ret</span>
+            <span class="k">elif</span> <span class="n">_return</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_return</span><span class="p">,</span><span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_return</span><span class="p">:</span>
+                    <span class="n">_return</span><span class="o">=</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="n">ix</span><span class="p">][</span><span class="n">_return</span><span class="p">]</span><span class="o">=</span><span class="n">ret</span>
+        <span class="k">return</span> <span class="n">retvals</span>
+
+
     <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a list of the common set of attributes of the instances in the folder.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
@@ -175,7 +213,7 @@
                             <span class="k">continue</span>
                     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                         <span class="k">pass</span>
-                    <span class="bp">self</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">=</span><span class="n">ret</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">=</span><span class="n">ret</span>
                 <span class="k">elif</span> <span class="n">_return</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_return</span><span class="p">,</span><span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_return</span><span class="p">:</span>
                         <span class="n">_return</span><span class="o">=</span><span class="n">meth</span><span class="o">.</span><span class="vm">__name__</span>
@@ -184,6 +222,46 @@
         <span class="c1">#Ok that&#39;s the wrapper function, now return  it for the user to mess around with.</span>
         <span class="k">return</span> <span class="n">_wrapper_</span>
 
+    <span class="k">def</span> <span class="nf">__rmatmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implement callable@DataFolder as a generic iterate a function over DataFolder members.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            An object that supports __call__ and knows about this DataFolder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">_wrapper_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Wraps a call to the metadataObject type for magic method calling.</span>
+
+<span class="sd">            Keyword Arguments:</span>
+<span class="sd">                _return (index types or None): specify to store the return value in the individual object&#39;s metadata</span>
+
+<span class="sd">            Note:</span>
+<span class="sd">                This relies on being defined inside the enclosure of the objectFolder method</span>
+<span class="sd">                so we have access to self and item</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">retvals</span><span class="o">=</span><span class="p">[]</span>
+            <span class="n">_return</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_return&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">):</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">clone</span>
+                <span class="n">ret</span><span class="o">=</span><span class="n">other</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+                <span class="n">retvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">_type</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_return</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span> <span class="c1">#Check if ret has same data type, otherwise will not overwrite well</span>
+                        <span class="k">if</span> <span class="n">ret</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">!=</span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">=</span><span class="n">ret</span>
+                <span class="k">elif</span> <span class="n">_return</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_return</span><span class="p">,</span><span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_return</span><span class="p">:</span>
+                        <span class="n">_return</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="vm">__name__</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="n">ix</span><span class="p">][</span><span class="n">_return</span><span class="p">]</span><span class="o">=</span><span class="n">ret</span>
+            <span class="k">return</span> <span class="n">retvals</span>
+        <span class="c1">#Ok that&#39;s the wrapper function, now return  it for the user to mess around with.</span>
+        <span class="k">return</span> <span class="n">_wrapper_</span>
 
 <span class="k">class</span> <span class="nc">_combined_metadata_proxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
@@ -234,7 +312,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">keys</span><span class="o">=</span><span class="nb">set</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">keys</span><span class="p">))</span>
-    
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">common_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a dictionary of the common_keys that have common values.&quot;&quot;&quot;</span>
@@ -1051,11 +1129,20 @@
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.next"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Python 2.7 style iterator function.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
-            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
+    <span class="k">def</span> <span class="nf">__rmatmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implement callable@DataFolder as a generic iterate a function over DataFolder members.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            An object that supports __call__ and knows about this DataFolder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">each</span><span class="o">.</span><span class="fm">__rmatmul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>  <span class="c1">#Just bounce it onto the each object</span>
 
     <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement the addition operator for baseFolder and metadataObjects.&quot;&quot;&quot;</span>
@@ -1304,7 +1391,7 @@
     <span class="c1">###########################################################################</span>
     <span class="c1">############# Normal Methods ##############################################</span>
 
-    <span class="k">def</span> <span class="nf">add_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.add_group"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.add_group">[docs]</a>    <span class="k">def</span> <span class="nf">add_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a new group to the current baseFolder with the given key.</span>
 
 <span class="sd">        Args:</span>
@@ -1324,14 +1411,14 @@
             <span class="n">new_group</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__clone__</span><span class="p">(</span><span class="n">attrs_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">new_group</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">key</span><span class="o">=</span><span class="n">key</span>
-        <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
-    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.clear"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Clear the subgroups.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__clear__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__clear__</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.count"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.count">[docs]</a>    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provide a count method like a sequence.</span>
 
 <span class="sd">        Args:</span>
@@ -1354,9 +1441,9 @@
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">metadataObject</span><span class="p">):</span>
             <span class="n">match</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">d</span><span class="o">==</span><span class="n">name</span> <span class="p">]</span>
-            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pathsplit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.file"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.file">[docs]</a>    <span class="k">def</span> <span class="nf">file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pathsplit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Recursively add groups in order to put the named value into a virtual tree of :py:class:`baseFolder`.</span>
 
 <span class="sd">        Args:</span>
@@ -1396,11 +1483,11 @@
                 <span class="n">tmp</span><span class="o">=</span><span class="n">tmp</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;No group </span><span class="si">{}</span><span class="s2"> exists and not creating groups.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">section</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">tmp</span>
+        <span class="k">return</span> <span class="n">tmp</span></div>
 
 
 
-    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="n">invert</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> <span class="c1"># pylint: disable=redefined-builtin</span>
+<div class="viewcode-block" id="baseFolder.filter"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="n">invert</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> <span class="c1"># pylint: disable=redefined-builtin</span>
         <span class="sd">&quot;&quot;&quot;Filter the current set of files by some criterion</span>
 
 <span class="sd">        Args:</span>
@@ -1435,9 +1522,9 @@
                     <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">result</span><span class="o">.</span><span class="n">__clear__</span><span class="p">()</span>
         <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
-    <span class="k">def</span> <span class="nf">filterout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> <span class="c1"># pylint: disable=redefined-builtin</span>
+<div class="viewcode-block" id="baseFolder.filterout"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.filterout">[docs]</a>    <span class="k">def</span> <span class="nf">filterout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> <span class="c1"># pylint: disable=redefined-builtin</span>
         <span class="sd">&quot;&quot;&quot;Synonym for self.filter(filter,invert=True)</span>
 
 <span class="sd">        Args:</span>
@@ -1450,9 +1537,9 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            The current objectFolder object with the files in the file list filtered.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.flatten"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compresses all the groups and sub-groups iunto a single flat file list.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -1478,17 +1565,17 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="n">new_name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">__clear__</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">=</span><span class="p">{}</span>
-        <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.get"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return either a sub-group or named object from this folder.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span><span class="ne">IndexError</span><span class="p">):</span>
             <span class="n">ret</span><span class="o">=</span><span class="n">default</span>
-        <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
 
-    <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.group"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.group">[docs]</a>    <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Take the files and sort them into a series of separate objectFolder objects according to the value of the key</span>
 
 <span class="sd">        Args:</span>
@@ -1518,9 +1605,9 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">next_keys</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">next_keys</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
-    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.index"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provide an index method like a sequence.</span>
 
 <span class="sd">        Args:</span>
@@ -1557,9 +1644,9 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">metadataObject</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">search</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">name</span><span class="o">==</span><span class="n">n</span><span class="p">:</span> <span class="k">return</span> <span class="n">i</span><span class="o">+</span><span class="n">start</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No match for any name of a metadataObject in this baseFolder.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No match for any name of a metadataObject in this baseFolder.&quot;</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ix</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.insert"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ix</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implements the insert method with the option to append as well.&quot;&quot;&quot;</span>
         <span class="n">name</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_name</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="n">names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()</span>
@@ -1574,21 +1661,21 @@
             <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()[</span><span class="n">ix</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">),</span><span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">ix</span><span class="o">&gt;=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">force_insert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">force_insert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.append"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Append an item to the folder object&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.items"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.items">[docs]</a>    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the key,value pairs for the subbroups of this folder.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">items</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.keys"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.keys">[docs]</a>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the keys used to access the sub-=groups of this folder.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">make_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.make_name"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.make_name">[docs]</a>    <span class="k">def</span> <span class="nf">make_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Construct a name from the value object if possible.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">):</span>
             <span class="n">name</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="s2">&quot;filename&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -1605,23 +1692,23 @@
             <span class="k">while</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_last_name</span><span class="o">+=</span><span class="mi">1</span>
                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Untitled-</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_name</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">name</span>
+            <span class="k">return</span> <span class="n">name</span></div>
 
 
-    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> <span class="c1"># pylint: disable=arguments-differ</span>
+<div class="viewcode-block" id="baseFolder.pop"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> <span class="c1"># pylint: disable=arguments-differ</span>
         <span class="sd">&quot;&quot;&quot;Return and remove either a subgroup or named object from this folder.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
             <span class="k">del</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span><span class="ne">IndexError</span><span class="p">):</span>
             <span class="n">ret</span><span class="o">=</span><span class="n">default</span>
-        <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
 
-    <span class="k">def</span> <span class="nf">popitem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.popitem"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.popitem">[docs]</a>    <span class="k">def</span> <span class="nf">popitem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the most recent subgroup from this folder.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">popitem</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">popitem</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">prune</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.prune"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.prune">[docs]</a>    <span class="k">def</span> <span class="nf">prune</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Remove any groups from the objectFolder (and subgroups).</span>
 
 <span class="sd">        Returns:</span>
@@ -1640,9 +1727,9 @@
                     <span class="k">del</span> <span class="n">grp</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
             <span class="n">pruneable</span><span class="o">=</span><span class="p">[]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pruner_</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;prunelist&quot;</span><span class="p">:</span><span class="n">pruneable</span><span class="p">})</span>
-        <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
-    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.select"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.select">[docs]</a>    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A generator that can be used to select particular data files from the objectFolder</span>
 
 <span class="sd">        Args:</span>
@@ -1734,14 +1821,14 @@
                 <span class="k">continue</span>
             <span class="c1">#Something matched, so append to result</span>
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
-    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.setdefault"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.setdefault">[docs]</a>    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return or set a subgroup or named object.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">d</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
 
-    <span class="k">def</span> <span class="nf">slice_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span><span class="n">output</span><span class="o">=</span><span class="s2">&quot;smart&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.slice_metadata"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.slice_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">slice_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span><span class="n">output</span><span class="o">=</span><span class="s2">&quot;smart&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return an array of the metadata values for each item/file in the top level group</span>
 
 <span class="sd">        Args:</span>
@@ -1764,9 +1851,9 @@
 <span class="sd">        TODO:</span>
 <span class="sd">            Add options to recurse through all groups? Put back RCT&#39;s values only functionality?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.sort"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sort the files by some key</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -1804,9 +1891,9 @@
             <span class="n">new_order</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">new_order</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__clear__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">new_order</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
-    <span class="k">def</span> <span class="nf">unflatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.unflatten"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.unflatten">[docs]</a>    <span class="k">def</span> <span class="nf">unflatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Takes a file list an unflattens them according to the file paths.</span>
 
 <span class="sd">        Returns:</span>
@@ -1825,9 +1912,9 @@
                 <span class="k">del</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">unflatten</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.update"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update this folder with a dictionary or another folder.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
@@ -1836,13 +1923,13 @@
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="n">other</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">k</span><span class="p">)))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="n">other</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">k</span><span class="p">)))</span></div>
 
-    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.values"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.values">[docs]</a>    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the sub-groups of this folder.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">values</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">walker</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.walk_groups"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.walk_groups">[docs]</a>    <span class="k">def</span> <span class="nf">walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">walker</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Walks through a heirarchy of groups and calls walker for each file.</span>
 
 <span class="sd">        Args:</span>
@@ -1866,9 +1953,9 @@
         <span class="n">only_terminal</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;only_terminal&quot;</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">walker_args</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;walker_args&quot;</span><span class="p">,</span><span class="nb">dict</span><span class="p">())</span>
         <span class="n">walker_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">walker_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">walker_args</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__walk_groups</span><span class="p">(</span><span class="n">walker</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="n">replace_terminal</span><span class="p">,</span><span class="n">only_terminal</span><span class="o">=</span><span class="n">only_terminal</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="n">walker_args</span><span class="p">,</span><span class="n">breadcrumb</span><span class="o">=</span><span class="p">[])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__walk_groups</span><span class="p">(</span><span class="n">walker</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="n">replace_terminal</span><span class="p">,</span><span class="n">only_terminal</span><span class="o">=</span><span class="n">only_terminal</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="n">walker_args</span><span class="p">,</span><span class="n">breadcrumb</span><span class="o">=</span><span class="p">[])</span></div>
 
-    <span class="k">def</span> <span class="nf">zip_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.zip_groups"><a class="viewcode-back" href="../../classes/Stoner.Folders.baseFolder.html#Stoner.baseFolder.zip_groups">[docs]</a>    <span class="k">def</span> <span class="nf">zip_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a list of tuples of metadataObjects drawn from the specified groups</span>
 
 <span class="sd">        Args:</span>
@@ -1881,7 +1968,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;groups must be a list of groups&quot;</span><span class="p">)</span>
         <span class="n">grps</span><span class="o">=</span><span class="p">[[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">x</span><span class="p">]]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
-        <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">grps</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">grps</span><span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="DiskBasedFolder"><a class="viewcode-back" href="../../classes/Stoner.Folders.DiskBasedFolder.html#Stoner.DiskBasedFolder">[docs]</a><span class="k">class</span> <span class="nc">DiskBasedFolder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
@@ -1906,6 +1993,9 @@
 <span class="sd">        flatten (bool): Specify where to present subdirectories as spearate groups in the folder (False) or as a single group (True). Default is False.</span>
 <span class="sd">            The :py:meth:`DiskBasedFolder.flatten` method has the equivalent effect and :py:meth:`DiskBasedFolder.unflatten` reverses it.</span>
 
+<span class="sd">        discard_earlier (bool): IF there are several files with the same filename apart from !#### being appended just before the extension, then discard</span>
+<span class="sd">            all except the one with the largest value of #### when collecting the list of files.</span>
+
 <span class="sd">        directory (str): The root directory on disc for the folder - by default this is the current working directory.</span>
 
 <span class="sd">        multifile (boo): Whether to select individual files manually that are not (necessarily) in  a common directory structure.</span>
@@ -1923,6 +2013,7 @@
               <span class="s2">&quot;directory&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
               <span class="s2">&quot;multifile&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
               <span class="s2">&quot;readlist&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+              <span class="s2">&quot;discard_earlier&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
               <span class="p">}</span>
 
 
@@ -2103,6 +2194,33 @@
                 <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">dirs</span><span class="p">,</span><span class="n">files</span>
 
+    <span class="k">def</span> <span class="nf">_discard_earlier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">files</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Helper function to discard files where a similar named file with !#### exists.&quot;&quot;&quot;</span>
+        <span class="n">search</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?P&lt;basename&gt;.*)\!(?P&lt;rev&gt;\d+)(?P&lt;ext&gt;\.[^\.]*)$&quot;</span><span class="p">)</span>
+        <span class="n">dups</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">ret</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">match</span><span class="o">=</span><span class="n">search</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">fname</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{basename}{ext}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">())</span>
+                <span class="n">rev</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()[</span><span class="s2">&quot;rev&quot;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">dups</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">dups</span><span class="p">[</span><span class="n">fname</span><span class="p">]</span><span class="o">&gt;</span><span class="n">rev</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                <span class="n">dups</span><span class="p">[</span><span class="n">fname</span><span class="p">]</span><span class="o">=</span><span class="n">rev</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dups</span><span class="p">:</span>
+                    <span class="n">dups</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span>
+        <span class="k">for</span> <span class="n">f</span><span class="p">,</span><span class="n">rev</span> <span class="ow">in</span> <span class="n">dups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">rev</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">base</span><span class="p">,</span><span class="n">ext</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">!</span><span class="si">{:04d}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">base</span><span class="p">,</span><span class="n">rev</span><span class="p">,</span><span class="n">ext</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ret</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">basenames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2128,7 +2246,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;pattern should be a string, regular expression or iterable object not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
 
 
-<div class="viewcode-block" id="DiskBasedFolder.getlist"><a class="viewcode-back" href="../../classes/Stoner.Folders.DiskBasedFolder.html#Stoner.DiskBasedFolder.getlist">[docs]</a>    <span class="k">def</span> <span class="nf">getlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">flatten</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DiskBasedFolder.getlist"><a class="viewcode-back" href="../../classes/Stoner.Folders.DiskBasedFolder.html#Stoner.DiskBasedFolder.getlist">[docs]</a>    <span class="k">def</span> <span class="nf">getlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">flatten</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">discard_earlier</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Scans the current directory, optionally recursively to build a list of filenames</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -2147,6 +2265,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__clear__</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">recursive</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">recursive</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">recursive</span>
+        <span class="k">if</span> <span class="n">discard_earlier</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">discard_earlier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">discard_earlier</span>
         <span class="k">if</span> <span class="n">flatten</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">flatten</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;flat&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span> <span class="c1">#ImageFolders don&#39;t have flat because it clashes with a numpy attribute</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span>  <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">directory</span><span class="p">:</span>
@@ -2159,6 +2279,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
         <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span>
         <span class="n">dirs</span><span class="p">,</span><span class="n">files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_scan_dir</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">discard_earlier</span><span class="p">:</span>
+            <span class="n">files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_discard_earlier</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span><span class="p">:</span> <span class="c1">#Remove excluded files</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">files</span><span class="p">,</span><span class="n">p</span><span class="p">)):</span>
@@ -2210,6 +2332,23 @@
             <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">o</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">relpaths</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">o</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="DiskBasedFolder.keep_latest"><a class="viewcode-back" href="../../classes/Stoner.Folders.DiskBasedFolder.html#Stoner.DiskBasedFolder.keep_latest">[docs]</a>    <span class="k">def</span> <span class="nf">keep_latest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Filter out earlier revisions of files with the same name.</span>
+
+<span class="sd">        The CM group LabVIEW software will avoid overwirting files when measuring by inserting !#### where #### is an integer revision number just before the</span>
+<span class="sd">        filename extension. This method will look for instances of several files which differ in name only by the presence of the revision number and will</span>
+<span class="sd">        kepp only the highest revision number. This is useful if several measurements of the same experiment have been carried out, but only the last file is</span>
+<span class="sd">        the correct one.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of the DataFolder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">files</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="p">)</span>
+        <span class="n">keep</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_discard_earlier</span><span class="p">(</span><span class="n">files</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">files</span><span class="p">)</span><span class="o">-</span><span class="n">keep</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="DiskBasedFolder.save"><a class="viewcode-back" href="../../classes/Stoner.Folders.DiskBasedFolder.html#Stoner.DiskBasedFolder.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -2294,7 +2433,7 @@
         <span class="k">return</span> <span class="n">tmp</span>
 
 
-<div class="viewcode-block" id="DataFolder.concatentate"><a class="viewcode-back" href="../../classes/Stoner.DataFolder.concatentate.html#Stoner.DataFolder.concatentate">[docs]</a>    <span class="k">def</span> <span class="nf">concatentate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sort</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFolder.concatentate"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.html#Stoner.DataFolder.concatentate">[docs]</a>    <span class="k">def</span> <span class="nf">concatentate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sort</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Concatentates all the files in a objectFolder into a single metadataObject like object.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -2317,7 +2456,7 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="DataFolder.extract"><a class="viewcode-back" href="../../classes/Stoner.DataFolder.extract.html#Stoner.DataFolder.extract">[docs]</a>    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">metadata</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFolder.extract"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.html#Stoner.DataFolder.extract">[docs]</a>    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">metadata</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Walks through the terminal group and gets the listed metadata from each file and constructsa replacement metadataObject.</span>
 
 <span class="sd">        Args:</span>
@@ -2377,7 +2516,7 @@
 
         <span class="k">return</span> <span class="n">ret</span><span class="o">.</span><span class="n">walk_groups</span><span class="p">(</span><span class="n">_extractor</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;metadata&quot;</span><span class="p">:</span><span class="n">metadata</span><span class="p">})</span></div>
 
-<div class="viewcode-block" id="DataFolder.gather"><a class="viewcode-back" href="../../classes/Stoner.DataFolder.gather.html#Stoner.DataFolder.gather">[docs]</a>    <span class="k">def</span> <span class="nf">gather</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFolder.gather"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.html#Stoner.DataFolder.gather">[docs]</a>    <span class="k">def</span> <span class="nf">gather</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a :py:class:`Stoner.Core.metadataObject`</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -2455,14 +2594,14 @@
 <span class="sd">            :outname:  plotfolder</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotFolder.figure"><a class="viewcode-back" href="../../classes/Stoner.Folders.PlotFolder.html#Stoner.PlotFolder.figure">[docs]</a>    <span class="k">def</span> <span class="nf">figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Pass through for :py:func:`matplotlib.pyplot.figure` but alos takes a note of the arguments for later.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fig_args</span><span class="o">=</span><span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fig_kargs</span><span class="o">=</span><span class="n">kargs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fiogure</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fiogure</span></div>
 
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotFolder.plot"><a class="viewcode-back" href="../../classes/Stoner.Folders.PlotFolder.html#Stoner.PlotFolder.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Call the plot method for each metadataObject, but switching to a subplot each time.</span>
 
 <span class="sd">        Args:</span>
@@ -2533,7 +2672,7 @@
             <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">))</span>
             <span class="n">extra</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">d</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">ret</span></div>
+        <span class="k">return</span> <span class="n">ret</span></div></div>
 </pre></div>
 
           </div>
@@ -2577,9 +2716,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.4
+      1.7.5
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

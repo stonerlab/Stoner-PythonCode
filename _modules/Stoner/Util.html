@@ -9,7 +9,7 @@
     <title>Stoner.Util &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
@@ -205,7 +205,7 @@
     <span class="c1">#Get other keyword arguments</span>
     <span class="n">correct_background</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;correct_background&quot;</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">correct_H</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;correct_H&quot;</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">saturation_fraction</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;saturation_fraction&quot;</span><span class="p">,</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">saturation_fraction</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;saturated_fraction&quot;</span><span class="p">,</span><span class="mf">0.2</span><span class="p">)</span>
 
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">up</span><span class="p">,</span><span class="n">down</span><span class="o">=</span><span class="n">_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -216,12 +216,12 @@
         <span class="n">mix</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">saturation_fraction</span><span class="p">)</span>
 
 
-        <span class="n">up</span><span class="o">.</span><span class="n">_push_mask</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="n">mix</span><span class="p">)</span>
+        <span class="n">up</span><span class="o">.</span><span class="n">_push_mask</span><span class="p">(</span><span class="n">up</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">mix</span><span class="p">)</span>
         <span class="n">pts</span><span class="o">=</span><span class="n">up</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
         <span class="n">up</span><span class="o">.</span><span class="n">_pop_mask</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">pts</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">,</span><span class="s2">&quot;Not enough points in the negative saturation state.(mix=</span><span class="si">{}</span><span class="s2">,pts=</span><span class="si">{}</span><span class="s2">,x=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mix</span><span class="p">,</span><span class="n">pts</span><span class="p">,</span><span class="n">up</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
 
-        <span class="n">down</span><span class="o">.</span><span class="n">_push_mask</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">mx</span><span class="p">)</span>
+        <span class="n">down</span><span class="o">.</span><span class="n">_push_mask</span><span class="p">(</span><span class="n">down</span><span class="o">.</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">mx</span><span class="p">)</span>
         <span class="n">pts</span><span class="o">=</span><span class="n">down</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
         <span class="n">down</span><span class="o">.</span><span class="n">_pop_mask</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">pts</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">,</span><span class="s2">&quot;Not enough points in the positive saturation state(mx=</span><span class="si">{}</span><span class="s2">,pts=</span><span class="si">{}</span><span class="s2">,x=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">pts</span><span class="p">,</span><span class="n">down</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
@@ -349,9 +349,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.4
+      1.7.5
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

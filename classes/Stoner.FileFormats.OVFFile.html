@@ -9,7 +9,7 @@
     <title>Stoner.FileFormats.OVFFile &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -71,106 +71,109 @@
 <tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.add_column.html#Stoner.FileFormats.OVFFile.add_column" title="Stoner.FileFormats.OVFFile.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;header,&nbsp;index,&nbsp;…])</td>
 <td>Appends a column of data or inserts a column to a datafile instance.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.clear.html#Stoner.FileFormats.OVFFile.clear" title="Stoner.FileFormats.OVFFile.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.adjust_setas.html#Stoner.FileFormats.OVFFile.adjust_setas" title="Stoner.FileFormats.OVFFile.adjust_setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjust_setas</span></code></a>(*args,&nbsp;**kargs)</td>
+<td>Adjust the setas of this object and return ourselves.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.clear.html#Stoner.FileFormats.OVFFile.clear" title="Stoner.FileFormats.OVFFile.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.closest.html#Stoner.FileFormats.OVFFile.closest" title="Stoner.FileFormats.OVFFile.closest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">closest</span></code></a>(value[,&nbsp;xcol])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.closest.html#Stoner.FileFormats.OVFFile.closest" title="Stoner.FileFormats.OVFFile.closest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">closest</span></code></a>(value[,&nbsp;xcol])</td>
 <td>Return the row in a data file which has an x-column value closest to the given value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.column.html#Stoner.FileFormats.OVFFile.column" title="Stoner.FileFormats.OVFFile.column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column</span></code></a>(col)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.column.html#Stoner.FileFormats.OVFFile.column" title="Stoner.FileFormats.OVFFile.column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column</span></code></a>(col)</td>
 <td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.columns.html#Stoner.FileFormats.OVFFile.columns" title="Stoner.FileFormats.OVFFile.columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columns</span></code></a>([not_masked])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.columns.html#Stoner.FileFormats.OVFFile.columns" title="Stoner.FileFormats.OVFFile.columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columns</span></code></a>([not_masked])</td>
 <td>Generator method that will iterate over the columns of data int he datafile.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.count.html#Stoner.FileFormats.OVFFile.count" title="Stoner.FileFormats.OVFFile.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>([axis])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.count.html#Stoner.FileFormats.OVFFile.count" title="Stoner.FileFormats.OVFFile.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>([axis])</td>
 <td>Count the number of un-masked elements in the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code>.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.del_column.html#Stoner.FileFormats.OVFFile.del_column" title="Stoner.FileFormats.OVFFile.del_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_column</span></code></a>([col,&nbsp;duplicates])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.del_column.html#Stoner.FileFormats.OVFFile.del_column" title="Stoner.FileFormats.OVFFile.del_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_column</span></code></a>([col,&nbsp;duplicates])</td>
 <td>Deletes a column from the current <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> object.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.del_nan.html#Stoner.FileFormats.OVFFile.del_nan" title="Stoner.FileFormats.OVFFile.del_nan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_nan</span></code></a>([col,&nbsp;clone])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.del_nan.html#Stoner.FileFormats.OVFFile.del_nan" title="Stoner.FileFormats.OVFFile.del_nan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_nan</span></code></a>([col,&nbsp;clone])</td>
 <td>Remove rows that have nan in them.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.del_rows.html#Stoner.FileFormats.OVFFile.del_rows" title="Stoner.FileFormats.OVFFile.del_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_rows</span></code></a>([col,&nbsp;val,&nbsp;invert])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.del_rows.html#Stoner.FileFormats.OVFFile.del_rows" title="Stoner.FileFormats.OVFFile.del_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_rows</span></code></a>([col,&nbsp;val,&nbsp;invert])</td>
 <td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.dir.html#Stoner.FileFormats.OVFFile.dir" title="Stoner.FileFormats.OVFFile.dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dir</span></code></a>([pattern])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.dir.html#Stoner.FileFormats.OVFFile.dir" title="Stoner.FileFormats.OVFFile.dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dir</span></code></a>([pattern])</td>
 <td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.filter.html#Stoner.FileFormats.OVFFile.filter" title="Stoner.FileFormats.OVFFile.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.filter.html#Stoner.FileFormats.OVFFile.filter" title="Stoner.FileFormats.OVFFile.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>([func,&nbsp;cols,&nbsp;reset])</td>
 <td>Sets the mask on rows of data by evaluating a function for each row.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.find_col.html#Stoner.FileFormats.OVFFile.find_col" title="Stoner.FileFormats.OVFFile.find_col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.find_col.html#Stoner.FileFormats.OVFFile.find_col" title="Stoner.FileFormats.OVFFile.find_col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
 <td>Indexes the column headers in order to locate a column of data.shape.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.get.html#Stoner.FileFormats.OVFFile.get" title="Stoner.FileFormats.OVFFile.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(item[,&nbsp;default])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.get.html#Stoner.FileFormats.OVFFile.get" title="Stoner.FileFormats.OVFFile.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(item[,&nbsp;default])</td>
 <td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.get_filename.html#Stoner.FileFormats.OVFFile.get_filename" title="Stoner.FileFormats.OVFFile.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a>(mode)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.get_filename.html#Stoner.FileFormats.OVFFile.get_filename" title="Stoner.FileFormats.OVFFile.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a>(mode)</td>
 <td>Forces the user to choose a new filename using a system dialog box.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.insert_rows.html#Stoner.FileFormats.OVFFile.insert_rows" title="Stoner.FileFormats.OVFFile.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(row,&nbsp;new_data)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.insert_rows.html#Stoner.FileFormats.OVFFile.insert_rows" title="Stoner.FileFormats.OVFFile.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(row,&nbsp;new_data)</td>
 <td>Insert new_data into the data array at position row.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.items.html#Stoner.FileFormats.OVFFile.items" title="Stoner.FileFormats.OVFFile.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.items.html#Stoner.FileFormats.OVFFile.items" title="Stoner.FileFormats.OVFFile.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.keys.html#Stoner.FileFormats.OVFFile.keys" title="Stoner.FileFormats.OVFFile.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.keys.html#Stoner.FileFormats.OVFFile.keys" title="Stoner.FileFormats.OVFFile.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</td>
 <td>An alias for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.dir(None)()</span></code> .</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.load.html#Stoner.FileFormats.OVFFile.load" title="Stoner.FileFormats.OVFFile.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.load.html#Stoner.FileFormats.OVFFile.load" title="Stoner.FileFormats.OVFFile.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
 <td>Loads the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> in from disc guessing a better subclass if necessary.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.pop.html#Stoner.FileFormats.OVFFile.pop" title="Stoner.FileFormats.OVFFile.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>(k[,d])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.pop.html#Stoner.FileFormats.OVFFile.pop" title="Stoner.FileFormats.OVFFile.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>(k[,d])</td>
 <td>If key is not found, d is returned if given, otherwise KeyError is raised.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.popitem.html#Stoner.FileFormats.OVFFile.popitem" title="Stoner.FileFormats.OVFFile.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.popitem.html#Stoner.FileFormats.OVFFile.popitem" title="Stoner.FileFormats.OVFFile.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</td>
 <td>as a 2-tuple; but raise KeyError if D is empty.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.rename.html#Stoner.FileFormats.OVFFile.rename" title="Stoner.FileFormats.OVFFile.rename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename</span></code></a>(old_col,&nbsp;new_col)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.rename.html#Stoner.FileFormats.OVFFile.rename" title="Stoner.FileFormats.OVFFile.rename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename</span></code></a>(old_col,&nbsp;new_col)</td>
 <td>Renames columns without changing the underlying data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.reorder_columns.html#Stoner.FileFormats.OVFFile.reorder_columns" title="Stoner.FileFormats.OVFFile.reorder_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reorder_columns</span></code></a>(cols[,&nbsp;headers_too,&nbsp;setas_too])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.reorder_columns.html#Stoner.FileFormats.OVFFile.reorder_columns" title="Stoner.FileFormats.OVFFile.reorder_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reorder_columns</span></code></a>(cols[,&nbsp;headers_too,&nbsp;setas_too])</td>
 <td>Construct a new data array from the original data by assembling the columns in the order given.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.rolling_window.html#Stoner.FileFormats.OVFFile.rolling_window" title="Stoner.FileFormats.OVFFile.rolling_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_window</span></code></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.rolling_window.html#Stoner.FileFormats.OVFFile.rolling_window" title="Stoner.FileFormats.OVFFile.rolling_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_window</span></code></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
 <td>Iterator that return a rolling window section of the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.rows.html#Stoner.FileFormats.OVFFile.rows" title="Stoner.FileFormats.OVFFile.rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rows</span></code></a>([not_masked])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.rows.html#Stoner.FileFormats.OVFFile.rows" title="Stoner.FileFormats.OVFFile.rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rows</span></code></a>([not_masked])</td>
 <td>Generator method that will iterate over rows of data</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.save.html#Stoner.FileFormats.OVFFile.save" title="Stoner.FileFormats.OVFFile.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([filename])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.save.html#Stoner.FileFormats.OVFFile.save" title="Stoner.FileFormats.OVFFile.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([filename])</td>
 <td>Saves a string representation of the current DataFile object into the file ‘filename’.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.search.html#Stoner.FileFormats.OVFFile.search" title="Stoner.FileFormats.OVFFile.search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.search.html#Stoner.FileFormats.OVFFile.search" title="Stoner.FileFormats.OVFFile.search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
 <td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.section.html#Stoner.FileFormats.OVFFile.section" title="Stoner.FileFormats.OVFFile.section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section</span></code></a>(**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.section.html#Stoner.FileFormats.OVFFile.section" title="Stoner.FileFormats.OVFFile.section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section</span></code></a>(**kargs)</td>
 <td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.select.html#Stoner.FileFormats.OVFFile.select" title="Stoner.FileFormats.OVFFile.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.select.html#Stoner.FileFormats.OVFFile.select" title="Stoner.FileFormats.OVFFile.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>Produce a copy of the DataFile with only data rows that match a criteria.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.setdefault.html#Stoner.FileFormats.OVFFile.setdefault" title="Stoner.FileFormats.OVFFile.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[,d])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.setdefault.html#Stoner.FileFormats.OVFFile.setdefault" title="Stoner.FileFormats.OVFFile.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[,d])</td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.sort.html#Stoner.FileFormats.OVFFile.sort" title="Stoner.FileFormats.OVFFile.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>(*order,&nbsp;**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.sort.html#Stoner.FileFormats.OVFFile.sort" title="Stoner.FileFormats.OVFFile.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>(*order,&nbsp;**kargs)</td>
 <td>Sorts the data by column name.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.split.html#Stoner.FileFormats.OVFFile.split" title="Stoner.FileFormats.OVFFile.split"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split</span></code></a>(*args)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.split.html#Stoner.FileFormats.OVFFile.split" title="Stoner.FileFormats.OVFFile.split"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split</span></code></a>(*args)</td>
 <td>Recursively splits the current <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> object into a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Forlders.DataFolder</span></code> objects where each one contains the rows from the original object which had the same value of a given column(s) or function.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.swap_column.html#Stoner.FileFormats.OVFFile.swap_column" title="Stoner.FileFormats.OVFFile.swap_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swap_column</span></code></a>(*swp,&nbsp;**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.swap_column.html#Stoner.FileFormats.OVFFile.swap_column" title="Stoner.FileFormats.OVFFile.swap_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swap_column</span></code></a>(*swp,&nbsp;**kargs)</td>
 <td>Swaps pairs of columns in the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.unique.html#Stoner.FileFormats.OVFFile.unique" title="Stoner.FileFormats.OVFFile.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.unique.html#Stoner.FileFormats.OVFFile.unique" title="Stoner.FileFormats.OVFFile.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
 <td>Return the unique values from the specified column - pass through for numpy.unique.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.update.html#Stoner.FileFormats.OVFFile.update" title="Stoner.FileFormats.OVFFile.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>([E,&nbsp;]**F)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.update.html#Stoner.FileFormats.OVFFile.update" title="Stoner.FileFormats.OVFFile.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>([E,&nbsp;]**F)</td>
 <td>If E present and has a .keys() method, does:     for k in E: D[k] = E[k] If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v In either case, this is followed by: for k, v in F.items(): D[k] = v</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.values.html#Stoner.FileFormats.OVFFile.values" title="Stoner.FileFormats.OVFFile.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.values.html#Stoner.FileFormats.OVFFile.values" title="Stoner.FileFormats.OVFFile.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</td>
 <td></td>
 </tr>
 </tbody>
@@ -303,9 +306,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.4
+      1.7.5
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

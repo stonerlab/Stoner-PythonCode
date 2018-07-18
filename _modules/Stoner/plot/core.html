@@ -9,7 +9,7 @@
     <title>Stoner.plot.core &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
@@ -56,13 +56,15 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PlotMixin&quot;</span><span class="p">,</span><span class="s2">&quot;hsl2rgb&quot;</span><span class="p">]</span>
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">python_v3</span><span class="p">,</span><span class="n">string_types</span><span class="p">,</span><span class="n">index_types</span>
-<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">_attribute_store</span><span class="p">,</span> <span class="n">isNone</span><span class="p">,</span><span class="n">isAnyNone</span><span class="p">,</span><span class="n">all_type</span><span class="p">,</span><span class="n">isiterable</span><span class="p">,</span><span class="n">typedList</span><span class="p">,</span><span class="n">get_option</span>
+<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">_attribute_store</span><span class="p">,</span> <span class="n">isNone</span><span class="p">,</span><span class="n">isAnyNone</span><span class="p">,</span><span class="n">all_type</span><span class="p">,</span><span class="n">isiterable</span><span class="p">,</span><span class="n">typedList</span><span class="p">,</span><span class="n">get_option</span><span class="p">,</span><span class="n">fix_signature</span>
 <span class="kn">from</span> <span class="nn">.formats</span> <span class="k">import</span> <span class="n">DefaultPlotStyle</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">errorfill</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">griddata</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
 
 <span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">copy</span>
@@ -134,7 +136,7 @@
             <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
             <span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
             <span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
-            <span class="s2">&quot;showfig&quot;</span><span class="p">:</span> <span class="nb">bool</span>
+            <span class="s2">&quot;_showfig&quot;</span><span class="p">:</span> <span class="nb">bool</span>
         <span class="p">}</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">typedList</span><span class="p">(</span><span class="n">string_types</span><span class="p">,[])</span>
@@ -166,6 +168,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">ret</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cmap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">()</span>
+    
+    <span class="nd">@cmap</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">cmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cmap</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">set_cmap</span><span class="p">(</span><span class="n">cmap</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">fig</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -246,16 +256,13 @@
     <span class="nd">@template</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the current template.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">DefaultPlotStyle</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">DefaultPlotStyle</span><span class="p">):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">DefaultPlotStyle</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_template</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Template is not of the right class&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Template is not of the right class:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_template</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
-
-
-
 
     <span class="k">def</span> <span class="nf">_Plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">figure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwords</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Private method for plotting a single plot to a figure.</span>
@@ -269,7 +276,7 @@
 <span class="sd">            **kwords (dict): Other keyword arguments to pass through</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-
+        <span class="n">kwords</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">kwords</span><span class="p">)</span> <span class="c1"># Make sure we don;t mutate kwords by accident</span>
         <span class="k">if</span> <span class="s2">&quot;label&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwords</span><span class="p">:</span>
             <span class="n">kwords</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_label</span><span class="p">(</span><span class="n">iy</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
@@ -285,9 +292,9 @@
         <span class="k">elif</span> <span class="n">plotter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_fmt</span><span class="p">:</span>
             <span class="n">plotter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">figure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwords</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">fmt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
-            <span class="n">plotter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">figure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwords</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fmt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">kwords</span><span class="p">[</span><span class="s2">&quot;fmt&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">fmt</span>
+            <span class="n">plotter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">figure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwords</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">figure</span><span class="o">.</span><span class="n">axes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">customise_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
@@ -507,24 +514,68 @@
 
 <span class="sd">                All other attrbiutes are passed over to the parent class</span>
 <span class="sd">                &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;plt_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plt</span><span class="p">,</span><span class="n">name</span><span class="p">[</span><span class="mi">4</span><span class="p">:]):</span>
-            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">plt</span><span class="p">,</span><span class="n">name</span><span class="p">[</span><span class="mi">4</span><span class="p">:])</span>
+        <span class="n">func</span><span class="o">=</span><span class="kc">None</span>
+        <span class="n">o_name</span><span class="o">=</span><span class="n">name</span>
+        <span class="n">mapping</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;plt_&quot;</span><span class="p">:(</span><span class="n">plt</span><span class="p">,</span><span class="s2">&quot;pyplot&quot;</span><span class="p">),</span><span class="s2">&quot;ax_&quot;</span><span class="p">:(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span><span class="s2">&quot;axes&quot;</span><span class="p">),</span><span class="s2">&quot;fig_&quot;</span><span class="p">:(</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span><span class="s2">&quot;figure&quot;</span><span class="p">)}</span>
+
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">o_name</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">,</span> <span class="n">mplfig</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Unknown attribute </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-            <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">.</span><span class="n">axes</span>
-            <span class="k">if</span> <span class="s2">&quot;get_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">ax</span><span class="p">):</span>
-                <span class="n">func</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="s2">&quot;get_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">()</span>
-            <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>  <span class="c1"># Sort of a universal pass through to plt</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">ax</span><span class="p">):</span>  <span class="c1"># Sort of a universal pass through to plt</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Unknown attribute </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">pass</span>
+        
+        <span class="c1">#First look for a function in the pyplot package</span>
+        <span class="k">for</span> <span class="n">prefix</span><span class="p">,(</span><span class="n">obj</span><span class="p">,</span><span class="n">key</span><span class="p">)</span> <span class="ow">in</span> <span class="n">mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">o_name</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):]</span> <span class="k">if</span> <span class="n">o_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="k">else</span> <span class="n">o_name</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pyplot_proxy</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="c1">#Nowcheck for prefixed access on axes and figures with get_</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ax_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;get_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">3</span><span class="p">:])</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">):</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="s2">&quot;get_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">:</span>
+            <span class="n">tfig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+            <span class="n">tax</span> <span class="o">=</span> <span class="n">tfig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>  <span class="c1"># protect the current axes and figure</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># oops we need a figure first!</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="s2">&quot;get_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;fig_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;get_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">4</span><span class="p">:])</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="s2">&quot;get_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">:</span>
+            <span class="n">tfig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+            <span class="n">tax</span> <span class="o">=</span> <span class="n">tfig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>  <span class="c1"># protect the current axes and figure</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># oops we need a figure first!</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">fig</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="s2">&quot;get_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            
+        <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#Ok Fallback to lookinf again at parent class</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">o_name</span><span class="p">)</span>
+
+        <span class="c1">#If we&#39;re still here then we&#39;re calling a proxy from that figure or axes                </span>
+        <span class="n">ret</span><span class="o">=</span><span class="n">func</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">tfig</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">tax</span><span class="p">)</span>        
         <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span> <span class="nf">_pyplot_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">what</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">what</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;axes&quot;</span><span class="p">,</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span><span class="s2">&quot;pyplot&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;pyplot proxy can&#39;t figure out what to get proxy from.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">what</span><span class="o">==</span><span class="s2">&quot;pyplot&quot;</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">=</span><span class="n">plt</span>
+        <span class="k">elif</span> <span class="n">what</span><span class="o">==</span><span class="s2">&quot;figure&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__figure</span>
+        <span class="k">elif</span> <span class="n">what</span><span class="o">==</span><span class="s2">&quot;aces&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Attempting to manipulate the methods on a figure or axes before a figure has been created for this Data.&quot;</span><span class="p">)</span>
+        <span class="n">func</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
+        
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">_proxy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+            <span class="n">ret</span><span class="o">=</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">return</span> <span class="n">fix_signature</span><span class="p">(</span><span class="n">_proxy</span><span class="p">,</span><span class="n">func</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the specified attribute.</span>
@@ -542,25 +593,45 @@
 <span class="sd">            Only &quot;fig&quot; is supported in this class - everything else drops through to the parent class</span>
 <span class="sd">            value (any): The value of the attribute to set.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">pass</span>
-        <span class="k">if</span> <span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">):</span>
+        <span class="n">func</span><span class="o">=</span><span class="kc">None</span>
+        <span class="n">o_name</span><span class="o">=</span><span class="n">name</span>
+
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ax_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">3</span><span class="p">:])</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">):</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">:</span>
             <span class="n">tfig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
             <span class="n">tax</span> <span class="o">=</span> <span class="n">tfig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>  <span class="c1"># protect the current axes and figure</span>
+
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># oops we need a figure first!</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
             <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">)</span>
             <span class="n">func</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">tfig</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">tax</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;fig_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">4</span><span class="p">:])</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">:</span>
+            <span class="n">tfig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+            <span class="n">tax</span> <span class="o">=</span> <span class="n">tfig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>  <span class="c1"># protect the current axes and figure</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># oops we need a figure first!</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">fig</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">o_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        
+        <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Unable to set attribute </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">o_name</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">tfig</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">tax</span><span class="p">)</span>        
 
 <div class="viewcode-block" id="PlotMixin.add_column"><a class="viewcode-back" href="../../../classes/Stoner.plot.PlotMixin.html#Stoner.PlotMixin.add_column">[docs]</a>    <span class="k">def</span> <span class="nf">add_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Appends a column of data or inserts a column to a datafile instance.</span>
@@ -1129,10 +1200,7 @@
                 <span class="n">temp_kwords</span><span class="p">[</span><span class="s2">&quot;yerr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;yerr&quot;</span><span class="p">][</span><span class="n">ix</span><span class="p">]</span>
             <span class="c1"># Call plot</span>
 
-            <span class="k">if</span> <span class="n">fmt_t</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_Plot</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">ycol</span><span class="p">[</span><span class="n">ix</span><span class="p">],</span> <span class="n">fmt_t</span><span class="p">,</span> <span class="n">nonkargs</span><span class="p">[</span><span class="s2">&quot;plotter&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">,</span> <span class="o">**</span><span class="n">temp_kwords</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_Plot</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">ycol</span><span class="p">[</span><span class="n">ix</span><span class="p">],</span> <span class="n">fmt_t</span><span class="p">,</span> <span class="n">nonkargs</span><span class="p">[</span><span class="s2">&quot;plotter&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">,</span> <span class="o">**</span><span class="n">temp_kwords</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_Plot</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">ycol</span><span class="p">[</span><span class="n">ix</span><span class="p">],</span> <span class="n">fmt_t</span><span class="p">,</span> <span class="n">nonkargs</span><span class="p">[</span><span class="s2">&quot;plotter&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">,</span> <span class="o">**</span><span class="n">temp_kwords</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fix_titles</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">multiple</span><span class="p">,</span> <span class="o">**</span><span class="n">nonkargs</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">ix</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Hooks for multiple subplots</span>
                 <span class="k">if</span> <span class="n">multiple</span> <span class="o">==</span> <span class="s2">&quot;panels&quot;</span><span class="p">:</span>
@@ -1253,6 +1321,8 @@
         <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quiver_plot</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">ycol</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">ucol</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">vcol</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span></div>
+    
+    <span class="n">plot_xyuvw</span> <span class="o">=</span> <span class="n">plot_xyuv</span>
 
 <div class="viewcode-block" id="PlotMixin.plot_xyzuvw"><a class="viewcode-back" href="../../../classes/Stoner.plot.PlotMixin.html#Stoner.PlotMixin.plot_xyzuvw">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xyzuvw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ucol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.</span>
@@ -1578,9 +1648,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.4
+      1.7.5
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -9,7 +9,7 @@
     <title>AnalysisMixin &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -80,7 +80,7 @@
 <tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.clip" title="Stoner.Analysis.AnalysisMixin.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>(clipper[,&nbsp;column])</td>
 <td>Clips the data based on the column and the clipper value.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">curve_fit</span></code></a>(func[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">curve_fit</span></code></a>(func[,&nbsp;xcol,&nbsp;ycol,&nbsp;sigma])</td>
 <td>General curve fitting function passed through from scipy.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.decompose" title="Stoner.Analysis.AnalysisMixin.decompose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decompose</span></code></a>([xcol,&nbsp;ycol,&nbsp;sym,&nbsp;asym,&nbsp;replace])</td>
@@ -119,7 +119,7 @@
 <tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.multiply" title="Stoner.Analysis.AnalysisMixin.multiply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiply</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Multiply one column (a) by  another column, number or array (b).</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.normalise" title="Stoner.Analysis.AnalysisMixin.normalise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalise</span></code></a>([target,&nbsp;base,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.normalise" title="Stoner.Analysis.AnalysisMixin.normalise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalise</span></code></a>([target,&nbsp;base,&nbsp;replace,&nbsp;header,&nbsp;…])</td>
 <td>Normalise data columns by dividing through by a base column value.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.odr" title="Stoner.Analysis.AnalysisMixin.odr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">odr</span></code></a>(model[,&nbsp;xcol,&nbsp;ycol])</td>
@@ -330,7 +330,7 @@ assignments are used.</p>
 
 <dl class="method">
 <dt id="Stoner.Analysis.AnalysisMixin.curve_fit">
-<code class="descname">curve_fit</code><span class="sig-paren">(</span><em>func</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>p0=None</em>, <em>sigma=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.curve_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">curve_fit</code><span class="sig-paren">(</span><em>func</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>sigma=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.curve_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>General curve fitting function passed through from scipy.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -878,24 +878,23 @@ additional column with the uncertainites will be added to the data.</p>
 
 <dl class="method">
 <dt id="Stoner.Analysis.AnalysisMixin.normalise">
-<code class="descname">normalise</code><span class="sig-paren">(</span><em>target=None</em>, <em>base=None</em>, <em>replace=True</em>, <em>header=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.normalise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.normalise" title="Permalink to this definition">¶</a></dt>
+<code class="descname">normalise</code><span class="sig-paren">(</span><em>target=None</em>, <em>base=None</em>, <em>replace=True</em>, <em>header=None</em>, <em>scale=None</em>, <em>limits=(0.0</em>, <em>1.0)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.normalise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.normalise" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalise data columns by dividing through by a base column value.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>target</strong> (<em>index</em>) – One or more target columns to normalise can be a string, integer or list of strings or integers.
-If None then the default ‘y’ column is used.</li>
-<li><strong>base</strong> (<em>index</em>) – The column to normalise to, can be an integer or string. If None then the target column is normalised
-to the range (-1,+1) or (0,1) depending on whether the input is bipolar or not.</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>target</strong> (<em>index</em>) – One or more target columns to normalise can be a string, integer or list of strings or integers.
+If None then the default ‘y’ column is used.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><strong>base</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The column to normalise to, can be an integer or string. <strong>Depricated</strong> can also be a tuple (low,high) being the output range</li>
 <li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Set True(default) to overwrite  the target data columns</li>
 <li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – The new column header - default is target name(norm)</li>
+<li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em> or </em><em>tuple of float</em><em>,</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Output range after normalising - low,high or None to map to -1,1</li>
+<li><strong>limits</strong> (<em>low</em><em>,</em><em>high</em>) – Take the input range from the <em>high</em> and <em>low</em> fraction of the input when sorted.</li>
 </ul>
 </td>
 </tr>
@@ -904,9 +903,10 @@ to the range (-1,+1) or (0,1) depending on whether the input is bipolar or not.<
 </tr>
 </tbody>
 </table>
-<p>If a and b are tuples of length two, then the firstelement is assumed to be the value and
-the second element an uncertainty in the value. The uncertainties will then be propagated and an
-additional column with the uncertainites will be added to the data.</p>
+<p class="rubric">Notes</p>
+<p>The <em>limits</em> parameter is used to set the input scale being normalised from - if the data has a few outliers then
+this setting can be used to clip the input range before normalising. The parameters in the limit are the values at
+the <em>low</em> and <em>high</em> fractions of the cumulative distribution function of the data.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1539,9 +1539,9 @@ argument list. In order to support the use of assigned columns, this has been sw
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jun 30, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.4
+      1.7.5
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

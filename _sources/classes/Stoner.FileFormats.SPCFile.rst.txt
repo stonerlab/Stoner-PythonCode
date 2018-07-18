@@ -15,6 +15,7 @@ Stoner.FileFormats.SPCFile
    
       ~Stoner.FileFormats.SPCFile.__init__
       ~Stoner.FileFormats.SPCFile.add_column
+      ~Stoner.FileFormats.SPCFile.adjust_setas
       ~Stoner.FileFormats.SPCFile.clear
       ~Stoner.FileFormats.SPCFile.closest
       ~Stoner.FileFormats.SPCFile.column

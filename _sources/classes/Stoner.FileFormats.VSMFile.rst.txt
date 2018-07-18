@@ -15,6 +15,7 @@ Stoner.FileFormats.VSMFile
    
       ~Stoner.FileFormats.VSMFile.__init__
       ~Stoner.FileFormats.VSMFile.add_column
+      ~Stoner.FileFormats.VSMFile.adjust_setas
       ~Stoner.FileFormats.VSMFile.clear
       ~Stoner.FileFormats.VSMFile.closest
       ~Stoner.FileFormats.VSMFile.column

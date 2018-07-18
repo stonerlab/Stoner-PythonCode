@@ -1,0 +1,8 @@
+
+
+VSMFile.adjust_setas
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: VSMFile.adjust_setas

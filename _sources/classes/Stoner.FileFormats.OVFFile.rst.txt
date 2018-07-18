@@ -15,6 +15,7 @@ Stoner.FileFormats.OVFFile
    
       ~Stoner.FileFormats.OVFFile.__init__
       ~Stoner.FileFormats.OVFFile.add_column
+      ~Stoner.FileFormats.OVFFile.adjust_setas
       ~Stoner.FileFormats.OVFFile.clear
       ~Stoner.FileFormats.OVFFile.closest
       ~Stoner.FileFormats.OVFFile.column

@@ -17,6 +17,7 @@ Stoner.Data
       ~Stoner.Data.__init__
       ~Stoner.Data.add
       ~Stoner.Data.add_column
+      ~Stoner.Data.adjust_setas
       ~Stoner.Data.annotate_fit
       ~Stoner.Data.apply
       ~Stoner.Data.bin
@@ -66,6 +67,7 @@ Stoner.Data
       ~Stoner.Data.plot_matrix
       ~Stoner.Data.plot_xy
       ~Stoner.Data.plot_xyuv
+      ~Stoner.Data.plot_xyuvw
       ~Stoner.Data.plot_xyz
       ~Stoner.Data.plot_xyzuvw
       ~Stoner.Data.polyfit
@@ -113,6 +115,7 @@ Stoner.Data
       ~Stoner.Data.axes
       ~Stoner.Data.basename
       ~Stoner.Data.clone
+      ~Stoner.Data.cmap
       ~Stoner.Data.column_headers
       ~Stoner.Data.data
       ~Stoner.Data.dict_records

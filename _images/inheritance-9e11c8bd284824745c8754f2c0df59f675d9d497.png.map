@@ -1,0 +1,11 @@
+<map id="inheritance394c189668" name="inheritance394c189668">
+<area shape="rect" id="node5" href="classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle" target="_top" title="Produces a default plot style." alt="" coords="508,109,612,130"/>
+<area shape="rect" id="node9" href="classes/Stoner.plot.formats.GBPlotStyle.html#Stoner.plot.formats.GBPlotStyle" target="_top" title="Template developed for Gavin&#39;s plotting." alt="" coords="667,4,749,26"/>
+<area shape="rect" id="node10" href="classes/Stoner.plot.formats.JTBPlotStyle.html#Stoner.plot.formats.JTBPlotStyle" target="_top" title="Template class for Joe&#39;s Plot settings." alt="" coords="667,46,749,67"/>
+<area shape="rect" id="node11" href="classes/Stoner.plot.formats.JTBinsetStyle.html#Stoner.plot.formats.JTBinsetStyle" target="_top" title="Template class for Joe&#39;s Plot settings." alt="" coords="664,87,752,109"/>
+<area shape="rect" id="node13" href="classes/Stoner.plot.formats.PRBPlotStyle.html#Stoner.plot.formats.PRBPlotStyle" target="_top" title="A figure Style for making figures for Phys Rev * Jounrals." alt="" coords="665,129,751,150"/>
+<area shape="rect" id="node14" href="classes/Stoner.plot.formats.SeabornPlotStyle.html#Stoner.plot.formats.SeabornPlotStyle" target="_top" title="A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots." alt="" coords="653,170,764,191"/>
+<area shape="rect" id="node15" href="classes/Stoner.plot.formats.SketchPlot.html#Stoner.plot.formats.SketchPlot" target="_top" title="Turn on xkcd plot style." alt="" coords="670,212,746,233"/>
+<area shape="rect" id="node7" title="Create a string based on a tick value and location." alt="" coords="119,26,191,47"/>
+<area shape="rect" id="node16" href="classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter" target="_top" title="An axis tick label formatter that emits Tex formula mode code." alt="" coords="232,26,321,47"/>
+</map>

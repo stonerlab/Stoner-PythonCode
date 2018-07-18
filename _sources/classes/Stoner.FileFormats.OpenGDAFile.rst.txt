@@ -15,6 +15,7 @@ Stoner.FileFormats.OpenGDAFile
    
       ~Stoner.FileFormats.OpenGDAFile.__init__
       ~Stoner.FileFormats.OpenGDAFile.add_column
+      ~Stoner.FileFormats.OpenGDAFile.adjust_setas
       ~Stoner.FileFormats.OpenGDAFile.clear
       ~Stoner.FileFormats.OpenGDAFile.closest
       ~Stoner.FileFormats.OpenGDAFile.column

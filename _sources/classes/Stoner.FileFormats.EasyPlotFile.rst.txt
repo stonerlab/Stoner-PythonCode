@@ -15,6 +15,7 @@ Stoner.FileFormats.EasyPlotFile
    
       ~Stoner.FileFormats.EasyPlotFile.__init__
       ~Stoner.FileFormats.EasyPlotFile.add_column
+      ~Stoner.FileFormats.EasyPlotFile.adjust_setas
       ~Stoner.FileFormats.EasyPlotFile.clear
       ~Stoner.FileFormats.EasyPlotFile.closest
       ~Stoner.FileFormats.EasyPlotFile.column

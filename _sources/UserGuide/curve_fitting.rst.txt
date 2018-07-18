@@ -243,7 +243,7 @@ Thermal Physics Models
 The :py:mod:`Stoner.Fit` module also supports a range of models suitable for various thermal physics related expressions:
 
     -   :py:class:`Stoner.Fit.Arrhenius` - The Arrhenius expression is used to describe processes whose rate is controlled by a thermal distribution,
-        it is essentially an exponential decay :math:`y=A\exp\left(\frac{-\Delta E}{k_Bx}\eight)`.
+        it is essentially an exponential decay :math:`y=A\exp\left(\frac{-\Delta E}{k_Bx}\right)`.
     -   :py:class:`Stoner.Fit.ModArrhenius` - The modified Arrhenous expresses :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` is used when the
         prefactor in the regular Arrhenius theory has a temperature dependence. Typically the prefactor exponent ranges for :math:`-1<n<1`.
     -   :py:class:`Stoner.Fit.StretchedExponential` is a standard exponential decay with an additional power :math:`\beta` -

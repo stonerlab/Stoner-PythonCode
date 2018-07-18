@@ -15,6 +15,7 @@ Stoner.FileFormats.FmokeFile
    
       ~Stoner.FileFormats.FmokeFile.__init__
       ~Stoner.FileFormats.FmokeFile.add_column
+      ~Stoner.FileFormats.FmokeFile.adjust_setas
       ~Stoner.FileFormats.FmokeFile.clear
       ~Stoner.FileFormats.FmokeFile.closest
       ~Stoner.FileFormats.FmokeFile.column

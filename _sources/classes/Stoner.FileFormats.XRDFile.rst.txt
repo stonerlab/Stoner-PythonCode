@@ -15,6 +15,7 @@ Stoner.FileFormats.XRDFile
    
       ~Stoner.FileFormats.XRDFile.__init__
       ~Stoner.FileFormats.XRDFile.add_column
+      ~Stoner.FileFormats.XRDFile.adjust_setas
       ~Stoner.FileFormats.XRDFile.clear
       ~Stoner.FileFormats.XRDFile.closest
       ~Stoner.FileFormats.XRDFile.column
