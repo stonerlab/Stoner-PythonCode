@@ -173,7 +173,8 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
+    test.test_discard_earlier()
     #test.test_Folders()
-    unittest.main()
+    #unittest.main()
     #test.test_grouping()
     #test.fldr.each.title
