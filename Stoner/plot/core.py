@@ -121,11 +121,11 @@ class PlotMixin(object):
         else:
             ret = None
         return ret
-    
+
     @property
     def cmap(self):
         return plt.get_cmap()
-    
+
     @cmap.setter
     def cmap(self,cmap):
         return plt.set_cmap(cmap)
@@ -216,6 +216,16 @@ class PlotMixin(object):
         else:
             raise ValueError("Template is not of the right class:{}".format(type(value)))
         self._template.apply()
+
+    @property
+    def title(self):
+        """Unmask the underlying attribute so we can fiddle plots."""
+        return self.ax_title
+
+    @title.setter
+    def title(self,value):
+        """Set the plot title as well as setting the parent title value."""
+        self.ax_title=value
 
     def _Plot(self, ix, iy, fmt, plotter, figure, **kwords):
         """Private method for plotting a single plot to a figure.
@@ -477,7 +487,7 @@ class PlotMixin(object):
             return object.__getattribute__(self,o_name)
         except AttributeError:
             pass
-        
+
         #First look for a function in the pyplot package
         for prefix,(obj,key) in mapping.items():
             name=o_name[len(prefix):] if o_name.startswith(prefix) else o_name
@@ -503,14 +513,14 @@ class PlotMixin(object):
                 self.figure()
             fig=self.fig
             func = fig.__getattribute__("get_{}".format(name))
-            
+
         if func is None: #Ok Fallback to lookinf again at parent class
             return super(PlotMixin, self).__getattr__(o_name)
 
-        #If we're still here then we're calling a proxy from that figure or axes                
+        #If we're still here then we're calling a proxy from that figure or axes
         ret=func()
         plt.figure(tfig.number)
-        plt.sca(tax)        
+        plt.sca(tax)
         return ret
 
     def _pyplot_proxy(self,name,what):
@@ -525,7 +535,7 @@ class PlotMixin(object):
         else:
             raise AttributeError("Attempting to manipulate the methods on a figure or axes before a figure has been created for this Data.")
         func=getattr(obj,name)
-        
+
         @wraps(func)
         def _proxy(*args,**kargs):
             ret=func(*args,**kargs)
@@ -550,10 +560,9 @@ class PlotMixin(object):
         """
         func=None
         o_name=name
-
         if name.startswith("ax_") and "set_{}".format(name[3:]) in dir(plt.Axes):
             name=name[3:]
-        if "set_{}".format(name) in dir(plt.Axes) and self.__figure:
+        if "set_{}".format(name) in dir(plt.Axes) and self.fig:
             tfig = plt.gcf()
             tax = tfig.gca()  # protect the current axes and figure
 
@@ -563,7 +572,7 @@ class PlotMixin(object):
             func = ax.__getattribute__("set_{}".format(name))
         if name.startswith("fig_") and "set_{}".format(name[4:]) in dir(plt.Figure):
             name=name[4:]
-        if "set_{}".format(name) in dir(plt.Figure) and self.__figure:
+        if "set_{}".format(name) in dir(plt.Figure) and self.fig:
             tfig = plt.gcf()
             tax = tfig.gca()  # protect the current axes and figure
 
@@ -571,11 +580,13 @@ class PlotMixin(object):
                 self.figure()
             fig=self.fig
             func = fig.__getattribute__("set_{}".format(name))
-        try:
-            return super(PlotMixin, self).__setattr__(o_name, value)
-        except AttributeError:
-            pass
-        
+
+        if o_name in dir(self) or func is None:
+            try:
+                return super(PlotMixin, self).__setattr__(o_name, value)
+            except AttributeError:
+                pass
+
         if func is None:
             raise AttributeError("Unable to set attribute {}".format(o_name))
 
@@ -586,7 +597,7 @@ class PlotMixin(object):
         else:
             func(*value)
         plt.figure(tfig.number)
-        plt.sca(tax)        
+        plt.sca(tax)
 
     def add_column(self, column_data, header=None, index=None, **kargs):
         """Appends a column of data or inserts a column to a datafile instance.
@@ -1276,7 +1287,7 @@ class PlotMixin(object):
         fig = self.quiver_plot(c.xcol, c.ycol, c.ucol, c.vcol, **kargs)
 
         return fig
-    
+
     plot_xyuvw = plot_xyuv
 
     def plot_xyzuvw(self, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None, wcol=None, **kargs):
