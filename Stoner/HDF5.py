@@ -13,16 +13,17 @@ __all__ = [ 'HDF5File', 'HDF5Folder', 'HGXFile', 'SLS_STXMFile', 'STXMImage']
 from .compat import string_types,bytes2str,get_filedialog
 import h5py
 import numpy as _np_
-from .Core import DataFile, StonerLoadError, metadataObject
-from . import Data
+from .Core import StonerLoadError, metadataObject,DataFile
+from . import Data,DataFolder
 from .Image.core import ImageFile
 import os.path as path
 import os
-from copy import copy
+from copy import copy,deepcopy
+import re
 
 
 class HDF5File(DataFile):
-    
+
     """A sub class of DataFile that sores itself in a HDF5File or group.
 
     Args:
@@ -49,16 +50,17 @@ class HDF5File(DataFile):
     patterns = ["*.hdf", "*.hf5"]
     mime_type=["application/x-hdf"]
 
-    #    def __init__(self,*args,**kargs):
-    #       """Constructor to catch initialising with an h5py.File or h5py.Group
-    #       """
-    #       if len(args)>0:
-    #           other=args[0]
-    #           if isinstance(other,h5py.File) or isinstance(other,h5py.Group):
-    #               super(HDF5File,self).__init__(**kargs)
-    #               self.load(other,**kargs)
-    #           else:
-    #               super(HDF5File,self).__init__(*args,**kargs)
+    def __init__(self,*args,**kargs):
+        """Constructor to catch initialising with an h5py.File or h5py.Group
+           """
+        if args and isinstance(args[0],(h5py.File,h5py.Group)):
+            args=list(args)
+            grp=args.pop(0)
+        else:
+            grp=None
+        super(HDF5File,self).__init__(*args,**kargs)
+        if grp is not None:
+            self._load(grp,**kargs)
 
     def _raise_error(self,f,message="Not a valid hdf5 file."):
         """Try to clsoe the filehandle f and raise a StonerLoadError."""
@@ -71,13 +73,13 @@ class HDF5File(DataFile):
 
     def _open_filename(self,filename):
         """Examine a file to see if it is an HDF5 file and open it if so.
-        
+
         Args:
             filename (str): Name of the file to open
-            
+
         Returns:
             (f5py.Group): Valid h5py.Group containg data/
-            
+
         Raises:
             StonerLoadError if not a valid file.
         """
@@ -89,8 +91,8 @@ class HDF5File(DataFile):
                 group="/".join(parts)
             else:
                 path.join(filename,parts.pop(0))
-                    
-                
+
+
         with open(filename,"rb") as sniff: # Some code to manaully look for the HDF5 format magic numbers
             sniff.seek(0,2)
             size=sniff.tell()
@@ -107,7 +109,7 @@ class HDF5File(DataFile):
                 else:
                     raise StonerLoadError("Couldn't find the HD5 format singature block")
         try:
-            f = h5py.File(filename, 'r')
+            f = h5py.File(filename, 'r+')
             for grp in group.split("/"):
                 if grp.strip()!="":
                     f=f[grp]
@@ -183,7 +185,8 @@ class HDF5File(DataFile):
             h5file = self.__file_dialog('w')
             self.filename = h5file
         if isinstance(h5file, string_types):
-            f = h5py.File(h5file, 'w')
+            mode="r+" if os.path.exists(h5file) else "w"
+            f = h5py.File(h5file, mode)
         elif isinstance(h5file, h5py.File) or isinstance(h5file, h5py.Group):
             f = h5file
         try:
@@ -220,7 +223,7 @@ class HDF5File(DataFile):
 
 
 class HGXFile(DataFile):
- 
+
     """A subclass of DataFile for reading GenX HDF Files.
 
     These files typically have an extension .hgx. This class has been based on a limited sample
@@ -230,6 +233,7 @@ class HGXFile(DataFile):
     priority=16
     pattern=["*.hgx"]
     mime_type=["application/x-hdf"]
+
 
     def _load(self, filename=None, *args, **kargs):
         """GenX HDF file loader routine.
@@ -281,8 +285,8 @@ class HGXFile(DataFile):
             self.seen.append(pth)
         if not isinstance(grp,h5py.Group):
             return None
-        if self.debug: 
-            print("Scanning in {}".format(pth))
+        if self.debug:
+            if self.debug: print("Scanning in {}".format(pth))
         for x in grp:
             if pth=="":
                 new_pth=x
@@ -319,8 +323,8 @@ class HGXFile(DataFile):
 
 
 
-class HDF5Folder(object):
-    
+class HDF5FolderMixin(object):
+
     """A mixin class for :py:class:`Stoner.Folders.DataFolder` that provides a method to load and save data from a single HDF5 file with groups.
 
     See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.
@@ -332,9 +336,54 @@ class HDF5Folder(object):
     def __init__(self, *args, **kargs):
         """Constructor for the HDF5Folder Class."""
         self.File = None
-        super(HDF5Folder, self).__init__(*args, **kargs)
+        super(HDF5FolderMixin, self).__init__(*args, **kargs)
 
-    def _dialog(self, message="Select Folder", new_directory=True, mode='r'):
+    def __getter__(self,name,instantiate=True):
+        """Loads the specified name from a file on disk.
+
+        Parameters:
+            name (key type): The canonical mapping key to get the dataObject. By default
+                the baseFolder class uses a :py:class:`regexpDict` to store objects in.
+
+        Keyword Arguments:
+            instatiate (bool): IF True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
+                the __getter__ method may return a key that can be used by it later to actually get the
+                :py:class:`Stoner.Core.Data` object.
+
+        Returns:
+            (metadataObject): The metadataObject
+        """
+        try:
+            return super(HDF5FolderMixin,self).__getter__(name,instantiate=instantiate)
+        except (AttributeError,IndexError,KeyError,OSError) as err:
+            if self.debug: print(err)
+            pass
+        names=list(os.path.split(name))
+        if names[0]=="/": # Prune leading ./
+            names=names[1:]
+        if self.File is None:
+            closeme=True
+            self.File=h5py.File(self.directory,"r+")
+        else:
+            closeme=False
+        grp=self.File
+        while len(names)>0:
+            next_group=names.pop(0)
+            if next_group not in grp:
+                raise IOError("Cannot find {} in {}".format(name,self.File.filename))
+            grp=grp[next_group]
+        tmp=self.loader(grp)
+        if not hasattr(tmp,"filename") or not isinstance(tmp.filename,string_types):
+            tmp.filename=grp.name
+        tmp=self.on_load_process(tmp)
+        tmp=self._update_from_object_attrs(tmp)
+        self.__setter__(name,tmp)
+        if closeme:
+            self.File.close()
+            self.File=None
+        return tmp
+
+    def _dialog(self, message="Select Folder", new_directory=True, mode='r+'):
         """Creates a file dialog box for working with
 
         Args:
@@ -361,12 +410,32 @@ class HDF5Folder(object):
         else:
             return None
 
+    def _visit_func(self,name,obj):
+        """Walker of the HDF5 tree."""
+        if isinstance(obj, h5py.Group) and "type" in obj.attrs:
+            cls=globals()[obj.attrs["type"]]
+            if issubclass(self.loader,cls):
+                self.__setter__(obj.name,obj.name)
+            elif obj.attrs["type"] == "HDF5Folder" and self.recursive:
+                self.groups[obj.name.split(path.sep)[-1]] = self.__class__(obj,
+                                                                           pattern=self.pattern,
+                                                                           type=self.type,recursive=self.recursive,loader=self.loader)
+
+    def close(self):
+        """Close the cirrent hd5 file."""
+        if isinstance(self.File,h5py.File):
+            self.File.close()
+            self.File=None
+        else:
+            raise IOError("HDF5 File not open!")
+
     def getlist(self, recursive=None, directory=None, flatten=False):
         """Reads the HDF5 File to construct a list of file HDF5File objects"""
         if recursive is None:
             recursive = self.recursive
         self.files = []
         self.groups = {}
+        closeme=True
         for d in [directory, self.directory, self.File, True]:
             if isinstance(d, bool) and d:
                 d = self._dialog()
@@ -376,27 +445,24 @@ class HDF5Folder(object):
         if directory is None:
             return None
         if isinstance(directory, string_types):
-            self.directory = directory
-            directory = h5py.File(directory, 'r')
-            self.File = directory
-        elif isinstance(directory, h5py.File) or isinstance(directory, h5py.Group):
+            try:
+                self.directory = directory
+                directory = h5py.File(directory, 'r+')
+                self.File = directory
+                closeme=True
+            except OSError:
+                return super(HDF5FolderMixin,self).getlist(recursive,directory,flatten)
+        elif isinstance(directory, h5py.File) or isinstance(directory, h5py.Group): # Bug out here
             self.File = directory.file
             self.directory = self.File.filename
+            closeme=False
         #At this point directory contains an open h5py.File object, or possibly a group
-        for obj in directory:
-            obj = directory[obj]
-            if isinstance(obj, h5py.Group) and "type" in obj.attrs:
-                if obj.attrs["type"] == "HDF5File":
-                    self.files.append(obj.name)
-                elif obj.attrs["type"] == "HDF5Folder" and recursive:
-                    self.groups[obj.name.split(path.sep)[-1]] = self.__class__(obj,
-                                                                               pattern=self.pattern,
-                                                                               type=self.type)
-                else:
-                    raise IOError("Found a group {} that isn't recognised".format(obj.name))
+        directory.visititems(self._visit_func)
         if flatten:
             self.flatten()
-
+        if closeme:
+            self.File.close()
+            self.File=None
         return self
 
     def save(self, root=None):
@@ -408,50 +474,54 @@ class HDF5Folder(object):
         Return:
             A list of group paths in the HDF5 file
         """
-        if root is None:
-            root = self._dialog(mode='w')
-        elif isinstance(root, bool) and not root and isinstance(self.File, h5py.File):
-            root = self.File.filename
+        closeme=False
+        if root is None and isinstance(self.File,h5py.File):
+            root = self.File
+        elif root is None and not isinstance(self.File,h5py.File):
+             root=h5py.File(self.directory)
+             self.File=root
+             closeme=True
+        if root is None or (isinstance(root, bool) and not root):
+            # now go and ask for one
+            root = self._dialog()
+            root=h5py.File(root)
+            self.File=root
+            closeme=True
+        if isinstance(root,string_types):
+             root=h5py.File(root)
+             self.File=root
+             closeme=True
+        if not isinstance(root,(h5py.File,h5py.Group)):
+            raise IOError("Can't save Folder without an HDF5 file or Group!")
+        #root should be an open h5py file
+        root.attrs["type"]="HDF5Folder"
+        for ix,obj in enumerate(self):
+            name=os.path.basename(getattr(obj,"filename","obj-{}".format(ix)))
+            if name not in root:
+                root.create_group(name)
+            name=root[name]
+            self.loader(obj).save(name)
+        for grp in self.groups:
+            if grp not in root:
+                root.create_group(grp)
+            self.groups[grp].save(root[grp])
+
+        if closeme and self.File is not None:
             self.File.close()
-        self.File = h5py.File(root, 'w')
-        tmp = self.walk_groups(self._save)
-        self.File.file.close()
-        return tmp
+            self.File=None
+        return self
 
-    def _save(self, f, trail):
-        """Create a virtual path of groups in the HDF5 file and save data.
+class HDF5Folder(HDF5FolderMixin,DataFolder):
 
-        Args:
-            f(DataFile):  A DataFile instance to save
-            trail (list): The trail of groups
+    def __init__(self,*args,**kargs):
+        self.loader=HDF5File
+        super(HDF5Folder,self).__init__(*args,**kargs)
+    pass
 
-        Returns:
-            The new filename of the saved DataFile.
-
-        Ensure we have created the trail as a series of sub groups, then create a sub-groupfor the filename
-        finally cast the DataFile as a HDF5File and save it, passing the new group as the filename which
-        will ensure we create a sub-group in the main HDF5 file
-
-        This routine is used by a walk_groups call - hence the prototype matches that required for
-        :py:meth:`Stoner.Folders.DataFolder.walk_groups`.
-        """
-        tmp = self.File
-        if not isinstance(f, DataFile):
-            f = Data(f)
-        for g in trail:
-            if g not in tmp:
-                tmp.create_group(g)
-            tmp = tmp[g]
-        tmp.create_group(f.filename)
-        tmp = tmp[f.filename]
-        f = HDF5File(f)
-        f.save(tmp)
-        return f.filename
-        
 class SLS_STXMFile(DataFile):
-    
+
     """Load images from the Swiss Light Source Pollux beamline"""
-    
+
     priority = 16
     compression = 'gzip'
     compression_opts = 6
@@ -474,7 +544,7 @@ class SLS_STXMFile(DataFile):
             self.filename = filename
         if isinstance(filename, string_types):  #We got a string, so we'll treat it like a file...
             try:
-                f = h5py.File(filename, 'r')
+                f = h5py.File(filename, 'r+')
             except IOError:
                 raise StonerLoadError("Failed to open {} as a n hdf5 file".format(filename))
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
@@ -507,15 +577,15 @@ class SLS_STXMFile(DataFile):
         if isinstance(filename, string_types):
             f.file.close()
         self["Loaded from"]=self.filename
-        
+
         if "instrument.sample_x.data" in self.metadata:
             self.metadata["actual_x"]=self.metadata["instrument.sample_x.data"].reshape(self.shape)
         if "instrument.sample_y.data" in self.metadata:
             self.metadata["actual_y"]=self.metadata["instrument.sample_y.data"].reshape(self.shape)
-        self.metadata["sample_x"],self.metadata["sample_y"]=_np_.meshgrid(self.metadata["counter0.sample_x"],self.metadata["counter0.sample_y"])            
-        
+        self.metadata["sample_x"],self.metadata["sample_y"]=_np_.meshgrid(self.metadata["counter0.sample_x"],self.metadata["counter0.sample_y"])
+
         return self
-        
+
     def scan_meta(self,group):
         """Scan the HDF5 Group for atributes and datasets and sub groups and recursively add them to the metadata."""
         root=".".join(group.name.split('/')[2:])
@@ -533,16 +603,16 @@ class SLS_STXMFile(DataFile):
                     self.metadata[name]=thing[...]
         for attr in group.attrs:
             self.metadata["{}.{}".format(root,attr)]=group.attrs[attr]
-            
+
 class STXMImage(ImageFile):
-    
+
     """An instance of KerrArray that will load itself from a Swiss Light Source STXM image"""
 
     _reduce_metadata=False
 
     def __init__(self,*args,**kargs):
         """Construct a STXMImage file.
-        
+
         Keyword Args:
             regrid (bool): If set True, the gridimage() method is automatically called to re-grid the image to known co-ordinates."""
         regrid=kargs.pop("regrid",False)
@@ -561,7 +631,7 @@ class STXMImage(ImageFile):
             self.gridimage(**regrid)
         elif regrid:
             self.gridimage()
-        
+
     def __floordiv__(self,other):
         if isinstance(other,metadataObject):
             if self["collection.polarization.value"]>0 and other["collection.polarization.value"]<0:

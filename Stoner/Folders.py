@@ -49,6 +49,8 @@ class _each_item(object):
         around nameclashes.
     """
 
+    _folder=None
+
     def __init__(self,folder):
 
         self._folder=folder
@@ -114,8 +116,12 @@ class _each_item(object):
 
         """
         try:
+            return super(_each_item,self).__getattr__(item)
+        except AttributeError:
+            pass
+        try:
             instance=self._folder.instance
-            if callable(getattr(instance,item,None)): # It's a method
+            if ismethod(getattr(instance,item,None)): # It's a method
                 ret=self.__getattr_proxy(item)
             else: # It's a static attribute
                 if item in self._folder._object_attrs:
@@ -129,6 +135,23 @@ class _each_item(object):
         except AttributeError: # Ok, pass back
             raise AttributeError("{} is not an Attribute of {} or {}".format(item,type(self),type(instance)))
         return ret
+
+    def __setattr__(self,name,value):
+        """Setting the attrbute on .each sets it on all instantiated objects and in _object_attrs.
+
+        Args:
+            name(str): Attribute to set
+            value (any): Value to set
+        """
+        if hasattr(self,name): #Handle setting our own attributes
+            super(_each_item,self).__setattr__(name,value)
+        elif name in dir(self._folder.instance): #This is an instance attribute
+            self._folder._object_attrs[name]=value #Add to attributes to be set on load
+            for d in self._folder.__names__(): #And set on all instantiated objects
+                if isinstance(self._folder.__getter__(d,instantiate=False),metadataObject):
+                    d=self._folder.__gett__(d)
+                    setattr(d,name,value)
+
 
     def __getattr_proxy(self,item):
         """Make a prpoxy call to access a method of the metadataObject like types.
@@ -460,6 +483,7 @@ class baseFolder(MutableSequence):
         self._object_attrs=dict()
         self._key=None
         self._type=metadataObject
+        self._loader=None
         self._instance_attrs=set()
         return self
 
@@ -567,6 +591,17 @@ class baseFolder(MutableSequence):
             val=self.__getter__(f,instantiate=None)
             if isinstance(val,self.type):
                 yield f,val
+
+    @property
+    def loader(self):
+        if self._loader is None:
+            self._loader=self.type
+        return self._loader
+
+    @loader.setter
+    def loader(self,value):
+        if issubclass(value,metadataObject):
+            self._loader=value
 
     @property
     def ls(self):
@@ -863,7 +898,7 @@ class baseFolder(MutableSequence):
                     except KeyError as e:
                         if name in item.metadata.common_keys:
                             return item.metadata.slice(name,output="Data")
-                        print(name)
+                        if self.debug: print(name)
                         raise e
             else: # Continuing to index into the tree of groups
                 raise KeyError("Can't index the baseFolder with {}".format(name))
@@ -1259,19 +1294,20 @@ class baseFolder(MutableSequence):
         cls = self.__class__
         result = cls.__new__(cls)
         for k, v in other.__dict__.items():
-            if k=="groups":
-                continue
-            if k=="objects":
+            if k in ["groups","_groups","objects","_objects"]:
                 continue
             try:
                 setattr(result, k, deepcopy(v))
             except Exception:
                 setattr(result, k, copy(v))
 
+        result.directory=other.directory
+
         for g in other.groups:
             self.groups[g]=cls(other.groups[g])
-        for n in other.ls:
+        for n in other.__names__():
             self.__setter__(n,other.__getter__(n,instantiate=None))
+
 
         return result
 
@@ -2058,6 +2094,8 @@ class DiskBasedFolder(object):
 
         pth=path.join(root,*trail)
         os.makesdirs(pth)
+        if isinstance(grp,metadataObject) and not isinstance(grp,self.loader):
+            grp=self.loader(grp)
         grp.save(path.join(pth,grp.filename))
         return grp.filename
 
@@ -2111,27 +2149,13 @@ class DiskBasedFolder(object):
         except (AttributeError,IndexError,KeyError):
             pass
         if name is not None and not path.exists(name):
-            name=path.join(self.directory,name)
-        tmp= self.type(name,**self.extra_args)
+            fname=path.join(self.directory,name)
+        else:
+            fname=name
+        tmp= self.type(self.loader(fname,**self.extra_args))
         if not hasattr(tmp,"filename") or not isinstance(tmp.filename,string_types):
-            tmp.filename=path.basename(name)
-        for p in self.pattern:
-            if isinstance(p,re._pattern_type) and (p.search(tmp.filename) is not None):
-                m=p.search(tmp.filename)
-                for k in m.groupdict():
-                    tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
-        if self.read_means: #Add mean and standard deviations to the metadata
-            if len(tmp)==0:
-                pass
-            elif len(tmp)==1:
-                for h in tmp.column_headers:
-                    tmp[h]=tmp.column(h)[0]
-                    tmp["{}_stdev".format(h)]=None
-            else:
-                for h in tmp.column_headers:
-                    tmp[h]=_np_.mean(tmp.column(h))
-                    tmp["{}_stdev".format(h)]=_np_.std(tmp.column(h))
-        tmp['Loaded from']=tmp.filename
+            tmp.filename=path.basename(fname)
+        tmp=self.on_load_process(tmp)
         tmp=self._update_from_object_attrs(tmp)
         self.__setter__(name,tmp)
         return tmp
@@ -2304,6 +2328,27 @@ class DiskBasedFolder(object):
             self.__deleter__(self.__lookup__(f))
         return self
 
+    def on_load_process(self,tmp):
+        """Carry out processing on a newly loaded file to set means and extra metadata."""
+        for p in self.pattern:
+            if isinstance(p,re._pattern_type) and (p.search(tmp.filename) is not None):
+                m=p.search(tmp.filename)
+                for k in m.groupdict():
+                    tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
+        if self.read_means: #Add mean and standard deviations to the metadata
+            if len(tmp)==0:
+                pass
+            elif len(tmp)==1:
+                for h in tmp.column_headers:
+                    tmp[h]=tmp.column(h)[0]
+                    tmp["{}_stdev".format(h)]=None
+            else:
+                for h in tmp.column_headers:
+                    tmp[h]=_np_.mean(tmp.column(h))
+                    tmp["{}_stdev".format(h)]=_np_.std(tmp.column(h))
+        tmp['Loaded from']=tmp.filename
+        return tmp
+
     def save(self,root=None):
         """Save the entire data folder out to disc using the groups as a directory tree,
         calling the save method for each file in turn.
@@ -2363,7 +2408,7 @@ class DataFolder(DiskBasedFolder,baseFolder):
         """
         if isinstance(f,DataFile):
             return f
-        tmp= self.type(f,**self.extra_args)
+        tmp= self.type(self.loader(f,**self.extra_args))
         if not isinstance(tmp.filename,string_types):
             tmp.filename=path.basename(f)
         for p in self.pattern:
