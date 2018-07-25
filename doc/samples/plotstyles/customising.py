@@ -16,6 +16,7 @@ d.template.template_lines__linewidth=2.0
 
 #Set the default figure size
 d.template["figure.figsize"]=(6,8)
+d.template["figure.autolayout"]=True
 # Make figure (before using subplot method) and select first subplot
 d.figure()
 d.subplot(211)
@@ -31,5 +32,3 @@ d.plot()
 d.title="Style Default settings"
 #Fixup layout
 d.figwidth=7 # Magic pass through attribute access
-d.tight_layout()
-

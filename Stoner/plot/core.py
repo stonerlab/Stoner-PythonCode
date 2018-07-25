@@ -302,6 +302,23 @@ class PlotMixin(object):
         vector_field = ax.quiver(X, Y, Z, U,V,W,**kargs)
 
         return vector_field
+    
+    def _vector_color(self,xcol=None,ycol=None,zcol=None,ucol=None,vcol=None,wcol=None,**kargs):
+        """Map a vector direction in the data to a value for use with a colormnap."""
+        c = self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
+
+        if isinstance(c.wcol, index_types): #3D vector field
+            wdata = self.column(c.wcol)
+            phidata = (wdata - _np_.min(wdata)) / (_np_.max(wdata) - _np_.min(wdata))
+        else: #2D vector field
+            phidata = _np_.ones(len(self)) * 0.5
+            wdata = phidata - 0.5
+        qdata = 0.5 + (_np_.arctan2(self.column(c.ucol), self.column(c.vcol)) / (2 * _np_.pi))
+        rdata = _np_.sqrt(self.column(c.ucol) ** 2 + self.column(c.vcol) ** 2 + wdata ** 2)
+        rdata = rdata / max(rdata)
+        Z = hsl2rgb(qdata, rdata, phidata).astype('f') / 255.0
+        return Z
+
 
     def _span_slice(self,col,num):
         """Create a slice that covers the range of a given column."""
@@ -335,15 +352,12 @@ class PlotMixin(object):
         else:
             col_mode = "color_by_vector"
         if "scalars" in kargs and isinstance(kargs["scalars"], bool) and kargs["scalars"]:  # fancy mode on
-            del kargs["scalars"]
-            pi = _np_.pi
-            colors = hsl2rgb((1 + self.q / pi) / 2, self.r / _np_.max(self.r), (1 + self.w) / 2)
-            quiv = mlab.quiver3d(X, Y, Z, U, V, W, scalars=_np_.ones(len(self)), **kargs)
+            kargs["scalars"]=_np_.arange(len(self))
+            colors = (self._vector_color()*255)
+            colors=_np_.column_stack((colors,_np_.ones(len(self))*255))
+            quiv = mlab.quiver3d(X, Y, Z, U, V, W, **kargs)
             quiv.glyph.color_mode = col_mode
-            sc = tvtk.UnsignedCharArray()
-            sc.from_array(colors)
-            quiv.mlab_source.dataset.point_data.scalars = sc
-            quiv.mlab_source.dataset.modified()
+            quiv.module_manager.scalar_lut_manager.lut.table = colors
         else:
             quiv = mlab.quiver3d(X, Y, Z, U, V, W, **kargs)
             quiv.glyph.color_mode = col_mode
@@ -530,12 +544,15 @@ class PlotMixin(object):
             obj=plt
         elif what=="figure" and self.__figure:
             obj=self.__figure
-        elif what=="aces" and self.__figure:
+        elif what=="axes" and self.__figure:
             obj=self.__figure.gca()
         else:
             raise AttributeError("Attempting to manipulate the methods on a figure or axes before a figure has been created for this Data.")
         func=getattr(obj,name)
-
+        
+        if not callable(func): #Bug out if this isn't a callable proxy!
+            return func
+        
         @wraps(func)
         def _proxy(*args,**kargs):
             ret=func(*args,**kargs)
@@ -1262,20 +1279,10 @@ class PlotMixin(object):
                 **kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
         """
         c = self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
-
+        Z=self._vector_color(xcol=xcol,ycol=ycol,ucol=ucol,vcol=vcol,wcol=wcol)
         if "template" in kargs: #Catch template in kargs
             self.template=kargs.pop("template")
 
-        if isinstance(c.wcol, index_types):
-            wdata = self.column(c.wcol)
-            phidata = (wdata - _np_.min(wdata)) / (_np_.max(wdata) - _np_.min(wdata))
-        else:
-            phidata = _np_.ones(len(self)) * 0.5
-            wdata = phidata - 0.5
-        qdata = 0.5 + (_np_.arctan2(self.column(c.ucol), self.column(c.vcol)) / (2 * _np_.pi))
-        rdata = _np_.sqrt(self.column(c.ucol) ** 2 + self.column(c.vcol) ** 2 + wdata ** 2)
-        rdata = rdata / max(rdata)
-        Z = hsl2rgb(qdata, rdata, phidata).astype('f') / 255.0
         if "save_filename" in kargs:
             save = kargs["save_filename"]
             del kargs["save_filename"]

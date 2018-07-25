@@ -46,11 +46,13 @@ except ImportError:
     ConfigParser=None
 
 try: # numba is an optional dependency
-    from numba import jit
+    from numba import jit,float64
 except ImportError:
-    def jit(func):
+    def jit(func,*args):
         """Null decorator function."""
         return func
+
+from matplotlib.pyplot import plot
 
 def _get_model_(model):
     """Utility meothd to manage creating an lmfit.Model.
@@ -819,7 +821,7 @@ class WLfit(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
-@jit
+@jit(float64(float64,float64,float64,float64,float64))
 def _strijkers_core(V, omega, delta, P, Z):
     """strijkers Model for point-contact Andreev Reflection Spectroscopy
     Args:
@@ -840,7 +842,11 @@ def _strijkers_core(V, omega, delta, P, Z):
     """
     #   Parameters
 
-    E = _np_.arange(2 * _np_.min(V), 2 * _np_.max(V), 0.025)  # Energy range in meV
+    mv=_np_.max(_np_.abs(V)) # Limit for evaluating the integrals
+    E = _np_.linspace(-2*mv,2*mv, len(V)*20)  # Energy range in meV - we use a mesh 20x denser than data points
+    gauss = (1 / _np_.sqrt(2  * _np_.pi*omega**2)) * _np_.exp(-(E**2 / (2 * omega**2)))
+    gauss/=gauss.sum() # Normalised gaussian for the convolution
+
 
     #Reflection prob arrays
     Au = _np_.zeros(len(E))
@@ -880,15 +886,16 @@ def _strijkers_core(V, omega, delta, P, Z):
 
     G = Gu + Gp
 
-    #Sets up gaus
-    gaus = _np_.zeros(len(V))
-    cond = _np_.zeros(len(V))
-
-    #computes gaussian and integrates over all E(more or less)
-    for tt in range(len(V)):
-        #Calculates fermi level smearing
-        gaus = (1 / (2 * omega * _np_.sqrt(_np_.pi))) * _np_.exp(-(((E - V[tt]) / (2 * omega)) ** 2))
-        cond[tt] = _np_.trapz(gaus * G, E)
+    #Convolve and chop out the central section
+    cond=_np_.convolve(G,gauss)
+    cond=cond[int(E.size/2):3*int(E.size/2)]
+    #Linear interpolation back onto the V data point
+    matches=E.searchsorted(V)
+    condl=cond[matches-1]
+    condh=cond[matches]
+    El=E[matches-1]
+    Er=E[matches]
+    cond=(condh-condl)/(Er-El)*(V-El)+condl
     return cond
 
 
