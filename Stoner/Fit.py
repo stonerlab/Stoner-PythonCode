@@ -847,12 +847,6 @@ def _strijkers_core(V, omega, delta, P, Z):
     gauss = (1 / _np_.sqrt(2  * _np_.pi*omega**2)) * _np_.exp(-(E**2 / (2 * omega**2)))
     gauss/=gauss.sum() # Normalised gaussian for the convolution
 
-
-    #Reflection prob arrays
-    Au = _np_.zeros(len(E))
-    Bu = _np_.zeros(len(E))
-    Bp = _np_.zeros(len(E))
-
     #Conductance calculation
 #    For ease of calculation, epsilon = E/(sqrt(E^2 - delta^2))
 #    Calculates reflection probabilities when E < or > delta
@@ -866,25 +860,16 @@ def _strijkers_core(V, omega, delta, P, Z):
     Au2 = (((_np_.abs(E) / (_np_.sqrt((E ** 2) - (delta ** 2)))) ** 2) - 1) / (((_np_.abs(E) /
                                                                                  (_np_.sqrt((E ** 2) - (delta ** 2)))) +
                                                                                 (1 + 2 * (Z ** 2))) ** 2)
-    Bu1 = 1 - Au1
     Bu2 = (4 * (Z ** 2) * (1 + (Z ** 2))) / (((_np_.abs(E) / (_np_.sqrt((E ** 2) - (delta ** 2)))) + (1 + 2 *
                                                                                                       (Z ** 2))) ** 2)
-    Bp1 = _np_.ones(len(E))
     Bp2 = Bu2 / (1 - Au2)
 
-    Au = _np_.where(_np_.abs(E) <= delta, Au1, Au2)
-    Bu = _np_.where(_np_.abs(E) <= delta, Bu1, Bu2)
-    Bp = _np_.where(_np_.abs(E) <= delta, Bp1, Bp2)
-
-    #  Calculates reflection 'probs' for pol and unpol currents
-    Guprob = 1 + Au - Bu
-    Gpprob = 1 - Bp
-
-    #Calculates pol and unpol conductance and normalises
-    Gu = (1 - P) * (1 + (Z ** 2)) * Guprob
-    Gp = 1 * (P) * (1 + (Z ** 2)) * Gpprob
-
-    G = Gu + Gp
+    unpolarised_prefactor=(1 - P) * (1 + (Z ** 2))
+    polarised_prefactor=1 * (P) * (1 + (Z ** 2))
+    #Optimised for a single use of np.where
+    G = unpolarised_prefactor+ polarised_prefactor++ _np_.where(_np_.abs(E) <= delta,
+                                                                 unpolarised_prefactor*(2*Au1-1)-_np_.ones_like(E)*polarised_prefactor,
+                                                                 unpolarised_prefactor*(Au2-Bu2)- Bp2*polarised_prefactor)
 
     #Convolve and chop out the central section
     cond=_np_.convolve(G,gauss)
@@ -897,7 +882,6 @@ def _strijkers_core(V, omega, delta, P, Z):
     Er=E[matches]
     cond=(condh-condl)/(Er-El)*(V-El)+condl
     return cond
-
 
 def strijkers(V, omega, delta, P, Z):
     """strijkers Model for point-contact Andreev Reflection Spectroscopy.
