@@ -52,6 +52,10 @@ except ImportError:
         """Null decorator function."""
         return func
 
+    def float64(*args):
+        """Define symbols if numba not installed."""
+        pass
+
 from matplotlib.pyplot import plot
 
 def _get_model_(model):
