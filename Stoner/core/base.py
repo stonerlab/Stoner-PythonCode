@@ -8,6 +8,7 @@ from collections import OrderedDict,MutableMapping
 import re
 import copy
 import numpy as np
+from numpy import isnan
 from numpy import NaN
 
 from ..compat import python_v3,string_types,int_types
@@ -569,6 +570,19 @@ class metadataObject(MutableMapping):
         """Pass through to metadata dictionary."""
         del self.metadata[name]
 
+    def __eq__(self,other):
+        """Implement am equality test for metadataObjects."""
+        if not isinstance(other,metadataObject):
+            return False
+        if len(self)!=len(other):
+            return False
+        for (k,v),(ok,ov) in zip(self.items(),other.items()):
+            if k!=ok or (v!=ov and not (isnan(v) and isnan(ov))):#Trap for nan!
+                break
+        else:
+            return True
+        return False
+
     def __len__(self):
         """Pass through to metadata dictionary."""
         return len(self.metadata)
@@ -579,7 +593,18 @@ class metadataObject(MutableMapping):
 
     def keys(self):
         """Return the keys of the metadata dictionary."""
-        return self.metadata.keys()
+        for k in self.metadata.keys():
+            yield k
+
+    def items(self):
+        """Make sure we implement an items that doesn't just iterate over self!"""
+        for k,v in self.metadata.items():
+            yield k,v
+
+    def values(self):
+        """Return the values of the metadata dictionary."""
+        for v in self.metadata.values():
+            yield v
 
     def save(self,path):
         """Stub method for a save function."""

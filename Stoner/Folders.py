@@ -3,7 +3,7 @@
 The core classes provides a means to access them as an ordered collection or as a mapping.
 """
 __all__ = ["baseFolder","DiskBasedFolder","DataFolder","PlotFolder"]
-from .compat import python_v3,int_types,string_types,get_filedialog,commonpath
+from Stoner.compat import python_v3,int_types,string_types,get_filedialog,commonpath
 from .tools import operator,isiterable,isproperty,islike_list,all_type
 import os
 import re
@@ -14,7 +14,7 @@ from functools import wraps
 import numpy as _np_
 from copy import copy,deepcopy
 import unicodedata
-from inspect import ismethod
+from inspect import ismethod,isgenerator
 import string
 from collections import Iterable,MutableSequence,OrderedDict
 from itertools import islice
@@ -524,6 +524,16 @@ class baseFolder(MutableSequence):
     def clone(self):
         """Clone just does a deepcopy as a property for compatibility with :py:class:`Stoner.Core.DataFile`."""
         return self.__clone__()
+
+    @property
+    def defaults(self):
+        """Build a single list of all of our defaults by iterating over the __mro__, caching the result."""
+        if not hasattr(self,"_default_store"):
+            self._default_store=dict()
+            for cls in reversed(self.__class__.__mro__):
+                if hasattr(cls,"_defaults"):
+                    self._default_store.update(cls._defaults)
+        return self._default_store
 
     @property
     def depth(self):
@@ -1293,7 +1303,14 @@ class baseFolder(MutableSequence):
     def __init_from_other(self,other):
         cls = self.__class__
         result = cls.__new__(cls)
-        for k, v in other.__dict__.items():
+        for k in dir(other):
+            if k.startswith("_"): # Short circuit before we even get the value
+                continue
+            v=getattr(other,k)
+            if ismethod(v)  or isgenerator(v):
+                continue
+            if isproperty(self,k) and not hasattr(v,"__set__"):
+                continue
             if k in ["groups","_groups","objects","_objects"]:
                 continue
             try:
@@ -1406,6 +1423,26 @@ class baseFolder(MutableSequence):
         """Clear the subgroups."""
         self.groups.clear()
         self.__clear__()
+
+    def compress(self,base=None):
+        """Compresses all empty groups from the root up until the first non-empty group is located.
+
+        Keyword Arguments:
+            depth )(int or None): Only flatten ub-groups that are within (*depth* of the deepest level.
+
+        Returns:
+            A copy of the now flattened DatFolder
+        """
+        if base is None:
+            base=self
+        if not len(self):
+            for g in list(self.groups.keys()):
+                nk=path.join(self.key,g)
+                base.groups[nk]=self.groups[g]
+                del self.groups[g]
+
+
+
 
     def count(self,name):
         """Provide a count method like a sequence.
@@ -2009,7 +2046,7 @@ class DiskBasedFolder(object):
     def __init__(self,*args,**kargs):
         """Additional constructor for DiskbasedFolders"""
         from Stoner import Data
-        defaults=copy(self._defaults)
+        defaults=self.defaults
         if "directory" in defaults and defaults["directory"] is None:
             defaults["directory"]=os.getcwd()
         if "type" in defaults and defaults["type"] is None and self._type==metadataObject:

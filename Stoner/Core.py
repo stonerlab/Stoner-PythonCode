@@ -1370,6 +1370,18 @@ class DataFile(metadataObject):
                     attr.append(col_check[k])
         return sorted(set(attr))
 
+    def __eq__(self,other):
+        if not isinstance(other,DataFile): #Start checking we're all DataFile's
+            return False
+        if self.data.shape!=other.data.shape or not _np_.all(self.data==other.data): #Check we have the same data
+            return False
+        if self.column_headers!=other.column_headers: # And the same headers
+            return False
+        if not super(DataFile,self).__eq__(other): #Check metadata
+            return False
+        #Ok give up, we are the same!
+        return True
+
     def __floordiv__(self, other):
         """Just aslias for self.column(other)."""
         if not isinstance(other, index_types):
