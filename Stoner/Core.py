@@ -1375,7 +1375,8 @@ class DataFile(metadataObject):
             return False
         if self.data.shape!=other.data.shape or not _np_.all(self.data==other.data): #Check we have the same data
             return False
-        if self.column_headers!=other.column_headers: # And the same headers
+        if len(self.column_headers)!=len(other.column_headers) or _np_.any(
+                                    [c1!=c2 for c1,c2 in zip(self.column_headers,other.column_headers)]): # And the same headers
             return False
         if not super(DataFile,self).__eq__(other): #Check metadata
             return False

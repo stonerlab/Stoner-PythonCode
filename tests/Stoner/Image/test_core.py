@@ -35,21 +35,21 @@ class ImageArrayTest(unittest.TestCase):
         self.imarr = ImageArray(np.copy(self.arr)) #ImageArray object
         self.imarrfile = ImageArray(os.path.join(thisdir, 'coretestdata/im1_annotated.png'))
                         #ImageArray object from file
-    
+
     #####test loading with different datatypes  ####
-        
+
     def test_load_from_array(self):
         #from array
         self.assertTrue(np.array_equal(self.imarr,self.arr))
         #int type
         imarr = ImageArray(np.arange(12,dtype="int32").reshape(3,4))
-        self.assertTrue(imarr.dtype==np.dtype('int32'),"Failed to set correct dtype - actual dtype={}".format(imarr.dtype))        
-    
+        self.assertTrue(imarr.dtype==np.dtype('int32'),"Failed to set correct dtype - actual dtype={}".format(imarr.dtype))
+
     def test_load_from_ImageArray(self):
         #from ImageArray
         t = ImageArray(self.imarr)
         self.assertTrue(shares_memory(self.imarr, t), 'no overlap on creating ImageArray from ImageArray')
-    
+
     def test_load_from_png(self):
         subpath = os.path.join("coretestdata","im1_annotated.png")
         fpath = os.path.join(thisdir, subpath)
@@ -61,7 +61,7 @@ class ImageArrayTest(unittest.TestCase):
         #check full path is in loaded from metadata
         self.assertTrue(os.path.normpath(anim.metadata['Loaded from']) == os.path.normpath(fpath), 'Full path not in metadata: {}'.format(anim["Loaded from"]))
         os.chdir(cwd)
-   
+
     def test_load_from_ImageFile(self):
         #uses the ImageFile.im attribute to set up ImageArray. Memory overlaps
         pass
@@ -69,21 +69,21 @@ class ImageArrayTest(unittest.TestCase):
 #        imarr = ImageArray(imfi)
 #        self.assertTrue(np.array_equal(imarr, imfi.image), 'Initialising from ImageFile failed')
 #        self.assertTrue(shares_memory(imarr, imfi.image))
-    
+
     def test_load_from_list(self):
         t=ImageArray([[1,3],[3,2],[4,3]])
         self.assertTrue(np.array_equal(t, np.array([[1,3],[3,2],[4,3]])), 'Initialising from list failed')
-    
+
     def test_load_1d_data(self):
         t=ImageArray(np.arange(10)/10.0)
         self.assertTrue(len(t.shape)==2) #converts to 2d
-    
+
     def test_load_no_args(self):
         #Should be a 2d empty array
         t=ImageArray()
         self.assertTrue(len(t.shape)==2)
         self.assertTrue(t.size==0)
-    
+
     def test_load_bad_data(self):
         def testload(arg):
             ImageArray(arg)
@@ -93,7 +93,7 @@ class ImageArrayTest(unittest.TestCase):
         self.assertRaises(ValueError, testload, np.arange(27).reshape(3,3,3))
         #bad filename
         self.assertRaises(ValueError, testload, 'sillyfile.xyz')
-            
+
     def test_load_kwargs(self):
         #metadata keyword arg
         t=ImageArray(self.arr, metadata={'a':5, 'b':7})
@@ -103,9 +103,9 @@ class ImageArrayTest(unittest.TestCase):
         t=ImageArray(np.arange(12).reshape(3,4), asfloat=True)
         self.assertTrue(t.dtype == np.float64, 'Initialising asfloat failed')
         self.assertTrue('Loaded from' in t.metadata.keys(), 'Loaded from should always be in metadata')
-    
+
     #####test attributes ##
-    
+
     def test_filename(self):
         im = ImageArray(np.linspace(0,1,12).reshape(3,4))
         fpath = os.path.join(thisdir, 'coretestdata/im1_annotated.png')
@@ -133,7 +133,7 @@ class ImageArrayTest(unittest.TestCase):
         self.assertTrue(c.userxyz == 123)
         c.userxyz = 234
         self.assertTrue(c.userxyz != self.imarr.userxyz)
-    
+
     def test_metadata(self):
         self.assertTrue(isinstance(self.imarr.metadata,typeHintedDict))
         self.imarr['testmeta']='abc'
@@ -143,8 +143,8 @@ class ImageArrayTest(unittest.TestCase):
         #bad data
         def test(imarr):
             imarr.metadata=(1,2,3)
-        self.assertRaises(TypeError, test, self.imarr) #check it won't let you do this        
-        
+        self.assertRaises(TypeError, test, self.imarr) #check it won't let you do this
+
     ### test numpy like creation behaviour #
     def test_user_attributes(self):
         self.imarr.abc = 'new att'
@@ -165,13 +165,13 @@ class ImageArrayTest(unittest.TestCase):
         for e in ext:
             self.imarr.save(filename=testfile+e)
             load=ImageArray(testfile+e)
-            self.assertTrue(all([k in keys for k in load.keys()]), 'problem saving metadata')
+            self.assertTrue(all([k in load.keys() for k in keys]), 'problem saving metadata {} {}'.format(list(load.keys()),e))
             if e=='.npy':
-                #tolerance is really poor for png whcih savees in 8bit format 
-                self.assertTrue(np.allclose(self.imarr, load), 
-                                'data not the same for extension {}'.format(e)) 
+                #tolerance is really poor for png whcih savees in 8bit format
+                self.assertTrue(np.allclose(self.imarr, load),
+                                'data not the same for extension {}'.format(e))
             os.remove(testfile+e) #tidy up
-    
+
     def test_savetiff(self):
         testfile=path.join(thisdir,'coretestdata','testsave.tiff')
         #create a few different data types
@@ -192,10 +192,10 @@ class ImageArrayTest(unittest.TestCase):
             self.assertTrue('ImageArray.dtype' in n.metadata.keys()) #check the dtype metdata got added
             self.assertTrue(im.dtype==n.dtype) #check the datatype
             self.assertTrue(np.allclose(im, n))  #check the data
-            
-            
-            
-        
+
+
+
+
     def test_max_box(self):
         s=self.imarr.shape
         self.assertTrue(self.imarr.max_box==(0,s[1],0,s[0]))
@@ -209,7 +209,7 @@ class ImageArrayTest(unittest.TestCase):
         c3 = self.imarr.crop(box=(1,3,1,4), copy=False)
         self.assertTrue(np.array_equal(c3,c), 'crop with no arguments failed')
         self.assertTrue(shares_memory(self.imarr, c3), 'crop with no copy failed')
-    
+
     def test_asint(self):
         ui = self.imarr.asint()
         self.assertTrue(ui.dtype==np.uint16)
@@ -217,7 +217,7 @@ class ImageArrayTest(unittest.TestCase):
                            [ 3944,  9439, 22571, 64980],
                            [19556, 60082, 48378, 50169]], dtype=np.uint16)
         self.assertTrue(np.array_equal(ui,intarr))
-        
+
     def test_other_funcs(self):
         """test imagefuncs add ons. the functions themselves are not checked
         and should include a few examples in the doc strings for testing"""
@@ -227,7 +227,7 @@ class ImageArrayTest(unittest.TestCase):
         self.assertTrue(np.allclose(im, self.imarr), 'imagefuncs not working')
         self.assertFalse(shares_memory(im, self.imarr), 'imagefunc failed to clone')
         im0 = ImageArray(np.linspace(0,1,12).reshape(3,4))
-        im1 = im0.clone * 5        
+        im1 = im0.clone * 5
         im2 = im1.rescale_intensity() #test skimage
         self.assertTrue(np.allclose(im2, im0), 'skimage func failed')
         self.assertFalse(shares_memory(im2, im1), 'skimage failed to clone')
@@ -238,18 +238,18 @@ class ImageFileTest(unittest.TestCase):
     def setUp(self):
         self.a = np.linspace(0,5,12).reshape(3,4)
         self.ifi = ImageFile(self.a)
-    
+
     def test_properties(self):
         self.assertTrue(np.allclose(self.ifi.image, self.a))
         self.ifi[0,1]=10.1
         self.assertTrue(self.ifi.image[0,1]==10.1)
-    
+
     def test_attrs(self):
         self.assertTrue(self.ifi['Loaded from'] == '')
         self.ifi.abc = 123
         self.assertTrue(self.ifi.image.abc == 123)
         self.assertTrue(self.ifi.abc == 123)
-        
+
     def test_methods(self):
         b=np.arange(12).reshape(3,4)
         ifi = ImageFile(b)
@@ -262,16 +262,16 @@ class ImageFileTest(unittest.TestCase):
         ifi.crop(0,3,0,None)
         self.assertTrue(ifi.shape==(3,3)) #check crop is forced to overwrite ifi despite shape change
 
-        
+
 if __name__=="__main__": # Run some tests manually to allow debugging
 #    test=ImageArrayTest("test_filename")
 #    test.setUp()
 #    test.test_save()
 #    test.test_savetiff()
-#    
+#
 #    test2=ImageFileTest("test_methods")
 #    test2.setUp()
 #    test2.test_methods()
-    
+
     unittest.main()
 

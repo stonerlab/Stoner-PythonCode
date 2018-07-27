@@ -471,7 +471,8 @@ class ZipFolderMixin(object):
         """
         if not isinstance(f, DataFile):
             f = DataFile(f)
-        bits=[self.File.filename,]+trail+[f.filename]
+        filename=path.splitdrive(f.filename)[1]
+        bits=[self.File.filename,]+trail+[filename]
         pathsep=path.join("a","b")[1]
         for ix,b in enumerate(bits):
             if ix==0 or not b.startswith(pathsep):

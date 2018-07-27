@@ -573,11 +573,14 @@ class metadataObject(MutableMapping):
     def __eq__(self,other):
         """Implement am equality test for metadataObjects."""
         if not isinstance(other,metadataObject):
+            print("Wrong Instance")
             return False
         if len(self)!=len(other):
+            print("wrong Length")
             return False
         for (k,v),(ok,ov) in zip(self.items(),other.items()):
             if k!=ok or (v!=ov and not (isnan(v) and isnan(ov))):#Trap for nan!
+                print("Key {}!={}".format(k,ok))
                 break
         else:
             return True
