@@ -18,8 +18,6 @@ import fnmatch
 from numpy import ceil
 from Stoner.compat import *
 import Stoner.Folders as SF
-import Stoner.HDF5 as SH
-import Stoner.Zip as SZ
 
 from Stoner import Data
 from Stoner.Util import hysteresis_correct

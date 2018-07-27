@@ -1809,14 +1809,14 @@ class DataFile(metadataObject):
             cols = max(cols, len(row) - 1)
             if row[0].strip() != '':
                 md = row[0].split('=')
-                if len(md) == 2:
+                if len(md) >= 2:
                     md[1] = "=".join(md[1:])
                 elif len(md) <= 1:
                     md.extend(['', ''])
 
-                if format == 1.5:
+                if fmt == 1.5:
                     self.metadata[md[0].strip()] = md[1].strip()
-                elif format == 1.0:
+                elif fmt == 1.0:
                     self.metadata[md[0].strip()] = self.metadata.string_to_type(md[1].strip())
             if len(row) < 2:
                 continue

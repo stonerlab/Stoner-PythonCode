@@ -148,6 +148,11 @@ class HDF5File(DataFile):
         else:
             self.data = [[]]
         metadata = f.require_group('metadata')
+        typehints=f.get("typehints",None)
+        if not isinstance(typehints,h5py.Group):
+            typehints=dict()
+        else:
+            typehints=typehints.attrs
         if "column_headers" in f.attrs:
             self.column_headers = [x.decode("utf8") for x in f.attrs["column_headers"]]
             if isinstance(self.column_headers, string_types):
@@ -155,8 +160,13 @@ class HDF5File(DataFile):
             self.column_headers = [bytes2str(x) for x in self.column_headers]
         else:
             raise StonerLoadError("Couldn't work out where my column headers were !")
-        for i in metadata.attrs:
-            self[i] = metadata.attrs[i]
+        for i in sorted(metadata.attrs):
+            v=metadata.attrs[i]
+            t=typehints.get(i,"Void")
+            if self.metadata.findtype(v)!=t and t!="Void": # We have typehints and this looks like it got exported
+                self.metadata["{}{{{}}}".format(i,t).strip()] = "{}".format(v).strip()
+            else:
+                self[i] = metadata.attrs[i]
         if isinstance(f, h5py.Group):
             if f.name!="/":
                 self.filename = os.path.join(f.file.filename,f.name)
@@ -197,12 +207,14 @@ class HDF5File(DataFile):
                              compression=self.compression,
                              compression_opts=self.compression_opts)
             metadata = f.require_group("metadata")
+            typehints = f.require_group("typehints")
             for k in self.metadata:
                 try:
+                    typehints.attrs[k]=self.metadata._typehints[k]
                     metadata.attrs[k] = self[k]
                 except TypeError:  # We get this for trying to store a bad data type - fallback to metadata export to string
                     parts = self.metadata.export(k).split('=')
-                    metadata[parts[0]] = "=".join(parts[1:])
+                    metadata.attrs[parts[0]] = "=".join(parts[1:])
             f.attrs["column_headers"] = [x.encode("utf8") for x in self.column_headers]
             f.attrs["filename"] = self.filename
             f.attrs["type"] = "HDF5File"

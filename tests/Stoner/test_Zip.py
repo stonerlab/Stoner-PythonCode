@@ -8,19 +8,14 @@ Created on Mon Jul 18 14:13:39 2016
 
 
 import unittest
-import sys
 import os.path as path
 import tempfile
-import os
-import numpy as np
-import re
 from Stoner.compat import *
 import Stoner
 import Stoner.Zip as SZ
 Data=Stoner.Data
 
 pth=path.dirname(__file__)
-testdata=path.realpath(path.join(pth,"test-data"))
 
 root=path.realpath(path.join(Stoner.__home__,".."))
 sample_data=path.realpath(path.join(root,"sample-data","NLIV"))
@@ -42,8 +37,9 @@ class Zip_test(unittest.TestCase):
         zipname=path.join(tmpdir,"test-zipfolder.zip")
         self.zipfldr.save(zipname)
         self.assertEqual(self.fldr.shape,self.zipfldr.shape,"ZipFolder Changed shape when saving!")
-        self.zipfldr_2=SZ.ZipFolder(zipname)
-        #self.assertEqual(self.zipfldr_2.shape,self.zipfldr.shape,"ZipFolder loaded from disc not same shape as ZipFolder in memory!")
+        self.zipfldr_2=SZ.ZipFolder(zipname).compress()
+        self.assertEqual(self.zipfldr_2.shape,self.zipfldr.shape,"ZipFolder loaded from disc not same shape as ZipFolder in memory!")
+        self.assertEqual(self.zipfldr[0],self.zipfldr_2[0],"File from loaded ZipFolder not the same as in memeory ZipFolder.")
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging

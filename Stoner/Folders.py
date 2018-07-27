@@ -677,6 +677,13 @@ class baseFolder(MutableSequence):
         return (len(self),grp_shape)
 
     @property
+    def trunkdepth(self):
+        """The number of levels of group before a group with files is found."""
+        if self.files:
+            return 0
+        return min([self.groups[g].trunkdepth for g in self.groups])+1
+
+    @property
     def type(self):
         """Defines the (sub)class of the :py:class:`Stoner.Core.metadataObject` instances."""
         return self._type
@@ -1424,7 +1431,7 @@ class baseFolder(MutableSequence):
         self.groups.clear()
         self.__clear__()
 
-    def compress(self,base=None):
+    def compress(self,base=None,key="."):
         """Compresses all empty groups from the root up until the first non-empty group is located.
 
         Keyword Arguments:
@@ -1437,9 +1444,19 @@ class baseFolder(MutableSequence):
             base=self
         if not len(self):
             for g in list(self.groups.keys()):
-                nk=path.join(self.key,g)
+                nk=path.join(key,g)
                 base.groups[nk]=self.groups[g]
                 del self.groups[g]
+                base.groups[nk].compress(base=base,key=nk)
+                if len(base.groups[nk].groups)==0:
+                    for f in base.groups[nk].__names__():
+                        obj=base.groups[nk].__getter__(f,instantiate=None)
+                        nf=path.join(nk,f)
+                        base.__setter__(nf,obj)
+                        base.groups[nk].__deleter__(f)
+                if len(base.groups[nk])==0 and len(base.groups[nk].groups)==0:
+                    del base.groups[nk]
+        return self
 
 
 

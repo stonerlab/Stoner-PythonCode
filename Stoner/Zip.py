@@ -72,7 +72,7 @@ class ZippedFile(DataFile):
             other = args[0]
             if isinstance(other, zf.ZipFile):
                 if len(args) == 2 and isinstance(args[1], string_types): #ZippedFile(open_zip,"filename")
-                    kargs["filename"] = args[1]
+                    kargs["filename"] = args[1].replace("\\","/")
                 elif "filename" not in kargs: # ZippedFile(open_zip) - assume we use tyhe first zipped file in there
                     kargs["filename"] = other.namelist()[0]
                 if kargs["filename"] not in other.namelist(): # New file not in the zip file yet
@@ -83,7 +83,8 @@ class ZippedFile(DataFile):
             elif isinstance(other, string_types):  # Passed a string - so try as a zipfile
                 if zf.is_zipfile(other):
                     other = zf.ZipFile(other, "a")
-                    args = (other, )
+                    args = args=list(args)
+                    args[0]=other
                 elif test_is_zip(other):
                     args = test_is_zip(other)
                 self.__init__(*args, **kargs)

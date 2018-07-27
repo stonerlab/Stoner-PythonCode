@@ -12,7 +12,7 @@ from numpy import isnan
 from numpy import NaN
 
 from ..compat import python_v3,string_types,int_types
-from ..tools import isiterable
+from ..tools import isiterable,isComparable
 
 try:
     assert not python_v3 # blist doesn't seem entirely reliable in 3.5 :-(
@@ -573,14 +573,11 @@ class metadataObject(MutableMapping):
     def __eq__(self,other):
         """Implement am equality test for metadataObjects."""
         if not isinstance(other,metadataObject):
-            print("Wrong Instance")
             return False
         if len(self)!=len(other):
-            print("wrong Length")
             return False
-        for (k,v),(ok,ov) in zip(self.items(),other.items()):
-            if k!=ok or (v!=ov and not (isnan(v) and isnan(ov))):#Trap for nan!
-                print("Key {}!={}".format(k,ok))
+        for (k,v),(ok,ov) in zip(sorted(self.items()),sorted(other.items())):
+            if k!=ok or (v!=ov and isComparable(v,ov)):#Trap for nan!
                 break
         else:
             return True

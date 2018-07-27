@@ -55,31 +55,9 @@ _options={"short_repr":False,
           "short_img_repr":True,
           "no_figs":True }
 
-
-def isNone(iterator):
-    """Returns True if input is None or an empty iterator, or an iterator of None.
-
-    Args:
-        iterator (None or Iterable):
-
-    Returns:
-        True if iterator is None, empty or full of None.
-    """
-    if iterator is None:
-        ret=True
-    elif isiterable(iterator) and not isinstance(iterator,string_types):
-        if len(iterator)==0: # pylint: disable=len-as-condition
-            ret=True
-        else:
-            for i in iterator:
-                if i is not None:
-                    ret=False
-                    break
-            else:
-                ret=True
-    else:
-        ret=False
-    return ret
+###############################################################################################################
+######################  Functions #############################################################################
+###############################################################################################################
 
 def all_size(iterator,size=None):
     """Check whether each element of *iterator* is the same length/shape.
@@ -107,214 +85,6 @@ def all_size(iterator,size=None):
     else:
         ret=True
     return ret
-
-def isAnyNone(*args):
-    """Intelligently check whether any of the inputs are None."""
-    for arg in args:
-        if arg is None:
-            return True
-    return False
-
-def all_type(iterator,typ):
-    """Determines if an interable omnly contains a common type.
-
-    Arguments:
-        iterator (Iterable): The object to check if it is all iterable
-        typ (class): The type to check for.
-
-    Returns:
-        True if all elements are of the type typ, or False if not.
-
-    Notes:
-        Routine will iterate the *iterator* and break when an element is not of
-        the search type *typ*.
-    """
-    ret=False
-    if isinstance(iterator,ndarray): #Try to short circuit for arrays
-        try:
-            return iterator.dtype==dtype(typ)
-        except TypeError:
-            pass
-    if isiterable(iterator):
-        for i in iterator:
-            if not isinstance(i,typ):
-                break
-        else:
-            ret=True
-    return ret
-
-def isiterable(value):
-    """Chack to see if a value is iterable.
-
-    Args:
-        value (object): Entitiy to check if it is iterable
-
-    Returns:
-        (bool): True if value is an instance of collections.Iterable.
-    """
-    return isinstance(value,Iterable)
-
-def islike_list(value):
-    """Returns True if value is an iterable but not a string."""
-    return isiterable(value) and not isinstance(value,string_types)
-
-def isproperty(obj,name):
-    """Check whether an attribute of an object or class is a property.
-
-    Args:
-        obj (instance or class): Thing that has the attribute to check
-        name (str): Name of the attrbiute that might be a property
-
-    Returns:
-        (bool): Whether the name is a property or not.
-    """
-    if isinstance(obj,object):
-        obj=obj.__class__
-    elif not issubclass(obj,object):
-        raise TypeError("Can only check for property status on attributes of an object or a class not a {}".format(type(obj)))
-    return hasattr(obj,name) and isinstance(getattr(obj,name),property)
-
-def istuple(obj,*args,**kargs):
-    """Determine if obj is a tuple of a certain signature.
-
-    Args:
-        obj(object): The object to check
-        *args(type): Each of the suceeding arguments are used to determine the expected type of each element.
-
-    Keywoprd Arguments:
-        strict(bool): Whether the elements of the tuple have to be exactly the type specified or just castable as the type
-
-    Returns:
-        (bool): True if obj is a matching tuple.
-    """
-    strict=kargs.pop("strict",True)
-    if not isinstance(obj,tuple):
-        return False
-    if args and len(obj)!=len(args):
-        return False
-    for t,e in zip(args,obj):
-        if strict:
-            if not isinstance(e,t):
-                bad=True
-                break
-        else:
-            try:
-                _ = t(e)
-            except ValueError:
-                bad=True
-                break
-    else:
-        bad=False
-    return not bad
-
-
-def tex_escape(text):
-    """Escapes spacecial text charcters in a string.
-
-    Parameters:
-        text (str): a plain text message
-
-    Returns:
-        the message escaped to appear correctly in LaTeX
-
-    From `Stackoverflow <http://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates>`
-    """
-    conv = {
-        '&': r'\&',
-        '%': r'\%',
-        '$': r'\$',
-        '#': r'\#',
-        '_': r'\_',
-        '{': r'\{',
-        '}': r'\}',
-        '~': r'\textasciitilde{}',
-        '^': r'\^{}',
-        '\\': r'\textbackslash{}',
-        '<': r'\textless',
-        '>': r'\textgreater',
-    }
-    regex = re.compile('|'.join(re.escape(bytes2str(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
-    return regex.sub(lambda match: conv[match.group()], text)
-
-
-def format_val(value,**kargs):
-    r"""Format a number as an SI quantity
-
-    Args:
-        value(float): Value to format
-
-    Keyword Arguments:
-        fmt (str): Specify the output format, opyions are:
-            *  "text" - plain text output
-            * "latex" - latex output
-            * "html" - html entities
-        escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)
-        mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
-            to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
-            i.e. mantissa and exponent format is used.
-        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
-            prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm
-        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
-            inside the math-mode markers, but not embedded in \mathrm.
-
-    Returns:
-        (str): The formatted value.
-    """
-    mode=kargs.pop("mode","float")
-    units=kargs.pop("units","")
-    prefix=kargs.pop("prefix","")
-    latex=kargs.pop("latex",False)
-    fmt=kargs.pop("fmt","latex" if latex else "text")
-    escape=kargs.pop("escape",False)
-    escape_func={"latex":tex_escape,"html":html_escape}.get(mode,lambda x:x)
-
-    if escape:
-        prefix=escape_func(prefix)
-        units=escape_func(units)
-
-    if mode == "float":  # Standard
-        suffix_val = ""
-    elif mode == "eng":  #Use SI prefixes
-        v_mag = floor(log10(abs(value)) / 3.0) * 3.0
-        prefixes = prefs.get(fmt,prefs["text"])
-        if v_mag in prefixes:
-            if fmt=="latex":
-                suffix_val = r"\mathrm{{{{{}}}}}".format(prefixes[v_mag])
-            else:
-                suffix_val = prefixes[v_mag]
-            value /= 10 ** v_mag
-        else:  # Implies 10^-3<x<10^3
-            suffix_val = ""
-    elif mode == "sci":  # Scientific mode - raise to common power of 10
-        v_mag = floor(log10(abs(value)))
-        if fmt=="latex":
-            suffix_val = r"\times 10^{{{{{}}}}}".format(int(v_mag))
-        elif fmt=="html":
-            suffix_val = "&times; 10<sup>{}</sup> ".format(int(v_mag))
-        else:
-            suffix_val = "E{} ".format(int(v_mag))
-        value /= 10 ** v_mag
-    else:  # Bad mode
-        raise RuntimeError("Unrecognised mode: {} in format_error".format(mode))
-
-    #Protect {} in units string
-    units = units.replace("{", "{{").replace("}", "}}")
-    prefix = prefix.replace("{", "{{").replace("}", "}}")
-    if fmt=="latex":  # Switch to latex math mode symbols
-        val_fmt_str = r"${}{{}}".format(prefix)
-        if units != "":
-            suffix_fmt = r"\mathrm{{{{{}}}}}".format(units)
-        else:
-            suffix_fmt = ""
-        suffix_fmt += "$"
-    elif fmt=="html":  # Switch to latex math mode symbols
-        val_fmt_str = r"{}{{}}".format(prefix)
-        suffix_fmt = units
-    else:  # Plain text
-        val_fmt_str = r"{}{{}}".format(prefix)
-        suffix_fmt = units
-    fmt_str = val_fmt_str + suffix_val + suffix_fmt
-    return fmt_str.format(value)
 
 def format_error(value, error=None, **kargs):
     r"""Handles the printing out of the answer with the uncertaintly to 1sf and the value to no more sf's than the uncertainty.
@@ -416,6 +186,85 @@ def format_error(value, error=None, **kargs):
         value = int(value)
     return fmt_str.format(value, error)
 
+def format_val(value,**kargs):
+    r"""Format a number as an SI quantity
+
+    Args:
+        value(float): Value to format
+
+    Keyword Arguments:
+        fmt (str): Specify the output format, opyions are:
+            *  "text" - plain text output
+            * "latex" - latex output
+            * "html" - html entities
+        escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)
+        mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
+            to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
+            i.e. mantissa and exponent format is used.
+        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
+            prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm
+        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
+            inside the math-mode markers, but not embedded in \mathrm.
+
+    Returns:
+        (str): The formatted value.
+    """
+    mode=kargs.pop("mode","float")
+    units=kargs.pop("units","")
+    prefix=kargs.pop("prefix","")
+    latex=kargs.pop("latex",False)
+    fmt=kargs.pop("fmt","latex" if latex else "text")
+    escape=kargs.pop("escape",False)
+    escape_func={"latex":tex_escape,"html":html_escape}.get(mode,lambda x:x)
+
+    if escape:
+        prefix=escape_func(prefix)
+        units=escape_func(units)
+
+    if mode == "float":  # Standard
+        suffix_val = ""
+    elif mode == "eng":  #Use SI prefixes
+        v_mag = floor(log10(abs(value)) / 3.0) * 3.0
+        prefixes = prefs.get(fmt,prefs["text"])
+        if v_mag in prefixes:
+            if fmt=="latex":
+                suffix_val = r"\mathrm{{{{{}}}}}".format(prefixes[v_mag])
+            else:
+                suffix_val = prefixes[v_mag]
+            value /= 10 ** v_mag
+        else:  # Implies 10^-3<x<10^3
+            suffix_val = ""
+    elif mode == "sci":  # Scientific mode - raise to common power of 10
+        v_mag = floor(log10(abs(value)))
+        if fmt=="latex":
+            suffix_val = r"\times 10^{{{{{}}}}}".format(int(v_mag))
+        elif fmt=="html":
+            suffix_val = "&times; 10<sup>{}</sup> ".format(int(v_mag))
+        else:
+            suffix_val = "E{} ".format(int(v_mag))
+        value /= 10 ** v_mag
+    else:  # Bad mode
+        raise RuntimeError("Unrecognised mode: {} in format_error".format(mode))
+
+    #Protect {} in units string
+    units = units.replace("{", "{{").replace("}", "}}")
+    prefix = prefix.replace("{", "{{").replace("}", "}}")
+    if fmt=="latex":  # Switch to latex math mode symbols
+        val_fmt_str = r"${}{{}}".format(prefix)
+        if units != "":
+            suffix_fmt = r"\mathrm{{{{{}}}}}".format(units)
+        else:
+            suffix_fmt = ""
+        suffix_fmt += "$"
+    elif fmt=="html":  # Switch to latex math mode symbols
+        val_fmt_str = r"{}{{}}".format(prefix)
+        suffix_fmt = units
+    else:  # Plain text
+        val_fmt_str = r"{}{{}}".format(prefix)
+        suffix_fmt = units
+    fmt_str = val_fmt_str + suffix_val + suffix_fmt
+    return fmt_str.format(value)
+
 def fix_signature(proxy_func,wrapped_func):
     """Tries to update proxy_func to have a signature that matches the wrapped func."""
     try:
@@ -427,6 +276,211 @@ def fix_signature(proxy_func,wrapped_func):
             pass
     return proxy_func
 
+def get_option(name):
+    """Return the option value"""
+    if name not in _options.keys():
+        raise IndexError("{} is not a valid package option".format(name))
+    return _options[name]
+
+def all_type(iterator,typ):
+    """Determines if an interable omnly contains a common type.
+
+    Arguments:
+        iterator (Iterable): The object to check if it is all iterable
+        typ (class): The type to check for.
+
+    Returns:
+        True if all elements are of the type typ, or False if not.
+
+    Notes:
+        Routine will iterate the *iterator* and break when an element is not of
+        the search type *typ*.
+    """
+    ret=False
+    if isinstance(iterator,ndarray): #Try to short circuit for arrays
+        try:
+            return iterator.dtype==dtype(typ)
+        except TypeError:
+            pass
+    if isiterable(iterator):
+        for i in iterator:
+            if not isinstance(i,typ):
+                break
+        else:
+            ret=True
+    return ret
+
+def isAnyNone(*args):
+    """Intelligently check whether any of the inputs are None."""
+    for arg in args:
+        if arg is None:
+            return True
+    return False
+
+def isComparable(v1,v2):
+    """Returns true if v1 and v2 can be compared sensibly
+
+    Args:
+        v1,v2 (any): Two values to compare
+
+    Returns:
+        False if both v1 and v2 are numerical and both nan, otherwise True.
+    """
+    try:
+        return not (isnan(v1) and isnan(v2))
+    except TypeError:
+        return True
+    except ValueError:
+        try:
+            return not logical_and(isnan(v1),isnan(v2)).any()
+        except TypeError:
+            return False
+
+def isiterable(value):
+    """Chack to see if a value is iterable.
+
+    Args:
+        value (object): Entitiy to check if it is iterable
+
+    Returns:
+        (bool): True if value is an instance of collections.Iterable.
+    """
+    return isinstance(value,Iterable)
+
+def islike_list(value):
+    """Returns True if value is an iterable but not a string."""
+    return isiterable(value) and not isinstance(value,string_types)
+
+def isNone(iterator):
+    """Returns True if input is None or an empty iterator, or an iterator of None.
+
+    Args:
+        iterator (None or Iterable):
+
+    Returns:
+        True if iterator is None, empty or full of None.
+    """
+    if iterator is None:
+        ret=True
+    elif isiterable(iterator) and not isinstance(iterator,string_types):
+        if len(iterator)==0: # pylint: disable=len-as-condition
+            ret=True
+        else:
+            for i in iterator:
+                if i is not None:
+                    ret=False
+                    break
+            else:
+                ret=True
+    else:
+        ret=False
+    return ret
+
+def isproperty(obj,name):
+    """Check whether an attribute of an object or class is a property.
+
+    Args:
+        obj (instance or class): Thing that has the attribute to check
+        name (str): Name of the attrbiute that might be a property
+
+    Returns:
+        (bool): Whether the name is a property or not.
+    """
+    if isinstance(obj,object):
+        obj=obj.__class__
+    elif not issubclass(obj,object):
+        raise TypeError("Can only check for property status on attributes of an object or a class not a {}".format(type(obj)))
+    return hasattr(obj,name) and isinstance(getattr(obj,name),property)
+
+def istuple(obj,*args,**kargs):
+    """Determine if obj is a tuple of a certain signature.
+
+    Args:
+        obj(object): The object to check
+        *args(type): Each of the suceeding arguments are used to determine the expected type of each element.
+
+    Keywoprd Arguments:
+        strict(bool): Whether the elements of the tuple have to be exactly the type specified or just castable as the type
+
+    Returns:
+        (bool): True if obj is a matching tuple.
+    """
+    strict=kargs.pop("strict",True)
+    if not isinstance(obj,tuple):
+        return False
+    if args and len(obj)!=len(args):
+        return False
+    for t,e in zip(args,obj):
+        if strict:
+            if not isinstance(e,t):
+                bad=True
+                break
+        else:
+            try:
+                _ = t(e)
+            except ValueError:
+                bad=True
+                break
+    else:
+        bad=False
+    return not bad
+
+def quantize(number,quantum):
+    """Round a number to the nearest multiple of a quantum.
+
+    Args:
+        number (float,array): Number(s) to be rounded to the nearest qyuantum
+        quantum (float): Quantum to round to
+    Returns:
+        number rounded to qunatum
+    """
+    return round(number/quantum)*quantum
+
+def set_option(name,value):
+    """Set a global package option.
+
+    - short_repr (bool): Instead of using a rich representation, use a short description for DataFile and Imagefile.
+    - short_data_repr (bool): Just use short representation for DataFiles
+    - short_img_repr (bool): Just use a short representation for image file
+    - no_figs (bool): Do not return figures from plotting functions, just plot them.
+    """
+    if name not in _options.keys():
+        raise IndexError("{} is not a valid package option".format(name))
+    if not isinstance(value,bool):
+        raise ValueError("{} takes a boolean value not a {}".format(name,type(value)))
+    _options[name]=value
+
+def tex_escape(text):
+    """Escapes spacecial text charcters in a string.
+
+    Parameters:
+        text (str): a plain text message
+
+    Returns:
+        the message escaped to appear correctly in LaTeX
+
+    From `Stackoverflow <http://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates>`
+    """
+    conv = {
+        '&': r'\&',
+        '%': r'\%',
+        '$': r'\$',
+        '#': r'\#',
+        '_': r'\_',
+        '{': r'\{',
+        '}': r'\}',
+        '~': r'\textasciitilde{}',
+        '^': r'\^{}',
+        '\\': r'\textbackslash{}',
+        '<': r'\textless',
+        '>': r'\textgreater',
+    }
+    regex = re.compile('|'.join(re.escape(bytes2str(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
+    return regex.sub(lambda match: conv[match.group()], text)
+
+###############################################################################################################
+######################  Classes ###############################################################################
+###############################################################################################################
 
 class _attribute_store(dict):
 
@@ -452,17 +506,6 @@ class _attribute_store(dict):
             return self[name]
         except KeyError:
             raise AttributeError
-
-def quantize(number,quantum):
-    """Round a number to the nearest multiple of a quantum.
-
-    Args:
-        number (float,array): Number(s) to be rounded to the nearest qyuantum
-        quantum (float): Quantum to round to
-    Returns:
-        number rounded to qunatum
-    """
-    return round(number/quantum)*quantum
 
 class typedList(MutableSequence):
 
@@ -552,23 +595,3 @@ class typedList(MutableSequence):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         else:
             self._store.insert(index,obj)
-            
-def set_option(name,value):
-    """Set a global package option.
-    
-    - short_repr (bool): Instead of using a rich representation, use a short description for DataFile and Imagefile.
-    - short_data_repr (bool): Just use short representation for DataFiles
-    - short_img_repr (bool): Just use a short representation for image file
-    - no_figs (bool): Do not return figures from plotting functions, just plot them.
-    """
-    if name not in _options.keys():
-        raise IndexError("{} is not a valid package option".format(name))
-    if not isinstance(value,bool):
-        raise ValueError("{} takes a boolean value not a {}".format(name,type(value)))
-    _options[name]=value
-    
-def get_option(name):
-    """Return the option value"""
-    if name not in _options.keys():
-        raise IndexError("{} is not a valid package option".format(name))
-    return _options[name]
