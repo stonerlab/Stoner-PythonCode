@@ -385,8 +385,7 @@ class HDF5FolderMixin(object):
                 raise IOError("Cannot find {} in {}".format(name,self.File.filename))
             grp=grp[next_group]
         tmp=self.loader(grp)
-        if not hasattr(tmp,"filename") or not isinstance(tmp.filename,string_types):
-            tmp.filename=grp.name
+        tmp.filename=grp.name
         tmp=self.on_load_process(tmp)
         tmp=self._update_from_object_attrs(tmp)
         self.__setter__(name,tmp)
@@ -500,7 +499,8 @@ class HDF5FolderMixin(object):
             self.File=root
             closeme=True
         if isinstance(root,string_types):
-             root=h5py.File(root)
+             mode="r+" if path.exists(root) else "w"
+             root=h5py.File(root,mode)
              self.File=root
              closeme=True
         if not isinstance(root,(h5py.File,h5py.Group)):
