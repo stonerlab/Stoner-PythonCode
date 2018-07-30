@@ -353,6 +353,9 @@ class DataArray(_ma_.MaskedArray):
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
+        elif isinstance(ix,tuple) and ix and isinstance(ix[-1],_np_.ndarray) and self.ndim==1: #Indexing with a numpy array
+            if len(ix)==1:
+                ix=ix[0]
         elif isinstance(ix,tuple) and ix and isiterable(ix[-1]): # indexing with a list of columns
             ix=list(ix)
             if all_type(ix[-1],bool):
