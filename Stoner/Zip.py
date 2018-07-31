@@ -71,12 +71,16 @@ class ZippedFile(DataFile):
         if len(args) > 0:
             other = args[0]
             if isinstance(other, zf.ZipFile):
+                otherdir=other.namelist()
                 if len(args) == 2 and isinstance(args[1], string_types): #ZippedFile(open_zip,"filename")
                     kargs["filename"] = args[1].replace("\\","/")
                 elif "filename" not in kargs: # ZippedFile(open_zip) - assume we use tyhe first zipped file in there
                     kargs["filename"] = other.namelist()[0]
+                #Attempt to normalise start of path
+                if kargs["filename"].startswith("./") and not (otherdir[0].startswith("/") or otherdir[0].startswith("./")):
+                    kargs["filename"]=kargs["filename"][2:]
                 if kargs["filename"] not in other.namelist(): # New file not in the zip file yet
-                    raise StonerLoadError("File {} not found in zip file {}".format(kargs["name"], other.filename))
+                    raise StonerLoadError("File {} not found in zip file {}".format(kargs["filename"], other.filename))
                 #Ok, by this point we have a zipfile which has a file in it. Construct ourselves and then load
                 super(ZippedFile, self).__init__(**kargs)
                 self._extract(other, kargs["filename"])

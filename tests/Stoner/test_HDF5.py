@@ -43,7 +43,10 @@ class HDF5_test(unittest.TestCase):
         HDF5name=path.join(tmpdir,"test-HDF5folder.HDF5")
         self.HDF5fldr.save(HDF5name)
         self.assertEqual(self.fldr.shape,self.HDF5fldr.shape,"HDF5Folder Changed shape when saving!")
-        self.HDF5fldr_2=SH.HDF5Folder(HDF5name).compress()
+        self.HDF5fldr_2=SH.HDF5Folder(HDF5name)
+        self.HDF5fldr_2.compress()
+        self.HDF5fldr.sort("i")
+        self.HDF5fldr_2.sort("i")
         self.assertEqual(self.HDF5fldr_2.shape,self.HDF5fldr.shape,"HDF5Folder loaded from disc not same shape as HDF5Folder in memory!")
         self.h1=self.HDF5fldr[0]
         self.h2=self.HDF5fldr_2[0]

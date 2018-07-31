@@ -713,7 +713,7 @@ class baseFolder(MutableSequence):
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         if isinstance(name,int_types):
-            name=list(self.objects.keys())[name]
+            name=self.__names__()[name]
         elif name not in self.__names__():
             name=self._objects.__lookup__(name)
         return name
@@ -1914,16 +1914,19 @@ class baseFolder(MutableSequence):
             k=[(x.get(key),i) for i,x in enumerate(self)]
             k=sorted(k,reverse=reverse)
             new_order=[self[i] for x,i in k]
+            new_names=[self.__names__()[i] for x,i in k]
         elif key is None:
             fnames=self.__names__()
             fnames.sort(reverse=reverse)
             new_order=[self.__getter__(name,instantiate=False) for name in fnames]
+            new_names=fnames
         elif isinstance(key,re._pattern_type):
             if python_v3:
-                new_order=sorted(self,key=lambda x:key.match(x).groups(), reverse=reverse)
+                new_names=sorted(self.__names__(),key=lambda x:key.match(x).groups(), reverse=reverse)
             else:
-                new_order=sorted(self,cmp=lambda x, y:cmp(key.match(x).groups(), # NOQA pylint: disable=undefined-variable
+                new_names=sorted(self.__names__(),cmp=lambda x, y:cmp(key.match(x).groups(), # NOQA pylint: disable=undefined-variable
                                  key.match(y).groups()), reverse=reverse)
+            new_order=[self.__getter__(x) for x in new_names]
         else:
             order=range(len(self))
             if python_v3:
@@ -1932,8 +1935,10 @@ class baseFolder(MutableSequence):
                 new_order=sorted(order,cmp=lambda x, y:cmp(key(self[x]),  # NOQA pylint: disable=undefined-variable
                                  key(self[y])), reverse=reverse)
             new_order=[self.__names__()[i] for i in new_order]
+            new_names=new_order
         self.__clear__()
-        self.extend(new_order)
+        for obj,k in zip(new_order,new_names):
+            self.__setter__(k,obj)
         return self
 
     def unflatten(self):
