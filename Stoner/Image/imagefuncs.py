@@ -2,9 +2,9 @@
 """Functions for manipulating Kerr (or any other) images
 
 All of these functions are accessible through the :class:`ImageArray` attributes e.g.:
-    
-    k=ImageArray('myfile'); k.level_image(). 
-    
+
+    k=ImageArray('myfile'); k.level_image().
+
 The first 'im' function argument is automatically added in this case.
 
 If you want to add new functions that's great. There's a few important points:
@@ -110,7 +110,7 @@ def align(im, ref, method=None,**kargs):
         ref (ndarray) reference array
 
     Keyword Args:
-        method (str or None): 
+        method (str or None):
             If given specifies which module to try and use.
             Options: 'scharr', 'chi2_shift', 'imreg_dft', 'cv2'
         **kargs (various): All other keyword arguments are passed to the specific algorithm.
@@ -427,12 +427,12 @@ def normalise(im,scale=None,sample=None,limits=(0.0,1.0)):
     Returns:
         A scaled version of the data. The ndarray min and max methods are used to allow masked images
         to be operated on only on the unmasked areas.
-        
+
     Notes:
         The *sample* keyword controls the area in which the range of input values is calculated, the actual scaling is
         done on the whole image.
-        
-        The *limits* parameter is used to set the input scale being normalised from - if an image has a few outliers then 
+
+        The *limits* parameter is used to set the input scale being normalised from - if an image has a few outliers then
         this setting can be used to clip the input range before normalising. The parameters in the limit are the values at
         the *low* and *high* fractions of the cumulative distribution functions.
     """
@@ -451,7 +451,7 @@ def normalise(im,scale=None,sample=None,limits=(0.0,1.0)):
     else:
         high=section.max()
         low=section.min()
-        
+
     if not istuple(scale,float,float,strict=False):
         raise ValueError("scale should be a 2-tuple of floats.")
     scaled=(im-low)/(high-low)
@@ -468,7 +468,7 @@ def clip_neg(im):
     """
     im[im<0] = 0
     return im
-        
+
 def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode='constant', cval=0.0,constrain=True,**kargs):
     """Wrapper for sckit-image method of the same name to get a line_profile.
 
@@ -555,7 +555,7 @@ def quantize(im,output,levels=None):
         ret[select]=val
     return ret
 
-def rotate(im, angle):
+def rotate(im, angle,mode="constant",cval=None):
     """Rotates the image.
 
     Areas lost by move are cropped, and areas gained are made black (0)
@@ -564,16 +564,22 @@ def rotate(im, angle):
         rotation: float
             clockwise rotation angle in radians (rotated about top right corner)
 
+    Keyword Argum,ents:
+        mode (str): How to handle points outside the original image. See :py:func:`skimage.transform.warp`. Defaults to "constant"
+        cval (float): The value to fill with if *mode* is constant. If not speficied or None, defaults to the mean pixcel value.
+
     Returns:
         im: ImageArray
             rotated image
     """
     rot=transform.SimilarityTransform(rotation=angle)
-    im.warp(rot)
+    if cval is None:
+        cval=im.mean()
+    im.warp(rot,mode=mode,cval=cval)
     im.metadata['transform:rotation']=angle
     return im
 
-def translate(im, translation, add_metadata=False,order=3,mode="wrap"):
+def translate(im, translation, add_metadata=False,order=3,mode="wrap",cval=None):
     """Translates the image.
 
     Areas lost by move are cropped, and areas gained are made black (0)
@@ -586,13 +592,17 @@ def translate(im, translation, add_metadata=False,order=3,mode="wrap"):
     Keyword Arguments:
         add_metadata (bool): Record the shift in the image metadata
         order (int): Interpolation order (default, 3, bi-cubic)
+        mode (str): How to handle points outside the original image. See :py:func:`skimage.transform.warp`. Defaults to "wrap"
+        cval (float): The value to fill with if *mode* is constant. If not speficied or None, defaults to the mean pixcel value.
 
     Returns:
         im (ImageArray): translated image
     """
     translation=[-x for x in translation]
     trans=transform.SimilarityTransform(translation=translation)
-    im=im.warp(trans,order=order,mode=mode)
+    if cval is None:
+        cval=im.mean()
+    im=im.warp(trans,order=order,mode=mode,cval=cval)
     if add_metadata:
         im.metadata['translation']=translation
         im.metadata['translation_limits']=translate_limits(im,translation)

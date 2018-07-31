@@ -4,7 +4,7 @@
 Base classes for the Stoner package
 """
 __all__=["_evaluatable","regexpDict","typeHintedDict","metadataObject"]
-from collections import OrderedDict,MutableMapping
+from collections import OrderedDict,MutableMapping,Mapping
 import re
 import copy
 import numpy as np
@@ -105,6 +105,21 @@ class regexpDict(sorteddict):
             return True
         except (KeyError,TypeError):
             return False
+        
+    def __xor__(self,other):
+        """Give the difference between two arrays."""
+        if not isinstance(other, Mapping):
+            return NotImplemented
+        mk=set(self.keys())
+        ok=set(other.keys())
+        if mk!=ok: # Keys differ
+            return mk^ok
+        #Do values differ?
+        ret=OrderedDict()
+        for (mk,mv),(ok,ov) in zip(sorted(self.items()),sorted(other.items())):
+            if np.any(mv!=ov) and isComparable(mv,ov):
+                ret[mk]=(mv,ov)
+        return ret
 
     def has_key(self,name):
         """Key is definitely in dictionary as literal"""
@@ -576,12 +591,8 @@ class metadataObject(MutableMapping):
             return False
         if len(self)!=len(other):
             return False
-        for (k,v),(ok,ov) in zip(sorted(self.items()),sorted(other.items())):
-            if k!=ok or (v!=ov and isComparable(v,ov)):#Trap for nan!
-                break
-        else:
-            return True
-        return False
+        ret=self.metadata^other.metadata
+        return len(ret)==0
 
     def __len__(self):
         """Pass through to metadata dictionary."""

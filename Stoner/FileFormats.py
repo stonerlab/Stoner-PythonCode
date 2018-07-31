@@ -110,12 +110,13 @@ class CSVFile(_SC_.DataFile):
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
             filename = self.__file_dialog('w')
-        spamWriter = csv.writer(open(filename, 'w'), delimiter=delimiter, quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        i = 0
-        spamWriter.writerow(self.column_headers)
-        while i < self.data.shape[0]:
-            spamWriter.writerow(self.data[i,:])
-            i += 1
+        with open(filename, 'w') as outfile:
+            spamWriter = csv.writer(outfile, delimiter=delimiter, quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            i = 0
+            spamWriter.writerow(self.column_headers)
+            while i < self.data.shape[0]:
+                spamWriter.writerow(self.data[i,:])
+                i += 1
         self.filename=filename
         return self
 
@@ -632,7 +633,8 @@ class RigakuFile(_SC_.DataFile):
                 else:
                     self.metadata[key] = newvalue
 
-        self.data = _np_.genfromtxt(io.open(self.filename,"rb"),
+        with io.open(self.filename,"rb") as data:
+            self.data = _np_.genfromtxt(data,
                                     dtype='float',
                                     delimiter=' ',
                                     invalid_raise=False,

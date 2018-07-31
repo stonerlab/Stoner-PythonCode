@@ -39,11 +39,11 @@ import scipy.constants.codata as consts
 import scipy.constants as cnst
 try:
     if python_v3:
-        import configparser as ConfigParser
+        from configparser import ConfigParser as SafeConfigParser
     else:
-        import ConfigParser
+        from ConfigParser import SafeConfigParser
 except ImportError:
-    ConfigParser=None
+    SafeConfigParser=None
 
 try: # numba is an optional dependency
     from numba import jit,float64
@@ -123,9 +123,9 @@ def cfg_data_from_ini(inifile,filename=None,**kargs):
     - **ycol (column index):** defines the y-column data for fitting.
     - **yerr (column index):** Optional column with uncertainity values for the data
     """
-    if ConfigParser is None:
+    if SafeConfigParser is None:
         raise RuntimeError("Need to have ConfigParser module installed for this to work.")
-    config = ConfigParser.SafeConfigParser()
+    config = SafeConfigParser()
     if isinstance(inifile,string_types):
         config.read(inifile)
     elif isinstance(inifile,IOBase):
@@ -193,7 +193,7 @@ def cfg_model_from_ini(inifile,model=None,data=None):
     a 2D array which lists the starting values for one or more fits. If the inifile describes mapping out
     the :math:`\Chi^2` as a function of the parameters, then this array has a separate row for each iteration.
     """
-    config = ConfigParser.SafeConfigParser()
+    config = SafeConfigParser()
     if isinstance(inifile,string_types):
         config.read(inifile)
     elif isinstance(inifile,IOBase):

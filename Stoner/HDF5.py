@@ -163,7 +163,7 @@ class HDF5File(DataFile):
         for i in sorted(metadata.attrs):
             v=metadata.attrs[i]
             t=typehints.get(i,"Void")
-            if self.metadata.findtype(v)!=t and t!="Void": # We have typehints and this looks like it got exported
+            if isinstance(v,string_types) and t!="Void": # We have typehints and this looks like it got exported
                 self.metadata["{}{{{}}}".format(i,t).strip()] = "{}".format(v).strip()
             else:
                 self[i] = metadata.attrs[i]
@@ -214,7 +214,7 @@ class HDF5File(DataFile):
                     metadata.attrs[k] = self[k]
                 except TypeError:  # We get this for trying to store a bad data type - fallback to metadata export to string
                     parts = self.metadata.export(k).split('=')
-                    metadata.attrs[parts[0]] = "=".join(parts[1:])
+                    metadata.attrs[k] = "=".join(parts[1:])
             f.attrs["column_headers"] = [x.encode("utf8") for x in self.column_headers]
             f.attrs["filename"] = self.filename
             f.attrs["type"] = "HDF5File"
@@ -367,7 +367,7 @@ class HDF5FolderMixin(object):
         """
         try:
             return super(HDF5FolderMixin,self).__getter__(name,instantiate=instantiate)
-        except (AttributeError,IndexError,KeyError,OSError) as err:
+        except (AttributeError,IndexError,KeyError,OSError,IOError) as err:
             if self.debug: print(err)
             pass
         names=list(os.path.split(name))

@@ -384,7 +384,7 @@ class ZipFolderMixin(object):
         """
         try:
             return super(ZipFolderMixin,self).__getter__(name,instantiate=instantiate)
-        except (AttributeError,IndexError,KeyError,OSError) as err:
+        except (AttributeError,IndexError,KeyError,OSError,IOError) as err:
             if self.debug: print(err)
             pass
 

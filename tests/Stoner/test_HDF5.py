@@ -45,11 +45,11 @@ class HDF5_test(unittest.TestCase):
         self.assertEqual(self.fldr.shape,self.HDF5fldr.shape,"HDF5Folder Changed shape when saving!")
         self.HDF5fldr_2=SH.HDF5Folder(HDF5name).compress()
         self.assertEqual(self.HDF5fldr_2.shape,self.HDF5fldr.shape,"HDF5Folder loaded from disc not same shape as HDF5Folder in memory!")
-        h1=self.HDF5fldr[0]
-        h2=self.HDF5fldr_2[0]
-        h2.metadata["Stoner.class"]="Data" # Correct the loader class
-        h2.metadata["Loaded from"]=h1.metadata["Loaded from"] #Corrects a path separator bug on Windows
-        self.assertEqual(h1,h2,"File from loaded HDF5Folder not the same as in memeory HDF5Folder.")
+        self.h1=self.HDF5fldr[0]
+        self.h2=self.HDF5fldr_2[0]
+        self.h2.metadata["Stoner.class"]="Data" # Correct the loader class
+        self.h2.metadata["Loaded from"]=self.h1.metadata["Loaded from"] #Corrects a path separator bug on Windows
+        self.assertEqual(self.h1,self.h2,"File from loaded HDF5Folder not the same as in memeory HDF5Folder.")
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
