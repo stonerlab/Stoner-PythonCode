@@ -38,19 +38,20 @@ class KerrArrayTest(unittest.TestCase):
             print("Skipping test that uses tesseract.")
             return None
         m=self.image.metadata
-        self.assertTrue(all((m['ocr_average']=='a//,16x',
+        
+        self.assertTrue(all((m['ocr_average']==16,
                             m['ocr_date']=='11/30/15',
-                            m['ocr_field'] == -0.13)), 'Misread metadata')
+                            m['ocr_field'] == -0.13)), 'Misread metadata {}'.format(m))
         keys=('ocr_scalebar_length_pixels', 'ocr_field_of_view_microns',
                           'Loaded from', 'ocr_microns_per_pixel', 'ocr_pixels_per_micron')
-        self.assertTrue(all([k in m.keys() for k in keys]), 'some part of the metadata didn\'t load')
+        self.assertTrue(all([k in m.keys() for k in keys]), 'some part of the metadata didn\'t load {}'.format(m))
         m_un=self.image2.metadata
         self.assertTrue('ocr_field' not in m_un.keys(), 'Unannotated image has wrong metadata')
         
         
         
 if __name__=="__main__": # Run some tests manually to allow debugging
-    test=KerrArrayTest()
-    test.setUp()
-    test.test_tesseract_ocr()
-    #unittest.main()
+    #test=KerrArrayTest()
+    #test.setUp()
+    #test.test_tesseract_ocr()
+    unittest.main()
