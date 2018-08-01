@@ -31,6 +31,7 @@ except ImportError:
 GRAY_RANGE=(0,65535)  #2^16
 IM_SIZE=(512,672) #Standard Kerr image size
 AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
+pattern_file=os.path.join(os.path.dirname(__file__),"kerr_patterns.txt")
 
 class KerrArray(ImageArray):
 
@@ -155,18 +156,38 @@ class KerrArray(ImageArray):
         key is the metadata key we're trying to find, it may give a
         hint for parsing the text generated.
         """
+        #first set up temp files to work with
+        tmpdir=tempfile.mkdtemp()
+        textfile=os.path.join(tmpdir,'tmpfile.txt')
+        stdoutfile=os.path.join(tmpdir,'logfile.txt')
+        imagefile=os.path.join(tmpdir,'tmpim.tif')
+        with open(textfile,'w') as tf:#open a text file to export metadata to temporarily
+            pass
+
         #process image to make it easier to read
         i=1.0*im / np.max(im) #change to float and normalise
         i=exposure.rescale_intensity(i,in_range=(0.49,0.5)) #saturate black and white pixels
         i=exposure.rescale_intensity(i) #make sure they're black and white
-        i=transform.rescale(i, 5.0,mode="constant",multichannel=False, anti_aliasing=True) #rescale to get more pixels on text
-        data=pytesseract.image_to_string(i)
+        i=transform.rescale(i, 5.0,mode="constant") #rescale to get more pixels on text
+        io.imsave(imagefile,(255.0*i).astype("uint8"),plugin='pil') #python imaging library will save according to file extension
+
+        #call tesseract
+        if self.tesseractable:
+            with open(stdoutfile,"w") as stdout:
+                subprocess.call(['tesseract', imagefile, textfile[:-4]],stdout=stdout,stderr=subprocess.STDOUT) #adds '.txt' extension itself
+            os.unlink(stdoutfile)
+        with open(textfile,'r') as tf:
+            data=tf.readline()
+
+        #delete the temp files
+        os.remove(textfile)
+        os.remove(imagefile)
+        os.rmdir(tmpdir)
 
         #parse the reading
         if len(data)==0:
             print('No data read for {}'.format(key))
         data=self._parse_text(data, key=key)
-        print(key,data)
         return data
 
     def _get_scalebar(self):
