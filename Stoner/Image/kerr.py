@@ -7,10 +7,13 @@ Derivatives of ImageArray and ImageStack specific to processing Kerr images.
 @author: phyrct
 """
 __all__ = ["KerrArray","KerrStack","MaskStack"]
+import re
+from Stoner.compat import python_v3
 from Stoner import Data
 from Stoner.Core import typeHintedDict
 from Stoner.Image import ImageArray, ImageStack
 import numpy as np
+import codecs
 import subprocess,tempfile,os
 from skimage import exposure,io,transform
 
@@ -137,6 +140,13 @@ class KerrArray(ImageArray):
                 text=float(text)
             except Exception:
                 pass #leave it as string
+        if key=="ocr_average":
+            try:
+                pattern=re.compile(r".*?([0-9]+)x.*")
+                result=pattern.match(text)
+                text=int(result.groups()[0])
+            except Exception:
+                pass
         #print '{} after processsing: \'{}\''.format(key,data)
 
         return text
@@ -160,7 +170,7 @@ class KerrArray(ImageArray):
         i=1.0*im / np.max(im) #change to float and normalise
         i=exposure.rescale_intensity(i,in_range=(0.49,0.5)) #saturate black and white pixels
         i=exposure.rescale_intensity(i) #make sure they're black and white
-        i=transform.rescale(i, 5.0) #rescale to get more pixels on text
+        i=transform.rescale(i, 10.0,order=3.0,mode="constant",cval=i.mean()) #rescale to get more pixels on text
         io.imsave(imagefile,(255.0*i).astype("uint8"),plugin='pil') #python imaging library will save according to file extension
 
         #call tesseract
@@ -168,13 +178,20 @@ class KerrArray(ImageArray):
             with open(stdoutfile,"w") as stdout:
                 subprocess.call(['tesseract', imagefile, textfile[:-4]],stdout=stdout,stderr=subprocess.STDOUT) #adds '.txt' extension itself
             os.unlink(stdoutfile)
-        with open(textfile,'r') as tf:
-            data=tf.readline()
+        if python_v3:                
+            with open(textfile,'r') as tf:
+                data=tf.readline()
+        else:
+            with codecs.open(textfile,"r",encoding="ascii", errors="ignore") as tf:
+                data=tf.readline()
+            data=data.encode("ascii","ignore")
+            
+        print(key,data)
 
         #delete the temp files
-        os.remove(textfile)
-        os.remove(imagefile)
-        os.rmdir(tmpdir)
+        #os.remove(textfile)
+        #os.remove(imagefile)
+        #os.rmdir(tmpdir)
 
         #parse the reading
         if len(data)==0:
@@ -185,7 +202,7 @@ class KerrArray(ImageArray):
     def _get_scalebar(self):
         """Get the length in pixels of the image scale bar"""
         box=(0,419,519,520) #row where scalebar exists
-        im=self.crop_image(box=box, copy=True)
+        im=self.crop(box=box, copy=True)
         im=im.astype(float)
         im=(im-im.min())/(im.max()-im.min())
         im=exposure.rescale_intensity(im,in_range=(0.49,0.5)) #saturate black and white pixels
@@ -218,27 +235,27 @@ class KerrArray(ImageArray):
         #now we have to crop the image to the various text areas and try tesseract
         elif field_only:
             fbox=(110,165,527,540) #(This is just the number area not the unit)
-            im=self.crop_image(box=fbox,copy=True)
+            im=self.crop(box=fbox,copy=True)
             field=self._tesseract_image(im,'ocr_field')
             self.metadata['ocr_field']=field
         else:
             text_areas={'ocr_field': (110,165,527,540),
                         'ocr_date': (542,605,512,527),
                         'ocr_time': (605,668,512,527),
-                        'ocr_subtract': (237,260,527,540),
+                        'ocr_subtract': (227,260,527,540),
                         'ocr_average': (303,350,527,540)}
             try:
                 sb_length=self._get_scalebar()
             except AssertionError:
                 sb_length=None
             if sb_length is not None:
-                text_areas.update({'ocr_scalebar_length_microns': (sb_length+10,sb_length+27,514,527),
+                text_areas.update({'ocr_scalebar_length_microns': (sb_length+10,sb_length+30,512,527),
                                    'ocr_lens': (sb_length+51,sb_length+97,514,527),
                                     'ocr_zoom': (sb_length+107,sb_length+149,514,527)})
 
             metadata={}   #now go through and process all keys
             for key in text_areas.keys():
-                im=self.crop_image(box=text_areas[key], copy=True)
+                im=self.crop(box=text_areas[key], copy=True)
                 metadata[key]=self._tesseract_image(im,key)
             metadata['ocr_scalebar_length_pixels']=sb_length
             if type(metadata['ocr_scalebar_length_microns'])==float:
