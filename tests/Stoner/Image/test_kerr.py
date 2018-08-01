@@ -39,7 +39,7 @@ class KerrArrayTest(unittest.TestCase):
             return None
         m=self.image.metadata
         
-        self.assertTrue(all((m['ocr_average']==16,
+        self.assertTrue(all((m['ocr_scalebar_length_microns']==50.0,
                             m['ocr_date']=='11/30/15',
                             m['ocr_field'] == -0.13)), 'Misread metadata {}'.format(m))
         keys=('ocr_scalebar_length_pixels', 'ocr_field_of_view_microns',
