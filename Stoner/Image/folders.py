@@ -78,13 +78,16 @@ class ImageFolderMixin(object):
         readlist (bool): Whether to read the directory immediately on creation. Default is True
     """
 
+    _defaults={"type":ImageArray,
+              "pattern":["*.png","*.tiff","*.jpeg","*.jpg","*.tif"],
+              }
+    _no_defaults=["flat",]
+
     def __init__(self, *args, **kargs):
         """nitialise the ImageFolder.
 
         Mostly a pass through to the :py:class:`Stoner.Folders.baseFolder` class.
         """
-        kargs["pattern"]=kargs.get("pattern","*.tif*")
-        kargs["type"]=kargs.get("type",ImageArray)
         if "flat" in self._defaults:
             del self._defaults["flat"]
         super(ImageFolderMixin,self).__init__(*args,**kargs)
@@ -102,7 +105,7 @@ class ImageFolderMixin(object):
     def images(self):
         """A generator that iterates over just the images in the Folder."""
         return _generator(self)
-    
+
     def _getattr_proxy(self,item):
         """Override baseFolder proxy call to access a method of the ImageFile
 
@@ -129,7 +132,7 @@ class ImageFolderMixin(object):
             for ix,f in enumerate(self):
                 meth=getattr(f,item,None)
                 ret=meth(*args,**kargs) #overwriting array is handled by ImageFile proxy function
-                retvals.append(ret)  
+                retvals.append(ret)
                 if item=='crop':
                     self[ix]=ret
                 if _return is not None:
@@ -141,7 +144,7 @@ class ImageFolderMixin(object):
         _wrapper_.__doc__=meth.__doc__
         _wrapper_.__name__=meth.__name__
         return _wrapper_
-        
+
     def apply_all(self, *args, **kargs):
         """apply function to all images in the stack
 
@@ -184,12 +187,12 @@ class ImageFolderMixin(object):
         ret=average.view(ImageArray)
         ret.metadata=self.metadata.common_metadata
         return ImageFile(ret[ret._box(_box)])
-    
+
     def loadgroup(self):
         """Load all files from this group into memory"""
         for _ in self:
             pass
-        
+
 
     def as_stack(self):
         """Return a ImageStack of the images in the current group."""
@@ -199,7 +202,7 @@ class ImageFolderMixin(object):
 
     def mean(self,_box=None):
         """Calculate the mean value of all the images in the stack.
-        
+
         Actually a synonym for self.average with not weights
         """
         return self.average(_box=_box)

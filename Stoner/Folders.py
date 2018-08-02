@@ -467,6 +467,8 @@ class baseFolder(MutableSequence):
         groups(regexpDict): A dictionary of similar baseFolder instances
         objects(regexptDict): A dictionary of metadataObjects
         _index(list): An index of the keys associated with objects
+        _defaults (dict): A dictionary of default balues for the constructor of the class when combined with mixin classes
+        _no_defaults (list): A list of default parameters to veto when setting the constructor.
 
     Properties:
         depth (int): The maximum number of levels of nested groups in the folder
@@ -496,6 +498,10 @@ class baseFolder(MutableSequence):
         - __clear__ remove all instance
         - __clone__ create a new copy of the mixin's state kinformation
     """
+
+    _defaults={} # A Dictionary of default values that will be combined with other classes to make a global set of defaults
+    _no_defaults=[] #A list of dewfaults to remove becayse they clash with subclass methods etc.
+
 
     def __new__(cls,*args,**kargs):
         """The __new__ method is used to create the underlying storage attributes.
@@ -531,6 +537,9 @@ class baseFolder(MutableSequence):
                 the mixin classes
             - calls the mixin init methods.
         """
+        for k in self.defaults:
+            setattr(self,k,kargs.pop(k,self.defaults[k]))
+
         if len(args)==1 and isinstance(args[0],baseFolder): # Special case for type changing.
             self.args=()
             self.kargs={}
@@ -565,6 +574,10 @@ class baseFolder(MutableSequence):
             for cls in reversed(self.__class__.__mro__):
                 if hasattr(cls,"_defaults"):
                     self._default_store.update(cls._defaults)
+            for cls in reversed(self.__class__.__mro__):
+                if hasattr(cls,"_no_defaults"):
+                    for k in cls._no_defaults:
+                        self._default_store.pop(k,None)
         return self._default_store
 
     @property
@@ -1376,7 +1389,10 @@ class baseFolder(MutableSequence):
         """Updates an object from object_attrs store."""
         if hasattr(self,"_object_attrs") and isinstance(self._object_attrs,dict):
             for k in self._object_attrs:
-                setattr(obj,k,self._object_attrs[k])
+                try:
+                    setattr(obj,k,self._object_attrs[k])
+                except AttributeError:
+                    raise AttributeError("Can't set attribute {} to {}".format(k,self._object_attrs[k]))
         return obj
 
 
@@ -2105,15 +2121,13 @@ class DiskBasedFolder(object):
     def __init__(self,*args,**kargs):
         """Additional constructor for DiskbasedFolders"""
         from Stoner import Data
-        defaults=self.defaults
-        if "directory" in defaults and defaults["directory"] is None:
-            defaults["directory"]=os.getcwd()
-        if "type" in defaults and defaults["type"] is None and self._type==metadataObject:
-            defaults["type"]=Data
+        defaults=self.defaults #Force the default store to be populated.
+        if "directory" in self._default_store and self._default_store["directory"] is None:
+            self._default_store["directory"]=os.getcwd()
+        if "type" in self._default_store and self._default_store["type"] is None and self._type==metadataObject:
+            self._default_store["type"]=Data
         elif self._type!=metadataObject: # Looks like we've already set our type in a subbclass
-            defaults.pop("type")
-        for k in defaults:
-            setattr(self,k,kargs.pop(k,defaults[k]))
+            self._default_store.pop("type")
         super(DiskBasedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
         if self.readlist and len(args)>0 and isinstance(args[0],string_types):
             self.getlist(directory=args[0])

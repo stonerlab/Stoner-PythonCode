@@ -50,8 +50,8 @@ class ImageFolderTest(unittest.TestCase):
 if __name__=="__main__":
     #t=ImageFolder(testdir)
     #ti=KerrStack(t)
-    #test=ImageFolderTest()
-    #test.setUp()
+    test=ImageFolderTest()
+    test.setUp()
     #test.test_kerrstack()
-    #test.test_load()
-    unittest.main()
+    test.test_load()
+    #unittest.main()
