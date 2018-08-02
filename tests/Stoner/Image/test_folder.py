@@ -37,7 +37,7 @@ class ImageFolderTest(unittest.TestCase):
         self.assertTrue(len(self.ks2)==len(os.listdir(testdir)),"ImageStack2 conversion from ImagerFolder failed")
         self.assertTrue(len(self.ks2_dir)==len(os.listdir(testdir)),"ImageStack2 read from directory failed.")
 
-        self.assertTrue(isinstance(self.td[0],ImageArray), 'Getting an image array from the ImageFolder failed') #'{}, '.format(isinstance(self.td[0], ImageArray))#
+        self.assertTrue(isinstance(self.td[0],ImageArray), 'Getting an image array from the ImageFolder failed type is {}'.format(type(self.td[0]))) #'{}, '.format(isinstance(self.td[0], ImageArray))#
         #self.assertTrue(self.td.slice_metadata(key='field',values_only=True)==knownfieldvals, 'slice metadata failed')
 
     def test_clone(self):
@@ -50,8 +50,8 @@ class ImageFolderTest(unittest.TestCase):
 if __name__=="__main__":
     #t=ImageFolder(testdir)
     #ti=KerrStack(t)
-    test=ImageFolderTest()
-    test.setUp()
+    #test=ImageFolderTest()
+    #test.setUp()
     #test.test_kerrstack()
-    test.test_load()
-    #unittest.main()
+    #test.test_load()
+    unittest.main()

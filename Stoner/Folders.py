@@ -872,6 +872,9 @@ class baseFolder(MutableSequence):
             return deepcopy(self)
         elif other is None:
             other=self.__class__()
+        for arg in self.defaults:
+            if hasattr(self,arg):
+                setattr(other,arg,getattr(self,arg))
         other.args=self.args
         other.kargs=self.kargs
         other.type=self.type
@@ -881,7 +884,8 @@ class baseFolder(MutableSequence):
         for k in self._instance_attrs:
             setattr(other,k,getattr(self,k))
         if not attrs_only:
-            other.groups=deepcopy(self.groups)
+            for g in self.groups:
+                other.groups[g]=self.groups[g].__clone__(attrs_only=attrs_only)
             other.objects=deepcopy(self.objects)
         return other
 
@@ -2131,16 +2135,6 @@ class DiskBasedFolder(object):
         super(DiskBasedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
         if self.readlist and len(args)>0 and isinstance(args[0],string_types):
             self.getlist(directory=args[0])
-
-
-    def __clone__(self,other=None,attrs_only=False):
-        """Add something to stop clones from autolisting again."""
-        if other is None:
-            other=self.__class__(readlist=False)
-        for arg in self._defaults:
-            if hasattr(self,arg):
-                setattr(other,arg,getattr(self,arg))
-        return super(DiskBasedFolder,self).__clone__(other=other,attrs_only=attrs_only)
 
     def _dialog(self, message="Select Folder",  new_directory=True):
         """Creates a directory dialog box for working with

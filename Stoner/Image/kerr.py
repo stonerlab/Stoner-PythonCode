@@ -270,7 +270,7 @@ class KerrStack(ImageStack):
     def __init__(self, *args, **kargs):
         """Constructor."""
         super(KerrStack, self).__init__(*args, **kargs)
-        self.convert_float()
+        self.asfloat()
         if 'field' in self.metadata.keys():
             self.fields = np.array(self.metadata['field'])
         else:
@@ -445,7 +445,7 @@ class MaskStack(KerrStack):
     def __init__(self, *args, **kargs):
         """Constructor."""
         super(MaskStack,self).__init__(*args, **kargs)
-        self.imarray=self.imarray.astype(bool)
+        self._stack=self._stack.astype(bool)
 
     def switch_index(self, saturation_end=True, saturation_value=True):
         """Given a stack of boolean masks representing a hystersis loop find the stack index of the saturation field for each pixel.

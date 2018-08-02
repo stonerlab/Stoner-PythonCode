@@ -15,51 +15,25 @@ import os
 
 testdir=os.path.join(os.path.dirname(__file__),"coretestdata","testims")
 
-class ImageStackTest(unittest.TestCase):
-
-    def setUp(self):
-        self.td = ImageFolder(testdir, pattern='*.png')
-        self.ks = ImageStack(testdir)
-        self.ks = ImageStack(self.td) #load in two ways
-        self.assertTrue(len(self.ks)==len(os.listdir(testdir)))
-        self.istack2=ImageStack2()
-        for theta in np.linspace(0,360,91):
-            i=ImageFile(np.zeros((100,100)))
-            x,y=10*np.cos(np.pi*theta/180)+50,10*np.sin(np.pi*theta/180)+50
-            i.draw.circle(x,y,25)
-            self.istack2.insert(0,i)
-
-    def test_imagestack(self):
-        ks=self.ks.clone
-        ks.append(self.ks[0].clone)
-        self.assertTrue(len(ks)==len(self.ks)+1, 'ImageStack append failed')
-        self.assertTrue(len(ks.allmeta)==len(self.ks.allmeta)+1, 'ImageStack append failed')
-        ks.insert(1, self.ks[0].clone)
-        del(ks[1:3])
-        self.assertTrue(len(ks)==len(self.ks), 'ImageStack insert or del failed')
-
-    def test_kerrstack(self):
-        ks=KerrStack(self.ks)
-        self.assertTrue(np.min(ks.imarray)==0.0 and np.max(ks.imarray)==1.0, 'KerrStack subtract failed min,max: {},{}'.format(np.min(ks.imarray),np.max(ks.imarray)))
-        d=ks.hysteresis()
-        self.assertTrue(isinstance(d, Data), 'hysteresis didnt return Data')
-        self.assertTrue(d.data.shape==(len(ks),2), 'hysteresis didnt return correct shape')
+istack2=ImageStack2()
+for theta in np.linspace(0,360,91):
+    i=ImageFile(np.zeros((100,100)))
+    x,y=10*np.cos(np.pi*theta/180)+50,10*np.sin(np.pi*theta/180)+50
+    i.draw.circle(x,y,25)
+    istack2.insert(0,i)
 
 class ImageStack2Test(unittest.TestCase):
 
     def setUp(self):
+        print("X"*80,"\n","Test Setup2")
         self.td = ImageFolder(testdir, pattern='*.png')
         self.ks = ImageStack2(testdir)
         self.ks = ImageStack2(self.td) #load in two ways
         self.assertTrue(len(self.ks)==len(os.listdir(testdir)))
-        self.istack2=ImageStack2()
-        for theta in np.linspace(0,360,91):
-            i=ImageFile(np.zeros((100,100)))
-            x,y=10*np.cos(np.pi*theta/180)+50,10*np.sin(np.pi*theta/180)+50
-            i.draw.circle(x,y,25)
-            self.istack2.insert(0,i)
+        self.istack2=istack2.clone
 
     def test_ImageStack2(self):
+        print("X"*80,"\n","Test ImageStack2")
         self.assertTrue(self.istack2.shape==(91,100,100),"ImageStack2.shape wrong at {}".format(self.istack2.shape))
         i=ImageFile(np.zeros((100,100))).draw.circle(50,50,25)
         self.m1=self.istack2.mean()
@@ -98,6 +72,7 @@ class ImageStack2Test(unittest.TestCase):
 
     def test_init(self):
         #try to init with a few different call sequences
+        print("X"*80,"\n","Test Init")
         listinit = []
         for i in range(10):
             listinit.append(np.arange(12).reshape(3,4))
@@ -114,6 +89,7 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(len(imfinit)==8, "Couldn't load from another ImageFolder object")
 
     def test_accessing(self):
+        print("X"*80,"\n","Test Accessing")
         #ensure we can write and read to the stack in different ways
         ist2 = ImageStack2(np.arange(60).reshape(4,3,5))
         im = np.zeros((3,5), dtype=int)
@@ -140,6 +116,7 @@ class ImageStack2Test(unittest.TestCase):
 
     def test_methods(self):
         #check function generator machinery works
+        print("X"*80,"\n","Test Methods")
         self.istack2.crop(0,30,0,50)
         self.assertTrue(self.istack2.shape==(91,50,30),"Unexpected size of imagestack2 got {} for 91x50x30".format(self.istack2.shape))
         ist2 = ImageStack2(np.arange(60).reshape(4,3,5))
@@ -160,11 +137,19 @@ class ImageStack2Test(unittest.TestCase):
         ist3.insert(1, np.arange(18).reshape(3,6))
         self.assertTrue(ist3[1].shape==(3,6), 'inserting an image of different size to stack')
 
+#    def test_kerrstack(self):
+#        print("X"*80+"\n"+"Test Kerrstack")
+#        ks=KerrStack(self.ks)
+#        self.assertTrue(np.min(ks.imarray)==0.0 and np.max(ks.imarray)==1.0, 'KerrStack subtract failed min,max: {},{}'.format(np.min(ks.imarray),np.max(ks.imarray)))
+#        d=ks.hysteresis()
+#        self.assertTrue(isinstance(d, Data), 'hysteresis didnt return Data')
+#        self.assertTrue(d.data.shape==(len(ks),2), 'hysteresis didnt return correct shape')
+
 
 if __name__=="__main__":
-    test=ImageStack2Test()
-    test.setUp()
-    test.test_ImageStack2()
+    #test=ImageStack2Test()
+    #test.setUp()
+    #test.test_ImageStack2()
     #test.test_methods()
-    #unittest.main()
+    unittest.main()
 
