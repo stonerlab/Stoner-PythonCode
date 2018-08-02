@@ -168,7 +168,7 @@ class KerrArray(ImageArray):
         i=1.0*im / np.max(im) #change to float and normalise
         i=exposure.rescale_intensity(i,in_range=(0.49,0.5)) #saturate black and white pixels
         i=exposure.rescale_intensity(i) #make sure they're black and white
-        i=transform.rescale(i, 5.0,mode="constant", multichannel=False, anti_aliasing=True) #rescale to get more pixels on text
+        i=transform.rescale(i, 5.0,mode="constant") #rescale to get more pixels on text
         io.imsave(imagefile,(255.0*i).astype("uint8"),plugin='pil') #python imaging library will save according to file extension
 
         #call tesseract
