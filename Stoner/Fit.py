@@ -53,8 +53,8 @@ except ImportError:
         return func
 
     def float64(*args):
-        """Define symbols if numba not installed."""
-        pass
+        """Define callable symbols if numba not installed."""
+        return lambda *args:len(args)
 
 from matplotlib.pyplot import plot
 
