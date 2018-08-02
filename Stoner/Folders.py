@@ -16,7 +16,7 @@ from copy import copy,deepcopy
 import unicodedata
 from inspect import ismethod,isgenerator
 import string
-from collections import Iterable,MutableSequence,OrderedDict
+from collections import Iterable,MutableSequence,OrderedDict,MutableMapping
 from itertools import islice
 import matplotlib.pyplot as plt
 from .Core import metadataObject,DataFile,regexpDict,typeHintedDict
@@ -239,7 +239,7 @@ class _each_item(object):
         #Ok that's the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
 
-class _combined_metadata_proxy(object):
+class _combined_metadata_proxy(MutableMapping):
 
     """Provide methods to interact with a whole collection of metadataObjects' metadata."""
 
@@ -253,8 +253,9 @@ class _combined_metadata_proxy(object):
         if hasattr(self._folder,"_metadata"): #Extra logic for Folders like Stack
             for item in self._folder._metadata.items():
                 yield item
-        for item in self._folder:
-            yield item.metadata
+        else:
+            for item in self._folder:
+                yield item.metadata
 
     @all.setter
     def all(self,value):
@@ -298,6 +299,37 @@ class _combined_metadata_proxy(object):
             if _np_.all(self[key]==val):
                 output[key]=val
         return output
+
+    def __contains__(self,item):
+        """Check for membership of all possible kes."""
+        return item in self.all_keys
+
+    def __iter__(self):
+        """Iterate over objects."""
+        return self
+
+    def __len__(self):
+        return len(self.common_keys)
+
+    def __next__(self):
+        for k in self.common_keys:
+            yield k
+
+    def next(self):
+        for k in self.common_keys:
+            yield k
+
+    def __delitem__(self,item):
+        """Attempt to delte item from all members of the folder."""
+        ok=False
+        for d in self._folder:
+            try:
+                del d.metadata[item]
+                ok=True
+            except KeyError:
+                pass
+        if not ok: #item was not a key in any data file
+            raise KeyError("{} was not recognised as a metadata key in any object in the folder.".format(item))
 
     def __getitem__(self,value):
         """Return an array formed by getting a single key from each object in the Folder."""
@@ -956,14 +988,19 @@ class baseFolder(MutableSequence):
             elif name in self.objects:
                 self.__deleter__(self.__lookup__(name))
             else:
-                raise KeyError("{} doesn't match either a group or object.".format(name))
+                raise KeyError("Can't use {} as a key to delete from baseFolder. ({})".format(name,self.__names__()))
         elif isinstance(name,int_types):
             if -len(self)<name<=len(self):
                 self.__deleter__(self.__lookup__(name))
             else:
                 raise IndexError("{} is out of range.".format(name))
+        elif isinstance(name,slice):
+            indices = name.indices(len(self))
+            name = range(*indices)
+            for ix in sorted(name,reverse=True):
+                del self[ix]
         else:
-            raise KeyError("Can't use {} as a key to delete from baseFolder.".format(name))
+            raise KeyError("Can't use {} as a key to delete from baseFolder. ({})".format(name,self.__names__()))
 
     def __contains__(self,name):
         """Check whether name is in a list of groups or in the list of names"""

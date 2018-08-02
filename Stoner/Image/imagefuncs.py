@@ -24,7 +24,7 @@ __all__ = ["adjust_contrast","align","correct_drift","subtract_image","fft","fil
            "profile_line","quantize","rotate","translate","translate_limits","plot_histogram","threshold_minmax","defect_mask","do_nothing",
            "float_and_croptext","denoise"]
 import copy
-
+import warnings
 import numpy as np,matplotlib.pyplot as plt, os
 from Stoner.tools import istuple,isiterable
 from scipy.interpolate import griddata
@@ -151,8 +151,11 @@ def align(im, ref, method=None,**kargs):
         new_im.metadata["chi2_shift"]=result
     elif (method is None and imreg_dft is not None) or method=="imreg_dft":
         constraints=kargs.pop("constraints",{"angle":[0.0,0.0],"scale":[1.0,0.0]})
-        result=imreg_dft.similarity(ref,im,constraints=constraints)
-        new_im=result.pop("timg").view(type=ImageArray)
+        cls=im.__class__
+        with warnings.catch_warnings(): #This causes a warning due to the masking
+            warnings.simplefilter("ignore")
+            result=imreg_dft.similarity(ref,im,constraints=constraints)
+        new_im=(result.pop("timg")).view(type=cls)
         new_im.metadata.update(im.metadata)
         new_im.metadata.update(result)
     elif (method is None and cv2 is not None) or method=="cv2":
@@ -507,7 +510,7 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode='constant',
         raise ValueError("dst co-ordinates are not a 2-tuple of ints.")
 
     if constrain:
-        fix=lambda x,mx: sorted([0,x,mx])[1]
+        fix=lambda x,mx: int(round(sorted([0,x,mx])[1]))
         r,c=img.shape
         src=list(src)
         src=(fix(src[0],r),fix(src[1],c))

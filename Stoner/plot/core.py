@@ -34,8 +34,7 @@ from matplotlib import cm
 
 try: # Check we've got 3D plotting
     from mpl_toolkits.mplot3d import Axes3D
-    from mpl_toolkits.axes_grid import inset_locator
-    from mpl_toolkits.axes_grid1 import host_subplot
+    from mpl_toolkits.axes_grid1 import host_subplot,inset_locator
     import mpl_toolkits.axisartist as AA
     _3D=True
 except ImportError:
@@ -302,7 +301,7 @@ class PlotMixin(object):
         vector_field = ax.quiver(X, Y, Z, U,V,W,**kargs)
 
         return vector_field
-    
+
     def _vector_color(self,xcol=None,ycol=None,zcol=None,ucol=None,vcol=None,wcol=None,**kargs):
         """Map a vector direction in the data to a value for use with a colormnap."""
         c = self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
@@ -549,10 +548,10 @@ class PlotMixin(object):
         else:
             raise AttributeError("Attempting to manipulate the methods on a figure or axes before a figure has been created for this Data.")
         func=getattr(obj,name)
-        
+
         if not callable(func): #Bug out if this isn't a callable proxy!
             return func
-        
+
         @wraps(func)
         def _proxy(*args,**kargs):
             ret=func(*args,**kargs)

@@ -46,7 +46,7 @@ class ImageStackTest(unittest.TestCase):
         self.assertTrue(d.data.shape==(len(ks),2), 'hysteresis didnt return correct shape')
 
 class ImageStack2Test(unittest.TestCase):
-    
+
     def setUp(self):
         self.td = ImageFolder(testdir, pattern='*.png')
         self.ks = ImageStack2(testdir)
@@ -58,7 +58,7 @@ class ImageStack2Test(unittest.TestCase):
             x,y=10*np.cos(np.pi*theta/180)+50,10*np.sin(np.pi*theta/180)+50
             i.draw.circle(x,y,25)
             self.istack2.insert(0,i)
-    
+
     def test_ImageStack2(self):
         self.assertTrue(self.istack2.shape==(91,100,100),"ImageStack2.shape wrong at {}".format(self.istack2.shape))
         i=ImageFile(np.zeros((100,100))).draw.circle(50,50,25)
@@ -95,7 +95,7 @@ class ImageStack2Test(unittest.TestCase):
         self.im1=self.im1.convert(np.int8)
         self.im2=self.istack2[0].convert(np.int8)
         self.assertTrue(abs((self.im2-self.im1).max())<=2.0,"Failed up/down conversion to integer images.")
-   
+
     def test_init(self):
         #try to init with a few different call sequences
         listinit = []
@@ -108,13 +108,13 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(np.allclose(npinitist.imarray,npinit), "problem initiating with 3d numpy array")
         ist2init = ImageStack2(self.istack2)
         self.assertTrue(np.allclose(ist2init.imarray,self.istack2.imarray), "problem initiating with other ImageStack")
-        self.assertTrue(all([k in ist2init[0].metadata.keys() for k in self.istack2[0].metadata.keys()]), 
+        self.assertTrue(all([k in ist2init[0].metadata.keys() for k in self.istack2[0].metadata.keys()]),
                         "problem with metadata when initiating with other ImageStack")
         imfinit = ImageStack2(self.td) #init with another ImageFolder
         self.assertTrue(len(imfinit)==8, "Couldn't load from another ImageFolder object")
-    
+
     def test_accessing(self):
-        #ensure we can write and read to the stack in different ways 
+        #ensure we can write and read to the stack in different ways
         ist2 = ImageStack2(np.arange(60).reshape(4,3,5))
         im = np.zeros((3,5), dtype=int)
         ist2[0].image = im
@@ -136,8 +136,8 @@ class ImageStack2Test(unittest.TestCase):
         #im2 = np.zeros((2,3,5))
         #ist2[3:5] = im2 #try setting two images at once
         #self.assertTrue(np.allclose(ist2[4],im))
-        
-        
+
+
     def test_methods(self):
         #check function generator machinery works
         self.istack2.crop(0,30,0,50)
@@ -159,11 +159,12 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(np.allclose(ist3[0],ist2[0]))
         ist3.insert(1, np.arange(18).reshape(3,6))
         self.assertTrue(ist3[1].shape==(3,6), 'inserting an image of different size to stack')
-        
+
 
 if __name__=="__main__":
     test=ImageStack2Test()
     test.setUp()
+    test.test_ImageStack2()
     #test.test_methods()
-    unittest.main()
-   
+    #unittest.main()
+

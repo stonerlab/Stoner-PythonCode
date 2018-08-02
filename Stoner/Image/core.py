@@ -4,6 +4,7 @@
 __all__ = ["ImageArray","ImageFile","DrawProxy","MaskProxy"]
 import numpy as np
 import os
+import warnings
 from copy import copy, deepcopy
 from skimage import color,exposure,feature,io,measure,\
                     filters,graph,util,restoration,morphology,\
@@ -710,7 +711,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                 clip negative intensity to 0
         """
         if self.dtype.kind=='f':
-            pass
+            ret=self
         else:
             ret = convert(self, dtype=np.float64, normalise=normalise) #preserve metadata
             ret = ImageArray(ret)
@@ -730,7 +731,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
             limits (low,high): Clip the intensity between low and high rather than zero and 1.
 
         Ensure data range is -1 to 1 or 0 to 1 if clip_negative is True.
-                
+
         """
         if limits is None:
             dl = self.dtype_limits(clip_negative=clip_negative)
@@ -902,18 +903,22 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
 
     def box(self, *args, **kargs):
         """Alias for :py:meth:`ImageArray.crop`"""
+        warnings.warn("The box method was replaced by crop and will raise and error in future versions.")
         return self.crop(*args, **kargs)
 
     def crop_image(self, *args, **kargs):
         """Back compatability alias for :py:meth:`ImageArray.crop`"""
+        warnings.warn("The crop_image method was replaced by crop and will raise and error in future versions.")
         return self.crop(*args, **kargs)
 
-    def convert_float(self, clip_negative=True):
+    def convert_float(self, clip_neg=True):
         """Deproicated compatability. :py:meth:`ImageArray.asfloat` preferred"""
-        self.asfloat(normalise=False, clip_neg=clip_negative)
+        warnings.warn("The convert_float method was replaced by asfloat and will raise and error in future versions.")
+        self.asfloat(normalise=False, clip_negative=clip_neg)
 
     def convert_int(self):
         """Depricated compatability meothd. :py:meth:`ImageArray.asint` preferred"""
+        warnings.warn("The convert_int method was replaced by asint and will raise and error in future versions.")
         self.asint()
 
 class ImageFile(metadataObject):
