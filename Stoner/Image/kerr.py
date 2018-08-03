@@ -7,18 +7,14 @@ Derivatives of ImageArray and ImageStack specific to processing Kerr images.
 @author: phyrct
 """
 __all__ = ["KerrArray","KerrStack","MaskStack"]
-import re
-from Stoner.compat import python_v3
+
 from Stoner import Data
 from Stoner.Core import typeHintedDict
 from Stoner.Image import ImageArray, ImageStack
 import numpy as np
-import codecs
 import os
-import subprocess,tempfile,os
-from skimage import exposure,io,transform,filters,morphology
-
-from matplotlib.pyplot import imshow,title,figure
+import subprocess,tempfile
+from skimage import exposure,io,transform
 
 try:
     import pytesseract
@@ -257,9 +253,9 @@ class KerrArray(ImageArray):
 
 
 
-class KerrStack(ImageStack):
+class KerrStackMixin(object):
 
-    """:py:class:`KerrStack` is similar to :py:class:`ImageStack` but adds some functionality particular to Kerr images.
+    """A mixin for :py:class:`ImageStack` that adds some functionality particular to Kerr images.
 
     Attributes:
         fields(list):
@@ -267,15 +263,17 @@ class KerrStack(ImageStack):
             for things like hysteresis.
     """
 
-    def __init__(self, *args, **kargs):
-        """Constructor."""
-        super(KerrStack, self).__init__(*args, **kargs)
-        self.asfloat()
-        if 'field' in self.metadata.keys():
-            self.fields = np.array(self.metadata['field'])
-        else:
-            self.fields = np.arange(len(self))
-#
+    @property
+    def fields(self):
+        """Produces an array of field values from the metadata."""
+        if not hasattr(self,"_field"):
+            if "field" not in self.metadata:
+                self._field=np.arange(len(self))
+            else:
+                self._field=np.array(self.metadata["field"])
+        return self._field
+
+
     def hysteresis(self, mask=None):
         """Make a hysteresis loop of the average intensity in the given images
 
@@ -309,11 +307,6 @@ class KerrStack(ImageStack):
         """Convert an image of index values into an image of field values"""
         fieldvals=np.take(self.fields, index_map)
         return ImageArray(fieldvals)
-
-    def reverse(self):
-        """Reverse the image order"""
-        self.imarray = self.imarray[::-1,:,:]
-        self.fields = self.fields[::-1]
 
     def denoise_thresh(self, denoise_weight=0.1, thresh=0.5, invert=False):
         """apply denoise then threshold images.
@@ -438,13 +431,13 @@ class KerrStack(ImageStack):
         average = np.average(self.imarray, axis=0, weights=weights)
         return average.view(ImageArray)
 
-class MaskStack(KerrStack):
+class MaskStackMixin(object):
 
-    """Similar to ImageStack but made for stacks of boolean or binary images"""
+    """A Mixin for :py:class:`Stoner.Image.ImageStack` but made for stacks of boolean or binary images"""
 
     def __init__(self, *args, **kargs):
-        """Constructor."""
-        super(MaskStack,self).__init__(*args, **kargs)
+        """Constructor ensures the data is boolean."""
+        super(MaskStackMixin,self).__init__(*args, **kargs)
         self._stack=self._stack.astype(bool)
 
     def switch_index(self, saturation_end=True, saturation_value=True):
@@ -500,3 +493,11 @@ class MaskStack(KerrStack):
             switch_prog.reverse()
         switch_ind=ImageArray(switch_ind.astype(int))
         return switch_ind, switch_prog
+
+class KerrStack(KerrStackMixin,ImageStack):
+    """Represents a stack of Kerr images."""
+    pass
+
+class MaskStack(MaskStackMixin,KerrStackMixin,ImageStack):
+    """A set of masks for Kerr images."""
+    pass

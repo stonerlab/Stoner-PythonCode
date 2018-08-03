@@ -124,17 +124,27 @@ Image Subpackage
 
 .. automodapi:: Stoner.Image
 
+.. inheritance-diagram:: Stoner.Image.ImageFile Stoner.Image.ImageFolder Stoner.Image.ImageStack
+
 .. automodapi:: Stoner.Image.folders
    :no-main-docstr:
 
 .. automodapi:: Stoner.Image.stack
    :no-main-docstr:
 
-.. automodapi:: Stoner.Image.kerr
-   :no-main-docstr:
+Additional Aimage Functions
+---------------------------
 
 .. automodapi:: Stoner.Image.imagefuncs
    :no-main-docstr:
 
 .. automodapi:: Stoner.Image.util
    :allowed-package-names: Stoner.Image
+
+
+Kerr Image Handling
+-------------------
+
+.. automodapi:: Stoner.Image.kerr
+   :no-main-docstr:
+
