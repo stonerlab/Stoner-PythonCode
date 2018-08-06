@@ -4,25 +4,36 @@ Working with Lots of Files
 .. currentmodule:: Stoner.Folders
 
 
-A common case is that you have measured lots of data curves and now have a large stack of data
-files sitting in a tree of directories on disc and now need to process all of them with some code.
-The :py:mod:`Stoner.Folders` contains classes to make this job easy.
+A common case is that you have measured lots of data and now have a large stack of data
+files sitting in a tree of directories on disc and need to process all of them with some code.
+The :py:mod:`Stoner.Folders` contains classes to make this job much easier.
 
-For the end-user, the top level class is :py:class:`DataFolder` and is designed to complement the :py:class:`Stoner.Core.Data`
-as a one stop solution for most cases. Like :py:class:`Stoner.Core.Data`, :py:class:`Stoner.Folders.DataFolder` is
-exported directly from the :py:mod:`Stoner` package.
+For the end-user, the top level classes are :py:class:`DataFolder` for :py:class:`Stoner.Data` and :py:class:`Stoner.Image.ImageFolder` doe xollections of
+:py:class:`Stoner.ImageFile`s. These are designed to complement the corresponding data classes :py:class:`Stoner.Core.Data` and :py:class:`Stoner.ImageFile`.
+Like :py:class:`Stoner.Core.Data`, :py:class:`Stoner.Folders.DataFolder` is exported directly from the :py:mod:`Stoner` package, whilst the
+:py:class:`Stoner.Image.ImageFolder` is exported from the :py:mod:`Stoner.Image` sub-paclkage.
 
 :py:class:`DataFolder` and it's friends are essentially containers for :py:class:`Stoner.Core.Data` (or similar classes from the
-:py:mod:`Stoner.Image` package) and for other isntances of :py:class:`DataFolder`. The :py:class:`DataFolder` supports both
-sequence-like and mapping-like interfaces to both the :py:class:`Stoner.Core.Data` objects and the 'sub'-:py:class:`DataFolder` objects
-(meaning that they work like both a list or a dictionary). :py:class:`DataFolder` is also lazy about loading files from disc - if an operation
-doesn't need to load a file it generally won't.
+:py:mod:`Stoner.Image` package) and for other instances of :py:class:`DataFolder` to alow a nested heirarchy to be built up.
+The :py:class:`DataFolder` supports both sequence-like and mapping-like interfaces to both the :py:class:`Stoner.Core.Data` objects and the
+'sub'-:py:class:`DataFolder` objects (meaning that they work like both a list or a dictionary).
+:py:class:`DataFolder` is also lazy about loading files from disc - if an operation doesn't need to load a file it generally won't bother to keep memory usage
+down and speed up.
+
+Their are further variants that can work with compressed zip archives - :py:class:`Stoner.Zip.ZipFolder` and for storing multiple files in a single HDF5 file -
+:py:class:`Stoner.HDF5.HDF5Folder`.
+
+Finally, for the case of image files, there is a specialised :py:class:`Stoner.Image.ImageStack` class that is optimised for image files of the same dimension
+and stores the images in a single 3D numpy array to allow much faster operations (at the expense of taking more RAM).
+
+In the documentation below, expcet where noted explicitly, you can use a :py:class:`Stoner.Image.ImageFolder` in place of the :py:class:`DataFolder`, but working
+with :py:class:`Stoner.Image.ImageFile` instead of :py:class:`Stoner.Data`.
 
 Basic Operations
 ================
 
-Building a (virtual) Folder of Data Files
------------------------------------------
+Building a (virtual) Folder of Data
+-----------------------------------
 
 The first thing you probably want to do is to get a list of data files in a directory
 (possibly including its subdirectories) and probably matching some sort of filename pattern.::
@@ -55,33 +66,100 @@ If you pass False into the constructor as the first argument then the :py:class:
 display a dialog box to let you choose a directory. If you add the *multifile* keyword argument and set it to True
 then you can use the dialog box to select multiple individual files.
 
-It is also possible to have the mean and satandard deviation of each column of data to be calculated and added as metadata as each file
-is loaded. The *read_means* boolean parameter can enable this.
+More Options on Reading the Files on Disk
+-----------------------------------------
+
+The *pattern* argument for :py:class:`DataFolder` can also take a list of multiple patterns if there are different filename types in the directory tree.::
+
+   f=DataFolder(pattern=['*.tdi',*/txt'])
+
+Sometimes a more complex filename matching mechanism than simple ''globbing'' is useful.
+The *pattern* keyword can also be a compiled regular expression::
+
+   import re
+   p=re.compile('i10-\d*.dat')
+   f=DataFolder(pattern=p)
+   p2=re.compile('i10-(?P<run>\d*)')
+   f=DataFolder(pattern=p)
+   f[0]['run']
+
+The second case illustrates a useful feature of regular expressions - they can be used to capture
+parts of the matched pattern -- and in the python version, one can name the capturing groups.
+In both cases above the :py:class:`DataFolder` has the same file members (basically these
+would be runs produced by the i10 beamline at Diamond), but in the second case the run
+number (which comes after ''i10-'' would be captured and presented as the *run* parameter in
+the metadata when the file was read.
+
+.. warning::
+   Note that the files are not modified - the extra metadata is only added as the file is read by the \
+   :py:class:`DataFlder`.
+
+The loading process will also add the metadata key ''Loaded From'' to the file which will give you a
+note of the filename used to read the data. If the attribute :py:attr:`DataFoilder.read_means` is set to **True**
+then additional metadata is set for each file that contains the mean value and standard deviation of each column of data.
+If you don't want the file listing to be recursive, this can be suppressed by using the *recursive*
+ keyword argument and the file listing can be suppressed altogether with the *nolist* keyword.::
+
+   f=DataFolder(pattern='*.dat',recursive=False)
+   f2=DataFolder(readlist=False)
+   f3=DataFolder(flat=True)
+
+If you don't want to create groups for each sub-directory, then set the keyword parameter
+*flat* **True** as shown in the last example above.
+
+Dealing With Revision Numbers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The Leeds CM Physics LabVIEW maeasurement software (aka 'The One Code') has a feature that adds a *revision number* into the filename when it is asked to
+overwrite a saved data file. This revision number is incremented until a non-colliding filename is created - thus ensuring that data isn't accidentally
+overwritten. The downside of this is that sometimes only the latest revision number actually contains the most useful data - in this case the option
+*discard_earlier* in the :py:meth:`DataFolder.__init__` constructor can be useful, or equivalently the :py:meth:`DataFolder.keep_latest` method::
+
+    f=DataFolder(".",discard_earlier=true)
+    # is equivalent to....
+    f=DataFolder(".")
+    f.keep_latest()
+
+More Goodies for :py:class:`DataFolder`s
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Since a :py:class:`Stoner.Data` represents data in named columns, the :py:class:`DataFolder` offers a couple of additional options for actions to take
+when reading the files in from disk. It is possible to have the mean and satandard deviation of each column of data to be calculated and added as
+metadata as each file is loaded. The *read_means* boolean parameter can enable this.
+
+Other Options
+------------
 
 Setting the *debug* parameter will cause additional debugging information to be sent as the code runs.
-
-All of these keywords to the constructor will set corresponding attributes on the created :py:class:`DataFolder`.
 
 Any other keyword arguments that are not attributes of :py:class:`DataFolder` are instead kept and used to set
 attributes on the individual :py:class:`Stoner.Core.DataFile` instances as they are loaded from disc. This,
 for example, can allow one to set the default :py:attr:`Stoner.Core.DataFile.setas` attribute for each file.
 
+All of these keywords to the constructor will set corresponding attributes on the created :py:class:`DataFolder`, so it is possible to redo the
+process of reading the list of files from disk by directly manipulating these attrbutes.
+
+The current root directory and pattern are set in the *directory* and *pattern* keywords and stored in the similarly named attributes.
+The :py:meth:`DataFolder.getlist` method can be used to force a new listing of files.::
+
+   f.dirctory='/home/phygbu/Data'
+   f.pattern='*.txt'
+   f.getlist()
+
+
 Manipulating the File List in a Folder
 --------------------------------------
 
-If you don't want the file listing to be recursive, this can be suppressed by using the *recursive*
- keyword argument and the file listing can be suppressed altogether with the *nolist* keyword::
-
-   f=DataFolder(pattern='*.dat',recursive=False)
-   f2=DataFolder(readlist=False)
-
-If you don't want to create groups for each sub-directory, then set the keyword parameter
-*flat* **True**, or call the :py:meth:`DataFolder.flatten` method. You can also use the
-:py:meth:`DataFolder.prune` method to remove groups (including nested groups) that have
-no data files in them.::
+The  :py:meth:`DataFolder.flatten` method will do the same as passing the *flat* keyword argument when creating the Lpy:class:`DataFolder` - although
+the search for folders on disk is recursive, the resulting :py:class:`DataFolder` contains a flat list of files. You can also use the
+:py:meth:`DataFolder.prune` method to remove groups (including nested groups) that have no data files in them. Finally the :py:meth:`DataFolder.compress`
+is useful when a :py:class:`DataFolder` contains a chain of sub-folers that have only one sub-folder in them - as can result when reading one specific
+directory from a deep directory tree. The :py:meth:`DataFolder.compress` method adjusts the virtual tree so that the rpot group is at the first level that
+contains more than just a single sub-folder.::
 
 	f.prune()
 	f.flatten()
+	f.compress()
 
 You can also use the sorted filenames in a :py:class:`DataFolder` to reconstruct the directory structure as
 groups by using the :py:meth:`DataFolder.unflatten` method. Alternatively the *invert* operator ~ will
@@ -149,56 +227,8 @@ and doesn't exactly match, then it is interpreted as a regular expression and th
 tiems - for setting items an exact name or integer index is required.
 
 
-Controlling the Gathering of the List of Files
-----------------------------------------------
-
-The current root directory and pattern are set in the *directory* and *pattern* keywords and stored in the similarly named attributes.
-The :py:meth:`DataFolder.getlist` method can be used to force a new listing of files.::
-
-   f.dirctory='/home/phygbu/Data'
-   f.pattern='*.txt'
-   f.getlist()
-
-Sometimes a more complex filename matching mechanism than simple ''globbing'' is useful.
-The *pattern* keyword can also be a compiled regular expression::
-
-   import re
-   p=re.compile('i10-\d*.dat')
-   f=DataFolder(pattern=p)
-   p2=re.compile('i10-(?P<run>\d*)')
-   f=DataFolder(pattern=p)
-   f[0]['run']
-
-The second case illustrates a useful feature of regular expressions - they can be used to capture
-parts of the matched pattern -- and in the python version, one can name the capturing groups.
-In both cases above the :py:class:`DataFolder` has the same file members (basically these
-would be runs produced by the i10 beamline at Diamond), but in the second case the run
-number (which comes after ''i10-'' would be captured and presented as the *run* parameter in
-the metadata when the file was read.
-
-.. warning::
-   Note that the files are not modified - the extra metadata is only added as the file is read by the \
-   :py:class:`DataFlder`.
-
-The loading process will also add the metadata key ''Loaded From'' to the file which will give you a
-note of the filename used to read the data. If the attribute :py:attr:`DataFoilder.read_means` is set to **True**
-then additional metadata is set for each file that contains the mean value and standard deviation of each column of data.
-
-Dealing With Revision Numbers
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The Leeds CM Physics LabVIEW maeasurement software (aka 'The One Code') has a feature that adds a *revision number* into the filename when it is asked to
-overwrite a saved data file. This revision number is incremented until a non-colliding filename is created - thus ensuring that data isn't accidentally
-overwritten. The downside of this is that sometimes only the latest revision number actually contains the most useful data - in this case the option
-*discard_earlier* in the :py:meth:`DataFolder.__init__` constructor can be useful, or equivalently the :py:meth:`DataFolder.keep_latest` method::
-
-    f=DataFolder(".",discard_earlier=true)
-    # is equivalent to....
-    f=DataFolder(".")
-    f.keep_latest()
-
 Doing Something With Each File
-------------------------------
+==============================
 
 A :py:class:`DataFolder` is an object that you can iterate over, lading the :py:class:`Stoner.Core.Data`
 type object for each of the files in turn. This provides an easy way to run through a set of files,
@@ -215,61 +245,52 @@ or even more compacts::
 
 of even (!)::
 
-    DataFolder(pattern='*.tdi',type=Stoner.Data).normalise('mac116','mac119').save()
+    DataFolder(pattern='*.tdi',type=Stoner.Data).each.normalise('mac116','mac119').save()
 
 This last example illustrates a special ability of a :py:class:`DataFolder` to use the methods of the
-type of :py:class:`Stoner.Core.DataFile` inside the DataFolder. When you access a method on DataFolder that
-is actually a method of the DataFile, the call a method that wraps a call to each DataFile in turn. If the method
-on the DataFile returns the DataFile back, then this is sotred in the DataFolder. In this case the result back
-to the user is the revised DataFolder. If, on the otherhand, the method when executed on the DataFile returns some other
-return value, then the user is returned a list of all of those return values. CFor example::
+type of :py:class:`Stoner.Core.DataFile` inside the DataFolder. The special :py:attr:`DataFolder.each` attribute (which is actually a
+:py:class:`Stoner.Folders.each_item instance) provides special hooks to let you call methods of the underlying :py:attr:`DataFolder.type` class on each
+file in the :py:class:`DataFolder` in turn. When you access a method on :py:attr:`DataFolder.each` that
+is actually a method of the DataFile, they call a method that wraps a call to each :py:class:`Stoner.Data` in turn. If the method
+on :py:class:`Stoner.Data` returns the :py:class:`Stoner.Data` back, then this is stored in the :py:class:`DataFolder`. In this case the result back`
+to the user is the revised :py:class:`DataFolder`. If, on the otherhand, the method when executed on the :py:class:`Data` returns some other
+return value, then the user is returned a list of all of those return values. For example::
 
     newT=np.linspace(1.4,10,100)
     folder=DataFolder(pattern="*.txt",type=Stoner.Data)
-    ret=folder.interpolate(newT,xcol="Temp",replace=True)
+    ret=folder.each.interpolate(newT,xcol="Temp",replace=True)
     # ret will be a copy of folder as Data,interpolate returns a copy of itself.
 
-    ret=folder.span("Resistance")
+    ret=folder.each.span("Resistance")
     # ret is a list of tuples as the return value of Data.span() is a tuple
 
-There are two cases where this might not quite do the trick:
+What happens if the anaylysis routine you want to run through all the items in :py:class:`DataFolder` is not a method of the :py:class:`Stoner.Data`
+class, but a function written by you? In this case, so long as you write your custom analysis function so that the first positional argument
+is the :py:class:`Stoner.Data` to be analysed, then the following syntax can be used::
 
-    1.  If there is a name collision between the method of the item in the :py:class:`DataFolder` and the :py:class:`DataFolder` itself. To work around this,
-        the :py:attr:`DataFolder.each` attribute allows you to loop implicitly through the contents of the :py:class:`DataFolder`. :py:attr:`DataFolder.each`
-        is actually an instance of a special class :py:class:`Stoner.Folders.each_item` that handles all the magic. Thus the following are equivalent::
+    def my_analysis(data,arg1,arg2,karg=True)
+        """Some sort of analysis function with some arguments and keyword argument that works
+        on some data *data*."""
+        return data.modified()
 
-            f=DataFolder(",",pattern="*.txt")
-            f.normalise('mac116','mac119')
-            # and
-            f.each.normalise('mac116','mac119')
+    f.each(my_analysis,arg1,arg2,karg=False)
 
-    2.  What happens if the anaylysis routine you want to run through all the items in :py:class:`DataFolder` is not a method of the :py:class:`Stoner.Data`
-        class, but an arbitary function written by you? In this case, so long as you write your custom analysis function so that the first positional argument
-        is the :py:class:`Stoner.Data` to be analysed, then the following syntax can be used::
+If the return value of the function is another instance of :py:class:`Stoner.Data` (or whatever is being stored as the items in the
+:py:class:`DataFolder`) then it will replace the items inside the :py:class:`DataFolder`. The call to :py:attr:`DataFolder.each` will also return a
+simple list of the return values. If the function retuns something else, then you can have it added to the metadata of each item in the
+:py:class:`DataFolder` by adding a *_return* keyword that can either be True to use the function name as the metadata name or a string to specify
+the name of the metadata to store the return value explicitly.
 
-            def my_analysis(data,arg1,arg2,karg=True)
-                """Some sort of analysis function with some arguments and keyword argument that works
-                on some data *data*."""
-                return data.modified()
+Thus, if your analysis function calcualtes some parameter that you want to call *beta* you might use the following::
 
-            f.each(my_analysis,arg1,arg2,karg=False)
+    f=DataFolder(",",pattern="*.txt")
+    f.each(my_analysis,arg1,arg2,karg=False,_return="beta")
 
-        If the return value of the function is another instance of :py:class:`Stoner.Data` (or whatever is being stored as the items in the
-        :py:class:`DataFolder`) then it will replace the items inside the :py:class:`DataFolder`. The call to :py:attr:`DataFolder.each` will also return a
-        simple list of the return values. If the function retuns something else, then you can have it added to the metadata of each item in the
-        :py:class:`DataFolder` by adding a *_return* keyword that can either be True to use the function name as the metadata name or a string to specify
-        the name of the metadata to store the return value explicitly.
+Finally if you are using Python 3.5+, then you can do the same thing as calling :py:attr:`Datafolder.each` with the matrix multiplication oeprator @::
 
-        Thus, if your analysis function calcualtes some parameter that you want to call *beta* you might use the following::
+    (my_analysis@f)(arg1,arg2,karg=False)
 
-            f=DataFolder(",",pattern="*.txt")
-            f.each(my_analysis,arg1,arg2,karg=False,_return="beta")
-
-        Finally if you are using Python 3.5+, then you can do the same thing as calling :py:attr:`Datafolder.each` with the matrix multiplication oeprator @::
-
-            (my_analysis@f)(arg1,arg2,karg=False)
-
-        *(my_analysis@f)* creates the callable object that iterates *my_analysis* over f, the second set of parenthesis above jsut calls this iterating object.
+*(my_analysis@f)* creates the callable object that iterates *my_analysis* over f, the second set of parenthesis above jsut calls this iterating object.
 
 
 :py:class:`DataFolder` is also indexable and has a length::
@@ -283,6 +304,13 @@ For the second case of indexing, the code will search the list of file names for
 and return that (roughly equivalent to doing *f.files.index("filename")]*) But see :ref:`groups`
 for creating a sub DataFolder with a named index.
 
+Working on the Metadata
+=======================
+
+Since each object inside a :py:class:`DataFolder` will be some form of :py:class:`Stoner.Core.metadataObject`, the :py:class:`DataFolder` provides a mechanism
+to access the combined metadata of all of the :py:class:`Stoner.Core.metadataObject`s it is sotring via a :py:attr:`DataFolder.metadata` attribute. Like
+:py:attr:`DataFolder.each` this is actually a special class that manages the process of iterating over the contents of the :py:class:`DataFolder` to get and set
+metadata on the individual :py:class:`Stoner.Data` objects.
 
 .. _groups:
 
