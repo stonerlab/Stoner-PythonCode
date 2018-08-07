@@ -20,6 +20,7 @@ from Stoner.compat import *
 import Stoner.Folders as SF
 
 from Stoner import Data
+import Stoner.HDF5, Stoner.Zip
 from Stoner.Util import hysteresis_correct
 
 import matplotlib.pyplot as plt
@@ -60,7 +61,6 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(list(self.fldr2.ls),list(self.fldr3.ls),"Folder.keep_latest didn't do the same as discard_earliest in constructor.")
 
     def test_Operators(self):
-        self.setUp()
         fldr=self.fldr
         fl=len(fldr)
         d=Data(np.ones((100,5)))
@@ -107,6 +107,27 @@ class Folders_test(unittest.TestCase):
         test_sliced=self.fldr.slice_metadata("Loaded as")
         self.assertEqual(len(sliced),len(test_sliced),"Test slice not equal length - sample-data changed? {}".format(test_sliced))
         self.assertTrue(np.all(test_sliced==sliced),"Slicing metadata failed to work.")
+
+    def test_metadata(self):
+        os.chdir(self.datadir)
+        self.fldr6=SF.DataFolder(".",pattern="QD*.dat",pruned=True)
+        self.assertEqual(repr(self.fldr6.metadata),"The DataFolder . has 9 common keys of metadata in 4 Data objects",
+                         "Representation method of metadata wrong.")
+        self.assertEqual(len(self.fldr6.metadata),9,"Length of common metadata not right.")
+        self.assertEqual(list(self.fldr6.metadata.keys()),['Byapp',
+                                                       'Datatype,Comment',
+                                                       'Datatype,Time',
+                                                       'Fileopentime',
+                                                       'Loaded as',
+                                                       'Loaded from',
+                                                       'Startupaxis-X',
+                                                       'Startupaxis-Y1',
+                                                       'Stoner.class'],"metadata.keys() not right.")
+        self.assertEqual(len(list(self.fldr6.metadata.all_keys())),49,"metadata.all_keys() the wrong length.")
+        self.assertTrue(isinstance(self.fldr6.metadata.slice("Loaded from")[0],dict),"metadata.slice not returtning a dictionary.")
+        self.assertTrue(isinstance(self.fldr6.metadata.slice("Loaded from",values_only=True),list),"metadata.slice not returtning a list with values_only=True.")
+        self.assertTrue(isinstance(self.fldr6.metadata.slice("Loaded from",output="Data"),Data),"metadata.slice not returtning Data with outpt='data'.")
+
 
 
     def test_clone(self):
@@ -180,8 +201,9 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-    test.test_clone()
+    #test.test_Operators()
+    #test.test_clone()
     #test.test_Folders()
-    #unittest.main()
+    unittest.main()
     #test.test_grouping()
     #test.fldr.each.title

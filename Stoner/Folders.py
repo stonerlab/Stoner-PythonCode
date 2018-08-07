@@ -2,7 +2,7 @@
 
 The core classes provides a means to access them as an ordered collection or as a mapping.
 """
-__all__ = ["baseFolder","DiskBasedFolder","DataFolder","PlotFolder"]
+__all__ = ["each_item","combined_metadata_proxy","baseFolder","DiskBasedFolder","DataFolder","PlotFolder"]
 from Stoner.compat import python_v3,int_types,string_types,get_filedialog,commonpath
 from .tools import operator,isiterable,isproperty,islike_list,all_type
 import os
@@ -39,7 +39,7 @@ def pathjoin(*args):
     tmp=path.join(*args)
     return tmp.replace(path.sep,"/")
 
-class _each_item(object):
+class each_item(object):
 
     """Provides a proxy object for accessing methods on the inividual members of a Folder.
     8
@@ -116,7 +116,7 @@ class _each_item(object):
 
         """
         try:
-            return super(_each_item,self).__getattr__(item)
+            return super(each_item,self).__getattr__(item)
         except AttributeError:
             pass
         try:
@@ -144,7 +144,7 @@ class _each_item(object):
             value (any): Value to set
         """
         if hasattr(self,name): #Handle setting our own attributes
-            super(_each_item,self).__setattr__(name,value)
+            super(each_item,self).__setattr__(name,value)
         elif name in dir(self._folder.instance): #This is an instance attribute
             self._folder._object_attrs[name]=value #Add to attributes to be set on load
             for d in self._folder.__names__(): #And set on all instantiated objects
@@ -239,7 +239,7 @@ class _each_item(object):
         #Ok that's the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
 
-class _combined_metadata_proxy(MutableMapping):
+class combined_metadata_proxy(MutableMapping):
 
     """Provide methods to interact with a whole collection of metadataObjects' metadata."""
 
@@ -266,17 +266,6 @@ class _combined_metadata_proxy(MutableMapping):
         else:
             for new,item in zip(value,self._folder):
                 item.metadata.update(new)
-
-    @property
-    def all_keys(self):
-        """Return the union of all the metadata keyus for all objects int he Folder."""
-        if len(self._folder)>0:
-            keys=set(self._folder[0].metadata.keys())
-            for d in self._folder:
-                keys|=set(d.metadata.keys())
-        else:
-            keys=set()
-        return sorted(list(keys))
 
 
     @property
@@ -306,18 +295,20 @@ class _combined_metadata_proxy(MutableMapping):
 
     def __iter__(self):
         """Iterate over objects."""
-        return self
+        for k in self.common_keys:
+            yield k
 
     def __len__(self):
+        """Out length is our common_keys."""
         return len(self.common_keys)
 
-    def __next__(self):
-        for k in self.common_keys:
-            yield k
-
-    def next(self):
-        for k in self.common_keys:
-            yield k
+    def __repr__(self):
+        """Give an informative dispaly of the metadata represenation."""
+        return "The {} {} has {} common keys of metadata in {} {} objects".format(self._folder.__class__.__name__,
+                                                                            self._folder.key,
+                                                                            len(self),
+                                                                            len(self._folder),
+                                                                            self._folder.type.__name__)
 
     def __delitem__(self,item):
         """Attempt to delte item from all members of the folder."""
@@ -359,6 +350,35 @@ class _combined_metadata_proxy(MutableMapping):
     def __setitem__(self,key,value):
         for d in self._folder:
             d[key]=value
+
+    def all_keys(self):
+        """Return the union of all the metadata keyus for all objects int he Folder."""
+        if len(self._folder)>0:
+            keys=set(self._folder[0].metadata.keys())
+            for d in self._folder:
+                keys|=set(d.metadata.keys())
+        else:
+            keys=set()
+        for k in sorted(keys):
+            yield k
+
+    def all_items(self):
+        """Return the result of indexing the metadata with all_keys().
+
+        Yields:
+            key,self[key]
+        """
+        for k in self.all_keys():
+            yield k,self[k]
+
+    def all_values(self):
+        """Return the result of indexing the metadata with all_keys().
+
+        Yields:
+            self[key]
+        """
+        for k in self.all_keys():
+            yield self[k]
 
     def apply(self,key,func):
         """Evaluate a function for each item in the folder and store the return value in a metadata key.
@@ -594,7 +614,7 @@ class baseFolder(MutableSequence):
     @property
     def each(self):
         """Return a proxy object for calling attributes of the member type of the folder."""
-        return _each_item(self)
+        return each_item(self)
 
     @property
     def files(self):
@@ -628,6 +648,10 @@ class baseFolder(MutableSequence):
         if self._instance is None:
             self._instance=self._type()
         return self._instance
+
+    @property
+    def is_empty(self):
+        return not len(self) and not len(self.groups)
 
     @property
     def key(self):
@@ -673,7 +697,7 @@ class baseFolder(MutableSequence):
     @property
     def metadata(self):
         """Returns the proxy accessor for operations on combined metadata."""
-        return _combined_metadata_proxy(self)
+        return combined_metadata_proxy(self)
 
     @property
     def mindepth(self):
@@ -875,6 +899,7 @@ class baseFolder(MutableSequence):
         for arg in self.defaults:
             if hasattr(self,arg):
                 setattr(other,arg,getattr(self,arg))
+        other.key=self.key
         other.args=self.args
         other.kargs=self.kargs
         other.type=self.type
@@ -1311,9 +1336,7 @@ class baseFolder(MutableSequence):
             A string representation of the current objectFolder object
         """
         cls=self.__class__.__name__
-        pth=getattr(self,"key")
-        if pth is None:
-            pth=getattr(self,"directory","")
+        pth=self.key
         pattern=getattr(self,"pattern","")
         s="{}({}) with pattern {} has {} files and {} groups\n".format(cls,pth,pattern,len(self),len(self.groups))
         for g in self.groups: # iterate over groups
@@ -1364,27 +1387,28 @@ class baseFolder(MutableSequence):
     def __init_from_other(self,other):
         cls = self.__class__
         result = cls.__new__(cls)
-        for k in dir(other):
-            if k.startswith("_"): # Short circuit before we even get the value
-                continue
-            v=getattr(other,k)
-            if ismethod(v)  or isgenerator(v):
-                continue
-            if isproperty(self,k) and not hasattr(v,"__set__"):
-                continue
-            if k in ["groups","_groups","objects","_objects"]:
-                continue
-            try:
-                setattr(result, k, deepcopy(v))
-            except Exception:
-                setattr(result, k, copy(v))
-
-        result.directory=other.directory
-
-        for g in other.groups:
-            self.groups[g]=cls(other.groups[g])
-        for n in other.__names__():
-            self.__setter__(n,other.__getter__(n,instantiate=None))
+        other.__clone__(other=result)
+#        for k in dir(other):
+#            if k.startswith("_"): # Short circuit before we even get the value
+#                continue
+#            v=getattr(other,k)
+#            if ismethod(v)  or isgenerator(v):
+#                continue
+#            if isproperty(self,k) and not hasattr(v,"__set__"):
+#                continue
+#            if k in ["groups","_groups","objects","_objects","key"]:
+#                continue
+#            try:
+#                setattr(result, k, deepcopy(v))
+#            except Exception:
+#                setattr(result, k, copy(v))
+#
+#        result.key=other.key
+#
+#        for g in other.groups:
+#            self.groups[g]=cls(other.groups[g])
+#        for n in other.__names__():
+#            self.__setter__(n,other.__getter__(n,instantiate=None))
 
 
         return result
@@ -1482,6 +1506,20 @@ class baseFolder(MutableSequence):
             self.groups[key]=new_group
             self.groups[key].key=key
         return self
+
+    def all(self):
+        """Iterates over all the files in the Folder and all it's sub Folders recursively.
+
+        Yields:
+            (path/filename,file)
+        """
+        for g in self.groups.values():
+            for p,d in g.all():
+                p=os.path.join(self.key,p)
+                yield p,d
+        for d in self:
+            yield d.filename,d
+
 
     def clear(self):
         """Clear the subgroups."""
@@ -1656,6 +1694,7 @@ class baseFolder(MutableSequence):
                     self.groups[g].flatten(depth)
         else:
             for g in self.groups:
+                if self.debug: print("{}->{}".format(self.key,self.groups[g].key))
                 self.groups[g].flatten()
                 for n in self.groups[g].__names__():
                     value=self.groups[g].__getter__(n,instantiate=None)
@@ -1809,24 +1848,17 @@ class baseFolder(MutableSequence):
         return self.groups.popitem()
 
     def prune(self):
-        """Remove any groups from the objectFolder (and subgroups).
+        """Remove any empty groups from the objectFolder (and subgroups).
 
         Returns:
             A copy of thte pruned objectFolder.
         """
-        pruneable=[] # slightly ugly to avoid modifying whilst iterating
-        self.walk_groups(self._pruner_,group=True,walker_args={"prunelist":pruneable})
-        while len(pruneable)!=0:
-            for p in pruneable:
-                pth=tuple(p[:-1])
-                item=p[-1]
-                if len(pth)==0:
-                    del self[item]
-                else:
-                    grp=self[pth]
-                    del grp[item]
-            pruneable=[]
-            self.walk_groups(self._pruner_,group=True,walker_args={"prunelist":pruneable})
+        keys=list(self.groups.keys())
+        for grp in keys:
+            g=self.groups[grp]
+            g.prune()
+            if not len(g) and not len(g.groups):
+                del self.groups[grp]
         return self
 
     def select(self,*args, **kargs):
@@ -2117,6 +2149,7 @@ class DiskBasedFolder(object):
               "flat":False,
               "directory":None,
               "multifile":False,
+              "pruned":True,
               "readlist":True,
               "discard_earlier":False,
               }
@@ -2135,6 +2168,17 @@ class DiskBasedFolder(object):
         super(DiskBasedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
         if self.readlist and len(args)>0 and isinstance(args[0],string_types):
             self.getlist(directory=args[0])
+        if self.pruned:
+            self.prune()
+
+    @baseFolder.key.getter
+    def key(self):
+        k=getattr(super(DiskBasedFolder,self),"key",None)
+        if k is None:
+            self.key=self.directory
+            return self._key
+        else:
+            return k
 
     def _dialog(self, message="Select Folder",  new_directory=True):
         """Creates a directory dialog box for working with
@@ -2403,7 +2447,7 @@ class DiskBasedFolder(object):
                 self.add_group(d)
                 self.groups[d].directory=path.join(root,d)
                 self.groups[d].getlist(recursive=recursive,flatten=flatten)
-        if flatten:
+        if flatten and not self.is_empty:
             self.flatten()
             #Now collapse out the common path in the names
             self.directory=path.commonprefix(self.__names__())
@@ -2411,8 +2455,9 @@ class DiskBasedFolder(object):
                 self.directory=path.dirname(self.directory)
             relpaths=[path.relpath(f,self.directory) for f in self.__names__()]
             for n,o in zip(relpaths,self.__names__()):
-                self.__setter__(n,self.__getter__(o))
-                self.__deleter__(o)
+                if n!=o:
+                    self.__setter__(n,self.__getter__(o))
+                    self.__deleter__(o)
         return self
 
     def keep_latest(self):

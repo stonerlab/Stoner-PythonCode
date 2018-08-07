@@ -9,11 +9,11 @@ files sitting in a tree of directories on disc and need to process all of them w
 The :py:mod:`Stoner.Folders` contains classes to make this job much easier.
 
 For the end-user, the top level classes are :py:class:`DataFolder` for :py:class:`Stoner.Data` and :py:class:`Stoner.Image.ImageFolder` doe xollections of
-:py:class:`Stoner.ImageFile`s. These are designed to complement the corresponding data classes :py:class:`Stoner.Core.Data` and :py:class:`Stoner.ImageFile`.
+:py:class:`Stoner.Image.ImageFile`s. These are designed to complement the corresponding data classes :py:class:`Stoner.Data` and :py:class:`Stoner.ImageFile`.
 Like :py:class:`Stoner.Core.Data`, :py:class:`Stoner.Folders.DataFolder` is exported directly from the :py:mod:`Stoner` package, whilst the
 :py:class:`Stoner.Image.ImageFolder` is exported from the :py:mod:`Stoner.Image` sub-paclkage.
 
-:py:class:`DataFolder` and it's friends are essentially containers for :py:class:`Stoner.Core.Data` (or similar classes from the
+:py:class:`DataFolder` and it's friends are essentially containers for :py:class:`Stoner.Data` (or similar classes from the
 :py:mod:`Stoner.Image` package) and for other instances of :py:class:`DataFolder` to alow a nested heirarchy to be built up.
 The :py:class:`DataFolder` supports both sequence-like and mapping-like interfaces to both the :py:class:`Stoner.Core.Data` objects and the
 'sub'-:py:class:`DataFolder` objects (meaning that they work like both a list or a dictionary).
@@ -95,7 +95,7 @@ the metadata when the file was read.
    :py:class:`DataFlder`.
 
 The loading process will also add the metadata key ''Loaded From'' to the file which will give you a
-note of the filename used to read the data. If the attribute :py:attr:`DataFoilder.read_means` is set to **True**
+note of the filename used to read the data. If the attribute :py:attr:`DataFolder.read_means` is set to **True**
 then additional metadata is set for each file that contains the mean value and standard deviation of each column of data.
 If you don't want the file listing to be recursive, this can be suppressed by using the *recursive*
  keyword argument and the file listing can be suppressed altogether with the *nolist* keyword.::
@@ -133,8 +133,14 @@ Other Options
 Setting the *debug* parameter will cause additional debugging information to be sent as the code runs.
 
 Any other keyword arguments that are not attributes of :py:class:`DataFolder` are instead kept and used to set
-attributes on the individual :py:class:`Stoner.Core.DataFile` instances as they are loaded from disc. This,
-for example, can allow one to set the default :py:attr:`Stoner.Core.DataFile.setas` attribute for each file.
+attributes on the individual :py:class:`Stoner.Data` instances as they are loaded from disc. This,
+for example, can allow one to set the default :py:attr:`Stoner.Data.setas` attribute for each file.
+
+.. note::
+
+    A particularly useful parameter to set in the DataFolder constructor is the *setas* parameter - this will ensure that the Lpy:attr:`Stoner.Data.setas`
+    attribute is set to identify columns of data as x, y etc. as the data files are loaded into the folder - thus allowing subsequent calls to
+    :py:class:`Stoner.Data` methods to run without needing to explictly set the columns each time.
 
 All of these keywords to the constructor will set corresponding attributes on the created :py:class:`DataFolder`, so it is possible to redo the
 process of reading the list of files from disk by directly manipulating these attrbutes.
@@ -248,7 +254,7 @@ of even (!)::
     DataFolder(pattern='*.tdi',type=Stoner.Data).each.normalise('mac116','mac119').save()
 
 This last example illustrates a special ability of a :py:class:`DataFolder` to use the methods of the
-type of :py:class:`Stoner.Core.DataFile` inside the DataFolder. The special :py:attr:`DataFolder.each` attribute (which is actually a
+type of :py:class:`Stoner.Data` inside the DataFolder. The special :py:attr:`DataFolder.each` attribute (which is actually a
 :py:class:`Stoner.Folders.each_item instance) provides special hooks to let you call methods of the underlying :py:attr:`DataFolder.type` class on each
 file in the :py:class:`DataFolder` in turn. When you access a method on :py:attr:`DataFolder.each` that
 is actually a method of the DataFile, they call a method that wraps a call to each :py:class:`Stoner.Data` in turn. If the method
@@ -307,10 +313,93 @@ for creating a sub DataFolder with a named index.
 Working on the Metadata
 =======================
 
-Since each object inside a :py:class:`DataFolder` will be some form of :py:class:`Stoner.Core.metadataObject`, the :py:class:`DataFolder` provides a mechanism
-to access the combined metadata of all of the :py:class:`Stoner.Core.metadataObject`s it is sotring via a :py:attr:`DataFolder.metadata` attribute. Like
-:py:attr:`DataFolder.each` this is actually a special class that manages the process of iterating over the contents of the :py:class:`DataFolder` to get and set
+Since each object inside a :py:class:`DataFolder` will be some form of :py:class:`Stoner.Core.metadataObject`, the :py:class:`DataFolder`
+provides a mechanism to access the combined metadata of all of the :py:class:`Stoner.Core.metadataObject`s it is storing  via a
+:py:attr:`DataFolder.metadata` attribute. Like :py:attr:`DataFolder.each` this is actually a special class (in this case
+:py:class:`combined_metadata_proxy`) that manages the process of iterating over the contents of the :py:class:`DataFolder` to get and set
 metadata on the individual :py:class:`Stoner.Data` objects.
+
+Indexing the :py:attr:`DataFolder.metadata` will return an array of the requested metadata key, with one element from each data file in the
+folder. If the metadata key is not present in all files, then the array is a masked array and the mask is set for the files where it
+is missing.::
+
+    f.metadata["Info.Sample_Material"]
+    >>> masked_array(data=['Er', --, 'None', 'FeNi'],
+             mask=[False,  True, False, False],
+       fill_value='N/A',
+            dtype='<U4')
+
+Writing to the contents of the :py:attr:`DataFolder.metadata` will simple set the corresponding metadata value on all the files in the folder.::
+
+    f.metadata["test"]=12.56
+    f.metadata["test"]
+    >>> array([12.56, 12.56, 12.56, 12.56])
+
+The :py:meth:`combined_metadata_proxy.slice" method procides more control over how the metadata stored in the data folder can be returned.::
+
+    f.metadata.slice("Startupaxis-X")
+    >>> [{'Startupaxis-X': 2},
+         {'Startupaxis-X': 2},
+         {'Startupaxis-X': 2},
+         {'Startupaxis-X': 2}]
+
+    f.metadata.slice(["Startupaxis-X","Datatype,Comment"])
+    >>> [{'Datatype,Comment': 1, 'Startupaxis-X': 2},
+         {'Startupaxis-X': 2, 'Datatype,Comment': 1},
+         {'Datatype,Comment': 1, 'Startupaxis-X': 2},
+         {'Datatype,Comment': 1, 'Startupaxis-X': 2}]
+    f.metadata.slice("Startupaxis-X",values_only=True)
+    >>> [2, 2, 2, 2]
+
+    f.metadata.slice("Startupaxis-X",output="Data")
+    >>>
+    ==========================  ===============
+    TDI Format 1.5                Startupaxis-X
+    index                                     0
+    ==========================  ===============
+    Stoner.class{String}= Data                2
+                                          2
+                                          2
+                                          2
+    ==========================  ===============
+
+As can be seen from these examples, the :py:meth:`combined_metadata_proxy.slice` method will default to returning eiother a list of dictionaries
+of )oif *values_only* is True, just a list, but the *output* parameter can change this. The options for *output* are:
+
+    -   "dict" or dict (the default if *values_only* is False)
+
+        return a list of dictionary subsets of the metadata
+    -   "list" or list (the default if *values_only* is True)
+
+        return a list of values of each item pf the metadata. If only item of metadata is requested, then just rturns a list.
+    -   "array" or np.array
+
+        return a single array - like list above, but returns as a numpy array. This can create a 2D array from multiple keys
+    -   "Data" or Stoner.Data
+
+        returns the metadata in a Stoner.Data object where the column headers are the metadata keys.
+    -   "smart"
+
+        switch between dict and list depending whether there is one or more keys.
+
+Since :py:class:`combined_metadata_proxy` implements a :py:class:`collections.MutableMapping` it supplies the standard dictionary
+like methods such as :py:meth:`combined_metadata_proxy.keys`,:py:meth:`combined_metadata_proxy.values` and :py:meth:`combined_metadata_proxy.items`
+- each of which work with the set of keys common to **all** the data files in the :py:class:`DataFolder`. If you instead want to work with all the
+keys defined in **any** of the data files, then there are versions :py:meth:`combined_metadata_proxy.all_keys`,
+:py:meth:`combined_metadata_proxy.all_values` and :py:meth:`combined_metadata_proxy.all_items`. The :py:attr:`combined_metadata_proxy.all`
+provides a list of all the metadata dictionaries for all the data files in the :py:class:`DataFolder`.
+
+Using the *output*="Data" is particularly powerful as it can be used to gather the results from e.g. a curve fitting across lots of datra files into a
+single :py:class:`Stoner.Data` object ready ofr plotting or further analysis.::
+
+    fldr=DataFolder(".",pattern="*.txt",setas="xy")
+    fldr.each.curve_fit(PowerLaw)
+    result=fldr.metadata.slice(["Temperature:T1","PowerLaw:A","PowerLaw:A error"],output="Data")
+    result.setas="xye"
+    result.plot(fmt="k.")
+
+In this example all the text files in the current directory tree are read in, a power-law is fitted to the first two columns and the result of the fit is
+plotted versus a temperature parameter.
 
 .. _groups:
 
@@ -350,7 +439,7 @@ The first form performs the filter on the filenames (using the standard python f
 One can also use a regular expression as illustrated int he second example -- although unlike using
 the *pattern* keyword in :py:meth:`DataFolder.getlist`, there is no option to capture metadata
 (although one could then subsequently set the pattern to achieve this). The third variant calls the
-supplied function, passing the current file as a :py:class:`Stoner.Core.DataFile` object in each time.
+supplied function, passing the current file as a :py:class:`Stoner.Data` object in each time.
 If the function evaluates to be **True** then the file is kept. The *invert* keyword is used to invert
 the sense of the filter (a particularly silly example here, since the greater than sign could simply
 be replaced with a less than or equals sign !). The *copy* keyword argument causes the :py:class:`DataFolder` to
@@ -447,7 +536,7 @@ easily accomplished by the :py:meth:`DataFolder.gather` method::
     f.gather()
 
 In the first two forms you specify the x column and one or more y columns. In the third form, the
-x and y columns are determined by the values from the :py:attr:`Stoner.Core.DataFile.setas` attribute.
+x and y columns are determined by the values from the :py:attr:`Stoner.Data.setas` attribute.
 (you can set the value of this attribute for all files in the :py:class:`DataFolder` by setting the
 :py:attr:`DataFolder.setas` attribute.)
 
@@ -475,14 +564,14 @@ then it will execute *func* once for each file. The function *fun* should be def
 
     def func(group,list_of-group_keys,arg1,arg2...)
 
-The first parameter should expect and instance of :py:class:`Stoner.Core.DataFile` if
+The first parameter should expect and instance of :py:class:`Stoner.Data` if
 *group* is **False** or an instance of :py:class:`DataFolder` if *group* is **True**.
 The second parameter will be given a list of of strings representing the group key values from
 the topmost group to the lowest (terminal) group.
 
 The *replace_terminal* parameter applies when *group* is **True** and the function returns a
 :py:class:`Stoner.Core,DataFile` object. This indicates that the group on which the function was
-called should be removed from the list fo groups and the returned :py:class:`Stoner.Core.DataFile`
+called should be removed from the list fo groups and the returned :py:class:`Stoner.Data`
 object should be added to the list of files in the folder. This operation is useful when one is
 processing a group of files to combined them into a single dataset. Combining a multi-level grouping
 operation and successive calls to :py:meth:`DataFolder.walk_groups` can rapidly reduce a large set of
@@ -496,7 +585,7 @@ In this case the :py:meth:`DataFolder.zip_groups` method can be useful.::
 
    f.groups[4.2].zip_groups(['positive','negative'])
 
-This would return a list of tuples of :py:class:`Stoner.Core.DataFile` objects where the tuples
+This would return a list of tuples of :py:class:`Stoner.Data` objects where the tuples
 would be the first positive and first negative field files, then the second of each, then third of
 each and so. This presupposes that the files started of sorted by some suitable parameter
 (eg a gate voltage).
