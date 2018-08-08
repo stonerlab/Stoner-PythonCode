@@ -12,12 +12,13 @@ import os, os.path as path
 import numpy as np
 import re
 from numpy import any,all,sqrt,nan
+from collections import MutableMapping
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
 from Stoner import Data,__home__
-from Stoner.Core import typeHintedDict
+from Stoner.Core import typeHintedDict,metadataObject
 
 class Datatest(unittest.TestCase):
 
@@ -30,6 +31,19 @@ class Datatest(unittest.TestCase):
         self.d3=Data(path.join(__home__,"..","sample-data","New-XRay-Data.dql"))
         self.d4=Data(path.join(__home__,"..","sample-data","Cu_resistivity_vs_T.txt"))
 
+
+    def test_base_class(self):
+        m=metadataObject()
+        m.update(self.d2.metadata)
+        self.assertTrue(isinstance(m,MutableMapping),"metadataObject is not a MutableMapping")
+        self.assertEqual(len(m),len(self.d2.metadata),"metadataObject length failure.")
+        self.assertEqual(len(m[".*"]),len(m),"Failure to index by regexp.")
+        for k in self.d2.metadata:
+            self.assertEqual(m[k],self.d2.metadata[k],"Failure to have equal keys for {}".format(k))
+            m[k]=k
+            self.assertEqual(m[k],k,"Failure to set keys for {}".format(k))
+            del m[k]
+        self.assertEqual(len(m),0,"Failed to delete from metadataObject.")
 
     def test_constructor(self):
         """Constructor Tests"""
@@ -149,6 +163,9 @@ class Datatest(unittest.TestCase):
         self.d["Test"]="This is a test"
         self.d["Int"]=1
         self.d["Float"]=1.0
+        keys,values=zip(*self.d.items())
+        self.assertEqual(tuple(self.d.keys()),keys,"Keys from items() not equal to keys from keys()")
+        self.assertEqual(tuple(self.d.values()),values,"Values from items() not equal to values from values()")
         self.assertEqual(self.d["Int"],1)
         self.assertEqual(self.d["Float"],1.0)
         self.assertEqual(self.d["Test"],self.d.metadata["Test"])

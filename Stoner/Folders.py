@@ -127,9 +127,12 @@ class each_item(object):
                 if item in self._folder._object_attrs:
                     ret=self._folder._object_attrs[item]
                 elif len(self._folder):
-                    ret=getattr(instance,item,None)
+                    ret=[(not hasattr(x,item),getattr(x,item,None)) for x in self._folder]
+                    mask,values=zip(*ret)
+                    ret=_np_.ma.MaskedArray(values)
+                    ret.mask=mask
                 else:
-                    ret=None
+                    ret=getattr(instance,item,None)
                 if ret is None:
                     raise AttributeError
         except AttributeError: # Ok, pass back
@@ -148,7 +151,7 @@ class each_item(object):
         elif name in dir(self._folder.instance): #This is an instance attribute
             self._folder._object_attrs[name]=value #Add to attributes to be set on load
             for d in self._folder.__names__(): #And set on all instantiated objects
-                if isinstance(self._folder.__getter__(d,instantiate=False),metadataObject):
+                if isinstance(self._folder.__getter__(d,instantiate=False),self._folder.type):
                     d=self._folder.__gett__(d)
                     setattr(d,name,value)
 

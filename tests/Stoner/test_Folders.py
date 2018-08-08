@@ -41,6 +41,8 @@ class Folders_test(unittest.TestCase):
         self.fldr3=SF.DataFolder(path.join(pth,"tests/Stoner/folder_data"),pattern="*.dat")
         self.fldr4=SF.DataFolder(self.datadir,pattern="QD-SQUID-VSM.dat")
         self.fldr5=self.fldr4.clone
+        os.chdir(self.datadir)
+        self.fldr6=SF.DataFolder(".",pattern="QD*.dat",pruned=True)
 
     def test_Folders(self):
         self.setUp()
@@ -109,8 +111,6 @@ class Folders_test(unittest.TestCase):
         self.assertTrue(np.all(test_sliced==sliced),"Slicing metadata failed to work.")
 
     def test_metadata(self):
-        os.chdir(self.datadir)
-        self.fldr6=SF.DataFolder(".",pattern="QD*.dat",pruned=True)
         self.assertEqual(repr(self.fldr6.metadata),"The DataFolder . has 9 common keys of metadata in 4 Data objects",
                          "Representation method of metadata wrong.")
         self.assertEqual(len(self.fldr6.metadata),9,"Length of common metadata not right.")
@@ -128,7 +128,15 @@ class Folders_test(unittest.TestCase):
         self.assertTrue(isinstance(self.fldr6.metadata.slice("Loaded from",values_only=True),list),"metadata.slice not returtning a list with values_only=True.")
         self.assertTrue(isinstance(self.fldr6.metadata.slice("Loaded from",output="Data"),Data),"metadata.slice not returtning Data with outpt='data'.")
 
-
+    def test_each(self):
+        shaper=lambda f:f.shape
+        res=self.fldr6.each(shaper)
+        self.assertEqual(res,[(6048, 88), (3025, 41), (1409, 57), (411, 72)],"__call__ on each fauiled.")
+        self.fldr6.each.del_column(0)
+        res=self.fldr6.each(shaper)
+        self.assertEqual(res,[(6048, 87), (3025, 40), (1409, 56), (411, 71)],"Proxy method call via each failed")
+        self.assertEqual(self.fldr6.each.filename.tolist(),['.\\QD-MH.dat', '.\\QD-PPMS.dat', '.\\QD-PPMS2.dat',
+                   '.\\QD-SQUID-VSM.dat'],"Reading attributes from each failed.")
 
     def test_clone(self):
          self.fldr=SF.DataFolder(self.datadir, pattern='*.txt')
