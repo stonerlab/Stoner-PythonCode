@@ -291,7 +291,7 @@ class combined_metadata_proxy(MutableMapping):
 
     def __contains__(self,item):
         """Check for membership of all possible kes."""
-        return item in self.all_keys
+        return item in self.all_keys()
 
     def __iter__(self):
         """Iterate over objects."""
@@ -324,7 +324,7 @@ class combined_metadata_proxy(MutableMapping):
 
     def __getitem__(self,value):
         """Return an array formed by getting a single key from each object in the Folder."""
-        if value not in self.all_keys:
+        if value not in self:
             raise KeyError("{} is not a key of any object in the Folder.".format(value))
         if value in self.common_keys:
             return _np_.array([d[value] for d in self._folder])
@@ -438,7 +438,6 @@ class combined_metadata_proxy(MutableMapping):
         if isinstance(key, string_types): # Single key given
             key=metadata[0].__lookup__(key,multiple=True)
             key=[key] if not islike_list(key) else key
-            keys=key
         # Expand all keys in case of multiple metadata matches
         newkey=[]
         for k in key:
@@ -911,7 +910,8 @@ class baseFolder(MutableSequence):
         if not attrs_only:
             for g in self.groups:
                 other.groups[g]=self.groups[g].__clone__(attrs_only=attrs_only)
-            other.objects=deepcopy(self.objects)
+            for k in self.__names__():
+                other.__setter__(k,self.__getter__(k,instantiate=None))
         return other
 
     ###########################################################################
@@ -1385,9 +1385,7 @@ class baseFolder(MutableSequence):
     ###################### Private Methods ####################################
 
     def __init_from_other(self,other):
-        cls = self.__class__
-        result = cls.__new__(cls)
-        other.__clone__(other=result)
+        other.__clone__(other=self)
 #        for k in dir(other):
 #            if k.startswith("_"): # Short circuit before we even get the value
 #                continue
@@ -1411,7 +1409,6 @@ class baseFolder(MutableSequence):
 #            self.__setter__(n,other.__getter__(n,instantiate=None))
 
 
-        return result
 
     def _update_from_object_attrs(self,obj):
         """Updates an object from object_attrs store."""

@@ -88,8 +88,6 @@ class ImageFolderMixin(object):
 
         Mostly a pass through to the :py:class:`Stoner.Folders.baseFolder` class.
         """
-        if "flat" in self._defaults:
-            del self._defaults["flat"]
         super(ImageFolderMixin,self).__init__(*args,**kargs)
 
     @property

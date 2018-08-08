@@ -63,6 +63,8 @@ class ImageStackMixin(object):
 
     """Implement an interface for a baseFolder to store images in a 3D numpy array for faster access."""
 
+    _defaults={"type":ImageFile}
+
 
     def __init__(self,*args,**kargs):
         """Initialise an ImageStack's pricate data and provide a type argument."""
@@ -70,8 +72,6 @@ class ImageStackMixin(object):
         self._metadata=regexpDict()
         self._names=list()
         self._sizes=np.array([],dtype=int).reshape(0,2)
-
-        kargs["type"]=ImageFile
 
         if not len(args):
             super(ImageStackMixin,self).__init__(**kargs)
@@ -249,29 +249,32 @@ class ImageStackMixin(object):
         self._metadata=regexpDict()
         self._stack=np.atleast_3d(np.ma.MaskedArray([]))
 
-    def __clone__(self,other=None,attrs_only=False):
-        """Do whatever is necessary to copy attributes from self to other.
-
-        Note:
-            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
-        """
-        if other is None:
-            other=self.__class__()
-        if not attrs_only:
-            other._metadata=copy.deepcopy(self._metadata)
-            other._stack=copy.deepcopy(self._stack)
-            other._names=copy.deepcopy(self._names)
-            other._sizes=np.copy(self._sizes)
-        return super(ImageStackMixin,self).__clone__(other=other,attrs_only=attrs_only)
+#    def __clone__(self,other=None,attrs_only=False):
+#        """Do whatever is necessary to copy attributes from self to other.
+#
+#        Note:
+#            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+#        """
+#        if other is None:
+#            other=self.__class__()
+##        if not attrs_only:
+##            other._metadata=copy.deepcopy(self._metadata)
+##            other._stack=copy.deepcopy(self._stack)
+##            other._names=copy.deepcopy(self._names)
+##            other._sizes=np.copy(self._sizes)
+#        return super(ImageStackMixin,self).__clone__(other=other,attrs_only=attrs_only)
 
     ###########################################################################
     ###################      Private methods     ##############################
 
     def _instantiate(self,idx):
         """Reconstructs the data type."""
-        tmp=self.type()
         r,c=self._sizes[idx]
-        tmp.data=self._stack[:r,:c,idx]
+        if issubclass(self.type,ImageArray): #IF the underlying type is an ImageArray, then return as a view with extra metadata
+            tmp=self._stack[:r,:c,idx].view(type=self.type)
+        else: #Otherwise it must be something with a data attribute
+            tmp=self.type()
+            tmp.data=self._stack[:r,:c,idx]
         tmp.metadata=self._metadata[self.__names__()[idx]]
         tmp._fromstack = True
         return tmp

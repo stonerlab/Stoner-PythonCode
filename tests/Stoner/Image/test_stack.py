@@ -22,7 +22,6 @@ for theta in np.linspace(0,360,91):
 class ImageStack2Test(unittest.TestCase):
 
     def setUp(self):
-        print("X"*80,"\n","Test Setup2")
         self.td = ImageFolder(testdir, pattern='*.png')
         self.ks = ImageStack(testdir)
         self.ks = ImageStack(self.td) #load in two ways
@@ -30,7 +29,6 @@ class ImageStack2Test(unittest.TestCase):
         self.istack2=istack2.clone
 
     def test_ImageStack2(self):
-        print("X"*80,"\n","Test ImageStack2")
         self.assertTrue(self.istack2.shape==(91,100,100),"ImageStack2.shape wrong at {}".format(self.istack2.shape))
         i=ImageFile(np.zeros((100,100))).draw.circle(50,50,25)
         self.m1=self.istack2.mean()
@@ -69,7 +67,6 @@ class ImageStack2Test(unittest.TestCase):
 
     def test_init(self):
         #try to init with a few different call sequences
-        print("X"*80,"\n","Test Init")
         listinit = []
         for i in range(10):
             listinit.append(np.arange(12).reshape(3,4))
@@ -86,7 +83,6 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(len(imfinit)==8, "Couldn't load from another ImageFolder object")
 
     def test_accessing(self):
-        print("X"*80,"\n","Test Accessing")
         #ensure we can write and read to the stack in different ways
         ist2 = ImageStack(np.arange(60).reshape(4,3,5))
         im = np.zeros((3,5), dtype=int)
@@ -113,7 +109,6 @@ class ImageStack2Test(unittest.TestCase):
 
     def test_methods(self):
         #check function generator machinery works
-        print("X"*80,"\n","Test Methods")
         self.istack2.crop(0,30,0,50)
         self.assertTrue(self.istack2.shape==(91,50,30),"Unexpected size of imagestack2 got {} for 91x50x30".format(self.istack2.shape))
         ist2 = ImageStack(np.arange(60).reshape(4,3,5))
