@@ -31,6 +31,17 @@ class Datatest(unittest.TestCase):
         self.d3=Data(path.join(__home__,"..","sample-data","New-XRay-Data.dql"))
         self.d4=Data(path.join(__home__,"..","sample-data","Cu_resistivity_vs_T.txt"))
 
+    def test_repr(self):
+        header="""==============  ======  ======
+TDI Format 1.5  X-Data  Y-Data
+    index       0 (x)   1 (y)
+==============  ======  ======"""
+        repr_header="""=============================  ========  ========
+TDI Format 1.5                   X-Data    Y-Data
+index                             0 (x)     1 (y)
+=============================  ========  ========"""
+        self.assertEqual(self.d.header,header,"Header output changed.")
+        self.assertEqual("\n".join(repr(self.d).split("\n")[:4]),repr_header,"Representation gave unexpcted header.")
 
     def test_base_class(self):
         m=metadataObject()
@@ -185,6 +196,8 @@ class Datatest(unittest.TestCase):
         self.assertTrue(np.isnan(self.d.x[ix]),"Failed to mask maximum value")
         self.d._pop_mask()
         self.assertEqual(self.d2.select(Temp__not__gt=150).shape,(839,3),"Seect method failure.")
+        self.assertEqual(self.d.select(lambda r:r.x<30),self.d.select(X__lt=30),"Select  method as callable failed.")
+        self.assertEqual(self.d.select(__=lambda r:r.x<30),self.d.select(X__lt=30),"Select  method as callable failed.")
 
     def test_operators(self):
         #Test Column Indexer
@@ -283,7 +296,10 @@ class Datatest(unittest.TestCase):
         d.setas=".y"
         d.del_nan()
         self.assertEqual(d.shape,(50,2),"del_nan with columns from setas failed shape was {}".format(d.shape))
-
+        d=self.d.clone
+        d2=self.d.clone
+        d2.data=d2.data[::-1,:]
+        self.assertEqual(d.sort(reverse=True),d2,"Sorting revserse not the same as manually reversed data.")
 
 
     def test_metadata_save(self):
