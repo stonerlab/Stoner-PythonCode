@@ -7,6 +7,7 @@ Created on Fri May 27 17:09:04 2016
 
 from Stoner.Image import ImageArray, KerrArray, ImageFile
 from Stoner.Core import typeHintedDict
+from Stoner import Data
 import numpy as np
 import unittest
 import sys
@@ -238,6 +239,15 @@ class ImageFileTest(unittest.TestCase):
     def setUp(self):
         self.a = np.linspace(0,5,12).reshape(3,4)
         self.ifi = ImageFile(self.a)
+        self.imgFile = ImageFile(os.path.join(thisdir, 'coretestdata/im1_annotated.png'))
+
+    def test_constructors(self):
+        self.d=Data(self.imgFile)
+        self.imgFile2=ImageFile(self.d)
+        del self.imgFile2["Stoner.class"]
+        del self.imgFile2["x_vector"]
+        del self.imgFile2["y_vector"]
+        self.assertEqual(self.imgFile,self.imgFile2,"Ropundtripping constructor through Data failed.")
 
     def test_properties(self):
         self.assertTrue(np.allclose(self.ifi.image, self.a))
@@ -269,9 +279,9 @@ if __name__=="__main__": # Run some tests manually to allow debugging
 #    test.test_save()
 #    test.test_savetiff()
 #
-#    test2=ImageFileTest("test_methods")
+#    test2=ImageFileTest("test_constructors")
 #    test2.setUp()
-#    test2.test_methods()
+#    test2.test_constructors()
 
     unittest.main()
 

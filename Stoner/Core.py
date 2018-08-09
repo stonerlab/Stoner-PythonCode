@@ -693,7 +693,7 @@ class DataFile(metadataObject):
             self.column_headers = ['Column_{}'.format(x) for x in range(_np_.shape(args[0])[1])]
         elif isinstance(arg, dict):  # Dictionary - use as data or metadata
             if all_type(arg.keys(),string_types) and all_type(arg.values(),_np_.ndarray) and _np_.all(
-                [len(arg[k].shape)==1 and _np_.all(len(arg[k])==len(arg.values()[0])) for k in arg]):
+                [len(arg[k].shape)==1 and _np_.all(len(arg[k])==len(list(arg.values())[0])) for k in arg]):
                 self.data=_np_.column_stack(tuple(arg.values()))
                 self.column_headers=list(arg.keys())
             else:

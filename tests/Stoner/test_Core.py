@@ -66,6 +66,9 @@ index                             0 (x)     1 (y)
         self.assertTrue(d.shape==(100,2),"Constructor from iterable list of nd array failed")
         d=Data([np.ones(100),np.zeros(100)],["X","Y"])
         self.assertTrue(d.column_headers==["X","Y"],"Failed to set column headers in constructor: {}".format(d.column_headers))
+        c=np.zeros(100)
+        d=Data({"X-Data":c,"Y-Data":c,"Z-Data":c})
+        self.assertEqual(d.shape,(100,3),"Construction from dictionary of columns failed.")
 
     def test_column(self):
         for i,c in enumerate(self.d.column_headers):
