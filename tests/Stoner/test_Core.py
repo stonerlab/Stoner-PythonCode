@@ -83,6 +83,34 @@ index                             0 (x)     1 (y)
         # Check attribute column access
         self.assertTrue(all(self.d.X==self.d.column(0)),"Failed to access column by attribute name")
 
+    def test_deltions(self):
+        ch=["{}-Data".format(chr(x)) for x in range(65,91)]
+        data=np.zeros((100,26))
+        metadata={"Key 1":True,"Key 2":12,"Key 3":"Hellow world"}
+        self.dd=Data(metadata)
+        self.dd.data=data
+        self.dd.column_headers=ch
+        self.dd.setas="3.x3.y3.z"
+        repr_string="""===========================  ========  =======  ========  =======  ========  ========
+TDI Format 1.5                 D-Data   ....      H-Data   ....      Y-Data    Z-Data
+index                           3 (x)              7 (y)                 24        25
+===========================  ========  =======  ========  =======  ========  ========
+Key 1{Boolean}= True                0                  0                  0         0
+Key 2{I32}= 12                      0  ...             0  ...             0         0
+Key 3{String}= Hellow world         0  ...             0  ...             0         0
+Stoner.class{String}= Data          0  ...             0  ...             0         0
+...                                 0  ...             0  ...             0         0"""
+        self.assertEqual("\n".join(repr(self.dd).split("\n")[:9]),repr_string,"Representation with interesting columns failed.")
+        del self.dd["Key 1"]
+        self.assertEqual(len(self.dd.metadata),3,"Deletion of metadata failed.")
+        del self.dd[20:30]
+        self.assertEqual(self.dd.shape,(90,26),"Deleting rows directly failed.")
+        self.dd.del_column("Q")
+        self.assertEqual(self.dd.shape,(90,25),"Deleting rows directly failed.")
+        self.dd%=3
+        self.assertEqual(self.dd.shape,(90,24),"Deleting rows directly failed.")
+
+
     def test_indexing(self):
         #Check all the indexing possibilities
         data=np.array(self.d.data)
