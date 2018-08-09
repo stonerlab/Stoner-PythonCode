@@ -128,8 +128,9 @@ class Folders_test(unittest.TestCase):
         fldr6.each.del_column(0)
         res=fldr6.each(shaper)
         self.assertEqual(res,[(6048, 87), (3025, 40), (1409, 56), (411, 71)],"Proxy method call via each failed")
-        self.assertEqual(fldr6.each.filename.tolist(),['.\\QD-MH.dat', '.\\QD-PPMS.dat', '.\\QD-PPMS2.dat',
-                   '.\\QD-SQUID-VSM.dat'],"Reading attributes from each failed.")
+        paths=['./QD-MH.dat', './QD-PPMS.dat', './QD-PPMS2.dat','./QD-SQUID-VSM.dat']
+        paths=[x.replace("/",os.sep) for x in paths]
+        self.assertEqual(fldr6.each.filename.tolist(),paths,"Reading attributes from each failed.")
         if python_v3:
             eval('(hysteresis_correct@fldr4)(setas="3.xy",saturated_fraction=0.25)')
             self.assertTrue("Hc" in fldr4[0],"Matrix multiplication of callable by DataFolder failed test.")
