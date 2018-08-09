@@ -19,6 +19,12 @@ pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
 from Stoner import Data,__home__
 from Stoner.Core import typeHintedDict,metadataObject
+import Stoner.compat
+
+def extra_get_filedialog(what="file", **opts):
+    return path.join(path.dirname(__file__),"CoreTest.dat")
+
+Stoner.Core.get_filedialog=extra_get_filedialog #Monkey patch to test the file dialog
 
 class Datatest(unittest.TestCase):
 
@@ -69,6 +75,8 @@ index                             0 (x)     1 (y)
         c=np.zeros(100)
         d=Data({"X-Data":c,"Y-Data":c,"Z-Data":c})
         self.assertEqual(d.shape,(100,3),"Construction from dictionary of columns failed.")
+        d=Data(False)
+        self.assertEqual(self.d,d,"Faked file-dialog test")
 
     def test_column(self):
         for i,c in enumerate(self.d.column_headers):
@@ -112,7 +120,12 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         self.assertEqual(self.dd.shape,(90,25),"Deleting rows directly failed.")
         self.dd%=3
         self.assertEqual(self.dd.shape,(90,24),"Deleting rows directly failed.")
-
+        self.dd.setas="x..y..z"
+        self.dd.del_column(self.dd.setas.not_set)
+        self.assertEqual(self.dd.shape,(90,3),"Deleting rows directly failed.")
+        self.dd.mask[50,1]=True
+        self.dd.del_column()
+        self.assertEqual(self.dd.shape,(90,2),"Deletion of masked rows failed.")
 
     def test_indexing(self):
         #Check all the indexing possibilities
@@ -215,9 +228,9 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         self.assertEqual(len(self.d.dir()),6,"Failed meta data directory listing ({})".format(len(self.d.dir())))
         self.assertEqual(len(self.d3["Temperature"]),7,"Regular experssion metadata search failed")
 
-
     def test_dir(self):
         self.assertTrue(self.d.dir("S")==["Stoner.class"],"Dir method failed: dir was {}".format(self.d.dir()))
+        self.assertEqual(len(dir(test.d)),241,"DataFile.__dir__ failed.")
 
     def test_filter(self):
         self.d._push_mask()
@@ -273,6 +286,24 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         e=~self.d
         self.assertTrue(e.setas[0]=="y","failed to invert setas columns")
         f.setas="xyz"
+
+    def test_properties(self):
+        self.little=Data()
+        p=np.linspace(0,np.pi,91)
+        q=np.linspace(0,2*np.pi,91)
+        r=np.cos(p)
+        x=r*np.sin(q)
+        y=r*np.cos(q)
+        self.little.data=np.column_stack((x,y,r))
+        self.little.setas="xyz"
+        q_ang=np.round(self.little.q/np.pi,decimals=2)
+        p_ang=np.round(self.little.p/np.pi,decimals=2)
+        self.assertTrue(np.max(q_ang)==1.0,"Data.q failure")
+        self.assertTrue(np.max(p_ang)==0.5,"Data.p failure")
+        self.assertTrue(np.min(p_ang)==-0.5,"Data.p failure")
+        self.little.mask=lambda r:np.abs(r.q)<0.25*np.pi
+        self.little.mask[:,2]=True
+        self.assertEqual(len(repr(self.little).split("\n")),len(self.little)+5,"Non shorterned representation failed.")
 
     def test_methods(self):
         d=self.d.clone

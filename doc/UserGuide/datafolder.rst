@@ -9,7 +9,7 @@ files sitting in a tree of directories on disc and need to process all of them w
 The :py:mod:`Stoner.Folders` contains classes to make this job much easier.
 
 For the end-user, the top level classes are :py:class:`DataFolder` for :py:class:`Stoner.Data` and :py:class:`Stoner.Image.ImageFolder` doe xollections of
-:py:class:`Stoner.Image.ImageFile`s. These are designed to complement the corresponding data classes :py:class:`Stoner.Data` and :py:class:`Stoner.ImageFile`.
+:py:class:`Stoner.Image.ImageFile` s. These are designed to complement the corresponding data classes :py:class:`Stoner.Data` and :py:class:`Stoner.ImageFile`.
 Like :py:class:`Stoner.Core.Data`, :py:class:`Stoner.Folders.DataFolder` is exported directly from the :py:mod:`Stoner` package, whilst the
 :py:class:`Stoner.Image.ImageFolder` is exported from the :py:mod:`Stoner.Image` sub-paclkage.
 
@@ -120,8 +120,8 @@ overwritten. The downside of this is that sometimes only the latest revision num
     f=DataFolder(".")
     f.keep_latest()
 
-More Goodies for :py:class:`DataFolder`s
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+More Goodies for :py:class:`DataFolder` s
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Since a :py:class:`Stoner.Data` represents data in named columns, the :py:class:`DataFolder` offers a couple of additional options for actions to take
 when reading the files in from disk. It is possible to have the mean and satandard deviation of each column of data to be calculated and added as
@@ -203,7 +203,7 @@ Getting a List of Files
 -----------------------
 
 To get a list of the names of the files in a :py:class:`DataFolder`, you can use the :py:attr:`DataFolder.ls` attribute.
-Sub-:py:class:`DataFolder`s also have a name (essentially a string key to the dictionary that holds them), this can be accessed
+Sub-:py:class:`DataFolder` s also have a name (essentially a string key to the dictionary that holds them), this can be accessed
 via the :py:attr:`DataFolder.lsgrp` generator fumnction.::
 
     list(f.ls)
@@ -314,7 +314,7 @@ Working on the Metadata
 =======================
 
 Since each object inside a :py:class:`DataFolder` will be some form of :py:class:`Stoner.Core.metadataObject`, the :py:class:`DataFolder`
-provides a mechanism to access the combined metadata of all of the :py:class:`Stoner.Core.metadataObject`s it is storing  via a
+provides a mechanism to access the combined metadata of all of the :py:class:`Stoner.Core.metadataObject` s it is storing  via a
 :py:attr:`DataFolder.metadata` attribute. Like :py:attr:`DataFolder.each` this is actually a special class (in this case
 :py:class:`combined_metadata_proxy`) that manages the process of iterating over the contents of the :py:class:`DataFolder` to get and set
 metadata on the individual :py:class:`Stoner.Data` objects.
