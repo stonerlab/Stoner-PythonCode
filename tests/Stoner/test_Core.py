@@ -230,7 +230,10 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
 
     def test_dir(self):
         self.assertTrue(self.d.dir("S")==["Stoner.class"],"Dir method failed: dir was {}".format(self.d.dir()))
-        self.assertEqual(len(dir(self.d)),241,"DataFile.__dir__ failed.")
+        bad_keys=set(['__metaclass__', 'iteritems', 'iterkeys', 'itervalues','__ge__', '__gt__', '__init_subclass__',
+                      '__le__', '__lt__', '__reversed__', '__slots__'])
+        attrs=set(dir(self.d))-bad_keys
+        self.assertEqual(len(attrs),234,"DataFile.__dir__ failed.")
 
     def test_filter(self):
         self.d._push_mask()
