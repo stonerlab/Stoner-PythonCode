@@ -2,7 +2,7 @@
 """
 
 __all__ = ["AnalysisMixin","GetAffineTransform","ApplyAffineTransform"]
-from inspect import isclass
+from inspect import isclass,signature
 from warnings import warn
 
 import numpy as _np_
@@ -105,17 +105,25 @@ class _curve_fit_result(object):
         self.perr=_np_.sqrt(_np_.diag(pcov))
         self.mesg=mesg
         self.ier=ier
+        self.infodict=infodict
         for k in infodict:
             setattr(self,k,infodict[k])
 
     #Following peroperties used to return desired information
 
     @property
+    def name(self):
+        """Name of the model fitted."""
+        return self.func.__name__
+
+    @property
     def full(self):
+        """The same as :py:attr:`_curve_fit_result.row`"""
         return self,self.row
 
     @property
     def row(self):
+        """Optimal parameters and errors as a single row."""
         ret=_np_.zeros(self.popt.size*2)
         ret[0::2]=self.popt
         ret[1::2]=self.perr
@@ -123,19 +131,88 @@ class _curve_fit_result(object):
 
     @property
     def fit(self):
+        """Copy of the fit report and optimal parameters and covariance."""
         return (self.popt,self.pcov)
 
     @property
     def data(self):
+        """The data that was fitted."""
+        self._data=getattr(self,"_data",_np_.array([]))
         return self._data
 
     @data.setter
     def data(self,data):
+        """The data that was fitted."""
         self._data=data
 
     @property
     def report(self):
+        """Copy of the fit report."""
         return self
+
+    @property
+    def N(self):
+        """Number of data points in dataset."""
+        return len(self.data)
+
+    @property
+    def n_p(self):
+        """Number of parameters in model."""
+        return len(self.popt)
+
+    @property
+    def redchi(self):
+        r"""Reduced $\chi^2$ Statistic."""
+        return self.chisq
+
+    @property
+    def chisqr(self):
+        r"""$\chi^2$ Statistic."""
+        return self.chisq*(self.N-self.n_p)
+
+    @property
+    def aic(self):
+        """Akaike Information Criterion statistic"""
+        return self.N*_np_.log(self.chisqr/self.N)+2*self.n_p
+
+    @property
+    def bic(self):
+        """Bayesian Information Criterion statistic"""
+        return self.N*_np_.log(self.chisqr/self.N)+_np_.log(self.N)*self.n_p
+
+    @property
+    def params(self):
+        """A list of parameter class objects."""
+        sig=signature(self.func)
+        ret={}
+        for i,k in enumerate(sig.parameters):
+            if i==0:
+                continue
+            ret[k]=sig.parameters[k]
+        return ret
+
+
+    def fit_report(self):
+        """A Fit report like lmfit does."""
+        template="""[[ Model ]]
+    {}
+[[ Fit Statistics ]]
+    # function evals   = {}
+    # data points      = {}
+    # variables        = {}
+    chi-square         = {}
+    reduced chi-square = {}
+    Akaike info crit   = {}
+    Bayesian info crit = {}
+[[ Variables ]]\n""".format(self.name,self.nfev,self.N,self.n_p,self.chisqr,self.redchi,self.aic,self.bic)
+        for p,v,e,p0 in zip(self.params,self.popt,self.perr,self.p0):
+            template+="\t{}: {} +/- {} ({:.3f}%) (init {})\n".format(p,v,e,(e*100/v),p0)
+        template+="[[Correlations]] (unreported correlations are <  0.100)\n"
+        for i,p in enumerate(self.params):
+            for j in range(i+1,len(self.params)):
+                if _np_.abs(self.pcov[i,j])>0.1:
+                    template+="\t({},{})\t\t={:.3f}".format(p,list(self.params.keys())[j],self.pcov[i,j])
+        return template
 
 def _lmfit_p0_dict(p0,model):
     """Works out an initial starting value dictionary for lmfit.
@@ -1068,9 +1145,12 @@ class AnalysisMixin(object):
                     s=sigma # probably this will fail!
             else:
                 s=sigma
-
             report=_curve_fit_result(*curve_fit(_func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs))
             report.func=func
+            if p0 is None:
+                report.p0=_np_.ones(len(report.popt))
+            else:
+                report.p0=p0
             report.data=self
             report.residual_vals=ydata-report.fvec
             report.chisq=(report.residual_vals**2).sum()

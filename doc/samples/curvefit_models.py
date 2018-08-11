@@ -33,5 +33,5 @@ d.ax_xlabel=""
 
 # Annotate plot with fitting parameters
 d.annotate_fit(PowerLaw,x=2.2,y=3,fontdict={"size":"x-small"})
-d.annotate_fit(PowerLaw,prefix="ODRModel",x=2.2,y=1.5,fontdict={"size":"x-small"})
+d.annotate_fit(ODRModel,x=2.2,y=1.5,fontdict={"size":"x-small"},prefix="ODRModel")
 d.title=u"curve_fit with models"

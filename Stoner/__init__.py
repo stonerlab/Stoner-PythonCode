@@ -101,14 +101,23 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
         are set to be 0.75 * maximum x and y limit of the plot.
         """
         mode=kargs.pop("mode","float")
-        if _lmfit and _inspect_.isclass(model) and issubclass(model,Model):
-            prefix=kargs.pop("prefix",self.get("lmfit.prefix",model.__name__))
-            model=model()
-        elif _lmfit and isinstance(model,Model):
+        if _inspect_.isclass(model) and ((_lmfit  and issubclass(model,Model)) or issubclass(model, Analysis.odrModel)):
+            model=model() #Instantiate a bare class first
+
+        if isinstance(model,Analysis.odrModel): #Get predix from odrModel
+            model_prefix=model.meta.get("__name__",model.__class__.__name__)
+            prefix=kargs.pop("prefix",self.get("odr.prefix",model_prefix))
+            param_names = model.meta.get("param_names",[])
+            display_names= model.meta.get("display_names",param_names)
+        elif _lmfit and isinstance(model,Model): #Get prefix from lmfit
             prefix=kargs.pop("prefix",self.get("lmfit.prefix",model.__class__.__name__))
-        elif callable(model):
+            param_names=model.param_names
+            display_names=getattr(model,"display_names",model.param_names)
+        elif callable(model): #Get prefix from callable name
             prefix=kargs.pop("prefix",model.__name__)
             model=Model(model)
+            param_names=model.param_names
+            display_names=getattr(model,"display_names",model.param_names)
         else:
             raise RuntimeError("model should be either an lmfit.Model or a callable function, not a {}".format(type(model)))
 
@@ -137,7 +146,7 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
             y=0.5*(yt-yb)+yb
 
         try: # if the model has an attribute display params then use these as the parameter anmes
-            for k,display_name in zip(model.param_names,model.display_names):
+            for k,display_name in zip(param_names,display_names):
                 if prefix:
                     self["{}{} label".format(prefix,k)]=display_name
                 else:
