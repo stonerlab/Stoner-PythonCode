@@ -2,7 +2,7 @@
 """
 
 __all__ = ["AnalysisMixin","GetAffineTransform","ApplyAffineTransform"]
-from inspect import isclass,signature
+from inspect import isclass
 from warnings import warn
 
 import numpy as _np_
@@ -18,6 +18,12 @@ from scipy.signal import savgol_filter
 
 from .compat import python_v3, string_types, int_types, index_types, LooseVersion
 from .tools import isNone, isiterable, all_type, istuple,islike_list
+
+if python_v3:
+    from inspect import signature
+else:
+    from inspect import getargspec
+    
 
 try:  #Allow lmfit to be optional
     import lmfit
@@ -183,12 +189,17 @@ class _curve_fit_result(object):
     @property
     def params(self):
         """A list of parameter class objects."""
-        sig=signature(self.func)
-        ret={}
-        for i,k in enumerate(sig.parameters):
-            if i==0:
-                continue
-            ret[k]=sig.parameters[k]
+        if python_v3:
+            sig=signature(self.func)
+            ret={}
+            for i,k in enumerate(sig.parameters):
+                if i==0:
+                    continue
+                ret[k]=sig.parameters[k]
+        else:
+            ret={}
+            for arg in getargspec(self.func)[0][1:]:
+                ret[arg]=arg
         return ret
 
 
