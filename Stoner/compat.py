@@ -33,7 +33,7 @@ if __vi__[0] == 2:
 
     def get_func_params(func):
         ret=[]
-        for arg in getargspec(self.func)[0][1:]:
+        for arg in getargspec(func)[0][1:]:
             ret.append(arg)
         return ret
 
