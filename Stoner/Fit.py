@@ -825,7 +825,7 @@ class WLfit(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
-@jit(float64(float64,float64,float64,float64,float64))
+@jit(float64[:](float64[:],float64,float64,float64,float64))
 def _strijkers_core(V, omega, delta, P, Z):
     """strijkers Model for point-contact Andreev Reflection Spectroscopy
     Args:
@@ -879,7 +879,7 @@ def _strijkers_core(V, omega, delta, P, Z):
     cond=_np_.convolve(G,gauss)
     cond=cond[int(E.size/2):3*int(E.size/2)]
     #Linear interpolation back onto the V data point
-    matches=E.searchsorted(V)
+    matches=_np_.searchsorted(E,V)
     condl=cond[matches-1]
     condh=cond[matches]
     El=E[matches-1]

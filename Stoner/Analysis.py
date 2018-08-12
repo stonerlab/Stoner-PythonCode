@@ -23,7 +23,7 @@ if python_v3:
     from inspect import signature
 else:
     from inspect import getargspec
-    
+
 
 try:  #Allow lmfit to be optional
     import lmfit
@@ -882,34 +882,67 @@ class AnalysisMixin(object):
         """Applies the given function to each row in the data set and adds to the data set.
 
         Args:
-            func (callable): A function that takes a numpy 1D array representing each row of data
+            func (callable): The function to apply to each row of the data.
             col (index): The column in which to place the result of the function
 
         Keyword Arguments:
-            replace (bool): Isnert a new data column (False) or replace the data column (True, default)
-            header (string or None): The new column header (defaults to the name of the function func
+            replace (bool): Either replace the existing column/complete data or create a new column or data file.
+            header (string or None): The new column header(s) (defaults to the name of the function func
+
+        Note:
+            If any extra keyword arguments are supplied then these are passed to the function directly. If
+            you need to pass any arguments that overlap with the keyword arguments to :py:math:`AnalysisMixin.apply`
+            then these can be supplied in a dictionary argument *_extra*.
+
+            The callable *func* should have a signature::
+
+                def func(row,**kargs):
+
+            and should return either a single float, in which case it will be used to repalce the specified column, or an
+            array, in which case it is used to completely replace the row of data.
+
+            If the function returns a complete row of data, then the *replace* parameter will cause the return value to be
+            a new datafile, leaving the original unchanged. The *headers* parameter can give the complete column headers for
+            the new data file.
 
         Returns:
             self: The newly modified :py:class:`AnalysisMixin`.
         """
         if col is None:
-            col = self.setas._get_cols()["ycol"][0]
+            col = self.setas.get("y",[0])[0]
         col = self.find_col(col)
-        nc = _np_.zeros(len(self))
-        for r in self:
+        kargs.update(kargs.pop("_extra",dict()))
+        #Check the dimension of the output
+        ret = func(next(self.rows()),**kargs)
+        try:
+            next(self.rows(reset=True))
+        except StopIteration:
+            pass
+        if isiterable(ret):
+            nc=_np_.zeros((len(self),len(ret)))
+        else:
+            nc=_np_.zeros(len(self))
+        #Evaluate the data row by row
+        for ix,r in enumerate(self.rows()):
             ret = func(r,**kargs)
-            if isiterable(ret):
-                if _np_.size(ret) == 1:
-                    ret = ret
-                elif len(ret) == len(r):
-                    ret = ret[col]
-                else:
-                    ret = ret[0]
-            nc[r.i] = ret
-        if header is None:
-            header = func.__name__
-        self = self.add_column(nc, header=header, index=col,replace=replace)
-        return self
+            if isiterable(ret) and not isinstance(ret,_np_.ndarray):
+                ret=_np_.ma.MaskedArray(ret)
+            nc[ix]=ret
+        #Work out how to handle the result
+        if nc.ndim==1:
+            if header is None:
+                header = func.__name__
+            self = self.add_column(nc, header=header, index=col,replace=replace,setas=self.setas[col])
+            ret=self
+        else:
+            if not replace:
+                ret=self.clone
+            else:
+                ret=self
+            ret.data=nc
+            if header is not None:
+                ret.column_headers=header
+        return ret
 
     def bin(self, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, **kargs):
         """Bin x-y data into new values of x with an error bar.

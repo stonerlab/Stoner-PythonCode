@@ -2105,7 +2105,7 @@ class DataFile(metadataObject):
             self.data = _np_.array([[]])
             (dr, dc) = (0, 0)
         if cl > dr and dc * dr > 0:
-            self.data = DataArray(_np_.append(self.data, _np_.zeros((cl - dr, dc)), 0),setas=self.data._setas)
+            self.data = DataArray(_np_.append(self.data, _np_.zeros((cl - dr, dc)), 0),setas=self.setas.clone)
         elif cl < dr:
             _np__data = _np_.append(_np__data, _np_.zeros(dr - cl))
         if replace:
@@ -2532,8 +2532,7 @@ class DataFile(metadataObject):
         if filemagic is not None:
             with filemagic(flags=MAGIC_MIME_TYPE) as m:
                 mimetype=m.id_filename(filename)
-            if self.debug:
-                print("Mimetype:{}".format(mimetype))
+            if self.debug: print("Mimetype:{}".format(mimetype))
         cls = self.__class__
         failed = True
         if auto_load:  # We're going to try every subclass we canA
@@ -2544,8 +2543,7 @@ class DataFile(metadataObject):
                         if self.debug: print("Skipping {} due to mismatcb mime type {}".format(cls.__name__,cls.mime_type))
                         continue
                     test = cls()
-                    if self.debug and filemagic is not None:
-                        print("Trying: {} =mimetype {}".format(cls.__name__,test.mime_type))
+                    if self.debug and filemagic is not None: print("Trying: {} =mimetype {}".format(cls.__name__,test.mime_type))
 
                     kargs.pop("auto_load",None)
                     test._load(self.filename,auto_load=False,*args,**kargs)
@@ -2694,7 +2692,7 @@ class DataFile(metadataObject):
                 ret = data
             yield ret
 
-    def rows(self,not_masked=False):
+    def rows(self,not_masked=False,reset=False):
         """Generator method that will iterate over rows of data
 
         Keyword Arguments:
@@ -2703,11 +2701,18 @@ class DataFile(metadataObject):
         Yields:
             1D array: Returns the next row of data
         """
-        for row in self.data:
+        if reset:
+            raise StopIteration
+        for ix,row in enumerate(self.data):
+            if not isinstance(row,DataArray):
+                row=DataArray([row])
+                row.i=ix
+                row.setas=self.setas
             if _ma_.is_masked(row) and not_masked:
                 continue
             else:
                 yield row
+
 
     def save(self, filename=None,**kargs):
         """Saves a string representation of the current DataFile object into the file 'filename'.

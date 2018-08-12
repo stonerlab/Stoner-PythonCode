@@ -42,6 +42,11 @@ class Analysis_test(unittest.TestCase):
         self.d4.divide(0,1,header="Divide")
         self.d4.diffsum(0,1,header="Diffsum")
         self.assertTrue(np.all(self.d4[0]==np.array([-0.5,-1,-3,3,-1,2])),"Test column ops failed.")
+        d=Data(np.zeros((100,1)))
+        d.add(0,1.0)
+        self.assertEqual(np.sum(d[:,0]),100.,"Add with a flot didn't work")
+        d.add(0,np.ones(100))
+        self.assertEqual(np.sum(d[:,0]),200.,"Add with an array failed.")
 
     def test_peaks(self):
         d=self.d3.clone
@@ -64,7 +69,20 @@ class Analysis_test(unittest.TestCase):
         self.assertTrue(d.threshold(0,all_vals=True)[1]==124.5)
         #self.assertTrue(d.threshold(0,interpolate=False,all_vals=True)[1]==125.0)
 
+    def test_apply(self):
+        self.app=Data(np.zeros((100,1)),setas="y")
+        self.app.apply(lambda r:r.i[0],header="Counter")
+        def calc(r,omega=1.0,k=1.0):
+            return np.sin(r.y*omega)
+        self.app.apply(calc,replace=False,header="Sin",_extra={"omega":0.1},k=1.0)
+        self.app.apply(lambda r:r.__class__([r[1],r[0]]),replace=True,header=["Index","Sin"])
+        self.app.setas="xy"
+        self.assertAlmostEqual(self.app.integrate(),-64.1722191259037,"Integrate after aplies failed.")
+
+
+
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Analysis_test("test_functions")
     test.setUp()
     unittest.main()
+    #test.test_apply()
