@@ -29,6 +29,15 @@ __all__ = ["python_v3","str2bytes","bytes2str","get_filedialog","string_types","
 
 # Nasty hacks to sort out some naming conventions
 if __vi__[0] == 2:
+    from inspect import getargspec
+
+    def get_func_params(func):
+        ret=[]
+        for arg in getargspec(self.func)[0][1:]:
+            ret.append(arg)
+        return ret
+
+
     range = xrange  # NOQA pylint:disable=redefined-builtin, undefined-variable
     string_types = (str, unicode)  # NOQA pylint: disable=undefined-variable
     int_types=(int,long)  # NOQA pylint: disable=undefined-variable
@@ -65,27 +74,36 @@ if __vi__[0] == 2:
             raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
         else:
             return funcs[what](**opts)
-        
+
     def commonpath(paths):
         """Given a sequence of path names, returns the longest common sub-path."""
-    
+
         if not paths:
             raise ValueError('commonpath() arg is an empty sequence')
-    
+
         prefix=commonprefix(paths)
         prefix=prefix[::-1]
         split=prefix.index(sep)
         if split>0:
             prefix=prefix[split:]
         return prefix[::-1]
-        
-        
+
+
 
 elif __vi__[0] == 3:
 
     from builtins import bytes as _bytes
     from os.path import commonpath
+    from inspect import signature
 
+    def get_func_params(func):
+        sig=signature(func)
+        ret={}
+        for i,k in enumerate(sig.parameters):
+            if i==0:
+                continue
+            ret[k]=sig.parameters[k]
+        return list(ret.keys())
 
     string_types = (str, )
     int_types=(int,)

@@ -16,7 +16,7 @@ from scipy.interpolate import interp1d, UnivariateSpline
 from scipy.optimize import curve_fit,newton
 from scipy.signal import savgol_filter
 
-from .compat import python_v3, string_types, int_types, index_types, LooseVersion
+from .compat import python_v3, string_types, int_types, index_types, LooseVersion,get_func_params
 from .tools import isNone, isiterable, all_type, istuple,islike_list
 
 if python_v3:
@@ -189,19 +189,7 @@ class _curve_fit_result(object):
     @property
     def params(self):
         """A list of parameter class objects."""
-        if python_v3:
-            sig=signature(self.func)
-            ret={}
-            for i,k in enumerate(sig.parameters):
-                if i==0:
-                    continue
-                ret[k]=sig.parameters[k]
-        else:
-            ret={}
-            for arg in getargspec(self.func)[0][1:]:
-                ret[arg]=arg
-        return ret
-
+        return get_func_params(self.func)
 
     def fit_report(self):
         """A Fit report like lmfit does."""
@@ -222,7 +210,7 @@ class _curve_fit_result(object):
         for i,p in enumerate(self.params):
             for j in range(i+1,len(self.params)):
                 if _np_.abs(self.pcov[i,j])>0.1:
-                    template+="\t({},{})\t\t={:.3f}".format(p,list(self.params.keys())[j],self.pcov[i,j])
+                    template+="\t({},{})\t\t={:.3f}".format(p,list(self.params)[j],self.pcov[i,j])
         return template
 
 def _lmfit_p0_dict(p0,model):
@@ -318,16 +306,47 @@ def _prep_lmfit_p0(model,ydata,xdata,p0,kargs):
             p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
     return p0,single_fit
 
-def _outlier(row, column, window, metric):
+def _outlier(row, window, metric,ycol=None):
     """Internal function for outlier detector.
 
     Calculates if the current row is an outlier from the surrounding data by looking
     at the number of standard deviations away from the average of the window it is.
     """
-    av = _np_.average(window[:, column])
-    std = _np_.std(window[:, column])  #standard deviation
-    return abs(row[column] - av) > metric * std
+    av = _np_.average(window[:, ycol])
+    std = _np_.std(window[:, ycol])  #standard deviation
+    return abs(row[ycol] - av) > metric * std
 
+def _poly_outlier(row, window, metric=3.0, ycol=None,xcol=None, order=1,yerr=None):
+    """Alternative outlier detection function that fits a polynomial locally over the window.
+
+    Args:
+        row (1D array): Current row of data
+        column int): Column index of y values to examine
+        window (2D array): Local window of data
+
+    Keyyword Arguments:
+        metric (float): Some measure of how sensitive the dection should be
+        xcol (column index): Column of data to use for X values. Defaults to current setas value
+        order (int): Order of polynomial to fit. Must be < length of window-1
+
+    Returns:
+        True if current row is an outlier
+    """
+    if order > window.shape[0] - 2:
+        raise ValueError("order should be smaller than the window length. {} vs {}".format(order,window.shape[0]-2))
+
+
+    x=window[:,xcol]-row[xcol]
+    y=window[:,ycol]
+    if yerr:
+        w=1.0/window[:,yerr]
+    else:
+        w=None
+
+    popt, pcov = _np_.polyfit(x,y, w=w,deg=order, cov=True)
+    pval = _np_.polyval(popt, 0.0)
+    perr=_np_.sqrt(_np_.diag(pcov))[-1]
+    return (pval-row[ycol])**2 > metric * perr
 
 def _threshold(threshold, data, rising=True, falling=False):
     """Internal function that implements the threshold method - also used in peak-finder
@@ -578,38 +597,6 @@ class AnalysisMixin(object):
             raise RuntimeError("Bad column index: {}".format(col))
         return data, name
 
-    def _poly_outlier(self, row, column, window, metric=3.0, xcol=None, order=1,yerr=None):
-        """Alternative outlier detection function that fits a polynomial locally over the window.
-
-        Args:
-            row (1D array): Current row of data
-            column int): Column index of y values to examine
-            window (2D array): Local window of data
-
-        Keyyword Arguments:
-            metric (float): Some measure of how sensitive the dection should be
-            xcol (column index): Column of data to use for X values. Defaults to current setas value
-            order (int): Order of polynomial to fit. Must be < length of window-1
-
-        Returns:
-            True if current row is an outlier
-        """
-        if order > window.shape[0] - 2:
-            raise ValueError("order should be smaller than the window length.")
-        _=self._col_args(xcol=xcol,ycol=column,yerr=yerr)
-
-
-        x=window[:,_.xcol]-row[_.xcol]
-        y=window[:,_.ycol]
-        if _.yerr:
-            w=1.0/window[:,_.yerr]
-        else:
-            w=None
-
-        popt, pcov = _np_.polyfit(x,y, w=w,deg=order, cov=True)
-        pval = _np_.polyval(popt, 0.0)
-        perr = _np_.sqrt(_np_.diag(pcov))[-1]
-        return abs(pval-row[_.ycol]) > metric * perr
 
     def _get_curve_fit_data(self,xcol,ycol,bounds,sigma):
         """Gather up the xdata and sigma columns for curve_fit."""
@@ -2147,23 +2134,26 @@ class AnalysisMixin(object):
         if func is None:
             func = _outlier
 
-        if column is None:
-            column = self.setas._get_cols("ycol")
+        _=self._col_args(scalar=True,ycol=column,**kargs)
+        params=get_func_params(func)
+        for p in params:
+            if p in _:
+                kargs[p]=_[p]
+
+        if action not in ["delete","mask","mask row"] and not callable(action):
+            raise ValueError("Do'n know what to do with action={}".format(action))
         index = []
-        column = self.find_col(column)  #going to be easier if this is an integer later on
         for i, t in enumerate(self.rolling_window(window, wrap=False, exclude_centre=width)):
-            if func(self.data[i], column, t, metric=certainty, **kargs):
+            if func(self.data[i], t, metric=certainty, **kargs):
                 index.append(i)
         self['outliers'] = index  #add outlier indecies to metadata
         index.reverse()  #Always reverse the index in case we're deleting rows in sucession
         if action == 'mask' or action == 'mask row':
-            mask = _np_.zeros(self.data.shape, dtype=bool)
             for i in index:
                 if action == 'mask':
-                    mask[i, column] = True
+                    self.mask[i, column] = True
                 else:
-                    mask[i,:] = True
-            self.mask = mask
+                    self.mask[i,:] = True
         elif action == 'delete':
             for i in index:
                 self.del_rows(i)
@@ -2773,27 +2763,29 @@ class AnalysisMixin(object):
 
         #Recursively call if we've got an iterable threshold
         if isiterable(threshold):
-            ret = []
-            for th in threshold:
-                ret.append(self.threshold(th,col=col,xcol=xcol,rising=rising,falling=falling,all_vals=all_vals))
+            if isinstance(xcol,bool) and not xcol:
+                ret=_np_.zeros((len(threshold),self.shape[1]))
+            else:
+                ret = _np_.zeros_like(threshold).view(type=DataArray)
+            for ix,th in enumerate(threshold):
+                ret[ix]=self.threshold(th,col=col,xcol=xcol,rising=rising,falling=falling,all_vals=all_vals)
             #Now we have to clean up the  retujrn list into a DataArray
-            retval=DataArray(ret)
-            if isinstance(ret[0],DataArray): # if xcol was False we got a complete row back
-                setas=ret[0].setas.clone
-                ch=ret[0].column_headers
-                retval.setas=setas
-                retval.column_headers=ch
-                retval.i=ret[0].i
+            if isinstance(xcol,bool) and not xcol: # if xcol was False we got a complete row back
+                ch=self.column_headers
+                ret.setas=self.setas.clone
+                ret.column_headers=ch
+                ret.i=ret[0].i
             else: #Either xcol was None so we got indices or we got a specified column back
                 if xcol is not None: # Specific column
-                    retval.column_headers=[self.column_headers[self.find_col(xcol)]]
-                    retval.i=[r.i for r in ret]
-                    retval.setas="x"
-                    retval.isrow=False
+                    ret=_np_.atleast_2d(ret)
+                    ret.column_headers=[self.column_headers[self.find_col(xcol)]]
+                    ret.i=[r.i for r in ret]
+                    ret.setas="x"
+                    ret.isrow=False
                 else:
-                    retval.column_headers=["Index"]
-                    retval.isrow=False
-            return retval
+                    ret.column_headers=["Index"]
+                    ret.isrow=False
+            return ret
         else:
             ret = _threshold(threshold, current, rising=rising, falling=falling)
             if not all_vals:
