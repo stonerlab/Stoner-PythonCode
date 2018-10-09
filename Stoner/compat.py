@@ -9,7 +9,6 @@ Created on Tue Jan 14 19:53:11 2014
 """
 from __future__ import print_function, absolute_import, division, unicode_literals
 from sys import version_info as __vi__
-from re import _pattern_type
 from matplotlib import __version__ as mpl_version
 from distutils.version import LooseVersion
 from os import walk
@@ -29,6 +28,7 @@ __all__ = ["python_v3","str2bytes","bytes2str","get_filedialog","string_types","
 
 # Nasty hacks to sort out some naming conventions
 if __vi__[0] == 2:
+    from re import _pattern_type
     from inspect import getargspec
 
     def get_func_params(func):
@@ -91,6 +91,12 @@ if __vi__[0] == 2:
 
 
 elif __vi__[0] == 3:
+    
+    if __vi__[1] <7:
+        from re import _pattern_type
+    else:
+        from re import Pattern as _pattern_type
+
 
     from builtins import bytes as _bytes
     from os.path import commonpath

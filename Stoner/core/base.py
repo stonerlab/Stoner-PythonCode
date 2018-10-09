@@ -11,7 +11,7 @@ import numpy as np
 from numpy import isnan
 from numpy import NaN
 
-from ..compat import python_v3,string_types,int_types
+from ..compat import python_v3,string_types,int_types,_pattern_type
 from ..tools import isiterable,isComparable
 
 try:
@@ -37,7 +37,7 @@ class regexpDict(sorteddict):
         """Lookup name and find a matching key or raise KeyError.
 
         Parameters:
-            name (str, re._pattern_type): The name to be searched for
+            name (str, _pattern_type): The name to be searched for
 
         Keyword Arguments:
             multiple (bool): Return a singl entry ()default, False) or multiple entries
@@ -67,7 +67,7 @@ class regexpDict(sorteddict):
                 ret=list(self.keys())[name]
             else:
                 nm=name
-            if isinstance(nm,re._pattern_type):
+            if isinstance(nm,_pattern_type):
                 ret=[n for n in self.keys() if isinstance(n,string_types) and nm.match(n)]
         if ret is None or isiterable(ret) and not ret:
             raise KeyError("{} is not a match to any key.".format(name))

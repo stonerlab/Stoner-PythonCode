@@ -20,7 +20,7 @@ import numpy as _np_
 from numpy import NaN # pylint: disable=unused-import
 import numpy.ma as _ma_
 
-from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,bytes2str
+from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,bytes2str,_pattern_type
 from .tools import isNone,all_size,all_type,_attribute_store,operator,isiterable,typedList,islike_list,get_option,istuple
 
 from .core.exceptions import StonerLoadError,StonerSetasError
@@ -1461,7 +1461,7 @@ class DataFile(metadataObject):
             and DataFile[5,3] would return the 6th element of the
             4th column.
         """
-        if isinstance(name, string_types+(re._pattern_type,)):
+        if isinstance(name, string_types+(_pattern_type,)):
             try:
                 ret = self.__meta__(name)
             except KeyError:
@@ -2387,7 +2387,7 @@ class DataFile(metadataObject):
         if pattern is None:
             return list(self.metadata.keys())
         else:
-            if isinstance(pattern, re._pattern_type):
+            if isinstance(pattern, _pattern_type):
                 test = pattern
             else:
                 test = re.compile(pattern)
@@ -3106,7 +3106,7 @@ class DataFile(metadataObject):
             else:
                 test = re.compile(ky)
                 ret = self.__regexp_meta__(test)
-        elif isinstance(ky, re._pattern_type):
+        elif isinstance(ky, _pattern_type):
             ret = self.__regexp_meta__(ky)
         else:
             raise TypeError("Only strings and regular expressions  are supported as search keys for metadata")

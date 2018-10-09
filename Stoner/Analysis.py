@@ -903,7 +903,7 @@ class AnalysisMixin(object):
         ret = func(next(self.rows()),**kargs)
         try:
             next(self.rows(reset=True))
-        except StopIteration:
+        except (RuntimeError,StopIteration):
             pass
         if isiterable(ret):
             nc=_np_.zeros((len(self),len(ret)))

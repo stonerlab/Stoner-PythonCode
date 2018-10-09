@@ -80,7 +80,7 @@ class Analysis_test(unittest.TestCase):
         self.app.apply(calc,replace=False,header="Sin",_extra={"omega":0.1},k=1.0)
         self.app.apply(lambda r:r.__class__([r[1],r[0]]),replace=True,header=["Index","Sin"])
         self.app.setas="xy"
-        self.assertAlmostEqual(self.app.integrate(),-64.1722191259037,"Integrate after aplies failed.")
+        self.assertAlmostEqual(self.app.integrate(),-64.1722191259037,msg="Integrate after aplies failed.")
 
 
 

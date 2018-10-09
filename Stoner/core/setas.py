@@ -8,7 +8,7 @@ import re
 import copy
 import numpy as _np_
 
-from ..compat import string_types,int_types,index_types
+from ..compat import string_types,int_types,index_types,_pattern_type
 from ..tools import _attribute_store,isiterable,typedList,islike_list,istuple
 
 from collections import MutableMapping
@@ -479,7 +479,7 @@ class _setas(MutableMapping):
                         raise KeyError('Column index out of range')
                 else:
                     col = self.column_headers.index(possible[0])
-        elif isinstance(col, re._pattern_type):
+        elif isinstance(col, _pattern_type):
             test = col
             possible = [x for x in self.column_headers if test.search(x)]
             if not possible:
