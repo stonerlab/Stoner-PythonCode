@@ -1468,7 +1468,15 @@ class MaskProxy(object):
     def _mask(self):
         self._IA.mask=np.ma.getmaskarray(self._IA)
         return self._IA.mask
-
+    
+    @property
+    def data(self):
+        return self[:]
+    
+    @property
+    def image(self):
+        return self[:]
+    
     @property
     def draw(self):
         return DrawProxy(self._mask)
