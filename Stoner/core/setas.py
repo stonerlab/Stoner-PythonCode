@@ -134,7 +134,27 @@ class _setas(MutableMapping):
         if not isinstance(value,dict):
             raise AttributeError("cols attribute must be a dictionary")
         self._cols=_attribute_store(value)
-
+    
+    @property
+    def x(self):
+        """Quick access to the x column number
+        Just a convenience read only property. If we want to change the setas.x
+        value we should use the setas(x=1,y=2) style call (so that reset can
+        be handled properly)
+        """
+        return self.cols['xcol']
+    
+    
+    @property
+    def y(self):
+        """Quick access to the y column numbers list"""
+        return self.cols['ycol']
+    
+    @property
+    def z(self):
+        """Quick access to the z column numbers list"""
+        return self.cols['zcol']
+    
     @property
     def column_headers(self):
         """Get the current column headers."""
