@@ -97,9 +97,12 @@ class SetasTest(unittest.TestCase):
         self.assertEqual(d.metadata.type(["User","Timestamp"]),['String', 'String'],"Metadata.type with slice failed")
         d.data["Column 2",:]=np.zeros(len(d)) #TODO make this work with d["Column 2",:] as well
         self.assertTrue(d.z.max()==0.0 and d.z.min()==0.0,"Failed to set Dataarray using string indexing")
-
+        self.assertTrue(d.setas.x==0 and d.setas.y==[1] and d.setas.z==[2])
+        d.setas(x=1, y='Column 2')
+        self.assertTrue(d.setas.x==1 and d.setas.y==[2])
+        
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=SetasTest("test_setas_metadata")
     test.setUp()
-    #test.test_setas()
-    unittest.main()
+    test.test_setas_metadata()
+    #unittest.main()
