@@ -12,7 +12,7 @@ import os, os.path as path
 import numpy as np
 import re
 from numpy import any,all,sqrt,nan
-from collections import MutableMapping
+from collections import MutableMapping,OrderedDict
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
@@ -97,7 +97,7 @@ index                             0 (x)     1 (y)
     def test_deltions(self):
         ch=["{}-Data".format(chr(x)) for x in range(65,91)]
         data=np.zeros((100,26))
-        metadata={"Key 1":True,"Key 2":12,"Key 3":"Hellow world"}
+        metadata=OrderedDict([("Key 1",True),("Key 2",12),("Key 3","Hellow world")])
         self.dd=Data(metadata)
         self.dd.data=data
         self.dd.column_headers=ch
