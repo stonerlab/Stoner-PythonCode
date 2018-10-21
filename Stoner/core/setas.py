@@ -8,7 +8,7 @@ import re
 import copy
 import numpy as _np_
 
-from ..compat import string_types,int_types,index_types
+from ..compat import string_types,int_types,index_types,_pattern_type
 from ..tools import _attribute_store,isiterable,typedList,islike_list,istuple
 
 from collections import MutableMapping
@@ -80,7 +80,10 @@ class _setas(MutableMapping):
                     self.setas=[]
                 value=self._decode_string(value)
             elif isinstance(value, _setas):
-                value = value.setas
+                if value is not self:
+                    value = value.setas
+                else:
+                    value=self._setas
         else:
             value = kargs
             if reset:
@@ -134,7 +137,27 @@ class _setas(MutableMapping):
         if not isinstance(value,dict):
             raise AttributeError("cols attribute must be a dictionary")
         self._cols=_attribute_store(value)
-
+    
+    @property
+    def x(self):
+        """Quick access to the x column number
+        Just a convenience read only property. If we want to change the setas.x
+        value we should use the setas(x=1,y=2) style call (so that reset can
+        be handled properly)
+        """
+        return self.cols['xcol']
+    
+    
+    @property
+    def y(self):
+        """Quick access to the y column numbers list"""
+        return self.cols['ycol']
+    
+    @property
+    def z(self):
+        """Quick access to the z column numbers list"""
+        return self.cols['zcol']
+    
     @property
     def column_headers(self):
         """Get the current column headers."""
@@ -479,7 +502,7 @@ class _setas(MutableMapping):
                         raise KeyError('Column index out of range')
                 else:
                     col = self.column_headers.index(possible[0])
-        elif isinstance(col, re._pattern_type):
+        elif isinstance(col, _pattern_type):
             test = col
             possible = [x for x in self.column_headers if test.search(x)]
             if not possible:

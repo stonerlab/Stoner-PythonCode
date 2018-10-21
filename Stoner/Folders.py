@@ -3,7 +3,7 @@
 The core classes provides a means to access them as an ordered collection or as a mapping.
 """
 __all__ = ["each_item","combined_metadata_proxy","baseFolder","DiskBasedFolder","DataFolder","PlotFolder"]
-from Stoner.compat import python_v3,int_types,string_types,get_filedialog,commonpath
+from Stoner.compat import python_v3,int_types,string_types,get_filedialog,commonpath,_pattern_type
 from .tools import operator,isiterable,isproperty,islike_list,all_type
 import os
 import re
@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 from .Core import metadataObject,DataFile,regexpDict,typeHintedDict
 
 
-regexp_type=(re._pattern_type,)
+regexp_type=(_pattern_type,)
 
 def _pathsplit(pth):
     """Split pth into a sequence of individual parts with path.split."""
@@ -1574,7 +1574,7 @@ class baseFolder(MutableSequence):
                 return len(fnmatch.filter(self.__names__(),name))
             else:
                 return self.__names__().count(self.__lookup__(name))
-        if isinstance(name,re._pattern_type):
+        if isinstance(name,_pattern_type):
             match=[1 for n in self.__names__() if name.match(n)]
             return len(match)
         if isinstance(name,metadataObject):
@@ -1648,7 +1648,7 @@ class baseFolder(MutableSequence):
             for f in result.__names__():
                 if fnmatch.fnmatch(f, filter)  ^ invert:
                     names.append(result.__getter__(f))
-        elif isinstance(filter, re._pattern_type):
+        elif isinstance(filter, _pattern_type):
             for f in result.__names__():
                 if filter.search(f) is not None:
                     names.append(result.__getter__(f))
@@ -1776,7 +1776,7 @@ class baseFolder(MutableSequence):
                     raise ValueError("{} is not a name of a metadataObject in this baseFolder.".format(name))
             else:
                 return search.index(self.__lookup__(name))+start
-        if isinstance(name,re._pattern_type):
+        if isinstance(name,_pattern_type):
             for i,n in enumerate(search):
                 if name.match(n): return i+start
             raise ValueError("No match for any name of a metadataObject in this baseFolder.")
@@ -2009,7 +2009,7 @@ class baseFolder(MutableSequence):
             fnames.sort(reverse=reverse)
             new_order=[self.__getter__(name,instantiate=False) for name in fnames]
             new_names=fnames
-        elif isinstance(key,re._pattern_type):
+        elif isinstance(key,_pattern_type):
             if python_v3:
                 new_names=sorted(self.__names__(),key=lambda x:key.match(x).groups(), reverse=reverse)
             else:
@@ -2363,7 +2363,7 @@ class DiskBasedFolder(object):
         """Sets the filename searching pattern[s] for the :py:class:`Stoner.Core.metadataObject`s."""
         if isinstance(value,string_types):
             self._pattern=(value,)
-        elif isinstance(value,re._pattern_type):
+        elif isinstance(value,_pattern_type):
             self._pattern=(value,)
         elif isiterable(value):
             self._pattern=[x for x in value]
@@ -2410,7 +2410,7 @@ class DiskBasedFolder(object):
             if isinstance(p,string_types):
                 for f in list(fnmatch.filter(files,p)):
                     del files[files.index(f)]
-            if isinstance(p,re._pattern_type):
+            if isinstance(p,_pattern_type):
                 matched=[]
                 # For reg expts we iterate over all files, but we can't delete matched
                 # files as we go as we're iterating over them - so we store the
@@ -2429,7 +2429,7 @@ class DiskBasedFolder(object):
                     # Now delete the matched file from the list of candidates
                     #This stops us double adding fles that match multiple patterns
                     del(files[files.index(f)])
-            if isinstance(p,re._pattern_type):
+            if isinstance(p,_pattern_type):
                 matched=[]
                 # For reg expts we iterate over all files, but we can't delete matched
                 # files as we go as we're iterating over them - so we store the
@@ -2480,7 +2480,7 @@ class DiskBasedFolder(object):
     def on_load_process(self,tmp):
         """Carry out processing on a newly loaded file to set means and extra metadata."""
         for p in self.pattern:
-            if isinstance(p,re._pattern_type) and (p.search(tmp.filename) is not None):
+            if isinstance(p,_pattern_type) and (p.search(tmp.filename) is not None):
                 m=p.search(tmp.filename)
                 for k in m.groupdict():
                     tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
@@ -2561,7 +2561,7 @@ class DataFolder(DiskBasedFolder,baseFolder):
         if not isinstance(tmp.filename,string_types):
             tmp.filename=path.basename(f)
         for p in self.pattern:
-            if isinstance(p,re._pattern_type) and (p.search(tmp.filename) is not None):
+            if isinstance(p,_pattern_type) and (p.search(tmp.filename) is not None):
                 m=p.search(tmp.filename)
                 for k in m.groupdict():
                     tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))

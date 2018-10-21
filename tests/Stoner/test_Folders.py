@@ -204,11 +204,19 @@ class Folders_test(unittest.TestCase):
         plt.close("all")
 
 if __name__=="__main__": # Run some tests manually to allow debugging
+    print("start")
     test=Folders_test("test_Folders")
+    print("Setup")
     test.setUp()
-    #test.test_Operators()
-    #test.test_clone()
-    #test.test_Folders()
-    unittest.main()
-    #test.test_grouping()
-    #test.fldr.each.title
+    print("Ops")
+    test.test_Operators()
+#    print("Clone")
+#    test.test_clone()
+#    print("Folders")
+#    test.test_Folders()
+#    #unittest.main()
+#    print("Group")
+#    test.test_grouping()
+#    print("Each")
+#    test.fldr.each.title
+    pass

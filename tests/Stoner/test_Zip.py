@@ -39,7 +39,8 @@ class Zip_test(unittest.TestCase):
         self.assertEqual(self.fldr.shape,self.zipfldr.shape,"ZipFolder Changed shape when saving!")
         self.zipfldr_2=SZ.ZipFolder(zipname).compress()
         self.assertEqual(self.zipfldr_2.shape,self.zipfldr.shape,"ZipFolder loaded from disc not same shape as ZipFolder in memory!")
-        self.assertEqual(self.zipfldr[0],self.zipfldr_2[0],"File from loaded ZipFolder not the same as in memeory ZipFolder.")
+        self.fname=path.basename(self.zipfldr[0].filename)
+        self.assertEqual(self.zipfldr[self.fname],self.zipfldr_2[self.fname],"File from loaded ZipFolder not the same as in memeory ZipFolder.")
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging

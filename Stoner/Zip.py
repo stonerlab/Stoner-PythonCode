@@ -15,7 +15,7 @@ from copy import copy
 import fnmatch
 import re
 
-from .compat import string_types,bytes2str,str2bytes,get_filedialog
+from .compat import string_types,bytes2str,str2bytes,get_filedialog,_pattern_type
 from .Core import DataFile,StonerLoadError
 from .Folders import baseFolder,pathjoin,DiskBasedFolder
 
@@ -323,7 +323,7 @@ class ZipFolderMixin(object):
             if isinstance(p,string_types):
                 for f in list(fnmatch.filter(files,p)):
                     del files[files.index(f)]
-            if isinstance(p,re._pattern_type):
+            if isinstance(p,_pattern_type):
                 matched=[]
                 # For reg expts we iterate over all files, but we can't delete matched
                 # files as we go as we're iterating over them - so we store the
@@ -341,7 +341,7 @@ class ZipFolderMixin(object):
                     del(files[files.index(f)])
                     f.replace(path.sep,"/")
                     self.append(f)
-            elif isinstance(p,re._pattern_type):
+            elif isinstance(p,_pattern_type):
                 matched=[]
                 # For reg expts we iterate over all files, but we can't delete matched
                 # files as we go as we're iterating over them - so we store the
