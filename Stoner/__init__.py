@@ -21,7 +21,7 @@ from .compat import _lmfit,Model
 from .tools import format_error,set_option,get_option
 
 from os import path as _path_
-__version_info__ = ('0', '9', '0dev')
+__version_info__ = ('0', '9', '0dev2')
 __version__ = '.'.join(__version_info__)
 
 __home__=_path_.realpath(_path_.dirname(__file__))
