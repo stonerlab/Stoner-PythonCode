@@ -505,7 +505,10 @@ class PlotMixin(object):
         for prefix,(obj,key) in mapping.items():
             name=o_name[len(prefix):] if o_name.startswith(prefix) else o_name
             if name in dir(obj):
-                return self._pyplot_proxy(name,key)
+                try:
+                    return self._pyplot_proxy(name,key)
+                except AttributeError:
+                    pass
 
         #Nowcheck for prefixed access on axes and figures with get_
         if name.startswith("ax_") and "get_{}".format(name[3:]) in dir(plt.Axes):

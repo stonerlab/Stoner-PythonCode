@@ -36,7 +36,7 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
   # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
-  - conda install --yes stoner
+  - conda install --yes stoner tabulate
   # Now we unistall the stable stoner
   - conda remove --yes stoner
   - pip install opencv_python

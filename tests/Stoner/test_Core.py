@@ -102,7 +102,7 @@ index                             0 (x)     1 (y)
         self.dd.data=data
         self.dd.column_headers=ch
         self.dd.setas="3.x3.y3.z"
-        repr_string="""===========================  ========  =======  ========  =======  ========  ========
+        self.repr_string="""===========================  ========  =======  ========  =======  ========  ========
 TDI Format 1.5                 D-Data   ....      H-Data   ....      Y-Data    Z-Data
 index                           3 (x)              7 (y)                 24        25
 ===========================  ========  =======  ========  =======  ========  ========
@@ -111,7 +111,7 @@ Key 2{I32}= 12                      0  ...             0  ...             0     
 Key 3{String}= Hellow world         0  ...             0  ...             0         0
 Stoner.class{String}= Data          0  ...             0  ...             0         0
 ...                                 0  ...             0  ...             0         0"""
-        self.assertEqual("\n".join(repr(self.dd).split("\n")[:9]),repr_string,"Representation with interesting columns failed.")
+        self.assertEqual("\n".join(repr(self.dd).split("\n")[:9]),self.repr_string,"Representation with interesting columns failed.")
         del self.dd["Key 1"]
         self.assertEqual(len(self.dd.metadata),3,"Deletion of metadata failed.")
         del self.dd[20:30]
@@ -466,5 +466,7 @@ class typeHintedDictTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Datatest("test_operators")
     test.setUp()
+    #test.test_filter()
+#    test.test_deltions()
     #test.test_dir()
     unittest.main()

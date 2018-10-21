@@ -80,7 +80,10 @@ class _setas(MutableMapping):
                     self.setas=[]
                 value=self._decode_string(value)
             elif isinstance(value, _setas):
-                value = value.setas
+                if value is not self:
+                    value = value.setas
+                else:
+                    value=self._setas
         else:
             value = kargs
             if reset:

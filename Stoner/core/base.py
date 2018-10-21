@@ -172,16 +172,16 @@ class typeHintedDict(regexpDict):
     __regexString = re.compile(r'^(String|Path|Enum)')
     __regexEvaluatable = re.compile(r'^(Cluster||\d+D Array|List)')
 
-    __types = {
-        'Boolean': bool,
-        'I32': int,
-        'Double Float': float,
-        'Cluster': dict,
-        'AnonCluster':tuple,
-        'Array': np.ndarray,
-        'List': list,
-        'String': str
-    }
+    __types = OrderedDict([ # Key order does matter here!
+        ('Boolean', bool),
+        ('I32', int),
+        ('Double Float', float),
+        ('Cluster', dict),
+        ('AnonCluster',tuple),
+        ('Array', np.ndarray),
+        ('List', list),
+        ('String', str)]
+    )
     # This is the inverse of the __tests below - this gives
     # the string type for standard Python classes
 

@@ -201,7 +201,10 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
                                 deepcopy(ImageArray._extra_attributes_default))
         setattr(self, '_optinfo', copy(_extra_attributes))
         for k,v in _extra_attributes.items():
-            setattr(self, k, getattr(obj, k, v))
+            try:
+                setattr(self, k, getattr(obj, k, v))
+            except AttributeError: #Some versions of  python don't like this
+                pass
         super(ImageArray,self).__array_finalize__(obj)
 
     def __array_prepare__(self,arr, context=None):

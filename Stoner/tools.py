@@ -363,7 +363,11 @@ def isNone(iterator):
     if iterator is None:
         ret=True
     elif isiterable(iterator) and not isinstance(iterator,string_types):
-        if len(iterator)==0: # pylint: disable=len-as-condition
+        try:
+            l=len(iterator)
+        except TypeError:
+            l=0
+        if l==0: # pylint: disable=len-as-condition
             ret=True
         else:
             for i in iterator:

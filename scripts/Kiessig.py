@@ -30,7 +30,8 @@ d=Data(filename,setas="xy") #Load the low angle scan
 # Finally we interpolate back to the complete data set to make sure we get the angle as well as the counts.
 d.lmfit(ExponentialModel,result=True,replace=False,header="Envelope")
 d.subtract("Counts","Envelope",replace=False,header="peaks")
-d%="Envelope"
+d.setas="xy"
+sys.exit()
 t=Data(d.interpolate(d.peaks(significance=sensitivity,width=8,poly=4)))
 
 t.column_headers=copy(d.column_headers)
