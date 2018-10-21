@@ -137,7 +137,7 @@ class _setas(MutableMapping):
         if not isinstance(value,dict):
             raise AttributeError("cols attribute must be a dictionary")
         self._cols=_attribute_store(value)
-    
+
     @property
     def x(self):
         """Quick access to the x column number
@@ -146,18 +146,18 @@ class _setas(MutableMapping):
         be handled properly)
         """
         return self.cols['xcol']
-    
-    
+
+
     @property
     def y(self):
         """Quick access to the y column numbers list"""
         return self.cols['ycol']
-    
+
     @property
     def z(self):
         """Quick access to the z column numbers list"""
         return self.cols['zcol']
-    
+
     @property
     def column_headers(self):
         """Get the current column headers."""
@@ -298,8 +298,8 @@ class _setas(MutableMapping):
 
     def __getattr__(self,name):
         """Try to see if attribute name is a key in self.cols and return that instead."""
-        if name in self.cols:
-            return self.cols[name]
+        if name in self._cols:
+            return self._cols[name]
         return super(_setas,self).__getattr__(name)
 
     def __getitem__(self, name):
