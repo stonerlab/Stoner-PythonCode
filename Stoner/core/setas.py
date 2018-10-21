@@ -298,7 +298,7 @@ class _setas(MutableMapping):
 
     def __getattr__(self,name):
         """Try to see if attribute name is a key in self.cols and return that instead."""
-        if name in self._cols:
+        if name!="_cols" and name in self._cols:
             return self._cols[name]
         return super(_setas,self).__getattr__(name)
 
