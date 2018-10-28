@@ -55,7 +55,7 @@ except ImportError:
     class _dummy(object):
         """A class that does nothing so that float64 can be an instance of it safely."""
         
-        def __Call__(self,*args):
+        def __call__(self,*args):
             return self
         
         def __getitem__(self,*args):
