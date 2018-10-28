@@ -52,9 +52,16 @@ except ImportError:
         """Null decorator function."""
         return func
 
-    def float64(*args):
-        """Define callable symbols if numba not installed."""
-        return lambda *args:len(args)
+    class _dummy(object):
+        """A class that does nothing so that float64 can be an instance of it safely."""
+        
+        def __Call__(self,*args):
+            return self
+        
+        def __getitem__(self,*args):
+            return self
+    
+    float64=_dummy()
 
 from matplotlib.pyplot import plot
 
