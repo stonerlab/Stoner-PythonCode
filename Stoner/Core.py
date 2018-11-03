@@ -305,6 +305,8 @@ class DataArray(_ma_.MaskedArray):
             if self._setas.cols[col] is not None:
                 indexer[-1]=self._setas.cols[col]
                 ret = self[tuple(indexer)]
+                if ret.ndim>0:
+                    ret.column_headers=self.column_headers[self._setas.cols[col]]
             else:
                 ret = None
         else:
@@ -315,6 +317,8 @@ class DataArray(_ma_.MaskedArray):
             else:
                 return None
             ret = self[tuple(indexer)]
+            if ret.ndim>0:
+                ret.column_headers=self.column_headers[indexer[-1]]
         if ret is None:
             raise StonerSetasError("Tried accessing a {} column, but setas is not defined.".format(name))
         else:
@@ -2061,31 +2065,21 @@ class DataFile(metadataObject):
             Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
             the original DataFile Instance as well as returning it.
         """
-        if index is None or isinstance(index,bool) and index:
+        if index is None or isinstance(index,bool) and index: #Enure index is set
             index = self.shape[1]
             replace = False
-            if header is None:
-                header = "Col{}".format(index)
         else:
             index = self.find_col(index)
-            if header is None:
-                header = self.column_headers[index]
 
-        if isinstance(setas,str) and len(setas)==1 and setas in "xyzdefuvw.-":
-            pass
-        elif setas is not None:
-            raise TypeError("setas parameter should be a single letter in the set xyzdefuvw.-, not {}".format(setas))
-        else:
-            setas="."
-
+        #Sort out the data and get it into an array of values.
         if isinstance(column_data, list):
             column_data = _np_.array(column_data)
 
+        if isinstance(column_data,DataArray) and header is None:
+            header=column_data.column_headers
+
         if isinstance(column_data, _np_.ndarray):
-            if len(_np_.shape(column_data)) != 1:
-                raise ValueError('Column data must be 1 dimensional not {}'.format(column_data.shape))
-            else:
-                _np__data = column_data
+            _np__data = column_data
         elif callable(column_data):
             if isinstance(func_args, dict):
                 new_data = [column_data(x, **func_args) for x in self]
@@ -2094,42 +2088,69 @@ class DataFile(metadataObject):
             _np__data = _np_.array(new_data)
         else:
             return NotImplemented
+
         #Sort out the sizes of the arrays
-        cl = len(_np__data)
-        if len(self.data.shape) == 2:
-            (dr, dc) = self.data.shape
-        elif len(self.data.shape) == 1:
+        if _np__data.ndim==1:
+            _np__data=_np_.atleast_2d(_np__data).T
+        cl,cw=_np__data.shape
+
+        #Make setas
+        setas = "."*cw if setas is None else setas
+
+        if isiterable(setas) and len(setas)==cw:
+            for s in setas:
+                if s not in ".-xyzuvwdefpqr":
+                    raise TypeError("setas parameter should be a string or list of letter in the set xyzdefuvw.-, not {}".format(setas))
+        else:
+            raise TypeError("setas parameter should be a string or list of letter the same length as the number of columns being added in the set xyzdefuvw.-, not {}".format(setas))
+
+        #Make sure our current data is at least 2D and get its size
+        if len(self.data.shape) == 1:
             self.data = _np_.atleast_2d(self.data).T
+        if len(self.data.shape) == 2:
             (dr, dc) = self.data.shape
         elif not self.data.shape:
             self.data = _np_.array([[]])
             (dr, dc) = (0, 0)
-        if cl > dr and dc * dr > 0:
+
+        #Expand either our current data or new data to have the same number of rows
+        if cl > dr and dc * dr > 0: # Existing data is finite and too short
             self.data = DataArray(_np_.append(self.data, _np_.zeros((cl - dr, dc)), 0),setas=self.setas.clone)
-        elif cl < dr:
-            _np__data = _np_.append(_np__data, _np_.zeros(dr - cl))
-        if replace:
-            self.data[:, index] = _np__data
-            if setas!="-":
-                self.setas[index]=setas
+        elif cl < dr: # New data is too short
+            _np__data = _np_.append(_np__data, _np_.zeros((dr - cl,cw)))
+        elif dc==0: #Existing data has no width - replace with cl,0
+            self.data=DataArray(_np_.zeros((cl,0)))
+        elif dr==0: #Existing data has no rows - expand existing data with zeros to have right length
+            self.data=DataArray(_np_.append(self.data,_np_.zeros((cl,dr)),axis=0),setas=self.setas.clone)
 
-        else:
-            if dc * dr == 0:
-                self.data = DataArray(_np_.transpose(_np_.atleast_2d(_np__data)),setas=self.data._setas)
-                self.column_headers=[header,]
-                self.setas=setas
+        # If not replacing, then add extra columns to existing data.
+        if not replace:
+            colums=copy.copy(self.column_headers)
+            old_setas=self.setas.clone
+            self.data=DataArray(_np_.append(self.data[:,:index],_np_.append(_np_.zeros_like(_np__data),self.data[:,index:],axis=1),axis=1),setas=self.setas.clone)
+            for ix in range(0,index):
+                self.column_headers[ix]=colums[ix]
+                self.setas[ix]=old_setas[ix]
+            for ix in range(index,dc):
+                self.column_headers[ix+cw]=colums[ix]
+                self.setas[ix+cw]=old_setas[ix]
+        #Check that we don't need to expand to overwrite with the new data
+        if index+cw>self.shape[1]:
+            self.data=DataArray(_np_.append(self.data,_np_.zeros((self.data.shape[0],self.data.shape[1]-index+cw)),axis=1),setas=self.setas.clone)
 
-            else:
-                columns=copy.copy(self.column_headers)
-                old_setas=list(self.setas)
-                if setas!="-":
-                    old_setas.insert(index,setas)
-                else:
-                    old_setas.insert(index,old_setas[index])
-                self.data = DataArray(_np_.insert(self.data, index, _np__data, 1))
-                self.setas(old_setas)  # [ylint: disable=not-callable]
-                columns.insert(index,header)
-                self.column_headers=columns
+        #Put the data into the array
+        self.data[:,index:index+cw]=_np__data
+
+        if header is None: # This will fix the header if not defined.
+            header=["Column {}".format(ix) for ix in range(index,index+cw)]
+        if isinstance(header,string_types):
+            header=[header,]
+        if len(header)!=cw:
+            header.extend(["Column {}".format(x) for x in range(index,index+cw)])
+        for ix,(hdr,s) in enumerate(zip(header,setas)):
+            self.column_headers[ix+index]=hdr
+            self.setas[index+ix]=s
+
         return self
 
     def adjust_setas(self,*args,**kargs):

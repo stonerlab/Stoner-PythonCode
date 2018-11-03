@@ -172,6 +172,8 @@ class _setas(MutableMapping):
         """Set the colum headers."""
         if isinstance(value,_np_.ndarray): #Convert ndarray to list of strings
             value=value.astype(str).tolist()
+        elif isinstance(value,string_types): #Bare strings get turned into lists
+            value=[value]
         self._column_headers=typedList(string_types,value)
 
     @property

@@ -24,6 +24,10 @@ import Stoner.compat
 def extra_get_filedialog(what="file", **opts):
     return path.join(path.dirname(__file__),"CoreTest.dat")
 
+def mask_func(r):
+    return np.abs(r.q)<0.25*np.pi
+
+
 Stoner.Core.get_filedialog=extra_get_filedialog #Monkey patch to test the file dialog
 
 class Datatest(unittest.TestCase):
@@ -308,7 +312,7 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         self.assertTrue(np.max(q_ang)==1.0,"Data.q failure")
         self.assertTrue(np.max(p_ang)==0.5,"Data.p failure")
         self.assertTrue(np.min(p_ang)==-0.5,"Data.p failure")
-        self.little.mask=lambda r:np.abs(r.q)<0.25*np.pi
+        self.little.mask=mask_func
         self.little.mask[:,2]=True
         self.assertEqual(len(repr(self.little).split("\n")),len(self.little)+5,"Non shorterned representation failed.")
 
@@ -324,10 +328,14 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         self.assertTrue(d[9,0]==10 and d[10,0]==0 and d[12,0]==11, "Failed to insert rows properly.")
         d=self.d.clone
         d.add_column(np.ones(len(d)),replace=False,header="added")
-        self.assertTrue(d.shape[1]==self.d.shape[1]+1,"Adding a column with replace=False did add a column.")
+        self.assertTrue(d.shape[1]==self.d.shape[1]+1,"Adding a column with replace=False did not add a column.")
         self.assertTrue(np.all(d.data[:,-1]==np.ones(len(d))),"Didn't add the new column to the end of the data.")
         self.assertTrue(len(d.column_headers)==len(self.d.column_headers)+1,"Column headers isn't bigger by one")
         self.assertTrue(d.column_headers==self.d.column_headers+["added",],"Column header not added correctly")
+        d=self.d.clone
+        d.add_column(self.d.x)
+        self.assertTrue(np.all(d.x==d[:,2]),"Adding a column as a DataArray with column headers didn't work")
+        self.assertTrue(d.x.column_headers[0]==d.column_headers[2],"Adding a column as a DataArray with column headers didn't work")
         e=d.clone
         d.swap_column([(0,1),(0,2)])
         self.assertTrue(d.column_headers==[e.column_headers[x] for x in [2,0,1]],"Swap column test failed: {}".format(d.column_headers))
@@ -466,6 +474,8 @@ class typeHintedDictTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Datatest("test_operators")
     test.setUp()
+    #test.test_properties()
+    #test.test_methods()
     #test.test_filter()
 #    test.test_deltions()
     #test.test_dir()

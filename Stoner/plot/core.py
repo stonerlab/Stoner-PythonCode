@@ -649,7 +649,7 @@ class PlotMixin(object):
         else:
             index = self.find_col(index)
 
-        self.labels[index]=header
+        self.labels=self.labels[:index]+self.column_headers[index:len(self.column_headers)-len(self.labels)+index]+self.labels[index:]
         return self
 
 
