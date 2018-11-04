@@ -534,7 +534,7 @@ class baseFolder(MutableSequence):
             self=super(baseFolder,cls).__new__(cls)
         else:
             self=super(baseFolder,cls).__new__(cls,*args,**kargs)
-        self.debug=kargs.pop("debug",False)
+        self._debug=kargs.pop("debug",False)
         self._object_attrs=dict()
         self._last_name=0
         self._groups=regexpDict()
@@ -545,6 +545,7 @@ class baseFolder(MutableSequence):
         self._type=metadataObject
         self._loader=None
         self._instance_attrs=set()
+        self._root="."
         return self
 
 
@@ -601,6 +602,18 @@ class baseFolder(MutableSequence):
                     for k in cls._no_defaults:
                         self._default_store.pop(k,None)
         return self._default_store
+
+    @property
+    def debug(self):
+        """Just read the local debug value."""
+        return self._debug
+
+    @debug.setter
+    def debug(self,value):
+        """Recursively set the debug value"""
+        self._debug=value
+        for g in self.groups:
+            self.groups[g].debug=value
 
     @property
     def depth(self):
@@ -746,6 +759,14 @@ class baseFolder(MutableSequence):
         """Return a data structure that is characteristic of the objectFolder's shape."""
         grp_shape={k:self[k].shape for k in self.groups}
         return (len(self),grp_shape)
+
+    @property
+    def root(self):
+        return self._root
+
+    @root.setter
+    def root(self,value):
+        self._root=value
 
     @property
     def trunkdepth(self):
@@ -1505,6 +1526,7 @@ class baseFolder(MutableSequence):
             new_group=self.__clone__(attrs_only=True)
             self.groups[key]=new_group
             self.groups[key].key=key
+            self.groups[key].root=path.join(self.root,str(key))
         return self
 
     def all(self):
@@ -1688,22 +1710,27 @@ class baseFolder(MutableSequence):
         """
         if isinstance(depth,int_types):
             if self.depth<=depth:
-                self.flatten()
+                return self.flatten()
             else:
                 for g in self.groups:
                     self.groups[g].flatten(depth)
-        else:
-            for g in self.groups:
-                if self.debug: print("{}->{}".format(self.key,self.groups[g].key))
-                self.groups[g].flatten()
-                for n in self.groups[g].__names__():
-                    value=self.groups[g].__getter__(n,instantiate=None)
-                    if hasattr(value,"filename"):
-                        value.filename=pathjoin(self.groups[g].key,value.filename)
-                    new_name=pathjoin(self.groups[g].key,n)
-                    self.__setter__(new_name,value)
-                self.groups[g].__clear__()
-            self.groups={}
+                return self
+
+        for g in self.groups:
+            if self.debug: print("{}->{}".format(self.key,self.groups[g].key))
+            self.groups[g].flatten()
+            for n in self.groups[g].__names__():
+                value=self.groups[g].__getter__(n,instantiate=None)
+                old_name=pathjoin(self.groups[g].root,n)
+                new_name=path.relpath(old_name,start=self.root)
+                if self.debug: print("\t{}::{}=>{}".format(g,old_name,new_name))
+
+                if hasattr(value,"filename"):
+                    value.filename=new_name
+
+                self.__setter__(new_name,value)
+            self.groups[g].__clear__()
+        self.groups={}
         return self
 
     def get(self,name,default=None):
@@ -1952,7 +1979,11 @@ class baseFolder(MutableSequence):
             else: # No tests matched - contineu to next line
                 continue
             #Something matched, so append to result
-            result.append(f)
+            if hasattr(f,"filename"):
+                name=f.filename
+                result.__setter__(name,f)
+            else:
+                result.append(f)
         return result
 
     def setdefault(self,k,d=None):
@@ -2292,13 +2323,13 @@ class DiskBasedFolder(object):
         Returns:
             (metadataObject): The metadataObject
         """
-        try:
+        try: #Try the parent methods first
             return super(DiskBasedFolder,self).__getter__(name,instantiate=instantiate)
         except (AttributeError,IndexError,KeyError):
             pass
-        if name is not None and not path.exists(name):
+        if name is not None and not path.exists(name): #Default we assume the name is relative to the root directory
             fname=path.join(self.directory,name)
-        else:
+        else: #Fall back to direct
             fname=name
         tmp= self.type(self.loader(fname,**self.extra_args))
         if not hasattr(tmp,"filename") or not isinstance(tmp.filename,string_types):
@@ -2352,6 +2383,14 @@ class DiskBasedFolder(object):
         """Returns a list of just the filename parts of the objectFolder."""
         for x in self.__names__():
             yield path.basename(x)
+
+    @property
+    def directory(self): #Just alias directory to root now
+        return self.root
+
+    @directory.setter
+    def directory(self,value):
+        self.root=value
 
     @property
     def pattern(self):
@@ -2425,7 +2464,7 @@ class DiskBasedFolder(object):
         for p in self.pattern: # pattern is a list of strings and regeps
             if isinstance(p,string_types):
                 for f in fnmatch.filter(files, p):
-                    self.append(path.join(root, f))
+                    self.append(f)
                     # Now delete the matched file from the list of candidates
                     #This stops us double adding fles that match multiple patterns
                     del(files[files.index(f)])
@@ -2436,7 +2475,7 @@ class DiskBasedFolder(object):
                 # indices and delete them later.
                 for f in files:
                     if p.search(f):
-                        self.__setter__(path.join(root,f),path.join(root,f))
+                        self.__setter__(f,path.join(root,f))
                         matched.append(files.index(f))
                 matched.sort(reverse=True)
                 for i in matched: # reverse sort the matching indices to safely delete

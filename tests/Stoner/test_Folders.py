@@ -39,13 +39,14 @@ class Folders_test(unittest.TestCase):
         pass
 
     def test_Folders(self):
-        fldr=SF.DataFolder(self.datadir,debug=False)
+        self.fldr=SF.DataFolder(self.datadir,debug=False)
+        fldr=self.fldr
         fl=len(fldr)
         datfiles=fnmatch.filter(os.listdir(self.datadir),"*.dat")
         length = len([i for i in os.listdir(self.datadir) if path.isfile(os.path.join(self.datadir,i))])-1 # don't coiunt TDMS index
         self.assertEqual(length,fl,"Failed to initialise DataFolder from sample data")
-        self.assertEqual(fldr.index(fldr[-1].filename),fl-1,"Failed to index back on filename")
-        self.assertEqual(fldr.count(fldr[-1].filename),1,"Failed to count filename with string")
+        self.assertEqual(fldr.index(path.basename(fldr[-1].filename)),fl-1,"Failed to index back on filename")
+        self.assertEqual(fldr.count(path.basename(fldr[-1].filename)),1,"Failed to count filename with string")
         self.assertEqual(fldr.count("*.dat"),len(datfiles),"Count with a glob pattern failed")
         self.assertEqual(len(fldr[::2]),ceil(len(fldr)/2.0),"Failed to get the correct number of elements in a folder slice")
 
@@ -128,9 +129,9 @@ class Folders_test(unittest.TestCase):
         fldr6.each.del_column(0)
         res=fldr6.each(shaper)
         self.assertEqual(res,[(6048, 87), (3025, 40), (1409, 56), (411, 71)],"Proxy method call via each failed")
-        paths=['./QD-MH.dat', './QD-PPMS.dat', './QD-PPMS2.dat','./QD-SQUID-VSM.dat']
-        paths=[x.replace("/",os.sep) for x in paths]
-        self.assertEqual(fldr6.each.filename.tolist(),paths,"Reading attributes from each failed.")
+        paths=['QD-MH.dat', 'QD-PPMS.dat', 'QD-PPMS2.dat','QD-SQUID-VSM.dat']
+        filenames=[path.relpath(x,start=fldr6.directory) for x in fldr6.each.filename.tolist()]
+        self.assertEqual(filenames,paths,"Reading attributes from each failed.")
         if python_v3:
             eval('(hysteresis_correct@fldr4)(setas="3.xy",saturated_fraction=0.25)')
             self.assertTrue("Hc" in fldr4[0],"Matrix multiplication of callable by DataFolder failed test.")
@@ -179,6 +180,7 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(fldr5.shape,pruned,"Folder pruning gave an unxpected shape.")
         self.assertEqual(fldr5[("test","1.4","0.5",0,"phase")],0.5,"Multilevel indexing of tree failed.")
         shape=(~(~fldr4).select(amplitude=1.4).select(frequency=1).select(phase__gt=0.2)).shape
+        self.fldr4=fldr4
         self.assertEqual(shape, selected,"Multi selects and inverts failed.")
         g=(~fldr4)/10
         self.assertEqual(g.shape,(0,{'Group 0': (15, {}),'Group 1': (15, {}),'Group 2': (15, {}),'Group 3': (15, {}),'Group 4': (15, {}),
@@ -204,17 +206,15 @@ class Folders_test(unittest.TestCase):
         plt.close("all")
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    print("start")
     test=Folders_test("test_Folders")
-    print("Setup")
     test.setUp()
-    print("Ops")
-    test.test_Operators()
+#    test.test_each()
+#    test.test_Operators()
 #    print("Clone")
 #    test.test_clone()
 #    print("Folders")
 #    test.test_Folders()
-#    #unittest.main()
+    unittest.main()
 #    print("Group")
 #    test.test_grouping()
 #    print("Each")
