@@ -106,6 +106,10 @@ class regexpDict(sorteddict):
         except (KeyError,TypeError):
             return False
         
+    def __eq__(self,other):
+        """Define equals operation in terms of xor operation."""
+        return len(self^other)==0 and len(other^self)==0
+        
     def __xor__(self,other):
         """Give the difference between two arrays."""
         if not isinstance(other, Mapping):
