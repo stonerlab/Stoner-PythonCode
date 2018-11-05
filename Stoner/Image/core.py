@@ -1262,7 +1262,7 @@ class ImageFile(metadataObject):
             zcol (column index): Column in the datafile that defines the intensity
         """
         data=Data(args[0])
-        shape=kargs.pop("shape",None)
+        shape=kargs.pop("shape","unique")
 
         _=data._col_args(**kargs)
         data.setas(x=_.xcol,y=_.ycol,z=_.zcol)

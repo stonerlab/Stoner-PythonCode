@@ -242,12 +242,14 @@ class ImageFileTest(unittest.TestCase):
         self.imgFile = ImageFile(os.path.join(thisdir, 'coretestdata/im1_annotated.png'))
 
     def test_constructors(self):
+        self.imgFile = ImageFile(os.path.join(thisdir, 'coretestdata/im1_annotated.png'))
         self.d=Data(self.imgFile)
         self.imgFile2=ImageFile(self.d)
         del self.imgFile2["Stoner.class"]
         del self.imgFile2["x_vector"]
         del self.imgFile2["y_vector"]
-        self.assertEqual(self.imgFile,self.imgFile2,"Ropundtripping constructor through Data failed.")
+        self.assertTrue(np.all(self.imgFile.image==self.imgFile2.image),"Roundtripping constructor through Data failed to dupliocate data.")
+        self.assertEqual(self.imgFile.metadata,self.imgFile2.metadata,"Roundtripping constructor through Data failed to duplicate metadata.")
 
     def test_properties(self):
         self.assertTrue(np.allclose(self.ifi.image, self.a))
@@ -279,9 +281,9 @@ if __name__=="__main__": # Run some tests manually to allow debugging
 #    test.test_save()
 #    test.test_savetiff()
 #
-#    test2=ImageFileTest("test_constructors")
+    test2=ImageFileTest("test_constructors")
 #    test2.setUp()
-#    test2.test_constructors()
+    test2.test_constructors()
 
-    unittest.main()
+#    unittest.main()
 

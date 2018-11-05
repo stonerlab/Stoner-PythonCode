@@ -6,9 +6,10 @@ Provides the a class to facilitate easier plotting of Stoner Data:
 Classes:
     PlotMixin - A class that uses matplotlib to plot data
 """
+from __future__ import division
 
 __all__ = ["PlotMixin","hsl2rgb"]
-from Stoner.compat import python_v3,string_types,index_types
+from Stoner.compat import python_v3,string_types,index_types,int_types
 from Stoner.tools import _attribute_store, isNone,isAnyNone,all_type,isiterable,typedList,get_option,fix_signature
 from .formats import DefaultPlotStyle
 from .utils import errorfill
@@ -323,9 +324,13 @@ class PlotMixin(object):
         """Create a slice that covers the range of a given column."""
         v=self.column(col)
         v1,v2=_np_.min(v),_np_.max(v)
-        span=v2-v1
-        delta=span/num
-        return slice(v1,v2+(delta/2),delta)
+        v=_np_.linspace(v1,v2,num)
+        delta=v[1]-v[0]
+        if isinstance(delta,int_types):
+            v2=v2+delta
+        else:
+            v2=v2+delta/2
+        return slice(v1,v2,delta)
 
     def _VectorFieldPlot(self, X, Y, Z, U, V, W, **kargs):
         """Helper function to plot vector fields using mayavi.mlab.

@@ -710,8 +710,8 @@ class DataFile(metadataObject):
             self.data = DataArray(arg.data,setas=arg.setas.clone)
             self.data.setas = arg.setas.clone
         elif "<class 'Stoner.Image.core.ImageFile'>" in [str(x) for x in arg.__class__.__mro__]: #Crazy hack to avoid importing a circular ref!
-            x=arg.get("x_vector",_np_.arange(arg.shape[0]))
-            y=arg.get("y_vector",_np_.arange(arg.shape[1]))
+            x=arg.get("x_vector",_np_.arange(arg.shape[1]))
+            y=arg.get("y_vector",_np_.arange(arg.shape[0]))
             x,y=_np_.meshgrid(x,y)
             z=arg.image
 
