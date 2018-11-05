@@ -84,7 +84,7 @@ class FuncsTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=FuncsTest("test_funcs")
     test.setUp()
-    test.test_imagefile_ops()
-    test.test_funcs()
-#    unittest.main()
+    #test.test_imagefile_ops()
+    #test.test_funcs()
+    unittest.main()
 

@@ -17,6 +17,7 @@ for theta in np.linspace(0,360,91):
     i=ImageFile(np.zeros((100,100)))
     x,y=10*np.cos(np.pi*theta/180)+50,10*np.sin(np.pi*theta/180)+50
     i.draw.circle(x,y,25)
+    i.filename="Angle {}".format(theta)
     istack2.insert(0,i)
 
 class ImageStack2Test(unittest.TestCase):
@@ -151,9 +152,9 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(np.all(ist2[3].mask), 'setting mask on an image stack item not working')
         
 if __name__=="__main__":
-    test=ImageStack2Test()
+    #test=ImageStack2Test()
     #test.setUp()
     #test.test_ImageStack2()
-    test.test_mask()
-    # unittest.main()
+    #test.test_mask()
+    unittest.main()
 
