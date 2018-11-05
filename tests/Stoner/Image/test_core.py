@@ -249,7 +249,8 @@ class ImageFileTest(unittest.TestCase):
         del self.imgFile2["x_vector"]
         del self.imgFile2["y_vector"]
         self.assertTrue(np.all(self.imgFile.image==self.imgFile2.image),"Roundtripping constructor through Data failed to dupliocate data.")
-        self.assertEqual(self.imgFile.metadata,self.imgFile2.metadata,"Roundtripping constructor through Data failed to duplicate metadata.")
+        self.assertEqual(self.imgFile.metadata,self.imgFile2.metadata,"Roundtripping constructor through Data failed to duplicate metadata: {}".format(
+                self.imgFile2.metadata^self.imgFile.metadata))
 
     def test_properties(self):
         self.assertTrue(np.allclose(self.ifi.image, self.a))
