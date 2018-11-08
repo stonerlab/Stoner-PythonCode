@@ -41,12 +41,13 @@ Getting this Code
     :alt: Introduction and Installation Guide to Stoner Pythin Package
     :width: 320
 
-The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies on blist, filemagic, npTDMS, imreg_dft
-and numba.
+The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies 
+on blist, filemagic, npTDMS, imreg_dft and numba.
 
-Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining dependencies are collected together
-in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner package is, therefore, to install the most recent Anaconda Python distribution (Python 3.6,
-3.5 or 2.7 should work) and then to install the Stoner package via:
+Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining 
+dependencies are collected together in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner package is, 
+therefore, to install the most recent Anaconda Python distribution (Python 3.7, 3.6, 3.5 or 2.7 should work) and then to install 
+the Stoner package via:
 
 .. code-block:: sh
 
@@ -62,7 +63,8 @@ This will install the Stoner package and any missing dependencies into your curr
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: https://github.com/gb119/Stoner-PythonCode
 
-The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 3.6 but test with 2.7 as well.
+The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 3.6 and 3.7  but test with 
+2.7 as well. *NB* Python 3.7 is only supported in version 0.9x onwards and is known to not work with version 0.8.x.
 
 Overview
 ========
@@ -152,6 +154,7 @@ The next development version will be on version 0.9. Features expected in 0.9 in
     *   Overhaul of the documentation and user guide
     *   Dropping support for the older Stoner.Image.stack.ImageStack class
     *   Droppping support for matplotlib<2.0
+    *   Support for Python 3.7
 
 Online documentation for all versions can be found on the ReadTheDocs pages `online documentation`_
 
@@ -161,6 +164,9 @@ Build Status
 Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls. We currently test against
 python 2.7 and 3.6 via Travis and internally test on Python 3.5 as well. Overall code quality
 is measured by landscape.io. The current status is shown at the top of this readme.
+
+Version 0.9 onwards, we test with Python 3.7, 3.6, 3.5 and 2.7. All versions are probably not compatible with Python 3.8, this will
+feature in version 0.10 (probably)
 
 Citing the Stoner Package
 ~~~~~~~~~~~~~~~~~~~~~~~~~

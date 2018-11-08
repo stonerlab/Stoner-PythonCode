@@ -300,6 +300,32 @@ Finally we incliudde some other common electrical transport models for solid-sta
     -   :py:class:`Stoner.Fit.KittelEquation` and :py:class:`Stoner.Fit.Inverse_Kittel` - the Kittel equation is used to described the magnetic field and frequency
         reponse of the ferromagnetic resonance peak.
 
+Making Fitting Models
+=====================
+
+You can simply pass a bare function to any of the general fitting meothods, but there can be advantages in using an py:class:`lmfit.Model` class - such as the
+ability to combine several models together, the ability to guess parameters or just for the readability. The Stoner package provides some tools to help make
+suitable model classes.
+
+:py:func:`Stoner.Fit.make_model` is a python decorator function that can do the leg-work of transforming a simple model function of the form::
+
+    @make_model
+    def model_func(x_data,param1,param2):
+        return f(x,param1,param2)
+
+into a suitable model class of the same name. This model class then provides a decorator function itself to mark a second function as something that can be used
+to guess parameter values::
+
+    @model_func.guesser
+    def model_guess(y_data,x=x_data):
+        return [param1_guess,param2_guess]
+
+the newly created **model_func** class can then be used immediately to fit data. The following example illustrates the concept.
+
+.. plot:: samples/make_model.py
+    :include-source:
+    :outname: make_model
+
 Advanced Fitting Topics
 =======================
 

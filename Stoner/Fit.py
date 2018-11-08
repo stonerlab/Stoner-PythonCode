@@ -11,13 +11,14 @@ All the functions here defined for scipy.optimize.curve\_fit to call themm
 i.e. the parameters are expanded to separate arguements.
 """
 __all__ = ['Arrhenius', 'BDR', 'BlochGrueneisen',  'FMR_Power', 'FluchsSondheimer', 'FowlerNordheim', 'Inverse_Kittel', 'KittelEquation', 'Langevin',
-            'Linear', 'Lorentzian_diff', 'ModArrhenius', 'NDimArrhenius', 'PowerLaw', 'Quadratic', 'Simmons', 'StretchedExp', 'Strijkers', 'TersoffHammann',
+            'Linear', 'Lorentzian_diff', 'make_model','ModArrhenius', 'NDimArrhenius', 'PowerLaw', 'Quadratic', 'Simmons', 'StretchedExp', 'Strijkers', 'TersoffHammann',
              'VFTEquation', 'WLfit', '_strijkers_core', 'arrhenius', 'bdr', 'blochGrueneisen', 'cfg_data_from_ini', 'cfg_model_from_ini', 'fluchsSondheimer',
               'fmr_power', 'fowlerNordheim', 'inverse_kittel', 'kittelEquation', 'langevin', 'linear', 'lorentzian_diff', 'modArrhenius', 'nDimArrhenius',
                'powerLaw', 'quadratic', 'simmons', 'stretchedExp', 'strijkers', 'vftEquation', 'wlfit']
 import Stoner.Core as _SC_
-from .compat import python_v3,string_types
+from .compat import python_v3,string_types, get_func_params
 from . import Data
+from functools import wraps
 import numpy as _np_
 from io import IOBase
 from scipy.special import digamma
@@ -54,13 +55,13 @@ except ImportError:
 
     class _dummy(object):
         """A class that does nothing so that float64 can be an instance of it safely."""
-        
+
         def __call__(self,*args):
             return self
-        
+
         def __getitem__(self,*args):
             return self
-    
+
     float64=_dummy()
 
 from matplotlib.pyplot import plot
@@ -97,6 +98,45 @@ def _get_model_(model):
     if not isinstance(model,Model):
         raise TypeError("model {} is not an instance of llmfit.Model".format(model.__name__))
     return model
+
+
+def make_model(model_func):
+    """A decorator that turns a function into an lmfit model."""
+
+    class _ModelDecorator(Model):
+
+        """A class that will provide some decorator methods to help build lmfit models."""
+
+        def __init__(self,*args,**kargs):
+            super(_ModelDecorator,self).__init__(model_func,*args,**kargs)
+
+        @classmethod
+        def guesser(cls,func):
+            """Use the given function as the guess method.
+
+            Args:
+                func (callable): A function that guesses the parameter values
+
+            Returns:
+                The wrapped guess function.
+
+            Notes:
+                This decorator will modify the instance attributes so that the instance has a working guess method.
+
+                func should take at least one positional argument, being the y-data values used to guess parameters.
+                It should return a list, tuple of guesses parameter values with one entry for each parameter in the model.
+            """
+            @wraps(func)
+            def guess_proxy(self,*args,**kargs):
+                guesses=func(*args,**kargs)
+                pars={x:y for x,y in zip(self.param_names,guesses)}
+                pars = self.make_params(**pars)
+                return update_param_vals(pars, self.prefix, **kargs)
+            cls.guess=guess_proxy
+            return guess_proxy
+
+    _ModelDecorator.__doc__=model_func.__doc__
+    return _ModelDecorator
 
 
 def linear(x, intercept, slope):
