@@ -121,6 +121,7 @@ intersphinx_mapping = {
     'matplotlib': ('http://matplotlib.org/', None),
     'astropy': ('http://docs.astropy.org/en/stable/', None),
     'h5py': ('http://docs.h5py.org/en/latest/', None),
+    'lmfit': ('https://lmfit.github.io/lmfit-py', None),
     }
 
 primary_domain = "py"

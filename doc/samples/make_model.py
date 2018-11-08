@@ -13,11 +13,17 @@ def simple_model(x,m,c):
     """A straight line"""
     return x*m+c
 
-#Add a function to guess parameters
+#Add a function to guess parameters (optional, but)
 @simple_model.guesser
 def guess_vals(y,x=None):
     """Should guess parameter values really!"""
-    return (1.0,1.0) #return one value per parameter
+    return (1.5,1.0) #return one value per parameter
+
+#Add a function to sry vonstraints on parameters (optional)
+@simple_model.hinter
+def hint_parameters():
+    """Five some hints about the parameter."""
+    return {"m":{"max":10.0,"min":1.0}}
 
 #Create some x,y data
 x=linspace(0,10,101)

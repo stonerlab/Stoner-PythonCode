@@ -303,7 +303,7 @@ Finally we incliudde some other common electrical transport models for solid-sta
 Making Fitting Models
 =====================
 
-You can simply pass a bare function to any of the general fitting meothods, but there can be advantages in using an py:class:`lmfit.Model` class - such as the
+You can simply pass a bare function to any of the general fitting meothods, but there can be advantages in using an :py:class:`lmfit.Model` class - such as the
 ability to combine several models together, the ability to guess parameters or just for the readability. The Stoner package provides some tools to help make
 suitable model classes.
 

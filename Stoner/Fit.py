@@ -20,6 +20,7 @@ from .compat import python_v3,string_types, get_func_params
 from . import Data
 from functools import wraps
 import numpy as _np_
+from collections import Mapping
 from io import IOBase
 from scipy.special import digamma
 try:
@@ -99,9 +100,32 @@ def _get_model_(model):
         raise TypeError("model {} is not an instance of llmfit.Model".format(model.__name__))
     return model
 
-
 def make_model(model_func):
-    """A decorator that turns a function into an lmfit model."""
+    """A decorator that turns a function into an lmfit model.
+
+    Notes:
+        The function being wrapped into the model should have the form::
+
+            def model_func(x_data,*parameters):
+                ....
+
+        (i.e. similar to what :py:func:`scipy.optimize.curve_fit` expects). The resulting
+        class is a sub-class of :py:class:`lmfit.Model` but also adds a class method
+        :py:method:`_ModelDectorator.guesser` which can be used as a decorator to convert another function into
+        a :py:meth:`lmfit.Model.guess` method. If using this decorator, the function that does the guessing should
+        take the form::
+
+            def guesser_function(y_data,x=x_data,**kargs):
+                return (param_1,param_2,....,pram_n)
+
+        Similarly, the class provides a :py:meth:`_ModelDecorator.hinter` decorator which can be used to mark a function
+        as something that can generate prameter hints for the model. In this case the function should take the form:
+
+            def hinter(**kwargs):
+                return {"param_1":{"max":max_val,"min":min_value,"value":start_value},"param_2":{.....}}
+
+        Finally the new model_func class can be instantiated or just passed to :py:meth:`Data.lmfit` etc. directly.
+    """
 
     class _ModelDecorator(Model):
 
@@ -109,6 +133,41 @@ def make_model(model_func):
 
         def __init__(self,*args,**kargs):
             super(_ModelDecorator,self).__init__(model_func,*args,**kargs)
+            if hasattr(self,"_limits"):
+                for param,limit in self._limits().items():
+                    self.set_param_hint(param,**limit)
+
+        def guess(self,y,x=None):
+            """A default parameter guess method that just guesses 1.0 for everything like :py:func:`scipy.optimize.curve_fit` does."""
+            return _np_.ones(len(self.param_names))
+
+
+        @classmethod
+        def hinter(cls,func):
+            """Use the given function to determine the parameter hints.
+
+            Args:
+                func (callable): A fimction that rturns a dictionary of dictionaries
+
+            Returns:
+                The wrapped hinter function.
+
+            Notes:
+                This decorator will modify the instance attributes so that the instance has a method to generate parameter hints.
+
+                func should only take keyword arguments as by default it will be called with no arguments during model initialisation.
+            """
+            @wraps(func)
+            def _limits_proxy(self,**kargs):
+                limits=func(**kargs)
+                for param in limits:
+                    if param not in self.param_names:
+                        raise RuntimeError("Unrecognised parameter in hinter function: {}".format(param))
+                    if not isinstance(limits[param],Mapping):
+                        raise RuntimeError("{Arameter hint for {} was not a mapping".format(param))
+                return limits
+            cls._limits=_limits_proxy
+            return _limits_proxy
 
         @classmethod
         def guesser(cls,func):
