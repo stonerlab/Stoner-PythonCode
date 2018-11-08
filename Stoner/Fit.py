@@ -105,7 +105,7 @@ def make_model(model_func):
 
     class _ModelDecorator(Model):
 
-        """A class that will provide some decorator methods to help build lmfit models."""
+        __doc__ = model_func.__doc__
 
         def __init__(self,*args,**kargs):
             super(_ModelDecorator,self).__init__(model_func,*args,**kargs)
@@ -135,7 +135,6 @@ def make_model(model_func):
             cls.guess=guess_proxy
             return guess_proxy
 
-    _ModelDecorator.__doc__=model_func.__doc__
     return _ModelDecorator
 
 
