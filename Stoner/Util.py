@@ -148,8 +148,8 @@ def hysteresis_correct(data, **kargs):
     if "setas" in kargs: # Allow us to override the setas variable
         data.setas=kargs.pop("setas")
 
-    xcol=kargs.pop("xcol",None)
-    ycol=kargs.pop("ycol",None)
+    xcol=kargs.pop("xcol",data.setas["x"])
+    ycol=kargs.pop("ycol",data.setas["y"])
     #Get xcol and ycols from kargs if specified
     _=data._col_args(xcol=xcol,ycol=ycol)
     data.setas(x=_.xcol,y=_.ycol)
@@ -190,7 +190,6 @@ def hysteresis_correct(data, **kargs):
             data.y=-data.y
         else:
             break
-
 
     #Find mean slope and offset
     pm = (p1 + p2) / 2

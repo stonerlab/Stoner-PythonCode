@@ -320,6 +320,12 @@ to guess parameter values::
     def model_guess(y_data,x=x_data):
         return [param1_guess,param2_guess]
 
+In the same vein, the class provides a decorator to use a function to generate hints about the parameter, such as bouding values::
+
+    @model_func.hinter
+    def model_parameter_hints():
+        return {"param1":{"max":10.0, "min":1.0},"param2":{"max":0.0}}
+
 the newly created **model_func** class can then be used immediately to fit data. The following example illustrates the concept.
 
 .. plot:: samples/make_model.py

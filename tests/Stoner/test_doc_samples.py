@@ -11,6 +11,8 @@ pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
 
+skip_scipts=["plot-folder-test"]
+
 class DocSamples_test(unittest.TestCase):
 
     """Path to sample Data File"""
@@ -19,13 +21,16 @@ class DocSamples_test(unittest.TestCase):
     def setUp(self):
         self.scripts=[path.relpath(x,self.datadir).replace(path.sep,".") for x in listdir_recursive(self.datadir,"*.py") if not x.endswith("__init__.py")]
         sys.path.insert(0,self.datadir)
-        
+
     def test_scripts(self):
         """Import each of the sample scripts in turn and see if they ran without error"""
         failures=[]
         for ix,filename in enumerate(self.scripts):
             os.chdir(self.datadir)
             script=filename[:-3]
+            if script in skip_scipts:
+                print("Skippoing {}".format(filename))
+                continue
             print("Trying script {}: {}".format(ix,filename))
             try:
                 os.chdir(self.datadir)
@@ -41,10 +46,10 @@ class DocSamples_test(unittest.TestCase):
                 print("Failed with\n{}".format(v))
                 failures.append("Script file {} failed with {}".format(filename,v))
         self.assertTrue(len(failures)==0,"\n".join(failures))
-                
+
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=DocSamples_test("test_scripts")
     test.setUp()
     test.test_scripts()
-                
-            
+
+

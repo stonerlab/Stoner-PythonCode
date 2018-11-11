@@ -4,7 +4,7 @@ Created on Fri Dec  1 17:37:39 2017
 
 @author: phygbu
 """
-from numpy import where,append
+from numpy import where,append,row_stack,atleast_2d
 from scipy.constants import mu_0
 from scipy.stats import gmean
 from os.path import join
@@ -54,18 +54,30 @@ for f in fldr[-1]: # Invert the negative field side
 
 resfldr=PlotFolder() # Somewhere to keep the results from +ve and -ve fields
 
+def do_fit(f):
+    """Function to fit just one set of data."""
+    f.template=template
+    f["cut"]=f.threshold(1.75E5,rising=False,falling=True)
+    res=f.lmfit(FMR_Power,result=True,header="Fit",bounds=lambda x,r:x<f["cut"],output="row")
+    ch=res.column_headers
+    res=append(res,[f.mean("Frequency"),s])
+    res=atleast_2d(res)
+    res.column_headers=ch+["Frequency (Hz)","Field Sign"]
+    f.setas[-1]="y"
+    return res,res.column_headers
+
+
 for s in fldr.groups:# Fit each FMR spectra
     subfldr=fldr[s]
-    result=Data()
-    for i,f in enumerate(fldr[s]):
-        f.template=template
-        f["cut"]=f.threshold(1.75E5,rising=False,falling=True)
-        res=f.lmfit(FMR_Power,result=True,header="Fit",bounds=lambda x,r:x<f["cut"],output="row")
-        ch=res.column_headers
-        res=append(res,[f.mean("Frequency"),s])
-        res.column_headers=ch+["Frequency (Hz)","Field Sign"]
-        result+=res
-        f.setas[-1]="y"
+
+    result=subfldr.each(do_fit)
+
+    data,headers=zip(*result)
+    new_data=data[0]
+    for r in data[1:]:
+        new_data=append(new_data,r,axis=0)
+    result=Data(new_data)
+    result.column_headers=headers[0]
 
     #Now plot all the fits
 

@@ -9,7 +9,8 @@ import os
 import re
 import os.path as path
 import fnmatch
-from functools import wraps
+from functools import wraps,partial
+import multiprocess as multiprocessing
 
 import numpy as _np_
 from copy import copy,deepcopy
@@ -20,7 +21,7 @@ from collections import Iterable,MutableSequence,OrderedDict,MutableMapping
 from itertools import islice
 import matplotlib.pyplot as plt
 from .Core import metadataObject,DataFile,regexpDict,typeHintedDict
-
+from traceback import format_exc
 
 regexp_type=(_pattern_type,)
 
@@ -38,6 +39,27 @@ def pathjoin(*args):
     """Join a path like path.join, but then replace the path separator with a standard /."""
     tmp=path.join(*args)
     return tmp.replace(path.sep,"/")
+
+def _worker(d,**kwargs):
+    """Support function to run an arbitary function over a :py:class:`Stoner.Data` object."""
+    byname=kwargs.get("byname",False)
+    func=kwargs.get("func",lambda x:x)
+    if byname:
+        func=getattr(d,func,lambda x:x)
+    args=kwargs.get("args",tuple())
+    kargs=kwargs.get("kargs",dict)
+    d["setas"]=list(d.setas)
+    d["args"]=args
+    d["kargs"]=kargs
+    d["func"]=func.__name__
+    try:
+        if byname: #Ut's an instance bound moethod
+            ret=func(*args,**kargs)
+        else: # It's an arbitary function
+            ret=func(d,*args,**kargs)
+    except Exception as e:
+        ret=e,format_exc()
+    return (d,ret)
 
 class each_item(object):
 
@@ -73,23 +95,29 @@ class each_item(object):
             If *_result* is True the return value is added to the :py:class:`Stoner.Core.metadataObject`'s metadata under the name
             of the function. If *_result* is a string. then return result is stored in the corresponding name.
         """
-        retvals=[]
+        retvals=[None]*len(self._folder)
         _return=kargs.pop("_return",None)
-        for ix,f in enumerate(self._folder):
-            ret = f.clone
-            ret=func(f,*args,**kargs)
-            retvals.append(ret)
+        _byname=kargs.pop("_byname",False)
+        p=multiprocessing.Pool(int(multiprocessing.cpu_count()/2))
+        for ix,(f,ret) in enumerate(p.imap(partial(_worker,func=func,args=args,kargs=kargs,byname=_byname),self._folder)):
+            retvals[ix]=ret
+            new_d=f
             if isinstance(ret,self._folder._type) and _return is None:
                 try: #Check if ret has same data type, otherwise will not overwrite well
                     if ret.data.dtype!=f.data.dtype:
                         continue
+                    else:
+                        new_d=ret
                 except AttributeError:
                     pass
-                self._folder[ix]=ret
             elif _return is not None:
                 if isinstance(_return,bool) and _return:
                     _return=func.__name__
-                self._folder[ix][_return]=ret
+                new_d[_return]=ret
+            name=getattr(f,"filename",self._folder.__names__()[ix])
+            self._folder.__setter__(name,new_d)
+        p.close()
+        p.join()
         return retvals
 
 
@@ -146,7 +174,7 @@ class each_item(object):
             name(str): Attribute to set
             value (any): Value to set
         """
-        if hasattr(self,name): #Handle setting our own attributes
+        if hasattr(self,name) or name.startswith("_"): #Handle setting our own attributes
             super(each_item,self).__setattr__(name,value)
         elif name in dir(self._folder.instance): #This is an instance attribute
             self._folder._object_attrs[name]=value #Add to attributes to be set on load
@@ -179,25 +207,8 @@ class each_item(object):
                 This relies on being defined inside the enclosure of the objectFolder method
                 so we have access to self and item
             """
-            retvals=[]
-            _return=kargs.pop("_return",None)
-            for ix,f in enumerate(self._folder):
-                ret = f.clone
-                meth=getattr(ret,item,None)
-                ret=meth(*args,**kargs)
-                retvals.append(ret)
-                if isinstance(ret,self._folder._type) and _return is None:
-                    try: #Check if ret has same data type, otherwise will not overwrite well
-                        if ret.data.dtype!=f.data.dtype:
-                            continue
-                    except AttributeError:
-                        pass
-                    self._folder[ix]=ret
-                elif _return is not None:
-                    if isinstance(_return,bool) and _return:
-                        _return=meth.__name__
-                    self._folder[ix][_return]=ret
-            return retvals
+            kargs["_byname"]=True # Tell the call that we're going to find the function by name as an instance method
+            return self(item,*args,**kargs) # Develove to self.__call__ where we have multiprocess magic
         #Ok that's the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
 
@@ -221,24 +232,8 @@ class each_item(object):
                 This relies on being defined inside the enclosure of the objectFolder method
                 so we have access to self and item
             """
-            retvals=[]
-            _return=kargs.pop("_return",None)
-            for ix,f in enumerate(self._folder):
-                ret = f.clone
-                ret=other(f,*args,**kargs)
-                retvals.append(ret)
-                if isinstance(ret,self._folder._type) and _return is None:
-                    try: #Check if ret has same data type, otherwise will not overwrite well
-                        if ret.data.dtype!=f.data.dtype:
-                            continue
-                    except AttributeError:
-                        pass
-                    self._folder[ix]=ret
-                elif _return is not None:
-                    if isinstance(_return,bool) and _return:
-                        _return=other.__name__
-                    self._folder[ix][_return]=ret
-            return retvals
+            kargs["_byname"]=False # Force the __call__ to use the callable function
+            return self(other,*args,**kargs) # Delegate to self.__call__ which has multiprocess magic.
         #Ok that's the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
 
@@ -933,7 +928,7 @@ class baseFolder(MutableSequence):
             setattr(other,k,getattr(self,k))
         if not attrs_only:
             for g in self.groups:
-                other.groups[g]=self.groups[g].__clone__(attrs_only=attrs_only)
+                other.groups[g]=self.groups[g].__clone__(other=other.__class__(),attrs_only=attrs_only)
             for k in self.__names__():
                 other.__setter__(k,self.__getter__(k,instantiate=None))
         return other
@@ -1306,39 +1301,11 @@ class baseFolder(MutableSequence):
         Returns:
             Either a modifed copy of this objectFolder or a list of return values
             from evaluating the method for each file in the Folder.
+
+        Notes:
+            This is now simply a proxy into getting the attribute on the baseFolder.each instead. This then makes use of multiprocess Pools to speed things up.
         """
-        meth=getattr(self.instance,item,None)
-        def _wrapper_(*args,**kargs):
-            """Wraps a call to the metadataObject type for magic method calling.
-
-            Keyword Arguments:
-                _return (index types or None): specify to store the return value in the individual object's metadata
-
-            Note:
-                This relies on being defined inside the enclosure of the objectFolder method
-                so we have access to self and item
-            """
-            retvals=[]
-            _return=kargs.pop("_return",None)
-            for ix,f in enumerate(self):
-                meth=getattr(f,item,None)
-                ret=meth(*args,**kargs)
-                retvals.append(ret)
-                if isinstance(ret,self._type) and _return is None:
-                    try: #Check if ret has same data type, otherwise will not overwrite well
-                        if ret.data.dtype==f.data.dtype:
-                            self[ix]=ret
-                    except AttributeError:
-                        pass
-                elif _return is not None:
-                    if isinstance(_return,bool) and _return:
-                        _return=meth.__name__
-                    self[ix][_return]=ret
-            return retvals
-        #Ok that's the wrapper function, now return  it for the user to mess around with.
-        _wrapper_.__doc__=meth.__doc__
-        _wrapper_.__name__=meth.__name__
-        return _wrapper_
+        return getattr(self.each,item)
 
     def __deepcopy__(self, memo):
         """Provides support for copy.deepcopy to work."""

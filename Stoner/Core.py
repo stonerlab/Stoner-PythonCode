@@ -246,8 +246,10 @@ class DataArray(_ma_.MaskedArray):
             r=self.shape[0]
             if isiterable(value) and len(value)==r: #Iterable and the correct length - assing straight
                 self._ibase=_np_.array(value)
-            elif isiterable(value): # Iterable but not the correct length - count from min of value
+            elif isiterable(value) and len(value)>0: # Iterable but not the correct length - count from min of value
                 self._ibase=_np_.arange(min(value),min(value)+r)
+            elif isiterable(value) and len(value)==0: # Iterable but not the correct length - count from min of value
+                self._ibase=_np_.arange(0,r,r)
             else: # No iterable
                 self._ibase=_np_.arange(value,value+r)
 
@@ -655,8 +657,8 @@ class DataFile(metadataObject):
         super(DataFile,self).__init__(*args,**kargs) # initialise self.metadata)
         self._public_attrs={
             "data": _np_.ndarray,
-            "column_headers": list,
             "setas": (string_types, list),
+            "column_headers": list,
             "metadata": typeHintedDict,
             "debug": bool,
             "filename": string_types,
@@ -1491,7 +1493,21 @@ class DataFile(metadataObject):
 
     def __getstate__(self):
         """Get ready for picking this object - used for deepcopy."""
-        return {"data": self.data, "column_headers": self.column_headers, "metadata": self.metadata,"filename":self.filename}
+        attrs=OrderedDict([("data",DataArray),
+                          ("setas",list),
+                          ("column_headers",list),
+                          ("metadata",typeHintedDict),
+                          ("debug",bool),
+                          ("filename",None),
+                          ("mask",None)])
+        state=OrderedDict()
+        for k,process in attrs.items():
+            if process is None:
+                val=getattr(self,k,None)
+            else:
+                val=process(getattr(self,k,None))
+            state[k]=val
+        return state
 
 
     def __iter__(self):
@@ -1582,9 +1598,13 @@ class DataFile(metadataObject):
 
     def __setstate__(self, state):
         """Internal function for pickling."""
-        self.data = DataArray(state["data"],setas=self._data._setas)
-        self.column_headers = state["column_headers"]
-        self.metadata = state["metadata"]
+        state["data"]=_np_.array(state["data"]) #Sanitise data
+        for attr in state:
+            if state[attr] is not None:
+                try:
+                    setattr(self,attr,state[attr])
+                except TypeError:
+                    pass
 
     def __str__(self):
         """Provides an implementation for str(DataFile) that does not shorten the output."""

@@ -302,7 +302,7 @@ class _setas(MutableMapping):
         """Try to see if attribute name is a key in self.cols and return that instead."""
         if name!="_cols" and name in self._cols:
             return self._cols[name]
-        return super(_setas,self).__getattr__(name)
+        return getattr(super(_setas,self),name)
 
     def __getitem__(self, name):
         """Permit the setas attribute to be treated like either a list or a dictionary.

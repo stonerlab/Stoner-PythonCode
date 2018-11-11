@@ -34,6 +34,8 @@ requirements:
     - seaborn>=0.7
     - tabulate>=0.8
     - imreg_dft>=2.0
+    - multiprocess>=0.70
+    - dill>=0.2.8
   run:
     - python
     - cycler>=0.10.0
@@ -52,6 +54,9 @@ requirements:
     - seaborn>=0.7
     - tabulate>=0.8
     - imreg_dft>=2.0
+    - multiprocess>=0.70
+    - dill>=0.2.8
+
 
 about:
   home: https://github.com/gb119/Stoner-PythonCode/

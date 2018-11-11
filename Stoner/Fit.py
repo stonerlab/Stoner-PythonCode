@@ -119,7 +119,7 @@ def make_model(model_func):
                 return (param_1,param_2,....,pram_n)
 
         Similarly, the class provides a :py:meth:`_ModelDecorator.hinter` decorator which can be used to mark a function
-        as something that can generate prameter hints for the model. In this case the function should take the form:
+        as something that can generate prameter hints for the model. In this case the function should take the form::
 
             def hinter(**kwargs):
                 return {"param_1":{"max":max_val,"min":min_value,"value":start_value},"param_2":{.....}}
