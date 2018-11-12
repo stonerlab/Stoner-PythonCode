@@ -136,6 +136,7 @@ def make_model(model_func):
             if hasattr(self,"_limits"):
                 for param,limit in self._limits().items():
                     self.set_param_hint(param,**limit)
+            self.__name__=self.func.__name__
 
         def guess(self,y,x=None):
             """A default parameter guess method that just guesses 1.0 for everything like :py:func:`scipy.optimize.curve_fit` does."""

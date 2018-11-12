@@ -84,7 +84,7 @@ class _odr_Model(odrModel):
                 return func(x,*beta)
         meta["__name__"]=meta["name"]
         p0=kargs.pop("p0",kargs.pop("estimate",None))
-        if p0 is None or len(p0)!=len(meta["param_names"]):
+        if p0 is None or (isiterable(p0) and len(p0)!=len(meta["param_names"])):
             p0=list()
             for k in meta["param_names"]:
                 if k in kargs:
@@ -99,6 +99,10 @@ class _odr_Model(odrModel):
         kargs["meta"]=meta
 
         super(_odr_Model,self).__init__(model,*args,**kargs)
+        
+        @property
+        def p0(self):
+            return getattr(self,"estimate",None)
 
 class _curve_fit_result(object):
 
@@ -287,6 +291,8 @@ def _prep_lmfit_p0(model,ydata,xdata,p0,kargs):
         p0,single_fit (iterable of floats, bool): The revised initial starting vector and whether this is a single fit operation.
     """
     if p0 is not None:
+        if callable(p0): # Allow p0 to be a callbale function
+            p0=p0(ydata,xdata)
         if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
             if p0.shape[0]==1: # Actually a single fit
                 p0=_lmfit_p0_dict(p0[0],model)
@@ -1151,7 +1157,7 @@ class AnalysisMixin(object):
             _func=func.func
             try:
                 if "p0" not in kargs: #Avoid expensive guess if we have a p0
-                    pguess=func.guess(ydata,xdata)
+                    pguess=func.guess
                 else:
                     pguess=None
             except:
@@ -1162,6 +1168,9 @@ class AnalysisMixin(object):
             p0=kargs.pop("p0",None)
         else:
             raise TypeError("curve_fit parameter 1 must be either a Model class from lmfit or scipy.odr, or a callable, not a {}".format(type(func)))
+
+        if callable(p0): # Allow the user to suppy p0 as a callanble function
+            p0=p0(ydata,xdat)
 
         retvals=[]
         i=None
@@ -2027,7 +2036,7 @@ class AnalysisMixin(object):
         else:
             prefix=str(prefix)
         #Get the inital guess if possible
-        kargs.pop("p0",getattr(model,"p0",None))
+        p0=kargs.pop("p0",getattr(model,"p0",None))
 
         _=self._col_args(xcol=xcol,ycol=ycol,xerr=sigma_x,yerr=sigma_y)
         working = self.search(_.xcol, bounds)
@@ -2035,6 +2044,10 @@ class AnalysisMixin(object):
 
         xdata = working[:, self.find_col(_.xcol)]
         ydata = working[:, self.find_col(_.ycol)]
+        if callable(p0): # Allow callable p0
+            p0=p0(ydata,xdata)
+        if p0 is not None:
+            model.estimate=p0
         if not _.has_xerr:
             sx=_np_.ones_like(xdata)
         else:
