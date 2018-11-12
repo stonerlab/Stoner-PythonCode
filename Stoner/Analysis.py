@@ -99,7 +99,7 @@ class _odr_Model(odrModel):
         kargs["meta"]=meta
 
         super(_odr_Model,self).__init__(model,*args,**kargs)
-        
+
         @property
         def p0(self):
             return getattr(self,"estimate",None)
@@ -1114,13 +1114,13 @@ class AnalysisMixin(object):
             *sigma* values matter.
             If True, `sigma` describes one standard deviation errors of the input data points. The estimated covariance in `pcov` is
             based on these values.
-            
+
             The starting vector *p0* can be either a list, tuple or array, or a callable that will produce a list, tuple or array. IF callable,
             it should take the form:
-                
+
                 def p0_func(ydata,x=xdata):
                     ....
-                    
+
             and return a list of parameter values that is in the same order as the model function. If p0 is not given and a :py:class:`lmfit.Model` or
             :py:class:`scipy.odr.Model` is supplied as the model function, then the model's estimates of the starting values will be used instead.
 
@@ -1180,7 +1180,14 @@ class AnalysisMixin(object):
             raise TypeError("curve_fit parameter 1 must be either a Model class from lmfit or scipy.odr, or a callable, not a {}".format(type(func)))
 
         if callable(p0): # Allow the user to suppy p0 as a callanble function
-            p0=p0(ydata,xdat)
+            if ydata.ndim!=1:
+                yy=ydata.ravel()
+            else:
+                yy=ydata
+            try: #Skip the guess if it fails
+                p0=p0(yy,xdat)
+            except:
+                p0=None
 
         retvals=[]
         i=None
