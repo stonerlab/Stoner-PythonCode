@@ -1122,7 +1122,7 @@ class AnalysisMixin(object):
                     ....
                     
             and return a list of parameter values that is in the same order as the model function. If p0 is not given and a :py:class:`lmfit.Model` or
-            :py:`scipy.odr.Model` is supplied as the model function, then the model's estimates of the starting values will be used instead.
+            :py:class:`scipy.odr.Model` is supplied as the model function, then the model's estimates of the starting values will be used instead.
 
 
         See Also:
