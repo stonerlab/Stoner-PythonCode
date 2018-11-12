@@ -1075,7 +1075,7 @@ class AnalysisMixin(object):
                 for each one. In this case the return value is a list of what would be returned for a single column fit.
 
         Keyword Arguments:
-            p0 (list, tuple or array): A vector of initial parameter values to try
+            p0 (list, tuple, array or callable): A vector of initial parameter values to try. See notes below.
             sigma (index): The index of the column with the y-error bars
             bounds (callable): A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
             result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
@@ -1114,10 +1114,20 @@ class AnalysisMixin(object):
             *sigma* values matter.
             If True, `sigma` describes one standard deviation errors of the input data points. The estimated covariance in `pcov` is
             based on these values.
+            
+            The starting vector *p0* can be either a list, tuple or array, or a callable that will produce a list, tuple or array. IF callable,
+            it should take the form:
+                
+                def p0_func(ydata,x=xdata):
+                    ....
+                    
+            and return a list of parameter values that is in the same order as the model function. If p0 is not given and a :py:class:`lmfit.Model` or
+            :py:`scipy.odr.Model` is supplied as the model function, then the model's estimates of the starting values will be used instead.
 
 
         See Also:
-            :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit`
+            :py:meth:`Stoner.Data.lmfit`
+            :py:meth:`Stoner.Data.odr`
             User guide section :ref:`curve_fit_guide`
         """
 
@@ -1559,7 +1569,7 @@ class AnalysisMixin(object):
             :py:attr:`Stoner.Core.DataFile.setas` y column
 
         Keyword Arguments:
-            p0 (list, tuple or array): A vector of initial parameter values to try.
+            p0 (list, tuple, array or callable): A vector of initial parameter values to try. See the notes in :py:meth:`Stoner.Data.curve_fit` for more details.
             sigma (index): The index of the column with the y-error bars
             bounds (callable): A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
             result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
@@ -1581,7 +1591,8 @@ class AnalysisMixin(object):
             - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally as a column of data.
 
         See Also:
-            :py:meth:`AnalysisMixin.curve_fit`
+            :py:meth:`Stoner.Data.curve_fit`
+            :py:meth:`Stoner.Data.odr`
             User guide section :ref:`fitting_with_limits`
 
         .. note::
@@ -1960,7 +1971,7 @@ class AnalysisMixin(object):
                 :py:attr:`Stoner.Core.DataFile.setas` y column
 
         Keyword Arguments:
-            p0 (list, tuple or array): A vector of initial parameter values to try.
+            p0 (list, tuple, array or callable): A vector of initial parameter values to try. See the notes to :py:meth:`Stoner.Data.curve_fit` for more details.
             sigma_x (index): The index of the column with the x-error bars
             sigma_y (index): The index of the column with the x-error bars
             bounds (callable): A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
