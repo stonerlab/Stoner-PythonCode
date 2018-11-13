@@ -19,7 +19,7 @@ from numpy import ceil
 from Stoner.compat import *
 import Stoner.Folders as SF
 
-from Stoner import Data
+from Stoner import Data,set_option
 import Stoner.HDF5, Stoner.Zip
 from Stoner.Util import hysteresis_correct
 
@@ -29,6 +29,7 @@ pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
 
+set_option("multiprocessing",os.name!="nt") # \Turn off parallel testing in windows
 
 class Folders_test(unittest.TestCase):
 
@@ -208,13 +209,13 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-#    test.test_each()
+    test.test_each()
 #    test.test_Operators()
 #    print("Clone")
 #    test.test_clone()
 #    print("Folders")
 #    test.test_Folders()
-    unittest.main()
+#    unittest.main()
 #    print("Group")
 #    test.test_grouping()
 #    print("Each")

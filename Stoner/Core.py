@@ -283,6 +283,20 @@ class DataArray(_ma_.MaskedArray):
     ############################              Speical Methods                ####################################################
     #============================================================================================================================
 
+    def __reduce__(self):
+        # Get the parent's __reduce__ tuple
+        pickled_state = super(DataArray, self).__reduce__()
+        # Create our own tuple to pass to __setstate__
+        new_state = pickled_state[2] + (self._setas,self.i)
+        # Return a tuple that replaces the parent's __setstate__ tuple with our own
+        return (pickled_state[0], pickled_state[1], new_state)
+
+    def __setstate__(self, state):
+        self._setas = state[-2]  # Set the info attribute
+        # Call the parent's __setstate__ with the other tuple elements.
+        super(DataArray, self).__setstate__(state[0:-2])
+        self.i=state[-1]
+
     def __getattr__(self,name):
         """Get a column using the setas attribute."""
         #Overrides __getattr__ to allow access as row.x etc.
@@ -598,12 +612,11 @@ class DataFile(metadataObject):
     def __new__(cls, *args,**kargs):
         """Do some init stuff before the mixins kick in."""
         self=metadataObject.__new__(cls)
-        self.debug = kargs.pop("debug",False)
+        object.__setattr__(self,"debug",kargs.pop("debug",False))
         self._masks = [False]
         self._filename = None
         self._public_attrs_real={}
-        super(DataFile,self).__setattr__("_data",DataArray([]))
-        self.column_headers = list()
+        object.__setattr__(self,"_data",DataArray([]))
         self._baseclass = DataFile
         return self
 
@@ -1491,23 +1504,23 @@ class DataFile(metadataObject):
             ret=self.data[name]
         return ret
 
-    def __getstate__(self):
-        """Get ready for picking this object - used for deepcopy."""
-        attrs=OrderedDict([("data",DataArray),
-                          ("setas",list),
-                          ("column_headers",list),
-                          ("metadata",typeHintedDict),
-                          ("debug",bool),
-                          ("filename",None),
-                          ("mask",None)])
-        state=OrderedDict()
-        for k,process in attrs.items():
-            if process is None:
-                val=getattr(self,k,None)
-            else:
-                val=process(getattr(self,k,None))
-            state[k]=val
-        return state
+#    def __getstate__(self):
+#        """Get ready for picking this object - used for deepcopy."""
+#        attrs=OrderedDict([("data",DataArray),
+#                          ("setas",list),
+#                          ("column_headers",list),
+#                          ("metadata",typeHintedDict),
+#                          ("debug",bool),
+#                          ("filename",None),
+#                          ("mask",None)])
+#        state=OrderedDict()
+#        for k,process in attrs.items():
+#            if process is None:
+#                val=getattr(self,k,None)
+#            else:
+#                val=process(getattr(self,k,None))
+#            state[k]=val
+#        return state
 
 
     def __iter__(self):
@@ -1530,10 +1543,10 @@ class DataFile(metadataObject):
             return _np_.shape(self.data)[0]
         return 0
 
-    def __reduce_ex__(self, p):
-        """Machinery used for deepcopy."""
-        cls=self.__class__
-        return (cls, (), self.__getstate__())
+#    def __reduce_ex__(self, p):
+#        """Machinery used for deepcopy."""
+#        cls=self.__class__
+#        return (cls, (), self.__getstate__())
 
     def __repr__(self):
         """Outputs the :py:class:`DataFile` object in TDI format.
@@ -1596,15 +1609,15 @@ class DataFile(metadataObject):
         else:
             self.data[name]=value
 
-    def __setstate__(self, state):
-        """Internal function for pickling."""
-        state["data"]=_np_.array(state["data"]) #Sanitise data
-        for attr in state:
-            if state[attr] is not None:
-                try:
-                    setattr(self,attr,state[attr])
-                except TypeError:
-                    pass
+#    def __setstate__(self, state):
+#        """Internal function for pickling."""
+#        state["data"]=_np_.array(state["data"]) #Sanitise data
+#        for attr in state:
+#            if state[attr] is not None:
+#                try:
+#                    setattr(self,attr,state[attr])
+#                except TypeError:
+#                    pass
 
     def __str__(self):
         """Provides an implementation for str(DataFile) that does not shorten the output."""

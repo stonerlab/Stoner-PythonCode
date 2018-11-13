@@ -4,12 +4,13 @@ The core classes provides a means to access them as an ordered collection or as 
 """
 __all__ = ["each_item","combined_metadata_proxy","baseFolder","DiskBasedFolder","DataFolder","PlotFolder"]
 from Stoner.compat import python_v3,int_types,string_types,get_filedialog,commonpath,_pattern_type
-from .tools import operator,isiterable,isproperty,islike_list,all_type
+from .tools import operator,isiterable,isproperty,islike_list,all_type,get_option
 import os
 import re
 import os.path as path
 import fnmatch
 from functools import wraps,partial
+import itertools
 import multiprocess as multiprocessing
 
 import numpy as _np_
@@ -95,31 +96,8 @@ class each_item(object):
             If *_result* is True the return value is added to the :py:class:`Stoner.Core.metadataObject`'s metadata under the name
             of the function. If *_result* is a string. then return result is stored in the corresponding name.
         """
-        retvals=[None]*len(self._folder)
-        _return=kargs.pop("_return",None)
-        _byname=kargs.pop("_byname",False)
-        p=multiprocessing.Pool(int(multiprocessing.cpu_count()/2))
-        for ix,(f,ret) in enumerate(p.imap(partial(_worker,func=func,args=args,kargs=kargs,byname=_byname),self._folder)):
-            retvals[ix]=ret
-            new_d=f
-            if isinstance(ret,self._folder._type) and _return is None:
-                try: #Check if ret has same data type, otherwise will not overwrite well
-                    if ret.data.dtype!=f.data.dtype:
-                        continue
-                    else:
-                        new_d=ret
-                except AttributeError:
-                    pass
-            elif _return is not None:
-                if isinstance(_return,bool) and _return:
-                    _return=func.__name__
-                new_d[_return]=ret
-            name=getattr(f,"filename",self._folder.__names__()[ix])
-            self._folder.__setter__(name,new_d)
-        p.close()
-        p.join()
-        return retvals
-
+        #Just call the iter generator but assemble into a list.
+        return list(self.iter(func,*args,**kargs))
 
     def __dir__(self):
         """Return a list of the common set of attributes of the instances in the folder."""
@@ -236,6 +214,57 @@ class each_item(object):
             return self(other,*args,**kargs) # Delegate to self.__call__ which has multiprocess magic.
         #Ok that's the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
+
+    def iter(self,func,*args,**kargs):
+        """Iterate over the baseFolder, calling func on each item.
+
+        Args:
+            func (callable): A Callable object that must take a metadataObject type instance as it's first argument.
+
+        Keyword Args:
+            _return (None, bool or str): Controls how the return value from *func* is added to the DataFolder
+
+        Returns:
+            A list of the results of evaluating *func* for each item in the folder.
+
+        Notes:
+            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is storing, then
+            the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the :py:class:`baseFolder`.
+            If *_result* is True the return value is added to the :py:class:`Stoner.Core.metadataObject`'s metadata under the name
+            of the function. If *_result* is a string. then return result is stored in the corresponding name.
+        """
+        _return=kargs.pop("_return",None)
+        _byname=kargs.pop("_byname",False)
+        if get_option("multiprocessing"):
+            p=multiprocessing.Pool(int(multiprocessing.cpu_count()/2))
+            imap=p.imap
+        else:
+            if python_v3:
+                imap=map
+            else:
+                imap=itertools.map
+        for ix,(f,ret) in enumerate(imap(partial(_worker,func=func,args=args,kargs=kargs,byname=_byname),self._folder)):
+            new_d=f
+            if isinstance(ret,self._folder._type) and _return is None:
+                try: #Check if ret has same data type, otherwise will not overwrite well
+                    if ret.data.dtype!=f.data.dtype:
+                        continue
+                    else:
+                        new_d=ret
+                except AttributeError:
+                    pass
+            elif _return is not None:
+                if isinstance(_return,bool) and _return:
+                    _return=func.__name__
+                new_d[_return]=ret
+            name=getattr(f,"filename",self._folder.__names__()[ix])
+            self._folder.__setter__(name,new_d)
+            yield ret
+        if get_option("multiprocessing"):
+            p.close()
+            p.join()
+
+
 
 class combined_metadata_proxy(MutableMapping):
 
