@@ -4,7 +4,7 @@
 __all__ = ["AnalysisMixin","GetAffineTransform","ApplyAffineTransform"]
 from inspect import isclass
 from warnings import warn
-
+from collections import Mapping,OrderedDict
 import numpy as _np_
 import numpy.ma as ma
 
@@ -237,6 +237,46 @@ def _lmfit_p0_dict(p0,model):
         raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
     #p0={p0[k] for k in model.param_names}
     return p0
+
+def _get_model_parnames(model):
+    """get a list of the model parameter names."""
+    if isinstance(model,type) and (isubclass(model,Model) or issubclass(model,odrmodel)):
+        model=Model()
+        
+    if isinstance(model,Model):
+        return model.param_names
+    if isinstance(model,odrmodel):
+        if "param_names" in model.meta:
+            return model.meta["param_names"]
+        else:
+            model=model.fcn
+    if not callable(model):
+        raise ValueError("Unrecognised type for model! - should be lmfit.Model, scipy.odr.Model or callable, not {}",format(type(model)))
+    arguments,carargs,jeywords,defaults=getfullargspec(model)[0:4] # pylint: disable=W1505
+    return list(arguments[1:])
+
+def _curve_fit_p0_list(p0,model):
+    """Takes something containing an initial vector and turns it into a list for curve_fit.
+    
+    Args:
+        model (callable, lmfit/Model, odr.Model): miodel object for parameter names
+        o0 (list,array,type or Mapping): Object containing the parameter gues values
+        
+    Returns:
+        A list of starting values in the order in which they appear in the model.
+    """
+    if p0 is None:
+        return p0
+    
+    if isinstance(p0,Mapping):
+        p_new=OrderedDict()
+        for x,v in p0.items():
+            p_new[x]=getattr(v,"value",float(v))
+        ret=[]
+        for x in _get_model_parnames(model):
+            ret.append(p_new.get(x,None))
+    elif isiterable(p0):
+        return [float(x) for x in p0]                  
 
 def _prep_lmfit_model(model,p0,kargs):
     """Prepare an lmfit model instance.
@@ -522,16 +562,18 @@ class AnalysisMixin(object):
         super(AnalysisMixin,self).__init__(*args,**kargs)
         if self.debug: print("Done AnlaysisMixin init")
 
-    def SG_Filter(self, col=None, points=15, poly=1, order=0, result=None, replace=False, header=None):
+    def SG_Filter(self, col=None, xcol=None, points=15, poly=1, order=0, pad=True, result=None, replace=False, header=None):
         """Implements Savitsky-Golay filtering of data for smoothing and differentiating data.
 
         Args:
             col (index): Column of Data to be filtered. if None, first y-column in setas is filtered.
-            prints (int): Number of data points to use in the filtering window. Should be an odd number > poly+1 (default 15)
+            points (int): Number of data points to use in the filtering window. Should be an odd number > poly+1 (default 15)
 
         Keyword Arguments:
+            xcol (coilumn index)@ If *order*>1 then can be used to specify an x-column to differentiate with respect to.
             poly (int): Order of polynomial to fit to the data. Must be equal or greater than order (default 1)
             order (int): Order of differentiation to carry out. Default=0 meaning smooth the data only.
+            pad (bool or float): Pad the start and end of the array with the mean value (True, default) or specired value (float) or leave as is.
             result (None,True, or column_index): If not None, column index to insert new data, or True to append as last column
             header (string or None): Header for new column if result is not None. If header is Nne, a suitable column header is generated.
 
@@ -543,6 +585,8 @@ class AnalysisMixin(object):
             If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used
             to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
             for differentiating data. This is now a pass through to :py:func:`scipy.signal.savgol_filter`
+            
+            Padding can help stop wildly wrong artefacts in the data at the start and enf of the data, particularly when the differntial order is >1.
 
         See Also:
             User guide section :ref:`smoothing_guide`
@@ -552,26 +596,45 @@ class AnalysisMixin(object):
         if points % 2 == 0:  #Ensure window length is odd
             points += 1
 
-        if col is None:
-            cols = self.setas._get_cols()
-            if order>0:
-                col = (cols["xcol"], cols["ycol"][0])
-            else:
-                col = cols["ycol"][0]
-        if isinstance(col, (list, tuple)):
+        _=self._col_args(scalar=False,ycol=col,xcol=xcol)
+
+        if _.xcol is not None:
+            col=_.ycol+[_.xcol]
             data = self.column(list(col)).T
-            ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
-            r = ddata[1:] / ddata[0]
         else:
-            data = self.column(col)
-            r = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
+            col=_.ycol
+            data = self.column(list(col)).T
+            data = _np_.row_stack((data,_np_.arange(data.shape[1])))
+        
+        ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
+        if isinstance(pad, bool) and pad:
+            offset=int(points*order**2/8)
+            padv=_np_.mean(ddata[:,offset:-offset],axis=1)
+            pad=_np_.ones((ddata.shape[0],offset))
+            for ix,v in enumerate(padv):
+                pad[ix]*=v
+        elif isinstance(pad,float):
+            offset=int(points/2)
+            pad=_np_.ones((ddata.shape[0],offset))*pad
+            
+        if _np_.all(pad) and offset>0:
+            ddata[:,:offset]=pad
+            ddata[:,-offset:]=pad
+        if order>=1:
+            r=ddata[:-1] / ddata[-1]
+        else:
+            r=ddata[:,:-1]
+
         if result is not None:
             if not isinstance(header, string_types):
-                header = '{} after {} order Savitsky-Golay Filter'.format(self.column_headers[self.find_col(col)],
-                                                                          ordinal(order))
-            if isinstance(result, bool) and result:
-                result = self.shape[1] - 1
-            self.add_column(r.ravel(), header, index=result, replace=replace)
+                header=[]
+                for column in col[:-1]:
+                    header.append('{} after {} order Savitsky-Golay Filter'.format(self.column_headers[column],
+                                                                          ordinal(order)))
+            else:
+                header=[header]*(len(col)-1)
+            for column,head in zip(r[:-1],header):
+                self.add_column(column.ravel(), header=head, index=result, replace=replace)
             return self
         else:
             return r
@@ -1188,6 +1251,8 @@ class AnalysisMixin(object):
                 p0=p0(yy,xdat)
             except:
                 p0=None
+
+        p0=_curve_fit_p0_list(p0,func)            
 
         retvals=[]
         i=None
@@ -2198,7 +2263,7 @@ class AnalysisMixin(object):
 
         Args:
             ycol (index): is the column name or index of the data in which to search for peaks
-            width (float): is the expected minium halalf-width of a peak in terms of the number of data points.
+            width (int or float): is the expected minium halalf-width of a peak in terms of the number of data points (int) or distance in x (float).
                 This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
                 to experimental noise, smaller means better eable to see sharp peaks
             poly (int): This is the order of polynomial to use when differentiating the data to locate a peak. Must >=2, higher numbers
@@ -2206,7 +2271,7 @@ class AnalysisMixin(object):
 
         Keyword Arguments:
             significance (float): is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
-                of the data. Bigger means less sensistive, smaller means more likely to detect noise.
+                of the data. Bigger means less sensistive, smaller means more likely to detect noise. Default is the maximum curvature/(2*width)
             xcol (index or None): name or index of data column that p[rovides the x-coordinate (default None)
             peaks (bool): select whether to measure peaks in data (default True)
             troughs (bool): select whether to measure troughs in data (default False)
@@ -2224,10 +2289,12 @@ class AnalysisMixin(object):
         See Also:
             User guide section :ref:`peak_finding`
         """
-        width=kargs.pop("width",len(self) / 20)
+        width=kargs.pop("width",int(len(self) / 20))
         peaks=kargs.pop("peaks",True)
         troughs=kargs.pop("troughs",False)
         poly=kargs.pop("poly",2)
+        assert poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or trough"
+
         sort=kargs.pop("sort",False)
         modify=kargs.pop("modify",False)
         full_data=kargs.pop("full_data",True)
@@ -2235,19 +2302,27 @@ class AnalysisMixin(object):
         xcol,ycol=_.xcol,_.ycol
         if isiterable(ycol):
             ycol=ycol[0]
-        assert poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or trough"
+        if isinstance(width,float): # Convert a floating point width unto an integer.
+            xmin,xmax=self.span(xcol)
+            width=int(len(self)*width/(xmax-xmin))
+        width=max(width,poly+1)
         setas=self.setas.clone
         self.setas=""
-        d1 = self.SG_Filter(ycol, width, poly, 1)
-        d2 = self.SG_Filter(ycol, 2*width, poly, 2) # 2nd differential requires more smoothing
+        d1 = self.SG_Filter(ycol, xcol=xcol,points=width,poly= poly, order=1).ravel()
+        d2 = self.SG_Filter(ycol, xcol=xcol,points=2*width,poly=poly, order=2).ravel() # 2nd differential requires more smoothing
 
         #We're going to ignore the start and end of the arrays
         index_offset=int(width/2)
         d1=d1[index_offset:-index_offset]
         d2=d2[index_offset:-index_offset]
+        
+        #Pad the ends of d2 with the mean value
+        pad=_np_.mean(d2[index_offset:-index_offset])
+        d2[:index_offset]=pad
+        d2[-index_offset:]=pad
 
         #Set the significance from the 2nd ifferential if not already set
-        significance = kargs.pop("significance",_np_.max(_np_.abs(d2))/20.0) # Base an apriori significance on max d2y/dx2 / 20
+        significance = kargs.pop("significance",_np_.max(_np_.abs(d2))/(2*width)) # Base an apriori significance on max d2y/dx2 / 20
         if isinstance(significance, int): # integer significance is inverse to floating
             significance = _np_.max(_np_.abs(d2))/significance # Base an apriori significance on max d2y/dx2 / 20
 
@@ -2554,7 +2629,8 @@ class AnalysisMixin(object):
             else:
                 sigma=_np_.ones(len(self))
         replace=kargs.pop("replace",True)
-        header=kargs.pop("header",None)
+        result=kargs.pop("result",True) # overwirte existing y column data
+        header=kargs.pop("header",self.column_headers[_.ycol])
         k=kargs.pop("order",3)
         s=kargs.pop("smoothing",None)
         bbox=kargs.pop("bbox",[None]*2)
@@ -2567,21 +2643,13 @@ class AnalysisMixin(object):
         if header is None:
             header=self.column_headers[_.ycol]
 
-        if isinstance(replace,bool):
-            if replace:
-                self.add_column(new_y,header=header, index=_.ycol,replace=True)
-                ret=self
-            else:
-                ret=new_y
-        elif isinstance(replace,index_types):
-            self.add_column(new_y,header=header, index=replace,replace=False)
-            ret=self
-        elif replace is None:
-            ret=spline
+        if not (result is None or (isinstance(result,bool) and not result)):
+            self.add_column(new_y, header, index=result, replace=replace)
+            return self
+        elif result is None:
+            return new_y
         else:
-            raise RuntimeError("replace should be column index, boolean or None")
-
-        return ret
+            return spline
 
     def stitch(self, other, xcol=None, ycol=None, overlap=None, min_overlap=0.0, mode="All", func=None, p0=None):
         r"""Apply a scaling to this data set to make it stich to another dataset.

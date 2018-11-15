@@ -26,5 +26,5 @@ d.setas="xy"
 d2=d.bin(bins=100,mode="lin")
 d2.fig=d.fig
 d2.plot(lw=2,label="Re-binned",color="blue")
-d2.xlim=(3.5,6.5)
-d2.ylim=(-0.2,0.4)
+d2.xlim(3.5,6.5)
+d2.ylim(-0.2,0.4)

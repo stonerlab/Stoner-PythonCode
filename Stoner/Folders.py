@@ -257,7 +257,7 @@ class each_item(object):
                 if isinstance(_return,bool) and _return:
                     _return=func.__name__
                 new_d[_return]=ret
-            name=getattr(f,"filename",self._folder.__names__()[ix])
+            name=self._folder.__names__()[ix]
             self._folder.__setter__(name,new_d)
             yield ret
         if get_option("multiprocessing"):

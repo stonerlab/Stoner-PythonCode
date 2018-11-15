@@ -50,8 +50,8 @@ class Analysis_test(unittest.TestCase):
 
     def test_peaks(self):
         d=self.d3.clone
-        d.peaks(width=8,poly=4,significance=40,modify=True)
-        self.assertEqual(len(d),10,"Failed on peaks test.")
+        d.peaks(width=8,poly=4,significance=100,modify=True)
+        self.assertEqual(len(d),11,"Failed on peaks test.")
 
     def test_threshold(self):
         #set up some zigzag data

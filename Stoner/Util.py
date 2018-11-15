@@ -51,7 +51,7 @@ def split_up_down(data, col=None, folder=None):
     if col is None:
         _=a._col_args()
         col=_.xcol
-    width = len(a) / 10
+    width = int(len(a) / 10)
     if width % 2 == 0:  # Ensure the window for Satvisky Golay filter is odd
         width += 1
     setas=a.setas.clone

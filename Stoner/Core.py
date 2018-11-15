@@ -2151,6 +2151,8 @@ class DataFile(metadataObject):
             self.data = DataArray(_np_.append(self.data, _np_.zeros((cl - dr, dc)), 0),setas=self.setas.clone)
         elif cl < dr: # New data is too short
             _np__data = _np_.append(_np__data, _np_.zeros((dr - cl,cw)))
+            if _np__data.ndim==1:
+                _np__data=_np_.atleast_2d(_np__data).T
         elif dc==0: #Existing data has no width - replace with cl,0
             self.data=DataArray(_np_.zeros((cl,0)))
         elif dr==0: #Existing data has no rows - expand existing data with zeros to have right length
