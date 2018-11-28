@@ -264,7 +264,7 @@ class each_item(object):
             name=self._folder.__names__()[ix]
             self._folder.__setter__(name,new_d)
             yield ret
-        if get_option("multiprocessing"):
+        if p is not None:
             p.close()
             p.join()
 
@@ -1435,16 +1435,23 @@ class baseFolder(MutableSequence):
 
     def _get_pool(self):
         """Utility method to get a Pool and map implementation depending on options.
-        
+
         Returns:
             Pool(),map: Pool object if possible and map implementation.
         """
         if get_option("multiprocessing"):
-            if get_option("threading"):
-                p=ThreadPool(processes=int(multiprocessing.cpu_count()-1))
-            else:
-                p=multiprocessing.Pool(int(multiprocessing.cpu_count()/2))
-            imap=p.imap
+            try:
+                if get_option("threading"):
+                    p=ThreadPool(processes=int(multiprocessing.cpu_count()-1))
+                else:
+                    p=multiprocessing.Pool(int(multiprocessing.cpu_count()/2))
+                imap=p.imap
+            except: #Fallback to non-multiprocessing if necessary
+                p=None
+                if python_v3:
+                    imap=map
+                else:
+                    imap=itertools.map
         else:
             p=None
             if python_v3:
@@ -1621,10 +1628,10 @@ class baseFolder(MutableSequence):
         if isinstance(name,metadataObject):
             match=[1 for d in self if d==name ]
             return len(match)
-        
+
     def fetch(self):
         """Preload the contents of the baseFolder.
-        
+
         In the base  class this is a NOP becuase the objects are all in memory anyway.
         """
         return self
@@ -2424,7 +2431,7 @@ class DiskBasedFolder(object):
     @directory.setter
     def directory(self,value):
         self.root=value
-        
+
     @property
     def not_loaded(self):
         """Return an array of True/False for whether we've loaded a metadataObject yet."""
@@ -2450,16 +2457,16 @@ class DiskBasedFolder(object):
 
     def fetch(self):
         """Preload the contents of the DiskbasedFolder.
-        
+
         With multiprocess enabled this will parallel load the contents of the folder into memory.
         """
         p,imap=self._get_pool()
         for ix,(f,name) in enumerate(imap(partial(_loader,loader=self.loader,typ=self._type),self.not_loaded)):
             self._folder.__setter__(name,f)
-            
-        if get_option("multiprocessing"):
+
+        if p is not None:
             p.close()
-            p.join()        
+            p.join()
         return self
 
     def getlist(self, recursive=None, directory=None,flatten=None, discard_earlier=None):
