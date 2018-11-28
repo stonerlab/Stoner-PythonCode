@@ -1451,13 +1451,13 @@ class baseFolder(MutableSequence):
                 if python_v3:
                     imap=map
                 else:
-                    imap=itertools.map
+                    imap=itertools.imap
         else:
             p=None
             if python_v3:
                 imap=map
             else:
-                imap=itertools.map
+                imap=itertools.imap
         return p,imap
 
     def _update_from_object_attrs(self,obj):

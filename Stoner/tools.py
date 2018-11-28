@@ -7,7 +7,7 @@ These functions depend only on Stoner.compat which is used to ensure a consisten
 __all__ = [ '_attribute_store', 'all_size', 'all_type', 'fix_signature', 'format_error', 'format_val', 'html_escape', 'isAnyNone', 'isNone', 'isiterable', 'islike_list',
              'isproperty', 'istuple', 'quantize', 'tex_escape', 'typedList','get_option','set_option']
 from collections import Iterable,MutableSequence
-from .compat import string_types,bytes2str
+from .compat import string_types,bytes2str,python_v3
 import re
 import os
 import inspect
@@ -55,7 +55,7 @@ _options={"short_repr":False,
           "short_data_repr":False,
           "short_img_repr":True,
           "no_figs":True,
-          "multiprocessing":os.name!="nt", #multiprocess doesn't run too well under Windows due to spawn()
+          "multiprocessing":os.name!="nt" and python_v3, #multiprocess doesn't run too well under Windows due to spawn()
           "threading":False }
 
 ###############################################################################################################

@@ -91,7 +91,7 @@ if __vi__[0] == 2:
 
 
 elif __vi__[0] == 3:
-    
+
     if __vi__[1] <7:
         from re import _pattern_type
     else:

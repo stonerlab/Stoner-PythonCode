@@ -29,8 +29,6 @@ pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
 
-set_option("multiprocessing",os.name!="nt") # \Turn off parallel testing in windows
-
 class Folders_test(unittest.TestCase):
 
     """Path to sample Data File"""
