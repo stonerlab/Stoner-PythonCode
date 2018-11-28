@@ -9,6 +9,7 @@ __all__ = [ '_attribute_store', 'all_size', 'all_type', 'fix_signature', 'format
 from collections import Iterable,MutableSequence
 from .compat import string_types,bytes2str
 import re
+import os
 import inspect
 
 from numpy import log10,floor,abs,logical_and,isnan,round,ndarray,dtype #pylint: disable=redefined-builtin
@@ -54,7 +55,8 @@ _options={"short_repr":False,
           "short_data_repr":False,
           "short_img_repr":True,
           "no_figs":True,
-          "multiprocessing":True }
+          "multiprocessing":os.name!="nt", #multiprocess doesn't run too well under Windows due to spawn()
+          "threading":False }
 
 ###############################################################################################################
 ######################  Functions #############################################################################

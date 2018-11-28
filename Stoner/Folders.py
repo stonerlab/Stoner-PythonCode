@@ -6,11 +6,13 @@ __all__ = ["each_item","combined_metadata_proxy","baseFolder","DiskBasedFolder",
 from Stoner.compat import python_v3,int_types,string_types,get_filedialog,commonpath,_pattern_type
 from .tools import operator,isiterable,isproperty,islike_list,all_type,get_option
 import os
+import sys
 import re
 import os.path as path
 import fnmatch
 from functools import wraps,partial
 import itertools
+from multiprocessing.pool import ThreadPool
 import multiprocess as multiprocessing
 
 import numpy as _np_
@@ -61,6 +63,13 @@ def _worker(d,**kwargs):
     except Exception as e:
         ret=e,format_exc()
     return (d,ret)
+
+def _loader(loader,typ,name):
+    """Lods and returns an object."""
+    return typ(loader(name)),name
+
+def _init_process(shared):
+    setattr(sys.modules[__name__],"_shared_val",shared)
 
 class each_item(object):
 
@@ -235,16 +244,11 @@ class each_item(object):
         """
         _return=kargs.pop("_return",None)
         _byname=kargs.pop("_byname",False)
-        if get_option("multiprocessing"):
-            p=multiprocessing.Pool(int(multiprocessing.cpu_count()/2))
-            imap=p.imap
-        else:
-            if python_v3:
-                imap=map
-            else:
-                imap=itertools.map
+        self._folder.fetch() # Prefetch thefolder in case we can do it in parallel
+        p,imap=self._folder._get_pool()
         for ix,(f,ret) in enumerate(imap(partial(_worker,func=func,args=args,kargs=kargs,byname=_byname),self._folder)):
             new_d=f
+            if self._folder.debug: print(ix,type(ret))
             if isinstance(ret,self._folder._type) and _return is None:
                 try: #Check if ret has same data type, otherwise will not overwrite well
                     if ret.data.dtype!=f.data.dtype:
@@ -1429,6 +1433,25 @@ class baseFolder(MutableSequence):
 #            self.__setter__(n,other.__getter__(n,instantiate=None))
 
 
+    def _get_pool(self):
+        """Utility method to get a Pool and map implementation depending on options.
+        
+        Returns:
+            Pool(),map: Pool object if possible and map implementation.
+        """
+        if get_option("multiprocessing"):
+            if get_option("threading"):
+                p=ThreadPool(processes=int(multiprocessing.cpu_count()-1))
+            else:
+                p=multiprocessing.Pool(int(multiprocessing.cpu_count()/2))
+            imap=p.imap
+        else:
+            p=None
+            if python_v3:
+                imap=map
+            else:
+                imap=itertools.map
+        return p,imap
 
     def _update_from_object_attrs(self,obj):
         """Updates an object from object_attrs store."""
@@ -1598,6 +1621,13 @@ class baseFolder(MutableSequence):
         if isinstance(name,metadataObject):
             match=[1 for d in self if d==name ]
             return len(match)
+        
+    def fetch(self):
+        """Preload the contents of the baseFolder.
+        
+        In the base  class this is a NOP becuase the objects are all in memory anyway.
+        """
+        return self
 
     def file(self, name, value, create=True, pathsplit=None):
         """Recursively add groups in order to put the named value into a virtual tree of :py:class:`baseFolder`.
@@ -2174,6 +2204,7 @@ class DiskBasedFolder(object):
               "read_means":False,
               "recursive":True,
               "flat":False,
+              "prefetch":True,
               "directory":None,
               "multifile":False,
               "pruned":True,
@@ -2185,16 +2216,22 @@ class DiskBasedFolder(object):
     def __init__(self,*args,**kargs):
         """Additional constructor for DiskbasedFolders"""
         from Stoner import Data
-        defaults=self.defaults #Force the default store to be populated.
+        _=self.defaults #Force the default store to be populated.
         if "directory" in self._default_store and self._default_store["directory"] is None:
             self._default_store["directory"]=os.getcwd()
         if "type" in self._default_store and self._default_store["type"] is None and self._type==metadataObject:
             self._default_store["type"]=Data
         elif self._type!=metadataObject: # Looks like we've already set our type in a subbclass
             self._default_store.pop("type")
+        flat=kargs.pop("flat",self._default_store.get("flat",False))
+        prefetch=kargs.pop("prefetch",self._default_store.get("prefetch",False))
         super(DiskBasedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
         if self.readlist and len(args)>0 and isinstance(args[0],string_types):
             self.getlist(directory=args[0])
+        if flat:
+            self.flatten()
+        if prefetch:
+            self.fetch()
         if self.pruned:
             self.prune()
 
@@ -2387,7 +2424,13 @@ class DiskBasedFolder(object):
     @directory.setter
     def directory(self,value):
         self.root=value
-
+        
+    @property
+    def not_loaded(self):
+        """Return an array of True/False for whether we've loaded a metadataObject yet."""
+        for ix,n in enumerate(self.__names__()):
+            if isinstance(self.__getter__(n,instantiate=False),self._type):
+                yield n
     @property
     def pattern(self):
         """Provide support for getting the pattern attribute."""
@@ -2405,6 +2448,19 @@ class DiskBasedFolder(object):
         else:
             raise ValueError("pattern should be a string, regular expression or iterable object not a {}".format(type(value)))
 
+    def fetch(self):
+        """Preload the contents of the DiskbasedFolder.
+        
+        With multiprocess enabled this will parallel load the contents of the folder into memory.
+        """
+        p,imap=self._get_pool()
+        for ix,(f,name) in enumerate(imap(partial(_loader,loader=self.loader,typ=self._type),self.not_loaded)):
+            self._folder.__setter__(name,f)
+            
+        if get_option("multiprocessing"):
+            p.close()
+            p.join()        
+        return self
 
     def getlist(self, recursive=None, directory=None,flatten=None, discard_earlier=None):
         """Scans the current directory, optionally recursively to build a list of filenames
@@ -2615,7 +2671,7 @@ class DataFolder(DiskBasedFolder,baseFolder):
         return tmp
 
 
-    def concatentate(self,sort=None,reverse=False):
+    def concatenate(self,sort=None,reverse=False):
         """Concatentates all the files in a objectFolder into a single metadataObject like object.
 
         Keyword Arguments:
