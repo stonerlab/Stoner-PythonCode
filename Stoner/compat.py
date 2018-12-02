@@ -24,12 +24,13 @@ except ImportError:
     _lmfit=False
 
 
-__all__ = ["python_v3","str2bytes","bytes2str","get_filedialog","string_types","int_types","index_types","LooseVersion","classproperty","mpl_version","_lmfit"]
+__all__ = ["python_v3","str2bytes","bytes2str","get_filedialog","string_types","int_types","index_types","LooseVersion","classproperty","mpl_version","_lmfit","cmp"]
 
 # Nasty hacks to sort out some naming conventions
 if __vi__[0] == 2:
     from re import _pattern_type
     from inspect import getargspec
+    from __builtin__ import cmp
 
     def get_func_params(func):
         ret=[]
@@ -97,7 +98,7 @@ elif __vi__[0] == 3:
     else:
         from re import Pattern as _pattern_type
 
-
+    cmp=None
     from builtins import bytes as _bytes
     from os.path import commonpath
     from inspect import signature

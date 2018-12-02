@@ -17,8 +17,9 @@ import re
 
 from .compat import string_types,bytes2str,str2bytes,get_filedialog,_pattern_type
 from .Core import DataFile,StonerLoadError
-from .Folders import baseFolder,pathjoin,DiskBasedFolder
-
+from .Folders import DiskBasedFolder
+from .folders.core import baseFolder
+from .folders.utils import pathjoin
 
 def test_is_zip(filename, member=""):
     """Recursively searches for a zipfile in the tree.
