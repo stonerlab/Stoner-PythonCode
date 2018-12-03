@@ -2,7 +2,7 @@
 of the `Condensed Matter Group<http://www.stoner.leeds.ac.uk/>` at the `University of Leeds<http://www.leeds.ac.uk>`.
 """
 # pylint: disable=import-error
-__all__=['Core', 'Analysis', 'plot', 'Image','tools','FileFormats','Folders','Data','DataFolder','set_option','get_option']
+__all__=['Core', 'Analysis', 'plot', 'Image','tools','FileFormats','folders','Folders','Data','DataFolder','set_option','get_option']
 
 # These fake the old namespace if you do an import Stoner
 from sys import float_info
