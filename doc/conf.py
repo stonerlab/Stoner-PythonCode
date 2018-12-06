@@ -114,6 +114,9 @@ autosummary_generate = True
 automodsumm_inherited_members = False
 autodoc_default_flags =[] # 'members', 'undoc-members', 'private-members','show-inheritance']
 
+inheritance_graph_attrs = dict(rankdir="TB", size='"6.0, 8.0"',
+                               fontsize=14, ratio='compress')
+
 intersphinx_mapping = {
    'python': ('http://docs.python.org/', None),
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),

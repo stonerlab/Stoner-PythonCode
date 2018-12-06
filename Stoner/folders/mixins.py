@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """mixin calsses for :py:class:`Stoner.folders.core.baseFoler`."""
-__all__=["DiskBasedFolder"]
+__all__=["DiskBasedFolder","DataMethodsMixin","PlotMethodsMixin"]
 
 import os
 import os.path as path

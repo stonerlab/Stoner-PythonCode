@@ -173,7 +173,7 @@ class baseFolder(MutableSequence):
 
     @property
     def each(self):
-        """Return a proxy object for calling attributes of the member type of the folder."""
+        """Return a :py:class:`Stoner.folders.each.item` proxy object for calling attributes of the member type of the folder."""
         return each_item(self)
 
     @property
@@ -256,7 +256,7 @@ class baseFolder(MutableSequence):
 
     @property
     def metadata(self):
-        """Returns the proxy accessor for operations on combined metadata."""
+        """Returns a :py:class:`Stoner.folders.metadata.combined_metadata_pryx` object for operations on combined metadata."""
         return combined_metadata_proxy(self)
 
     @property
