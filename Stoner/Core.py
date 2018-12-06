@@ -432,8 +432,8 @@ class DataFile(metadataObject):
     @property
     def setas(self):
         """Get the list of column assignments."""
-        return self._data._setas
-
+        setas=self._data._setas
+        return setas
     @setas.setter
     def setas(self, value):
         """Sets a new setas assignment by calling the setas object."""

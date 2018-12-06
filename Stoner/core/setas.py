@@ -11,7 +11,7 @@ import numpy as _np_
 from ..compat import string_types,int_types,index_types,_pattern_type
 from ..tools import _attribute_store,isiterable,typedList,islike_list,istuple
 
-from collections import MutableMapping
+from collections import MutableMapping,Mapping
 
 class setas(MutableMapping):
 
@@ -31,7 +31,7 @@ class setas(MutableMapping):
                   6: {"axes":6,"xcol":0,"ycol":1,"zcol":2,"ucol":3,"vcol":4,"wcol":5,"xerr":None,"yerr":None,"zerr":None},} # xyzuvw
 
 
-    def __init__(self, initial_val=None, **kargs):
+    def __init__(self, row=False,bless=None):
         """Constructs the setas instance and sets an initial value.
 
         Args:
@@ -40,17 +40,12 @@ class setas(MutableMapping):
         Keyword Arguments:
             initial_val (string or list or dict): Initial values to set
         """
-        self._row=kargs.pop("_row",False)
+        self._row=row
         self._cols = _attribute_store()
         self._shape=tuple()
         self._setas = list()
         self._column_headers = typedList(string_types)
-
-
-        if initial_val is not None:
-            self(initial_val)
-        elif kargs:
-            self(**kargs)
+        self._object=bless
 
     def _decode_string(self,value):
         """Expands a string of column assignments, replacing numbers with repeated characters."""
@@ -127,16 +122,8 @@ class setas(MutableMapping):
     @property
     def cols(self):
         """Get the current column assignments."""
-        if not self._cols:
-            self._cols.update(self._get_cols())
+        self._cols.update(self._get_cols())
         return self._cols
-
-    @cols.setter
-    def cols(self,value):
-        """Update the current column assignments."""
-        if not isinstance(value,dict):
-            raise AttributeError("cols attribute must be a dictionary")
-        self._cols=_attribute_store(value)
 
     @property
     def x(self):
@@ -146,7 +133,6 @@ class setas(MutableMapping):
         be handled properly)
         """
         return self.cols['xcol']
-
 
     @property
     def y(self):
@@ -223,9 +209,16 @@ class setas(MutableMapping):
         setas("xyzuvw")
         setas(["x"],["y"],["z"],["u"],["v"],["w"])
         setas(x="column_1",y=3,column4="z")
+
+        Keyword Arguments:
+            _self (bool): If True, make the call return a copy of the setas object, if False, return _object attribute, if None, return None
         """
+        return_self=kargs.pop("_self",None)
         if not (args  or kargs): #New - bare call to setas will return the current value.
             return self.setas
+        if len(args)==1 and isinstance(args[0],setas):
+            args=list(args)
+            args[0]=args[0].to_list()
         if len(args)==1 and not (isinstance(args[0], string_types+(setas,)) or isiterable(args[0])):
             raise SyntaxError("setas should be called with eother a string, iterable object or setas object, not a {}".format(type(args[0])))
 
@@ -260,6 +253,13 @@ class setas(MutableMapping):
         else:
             raise ValueError("Set as column string ended with a number")
         self.cols.update(self._get_cols())
+        if return_self is None:
+            return None
+        elif return_self:
+            return self
+        else:
+            return self._object
+
 
     def __contains__(self,item):
         """Use getitem to test for membership. Either column assignments or column index types are tested."""
@@ -398,12 +398,13 @@ class setas(MutableMapping):
 
     def __add_core__(self,new,other):
         """Allow the user to add a dictionary to setas to add extra columns."""
-        if isinstance(other,setas): #Deal with the other value being a setas attribute already.
-            other=other.to_dict()
-        elif istuple(other,index_types,string_types) or istuple(other,string_types,index_types):
-            other={other[0]:other[1]}
         if not isinstance(other,dict):
-            return NotImplemented
+            try:
+                tmp=self.clone
+                tmp(other)
+                other=tmp.to_dict()
+            except Exception:
+                return NotImplemented
         for k,v in other.items():
             if isinstance(k,string_types) and len(k)==1 and k in "xyzuvwdef": #of the form x:column_name
                 for v in new.find_col(v,force_list=True):
@@ -433,11 +434,35 @@ class setas(MutableMapping):
                     new._setas[new._setas.index(other)]="."
                 except ValueError:
                     break
+            return new
         elif isinstance(other,index_types):
             try:
                 new._setas[new.find_col(other)]="."
+                return new
             except KeyError:
-                pass
+                other=new.clone(other,_self=True)
+
+        if isinstance(other,Mapping):
+            me=new.to_dict()
+            other=new.clone(other,_self=True).to_dict()
+            for k,v in other.items():
+                v=[v] if not isinstance(v,list) else v
+                if k in me:
+                    for header in v:
+                        if header in me[k]:
+                            if isinstance(me[k],list):
+                                me[k].remove(header)
+                            else:
+                                me[k]=""
+                        else:
+                            raise ValueError("{} is not set as {}".format(header,k))
+                        if len(me[k])==0:
+                            del me[k]
+                else:
+                    raise ValueError("No column is set as {}".format(k))
+            new.clear()
+            new(me)
+            return new
         elif isiterable(other):
             for o in other:
                 new=self.__sub_core__(new,o)
@@ -445,7 +470,7 @@ class setas(MutableMapping):
                     return NotImplemented
         else:
             return NotImplemented
-        return new
+        return NotImplemented
 
 
     def __sub__(self,other):
@@ -646,6 +671,25 @@ class setas(MutableMapping):
             if len(ret[k])==1:
                 ret[k]=ret[k][0]
         return ret
+
+    def to_list(self):
+        """Returns the setas attribute as a list of letter types."""
+        return list(self)
+
+    def to_string(self,encode=False):
+        """"Return the setas attribute encoded as a string, optionally replacing runs of 3 or more identical characters with a precediung digit."""
+        expanded="".join(self)
+        if encode:
+            pat=re.compile(r"((.)\2{2,9})")
+            while True:
+                res=pat.search(expanded)
+                if not res:
+                    break
+                start,stop=res.span()
+                let=str(stop-start)+res.group(2)
+                expanded=expanded[:start]+let+expanded[stop:]
+        return expanded
+
 
     def _get_cols(self, what=None, startx=0,no_guess=False):
         """Uses the setas attribute to work out which columns to use for x,y,z etc.

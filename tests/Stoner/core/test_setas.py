@@ -31,9 +31,56 @@ class SetasTest(unittest.TestCase):
         self.d3=Data(path.join(__home__,"..","sample-data","New-XRay-Data.dql"))
         self.d4=Data(path.join(__home__,"..","sample-data","Cu_resistivity_vs_T.txt"))
 
+    def test_setas_basics(self):
+        self.d4.setas="2.y.x3."
+        self.assertEqual(self.d4.setas.x,4,"Failed to set set as from string with numbers.")
+        tmp=list(self.d4.setas)
+        self.d4.setas="..y.x..."
+        self.assertEqual(list(self.d4.setas),tmp,"Explicit exapnsion of setas not the same as with numbers.")
+        self.d4.setas(x="T (K)")
+        self.d4.setas(y="rho",reset=False)
+        self.assertEqual(list(self.d4.setas),tmp,"setas from calls with and without reset failed")
+        s=self.d4.setas.clone
+        self.d4.setas=[]
+        self.assertEqual(list(self.d4.setas),["." for i in range(8)],"Failed to clear setas")
+        self.d4.setas(s)
+        self.assertEqual(list(self.d4.setas),tmp,"setas from call with setas failed")
+        self.d4.setas(reset="Yes")
+        self.assertEqual(list(self.d4.setas),["." for i in range(8)],"Failed to clear setas")
+        self.assertEqual(self.d4.setas._size,8,"Size attribute failed.")
+        self.assertEqual(self.d4[0,:].setas._size,8,"Size attribute for array row failed.")
+        self.assertEqual(self.d4[:,0].setas._size,1,"Size attribute for array column  failed.")
+        self.d4.column_headers[-3:]=["Column","Column","Column"]
+        self.assertEqual(self.d4.setas._unique_headers,['Voltage', 'Current', '$\\rho$ ($\\Omega$m)', 'Resistance', 'T (K)', 'Column', 6, 7],
+                                                        "Unique Headers failed in setas.")
+        self.d4.setas("2.y.x3.")
+        self.assertTrue(self.d4.setas=="..y.x...","Equality test by string failed.")
+        self.assertTrue(self.d4.setas=="2.y.x3.","Equality test by numbered string failed.")
+        self.assertEqual(self.d4.setas.to_string(),"..y.x...","To_string() failed.")
+        self.assertEqual(self.d4.setas.to_string(encode=True),"..y.x3.","To_string() failed.")
+        self.d4.setas.clear()
+        self.d4.setas+="2.y.x3."
+        self.assertTrue(self.d4.setas=="2.y.x3.","Equality test by numbered string failed.")
+        self.d4.setas-="2.y"
+        self.assertTrue(self.d4.setas=="4.x3.","Deletion Operator failed.")
+        self.d4.setas="2.y.x3."
+        self.assertEqual(self.d4.setas["rho"],"y","Getitem by type failed.")
+        self.assertEqual(self.d4.setas["x"],"T (K)","Getitem by name failed.")
+        self.assertEqual(self.d4.setas.x,4,"setas x attribute failed.")
+        self.assertEqual(self.d4.setas.y,[2],"setas y attribute failed.")
+        self.assertEqual(self.d4.setas.z,[],"setas z attribute failed.")
+        self.assertTrue(all(self.d4.setas.set==np.array([False,False,True,False,True,False,False,False])),"setas.set attribute not working.")
+        self.assertTrue(all(self.d4.setas.not_set==np.array([True,True,False,True,False,True,True,True])),"setas.set attribute not working.")
+        self.assertTrue("x" in self.d4.setas,"set.__contains__ failed")
+        del self.d4.setas["x"]
+        self.assertFalse("x" in self.d4.setas,"setas del item by column type failed.")
+        del self.d4.setas["rho"]
+        self.assertFalse("y" in self.d4.setas,"setas del by column named failed")
+
     def test_setas_dict_interface(self):
         self.assertEqual(list(self.d.setas.items()),[('X-Data', 'x'), ('Y-Data', 'y')],"Items method of setas failed.")
         self.assertEqual(list(self.d.setas.keys()),["X-Data","Y-Data"],"setas keys method fails.")
+
         self.assertEqual(list(self.d.setas.values()),["x","y"],"setas values method fails.")
         self.assertEqual(self.d.setas.get("x"),"X-Data","Simple get with key on setas failed.")
         self.assertEqual(self.d.setas.get("e","Help"),"Help","get on setas with non-existant key failed.")
@@ -104,5 +151,5 @@ class SetasTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=SetasTest("test_setas_metadata")
     test.setUp()
-    test.test_setas_metadata()
-    #unittest.main()
+    #test.test_setas_basics()
+    unittest.main()
