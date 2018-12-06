@@ -100,7 +100,7 @@ class SetasTest(unittest.TestCase):
         self.assertTrue(d.setas.x==0 and d.setas.y==[1] and d.setas.z==[2])
         d.setas(x=1, y='Column 2')
         self.assertTrue(d.setas.x==1 and d.setas.y==[2])
-        
+
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=SetasTest("test_setas_metadata")
     test.setUp()

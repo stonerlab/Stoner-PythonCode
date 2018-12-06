@@ -180,34 +180,6 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         self.assertTrue(all(sqrt(self.d[:,0]**2+self.d[:,1]**2)==self.d.r),"Calculated r attribute not right.")
         self.assertTrue(self.d2.records._[5]["Column 2"]==self.d2.data[5,2],"Records and as array attributes problem")
 
-
-    def test_setas(self):
-        #Check readback of setas
-        self.assertEqual(self.d.setas,["x","y"],"setas attribute not set in constructor or equality testing failed")
-        self.assertEqual(self.d.setas,"xy","setas attribute equality to string failed")
-        s=self.d.setas.clone
-        self.assertEqual(self.d.setas,s,"setas attribute equality to cloned setas failed")
-        self.assertEqual(str(self.d.setas),"xy","setas attribute not not converted to string")
-        self.assertTrue(all(self.d.x==self.d.column(0)),"Attribute setas column axis fails")
-        self.d.setas(x="Y-Data",reset=False)
-        self.assertEqual(self.d.setas,["x","x"],"Failed to set setas by type=column keyword assignment")
-        self.d.setas(Y="y",reset=False)
-        self.assertEqual(self.d.setas,["x","y"],"Failed to set setas by column=type keyword assignment")
-        self.assertEqual(self.d.setas["x"],"X-Data","Failed to return column name from setas dict reading")
-        self.assertEqual(self.d.setas["#x"],0,"Failed to return column index from setas dict reading")
-        e=~self.d
-        self.assertEqual(e.setas,"yx","Failed the invert xy columns operator ~")
-        e.setas.unset("y")
-        self.assertEqual(e.setas,".x","Failed to unset column by letter")
-        e.setas="yx"
-        e.setas.unset(0)
-        self.assertEqual(e.setas,".x","Failed to unset column by integer")
-        e.setas="yx"
-        e.setas.unset("X-Data")
-        self.assertEqual(e.setas,".x","Failed to unset column by column name")
-        e=self.d.clone(setas="x.")
-        self.assertEqual(e.setas,"x","Failed to test setas equality by abbreviated string")
-
     def test_iterators(self):
         for i,c in enumerate(self.d.columns()):
             self.assertTrue(all(self.d.column(i)==c),"Iterating over DataFile.columns not the same as direct indexing column")
