@@ -70,6 +70,7 @@
 <span class="kn">import</span> <span class="nn">operator</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">textwrap</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">reduce</span>
 
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
@@ -176,19 +177,17 @@
     <span class="k">if</span> <span class="n">note</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">initialdoc</span>
 
-    <span class="c1"># FIXME: disable this function for the moment until we figure out what to</span>
-    <span class="c1"># do with it. Currently it may result in duplicate Notes sections or Notes</span>
-    <span class="c1"># sections in the wrong place</span>
-    <span class="k">return</span> <span class="n">initialdoc</span>
+    <span class="n">notesplit</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\n\s*?Notes\n\s*?-----&#39;</span><span class="p">,</span> <span class="n">initialdoc</span><span class="p">)</span>
 
-    <span class="n">newdoc</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    </span><span class="si">%s</span><span class="s2"></span>
-
-<span class="s2">    Notes</span>
+    <span class="n">notedoc</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">Notes</span>
 <span class="s2">    -----</span>
-<span class="s2">    </span><span class="si">%s</span><span class="s2"></span>
-<span class="s2">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">newdoc</span> <span class="o">%</span> <span class="p">(</span><span class="n">initialdoc</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span>
+<span class="s2">    </span><span class="si">%s</span><span class="s2">&quot;&quot;&quot;</span> <span class="o">%</span> <span class="n">note</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">notesplit</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">notedoc</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">    &#39;</span> <span class="o">+</span> <span class="n">notedoc</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">notesplit</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">notedoc</span><span class="p">]</span> <span class="o">+</span> <span class="n">notesplit</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
 
 
 <span class="k">def</span> <span class="nf">get_object_signature</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -1674,7 +1673,7 @@
 
     <span class="c1"># Make sure the input dtype is valid.</span>
     <span class="n">dtype</span> <span class="o">=</span> <span class="n">make_mask_descr</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
-    
+
     <span class="c1"># legacy boolean special case: &quot;existence of fields implies true&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">m</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span> <span class="ow">and</span> <span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
@@ -2364,8 +2363,10 @@
         <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">xnew</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">umath</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">xnew</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">masked_array</span><span class="p">(</span>
-        <span class="n">xnew</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="n">shrink</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">masked_array</span><span class="p">(</span><span class="n">xnew</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">shrink</span><span class="p">:</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">shrink_mask</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ret</span>
 
 
 <span class="k">def</span> <span class="nf">masked_invalid</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -2844,13 +2845,8 @@
             <span class="c1"># FIXME _sharedmask is never used.</span>
             <span class="n">_sharedmask</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="c1"># Process mask.</span>
-        <span class="c1"># Number of named fields (or zero if none)</span>
-        <span class="n">names_</span> <span class="o">=</span> <span class="n">_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span> <span class="ow">or</span> <span class="p">()</span>
         <span class="c1"># Type of the mask</span>
-        <span class="k">if</span> <span class="n">names_</span><span class="p">:</span>
-            <span class="n">mdtype</span> <span class="o">=</span> <span class="n">make_mask_descr</span><span class="p">(</span><span class="n">_data</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">mdtype</span> <span class="o">=</span> <span class="n">MaskType</span>
+        <span class="n">mdtype</span> <span class="o">=</span> <span class="n">make_mask_descr</span><span class="p">(</span><span class="n">_data</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="n">nomask</span><span class="p">:</span>
             <span class="c1"># Case 1. : no mask in input.</span>
@@ -2876,14 +2872,12 @@
                     <span class="n">_data</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">mask</span>
                     <span class="n">_data</span><span class="o">.</span><span class="n">_sharedmask</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">else</span><span class="p">:</span>
+                <span class="n">_data</span><span class="o">.</span><span class="n">_sharedmask</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">copy</span>
                 <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
                     <span class="n">_data</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">_data</span><span class="o">.</span><span class="n">_mask</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-                    <span class="n">_data</span><span class="o">.</span><span class="n">_sharedmask</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="c1"># Reset the shape of the original mask</span>
                     <span class="k">if</span> <span class="n">getmask</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">nomask</span><span class="p">:</span>
                         <span class="n">data</span><span class="o">.</span><span class="n">_mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">_data</span><span class="o">.</span><span class="n">_sharedmask</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Case 2. : With a mask in input.</span>
             <span class="c1"># If mask is boolean, create an array of True or False</span>
@@ -2920,7 +2914,7 @@
                     <span class="n">_data</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">mask</span>
                     <span class="n">_data</span><span class="o">.</span><span class="n">_sharedmask</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">copy</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">names_</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
                         <span class="k">def</span> <span class="nf">_recursive_or</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
                             <span class="s2">&quot;do a|=b on each field of a, recursively&quot;</span>
                             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
@@ -2929,7 +2923,7 @@
                                     <span class="n">_recursive_or</span><span class="p">(</span><span class="n">af</span><span class="p">,</span> <span class="n">bf</span><span class="p">)</span>
                                 <span class="k">else</span><span class="p">:</span>
                                     <span class="n">af</span> <span class="o">|=</span> <span class="n">bf</span>
-                            <span class="k">return</span>
+
                         <span class="n">_recursive_or</span><span class="p">(</span><span class="n">_data</span><span class="o">.</span><span class="n">_mask</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">_data</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">_data</span><span class="o">.</span><span class="n">_mask</span><span class="p">)</span>
@@ -3024,11 +3018,32 @@
             <span class="c1"># heuristic it&#39;s not bad.) In all other cases, we make a copy of</span>
             <span class="c1"># the mask, so that future modifications to &#39;self&#39; do not end up</span>
             <span class="c1"># side-effecting &#39;obj&#39; as well.</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__array_interface__</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">nomask</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">__array_interface__</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                     <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__array_interface__</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]):</span>
-                <span class="n">_mask</span> <span class="o">=</span> <span class="n">_mask</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="c1"># We should make a copy. But we could get here via astype,</span>
+                <span class="c1"># in which case the mask might need a new dtype as well</span>
+                <span class="c1"># (e.g., changing to or from a structured dtype), and the</span>
+                <span class="c1"># order could have changed. So, change the mask type if</span>
+                <span class="c1"># needed and use astype instead of copy.</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">obj</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
+                    <span class="n">_mask_dtype</span> <span class="o">=</span> <span class="n">_mask</span><span class="o">.</span><span class="n">dtype</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_mask_dtype</span> <span class="o">=</span> <span class="n">make_mask_descr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">c_contiguous</span><span class="p">:</span>
+                    <span class="n">order</span> <span class="o">=</span> <span class="s2">&quot;C&quot;</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">f_contiguous</span><span class="p">:</span>
+                    <span class="n">order</span> <span class="o">=</span> <span class="s2">&quot;F&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">order</span> <span class="o">=</span> <span class="s2">&quot;K&quot;</span>
+
+                <span class="n">_mask</span> <span class="o">=</span> <span class="n">_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">_mask_dtype</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Take a view so shape changes, etc., do not propagate back.</span>
+                <span class="n">_mask</span> <span class="o">=</span> <span class="n">_mask</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_mask</span> <span class="o">=</span> <span class="n">nomask</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">_mask</span>
         <span class="c1"># Finalize the mask</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">nomask</span><span class="p">:</span>
@@ -3068,12 +3083,8 @@
             <span class="n">domain</span> <span class="o">=</span> <span class="n">ufunc_domain</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">domain</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># Take the domain, and make sure it&#39;s a ndarray</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
-                        <span class="n">d</span> <span class="o">=</span> <span class="n">filled</span><span class="p">(</span><span class="n">reduce</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">input_args</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
-                        <span class="n">d</span> <span class="o">=</span> <span class="n">filled</span><span class="p">(</span><span class="n">domain</span><span class="p">(</span><span class="o">*</span><span class="n">input_args</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
+                <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
+                    <span class="n">d</span> <span class="o">=</span> <span class="n">filled</span><span class="p">(</span><span class="n">domain</span><span class="p">(</span><span class="o">*</span><span class="n">input_args</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                     <span class="c1"># Fill the result where the domain is wrong</span>
@@ -3119,7 +3130,7 @@
 <span class="sd">            returned object (this is equivalent to setting the ``type``</span>
 <span class="sd">            parameter).</span>
 <span class="sd">        type : Python type, optional</span>
-<span class="sd">            Type of the returned view, e.g., ndarray or matrix.  Again, the</span>
+<span class="sd">            Type of the returned view, either ndarray or a subclass.  The</span>
 <span class="sd">            default None results in type preservation.</span>
 
 <span class="sd">        Notes</span>
@@ -3187,45 +3198,6 @@
                 <span class="n">output</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="n">fill_value</span>
         <span class="k">return</span> <span class="n">output</span>
     <span class="n">view</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="vm">__doc__</span>
-
-    <span class="k">def</span> <span class="nf">astype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newtype</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a copy of the MaskedArray cast to given newtype.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        output : MaskedArray</span>
-<span class="sd">            A copy of self cast to input newtype.</span>
-<span class="sd">            The returned record shape matches self.shape.</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; x = np.ma.array([[1,2,3.1],[4,5,6],[7,8,9]], mask=[0] + [1,0]*4)</span>
-<span class="sd">        &gt;&gt;&gt; print(x)</span>
-<span class="sd">        [[1.0 -- 3.1]</span>
-<span class="sd">         [-- 5.0 --]</span>
-<span class="sd">         [7.0 -- 9.0]]</span>
-<span class="sd">        &gt;&gt;&gt; print(x.astype(int32))</span>
-<span class="sd">        [[1 -- 3]</span>
-<span class="sd">         [-- 5 --]</span>
-<span class="sd">         [7 -- 9]]</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">newtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">newtype</span><span class="p">)</span>
-        <span class="n">newmasktype</span> <span class="o">=</span> <span class="n">make_mask_descr</span><span class="p">(</span><span class="n">newtype</span><span class="p">)</span>
-
-        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">newtype</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">_update_from</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="ow">is</span> <span class="n">nomask</span><span class="p">:</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">nomask</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">newmasktype</span><span class="p">)</span>
-
-        <span class="c1"># Don&#39;t check _fill_value if it&#39;s None, that&#39;ll speed things up</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">_fill_value</span> <span class="o">=</span> <span class="n">_check_fill_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fill_value</span><span class="p">,</span> <span class="n">newtype</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">output</span>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -3413,16 +3385,34 @@
             <span class="n">_mask</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span> <span class="o">=</span> <span class="n">mindx</span>
         <span class="k">return</span>
 
-    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">MaskedArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;dtype&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">nomask</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">make_mask_descr</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">ndarray</span><span class="p">)</span>
-            <span class="c1"># Try to reset the shape of the mask (if we don&#39;t have a void)</span>
-            <span class="c1"># This raises a ValueError if the dtype change won&#39;t work</span>
+    <span class="c1"># Define so that we can overwrite the setter.</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">MaskedArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span>
+
+    <span class="nd">@dtype</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MaskedArray</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">nomask</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">make_mask_descr</span><span class="p">(</span><span class="n">dtype</span><span class="p">),</span> <span class="n">ndarray</span><span class="p">)</span>
+            <span class="c1"># Try to reset the shape of the mask (if we don&#39;t have a void).</span>
+            <span class="c1"># This raises a ValueError if the dtype change won&#39;t work.</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
                 <span class="k">pass</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">MaskedArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="nd">@shape</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MaskedArray</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">)</span>
+        <span class="c1"># Cannot use self._mask, since it may not (yet) exist when a</span>
+        <span class="c1"># masked matrix sets the shape.</span>
+        <span class="k">if</span> <span class="n">getmask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">nomask</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
 
     <span class="k">def</span> <span class="nf">__setmask__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -3742,14 +3732,14 @@
 <span class="sd">        &gt;&gt;&gt; type(x.filled())</span>
 <span class="sd">        &lt;type &#39;numpy.ndarray&#39;&gt;</span>
 
-<span class="sd">        Subclassing is preserved. This means that if the data part of the masked</span>
-<span class="sd">        array is a matrix, `filled` returns a matrix:</span>
+<span class="sd">        Subclassing is preserved. This means that if, e.g., the data part of</span>
+<span class="sd">        the masked array is a recarray, `filled` returns a recarray:</span>
 
-<span class="sd">        &gt;&gt;&gt; x = np.ma.array(np.matrix([[1, 2], [3, 4]]), mask=[[0, 1], [1, 0]])</span>
-<span class="sd">        &gt;&gt;&gt; x.filled()</span>
-<span class="sd">        matrix([[     1, 999999],</span>
-<span class="sd">                [999999,      4]])</span>
-
+<span class="sd">        &gt;&gt;&gt; x = np.array([(-1, 2), (-3, 4)], dtype=&#39;i8,i8&#39;).view(np.recarray)</span>
+<span class="sd">        &gt;&gt;&gt; m = np.ma.array(x, mask=[(True, False), (False, True)])</span>
+<span class="sd">        &gt;&gt;&gt; m.filled()</span>
+<span class="sd">        rec.array([(999999,      2), (    -3, 999999)],</span>
+<span class="sd">                  dtype=[(&#39;f0&#39;, &#39;&lt;i8&#39;), (&#39;f1&#39;, &#39;&lt;i8&#39;)])</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span>
         <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="n">nomask</span><span class="p">:</span>
@@ -4351,18 +4341,18 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">MaskError</span><span class="p">(</span><span class="s1">&#39;Cannot convert masked element to a Python int.&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
-    
+
     <span class="k">def</span> <span class="nf">__long__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert to long.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Only length-1 arrays can be conveted &quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Only length-1 arrays can be converted &quot;</span>
                             <span class="s2">&quot;to Python scalars&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">MaskError</span><span class="p">(</span><span class="s1">&#39;Cannot convert masked element to a Python long.&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">long</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
-      
+
 
     <span class="k">def</span> <span class="nf">get_imag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -5386,7 +5376,7 @@
 <span class="sd">                originally intended.</span>
 <span class="sd">                Until then, the axis should be given explicitly when</span>
 <span class="sd">                ``arr.ndim &gt; 1``, to avoid a FutureWarning.</span>
-<span class="sd">        kind : {&#39;quicksort&#39;, &#39;mergesort&#39;, &#39;heapsort&#39;}, optional</span>
+<span class="sd">        kind : {&#39;quicksort&#39;, &#39;mergesort&#39;, &#39;heapsort&#39;, &#39;stable&#39;}, optional</span>
 <span class="sd">            Sorting algorithm.</span>
 <span class="sd">        order : list, optional</span>
 <span class="sd">            When `a` is an array with fields defined, this argument specifies</span>
@@ -5537,7 +5527,7 @@
 <span class="sd">        axis : int, optional</span>
 <span class="sd">            Axis along which to sort. If None, the array is flattened before</span>
 <span class="sd">            sorting. The default is -1, which sorts along the last axis.</span>
-<span class="sd">        kind : {&#39;quicksort&#39;, &#39;mergesort&#39;, &#39;heapsort&#39;}, optional</span>
+<span class="sd">        kind : {&#39;quicksort&#39;, &#39;mergesort&#39;, &#39;heapsort&#39;, &#39;stable&#39;}, optional</span>
 <span class="sd">            Sorting algorithm. Default is &#39;quicksort&#39;.</span>
 <span class="sd">        order : list, optional</span>
 <span class="sd">            When `a` is a structured array, this argument specifies which fields</span>
@@ -5600,14 +5590,7 @@
         <span class="n">sidx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span>
                             <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">endwith</span><span class="o">=</span><span class="n">endwith</span><span class="p">)</span>
 
-        <span class="c1"># save memory for 1d arrays</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="n">sidx</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">]))</span>
-            <span class="n">idx</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">sidx</span>
-
-        <span class="bp">self</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sidx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">min</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">_NoValue</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -5793,7 +5776,7 @@
             <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">newmask</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">out</span>
 
-    <span class="k">def</span> <span class="nf">ptp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ptp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return (maximum - minimum) along the given dimension</span>
 <span class="sd">        (i.e. peak-to-peak value).</span>
@@ -5818,11 +5801,15 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
-            <span class="n">result</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span>
+                              <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span>
+                               <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">result</span>
-        <span class="n">out</span><span class="o">.</span><span class="n">flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
-        <span class="n">min_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span>
+                            <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">)</span>
+        <span class="n">min_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span>
+                             <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">casting</span><span class="o">=</span><span class="s1">&#39;unsafe&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">out</span>
 
@@ -6381,6 +6368,24 @@
         <span class="c1"># precedent for this with `np.bool_` scalars.</span>
         <span class="k">return</span> <span class="bp">self</span>
 
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+		
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__has_singleton</span><span class="p">():</span>
+            <span class="c1"># allow the singleton to be initialized</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">MaskedConstant</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">__singleton</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;attributes of </span><span class="si">{!r}</span><span class="s2"> are not writeable&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># duplicate instance - we can end up here from __array_finalize__,</span>
+            <span class="c1"># where we set the __class__ attribute</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">MaskedConstant</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
 
 <span class="n">masked</span> <span class="o">=</span> <span class="n">masked_singleton</span> <span class="o">=</span> <span class="n">MaskedConstant</span><span class="p">()</span>
 <span class="n">masked_array</span> <span class="o">=</span> <span class="n">MaskedArray</span>
@@ -6561,17 +6566,15 @@
 <span class="nb">max</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">MaskedArray</span><span class="o">.</span><span class="n">max</span><span class="o">.</span><span class="vm">__doc__</span>
 
 
-<span class="k">def</span> <span class="nf">ptp</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    a.ptp(axis=None) =  a.max(axis) - a.min(axis)</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">ptp</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">_NoValue</span><span class="p">):</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">keepdims</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">_NoValue</span> <span class="k">else</span> <span class="p">{</span><span class="s1">&#39;keepdims&#39;</span><span class="p">:</span> <span class="n">keepdims</span><span class="p">}</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
         <span class="c1"># If obj doesn&#39;t have a ptp method or if the method doesn&#39;t accept</span>
         <span class="c1"># a fill_value argument</span>
-        <span class="k">return</span> <span class="n">asanyarray</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">asanyarray</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span>
+                                   <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 <span class="n">ptp</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">MaskedArray</span><span class="o">.</span><span class="n">ptp</span><span class="o">.</span><span class="vm">__doc__</span>
 
 
@@ -7009,6 +7012,7 @@
 <span class="sd">     [[False False]</span>
 <span class="sd">     [False  True]],</span>
 <span class="sd">           fill_value = 999999)</span>
+
 <span class="sd">    &gt;&gt;&gt; ma.transpose(x)</span>
 <span class="sd">    masked_array(data =</span>
 <span class="sd">     [[0 2]</span>
@@ -7903,6 +7907,16 @@
 <span class="c1">##############################################################################</span>
 <span class="c1">#                               Pickling                                     #</span>
 <span class="c1">##############################################################################</span>
+
+<span class="k">def</span> <span class="nf">_pickle_warn</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+    <span class="c1"># NumPy 1.15.0, 2017-12-10</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s2">&quot;np.ma.</span><span class="si">{method}</span><span class="s2"> is deprecated, use pickle.</span><span class="si">{method}</span><span class="s2"> instead&quot;</span>
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">),</span>
+        <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+
 <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">F</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pickle a masked array to a file.</span>
@@ -7917,6 +7931,7 @@
 <span class="sd">        The file to pickle `a` to. If a string, the full path to the file.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_pickle_warn</span><span class="p">(</span><span class="s1">&#39;dump&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="s1">&#39;readline&#39;</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">F</span><span class="p">:</span>
             <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
@@ -7937,6 +7952,7 @@
 <span class="sd">        returned.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_pickle_warn</span><span class="p">(</span><span class="s1">&#39;dumps&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 
 
@@ -7960,6 +7976,7 @@
 <span class="sd">    the NumPy binary .npy format.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_pickle_warn</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="s1">&#39;readline&#39;</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">F</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
@@ -7983,6 +8000,7 @@
 <span class="sd">    dumps : Return a string corresponding to the pickling of a masked array.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_pickle_warn</span><span class="p">(</span><span class="s1">&#39;loads&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">strg</span><span class="p">)</span>
 
 
@@ -8195,9 +8213,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -112,6 +112,7 @@ and <em>row</em> is the data for the row.</p>
 <dt>Example</dt>
 <dd><div class="first highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Detect outlying points from a lione.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.Analysis</span> <span class="kn">import</span> <span class="n">_poly_outlier</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
 <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">201</span><span class="p">)</span>
@@ -126,8 +127,12 @@ and <em>row</em> is the data for the row.</p>
 <span class="n">e</span><span class="o">.</span><span class="n">outlier_detection</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">)</span>
 <span class="n">e</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;r-&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Default Outliers removed&quot;</span><span class="p">)</span>
 <span class="n">f</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">clone</span>
-<span class="n">f</span><span class="o">.</span><span class="n">outlier_detection</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">certainty</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">,</span><span class="n">func</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">_poly_outlier</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">outlier_detection</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">certainty</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">,</span><span class="n">func</span><span class="o">=</span><span class="n">_poly_outlier</span><span class="p">)</span>
 <span class="n">f</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;g-&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Poly Outliers removed&quot;</span><span class="p">)</span>
+<span class="n">g</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">clone</span>
+<span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">outlier_detection</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">certainty</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">,</span><span class="n">func</span><span class="o">=</span><span class="n">_poly_outlier</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Masked outliers&quot;</span><span class="p">)</span>
+<span class="n">g</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">clone</span>
 <span class="n">e</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Outlier detection test&quot;</span>
 </pre></div>
 </div>
@@ -202,9 +207,9 @@ and <em>row</em> is the data for the row.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

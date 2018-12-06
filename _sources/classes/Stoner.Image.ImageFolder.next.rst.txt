@@ -1,0 +1,8 @@
+
+
+ImageFolder.next
+=============================
+
+.. currentmodule:: Stoner.Image
+
+.. automethod:: ImageFolder.next

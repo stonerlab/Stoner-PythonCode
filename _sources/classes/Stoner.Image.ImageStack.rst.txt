@@ -5,3 +5,187 @@ ImageStack
 
 .. autoclass:: ImageStack
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~ImageStack.allmeta
+      ~ImageStack.basenames
+      ~ImageStack.clone
+      ~ImageStack.debug
+      ~ImageStack.defaults
+      ~ImageStack.depth
+      ~ImageStack.directory
+      ~ImageStack.each
+      ~ImageStack.files
+      ~ImageStack.groups
+      ~ImageStack.images
+      ~ImageStack.imarray
+      ~ImageStack.instance
+      ~ImageStack.is_empty
+      ~ImageStack.key
+      ~ImageStack.loaded
+      ~ImageStack.loader
+      ~ImageStack.ls
+      ~ImageStack.lsgrp
+      ~ImageStack.max_size
+      ~ImageStack.metadata
+      ~ImageStack.mindepth
+      ~ImageStack.not_empty
+      ~ImageStack.not_loaded
+      ~ImageStack.objects
+      ~ImageStack.pattern
+      ~ImageStack.root
+      ~ImageStack.shape
+      ~ImageStack.size
+      ~ImageStack.trunkdepth
+      ~ImageStack.type
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ImageStack.add_group
+      ~ImageStack.all
+      ~ImageStack.append
+      ~ImageStack.apply_all
+      ~ImageStack.as_stack
+      ~ImageStack.asfloat
+      ~ImageStack.average
+      ~ImageStack.clear
+      ~ImageStack.compress
+      ~ImageStack.correct_drifts
+      ~ImageStack.count
+      ~ImageStack.crop_stack
+      ~ImageStack.dtype_limits
+      ~ImageStack.extend
+      ~ImageStack.fetch
+      ~ImageStack.file
+      ~ImageStack.filter
+      ~ImageStack.filterout
+      ~ImageStack.flatten
+      ~ImageStack.get
+      ~ImageStack.getlist
+      ~ImageStack.group
+      ~ImageStack.index
+      ~ImageStack.insert
+      ~ImageStack.items
+      ~ImageStack.keep_latest
+      ~ImageStack.keys
+      ~ImageStack.loadgroup
+      ~ImageStack.make_name
+      ~ImageStack.mean
+      ~ImageStack.next
+      ~ImageStack.on_load_process
+      ~ImageStack.pop
+      ~ImageStack.popitem
+      ~ImageStack.prune
+      ~ImageStack.remove
+      ~ImageStack.reverse
+      ~ImageStack.save
+      ~ImageStack.select
+      ~ImageStack.setdefault
+      ~ImageStack.show
+      ~ImageStack.slice_metadata
+      ~ImageStack.sort
+      ~ImageStack.stddev
+      ~ImageStack.stderr
+      ~ImageStack.subtract
+      ~ImageStack.unflatten
+      ~ImageStack.unload
+      ~ImageStack.update
+      ~ImageStack.values
+      ~ImageStack.view
+      ~ImageStack.walk_groups
+      ~ImageStack.zip_groups
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: allmeta
+   .. autoattribute:: basenames
+   .. autoattribute:: clone
+   .. autoattribute:: debug
+   .. autoattribute:: defaults
+   .. autoattribute:: depth
+   .. autoattribute:: directory
+   .. autoattribute:: each
+   .. autoattribute:: files
+   .. autoattribute:: groups
+   .. autoattribute:: images
+   .. autoattribute:: imarray
+   .. autoattribute:: instance
+   .. autoattribute:: is_empty
+   .. autoattribute:: key
+   .. autoattribute:: loaded
+   .. autoattribute:: loader
+   .. autoattribute:: ls
+   .. autoattribute:: lsgrp
+   .. autoattribute:: max_size
+   .. autoattribute:: metadata
+   .. autoattribute:: mindepth
+   .. autoattribute:: not_empty
+   .. autoattribute:: not_loaded
+   .. autoattribute:: objects
+   .. autoattribute:: pattern
+   .. autoattribute:: root
+   .. autoattribute:: shape
+   .. autoattribute:: size
+   .. autoattribute:: trunkdepth
+   .. autoattribute:: type
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: add_group
+   .. automethod:: all
+   .. automethod:: append
+   .. automethod:: apply_all
+   .. automethod:: as_stack
+   .. automethod:: asfloat
+   .. automethod:: average
+   .. automethod:: clear
+   .. automethod:: compress
+   .. automethod:: correct_drifts
+   .. automethod:: count
+   .. automethod:: crop_stack
+   .. automethod:: dtype_limits
+   .. automethod:: extend
+   .. automethod:: fetch
+   .. automethod:: file
+   .. automethod:: filter
+   .. automethod:: filterout
+   .. automethod:: flatten
+   .. automethod:: get
+   .. automethod:: getlist
+   .. automethod:: group
+   .. automethod:: index
+   .. automethod:: insert
+   .. automethod:: items
+   .. automethod:: keep_latest
+   .. automethod:: keys
+   .. automethod:: loadgroup
+   .. automethod:: make_name
+   .. automethod:: mean
+   .. automethod:: next
+   .. automethod:: on_load_process
+   .. automethod:: pop
+   .. automethod:: popitem
+   .. automethod:: prune
+   .. automethod:: remove
+   .. automethod:: reverse
+   .. automethod:: save
+   .. automethod:: select
+   .. automethod:: setdefault
+   .. automethod:: show
+   .. automethod:: slice_metadata
+   .. automethod:: sort
+   .. automethod:: stddev
+   .. automethod:: stderr
+   .. automethod:: subtract
+   .. automethod:: unflatten
+   .. automethod:: unload
+   .. automethod:: update
+   .. automethod:: values
+   .. automethod:: view
+   .. automethod:: walk_groups
+   .. automethod:: zip_groups

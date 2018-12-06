@@ -1,0 +1,6 @@
+itersubclasses
+==============
+
+.. currentmodule:: Stoner.core.utils
+
+.. autofunction:: itersubclasses

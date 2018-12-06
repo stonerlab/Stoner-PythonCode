@@ -65,20 +65,40 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – A function that takes a numpy 1D array representing each row of data</li>
+<li><strong>func</strong> (<em>callable</em>) – The function to apply to each row of the data.</li>
 <li><strong>col</strong> (<em>index</em>) – The column in which to place the result of the function</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Isnert a new data column (False) or replace the data column (True, default)</li>
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – The new column header (defaults to the name of the function func</li>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Either replace the existing column/complete data or create a new column or data file.</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – The new column header(s) (defaults to the name of the function func</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code>.</p>
-</td>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If any extra keyword arguments are supplied then these are passed to the function directly. If
+you need to pass any arguments that overlap with the keyword arguments to <a href="#id1"><span class="problematic" id="id2">:py:math:`AnalysisMixin.apply`</span></a>
+then these can be supplied in a dictionary argument <em>_extra</em>.</p>
+<p>The callable <em>func</em> should have a signature:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>and should return either a single float, in which case it will be used to repalce the specified column, or an
+array, in which case it is used to completely replace the row of data.</p>
+<p class="last">If the function returns a complete row of data, then the <em>replace</em> parameter will cause the return value to be
+a new datafile, leaving the original unchanged. The <em>headers</em> parameter can give the complete column headers for
+the new data file.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>self</em> – The newly modified <code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code>.</td>
 </tr>
 </tbody>
 </table>
@@ -147,9 +167,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

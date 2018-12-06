@@ -54,17 +54,27 @@
 <span class="sd">@author: phyrct</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;KerrArray&quot;</span><span class="p">,</span><span class="s2">&quot;KerrStack&quot;</span><span class="p">,</span><span class="s2">&quot;MaskStack&quot;</span><span class="p">]</span>
+
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">typeHintedDict</span>
 <span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">ImageArray</span><span class="p">,</span> <span class="n">ImageStack</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">subprocess</span><span class="o">,</span><span class="nn">tempfile</span><span class="o">,</span><span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span><span class="o">,</span><span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">exposure</span><span class="p">,</span><span class="n">io</span><span class="p">,</span><span class="n">transform</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pytesseract</span>
+    <span class="n">_tesseractable</span><span class="o">=</span><span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">pytesseract</span><span class="o">=</span><span class="kc">None</span>
+    <span class="n">_tesseractable</span><span class="o">=</span><span class="kc">False</span>
+
 
 <span class="n">GRAY_RANGE</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">65535</span><span class="p">)</span>  <span class="c1">#2^16</span>
 <span class="n">IM_SIZE</span><span class="o">=</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span><span class="mi">672</span><span class="p">)</span> <span class="c1">#Standard Kerr image size</span>
 <span class="n">AN_IM_SIZE</span><span class="o">=</span><span class="p">(</span><span class="mi">554</span><span class="p">,</span><span class="mi">672</span><span class="p">)</span> <span class="c1">#Kerr image with annotation not cropped</span>
-
+<span class="n">pattern_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span><span class="s2">&quot;kerr_patterns.txt&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="KerrArray"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.KerrArray">[docs]</a><span class="k">class</span> <span class="nc">KerrArray</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">):</span>
 
@@ -116,14 +126,9 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tesseractable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Do a test call to tesseract to see if it is there and cache the result.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tesseractable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_tesseractable</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;tesseract&quot;</span><span class="p">,</span><span class="s2">&quot;-v&quot;</span><span class="p">])</span><span class="o">==</span><span class="mi">0</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_tesseractable</span><span class="o">=</span><span class="kc">False</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tesseractable</span>
+        <span class="k">return</span> <span class="n">_tesseractable</span>
 
-    <span class="k">def</span> <span class="nf">crop_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="KerrArray.crop_text"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.KerrArray.crop_text">[docs]</a>    <span class="k">def</span> <span class="nf">crop_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Crop the bottom text area from a standard Kermit image</span>
 
 <span class="sd">        KeywordArguments:</span>
@@ -136,9 +141,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">!=</span><span class="n">AN_IM_SIZE</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Need a full sized Kerr image to crop. Current size is </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="c1">#check it&#39;s a normal image</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">IM_SIZE</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">IM_SIZE</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">reduce_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="KerrArray.reduce_metadata"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.KerrArray.reduce_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">reduce_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reduce the metadata down to a few useful pieces and do a bit of processing.</span>
 
 <span class="sd">        Returns:</span>
@@ -160,11 +165,11 @@
                 <span class="n">newmet</span><span class="p">[</span><span class="s1">&#39;Averaging&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
                 <span class="n">newmet</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Images to Average&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">=</span><span class="n">typeHintedDict</span><span class="p">(</span><span class="n">newmet</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span></div>
+
 
     <span class="k">def</span> <span class="nf">_parse_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Attempt to parse text which has been recognised from an image</span>
-
 <span class="sd">        if key is given specific hints may be applied</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#strip any internal white space</span>
@@ -190,7 +195,6 @@
 
     <span class="k">def</span> <span class="nf">_tesseract_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;ocr image with tesseract tool.</span>
-
 <span class="sd">        im is the cropped image containing just a bit of text</span>
 <span class="sd">        key is the metadata key we&#39;re trying to find, it may give a</span>
 <span class="sd">        hint for parsing the text generated.</span>
@@ -207,7 +211,7 @@
         <span class="n">i</span><span class="o">=</span><span class="mf">1.0</span><span class="o">*</span><span class="n">im</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">im</span><span class="p">)</span> <span class="c1">#change to float and normalise</span>
         <span class="n">i</span><span class="o">=</span><span class="n">exposure</span><span class="o">.</span><span class="n">rescale_intensity</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">in_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.49</span><span class="p">,</span><span class="mf">0.5</span><span class="p">))</span> <span class="c1">#saturate black and white pixels</span>
         <span class="n">i</span><span class="o">=</span><span class="n">exposure</span><span class="o">.</span><span class="n">rescale_intensity</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="c1">#make sure they&#39;re black and white</span>
-        <span class="n">i</span><span class="o">=</span><span class="n">transform</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span> <span class="c1">#rescale to get more pixels on text</span>
+        <span class="n">i</span><span class="o">=</span><span class="n">transform</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">)</span> <span class="c1">#rescale to get more pixels on text</span>
         <span class="n">io</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">imagefile</span><span class="p">,(</span><span class="mf">255.0</span><span class="o">*</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint8&quot;</span><span class="p">),</span><span class="n">plugin</span><span class="o">=</span><span class="s1">&#39;pil&#39;</span><span class="p">)</span> <span class="c1">#python imaging library will save according to file extension</span>
 
         <span class="c1">#call tesseract</span>
@@ -232,7 +236,7 @@
     <span class="k">def</span> <span class="nf">_get_scalebar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the length in pixels of the image scale bar&quot;&quot;&quot;</span>
         <span class="n">box</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">419</span><span class="p">,</span><span class="mi">519</span><span class="p">,</span><span class="mi">520</span><span class="p">)</span> <span class="c1">#row where scalebar exists</span>
-        <span class="n">im</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">im</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">im</span><span class="o">=</span><span class="n">im</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">im</span><span class="o">=</span><span class="p">(</span><span class="n">im</span><span class="o">-</span><span class="n">im</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">/</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">im</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
         <span class="n">im</span><span class="o">=</span><span class="n">exposure</span><span class="o">.</span><span class="n">rescale_intensity</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="n">in_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.49</span><span class="p">,</span><span class="mf">0.5</span><span class="p">))</span> <span class="c1">#saturate black and white pixels</span>
@@ -243,18 +247,15 @@
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lim</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Couldn</span><span class="se">\&#39;</span><span class="s1">t find scalebar&#39;</span>
         <span class="k">return</span> <span class="n">lim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">lim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">ocr_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="KerrArray.ocr_metadata"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.KerrArray.ocr_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">ocr_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Use image recognition to try to pull the metadata numbers off the image</span>
-
 <span class="sd">        Requirements: This function uses tesseract to recognise the image, therefore</span>
 <span class="sd">        tesseract file1 file2 must be valid on your command line.</span>
 <span class="sd">        Install tesseract from</span>
 <span class="sd">        https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar</span>
-
 <span class="sd">        KeywordArguments:</span>
 <span class="sd">            field_only(bool):</span>
 <span class="sd">                only try to return a field value</span>
-
 <span class="sd">        Returns:</span>
 <span class="sd">            metadata: dict</span>
 <span class="sd">                updated metadata dictionary</span>
@@ -265,7 +266,7 @@
         <span class="c1">#now we have to crop the image to the various text areas and try tesseract</span>
         <span class="k">elif</span> <span class="n">field_only</span><span class="p">:</span>
             <span class="n">fbox</span><span class="o">=</span><span class="p">(</span><span class="mi">110</span><span class="p">,</span><span class="mi">165</span><span class="p">,</span><span class="mi">527</span><span class="p">,</span><span class="mi">540</span><span class="p">)</span> <span class="c1">#(This is just the number area not the unit)</span>
-            <span class="n">im</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">fbox</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">im</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">fbox</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tesseract_image</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="s1">&#39;ocr_field&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_field&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">field</span>
         <span class="k">else</span><span class="p">:</span>
@@ -285,7 +286,7 @@
 
             <span class="n">metadata</span><span class="o">=</span><span class="p">{}</span>   <span class="c1">#now go through and process all keys</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">text_areas</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">im</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">text_areas</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">im</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">text_areas</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tesseract_image</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="n">key</span><span class="p">)</span>
             <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_scalebar_length_pixels&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">sb_length</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_scalebar_length_microns&#39;</span><span class="p">])</span><span class="o">==</span><span class="nb">float</span><span class="p">:</span>
@@ -295,12 +296,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">&#39;ocr_field&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_field&#39;</span><span class="p">],(</span><span class="nb">int</span><span class="p">,</span><span class="nb">float</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_field&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>  <span class="c1">#didn&#39;t read the field properly</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span></div></div>
 
 
-<div class="viewcode-block" id="KerrStack"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.KerrStack.html#Stoner.Image.KerrStack">[docs]</a><span class="k">class</span> <span class="nc">KerrStack</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;:py:class:`KerrStack` is similar to :py:class:`ImageStack` but adds some functionality particular to Kerr images.</span>
+<span class="k">class</span> <span class="nc">KerrStackMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;A mixin for :py:class:`ImageStack` that adds some functionality particular to Kerr images.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        fields(list):</span>
@@ -308,15 +310,17 @@
 <span class="sd">            for things like hysteresis.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">KerrStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">convert_float</span><span class="p">()</span>
-        <span class="k">if</span> <span class="s1">&#39;field&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="p">[</span><span class="s1">&#39;field&#39;</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-<span class="c1">#</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Produces an array of field values from the metadata.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_field&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;field&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;field&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span>
+
+
     <span class="k">def</span> <span class="nf">hysteresis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Make a hysteresis loop of the average intensity in the given images</span>
 
@@ -350,11 +354,6 @@
         <span class="sd">&quot;&quot;&quot;Convert an image of index values into an image of field values&quot;&quot;&quot;</span>
         <span class="n">fieldvals</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">,</span> <span class="n">index_map</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">fieldvals</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reverse the image order&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">denoise_thresh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">denoise_weight</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;apply denoise then threshold images.</span>
@@ -477,16 +476,16 @@
                                  <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">m</span><span class="p">]),</span><span class="n">weights</span><span class="p">[</span><span class="n">m</span><span class="p">]])</span>
             <span class="c1">#weights means we only account for non-zero values in average</span>
         <span class="n">average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">average</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">average</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span>
 
-<div class="viewcode-block" id="MaskStack"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.MaskStack.html#Stoner.Image.MaskStack">[docs]</a><span class="k">class</span> <span class="nc">MaskStack</span><span class="p">(</span><span class="n">KerrStack</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MaskStackMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Similar to ImageStack but made for stacks of boolean or binary images&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A Mixin for :py:class:`Stoner.Image.ImageStack` but made for stacks of boolean or binary images&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">MaskStack</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;Constructor ensures the data is boolean.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MaskStackMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">switch_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">saturation_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">saturation_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Given a stack of boolean masks representing a hystersis loop find the stack index of the saturation field for each pixel.</span>
@@ -540,7 +539,15 @@
             <span class="n">switch_ind</span><span class="o">=-</span><span class="n">switch_ind</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="c1">#should check this!</span>
             <span class="n">switch_prog</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
         <span class="n">switch_ind</span><span class="o">=</span><span class="n">ImageArray</span><span class="p">(</span><span class="n">switch_ind</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">switch_ind</span><span class="p">,</span> <span class="n">switch_prog</span></div>
+        <span class="k">return</span> <span class="n">switch_ind</span><span class="p">,</span> <span class="n">switch_prog</span>
+
+<div class="viewcode-block" id="KerrStack"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.KerrStack.html#Stoner.Image.KerrStack">[docs]</a><span class="k">class</span> <span class="nc">KerrStack</span><span class="p">(</span><span class="n">KerrStackMixin</span><span class="p">,</span><span class="n">ImageStack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a stack of Kerr images.&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="MaskStack"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.MaskStack.html#Stoner.Image.MaskStack">[docs]</a><span class="k">class</span> <span class="nc">MaskStack</span><span class="p">(</span><span class="n">MaskStackMixin</span><span class="p">,</span><span class="n">KerrStackMixin</span><span class="p">,</span><span class="n">ImageStack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A set of masks for Kerr images.&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
 </pre></div>
 
           </div>
@@ -584,9 +591,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

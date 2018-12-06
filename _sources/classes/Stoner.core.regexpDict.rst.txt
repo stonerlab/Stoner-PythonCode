@@ -1,0 +1,27 @@
+regexpDict
+==========
+
+.. currentmodule:: Stoner.core
+
+.. autoclass:: regexpDict
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~regexpDict.allowed_keys
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~regexpDict.has_key
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: allowed_keys
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: has_key

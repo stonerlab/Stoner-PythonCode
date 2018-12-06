@@ -1,0 +1,23 @@
+tab_delimited
+=============
+
+.. currentmodule:: Stoner.core.utils
+
+.. autoclass:: tab_delimited
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~tab_delimited.delimiter
+      ~tab_delimited.doublequote
+      ~tab_delimited.lineterminator
+      ~tab_delimited.quoting
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: delimiter
+   .. autoattribute:: doublequote
+   .. autoattribute:: lineterminator
+   .. autoattribute:: quoting

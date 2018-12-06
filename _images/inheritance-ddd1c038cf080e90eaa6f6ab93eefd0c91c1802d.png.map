@@ -1,9 +1,0 @@
-<map id="inheritance1c98c3337c" name="inheritance1c98c3337c">
-<area shape="rect" id="node10" title="All the operations on a read&#45;only sequence." alt="" coords="211,12,278,32"/>
-<area shape="rect" id="node5" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" target="_top" title=":py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers." alt="" coords="599,81,656,100"/>
-<area shape="rect" id="node15" href="classes/Stoner.Zip.ZippedFile.html#Stoner.Zip.ZippedFile" target="_top" title="A sub class of DataFile that sores itself in a zip file." alt="" coords="697,81,764,100"/>
-<area shape="rect" id="node6" title="Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object." alt="" coords="460,81,558,100"/>
-<area shape="rect" id="node14" href="classes/Stoner.Folders.baseFolder.html#Stoner.Folders.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="473,4,544,24"/>
-<area shape="rect" id="node12" href="classes/Stoner.Zip.ZipFolder.html#Stoner.Zip.ZipFolder" target="_top" title="A sub class of DataFile that sores itself in a zip file." alt="" coords="595,24,659,43"/>
-<area shape="rect" id="node13" href="classes/Stoner.Zip.ZipFolderMixin.html#Stoner.Zip.ZipFolderMixin" target="_top" title="A sub class of :py:class:`Stoner.Folders.DataFolder` that provides a method to load and save data from a single Zip file." alt="" coords="464,42,553,62"/>
-</map>

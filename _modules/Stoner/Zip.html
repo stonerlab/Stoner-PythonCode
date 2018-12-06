@@ -55,17 +55,18 @@
 <span class="sd">* ZipFolder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single zip file</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;test_is_zip&#39;</span><span class="p">,</span><span class="s1">&#39;ZippedFile&#39;</span><span class="p">,</span><span class="s1">&#39;ZipFolderMixin&#39;</span><span class="p">,</span><span class="s1">&#39;ZipFolder&#39;</span><span class="p">]</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span><span class="n">bytes2str</span><span class="p">,</span><span class="n">str2bytes</span>
 <span class="kn">import</span> <span class="nn">zipfile</span> <span class="k">as</span> <span class="nn">zf</span>
-<span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">DataFile</span><span class="p">,</span><span class="n">StonerLoadError</span><span class="p">,</span><span class="n">metadataObject</span>
-<span class="kn">from</span> <span class="nn">.Folders</span> <span class="k">import</span> <span class="n">baseFolder</span><span class="p">,</span><span class="n">pathjoin</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
 <span class="kn">from</span> <span class="nn">traceback</span> <span class="k">import</span> <span class="n">format_exc</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span><span class="p">,</span><span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
 <span class="kn">import</span> <span class="nn">fnmatch</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
+<span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span><span class="n">bytes2str</span><span class="p">,</span><span class="n">str2bytes</span><span class="p">,</span><span class="n">get_filedialog</span><span class="p">,</span><span class="n">_pattern_type</span>
+<span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">DataFile</span><span class="p">,</span><span class="n">StonerLoadError</span>
+<span class="kn">from</span> <span class="nn">.Folders</span> <span class="k">import</span> <span class="n">DiskBasedFolder</span>
+<span class="kn">from</span> <span class="nn">.folders.core</span> <span class="k">import</span> <span class="n">baseFolder</span>
+<span class="kn">from</span> <span class="nn">.folders.utils</span> <span class="k">import</span> <span class="n">pathjoin</span>
 
 <div class="viewcode-block" id="test_is_zip"><a class="viewcode-back" href="../../classes/Stoner.Zip.test_is_zip.html#Stoner.Zip.test_is_zip">[docs]</a><span class="k">def</span> <span class="nf">test_is_zip</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">member</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Recursively searches for a zipfile in the tree.</span>
@@ -118,19 +119,24 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">other</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">):</span>
+                <span class="n">otherdir</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">string_types</span><span class="p">):</span> <span class="c1">#ZippedFile(open_zip,&quot;filename&quot;)</span>
-                    <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="s2">&quot;filename&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span> <span class="c1"># ZippedFile(open_zip) - assume we use tyhe first zipped file in there</span>
                     <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">namelist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1">#Attempt to normalise start of path</span>
+                <span class="k">if</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;./&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">otherdir</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">otherdir</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;./&quot;</span><span class="p">)):</span>
+                    <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
                 <span class="k">if</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">namelist</span><span class="p">():</span> <span class="c1"># New file not in the zip file yet</span>
-                    <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;File </span><span class="si">{}</span><span class="s2"> not found in zip file </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">other</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
+                    <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;File </span><span class="si">{}</span><span class="s2"> not found in zip file </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">],</span> <span class="n">other</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
                 <span class="c1">#Ok, by this point we have a zipfile which has a file in it. Construct ourselves and then load</span>
                 <span class="nb">super</span><span class="p">(</span><span class="n">ZippedFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_extract</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">])</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>  <span class="c1"># Passed a string - so try as a zipfile</span>
                 <span class="k">if</span> <span class="n">zf</span><span class="o">.</span><span class="n">is_zipfile</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
                     <span class="n">other</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
-                    <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">)</span>
+                    <span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+                    <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">other</span>
                 <span class="k">elif</span> <span class="n">test_is_zip</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
                     <span class="n">args</span> <span class="o">=</span> <span class="n">test_is_zip</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
@@ -283,60 +289,20 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="s2">&quot;Constructor for the ZipFolderMixin Class.&quot;</span>
-        <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span> <span class="c1">#Trail back to find a parent that might actually be handling the storage</span>
-            <span class="k">if</span> <span class="s2">&quot;__setter__&quot;</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span> <span class="ow">and</span> <span class="s2">&quot;__getter__&quot;</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_storage_class</span><span class="o">=</span><span class="bp">cls</span>
-                <span class="k">break</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_storage_class</span><span class="o">=</span><span class="n">baseFolder</span> <span class="c1"># Fall back to the base class</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
-        <span class="n">defaults</span><span class="o">=</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span><span class="p">)</span>
-        <span class="n">defaults</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
-            <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">Data</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">zf</span><span class="o">.</span><span class="n">is_zipfile</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fp</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">=</span><span class="kc">None</span>
-
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">defaults</span><span class="p">:</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">defaults</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_zip_contents</span><span class="o">=</span><span class="p">[]</span>
-
         <span class="nb">super</span><span class="p">(</span><span class="n">ZipFolderMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">readlist</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">getlist</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
-
-    <span class="nd">@directory</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">=</span><span class="n">value</span>
-        
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">full_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">)</span>
 
     <span class="nd">@key</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">=</span><span class="n">pathjoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">=</span><span class="n">pathjoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Select Folder&quot;</span><span class="p">,</span> <span class="n">new_directory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">):</span>
@@ -349,22 +315,16 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            A directory to be used for the file operation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">enthought.pyface.api</span> <span class="k">import</span> <span class="n">FileDialog</span><span class="p">,</span> <span class="n">OK</span>
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">pyface.api</span> <span class="k">import</span> <span class="n">FileDialog</span><span class="p">,</span> <span class="n">OK</span>
-        <span class="c1"># Wildcard pattern to be used in file dialogs.</span>
-        <span class="n">file_wildcard</span> <span class="o">=</span> <span class="s2">&quot;zip file (*.zip)|All files|*&quot;</span>
+        <span class="n">file_wildcard</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;zip file&quot;</span><span class="p">,</span><span class="s2">&quot;*.zip&quot;</span><span class="p">),(</span><span class="s2">&quot;All files&quot;</span><span class="p">,</span><span class="s2">&quot;*.*&quot;</span><span class="p">)]</span>
 
         <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span>
-            <span class="n">mode2</span> <span class="o">=</span> <span class="s2">&quot;open&quot;</span>
+            <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;file&quot;</span>
         <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;w&quot;</span><span class="p">:</span>
-            <span class="n">mode2</span> <span class="o">=</span> <span class="s2">&quot;save as&quot;</span>
+            <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;save&quot;</span>
 
-        <span class="n">dlg</span> <span class="o">=</span> <span class="n">FileDialog</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">mode2</span><span class="p">,</span> <span class="n">wildcard</span><span class="o">=</span><span class="n">file_wildcard</span><span class="p">)</span>
-        <span class="n">dlg</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">dlg</span><span class="o">.</span><span class="n">return_code</span> <span class="o">==</span> <span class="n">OK</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">dlg</span><span class="o">.</span><span class="n">path</span>
+        <span class="n">dlg</span> <span class="o">=</span> <span class="n">get_filedialog</span><span class="p">(</span><span class="n">what</span><span class="o">=</span><span class="n">what</span><span class="p">,</span> <span class="n">filetypes</span><span class="o">=</span><span class="n">file_wildcard</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dlg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">dlg</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span>
@@ -382,19 +342,26 @@
             <span class="n">flatten</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flat</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">directory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">=</span><span class="n">zf</span><span class="o">.</span><span class="n">ZipExtFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dialog</span><span class="p">(),</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">=</span><span class="n">zf</span><span class="o">.</span><span class="n">ZipExtFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dialog</span><span class="p">(),</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
             <span class="n">close_me</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">directory</span><span class="o">.</span><span class="n">fp</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">directory</span>
                 <span class="n">close_me</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
                 <span class="n">close_me</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>  <span class="c1">#Fall back to DataFolder</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ZipFolderMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="n">recursive</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">flatten</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">zf</span><span class="o">.</span><span class="n">is_zipfile</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+                <span class="n">close_me</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="p">,</span><span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">):</span>
-            <span class="n">close_me</span><span class="o">=</span><span class="kc">False</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">fp</span><span class="p">:</span>
+                <span class="n">close_me</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+                <span class="n">close_me</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> does not appear to be zip file!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">directory</span><span class="p">))</span>
         <span class="c1">#At this point directory contains an open h5py.File object, or possibly a group</span>
@@ -404,7 +371,7 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">files</span><span class="p">,</span><span class="n">p</span><span class="p">)):</span>
                     <span class="k">del</span> <span class="n">files</span><span class="p">[</span><span class="n">files</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">_pattern_type</span><span class="p">):</span>
                 <span class="n">matched</span><span class="o">=</span><span class="p">[]</span>
                 <span class="c1"># For reg expts we iterate over all files, but we can&#39;t delete matched</span>
                 <span class="c1"># files as we go as we&#39;re iterating over them - so we store the</span>
@@ -422,7 +389,7 @@
                     <span class="k">del</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">files</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">f</span><span class="p">)])</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">_pattern_type</span><span class="p">):</span>
                 <span class="n">matched</span><span class="o">=</span><span class="p">[]</span>
                 <span class="c1"># For reg expts we iterate over all files, but we can&#39;t delete matched</span>
                 <span class="c1"># files as we go as we&#39;re iterating over them - so we store the</span>
@@ -441,7 +408,7 @@
         <span class="k">if</span> <span class="n">flatten</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">flatten</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">unflatten</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">close_me</span><span class="p">:</span>
-            <span class="n">directory</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
     <span class="k">def</span> <span class="nf">__clone__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">attrs_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -451,8 +418,8 @@
         <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">arg</span><span class="p">):</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">arg</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">arg</span><span class="p">))</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ZipFolderMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__clone__</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">,</span><span class="n">attrs_only</span><span class="o">=</span><span class="n">attrs_only</span><span class="p">)</span>            
-    
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ZipFolderMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__clone__</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">,</span><span class="n">attrs_only</span><span class="o">=</span><span class="n">attrs_only</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">__getter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Loads the specified name from a compressed archive.</span>
 
@@ -467,24 +434,24 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            (metadataObject): The metadataObject</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span> <span class="c1"># try to go back to the base to see if it&#39;s already loaded</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage_class</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">instantiate</span><span class="o">=</span><span class="n">instantiate</span><span class="p">)</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span><span class="ne">IndexError</span><span class="p">,</span><span class="ne">KeyError</span><span class="p">):</span> <span class="c1">#Ok, that failed, so let&#39;s</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ZipFolderMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">instantiate</span><span class="o">=</span><span class="n">instantiate</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span><span class="ne">IndexError</span><span class="p">,</span><span class="ne">KeyError</span><span class="p">,</span><span class="ne">OSError</span><span class="p">,</span><span class="ne">IOError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
             <span class="k">pass</span>
-        
-        <span class="c1">#name=self.__lookup__(name)</span>
+
         <span class="k">if</span> <span class="n">instantiate</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">ZippedFile</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="n">name</span><span class="p">)))</span>
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span> <span class="c1"># closed zip file?</span>
-                <span class="n">filename</span><span class="o">=</span><span class="n">test_is_zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">filename</span><span class="o">=</span><span class="n">test_is_zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
                 <span class="n">tmp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">ZippedFile</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="n">name</span><span class="p">)))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="k">return</span> <span class="n">tmp</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">name</span>
-       
+
     <span class="k">def</span> <span class="nf">__lookup__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Look for a given name in the ZipFolder namelist.</span>
 
@@ -531,7 +498,9 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">root</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="p">,</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">):</span>
             <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">filename</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;a&quot;</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;w&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">close</span><span class="p">()</span><span class="c1">#Close the file having created it</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">tmp</span></div>
@@ -555,13 +524,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">DataFile</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="n">member</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">trail</span><span class="p">)</span>
-        <span class="n">member</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
+        <span class="n">filename</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">splitdrive</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">bits</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">filename</span><span class="p">,]</span><span class="o">+</span><span class="n">trail</span><span class="o">+</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span>
+        <span class="n">pathsep</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="s2">&quot;b&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bits</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ix</span><span class="o">==</span><span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">b</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">pathsep</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">bits</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">=</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">member</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">bits</span><span class="p">)</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">ZippedFile</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">member</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">filename</span></div>
 
-<div class="viewcode-block" id="ZipFolder"><a class="viewcode-back" href="../../classes/Stoner.Zip.ZipFolder.html#Stoner.Zip.ZipFolder">[docs]</a><span class="k">class</span> <span class="nc">ZipFolder</span><span class="p">(</span><span class="n">ZipFolderMixin</span><span class="p">,</span><span class="n">baseFolder</span><span class="p">):</span>
+<div class="viewcode-block" id="ZipFolder"><a class="viewcode-back" href="../../classes/Stoner.Zip.ZipFolder.html#Stoner.Zip.ZipFolder">[docs]</a><span class="k">class</span> <span class="nc">ZipFolder</span><span class="p">(</span><span class="n">ZipFolderMixin</span><span class="p">,</span><span class="n">DiskBasedFolder</span><span class="p">,</span><span class="n">baseFolder</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;A sub class of DataFile that sores itself in a zip file.</span>
 
@@ -571,8 +546,9 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-
-    <span class="k">pass</span></div>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="s2">&quot;Constructor for the ZipFolderMixin Class.&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ZipFolder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
 
 </pre></div>
 
@@ -617,9 +593,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

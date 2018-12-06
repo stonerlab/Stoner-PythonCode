@@ -84,7 +84,7 @@ standalone fitting functios:</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li>They provide a consisten way of defining the model to be fitted. All of the Stoner package functions accept a model function of the form:
-f(x,p1,p2,p3), constructing the necessary intrermediate model class as necessary - similatly they can all take an <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code>
+f(x,p1,p2,p3), constructing the necessary intrermediate model class as necessary - similatly they can all take an <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a>
 class or instance and adapt that as necessary.</li>
 <li>They provide a consisten parameter order and keyword argument names as far as possible within the limits of the underlying algorithms.
 Gerneally these follow the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v1.1.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.curve_fit()</span></code></a> conventions.</li>
@@ -157,11 +157,12 @@ for adding appropriately formatted details of the fit to the plot (in this case 
 
 <span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;curve_fit_data.dat&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">)</span>
-<span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span><span class="n">output</span><span class="o">=</span><span class="s2">&quot;report&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x..y&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;b-&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">())</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/curve_fit_line.png">png</a>, <a class="reference external" href="../samples/curve_fit_line.hires.png">hires.png</a>, <a class="reference external" href="../samples/curve_fit_line.pdf">pdf</a>)</p>
@@ -191,7 +192,7 @@ the same name.:</p>
 </div>
 <p>The first parameter is the fitting function. This should have prototype
 <code class="docutils literal notranslate"><span class="pre">y=func(x,p[0],p[1],p[2]...)</span></code>: where <em>p</em> is a list of fitting parameters.</p>
-<p>Alternatively a subclass of, or instance of, a <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code> can also be passed and it’s function will be used to provide infromation to
+<p>Alternatively a subclass of, or instance of, a <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a> can also be passed and it’s function will be used to provide infromation to
 <a class="reference internal" href="../classes/Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.curve_fit()</span></code></a>.</p>
 <p>The <em>p0</em> parameter contains the initial guesses at the fitting
 parameters, the default value is 1.
@@ -220,9 +221,9 @@ that the parameters are not properly independent in the model.</p>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">lmfit</span></code> provides a flexible way to fit complex models to experimental data in a pythonesque object-orientated fashion.
 A full description of the lmfit module is given in the <a class="reference external" href="href=http://lmfit.github.io/lmfit-py/">lmffit documentation</a>. . The
 <a class="reference internal" href="../classes/Stoner.Data.lmfit.html#Stoner.Data.lmfit" title="Stoner.Data.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.lmfit()</span></code></a> method is used to interact with lmfit.</p>
-<p>In order to use <a class="reference internal" href="../classes/Stoner.Data.lmfit.html#Stoner.Data.lmfit" title="Stoner.Data.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.lmfit()</span></code></a>, one requires a <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code> instance. This describes a function
+<p>In order to use <a class="reference internal" href="../classes/Stoner.Data.lmfit.html#Stoner.Data.lmfit" title="Stoner.Data.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.lmfit()</span></code></a>, one requires a <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a> instance. This describes a function
 and its independent and fittable parameters, whether they have limits and what the limits are. The <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Fit</span></code></a> module contains
-a series of <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code> subclasses that represent various models used in condensed matter physics.</p>
+a series of <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a> subclasses that represent various models used in condensed matter physics.</p>
 <p>The operation of <a class="reference internal" href="../classes/Stoner.Data.lmfit.html#Stoner.Data.lmfit" title="Stoner.Data.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.lmfit()</span></code></a> is very similar to that of <a class="reference internal" href="../classes/Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Data.curve_fit()</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="k">import</span> <span class="n">Arrehenius</span>
 <span class="n">model</span><span class="o">=</span><span class="n">Arrehenius</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="mf">1E7</span><span class="p">,</span><span class="n">DE</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
@@ -325,7 +326,7 @@ used instead.</p>
 <div class="section" id="included-fitting-models">
 <h2>Included Fitting Models<a class="headerlink" href="#included-fitting-models" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Fit</span></code></a> module provides a number of standard fitting models suitable for solida state physics. Each model is provided either as an
-<code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code> and callable function. The former case often also provides a means to guess initial values from the data.</p>
+<a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a> and callable function. The former case often also provides a means to guess initial values from the data.</p>
 <div class="section" id="elementary-models">
 <h3>Elementary Models<a class="headerlink" href="#elementary-models" title="Permalink to this headline">¶</a></h3>
 <p>Amongst the incluided models are very generic model functions including:</p>
@@ -418,6 +419,80 @@ weak-localisation effects appear,</li>
 reponse of the ferromagnetic resonance peak.</li>
 </ul>
 </div></blockquote>
+</div>
+</div>
+<div class="section" id="making-fitting-models">
+<h2>Making Fitting Models<a class="headerlink" href="#making-fitting-models" title="Permalink to this headline">¶</a></h2>
+<p>You can simply pass a bare function to any of the general fitting meothods, but there can be advantages in using an <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> class - such as the
+ability to combine several models together, the ability to guess parameters or just for the readability. The Stoner package provides some tools to help make
+suitable model classes.</p>
+<p><a class="reference internal" href="../classes/Stoner.Fit.make_model.html#Stoner.Fit.make_model" title="Stoner.Fit.make_model"><code class="xref py py-func docutils literal notranslate"><span class="pre">Stoner.Fit.make_model()</span></code></a> is a python decorator function that can do the leg-work of transforming a simple model function of the form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@make_model</span>
+<span class="k">def</span> <span class="nf">model_func</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span><span class="n">param1</span><span class="p">,</span><span class="n">param2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">param1</span><span class="p">,</span><span class="n">param2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>into a suitable model class of the same name. This model class then provides a decorator function itself to mark a second function as something that can be used
+to guess parameter values:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@model_func</span><span class="o">.</span><span class="n">guesser</span>
+<span class="k">def</span> <span class="nf">model_guess</span><span class="p">(</span><span class="n">y_data</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="n">x_data</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">param1_guess</span><span class="p">,</span><span class="n">param2_guess</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>In the same vein, the class provides a decorator to use a function to generate hints about the parameter, such as bouding values:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@model_func</span><span class="o">.</span><span class="n">hinter</span>
+<span class="k">def</span> <span class="nf">model_parameter_hints</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;param1&quot;</span><span class="p">:{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span><span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span><span class="mf">1.0</span><span class="p">},</span><span class="s2">&quot;param2&quot;</span><span class="p">:{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span><span class="mf">0.0</span><span class="p">}}</span>
+</pre></div>
+</div>
+<p>the newly created <strong>model_func</strong> class can then be used immediately to fit data. The following example illustrates the concept.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Demo of the make_model decorator&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">make_model</span>
+
+<span class="c1">#Make our model</span>
+<span class="nd">@make_model</span>
+<span class="k">def</span> <span class="nf">simple_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A straight line&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="n">m</span><span class="o">+</span><span class="n">c</span>
+
+<span class="c1">#Add a function to guess parameters (optional, but)</span>
+<span class="nd">@simple_model.guesser</span>
+<span class="k">def</span> <span class="nf">guess_vals</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Should guess parameter values really!&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span> <span class="c1">#return one value per parameter</span>
+
+<span class="c1">#Add a function to sry vonstraints on parameters (optional)</span>
+<span class="nd">@simple_model.hinter</span>
+<span class="k">def</span> <span class="nf">hint_parameters</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Five some hints about the parameter.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;m&quot;</span><span class="p">:{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span><span class="mf">10.0</span><span class="p">,</span><span class="s2">&quot;min&quot;</span><span class="p">:</span><span class="mf">1.0</span><span class="p">}}</span>
+
+<span class="c1">#Create some x,y data</span>
+<span class="n">x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span>
+<span class="n">y</span><span class="o">=</span><span class="mf">4.5</span><span class="o">*</span><span class="n">x</span><span class="o">-</span><span class="mf">2.3</span><span class="o">+</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="c1">#Make The Data object</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">,</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span><span class="s2">&quot;Y&quot;</span><span class="p">])</span>
+
+<span class="c1">#Do the fit</span>
+<span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">simple_model</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c1">#Plot the result</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyy&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r+&quot;</span><span class="p">,</span><span class="s2">&quot;b-&quot;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Simple Model Fit&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">simple_model</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/make_model.png">png</a>, <a class="reference external" href="../samples/make_model.hires.png">hires.png</a>, <a class="reference external" href="../samples/make_model.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/make_model.png" src="../_images/make_model.png" />
 </div>
 </div>
 <div class="section" id="advanced-fitting-topics">
@@ -647,14 +722,16 @@ on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe cod
 <span class="n">d</span><span class="o">=</span><span class="n">cfg_data_from_ini</span><span class="p">(</span><span class="n">config</span><span class="p">,</span><span class="n">datafile</span><span class="p">)</span>
 <span class="n">model</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">cfg_model_from_ini</span><span class="p">(</span><span class="n">config</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
 
-<span class="n">fit</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">odr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;odr&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">+=</span><span class="mf">0.25</span>
+
+<span class="n">fit</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">odr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;odr&quot;</span><span class="p">,</span><span class="n">residuals</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 <span class="n">d</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="s2">&quot;r-&quot;</span><span class="p">,</span><span class="s2">&quot;bo&quot;</span><span class="p">])</span> <span class="c1"># plot the data</span>
-<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=-</span><span class="mi">25</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">1.02</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
-
-<span class="n">fit</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;lmfit&quot;</span><span class="p">,</span><span class="s2">&quot;g-&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=-</span><span class="mi">25</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
+
+<span class="n">fit</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">,</span><span class="n">residuals</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;lmfit&quot;</span><span class="p">,</span><span class="s2">&quot;g-&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=-</span><span class="mi">25</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">1.02</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/odr_demo.png">png</a>, <a class="reference external" href="../samples/odr_demo.hires.png">hires.png</a>, <a class="reference external" href="../samples/odr_demo.pdf">pdf</a>)</p>
@@ -698,6 +775,7 @@ on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe cod
 <li><a class="reference internal" href="#other-electrical-transport-models">Other Electrical Transport Models</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#making-fitting-models">Making Fitting Models</a></li>
 <li><a class="reference internal" href="#advanced-fitting-topics">Advanced Fitting Topics</a><ul>
 <li><a class="reference internal" href="#fitting-in-more-than-1d">Fitting In More than 1D</a></li>
 <li><a class="reference internal" href="#non-linear-curve-fitting-with-initialisation-file">Non-linear curve fitting with initialisation file</a></li>
@@ -756,9 +834,9 @@ on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe cod
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

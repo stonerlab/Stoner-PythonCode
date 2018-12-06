@@ -75,7 +75,7 @@ for each one. In this case the return value is a list of what would be returned 
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a>) – A vector of initial parameter values to try</li>
+<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>, </em><a class="reference internal" href="../Stoner.html#module-Stoner.core.array" title="Stoner.core.array"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A vector of initial parameter values to try. See notes below.</li>
 <li><strong>sigma</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The index of the column with the y-error bars</li>
 <li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
 <li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
@@ -110,20 +110,31 @@ for the fitting parameters.</p>
 <p>If the columns are not specified (or set to None) then the X and Y data are taken using the
 <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.</p>
 <p>The fitting function should have prototype y=f(x,p[0],p[1],p[2]…)
-The x-column and y-column can be anything that <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.find_col()</span></code></a> can use as an index
+The x-column and y-column can be anything that <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.find_col()</span></code> can use as an index
 but typucally either strings to be matched against column headings or integers.
 The initial parameter values and weightings default to None which corresponds to all parameters starting
 at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
 point is to be used in the fit and false if not.</p>
-<p class="last">The <em>absolute_sigma</em> keyword determines whether the returned covariance matrix <cite>pcov</cite> is based on <em>estimated</em> errors in
+<p>The <em>absolute_sigma</em> keyword determines whether the returned covariance matrix <cite>pcov</cite> is based on <em>estimated</em> errors in
 the data, and is not affected by the overall magnitude of the values in <cite>sigma</cite>. Only the relative magnitudes of the
 <em>sigma</em> values matter.
 If True, <cite>sigma</cite> describes one standard deviation errors of the input data points. The estimated covariance in <cite>pcov</cite> is
 based on these values.</p>
+<p>The starting vector <em>p0</em> can be either a list, tuple or array, or a callable that will produce a list, tuple or array. IF callable,
+it should take the form:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>def p0_func(ydata,x=xdata):</dt>
+<dd></dd>
+</dl>
+</div></blockquote>
+<p class="last">and return a list of parameter values that is in the same order as the model function. If p0 is not given and a <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> or
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> is supplied as the model function, then the model’s estimates of the starting values will be used instead.</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin.lmfit()</span></code></a>
+<p class="last"><a class="reference internal" href="Stoner.Data.lmfit.html#Stoner.Data.lmfit" title="Stoner.Data.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.lmfit()</span></code></a>
+<a class="reference internal" href="Stoner.Data.odr.html#Stoner.Data.odr" title="Stoner.Data.odr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.odr()</span></code></a>
 User guide section <a class="reference internal" href="../UserGuide/curve_fitting.html#curve-fit-guide"><span class="std std-ref">Curve Fitting in the Stoner Pacakge</span></a></p>
 </div>
 </dd></dl>
@@ -191,9 +202,9 @@ User guide section <a class="reference internal" href="../UserGuide/curve_fittin
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

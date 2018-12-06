@@ -5,15 +5,3 @@ HDF5Folder
 
 .. autoclass:: HDF5Folder
    :show-inheritance:
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-
-      ~HDF5Folder.getlist
-      ~HDF5Folder.save
-
-   .. rubric:: Methods Documentation
-
-   .. automethod:: getlist
-   .. automethod:: save

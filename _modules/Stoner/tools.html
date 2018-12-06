@@ -54,8 +54,9 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;_attribute_store&#39;</span><span class="p">,</span> <span class="s1">&#39;all_size&#39;</span><span class="p">,</span> <span class="s1">&#39;all_type&#39;</span><span class="p">,</span> <span class="s1">&#39;fix_signature&#39;</span><span class="p">,</span> <span class="s1">&#39;format_error&#39;</span><span class="p">,</span> <span class="s1">&#39;format_val&#39;</span><span class="p">,</span> <span class="s1">&#39;html_escape&#39;</span><span class="p">,</span> <span class="s1">&#39;isAnyNone&#39;</span><span class="p">,</span> <span class="s1">&#39;isNone&#39;</span><span class="p">,</span> <span class="s1">&#39;isiterable&#39;</span><span class="p">,</span> <span class="s1">&#39;islike_list&#39;</span><span class="p">,</span>
              <span class="s1">&#39;isproperty&#39;</span><span class="p">,</span> <span class="s1">&#39;istuple&#39;</span><span class="p">,</span> <span class="s1">&#39;quantize&#39;</span><span class="p">,</span> <span class="s1">&#39;tex_escape&#39;</span><span class="p">,</span> <span class="s1">&#39;typedList&#39;</span><span class="p">,</span><span class="s1">&#39;get_option&#39;</span><span class="p">,</span><span class="s1">&#39;set_option&#39;</span><span class="p">]</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span><span class="p">,</span><span class="n">MutableSequence</span>
-<span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span><span class="n">bytes2str</span>
+<span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span><span class="n">bytes2str</span><span class="p">,</span><span class="n">python_v3</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">log10</span><span class="p">,</span><span class="n">floor</span><span class="p">,</span><span class="nb">abs</span><span class="p">,</span><span class="n">logical_and</span><span class="p">,</span><span class="n">isnan</span><span class="p">,</span><span class="nb">round</span><span class="p">,</span><span class="n">ndarray</span><span class="p">,</span><span class="n">dtype</span> <span class="c1">#pylint: disable=redefined-builtin</span>
@@ -100,33 +101,13 @@
 <span class="n">_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;short_repr&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
           <span class="s2">&quot;short_data_repr&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
           <span class="s2">&quot;short_img_repr&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
-          <span class="s2">&quot;no_figs&quot;</span><span class="p">:</span><span class="kc">True</span> <span class="p">}</span>
+          <span class="s2">&quot;no_figs&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+          <span class="s2">&quot;multiprocessing&quot;</span><span class="p">:</span><span class="n">os</span><span class="o">.</span><span class="n">name</span><span class="o">!=</span><span class="s2">&quot;nt&quot;</span> <span class="ow">and</span> <span class="n">python_v3</span><span class="p">,</span> <span class="c1">#multiprocess doesn&#39;t run too well under Windows due to spawn()</span>
+          <span class="s2">&quot;threading&quot;</span><span class="p">:</span><span class="kc">False</span> <span class="p">}</span>
 
-
-<div class="viewcode-block" id="isNone"><a class="viewcode-back" href="../../classes/Stoner.tools.isNone.html#Stoner.tools.isNone">[docs]</a><span class="k">def</span> <span class="nf">isNone</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns True if input is None or an empty iterator, or an iterator of None.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        iterator (None or Iterable):</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        True if iterator is None, empty or full of None.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">iterator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
-    <span class="k">elif</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="c1"># pylint: disable=len-as-condition</span>
-            <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">ret</span><span class="o">=</span><span class="kc">False</span>
-                    <span class="k">break</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">ret</span><span class="o">=</span><span class="kc">False</span>
-    <span class="k">return</span> <span class="n">ret</span></div>
+<span class="c1">###############################################################################################################</span>
+<span class="c1">######################  Functions #############################################################################</span>
+<span class="c1">###############################################################################################################</span>
 
 <div class="viewcode-block" id="all_size"><a class="viewcode-back" href="../../classes/Stoner.tools.all_size.html#Stoner.tools.all_size">[docs]</a><span class="k">def</span> <span class="nf">all_size</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check whether each element of *iterator* is the same length/shape.</span>
@@ -154,214 +135,6 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
     <span class="k">return</span> <span class="n">ret</span></div>
-
-<div class="viewcode-block" id="isAnyNone"><a class="viewcode-back" href="../../classes/Stoner.tools.isAnyNone.html#Stoner.tools.isAnyNone">[docs]</a><span class="k">def</span> <span class="nf">isAnyNone</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Intelligently check whether any of the inputs are None.&quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="kc">False</span></div>
-
-<div class="viewcode-block" id="all_type"><a class="viewcode-back" href="../../classes/Stoner.tools.all_type.html#Stoner.tools.all_type">[docs]</a><span class="k">def</span> <span class="nf">all_type</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">typ</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Determines if an interable omnly contains a common type.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        iterator (Iterable): The object to check if it is all iterable</span>
-<span class="sd">        typ (class): The type to check for.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        True if all elements are of the type typ, or False if not.</span>
-
-<span class="sd">    Notes:</span>
-<span class="sd">        Routine will iterate the *iterator* and break when an element is not of</span>
-<span class="sd">        the search type *typ*.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ret</span><span class="o">=</span><span class="kc">False</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">ndarray</span><span class="p">):</span> <span class="c1">#Try to short circuit for arrays</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">iterator</span><span class="o">.</span><span class="n">dtype</span><span class="o">==</span><span class="n">dtype</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="k">pass</span>
-    <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">typ</span><span class="p">):</span>
-                <span class="k">break</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
-    <span class="k">return</span> <span class="n">ret</span></div>
-
-<div class="viewcode-block" id="isiterable"><a class="viewcode-back" href="../../classes/Stoner.tools.isiterable.html#Stoner.tools.isiterable">[docs]</a><span class="k">def</span> <span class="nf">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Chack to see if a value is iterable.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        value (object): Entitiy to check if it is iterable</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        (bool): True if value is an instance of collections.Iterable.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">Iterable</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="islike_list"><a class="viewcode-back" href="../../classes/Stoner.tools.islike_list.html#Stoner.tools.islike_list">[docs]</a><span class="k">def</span> <span class="nf">islike_list</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns True if value is an iterable but not a string.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">string_types</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="isproperty"><a class="viewcode-back" href="../../classes/Stoner.tools.isproperty.html#Stoner.tools.isproperty">[docs]</a><span class="k">def</span> <span class="nf">isproperty</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check whether an attribute of an object or class is a property.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        obj (instance or class): Thing that has the attribute to check</span>
-<span class="sd">        name (str): Name of the attrbiute that might be a property</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        (bool): Whether the name is a property or not.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="nb">object</span><span class="p">):</span>
-        <span class="n">obj</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="nb">object</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Can only check for property status on attributes of an object or a class not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)))</span>
-    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">name</span><span class="p">),</span><span class="nb">property</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="istuple"><a class="viewcode-back" href="../../classes/Stoner.tools.istuple.html#Stoner.tools.istuple">[docs]</a><span class="k">def</span> <span class="nf">istuple</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Determine if obj is a tuple of a certain signature.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        obj(object): The object to check</span>
-<span class="sd">        *args(type): Each of the suceeding arguments are used to determine the expected type of each element.</span>
-
-<span class="sd">    Keywoprd Arguments:</span>
-<span class="sd">        strict(bool): Whether the elements of the tuple have to be exactly the type specified or just castable as the type</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        (bool): True if obj is a matching tuple.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">strict</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;strict&quot;</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="nb">tuple</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="n">args</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">!=</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">for</span> <span class="n">t</span><span class="p">,</span><span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args</span><span class="p">,</span><span class="n">obj</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="n">t</span><span class="p">):</span>
-                <span class="n">bad</span><span class="o">=</span><span class="kc">True</span>
-                <span class="k">break</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">_</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">bad</span><span class="o">=</span><span class="kc">True</span>
-                <span class="k">break</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">bad</span><span class="o">=</span><span class="kc">False</span>
-    <span class="k">return</span> <span class="ow">not</span> <span class="n">bad</span></div>
-
-
-<div class="viewcode-block" id="tex_escape"><a class="viewcode-back" href="../../classes/Stoner.tools.tex_escape.html#Stoner.tools.tex_escape">[docs]</a><span class="k">def</span> <span class="nf">tex_escape</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Escapes spacecial text charcters in a string.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        text (str): a plain text message</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        the message escaped to appear correctly in LaTeX</span>
-
-<span class="sd">    From `Stackoverflow &lt;http://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates&gt;`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">conv</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;&amp;&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\&amp;&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;%&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\%&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;#&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\#&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;_&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\_&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;{&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\{&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;}&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\}&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;~&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\textasciitilde</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;^&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\textbackslash</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\textless&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\textgreater&#39;</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">bytes2str</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">conv</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">))))</span>
-    <span class="k">return</span> <span class="n">regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">match</span><span class="p">:</span> <span class="n">conv</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()],</span> <span class="n">text</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="format_val"><a class="viewcode-back" href="../../classes/Stoner.tools.format_val.html#Stoner.tools.format_val">[docs]</a><span class="k">def</span> <span class="nf">format_val</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Format a number as an SI quantity</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        value(float): Value to format</span>
-
-<span class="sd">    Keyword Arguments:</span>
-<span class="sd">        fmt (str): Specify the output format, opyions are:</span>
-<span class="sd">            *  &quot;text&quot; - plain text output</span>
-<span class="sd">            * &quot;latex&quot; - latex output</span>
-<span class="sd">            * &quot;html&quot; - html entities</span>
-<span class="sd">        escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)</span>
-<span class="sd">        mode (string): If &quot;float&quot; (default) the number is formatted as is, if &quot;eng&quot; the value and error is converted</span>
-<span class="sd">            to the next samllest power of 1000 and the appropriate SI index appended. If mode is &quot;sci&quot; then a scientifc,</span>
-<span class="sd">            i.e. mantissa and exponent format is used.</span>
-<span class="sd">        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are</span>
-<span class="sd">            prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm</span>
-<span class="sd">        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is</span>
-<span class="sd">            inside the math-mode markers, but not embedded in \mathrm.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        (str): The formatted value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">mode</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
-    <span class="n">units</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">prefix</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">latex</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">fmt</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fmt&quot;</span><span class="p">,</span><span class="s2">&quot;latex&quot;</span> <span class="k">if</span> <span class="n">latex</span> <span class="k">else</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span>
-    <span class="n">escape</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;escape&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">escape_func</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latex&quot;</span><span class="p">:</span><span class="n">tex_escape</span><span class="p">,</span><span class="s2">&quot;html&quot;</span><span class="p">:</span><span class="n">html_escape</span><span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">escape</span><span class="p">:</span>
-        <span class="n">prefix</span><span class="o">=</span><span class="n">escape_func</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
-        <span class="n">units</span><span class="o">=</span><span class="n">escape_func</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;float&quot;</span><span class="p">:</span>  <span class="c1"># Standard</span>
-        <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;eng&quot;</span><span class="p">:</span>  <span class="c1">#Use SI prefixes</span>
-        <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.0</span>
-        <span class="n">prefixes</span> <span class="o">=</span> <span class="n">prefs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span><span class="n">prefs</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">v_mag</span> <span class="ow">in</span> <span class="n">prefixes</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">fmt</span><span class="o">==</span><span class="s2">&quot;latex&quot;</span><span class="p">:</span>
-                <span class="n">suffix_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">suffix_val</span> <span class="o">=</span> <span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">]</span>
-            <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Implies 10^-3&lt;x&lt;10^3</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;sci&quot;</span><span class="p">:</span>  <span class="c1"># Scientific mode - raise to common power of 10</span>
-        <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-        <span class="k">if</span> <span class="n">fmt</span><span class="o">==</span><span class="s2">&quot;latex&quot;</span><span class="p">:</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\times 10^{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">fmt</span><span class="o">==</span><span class="s2">&quot;html&quot;</span><span class="p">:</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&amp;times; 10&lt;sup&gt;</span><span class="si">{}</span><span class="s2">&lt;/sup&gt; &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;E</span><span class="si">{}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
-        <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Bad mode</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unrecognised mode: </span><span class="si">{}</span><span class="s2"> in format_error&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
-
-    <span class="c1">#Protect {} in units string</span>
-    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
-    <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">fmt</span><span class="o">==</span><span class="s2">&quot;latex&quot;</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
-        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">{{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">units</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">suffix_fmt</span> <span class="o">+=</span> <span class="s2">&quot;$&quot;</span>
-    <span class="k">elif</span> <span class="n">fmt</span><span class="o">==</span><span class="s2">&quot;html&quot;</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
-        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
-        <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Plain text</span>
-        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
-        <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
-    <span class="n">fmt_str</span> <span class="o">=</span> <span class="n">val_fmt_str</span> <span class="o">+</span> <span class="n">suffix_val</span> <span class="o">+</span> <span class="n">suffix_fmt</span>
-    <span class="k">return</span> <span class="n">fmt_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="format_error"><a class="viewcode-back" href="../../classes/Stoner.tools.format_error.html#Stoner.tools.format_error">[docs]</a><span class="k">def</span> <span class="nf">format_error</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Handles the printing out of the answer with the uncertaintly to 1sf and the value to no more sf&#39;s than the uncertainty.</span>
@@ -463,6 +236,85 @@
         <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fmt_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="format_val"><a class="viewcode-back" href="../../classes/Stoner.tools.format_val.html#Stoner.tools.format_val">[docs]</a><span class="k">def</span> <span class="nf">format_val</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Format a number as an SI quantity</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value(float): Value to format</span>
+
+<span class="sd">    Keyword Arguments:</span>
+<span class="sd">        fmt (str): Specify the output format, opyions are:</span>
+<span class="sd">            *  &quot;text&quot; - plain text output</span>
+<span class="sd">            * &quot;latex&quot; - latex output</span>
+<span class="sd">            * &quot;html&quot; - html entities</span>
+<span class="sd">        escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)</span>
+<span class="sd">        mode (string): If &quot;float&quot; (default) the number is formatted as is, if &quot;eng&quot; the value and error is converted</span>
+<span class="sd">            to the next samllest power of 1000 and the appropriate SI index appended. If mode is &quot;sci&quot; then a scientifc,</span>
+<span class="sd">            i.e. mantissa and exponent format is used.</span>
+<span class="sd">        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are</span>
+<span class="sd">            prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm</span>
+<span class="sd">        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is</span>
+<span class="sd">            inside the math-mode markers, but not embedded in \mathrm.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (str): The formatted value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mode</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
+    <span class="n">units</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">prefix</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">latex</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fmt&quot;</span><span class="p">,</span><span class="s2">&quot;latex&quot;</span> <span class="k">if</span> <span class="n">latex</span> <span class="k">else</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span>
+    <span class="n">escape</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;escape&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">escape_func</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latex&quot;</span><span class="p">:</span><span class="n">tex_escape</span><span class="p">,</span><span class="s2">&quot;html&quot;</span><span class="p">:</span><span class="n">html_escape</span><span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">escape</span><span class="p">:</span>
+        <span class="n">prefix</span><span class="o">=</span><span class="n">escape_func</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="n">units</span><span class="o">=</span><span class="n">escape_func</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;float&quot;</span><span class="p">:</span>  <span class="c1"># Standard</span>
+        <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;eng&quot;</span><span class="p">:</span>  <span class="c1">#Use SI prefixes</span>
+        <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.0</span>
+        <span class="n">prefixes</span> <span class="o">=</span> <span class="n">prefs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span><span class="n">prefs</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">v_mag</span> <span class="ow">in</span> <span class="n">prefixes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fmt</span><span class="o">==</span><span class="s2">&quot;latex&quot;</span><span class="p">:</span>
+                <span class="n">suffix_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">suffix_val</span> <span class="o">=</span> <span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">]</span>
+            <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Implies 10^-3&lt;x&lt;10^3</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;sci&quot;</span><span class="p">:</span>  <span class="c1"># Scientific mode - raise to common power of 10</span>
+        <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">fmt</span><span class="o">==</span><span class="s2">&quot;latex&quot;</span><span class="p">:</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\times 10^{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">fmt</span><span class="o">==</span><span class="s2">&quot;html&quot;</span><span class="p">:</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&amp;times; 10&lt;sup&gt;</span><span class="si">{}</span><span class="s2">&lt;/sup&gt; &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;E</span><span class="si">{}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Bad mode</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unrecognised mode: </span><span class="si">{}</span><span class="s2"> in format_error&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+
+    <span class="c1">#Protect {} in units string</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fmt</span><span class="o">==</span><span class="s2">&quot;latex&quot;</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
+        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">{{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">units</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">suffix_fmt</span> <span class="o">+=</span> <span class="s2">&quot;$&quot;</span>
+    <span class="k">elif</span> <span class="n">fmt</span><span class="o">==</span><span class="s2">&quot;html&quot;</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
+        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Plain text</span>
+        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
+    <span class="n">fmt_str</span> <span class="o">=</span> <span class="n">val_fmt_str</span> <span class="o">+</span> <span class="n">suffix_val</span> <span class="o">+</span> <span class="n">suffix_fmt</span>
+    <span class="k">return</span> <span class="n">fmt_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="fix_signature"><a class="viewcode-back" href="../../classes/Stoner.tools.fix_signature.html#Stoner.tools.fix_signature">[docs]</a><span class="k">def</span> <span class="nf">fix_signature</span><span class="p">(</span><span class="n">proxy_func</span><span class="p">,</span><span class="n">wrapped_func</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Tries to update proxy_func to have a signature that matches the wrapped func.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -474,6 +326,215 @@
             <span class="k">pass</span>
     <span class="k">return</span> <span class="n">proxy_func</span></div>
 
+<div class="viewcode-block" id="get_option"><a class="viewcode-back" href="../../classes/Stoner.tools.get_option.html#Stoner.tools.get_option">[docs]</a><span class="k">def</span> <span class="nf">get_option</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the option value&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a valid package option&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">_options</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="all_type"><a class="viewcode-back" href="../../classes/Stoner.tools.all_type.html#Stoner.tools.all_type">[docs]</a><span class="k">def</span> <span class="nf">all_type</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">typ</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Determines if an interable omnly contains a common type.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        iterator (Iterable): The object to check if it is all iterable</span>
+<span class="sd">        typ (class): The type to check for.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if all elements are of the type typ, or False if not.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        Routine will iterate the *iterator* and break when an element is not of</span>
+<span class="sd">        the search type *typ*.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ret</span><span class="o">=</span><span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">ndarray</span><span class="p">):</span> <span class="c1">#Try to short circuit for arrays</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">iterator</span><span class="o">.</span><span class="n">dtype</span><span class="o">==</span><span class="n">dtype</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">typ</span><span class="p">):</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+<div class="viewcode-block" id="isAnyNone"><a class="viewcode-back" href="../../classes/Stoner.tools.isAnyNone.html#Stoner.tools.isAnyNone">[docs]</a><span class="k">def</span> <span class="nf">isAnyNone</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Intelligently check whether any of the inputs are None.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+<span class="k">def</span> <span class="nf">isComparable</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns true if v1 and v2 can be compared sensibly</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        v1,v2 (any): Two values to compare</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        False if both v1 and v2 are numerical and both nan, otherwise True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">isnan</span><span class="p">(</span><span class="n">v2</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="n">logical_and</span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">v1</span><span class="p">),</span><span class="n">isnan</span><span class="p">(</span><span class="n">v2</span><span class="p">))</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="isiterable"><a class="viewcode-back" href="../../classes/Stoner.tools.isiterable.html#Stoner.tools.isiterable">[docs]</a><span class="k">def</span> <span class="nf">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Chack to see if a value is iterable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (object): Entitiy to check if it is iterable</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (bool): True if value is an instance of collections.Iterable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">Iterable</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="islike_list"><a class="viewcode-back" href="../../classes/Stoner.tools.islike_list.html#Stoner.tools.islike_list">[docs]</a><span class="k">def</span> <span class="nf">islike_list</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns True if value is an iterable but not a string.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">string_types</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="isNone"><a class="viewcode-back" href="../../classes/Stoner.tools.isNone.html#Stoner.tools.isNone">[docs]</a><span class="k">def</span> <span class="nf">isNone</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns True if input is None or an empty iterator, or an iterator of None.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        iterator (None or Iterable):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if iterator is None, empty or full of None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">iterator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">l</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">l</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">if</span> <span class="n">l</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="c1"># pylint: disable=len-as-condition</span>
+            <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ret</span><span class="o">=</span><span class="kc">False</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ret</span><span class="o">=</span><span class="kc">False</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+<div class="viewcode-block" id="isproperty"><a class="viewcode-back" href="../../classes/Stoner.tools.isproperty.html#Stoner.tools.isproperty">[docs]</a><span class="k">def</span> <span class="nf">isproperty</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check whether an attribute of an object or class is a property.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj (instance or class): Thing that has the attribute to check</span>
+<span class="sd">        name (str): Name of the attrbiute that might be a property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (bool): Whether the name is a property or not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="nb">object</span><span class="p">):</span>
+        <span class="n">obj</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="nb">object</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Can only check for property status on attributes of an object or a class not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">name</span><span class="p">),</span><span class="nb">property</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="istuple"><a class="viewcode-back" href="../../classes/Stoner.tools.istuple.html#Stoner.tools.istuple">[docs]</a><span class="k">def</span> <span class="nf">istuple</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Determine if obj is a tuple of a certain signature.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj(object): The object to check</span>
+<span class="sd">        *args(type): Each of the suceeding arguments are used to determine the expected type of each element.</span>
+
+<span class="sd">    Keywoprd Arguments:</span>
+<span class="sd">        strict(bool): Whether the elements of the tuple have to be exactly the type specified or just castable as the type</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (bool): True if obj is a matching tuple.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">strict</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;strict&quot;</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">args</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">!=</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">t</span><span class="p">,</span><span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args</span><span class="p">,</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="n">t</span><span class="p">):</span>
+                <span class="n">bad</span><span class="o">=</span><span class="kc">True</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">bad</span><span class="o">=</span><span class="kc">True</span>
+                <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">bad</span><span class="o">=</span><span class="kc">False</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">bad</span></div>
+
+<div class="viewcode-block" id="quantize"><a class="viewcode-back" href="../../classes/Stoner.tools.quantize.html#Stoner.tools.quantize">[docs]</a><span class="k">def</span> <span class="nf">quantize</span><span class="p">(</span><span class="n">number</span><span class="p">,</span><span class="n">quantum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Round a number to the nearest multiple of a quantum.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        number (float,array): Number(s) to be rounded to the nearest qyuantum</span>
+<span class="sd">        quantum (float): Quantum to round to</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        number rounded to qunatum</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">number</span><span class="o">/</span><span class="n">quantum</span><span class="p">)</span><span class="o">*</span><span class="n">quantum</span></div>
+
+<div class="viewcode-block" id="set_option"><a class="viewcode-back" href="../../classes/Stoner.tools.set_option.html#Stoner.tools.set_option">[docs]</a><span class="k">def</span> <span class="nf">set_option</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set a global package option.</span>
+
+<span class="sd">    - short_repr (bool): Instead of using a rich representation, use a short description for DataFile and Imagefile.</span>
+<span class="sd">    - short_data_repr (bool): Just use short representation for DataFiles</span>
+<span class="sd">    - short_img_repr (bool): Just use a short representation for image file</span>
+<span class="sd">    - no_figs (bool): Do not return figures from plotting functions, just plot them.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a valid package option&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> takes a boolean value not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+    <span class="n">_options</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span></div>
+
+<div class="viewcode-block" id="tex_escape"><a class="viewcode-back" href="../../classes/Stoner.tools.tex_escape.html#Stoner.tools.tex_escape">[docs]</a><span class="k">def</span> <span class="nf">tex_escape</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Escapes spacecial text charcters in a string.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        text (str): a plain text message</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        the message escaped to appear correctly in LaTeX</span>
+
+<span class="sd">    From `Stackoverflow &lt;http://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates&gt;`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conv</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;&amp;&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\&amp;&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;%&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\%&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;$&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\$&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;#&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\#&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\_&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;{&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\{&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;}&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\}&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;~&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\textasciitilde</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;^&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\textbackslash</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\textless&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\textgreater&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">bytes2str</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">conv</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">))))</span>
+    <span class="k">return</span> <span class="n">regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">match</span><span class="p">:</span> <span class="n">conv</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()],</span> <span class="n">text</span><span class="p">)</span></div>
+
+<span class="c1">###############################################################################################################</span>
+<span class="c1">######################  Classes ###############################################################################</span>
+<span class="c1">###############################################################################################################</span>
 
 <div class="viewcode-block" id="_attribute_store"><a class="viewcode-back" href="../../classes/Stoner.tools._attribute_store.html#Stoner.tools._attribute_store">[docs]</a><span class="k">class</span> <span class="nc">_attribute_store</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
 
@@ -499,17 +560,6 @@
             <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span></div>
-
-<div class="viewcode-block" id="quantize"><a class="viewcode-back" href="../../classes/Stoner.tools.quantize.html#Stoner.tools.quantize">[docs]</a><span class="k">def</span> <span class="nf">quantize</span><span class="p">(</span><span class="n">number</span><span class="p">,</span><span class="n">quantum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Round a number to the nearest multiple of a quantum.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        number (float,array): Number(s) to be rounded to the nearest qyuantum</span>
-<span class="sd">        quantum (float): Quantum to round to</span>
-<span class="sd">    Returns:</span>
-<span class="sd">        number rounded to qunatum</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">number</span><span class="o">/</span><span class="n">quantum</span><span class="p">)</span><span class="o">*</span><span class="n">quantum</span></div>
 
 <div class="viewcode-block" id="typedList"><a class="viewcode-back" href="../../classes/Stoner.tools.typedList.html#Stoner.tools.typedList">[docs]</a><span class="k">class</span> <span class="nc">typedList</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">):</span>
 
@@ -599,26 +649,6 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Elelements of this list should be of type </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">obj</span><span class="p">)</span></div>
-            
-<div class="viewcode-block" id="set_option"><a class="viewcode-back" href="../../classes/Stoner.tools.set_option.html#Stoner.tools.set_option">[docs]</a><span class="k">def</span> <span class="nf">set_option</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set a global package option.</span>
-<span class="sd">    </span>
-<span class="sd">    - short_repr (bool): Instead of using a rich representation, use a short description for DataFile and Imagefile.</span>
-<span class="sd">    - short_data_repr (bool): Just use short representation for DataFiles</span>
-<span class="sd">    - short_img_repr (bool): Just use a short representation for image file</span>
-<span class="sd">    - no_figs (bool): Do not return figures from plotting functions, just plot them.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a valid package option&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> takes a boolean value not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-    <span class="n">_options</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span></div>
-    
-<div class="viewcode-block" id="get_option"><a class="viewcode-back" href="../../classes/Stoner.tools.get_option.html#Stoner.tools.get_option">[docs]</a><span class="k">def</span> <span class="nf">get_option</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return the option value&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a valid package option&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">_options</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
 </pre></div>
 
           </div>
@@ -662,9 +692,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

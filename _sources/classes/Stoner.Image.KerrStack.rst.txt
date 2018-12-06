@@ -5,3 +5,205 @@ KerrStack
 
 .. autoclass:: KerrStack
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~KerrStack.allmeta
+      ~KerrStack.basenames
+      ~KerrStack.clone
+      ~KerrStack.debug
+      ~KerrStack.defaults
+      ~KerrStack.depth
+      ~KerrStack.directory
+      ~KerrStack.each
+      ~KerrStack.fields
+      ~KerrStack.files
+      ~KerrStack.groups
+      ~KerrStack.images
+      ~KerrStack.imarray
+      ~KerrStack.instance
+      ~KerrStack.is_empty
+      ~KerrStack.key
+      ~KerrStack.loaded
+      ~KerrStack.loader
+      ~KerrStack.ls
+      ~KerrStack.lsgrp
+      ~KerrStack.max_size
+      ~KerrStack.metadata
+      ~KerrStack.mindepth
+      ~KerrStack.not_empty
+      ~KerrStack.not_loaded
+      ~KerrStack.objects
+      ~KerrStack.pattern
+      ~KerrStack.root
+      ~KerrStack.shape
+      ~KerrStack.size
+      ~KerrStack.trunkdepth
+      ~KerrStack.type
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~KerrStack.HcMap
+      ~KerrStack.add_group
+      ~KerrStack.all
+      ~KerrStack.append
+      ~KerrStack.apply_all
+      ~KerrStack.as_stack
+      ~KerrStack.asfloat
+      ~KerrStack.average
+      ~KerrStack.average_Hcmap
+      ~KerrStack.clear
+      ~KerrStack.compress
+      ~KerrStack.correct_drifts
+      ~KerrStack.count
+      ~KerrStack.crop_stack
+      ~KerrStack.crop_text
+      ~KerrStack.denoise_thresh
+      ~KerrStack.dtype_limits
+      ~KerrStack.extend
+      ~KerrStack.fetch
+      ~KerrStack.file
+      ~KerrStack.filter
+      ~KerrStack.filterout
+      ~KerrStack.find_threshold
+      ~KerrStack.flatten
+      ~KerrStack.get
+      ~KerrStack.getlist
+      ~KerrStack.group
+      ~KerrStack.hysteresis
+      ~KerrStack.index
+      ~KerrStack.index_to_field
+      ~KerrStack.insert
+      ~KerrStack.items
+      ~KerrStack.keep_latest
+      ~KerrStack.keys
+      ~KerrStack.loadgroup
+      ~KerrStack.make_name
+      ~KerrStack.mean
+      ~KerrStack.next
+      ~KerrStack.on_load_process
+      ~KerrStack.pop
+      ~KerrStack.popitem
+      ~KerrStack.prune
+      ~KerrStack.remove
+      ~KerrStack.reverse
+      ~KerrStack.save
+      ~KerrStack.select
+      ~KerrStack.setdefault
+      ~KerrStack.show
+      ~KerrStack.slice_metadata
+      ~KerrStack.sort
+      ~KerrStack.stable_mask
+      ~KerrStack.stddev
+      ~KerrStack.stderr
+      ~KerrStack.subtract
+      ~KerrStack.unflatten
+      ~KerrStack.unload
+      ~KerrStack.update
+      ~KerrStack.values
+      ~KerrStack.view
+      ~KerrStack.walk_groups
+      ~KerrStack.zip_groups
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: allmeta
+   .. autoattribute:: basenames
+   .. autoattribute:: clone
+   .. autoattribute:: debug
+   .. autoattribute:: defaults
+   .. autoattribute:: depth
+   .. autoattribute:: directory
+   .. autoattribute:: each
+   .. autoattribute:: fields
+   .. autoattribute:: files
+   .. autoattribute:: groups
+   .. autoattribute:: images
+   .. autoattribute:: imarray
+   .. autoattribute:: instance
+   .. autoattribute:: is_empty
+   .. autoattribute:: key
+   .. autoattribute:: loaded
+   .. autoattribute:: loader
+   .. autoattribute:: ls
+   .. autoattribute:: lsgrp
+   .. autoattribute:: max_size
+   .. autoattribute:: metadata
+   .. autoattribute:: mindepth
+   .. autoattribute:: not_empty
+   .. autoattribute:: not_loaded
+   .. autoattribute:: objects
+   .. autoattribute:: pattern
+   .. autoattribute:: root
+   .. autoattribute:: shape
+   .. autoattribute:: size
+   .. autoattribute:: trunkdepth
+   .. autoattribute:: type
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: HcMap
+   .. automethod:: add_group
+   .. automethod:: all
+   .. automethod:: append
+   .. automethod:: apply_all
+   .. automethod:: as_stack
+   .. automethod:: asfloat
+   .. automethod:: average
+   .. automethod:: average_Hcmap
+   .. automethod:: clear
+   .. automethod:: compress
+   .. automethod:: correct_drifts
+   .. automethod:: count
+   .. automethod:: crop_stack
+   .. automethod:: crop_text
+   .. automethod:: denoise_thresh
+   .. automethod:: dtype_limits
+   .. automethod:: extend
+   .. automethod:: fetch
+   .. automethod:: file
+   .. automethod:: filter
+   .. automethod:: filterout
+   .. automethod:: find_threshold
+   .. automethod:: flatten
+   .. automethod:: get
+   .. automethod:: getlist
+   .. automethod:: group
+   .. automethod:: hysteresis
+   .. automethod:: index
+   .. automethod:: index_to_field
+   .. automethod:: insert
+   .. automethod:: items
+   .. automethod:: keep_latest
+   .. automethod:: keys
+   .. automethod:: loadgroup
+   .. automethod:: make_name
+   .. automethod:: mean
+   .. automethod:: next
+   .. automethod:: on_load_process
+   .. automethod:: pop
+   .. automethod:: popitem
+   .. automethod:: prune
+   .. automethod:: remove
+   .. automethod:: reverse
+   .. automethod:: save
+   .. automethod:: select
+   .. automethod:: setdefault
+   .. automethod:: show
+   .. automethod:: slice_metadata
+   .. automethod:: sort
+   .. automethod:: stable_mask
+   .. automethod:: stddev
+   .. automethod:: stderr
+   .. automethod:: subtract
+   .. automethod:: unflatten
+   .. automethod:: unload
+   .. automethod:: update
+   .. automethod:: values
+   .. automethod:: view
+   .. automethod:: walk_groups
+   .. automethod:: zip_groups

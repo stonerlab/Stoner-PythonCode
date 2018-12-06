@@ -1,0 +1,7 @@
+metadataObject
+==============
+
+.. currentmodule:: Stoner.core.base
+
+.. autoclass:: metadataObject
+   :show-inheritance:

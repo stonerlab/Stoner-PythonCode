@@ -53,9 +53,10 @@
 <span class="sd">Classes:</span>
 <span class="sd">    PlotMixin - A class that uses matplotlib to plot data</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PlotMixin&quot;</span><span class="p">,</span><span class="s2">&quot;hsl2rgb&quot;</span><span class="p">]</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">python_v3</span><span class="p">,</span><span class="n">string_types</span><span class="p">,</span><span class="n">index_types</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">python_v3</span><span class="p">,</span><span class="n">string_types</span><span class="p">,</span><span class="n">index_types</span><span class="p">,</span><span class="n">int_types</span>
 <span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">_attribute_store</span><span class="p">,</span> <span class="n">isNone</span><span class="p">,</span><span class="n">isAnyNone</span><span class="p">,</span><span class="n">all_type</span><span class="p">,</span><span class="n">isiterable</span><span class="p">,</span><span class="n">typedList</span><span class="p">,</span><span class="n">get_option</span><span class="p">,</span><span class="n">fix_signature</span>
 <span class="kn">from</span> <span class="nn">.formats</span> <span class="k">import</span> <span class="n">DefaultPlotStyle</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">errorfill</span>
@@ -63,7 +64,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">griddata</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Mapping</span><span class="p">,</span><span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
 
 <span class="kn">import</span> <span class="nn">platform</span>
@@ -81,8 +82,7 @@
 
 <span class="k">try</span><span class="p">:</span> <span class="c1"># Check we&#39;ve got 3D plotting</span>
     <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="k">import</span> <span class="n">Axes3D</span>
-    <span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid</span> <span class="k">import</span> <span class="n">inset_locator</span>
-    <span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="k">import</span> <span class="n">host_subplot</span>
+    <span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="k">import</span> <span class="n">host_subplot</span><span class="p">,</span><span class="n">inset_locator</span>
     <span class="kn">import</span> <span class="nn">mpl_toolkits.axisartist</span> <span class="k">as</span> <span class="nn">AA</span>
     <span class="n">_3D</span><span class="o">=</span><span class="kc">True</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -168,11 +168,11 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">ret</span>
-    
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cmap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">()</span>
-    
+
     <span class="nd">@cmap</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">cmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cmap</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">set_cmap</span><span class="p">(</span><span class="n">cmap</span><span class="p">)</span>
@@ -264,6 +264,16 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Template is not of the right class:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_template</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Unmask the underlying attribute so we can fiddle plots.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax_title</span>
+
+    <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the plot title as well as setting the parent title value.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax_title</span><span class="o">=</span><span class="n">value</span>
+
     <span class="k">def</span> <span class="nf">_Plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">figure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwords</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Private method for plotting a single plot to a figure.</span>
 
@@ -340,13 +350,34 @@
 
         <span class="k">return</span> <span class="n">vector_field</span>
 
+    <span class="k">def</span> <span class="nf">_vector_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">zcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ucol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">vcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">wcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Map a vector direction in the data to a value for use with a colormnap.&quot;&quot;&quot;</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_cols</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">,</span> <span class="n">ucol</span><span class="o">=</span><span class="n">ucol</span><span class="p">,</span> <span class="n">vcol</span><span class="o">=</span><span class="n">vcol</span><span class="p">,</span> <span class="n">wcol</span><span class="o">=</span><span class="n">wcol</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">wcol</span><span class="p">,</span> <span class="n">index_types</span><span class="p">):</span> <span class="c1">#3D vector field</span>
+            <span class="n">wdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">wcol</span><span class="p">)</span>
+            <span class="n">phidata</span> <span class="o">=</span> <span class="p">(</span><span class="n">wdata</span> <span class="o">-</span> <span class="n">_np_</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">wdata</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">wdata</span><span class="p">)</span> <span class="o">-</span> <span class="n">_np_</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">wdata</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1">#2D vector field</span>
+            <span class="n">phidata</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span>
+            <span class="n">wdata</span> <span class="o">=</span> <span class="n">phidata</span> <span class="o">-</span> <span class="mf">0.5</span>
+        <span class="n">qdata</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">ucol</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">vcol</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+        <span class="n">rdata</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">ucol</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">vcol</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">wdata</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">rdata</span> <span class="o">=</span> <span class="n">rdata</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">rdata</span><span class="p">)</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">hsl2rgb</span><span class="p">(</span><span class="n">qdata</span><span class="p">,</span> <span class="n">rdata</span><span class="p">,</span> <span class="n">phidata</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.0</span>
+        <span class="k">return</span> <span class="n">Z</span>
+
+
     <span class="k">def</span> <span class="nf">_span_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">col</span><span class="p">,</span><span class="n">num</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a slice that covers the range of a given column.&quot;&quot;&quot;</span>
         <span class="n">v</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
         <span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">v</span><span class="p">),</span><span class="n">_np_</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-        <span class="n">span</span><span class="o">=</span><span class="n">v2</span><span class="o">-</span><span class="n">v1</span>
-        <span class="n">delta</span><span class="o">=</span><span class="n">span</span><span class="o">/</span><span class="n">num</span>
-        <span class="k">return</span> <span class="nb">slice</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="o">+</span><span class="p">(</span><span class="n">delta</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="n">delta</span><span class="p">)</span>
+        <span class="n">v</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">num</span><span class="p">)</span>
+        <span class="n">delta</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span><span class="n">int_types</span><span class="p">):</span>
+            <span class="n">v2</span><span class="o">=</span><span class="n">v2</span><span class="o">+</span><span class="n">delta</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v2</span><span class="o">=</span><span class="n">v2</span><span class="o">+</span><span class="n">delta</span><span class="o">/</span><span class="mi">2</span>
+        <span class="k">return</span> <span class="nb">slice</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">delta</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_VectorFieldPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Helper function to plot vector fields using mayavi.mlab.</span>
@@ -372,15 +403,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">col_mode</span> <span class="o">=</span> <span class="s2">&quot;color_by_vector&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;scalars&quot;</span> <span class="ow">in</span> <span class="n">kargs</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;scalars&quot;</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;scalars&quot;</span><span class="p">]:</span>  <span class="c1"># fancy mode on</span>
-            <span class="k">del</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;scalars&quot;</span><span class="p">]</span>
-            <span class="n">pi</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">pi</span>
-            <span class="n">colors</span> <span class="o">=</span> <span class="n">hsl2rgb</span><span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">/</span> <span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">/</span> <span class="n">_np_</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">quiv</span> <span class="o">=</span> <span class="n">mlab</span><span class="o">.</span><span class="n">quiver3d</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">scalars</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;scalars&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vector_color</span><span class="p">()</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span>
+            <span class="n">colors</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">colors</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="o">*</span><span class="mi">255</span><span class="p">))</span>
+            <span class="n">quiv</span> <span class="o">=</span> <span class="n">mlab</span><span class="o">.</span><span class="n">quiver3d</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
             <span class="n">quiv</span><span class="o">.</span><span class="n">glyph</span><span class="o">.</span><span class="n">color_mode</span> <span class="o">=</span> <span class="n">col_mode</span>
-            <span class="n">sc</span> <span class="o">=</span> <span class="n">tvtk</span><span class="o">.</span><span class="n">UnsignedCharArray</span><span class="p">()</span>
-            <span class="n">sc</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span>
-            <span class="n">quiv</span><span class="o">.</span><span class="n">mlab_source</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">point_data</span><span class="o">.</span><span class="n">scalars</span> <span class="o">=</span> <span class="n">sc</span>
-            <span class="n">quiv</span><span class="o">.</span><span class="n">mlab_source</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">modified</span><span class="p">()</span>
+            <span class="n">quiv</span><span class="o">.</span><span class="n">module_manager</span><span class="o">.</span><span class="n">scalar_lut_manager</span><span class="o">.</span><span class="n">lut</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">colors</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">quiv</span> <span class="o">=</span> <span class="n">mlab</span><span class="o">.</span><span class="n">quiver3d</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
             <span class="n">quiv</span><span class="o">.</span><span class="n">glyph</span><span class="o">.</span><span class="n">color_mode</span> <span class="o">=</span> <span class="n">col_mode</span>
@@ -516,18 +544,23 @@
 <span class="sd">                &quot;&quot;&quot;</span>
         <span class="n">func</span><span class="o">=</span><span class="kc">None</span>
         <span class="n">o_name</span><span class="o">=</span><span class="n">name</span>
-        <span class="n">mapping</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;plt_&quot;</span><span class="p">:(</span><span class="n">plt</span><span class="p">,</span><span class="s2">&quot;pyplot&quot;</span><span class="p">),</span><span class="s2">&quot;ax_&quot;</span><span class="p">:(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span><span class="s2">&quot;axes&quot;</span><span class="p">),</span><span class="s2">&quot;fig_&quot;</span><span class="p">:(</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span><span class="s2">&quot;figure&quot;</span><span class="p">)}</span>
+        <span class="n">mapping</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;plt_&quot;</span><span class="p">,(</span><span class="n">plt</span><span class="p">,</span><span class="s2">&quot;pyplot&quot;</span><span class="p">)),</span> <span class="c1"># Need to be explicit in 2.7!</span>
+                            <span class="p">(</span><span class="s2">&quot;ax_&quot;</span><span class="p">,(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span><span class="s2">&quot;axes&quot;</span><span class="p">)),</span>
+                            <span class="p">(</span><span class="s2">&quot;fig_&quot;</span><span class="p">,(</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span><span class="s2">&quot;figure&quot;</span><span class="p">))])</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">o_name</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="k">pass</span>
-        
+
         <span class="c1">#First look for a function in the pyplot package</span>
         <span class="k">for</span> <span class="n">prefix</span><span class="p">,(</span><span class="n">obj</span><span class="p">,</span><span class="n">key</span><span class="p">)</span> <span class="ow">in</span> <span class="n">mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">name</span><span class="o">=</span><span class="n">o_name</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):]</span> <span class="k">if</span> <span class="n">o_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="k">else</span> <span class="n">o_name</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pyplot_proxy</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pyplot_proxy</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="k">pass</span>
 
         <span class="c1">#Nowcheck for prefixed access on axes and figures with get_</span>
         <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ax_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;get_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">3</span><span class="p">:])</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">):</span>
@@ -548,14 +581,14 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
             <span class="n">fig</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span>
             <span class="n">func</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="s2">&quot;get_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-            
+
         <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#Ok Fallback to lookinf again at parent class</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">o_name</span><span class="p">)</span>
 
-        <span class="c1">#If we&#39;re still here then we&#39;re calling a proxy from that figure or axes                </span>
+        <span class="c1">#If we&#39;re still here then we&#39;re calling a proxy from that figure or axes</span>
         <span class="n">ret</span><span class="o">=</span><span class="n">func</span><span class="p">()</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">tfig</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">tax</span><span class="p">)</span>        
+        <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">tax</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="nf">_pyplot_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">what</span><span class="p">):</span>
@@ -565,12 +598,15 @@
             <span class="n">obj</span><span class="o">=</span><span class="n">plt</span>
         <span class="k">elif</span> <span class="n">what</span><span class="o">==</span><span class="s2">&quot;figure&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">:</span>
             <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__figure</span>
-        <span class="k">elif</span> <span class="n">what</span><span class="o">==</span><span class="s2">&quot;aces&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">what</span><span class="o">==</span><span class="s2">&quot;axes&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">:</span>
             <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Attempting to manipulate the methods on a figure or axes before a figure has been created for this Data.&quot;</span><span class="p">)</span>
         <span class="n">func</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
-        
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span> <span class="c1">#Bug out if this isn&#39;t a callable proxy!</span>
+            <span class="k">return</span> <span class="n">func</span>
+
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">_proxy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
             <span class="n">ret</span><span class="o">=</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
@@ -595,10 +631,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">func</span><span class="o">=</span><span class="kc">None</span>
         <span class="n">o_name</span><span class="o">=</span><span class="n">name</span>
-
         <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ax_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">3</span><span class="p">:])</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">):</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
-        <span class="k">if</span> <span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="p">:</span>
             <span class="n">tfig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
             <span class="n">tax</span> <span class="o">=</span> <span class="n">tfig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>  <span class="c1"># protect the current axes and figure</span>
 
@@ -608,7 +643,7 @@
             <span class="n">func</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;fig_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">4</span><span class="p">:])</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
-        <span class="k">if</span> <span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="p">:</span>
             <span class="n">tfig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
             <span class="n">tax</span> <span class="o">=</span> <span class="n">tfig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>  <span class="c1"># protect the current axes and figure</span>
 
@@ -616,11 +651,13 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
             <span class="n">fig</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span>
             <span class="n">func</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="s2">&quot;set_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">o_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">pass</span>
-        
+
+        <span class="k">if</span> <span class="n">o_name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">or</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">o_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
         <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Unable to set attribute </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">o_name</span><span class="p">))</span>
 
@@ -631,7 +668,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">tfig</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">tax</span><span class="p">)</span>        
+        <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">tax</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PlotMixin.add_column"><a class="viewcode-back" href="../../../classes/Stoner.plot.PlotMixin.html#Stoner.PlotMixin.add_column">[docs]</a>    <span class="k">def</span> <span class="nf">add_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Appends a column of data or inserts a column to a datafile instance.</span>
@@ -664,7 +701,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">header</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span><span class="o">+</span><span class="n">index</span><span class="p">]</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 
@@ -1296,20 +1333,10 @@
 <span class="sd">                **kargs (dict): A dictionary of other keyword arguments to pass into the plot function.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_cols</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">,</span> <span class="n">ucol</span><span class="o">=</span><span class="n">ucol</span><span class="p">,</span> <span class="n">vcol</span><span class="o">=</span><span class="n">vcol</span><span class="p">,</span> <span class="n">wcol</span><span class="o">=</span><span class="n">wcol</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-
+        <span class="n">Z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_vector_color</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">,</span><span class="n">ucol</span><span class="o">=</span><span class="n">ucol</span><span class="p">,</span><span class="n">vcol</span><span class="o">=</span><span class="n">vcol</span><span class="p">,</span><span class="n">wcol</span><span class="o">=</span><span class="n">wcol</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;template&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span> <span class="c1">#Catch template in kargs</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;template&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">wcol</span><span class="p">,</span> <span class="n">index_types</span><span class="p">):</span>
-            <span class="n">wdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">wcol</span><span class="p">)</span>
-            <span class="n">phidata</span> <span class="o">=</span> <span class="p">(</span><span class="n">wdata</span> <span class="o">-</span> <span class="n">_np_</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">wdata</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">wdata</span><span class="p">)</span> <span class="o">-</span> <span class="n">_np_</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">wdata</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">phidata</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span>
-            <span class="n">wdata</span> <span class="o">=</span> <span class="n">phidata</span> <span class="o">-</span> <span class="mf">0.5</span>
-        <span class="n">qdata</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">ucol</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">vcol</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
-        <span class="n">rdata</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">ucol</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">vcol</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">wdata</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">rdata</span> <span class="o">=</span> <span class="n">rdata</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">rdata</span><span class="p">)</span>
-        <span class="n">Z</span> <span class="o">=</span> <span class="n">hsl2rgb</span><span class="p">(</span><span class="n">qdata</span><span class="p">,</span> <span class="n">rdata</span><span class="p">,</span> <span class="n">phidata</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.0</span>
         <span class="k">if</span> <span class="s2">&quot;save_filename&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
             <span class="n">save</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;save_filename&quot;</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;save_filename&quot;</span><span class="p">]</span>
@@ -1321,7 +1348,7 @@
         <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quiver_plot</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">ycol</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">ucol</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">vcol</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span></div>
-    
+
     <span class="n">plot_xyuvw</span> <span class="o">=</span> <span class="n">plot_xyuv</span>
 
 <div class="viewcode-block" id="PlotMixin.plot_xyzuvw"><a class="viewcode-back" href="../../../classes/Stoner.plot.PlotMixin.html#Stoner.PlotMixin.plot_xyzuvw">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xyzuvw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ucol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
@@ -1648,9 +1675,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

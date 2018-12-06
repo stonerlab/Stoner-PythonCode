@@ -67,7 +67,7 @@ analysis on data files.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.SG_Filter.html#Stoner.Data.SG_Filter" title="Stoner.Data.SG_Filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SG_Filter</span></code></a>([col,&nbsp;points,&nbsp;poly,&nbsp;order,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.SG_Filter.html#Stoner.Data.SG_Filter" title="Stoner.Data.SG_Filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SG_Filter</span></code></a>([col,&nbsp;xcol,&nbsp;points,&nbsp;poly,&nbsp;order,&nbsp;…])</td>
 <td>Implements Savitsky-Golay filtering of data for smoothing and differentiating data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Data.__init__.html#Stoner.Data.__init__" title="Stoner.Data.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args,&nbsp;**kargs)</td>
@@ -179,7 +179,7 @@ analysis on data files.</p>
 <td>Interpolate a dataset to get a new set of values for a given set of x data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Data.items.html#Stoner.Data.items" title="Stoner.Data.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</td>
-<td></td>
+<td>Make sure we implement an items that doesn’t just iterate over self!</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.keys.html#Stoner.Data.keys" title="Stoner.Data.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</td>
 <td>An alias for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.dir(None)()</span></code> .</td>
@@ -259,7 +259,7 @@ analysis on data files.</p>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Data.rolling_window.html#Stoner.Data.rolling_window" title="Stoner.Data.rolling_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_window</span></code></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
 <td>Iterator that return a rolling window section of the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.rows.html#Stoner.Data.rows" title="Stoner.Data.rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rows</span></code></a>([not_masked])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.rows.html#Stoner.Data.rows" title="Stoner.Data.rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rows</span></code></a>([not_masked,&nbsp;reset])</td>
 <td>Generator method that will iterate over rows of data</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Data.save.html#Stoner.Data.save" title="Stoner.Data.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([filename])</td>
@@ -302,7 +302,7 @@ analysis on data files.</p>
 <td>Pass throuygh for plt.subplot().</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.subplot2grid.html#Stoner.Data.subplot2grid" title="Stoner.Data.subplot2grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplot2grid</span></code></a>(*args,&nbsp;**kargs)</td>
-<td>Pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot2grid.html#matplotlib.pyplot.subplot2grid" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.subplot2grid()</span></code></a>.</td>
+<td>Pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot2grid.html#matplotlib.pyplot.subplot2grid" title="(in Matplotlib v3.0.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.subplot2grid()</span></code></a>.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Data.subtract.html#Stoner.Data.subtract" title="Stoner.Data.subtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Subtract one column, number or array (b) from another column (a).</td>
@@ -320,7 +320,7 @@ analysis on data files.</p>
 <td>If E present and has a .keys() method, does:     for k in E: D[k] = E[k] If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v In either case, this is followed by: for k, v in F.items(): D[k] = v</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Data.values.html#Stoner.Data.values" title="Stoner.Data.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</td>
-<td></td>
+<td>Return the values of the metadata dictionary.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Data.x2.html#Stoner.Data.x2" title="Stoner.Data.x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x2</span></code></a>()</td>
 <td>Generate a new set of axes with a second x-scale.</td>
@@ -433,6 +433,9 @@ analysis on data files.</p>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">template</span></code></td>
 <td>Return the current plot template.</td>
 </tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">title</span></code></td>
+<td>Unmask the underlying attribute so we can fiddle plots.</td>
+</tr>
 </tbody>
 </table>
 </dd></dl>
@@ -497,9 +500,9 @@ analysis on data files.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

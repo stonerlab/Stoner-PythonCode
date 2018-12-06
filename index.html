@@ -66,11 +66,12 @@ API Reference guide. The <a class="reference external" href="http://www.github.c
 <div class="section" id="getting-this-code">
 <h2>Getting this Code<a class="headerlink" href="#getting-this-code" title="Permalink to this headline">¶</a></h2>
 <a class="reference external image-reference" href="https://www.youtube.com/watch?v=uZ_yKs11W18"><img alt="Introduction and Installation Guide to Stoner Pythin Package" src="https://i.imgur.com/h4mWwM0.png" style="width: 320px;" /></a>
-<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies on blist, filemagic, npTDMS, imreg_dft
-and numba.</p>
-<p>Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining dependencies are collected together
-in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner package is, therefore, to install the most recent Anaconda Python distribution (Python 3.6,
-3.5 or 2.7 should work) and then to install the Stoner package via:</p>
+<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies
+on blist, filemagic, npTDMS, imreg_dft and numba.</p>
+<p>Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining
+dependencies are collected together in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner package is,
+therefore, to install the most recent Anaconda Python distribution (Python 3.7, 3.6, 3.5 or 2.7 should work) and then to install
+the Stoner package via:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>conda install -c phygbu Stoner
 </pre></div>
 </div>
@@ -81,7 +82,8 @@ in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner
 <p>This will install the Stoner package and any missing dependencies into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: <a class="reference external" href="https://github.com/gb119/Stoner-PythonCode">https://github.com/gb119/Stoner-PythonCode</a></p>
-<p>The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 3.6 but test with 2.7 as well.</p>
+<p>The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 3.6 and 3.7  but test with
+2.7 as well. <em>NB</em> Python 3.7 is only supported in version 0.9x onwards and is known to not work with version 0.8.x.</p>
 </div>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
@@ -157,6 +159,7 @@ making beta packages available.</p>
 <li>Overhaul of the documentation and user guide</li>
 <li>Dropping support for the older Stoner.Image.stack.ImageStack class</li>
 <li>Droppping support for matplotlib&lt;2.0</li>
+<li>Support for Python 3.7</li>
 </ul>
 </div></blockquote>
 <p>Online documentation for all versions can be found on the ReadTheDocs pages <a class="reference external" href="http://stoner-pythoncode.readthedocs.io/en/latest/">online documentation</a></p>
@@ -165,6 +168,8 @@ making beta packages available.</p>
 <p>Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls. We currently test against
 python 2.7 and 3.6 via Travis and internally test on Python 3.5 as well. Overall code quality
 is measured by landscape.io. The current status is shown at the top of this readme.</p>
+<p>Version 0.9 onwards, we test with Python 3.7, 3.6, 3.5 and 2.7. All versions are probably not compatible with Python 3.8, this will
+feature in version 0.10 (probably)</p>
 </div>
 <div class="section" id="citing-the-stoner-package">
 <h4>Citing the Stoner Package<a class="headerlink" href="#citing-the-stoner-package" title="Permalink to this headline">¶</a></h4>
@@ -227,41 +232,10 @@ encourage any users to cite this package via that doi.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Stoner.html">Module Api Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="classes/Stoner.Data.html">Stoner.Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="classes/Stoner.DataFolder.html">Stoner.DataFolder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#class-inheritance-diagram">Class Inheritance Diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#classes">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id1">Class Inheritance Diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#functions">Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id2">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id3">Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id4">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id5">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id6">Class Inheritance Diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id7">Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id8">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id9">Class Inheritance Diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id10">Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id11">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id12">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id13">Class Inheritance Diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id14">Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id15">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id16">Class Inheritance Diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id17">Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id18">Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id19">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id20">Class Inheritance Diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id21">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id22">Class Inheritance Diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id23">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id24">Class Inheritance Diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id25">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id26">Class Inheritance Diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id27">Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id28">Class Inheritance Diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id29">Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#id30">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#primary-classes">Primary Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#numerical-data-objects">Numerical Data Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#folders-pacakge-collections-classes">Folders pacakge - Collections Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#image-subpackage">Image Subpackage</a></li>
 </ul>
 </li>
 </ul>
@@ -346,9 +320,9 @@ encourage any users to cite this package via that doi.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

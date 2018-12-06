@@ -142,5 +142,6 @@ Stoner.Data
       ~Stoner.Data.subclasses
       ~Stoner.Data.subplots
       ~Stoner.Data.template
+      ~Stoner.Data.title
    
    

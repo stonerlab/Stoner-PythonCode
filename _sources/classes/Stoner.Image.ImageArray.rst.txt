@@ -5,3 +5,271 @@ ImageArray
 
 .. autoclass:: ImageArray
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~ImageArray.CCW
+      ~ImageArray.CW
+      ~ImageArray.T
+      ~ImageArray.aspect
+      ~ImageArray.base
+      ~ImageArray.baseclass
+      ~ImageArray.centre
+      ~ImageArray.clone
+      ~ImageArray.ctypes
+      ~ImageArray.data
+      ~ImageArray.draw
+      ~ImageArray.dtype
+      ~ImageArray.fill_value
+      ~ImageArray.flags
+      ~ImageArray.flat
+      ~ImageArray.fmts
+      ~ImageArray.hardmask
+      ~ImageArray.imag
+      ~ImageArray.itemsize
+      ~ImageArray.mask
+      ~ImageArray.max_box
+      ~ImageArray.metadata
+      ~ImageArray.nbytes
+      ~ImageArray.ndim
+      ~ImageArray.real
+      ~ImageArray.recordmask
+      ~ImageArray.shape
+      ~ImageArray.sharedmask
+      ~ImageArray.size
+      ~ImageArray.strides
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ImageArray.all
+      ~ImageArray.anom
+      ~ImageArray.any
+      ~ImageArray.argmax
+      ~ImageArray.argmin
+      ~ImageArray.argpartition
+      ~ImageArray.argsort
+      ~ImageArray.asfloat
+      ~ImageArray.asint
+      ~ImageArray.astype
+      ~ImageArray.box
+      ~ImageArray.byteswap
+      ~ImageArray.choose
+      ~ImageArray.clear
+      ~ImageArray.clip
+      ~ImageArray.clip_intensity
+      ~ImageArray.compress
+      ~ImageArray.compressed
+      ~ImageArray.conj
+      ~ImageArray.conjugate
+      ~ImageArray.convert_float
+      ~ImageArray.convert_int
+      ~ImageArray.copy
+      ~ImageArray.count
+      ~ImageArray.crop
+      ~ImageArray.crop_image
+      ~ImageArray.cumprod
+      ~ImageArray.cumsum
+      ~ImageArray.diagonal
+      ~ImageArray.dot
+      ~ImageArray.dtype_limits
+      ~ImageArray.dump
+      ~ImageArray.dumps
+      ~ImageArray.fill
+      ~ImageArray.filled
+      ~ImageArray.flatten
+      ~ImageArray.get
+      ~ImageArray.get_fill_value
+      ~ImageArray.get_imag
+      ~ImageArray.get_real
+      ~ImageArray.getfield
+      ~ImageArray.harden_mask
+      ~ImageArray.ids
+      ~ImageArray.iscontiguous
+      ~ImageArray.item
+      ~ImageArray.items
+      ~ImageArray.itemset
+      ~ImageArray.keys
+      ~ImageArray.max
+      ~ImageArray.mean
+      ~ImageArray.min
+      ~ImageArray.mini
+      ~ImageArray.newbyteorder
+      ~ImageArray.nonzero
+      ~ImageArray.partition
+      ~ImageArray.pop
+      ~ImageArray.popitem
+      ~ImageArray.prod
+      ~ImageArray.product
+      ~ImageArray.ptp
+      ~ImageArray.put
+      ~ImageArray.ravel
+      ~ImageArray.repeat
+      ~ImageArray.reshape
+      ~ImageArray.resize
+      ~ImageArray.round
+      ~ImageArray.save
+      ~ImageArray.save_npy
+      ~ImageArray.save_png
+      ~ImageArray.save_tiff
+      ~ImageArray.searchsorted
+      ~ImageArray.set_fill_value
+      ~ImageArray.setdefault
+      ~ImageArray.setfield
+      ~ImageArray.setflags
+      ~ImageArray.shrink_mask
+      ~ImageArray.soften_mask
+      ~ImageArray.sort
+      ~ImageArray.squeeze
+      ~ImageArray.std
+      ~ImageArray.sum
+      ~ImageArray.swapaxes
+      ~ImageArray.take
+      ~ImageArray.tobytes
+      ~ImageArray.tofile
+      ~ImageArray.toflex
+      ~ImageArray.tolist
+      ~ImageArray.torecords
+      ~ImageArray.tostring
+      ~ImageArray.trace
+      ~ImageArray.transpose
+      ~ImageArray.unshare_mask
+      ~ImageArray.update
+      ~ImageArray.values
+      ~ImageArray.var
+      ~ImageArray.view
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: CCW
+   .. autoattribute:: CW
+   .. autoattribute:: T
+   .. autoattribute:: aspect
+   .. autoattribute:: base
+   .. autoattribute:: baseclass
+   .. autoattribute:: centre
+   .. autoattribute:: clone
+   .. autoattribute:: ctypes
+   .. autoattribute:: data
+   .. autoattribute:: draw
+   .. autoattribute:: dtype
+   .. autoattribute:: fill_value
+   .. autoattribute:: flags
+   .. autoattribute:: flat
+   .. autoattribute:: fmts
+   .. autoattribute:: hardmask
+   .. autoattribute:: imag
+   .. autoattribute:: itemsize
+   .. autoattribute:: mask
+   .. autoattribute:: max_box
+   .. autoattribute:: metadata
+   .. autoattribute:: nbytes
+   .. autoattribute:: ndim
+   .. autoattribute:: real
+   .. autoattribute:: recordmask
+   .. autoattribute:: shape
+   .. autoattribute:: sharedmask
+   .. autoattribute:: size
+   .. autoattribute:: strides
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: all
+   .. automethod:: anom
+   .. automethod:: any
+   .. automethod:: argmax
+   .. automethod:: argmin
+   .. automethod:: argpartition
+   .. automethod:: argsort
+   .. automethod:: asfloat
+   .. automethod:: asint
+   .. automethod:: astype
+   .. automethod:: box
+   .. automethod:: byteswap
+   .. automethod:: choose
+   .. automethod:: clear
+   .. automethod:: clip
+   .. automethod:: clip_intensity
+   .. automethod:: compress
+   .. automethod:: compressed
+   .. automethod:: conj
+   .. automethod:: conjugate
+   .. automethod:: convert_float
+   .. automethod:: convert_int
+   .. automethod:: copy
+   .. automethod:: count
+   .. automethod:: crop
+   .. automethod:: crop_image
+   .. automethod:: cumprod
+   .. automethod:: cumsum
+   .. automethod:: diagonal
+   .. automethod:: dot
+   .. automethod:: dtype_limits
+   .. automethod:: dump
+   .. automethod:: dumps
+   .. automethod:: fill
+   .. automethod:: filled
+   .. automethod:: flatten
+   .. automethod:: get
+   .. automethod:: get_fill_value
+   .. automethod:: get_imag
+   .. automethod:: get_real
+   .. automethod:: getfield
+   .. automethod:: harden_mask
+   .. automethod:: ids
+   .. automethod:: iscontiguous
+   .. automethod:: item
+   .. automethod:: items
+   .. automethod:: itemset
+   .. automethod:: keys
+   .. automethod:: max
+   .. automethod:: mean
+   .. automethod:: min
+   .. automethod:: mini
+   .. automethod:: newbyteorder
+   .. automethod:: nonzero
+   .. automethod:: partition
+   .. automethod:: pop
+   .. automethod:: popitem
+   .. automethod:: prod
+   .. automethod:: product
+   .. automethod:: ptp
+   .. automethod:: put
+   .. automethod:: ravel
+   .. automethod:: repeat
+   .. automethod:: reshape
+   .. automethod:: resize
+   .. automethod:: round
+   .. automethod:: save
+   .. automethod:: save_npy
+   .. automethod:: save_png
+   .. automethod:: save_tiff
+   .. automethod:: searchsorted
+   .. automethod:: set_fill_value
+   .. automethod:: setdefault
+   .. automethod:: setfield
+   .. automethod:: setflags
+   .. automethod:: shrink_mask
+   .. automethod:: soften_mask
+   .. automethod:: sort
+   .. automethod:: squeeze
+   .. automethod:: std
+   .. automethod:: sum
+   .. automethod:: swapaxes
+   .. automethod:: take
+   .. automethod:: tobytes
+   .. automethod:: tofile
+   .. automethod:: toflex
+   .. automethod:: tolist
+   .. automethod:: torecords
+   .. automethod:: tostring
+   .. automethod:: trace
+   .. automethod:: transpose
+   .. automethod:: unshare_mask
+   .. automethod:: update
+   .. automethod:: values
+   .. automethod:: var
+   .. automethod:: view

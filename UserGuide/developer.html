@@ -60,10 +60,10 @@
 From the end-user perspective, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> class contains several attributes that behave like data types that the user is familiar with:</p>
 <ul class="simple">
 <li>data
-Although this is essentially a numpy array, it is in fact a subclass of a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a>, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code></a>, with an extra attribute
-<a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray.setas" title="Stoner.Core.DataArray.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataArray.setas</span></code></a> that is used to label the columns of data and to track assignments to types of columns (x,y,z etc). As
-<a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code></a> can thus track what columns mean in cartersian co-ordinate systems, it can provide an on-the-fly conversion to polar
-co-ordinate sustems. <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code></a> also keeps track of the row numbers of the array and can label its rows with the <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray.i" title="Stoner.Core.DataArray.i"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataArray.i</span></code></a>
+Although this is essentially a numpy array, it is in fact a subclass of a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code>, with an extra attribute
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">DataArray.setas</span></code> that is used to label the columns of data and to track assignments to types of columns (x,y,z etc). As
+<code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code> can thus track what columns mean in cartersian co-ordinate systems, it can provide an on-the-fly conversion to polar
+co-ordinate sustems. <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code> also keeps track of the row numbers of the array and can label its rows with the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataArray.i</span></code>
 attribute.</li>
 <li>metadata
 In many respects this looks like a standard dictionary, albeit one that sorts its keys in alpahabetical order. Actually it is a subclass of a
@@ -71,9 +71,9 @@ blist.sortedDict that maintains a second dictionary with matching keys that stor
 in order to support export to non-duck typed environments.</li>
 <li>column_headers
 This appears to be a stadnard list of strings, except that it is kept in sync with the size of the numerical data array, adding extra entries or
-losing them as the data array gains or loses columns. Actually this is proxied through to the <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray.setas" title="Stoner.Core.DataArray.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataArray.setas</span></code></a> attribute</li>
+losing them as the data array gains or loses columns. Actually this is proxied through to the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataArray.setas</span></code> attribute</li>
 <li>setas
-This is a simple proxy through to the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.data</span></code></a> attribute’s <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray.setas" title="Stoner.Core.DataArray.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataArray.setas</span></code></a> attribute. As described above, this provides
+This is a simple proxy through to the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.data</span></code></a> attribute’s <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataArray.setas</span></code> attribute. As described above, this provides
 the column labelling and assignment functionality, it also handles the code to index columns by number, name, regular expression pattern. Internally
 this attribute stores a simple list of the column assignments, but supports being called with a variety of arguments and keyword arguments to manipulate
 that list. Attempting to set this attribute results in a translation to the appropriate function call, whilst getting it is converted to expressing it
@@ -207,9 +207,9 @@ strings so that the API documentation is picked up correctly.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

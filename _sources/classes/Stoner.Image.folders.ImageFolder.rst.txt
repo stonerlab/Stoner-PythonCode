@@ -5,3 +5,169 @@ ImageFolder
 
 .. autoclass:: ImageFolder
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~ImageFolder.basenames
+      ~ImageFolder.clone
+      ~ImageFolder.debug
+      ~ImageFolder.defaults
+      ~ImageFolder.depth
+      ~ImageFolder.directory
+      ~ImageFolder.each
+      ~ImageFolder.files
+      ~ImageFolder.groups
+      ~ImageFolder.images
+      ~ImageFolder.instance
+      ~ImageFolder.is_empty
+      ~ImageFolder.key
+      ~ImageFolder.loaded
+      ~ImageFolder.loader
+      ~ImageFolder.ls
+      ~ImageFolder.lsgrp
+      ~ImageFolder.metadata
+      ~ImageFolder.mindepth
+      ~ImageFolder.not_empty
+      ~ImageFolder.not_loaded
+      ~ImageFolder.objects
+      ~ImageFolder.pattern
+      ~ImageFolder.root
+      ~ImageFolder.shape
+      ~ImageFolder.size
+      ~ImageFolder.trunkdepth
+      ~ImageFolder.type
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ImageFolder.add_group
+      ~ImageFolder.all
+      ~ImageFolder.append
+      ~ImageFolder.apply_all
+      ~ImageFolder.as_stack
+      ~ImageFolder.average
+      ~ImageFolder.clear
+      ~ImageFolder.compress
+      ~ImageFolder.count
+      ~ImageFolder.extend
+      ~ImageFolder.fetch
+      ~ImageFolder.file
+      ~ImageFolder.filter
+      ~ImageFolder.filterout
+      ~ImageFolder.flatten
+      ~ImageFolder.get
+      ~ImageFolder.getlist
+      ~ImageFolder.group
+      ~ImageFolder.index
+      ~ImageFolder.insert
+      ~ImageFolder.items
+      ~ImageFolder.keep_latest
+      ~ImageFolder.keys
+      ~ImageFolder.loadgroup
+      ~ImageFolder.make_name
+      ~ImageFolder.mean
+      ~ImageFolder.next
+      ~ImageFolder.on_load_process
+      ~ImageFolder.pop
+      ~ImageFolder.popitem
+      ~ImageFolder.prune
+      ~ImageFolder.remove
+      ~ImageFolder.reverse
+      ~ImageFolder.save
+      ~ImageFolder.select
+      ~ImageFolder.setdefault
+      ~ImageFolder.slice_metadata
+      ~ImageFolder.sort
+      ~ImageFolder.stddev
+      ~ImageFolder.stderr
+      ~ImageFolder.unflatten
+      ~ImageFolder.unload
+      ~ImageFolder.update
+      ~ImageFolder.values
+      ~ImageFolder.view
+      ~ImageFolder.walk_groups
+      ~ImageFolder.zip_groups
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: basenames
+   .. autoattribute:: clone
+   .. autoattribute:: debug
+   .. autoattribute:: defaults
+   .. autoattribute:: depth
+   .. autoattribute:: directory
+   .. autoattribute:: each
+   .. autoattribute:: files
+   .. autoattribute:: groups
+   .. autoattribute:: images
+   .. autoattribute:: instance
+   .. autoattribute:: is_empty
+   .. autoattribute:: key
+   .. autoattribute:: loaded
+   .. autoattribute:: loader
+   .. autoattribute:: ls
+   .. autoattribute:: lsgrp
+   .. autoattribute:: metadata
+   .. autoattribute:: mindepth
+   .. autoattribute:: not_empty
+   .. autoattribute:: not_loaded
+   .. autoattribute:: objects
+   .. autoattribute:: pattern
+   .. autoattribute:: root
+   .. autoattribute:: shape
+   .. autoattribute:: size
+   .. autoattribute:: trunkdepth
+   .. autoattribute:: type
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: add_group
+   .. automethod:: all
+   .. automethod:: append
+   .. automethod:: apply_all
+   .. automethod:: as_stack
+   .. automethod:: average
+   .. automethod:: clear
+   .. automethod:: compress
+   .. automethod:: count
+   .. automethod:: extend
+   .. automethod:: fetch
+   .. automethod:: file
+   .. automethod:: filter
+   .. automethod:: filterout
+   .. automethod:: flatten
+   .. automethod:: get
+   .. automethod:: getlist
+   .. automethod:: group
+   .. automethod:: index
+   .. automethod:: insert
+   .. automethod:: items
+   .. automethod:: keep_latest
+   .. automethod:: keys
+   .. automethod:: loadgroup
+   .. automethod:: make_name
+   .. automethod:: mean
+   .. automethod:: next
+   .. automethod:: on_load_process
+   .. automethod:: pop
+   .. automethod:: popitem
+   .. automethod:: prune
+   .. automethod:: remove
+   .. automethod:: reverse
+   .. automethod:: save
+   .. automethod:: select
+   .. automethod:: setdefault
+   .. automethod:: slice_metadata
+   .. automethod:: sort
+   .. automethod:: stddev
+   .. automethod:: stderr
+   .. automethod:: unflatten
+   .. automethod:: unload
+   .. automethod:: update
+   .. automethod:: values
+   .. automethod:: view
+   .. automethod:: walk_groups
+   .. automethod:: zip_groups

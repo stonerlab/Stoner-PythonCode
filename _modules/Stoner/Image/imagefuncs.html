@@ -49,9 +49,9 @@
 <span class="sd">&quot;&quot;&quot;Functions for manipulating Kerr (or any other) images</span>
 
 <span class="sd">All of these functions are accessible through the :class:`ImageArray` attributes e.g.:</span>
-<span class="sd">    </span>
-<span class="sd">    k=ImageArray(&#39;myfile&#39;); k.level_image(). </span>
-<span class="sd">    </span>
+
+<span class="sd">    k=ImageArray(&#39;myfile&#39;); k.level_image().</span>
+
 <span class="sd">The first &#39;im&#39; function argument is automatically added in this case.</span>
 
 <span class="sd">If you want to add new functions that&#39;s great. There&#39;s a few important points:</span>
@@ -71,7 +71,7 @@
            <span class="s2">&quot;profile_line&quot;</span><span class="p">,</span><span class="s2">&quot;quantize&quot;</span><span class="p">,</span><span class="s2">&quot;rotate&quot;</span><span class="p">,</span><span class="s2">&quot;translate&quot;</span><span class="p">,</span><span class="s2">&quot;translate_limits&quot;</span><span class="p">,</span><span class="s2">&quot;plot_histogram&quot;</span><span class="p">,</span><span class="s2">&quot;threshold_minmax&quot;</span><span class="p">,</span><span class="s2">&quot;defect_mask&quot;</span><span class="p">,</span><span class="s2">&quot;do_nothing&quot;</span><span class="p">,</span>
            <span class="s2">&quot;float_and_croptext&quot;</span><span class="p">,</span><span class="s2">&quot;denoise&quot;</span><span class="p">]</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="o">,</span><span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span><span class="o">,</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">istuple</span><span class="p">,</span><span class="n">isiterable</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">griddata</span>
@@ -157,7 +157,7 @@
 <span class="sd">        ref (ndarray) reference array</span>
 
 <span class="sd">    Keyword Args:</span>
-<span class="sd">        method (str or None): </span>
+<span class="sd">        method (str or None):</span>
 <span class="sd">            If given specifies which module to try and use.</span>
 <span class="sd">            Options: &#39;scharr&#39;, &#39;chi2_shift&#39;, &#39;imreg_dft&#39;, &#39;cv2&#39;</span>
 <span class="sd">        **kargs (various): All other keyword arguments are passed to the specific algorithm.</span>
@@ -198,8 +198,11 @@
         <span class="n">new_im</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;chi2_shift&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">result</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">imreg_dft</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">method</span><span class="o">==</span><span class="s2">&quot;imreg_dft&quot;</span><span class="p">:</span>
         <span class="n">constraints</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;constraints&quot;</span><span class="p">,{</span><span class="s2">&quot;angle&quot;</span><span class="p">:[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">],</span><span class="s2">&quot;scale&quot;</span><span class="p">:[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">]})</span>
-        <span class="n">result</span><span class="o">=</span><span class="n">imreg_dft</span><span class="o">.</span><span class="n">similarity</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span><span class="n">im</span><span class="p">,</span><span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">)</span>
-        <span class="n">new_im</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;timg&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">ImageArray</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">=</span><span class="n">im</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span> <span class="c1">#This causes a warning due to the masking</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">=</span><span class="n">imreg_dft</span><span class="o">.</span><span class="n">similarity</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span><span class="n">im</span><span class="p">,</span><span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">)</span>
+        <span class="n">new_im</span><span class="o">=</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;timg&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">cls</span><span class="p">)</span>
         <span class="n">new_im</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
         <span class="n">new_im</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cv2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">method</span><span class="o">==</span><span class="s2">&quot;cv2&quot;</span><span class="p">:</span>
@@ -474,12 +477,12 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        A scaled version of the data. The ndarray min and max methods are used to allow masked images</span>
 <span class="sd">        to be operated on only on the unmasked areas.</span>
-<span class="sd">        </span>
+
 <span class="sd">    Notes:</span>
 <span class="sd">        The *sample* keyword controls the area in which the range of input values is calculated, the actual scaling is</span>
 <span class="sd">        done on the whole image.</span>
-<span class="sd">        </span>
-<span class="sd">        The *limits* parameter is used to set the input scale being normalised from - if an image has a few outliers then </span>
+
+<span class="sd">        The *limits* parameter is used to set the input scale being normalised from - if an image has a few outliers then</span>
 <span class="sd">        this setting can be used to clip the input range before normalising. The parameters in the limit are the values at</span>
 <span class="sd">        the *low* and *high* fractions of the cumulative distribution functions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -498,7 +501,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">high</span><span class="o">=</span><span class="n">section</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="n">low</span><span class="o">=</span><span class="n">section</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        
+
     <span class="k">if</span> <span class="ow">not</span> <span class="n">istuple</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span><span class="nb">float</span><span class="p">,</span><span class="nb">float</span><span class="p">,</span><span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;scale should be a 2-tuple of floats.&quot;</span><span class="p">)</span>
     <span class="n">scaled</span><span class="o">=</span><span class="p">(</span><span class="n">im</span><span class="o">-</span><span class="n">low</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">high</span><span class="o">-</span><span class="n">low</span><span class="p">)</span>
@@ -515,7 +518,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">im</span><span class="p">[</span><span class="n">im</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="n">im</span>
-        
+
 <div class="viewcode-block" id="profile_line"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.profile_line.html#Stoner.Image.imagefuncs.profile_line">[docs]</a><span class="k">def</span> <span class="nf">profile_line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">constrain</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Wrapper for sckit-image method of the same name to get a line_profile.</span>
 
@@ -554,7 +557,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dst co-ordinates are not a 2-tuple of ints.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">constrain</span><span class="p">:</span>
-        <span class="n">fix</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">mx</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">mx</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">fix</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">mx</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">mx</span><span class="p">])[</span><span class="mi">1</span><span class="p">]))</span>
         <span class="n">r</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">src</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
         <span class="n">src</span><span class="o">=</span><span class="p">(</span><span class="n">fix</span><span class="p">(</span><span class="n">src</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">r</span><span class="p">),</span><span class="n">fix</span><span class="p">(</span><span class="n">src</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">c</span><span class="p">))</span>
@@ -602,7 +605,7 @@
         <span class="n">ret</span><span class="p">[</span><span class="n">select</span><span class="p">]</span><span class="o">=</span><span class="n">val</span>
     <span class="k">return</span> <span class="n">ret</span></div>
 
-<div class="viewcode-block" id="rotate"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.rotate.html#Stoner.Image.imagefuncs.rotate">[docs]</a><span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+<div class="viewcode-block" id="rotate"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.rotate.html#Stoner.Image.imagefuncs.rotate">[docs]</a><span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span><span class="n">cval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Rotates the image.</span>
 
 <span class="sd">    Areas lost by move are cropped, and areas gained are made black (0)</span>
@@ -611,16 +614,22 @@
 <span class="sd">        rotation: float</span>
 <span class="sd">            clockwise rotation angle in radians (rotated about top right corner)</span>
 
+<span class="sd">    Keyword Argum,ents:</span>
+<span class="sd">        mode (str): How to handle points outside the original image. See :py:func:`skimage.transform.warp`. Defaults to &quot;constant&quot;</span>
+<span class="sd">        cval (float): The value to fill with if *mode* is constant. If not speficied or None, defaults to the mean pixcel value.</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        im: ImageArray</span>
 <span class="sd">            rotated image</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rot</span><span class="o">=</span><span class="n">transform</span><span class="o">.</span><span class="n">SimilarityTransform</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="n">angle</span><span class="p">)</span>
-    <span class="n">im</span><span class="o">.</span><span class="n">warp</span><span class="p">(</span><span class="n">rot</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cval</span><span class="o">=</span><span class="n">im</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">im</span><span class="o">.</span><span class="n">warp</span><span class="p">(</span><span class="n">rot</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span><span class="n">cval</span><span class="o">=</span><span class="n">cval</span><span class="p">)</span>
     <span class="n">im</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;transform:rotation&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">angle</span>
     <span class="k">return</span> <span class="n">im</span></div>
 
-<div class="viewcode-block" id="translate"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.translate.html#Stoner.Image.imagefuncs.translate">[docs]</a><span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">translation</span><span class="p">,</span> <span class="n">add_metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wrap&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="translate"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.translate.html#Stoner.Image.imagefuncs.translate">[docs]</a><span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">translation</span><span class="p">,</span> <span class="n">add_metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wrap&quot;</span><span class="p">,</span><span class="n">cval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Translates the image.</span>
 
 <span class="sd">    Areas lost by move are cropped, and areas gained are made black (0)</span>
@@ -633,13 +642,17 @@
 <span class="sd">    Keyword Arguments:</span>
 <span class="sd">        add_metadata (bool): Record the shift in the image metadata</span>
 <span class="sd">        order (int): Interpolation order (default, 3, bi-cubic)</span>
+<span class="sd">        mode (str): How to handle points outside the original image. See :py:func:`skimage.transform.warp`. Defaults to &quot;wrap&quot;</span>
+<span class="sd">        cval (float): The value to fill with if *mode* is constant. If not speficied or None, defaults to the mean pixcel value.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        im (ImageArray): translated image</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">translation</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">translation</span><span class="p">]</span>
     <span class="n">trans</span><span class="o">=</span><span class="n">transform</span><span class="o">.</span><span class="n">SimilarityTransform</span><span class="p">(</span><span class="n">translation</span><span class="o">=</span><span class="n">translation</span><span class="p">)</span>
-    <span class="n">im</span><span class="o">=</span><span class="n">im</span><span class="o">.</span><span class="n">warp</span><span class="p">(</span><span class="n">trans</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cval</span><span class="o">=</span><span class="n">im</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">im</span><span class="o">=</span><span class="n">im</span><span class="o">.</span><span class="n">warp</span><span class="p">(</span><span class="n">trans</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span><span class="n">cval</span><span class="o">=</span><span class="n">cval</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">add_metadata</span><span class="p">:</span>
         <span class="n">im</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;translation&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">translation</span>
         <span class="n">im</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;translation_limits&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">translate_limits</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="n">translation</span><span class="p">)</span>
@@ -812,9 +825,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

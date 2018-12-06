@@ -281,7 +281,7 @@ and then smoothed and then reinterpolated back to the original x data co-ordinat
 <p class="last">This will fail for hysteretic data. In this case it would be better to use an integer size argument and to ensure
 the data is evenly spaced to start with.</p>
 </div>
-<p>The <em>result</em> and <em>replace</em> arguments are passed through to <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.add_column()</span></code></a> unless <em>replace</em>
+<p>The <em>result</em> and <em>replace</em> arguments are passed through to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.add_column()</span></code> unless <em>replace</em>
 is <strong>False</strong> in which case, the smoothed data is passed back as the return value and the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>
 is left unmodified.</p>
 </div></blockquote>
@@ -339,8 +339,8 @@ and effective, but does reduce the length of the data !</p>
 <span class="n">d2</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">)</span>
 <span class="n">d2</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span>
 <span class="n">d2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Re-binned&quot;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-<span class="n">d2</span><span class="o">.</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span><span class="mf">6.5</span><span class="p">)</span>
-<span class="n">d2</span><span class="o">.</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">d2</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span><span class="mf">6.5</span><span class="p">)</span>
+<span class="n">d2</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.4</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/smooth.png">png</a>, <a class="reference external" href="../samples/smooth.hires.png">hires.png</a>, <a class="reference external" href="../samples/smooth.pdf">pdf</a>)</p>
@@ -533,7 +533,7 @@ less equal significance. By default, only peaks are returned in order of x posit
 
 <span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;../../sample-data/New-XRay-Data.dql&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">d</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="n">poly</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">significance</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span><span class="n">modify</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span><span class="n">poly</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">significance</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">modify</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;Peaks&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">)</span>
 </pre></div>
@@ -627,9 +627,9 @@ less equal significance. By default, only peaks are returned in order of x posit
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

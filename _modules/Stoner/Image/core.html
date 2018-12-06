@@ -51,6 +51,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ImageArray&quot;</span><span class="p">,</span><span class="s2">&quot;ImageFile&quot;</span><span class="p">,</span><span class="s2">&quot;DrawProxy&quot;</span><span class="p">,</span><span class="s2">&quot;MaskProxy&quot;</span><span class="p">]</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">color</span><span class="p">,</span><span class="n">exposure</span><span class="p">,</span><span class="n">feature</span><span class="p">,</span><span class="n">io</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span>\
                     <span class="n">filters</span><span class="p">,</span><span class="n">graph</span><span class="p">,</span><span class="n">util</span><span class="p">,</span><span class="n">restoration</span><span class="p">,</span><span class="n">morphology</span><span class="p">,</span>\
@@ -247,7 +248,10 @@
                                 <span class="n">deepcopy</span><span class="p">(</span><span class="n">ImageArray</span><span class="o">.</span><span class="n">_extra_attributes_default</span><span class="p">))</span>
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_optinfo&#39;</span><span class="p">,</span> <span class="n">copy</span><span class="p">(</span><span class="n">_extra_attributes</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">_extra_attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span> <span class="c1">#Some versions of  python don&#39;t like this</span>
+                <span class="k">pass</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__array_finalize__</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__array_prepare__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -687,7 +691,7 @@
     <span class="c1">############### Custom Methods for ImageArray###############################################################</span>
 
 
-    <span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.crop"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.crop">[docs]</a>    <span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Crop the image.</span>
 
 <span class="sd">        This is essentially like taking a view onto the array</span>
@@ -719,9 +723,9 @@
         <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">box</span><span class="p">]</span>
         <span class="k">if</span> <span class="s1">&#39;copy&#39;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">kargs</span><span class="p">[</span><span class="s1">&#39;copy&#39;</span><span class="p">]:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">clone</span>
-        <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
 
-    <span class="k">def</span> <span class="nf">dtype_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.dtype_limits"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.dtype_limits">[docs]</a>    <span class="k">def</span> <span class="nf">dtype_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return intensity limits, i.e. (min, max) tuple, of the image&#39;s dtype.</span>
 
 <span class="sd">        Args:</span>
@@ -739,9 +743,9 @@
         <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="o">=</span> <span class="n">dtype_range</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">clip_negative</span><span class="p">:</span>
             <span class="n">imin</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">return</span> <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span>
+        <span class="k">return</span> <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span></div>
 
-    <span class="k">def</span> <span class="nf">asfloat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.asfloat"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.asfloat">[docs]</a>    <span class="k">def</span> <span class="nf">asfloat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the image converted to floating point type.</span>
 
 <span class="sd">        If currently an int type and normalise then floats will be normalised</span>
@@ -757,7 +761,7 @@
 <span class="sd">                clip negative intensity to 0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span><span class="o">==</span><span class="s1">&#39;f&#39;</span><span class="p">:</span>
-            <span class="k">pass</span>
+            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="n">normalise</span><span class="p">)</span> <span class="c1">#preserve metadata</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
@@ -766,9 +770,9 @@
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">clip</span> <span class="ow">or</span> <span class="n">clip_negative</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">clip_intensity</span><span class="p">(</span><span class="n">clip_negative</span><span class="o">=</span><span class="n">clip_negative</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
 
-    <span class="k">def</span> <span class="nf">clip_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.clip_intensity"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.clip_intensity">[docs]</a>    <span class="k">def</span> <span class="nf">clip_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Clip intensity outside the range -1,1 or 0,1</span>
 
 <span class="sd">        Keyword ArgumentsL</span>
@@ -777,15 +781,15 @@
 <span class="sd">            limits (low,high): Clip the intensity between low and high rather than zero and 1.</span>
 
 <span class="sd">        Ensure data range is -1 to 1 or 0 to 1 if clip_negative is True.</span>
-<span class="sd">                </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">limits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype_limits</span><span class="p">(</span><span class="n">clip_negative</span><span class="o">=</span><span class="n">clip_negative</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">dl</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">limits</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">asint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.asint"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.asint">[docs]</a>    <span class="k">def</span> <span class="nf">asint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;convert the image to unsigned integer format.</span>
 
 <span class="sd">        May raise warnings about loss of precision.</span>
@@ -793,10 +797,10 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span><span class="o">==</span><span class="s1">&#39;f&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">&lt;-</span><span class="mi">1</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">normalise</span><span class="p">()</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
 
 
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.save"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves the image into the file &#39;filename&#39;.</span>
 
 <span class="sd">        Metadata will be preserved in .png and .tif format.</span>
@@ -852,9 +856,9 @@
                 <span class="n">forcetype</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;forcetype&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
                 <span class="n">saver</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">forcetype</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">saver</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                <span class="n">saver</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">save_png</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.save_png"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.save_png">[docs]</a>    <span class="k">def</span> <span class="nf">save_png</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save the ImageArray with metadata in a png file.</span>
 <span class="sd">        This can only save as 8bit unsigned integer so there is likely</span>
 <span class="sd">        to be a loss of precision on floating point data&quot;&quot;&quot;</span>
@@ -866,14 +870,14 @@
             <span class="n">meta</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
         <span class="n">s</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">*</span><span class="mi">256</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
         <span class="n">im</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;uint8&#39;</span><span class="p">),</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;L&#39;</span><span class="p">)</span>
-        <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">pngname</span><span class="p">,</span><span class="n">pnginfo</span><span class="o">=</span><span class="n">meta</span><span class="p">)</span>
+        <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">pngname</span><span class="p">,</span><span class="n">pnginfo</span><span class="o">=</span><span class="n">meta</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">save_npy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.save_npy"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.save_npy">[docs]</a>    <span class="k">def</span> <span class="nf">save_npy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save the ImageArray as a numpy array.&quot;&quot;&quot;</span>
         <span class="n">npyname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">npyname</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">npyname</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
 
-    <span class="k">def</span> <span class="nf">save_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span> <span class="n">forcetype</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.save_tiff"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.save_tiff">[docs]</a>    <span class="k">def</span> <span class="nf">save_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span> <span class="n">forcetype</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save the ImageArray as a tiff image with metadata</span>
 <span class="sd">        PIL can save in modes &quot;L&quot; (8bit unsigned int), &quot;I&quot; (32bit signed int),</span>
 <span class="sd">        or &quot;F&quot; (32bit signed float). In general max info is preserved for &quot;F&quot;</span>
@@ -912,7 +916,7 @@
         <span class="k">else</span><span class="p">:</span>  <span class="c1">#default to tiff</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;.tiff&#39;</span>
         <span class="n">tiffname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">ext</span>
-        <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">tiffname</span><span class="p">,</span><span class="n">tiffinfo</span><span class="o">=</span><span class="n">ifd</span><span class="p">)</span>
+        <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">tiffname</span><span class="p">,</span><span class="n">tiffinfo</span><span class="o">=</span><span class="n">ifd</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__file_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates a file dialog box for loading or saving ~b ImageFile objects.</span>
@@ -947,21 +951,25 @@
     <span class="c1">############################################################################################################</span>
     <span class="c1">############## Depricated Methods ##########################################################################</span>
 
-    <span class="k">def</span> <span class="nf">box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.box"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.box">[docs]</a>    <span class="k">def</span> <span class="nf">box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Alias for :py:meth:`ImageArray.crop`&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The box method was replaced by crop and will raise and error in future versions.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">crop_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.crop_image"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.crop_image">[docs]</a>    <span class="k">def</span> <span class="nf">crop_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Back compatability alias for :py:meth:`ImageArray.crop`&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The crop_image method was replaced by crop and will raise and error in future versions.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">convert_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.convert_float"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.convert_float">[docs]</a>    <span class="k">def</span> <span class="nf">convert_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_neg</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Deproicated compatability. :py:meth:`ImageArray.asfloat` preferred&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">asfloat</span><span class="p">(</span><span class="n">normalise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">clip_neg</span><span class="o">=</span><span class="n">clip_negative</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The convert_float method was replaced by asfloat and will raise and error in future versions.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">asfloat</span><span class="p">(</span><span class="n">normalise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="n">clip_neg</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">convert_int</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageArray.convert_int"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.convert_int">[docs]</a>    <span class="k">def</span> <span class="nf">convert_int</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Depricated compatability meothd. :py:meth:`ImageArray.asint` preferred&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">asint</span><span class="p">()</span></div>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The convert_int method was replaced by asint and will raise and error in future versions.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">asint</span><span class="p">()</span></div></div>
 
 <div class="viewcode-block" id="ImageFile"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageFile.html#Stoner.Image.ImageFile">[docs]</a><span class="k">class</span> <span class="nc">ImageFile</span><span class="p">(</span><span class="n">metadataObject</span><span class="p">):</span>
 
@@ -999,7 +1007,7 @@
     <span class="n">_protected_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_fromstack&#39;</span><span class="p">]</span> <span class="c1">#these won&#39;t be passed through to self.image attrs</span>
 
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageFile.__init__"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageFile.__init__.html#Stoner.Image.ImageFile.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Mostly a pass through to ImageArray constructor.</span>
 
 <span class="sd">        Local attribute is image. All other attributes and calls are passed</span>
@@ -1024,7 +1032,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">=</span><span class="n">ImageArray</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">DataFile</span><span class="p">):</span> <span class="c1">#Support initing from a DataFile that defines x,y,z coordinates</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_init_from_datafile</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fromstack</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;_fromstack&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="c1">#for use by ImageStack</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fromstack</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;_fromstack&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="c1">#for use by ImageStack</span></div>
 
 
     <span class="c1">#####################################################################################################################################</span>
@@ -1301,7 +1309,7 @@
 <span class="sd">            zcol (column index): Column in the datafile that defines the intensity</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">shape</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;shape&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">shape</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;shape&quot;</span><span class="p">,</span><span class="s2">&quot;unique&quot;</span><span class="p">)</span>
 
         <span class="n">_</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">zcol</span><span class="p">)</span>
@@ -1368,7 +1376,7 @@
         <span class="n">data</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageFile.save"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageFile.save.html#Stoner.Image.ImageFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves the image into the file &#39;filename&#39;.</span>
 
 <span class="sd">        Metadata will be preserved in .png and .tif format.</span>
@@ -1388,7 +1396,7 @@
 <span class="sd">            or a list of them. If not included will guess from filename.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#catch before metadataObject tries to take over.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
 <span class="k">class</span> <span class="nc">DrawProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -1510,7 +1518,15 @@
     <span class="k">def</span> <span class="nf">_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_IA</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">getmaskarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_IA</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IA</span><span class="o">.</span><span class="n">mask</span>
-
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[:]</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[:]</span>
+    
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">DrawProxy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">)</span>
@@ -1618,9 +1634,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

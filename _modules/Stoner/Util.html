@@ -98,7 +98,7 @@
     <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">_col_args</span><span class="p">()</span>
         <span class="n">col</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span>
-    <span class="n">width</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">width</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Ensure the window for Satvisky Golay filter is odd</span>
         <span class="n">width</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="n">setas</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
@@ -195,8 +195,8 @@
     <span class="k">if</span> <span class="s2">&quot;setas&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span> <span class="c1"># Allow us to override the setas variable</span>
         <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;setas&quot;</span><span class="p">)</span>
 
-    <span class="n">xcol</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;xcol&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">ycol</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ycol&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">xcol</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;xcol&quot;</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
+    <span class="n">ycol</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ycol&quot;</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">])</span>
     <span class="c1">#Get xcol and ycols from kargs if specified</span>
     <span class="n">_</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">)</span>
     <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">)</span>
@@ -237,7 +237,6 @@
             <span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">=-</span><span class="n">data</span><span class="o">.</span><span class="n">y</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">break</span>
-
 
     <span class="c1">#Find mean slope and offset</span>
     <span class="n">pm</span> <span class="o">=</span> <span class="p">(</span><span class="n">p1</span> <span class="o">+</span> <span class="n">p2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
@@ -349,9 +348,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

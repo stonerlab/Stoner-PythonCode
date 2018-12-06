@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="CSVFile.__init__" href="Stoner.FileFormats.CSVFile.__init__.html" />
-    <link rel="prev" title="PlotFolder" href="Stoner.Folders.PlotFolder.html" />
+    <link rel="prev" title="errorfill" href="Stoner.plot.utils.errorfill.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -28,7 +28,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Folders.PlotFolder.html" title="Previous document">PlotFolder</a>
+          <a href="Stoner.plot.utils.errorfill.html" title="Previous document">errorfill</a>
         </li>
         <li>
           <a href="Stoner.FileFormats.CSVFile.__init__.html" title="Next document">CSVFile.__init__</a>
@@ -116,7 +116,7 @@
 <td>Insert new_data into the data array at position row.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.items.html#Stoner.FileFormats.CSVFile.items" title="Stoner.FileFormats.CSVFile.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</td>
-<td></td>
+<td>Make sure we implement an items that doesn’t just iterate over self!</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.keys.html#Stoner.FileFormats.CSVFile.keys" title="Stoner.FileFormats.CSVFile.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</td>
 <td>An alias for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.dir(None)()</span></code> .</td>
@@ -139,7 +139,7 @@
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.rolling_window.html#Stoner.FileFormats.CSVFile.rolling_window" title="Stoner.FileFormats.CSVFile.rolling_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_window</span></code></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
 <td>Iterator that return a rolling window section of the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.rows.html#Stoner.FileFormats.CSVFile.rows" title="Stoner.FileFormats.CSVFile.rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rows</span></code></a>([not_masked])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.rows.html#Stoner.FileFormats.CSVFile.rows" title="Stoner.FileFormats.CSVFile.rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rows</span></code></a>([not_masked,&nbsp;reset])</td>
 <td>Generator method that will iterate over rows of data</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.save.html#Stoner.FileFormats.CSVFile.save" title="Stoner.FileFormats.CSVFile.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>(filename,&nbsp;**kargs)</td>
@@ -173,7 +173,7 @@
 <td>If E present and has a .keys() method, does:     for k in E: D[k] = E[k] If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v In either case, this is followed by: for k, v in F.items(): D[k] = v</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.values.html#Stoner.FileFormats.CSVFile.values" title="Stoner.FileFormats.CSVFile.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</td>
-<td></td>
+<td>Return the values of the metadata dictionary.</td>
 </tr>
 </tbody>
 </table>
@@ -257,8 +257,8 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Folders.PlotFolder.html"
-                        title="previous chapter">PlotFolder</a></p>
+  <p class="topless"><a href="Stoner.plot.utils.errorfill.html"
+                        title="previous chapter">errorfill</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.FileFormats.CSVFile.__init__.html"
                         title="next chapter">CSVFile.__init__</a></p>
@@ -288,7 +288,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Folders.PlotFolder.html" title="Previous document">PlotFolder</a>
+          <a href="Stoner.plot.utils.errorfill.html" title="Previous document">errorfill</a>
         </li>
         <li>
           <a href="Stoner.FileFormats.CSVFile.__init__.html" title="Next document">CSVFile.__init__</a>
@@ -305,9 +305,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

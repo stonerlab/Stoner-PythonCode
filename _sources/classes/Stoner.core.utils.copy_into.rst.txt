@@ -1,0 +1,6 @@
+copy_into
+=========
+
+.. currentmodule:: Stoner.core.utils
+
+.. autofunction:: copy_into

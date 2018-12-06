@@ -1,8 +1,0 @@
-
-
-DataFolder.concatentate
-==============================
-
-.. currentmodule:: Stoner
-
-.. automethod:: DataFolder.concatentate

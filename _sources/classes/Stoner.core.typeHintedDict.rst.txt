@@ -1,0 +1,45 @@
+typeHintedDict
+==============
+
+.. currentmodule:: Stoner.core
+
+.. autoclass:: typeHintedDict
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~typeHintedDict.allowed_keys
+      ~typeHintedDict.types
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~typeHintedDict.copy
+      ~typeHintedDict.export
+      ~typeHintedDict.export_all
+      ~typeHintedDict.filter
+      ~typeHintedDict.findtype
+      ~typeHintedDict.import_all
+      ~typeHintedDict.import_key
+      ~typeHintedDict.string_to_type
+      ~typeHintedDict.type
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: allowed_keys
+   .. autoattribute:: types
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: copy
+   .. automethod:: export
+   .. automethod:: export_all
+   .. automethod:: filter
+   .. automethod:: findtype
+   .. automethod:: import_all
+   .. automethod:: import_key
+   .. automethod:: string_to_type
+   .. automethod:: type

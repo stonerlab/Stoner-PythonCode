@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>item &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="proxy" href="Stoner.folders.metadata.proxy.html" />
+    <link rel="prev" title="PlotMethodsMixin" href="Stoner.folders.mixins.PlotMethodsMixin.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.folders.mixins.PlotMethodsMixin.html" title="Previous document">PlotMethodsMixin</a>
+        </li>
+        <li>
+          <a href="Stoner.folders.metadata.proxy.html" title="Next document">proxy</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="item">
+<h1>item<a class="headerlink" href="#item" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.folders.each.item">
+<em class="property">class </em><code class="descclassname">Stoner.folders.each.</code><code class="descname">item</code><span class="sig-paren">(</span><em>folder</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/each.html#item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.each.item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Provides a proxy object for accessing methods on the inividual members of a Folder.
+8
+.. rubric:: Notes</p>
+<p>The prupose of this class is to allow it to be explicit that we’re calling methods
+on the members of the folder rather than a collective method. This allows us to work
+around nameclashes.</p>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.each.item.__call__" title="Stoner.folders.each.item.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(func,&nbsp;*args,&nbsp;**kargs)</td>
+<td>Iterate over the baseFolder, calling func on each item.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.each.item.iter" title="Stoner.folders.each.item.iter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter</span></code></a>(func,&nbsp;*args,&nbsp;**kargs)</td>
+<td>Iterate over the baseFolder, calling func on each item.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.folders.each.item.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>func</em>, <em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/each.html#item.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.each.item.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over the baseFolder, calling func on each item.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>func</strong> (<em>callable</em>) – A Callable object that must take a metadataObject type instance as it’s first argument.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>_return</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Controls how the return value from <em>func</em> is added to the DataFolder</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of the results of evaluating <em>func</em> for each item in the folder.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>If <em>_return</em> is None and the return type of <em>func</em> is the same type as the <code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code> is storing, then
+the return value replaces trhe original <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataobject</span></code> in the <code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code>.
+If <em>_result</em> is True the return value is added to the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code>’s metadata under the name
+of the function. If <em>_result</em> is a string. then return result is stored in the corresponding name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.folders.each.item.iter">
+<code class="descname">iter</code><span class="sig-paren">(</span><em>func</em>, <em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/each.html#item.iter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.each.item.iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over the baseFolder, calling func on each item.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>func</strong> (<em>callable</em>) – A Callable object that must take a metadataObject type instance as it’s first argument.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>_return</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Controls how the return value from <em>func</em> is added to the DataFolder</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of the results of evaluating <em>func</em> for each item in the folder.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>If <em>_return</em> is None and the return type of <em>func</em> is the same type as the <code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code> is storing, then
+the return value replaces trhe original <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataobject</span></code> in the <code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code>.
+If <em>_result</em> is True the return value is added to the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code>’s metadata under the name
+of the function. If <em>_result</em> is a string. then return result is stored in the corresponding name.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.folders.mixins.PlotMethodsMixin.html"
+                        title="previous chapter">PlotMethodsMixin</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.folders.metadata.proxy.html"
+                        title="next chapter">proxy</a></p>
+<div class="sourcelink">
+  <a href="../_sources/classes/Stoner.folders.each.item.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.folders.mixins.PlotMethodsMixin.html" title="Previous document">PlotMethodsMixin</a>
+        </li>
+        <li>
+          <a href="Stoner.folders.metadata.proxy.html" title="Next document">proxy</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.7.9
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

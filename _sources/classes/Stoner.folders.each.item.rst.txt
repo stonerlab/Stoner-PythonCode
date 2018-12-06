@@ -1,0 +1,19 @@
+item
+====
+
+.. currentmodule:: Stoner.folders.each
+
+.. autoclass:: item
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~item.__call__
+      ~item.iter
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__
+   .. automethod:: iter

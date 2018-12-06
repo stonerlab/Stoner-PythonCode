@@ -75,7 +75,7 @@
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a>) – A vector of initial parameter values to try.</li>
+<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>, </em><a class="reference internal" href="../Stoner.html#module-Stoner.core.array" title="Stoner.core.array"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A vector of initial parameter values to try. See the notes in <a class="reference internal" href="Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.curve_fit()</span></code></a> for more details.</li>
 <li><strong>sigma</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The index of the column with the y-error bars</li>
 <li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
 <li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
@@ -106,7 +106,8 @@ relevant information about the fit.</p>
 </dl>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code>
+<p class="last"><a class="reference internal" href="Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.curve_fit()</span></code></a>
+<a class="reference internal" href="Stoner.Data.odr.html#Stoner.Data.odr" title="Stoner.Data.odr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.odr()</span></code></a>
 User guide section <a class="reference internal" href="../UserGuide/curve_fitting.html#fitting-with-limits"><span class="std std-ref">Fitting with limits</span></a></p>
 </div>
 <div class="admonition note">
@@ -222,9 +223,9 @@ columns are the fitted values of the parameters with an additional column for <s
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

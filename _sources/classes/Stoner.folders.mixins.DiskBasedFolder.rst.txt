@@ -1,0 +1,45 @@
+DiskBasedFolder
+===============
+
+.. currentmodule:: Stoner.folders.mixins
+
+.. autoclass:: DiskBasedFolder
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~DiskBasedFolder.basenames
+      ~DiskBasedFolder.directory
+      ~DiskBasedFolder.key
+      ~DiskBasedFolder.not_loaded
+      ~DiskBasedFolder.pattern
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~DiskBasedFolder.fetch
+      ~DiskBasedFolder.getlist
+      ~DiskBasedFolder.keep_latest
+      ~DiskBasedFolder.on_load_process
+      ~DiskBasedFolder.save
+      ~DiskBasedFolder.unload
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: basenames
+   .. autoattribute:: directory
+   .. autoattribute:: key
+   .. autoattribute:: not_loaded
+   .. autoattribute:: pattern
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: fetch
+   .. automethod:: getlist
+   .. automethod:: keep_latest
+   .. automethod:: on_load_process
+   .. automethod:: save
+   .. automethod:: unload

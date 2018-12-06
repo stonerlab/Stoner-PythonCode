@@ -23,6 +23,7 @@ PlotMixin
       ~PlotMixin.showfig
       ~PlotMixin.subplots
       ~PlotMixin.template
+      ~PlotMixin.title
 
    .. rubric:: Methods Summary
 
@@ -63,6 +64,7 @@ PlotMixin
    .. autoattribute:: showfig
    .. autoattribute:: subplots
    .. autoattribute:: template
+   .. autoattribute:: title
 
    .. rubric:: Methods Documentation
 

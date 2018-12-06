@@ -1,0 +1,41 @@
+DataArray
+=========
+
+.. currentmodule:: Stoner.core
+
+.. autoclass:: DataArray
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~DataArray.column_headers
+      ~DataArray.i
+      ~DataArray.isrow
+      ~DataArray.p
+      ~DataArray.q
+      ~DataArray.r
+      ~DataArray.setas
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~DataArray.keys
+      ~DataArray.swap_column
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: column_headers
+   .. autoattribute:: i
+   .. autoattribute:: isrow
+   .. autoattribute:: p
+   .. autoattribute:: q
+   .. autoattribute:: r
+   .. autoattribute:: setas
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: keys
+   .. automethod:: swap_column

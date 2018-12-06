@@ -1,7 +1,46 @@
-ImageFile
-=========
+Stoner.Image.ImageFile
+======================
 
 .. currentmodule:: Stoner.Image
 
 .. autoclass:: ImageFile
-   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Image.ImageFile.__init__
+      ~Stoner.Image.ImageFile.clear
+      ~Stoner.Image.ImageFile.get
+      ~Stoner.Image.ImageFile.items
+      ~Stoner.Image.ImageFile.keys
+      ~Stoner.Image.ImageFile.pop
+      ~Stoner.Image.ImageFile.popitem
+      ~Stoner.Image.ImageFile.save
+      ~Stoner.Image.ImageFile.setdefault
+      ~Stoner.Image.ImageFile.update
+      ~Stoner.Image.ImageFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Image.ImageFile.CCW
+      ~Stoner.Image.ImageFile.CW
+      ~Stoner.Image.ImageFile.clone
+      ~Stoner.Image.ImageFile.data
+      ~Stoner.Image.ImageFile.filename
+      ~Stoner.Image.ImageFile.image
+      ~Stoner.Image.ImageFile.mask
+      ~Stoner.Image.ImageFile.metadata
+   
+   

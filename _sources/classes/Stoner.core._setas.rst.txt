@@ -1,0 +1,7 @@
+_setas
+======
+
+.. currentmodule:: Stoner.core
+
+.. autoclass:: _setas
+   :show-inheritance:

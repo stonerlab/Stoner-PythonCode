@@ -12,10 +12,11 @@ d.normalise(2,scale=(0.,10.)) # Just to keep the plot sane!
 d.template["axes.prop_cycle"]=(cycler(color=["Blue","Purple"])+cycler(linestyle=["-","--"]))
 
 #Can also access as an attribute
-d.template.template_lines__linewidth=1.5
+d.template.template_lines__linewidth=2.0
 
 #Set the default figure size
 d.template["figure.figsize"]=(6,8)
+d.template["figure.autolayout"]=True
 # Make figure (before using subplot method) and select first subplot
 d.figure()
 d.subplot(211)
@@ -29,7 +30,5 @@ d.subplot(212)
 #Plot with defaults
 d.plot()
 d.title="Style Default settings"
-#Fuixup layout
-d.figwidth=8
-d.tight_layout()
-
+#Fixup layout
+d.figwidth=7 # Magic pass through attribute access

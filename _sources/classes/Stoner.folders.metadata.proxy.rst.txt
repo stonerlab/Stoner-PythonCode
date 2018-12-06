@@ -1,0 +1,7 @@
+proxy
+=====
+
+.. currentmodule:: Stoner.folders.metadata
+
+.. autoclass:: proxy
+   :show-inheritance:

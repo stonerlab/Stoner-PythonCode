@@ -1,0 +1,9 @@
+<map id="inheritance4d7d1f0691" name="inheritance4d7d1f0691">
+<area shape="rect" id="node10" title="All the operations on a read&#45;only sequence." alt="" coords="331,152,417,177"/>
+<area shape="rect" id="node5" href="classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" target="_top" title="Provide an interface to manipulating lots of data files stored within a directory structure on disc." alt="" coords="191,372,285,397"/>
+<area shape="rect" id="node11" href="classes/Stoner.Folders.PlotFolder.html#Stoner.Folders.PlotFolder" target="_top" title="A :py:class:`Stoner.folders.baseFolder` that knows how to ploth its underlying data files." alt="" coords="124,445,211,471"/>
+<area shape="rect" id="node6" href="classes/Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin" target="_top" title="A mixin class that provides a :py:class:`Stoner.folders.core.baseFolder` with methods for working with :py:class:`Stoner.Data` objects." alt="" coords="5,299,148,324"/>
+<area shape="rect" id="node7" href="classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="173,299,303,324"/>
+<area shape="rect" id="node8" href="classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="327,299,421,324"/>
+<area shape="rect" id="node12" href="classes/Stoner.folders.mixins.PlotMethodsMixin.html#Stoner.folders.mixins.PlotMethodsMixin" target="_top" title="A Mixin for :py:class:`Stoner.folders.core.baseFolder` with extra methods for plotting lots of files." alt="" coords="29,372,167,397"/>
+</map>

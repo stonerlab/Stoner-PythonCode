@@ -65,7 +65,7 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.SG_Filter" title="Stoner.Analysis.AnalysisMixin.SG_Filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SG_Filter</span></code></a>([col,&nbsp;points,&nbsp;poly,&nbsp;order,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.SG_Filter" title="Stoner.Analysis.AnalysisMixin.SG_Filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SG_Filter</span></code></a>([col,&nbsp;xcol,&nbsp;points,&nbsp;poly,&nbsp;order,&nbsp;…])</td>
 <td>Implements Savitsky-Golay filtering of data for smoothing and differentiating data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.add" title="Stoner.Analysis.AnalysisMixin.add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
@@ -160,7 +160,7 @@
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="Stoner.Analysis.AnalysisMixin.SG_Filter">
-<code class="descname">SG_Filter</code><span class="sig-paren">(</span><em>col=None</em>, <em>points=15</em>, <em>poly=1</em>, <em>order=0</em>, <em>result=None</em>, <em>replace=False</em>, <em>header=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.SG_Filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.SG_Filter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">SG_Filter</code><span class="sig-paren">(</span><em>col=None</em>, <em>xcol=None</em>, <em>points=15</em>, <em>poly=1</em>, <em>order=0</em>, <em>pad=True</em>, <em>result=None</em>, <em>replace=False</em>, <em>header=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.SG_Filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.SG_Filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implements Savitsky-Golay filtering of data for smoothing and differentiating data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -168,14 +168,16 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>col</strong> (<em>index</em>) – Column of Data to be filtered. if None, first y-column in setas is filtered.</li>
-<li><strong>prints</strong> (<em>int</em>) – Number of data points to use in the filtering window. Should be an odd number &gt; poly+1 (default 15)</li>
+<li><strong>points</strong> (<em>int</em>) – Number of data points to use in the filtering window. Should be an odd number &gt; poly+1 (default 15)</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><strong>xcol</strong> (<em>coilumn index</em>) – </li>
 <li><strong>poly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of polynomial to fit to the data. Must be equal or greater than order (default 1)</li>
 <li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of differentiation to carry out. Default=0 meaning smooth the data only.</li>
+<li><strong>pad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Pad the start and end of the array with the mean value (True, default) or specired value (float) or leave as is.</li>
 <li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><em>True</em></a><em>, or </em><em>column_index</em>) – If not None, column index to insert new data, or True to append as last column</li>
 <li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – Header for new column if result is not None. If header is Nne, a suitable column header is generated.</li>
 </ul>
@@ -191,6 +193,7 @@ Otherwise, a copy of the modified AnalysisMixin object is returned.</p>
 <p>If col is not specified or is None then the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code> column assignments are used
 to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
 for differentiating data. This is now a pass through to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.savgol_filter.html#scipy.signal.savgol_filter" title="(in SciPy v1.1.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.savgol_filter()</span></code></a></p>
+<p>Padding can help stop wildly wrong artefacts in the data at the start and enf of the data, particularly when the differntial order is &gt;1.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last">User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#smoothing-guide"><span class="std std-ref">Smoothing and Filtering Data</span></a></p>
@@ -237,20 +240,40 @@ additional column with the uncertainites will be added to the data.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – A function that takes a numpy 1D array representing each row of data</li>
+<li><strong>func</strong> (<em>callable</em>) – The function to apply to each row of the data.</li>
 <li><strong>col</strong> (<em>index</em>) – The column in which to place the result of the function</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Isnert a new data column (False) or replace the data column (True, default)</li>
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – The new column header (defaults to the name of the function func</li>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Either replace the existing column/complete data or create a new column or data file.</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – The new column header(s) (defaults to the name of the function func</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</p>
-</td>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If any extra keyword arguments are supplied then these are passed to the function directly. If
+you need to pass any arguments that overlap with the keyword arguments to <a href="#id1"><span class="problematic" id="id2">:py:math:`AnalysisMixin.apply`</span></a>
+then these can be supplied in a dictionary argument <em>_extra</em>.</p>
+<p>The callable <em>func</em> should have a signature:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>and should return either a single float, in which case it will be used to repalce the specified column, or an
+array, in which case it is used to completely replace the row of data.</p>
+<p class="last">If the function returns a complete row of data, then the <em>replace</em> parameter will cause the return value to be
+a new datafile, leaving the original unchanged. The <em>headers</em> parameter can give the complete column headers for
+the new data file.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>self</em> – The newly modified <a class="reference internal" href="#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -347,7 +370,7 @@ for each one. In this case the return value is a list of what would be returned 
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a>) – A vector of initial parameter values to try</li>
+<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>, </em><a class="reference internal" href="../Stoner.html#module-Stoner.core.array" title="Stoner.core.array"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A vector of initial parameter values to try. See notes below.</li>
 <li><strong>sigma</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The index of the column with the y-error bars</li>
 <li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
 <li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
@@ -382,20 +405,31 @@ for the fitting parameters.</p>
 <p>If the columns are not specified (or set to None) then the X and Y data are taken using the
 <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.</p>
 <p>The fitting function should have prototype y=f(x,p[0],p[1],p[2]…)
-The x-column and y-column can be anything that <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.find_col()</span></code></a> can use as an index
+The x-column and y-column can be anything that <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.find_col()</span></code> can use as an index
 but typucally either strings to be matched against column headings or integers.
 The initial parameter values and weightings default to None which corresponds to all parameters starting
 at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
 point is to be used in the fit and false if not.</p>
-<p class="last">The <em>absolute_sigma</em> keyword determines whether the returned covariance matrix <cite>pcov</cite> is based on <em>estimated</em> errors in
+<p>The <em>absolute_sigma</em> keyword determines whether the returned covariance matrix <cite>pcov</cite> is based on <em>estimated</em> errors in
 the data, and is not affected by the overall magnitude of the values in <cite>sigma</cite>. Only the relative magnitudes of the
 <em>sigma</em> values matter.
 If True, <cite>sigma</cite> describes one standard deviation errors of the input data points. The estimated covariance in <cite>pcov</cite> is
 based on these values.</p>
+<p>The starting vector <em>p0</em> can be either a list, tuple or array, or a callable that will produce a list, tuple or array. IF callable,
+it should take the form:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>def p0_func(ydata,x=xdata):</dt>
+<dd></dd>
+</dl>
+</div></blockquote>
+<p class="last">and return a list of parameter values that is in the same order as the model function. If p0 is not given and a <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> or
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> is supplied as the model function, then the model’s estimates of the starting values will be used instead.</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.lmfit" title="Stoner.Analysis.AnalysisMixin.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin.lmfit()</span></code></a>
+<p class="last"><a class="reference internal" href="Stoner.Data.lmfit.html#Stoner.Data.lmfit" title="Stoner.Data.lmfit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.lmfit()</span></code></a>
+<a class="reference internal" href="Stoner.Data.odr.html#Stoner.Data.odr" title="Stoner.Data.odr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.odr()</span></code></a>
 User guide section <a class="reference internal" href="../UserGuide/curve_fitting.html#curve-fit-guide"><span class="std std-ref">Curve Fitting in the Stoner Pacakge</span></a></p>
 </div>
 </dd></dl>
@@ -646,7 +680,7 @@ an array of xvalues.</p>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a>) – A vector of initial parameter values to try.</li>
+<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>, </em><a class="reference internal" href="../Stoner.html#module-Stoner.core.array" title="Stoner.core.array"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A vector of initial parameter values to try. See the notes in <a class="reference internal" href="Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.curve_fit()</span></code></a> for more details.</li>
 <li><strong>sigma</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The index of the column with the y-error bars</li>
 <li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
 <li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
@@ -677,7 +711,8 @@ relevant information about the fit.</p>
 </dl>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code></a>
+<p class="last"><a class="reference internal" href="Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.curve_fit()</span></code></a>
+<a class="reference internal" href="Stoner.Data.odr.html#Stoner.Data.odr" title="Stoner.Data.odr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.odr()</span></code></a>
 User guide section <a class="reference internal" href="../UserGuide/curve_fitting.html#fitting-with-limits"><span class="std std-ref">Fitting with limits</span></a></p>
 </div>
 <div class="admonition note">
@@ -798,7 +833,7 @@ assignments are used.</p>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>sigma</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a>) – The uncertainity noted for each value in the mean</li>
+<li><strong>sigma</strong> (<em>column index</em><em> or </em><a class="reference internal" href="../Stoner.html#module-Stoner.core.array" title="Stoner.core.array"><em>array</em></a>) – The uncertainity noted for each value in the mean</li>
 <li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable function that takes a single argument list of
 numbers representing one row, and returns True for all rows to search in.</li>
 </ul>
@@ -928,7 +963,7 @@ the <em>low</em> and <em>high</em> fractions of the cumulative distribution func
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a>) – A vector of initial parameter values to try.</li>
+<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>, </em><a class="reference internal" href="../Stoner.html#module-Stoner.core.array" title="Stoner.core.array"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A vector of initial parameter values to try. See the notes to <a class="reference internal" href="Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.curve_fit()</span></code></a> for more details.</li>
 <li><strong>sigma_x</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The index of the column with the x-error bars</li>
 <li><strong>sigma_y</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The index of the column with the x-error bars</li>
 <li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
@@ -1084,6 +1119,7 @@ and <em>row</em> is the data for the row.</p>
 <dt>Example</dt>
 <dd><div class="first highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Detect outlying points from a lione.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.Analysis</span> <span class="kn">import</span> <span class="n">_poly_outlier</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
 <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">201</span><span class="p">)</span>
@@ -1098,8 +1134,12 @@ and <em>row</em> is the data for the row.</p>
 <span class="n">e</span><span class="o">.</span><span class="n">outlier_detection</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">)</span>
 <span class="n">e</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;r-&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Default Outliers removed&quot;</span><span class="p">)</span>
 <span class="n">f</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">clone</span>
-<span class="n">f</span><span class="o">.</span><span class="n">outlier_detection</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">certainty</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">,</span><span class="n">func</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">_poly_outlier</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">outlier_detection</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">certainty</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">,</span><span class="n">func</span><span class="o">=</span><span class="n">_poly_outlier</span><span class="p">)</span>
 <span class="n">f</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;g-&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Poly Outliers removed&quot;</span><span class="p">)</span>
+<span class="n">g</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">clone</span>
+<span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">outlier_detection</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">certainty</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">,</span><span class="n">func</span><span class="o">=</span><span class="n">_poly_outlier</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Masked outliers&quot;</span><span class="p">)</span>
+<span class="n">g</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">clone</span>
 <span class="n">e</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Outlier detection test&quot;</span>
 </pre></div>
 </div>
@@ -1121,7 +1161,7 @@ and <em>row</em> is the data for the row.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>ycol</strong> (<em>index</em>) – is the column name or index of the data in which to search for peaks</li>
-<li><strong>width</strong> (<em>float</em>) – is the expected minium halalf-width of a peak in terms of the number of data points.
+<li><strong>width</strong> (<em>int or float</em>) – is the expected minium halalf-width of a peak in terms of the number of data points (int) or distance in x (float).
 This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
 to experimental noise, smaller means better eable to see sharp peaks</li>
 <li><strong>poly</strong> (<em>int</em>) – This is the order of polynomial to use when differentiating the data to locate a peak. Must &gt;=2, higher numbers
@@ -1132,7 +1172,7 @@ will find sharper peaks more accurately but at the risk of finding more false po
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
 <li><strong>significance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
-of the data. Bigger means less sensistive, smaller means more likely to detect noise.</li>
+of the data. Bigger means less sensistive, smaller means more likely to detect noise. Default is the maximum curvature/(2*width)</li>
 <li><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – name or index of data column that p[rovides the x-coordinate (default None)</li>
 <li><strong>peaks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – select whether to measure peaks in data (default True)</li>
 <li><strong>troughs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – select whether to measure troughs in data (default False)</li>
@@ -1539,9 +1579,9 @@ argument list. In order to support the use of assigned columns, this has been sw
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jul 18, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.5
+      1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

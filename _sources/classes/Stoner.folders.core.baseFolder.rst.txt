@@ -1,0 +1,135 @@
+baseFolder
+==========
+
+.. currentmodule:: Stoner.folders.core
+
+.. autoclass:: baseFolder
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~baseFolder.clone
+      ~baseFolder.debug
+      ~baseFolder.defaults
+      ~baseFolder.depth
+      ~baseFolder.each
+      ~baseFolder.files
+      ~baseFolder.groups
+      ~baseFolder.instance
+      ~baseFolder.is_empty
+      ~baseFolder.key
+      ~baseFolder.loaded
+      ~baseFolder.loader
+      ~baseFolder.ls
+      ~baseFolder.lsgrp
+      ~baseFolder.metadata
+      ~baseFolder.mindepth
+      ~baseFolder.not_empty
+      ~baseFolder.objects
+      ~baseFolder.root
+      ~baseFolder.shape
+      ~baseFolder.trunkdepth
+      ~baseFolder.type
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~baseFolder.add_group
+      ~baseFolder.all
+      ~baseFolder.append
+      ~baseFolder.clear
+      ~baseFolder.compress
+      ~baseFolder.count
+      ~baseFolder.extend
+      ~baseFolder.fetch
+      ~baseFolder.file
+      ~baseFolder.filter
+      ~baseFolder.filterout
+      ~baseFolder.flatten
+      ~baseFolder.get
+      ~baseFolder.group
+      ~baseFolder.index
+      ~baseFolder.insert
+      ~baseFolder.items
+      ~baseFolder.keys
+      ~baseFolder.make_name
+      ~baseFolder.next
+      ~baseFolder.pop
+      ~baseFolder.popitem
+      ~baseFolder.prune
+      ~baseFolder.remove
+      ~baseFolder.reverse
+      ~baseFolder.select
+      ~baseFolder.setdefault
+      ~baseFolder.slice_metadata
+      ~baseFolder.sort
+      ~baseFolder.unflatten
+      ~baseFolder.update
+      ~baseFolder.values
+      ~baseFolder.walk_groups
+      ~baseFolder.zip_groups
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: clone
+   .. autoattribute:: debug
+   .. autoattribute:: defaults
+   .. autoattribute:: depth
+   .. autoattribute:: each
+   .. autoattribute:: files
+   .. autoattribute:: groups
+   .. autoattribute:: instance
+   .. autoattribute:: is_empty
+   .. autoattribute:: key
+   .. autoattribute:: loaded
+   .. autoattribute:: loader
+   .. autoattribute:: ls
+   .. autoattribute:: lsgrp
+   .. autoattribute:: metadata
+   .. autoattribute:: mindepth
+   .. autoattribute:: not_empty
+   .. autoattribute:: objects
+   .. autoattribute:: root
+   .. autoattribute:: shape
+   .. autoattribute:: trunkdepth
+   .. autoattribute:: type
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: add_group
+   .. automethod:: all
+   .. automethod:: append
+   .. automethod:: clear
+   .. automethod:: compress
+   .. automethod:: count
+   .. automethod:: extend
+   .. automethod:: fetch
+   .. automethod:: file
+   .. automethod:: filter
+   .. automethod:: filterout
+   .. automethod:: flatten
+   .. automethod:: get
+   .. automethod:: group
+   .. automethod:: index
+   .. automethod:: insert
+   .. automethod:: items
+   .. automethod:: keys
+   .. automethod:: make_name
+   .. automethod:: next
+   .. automethod:: pop
+   .. automethod:: popitem
+   .. automethod:: prune
+   .. automethod:: remove
+   .. automethod:: reverse
+   .. automethod:: select
+   .. automethod:: setdefault
+   .. automethod:: slice_metadata
+   .. automethod:: sort
+   .. automethod:: unflatten
+   .. automethod:: update
+   .. automethod:: values
+   .. automethod:: walk_groups
+   .. automethod:: zip_groups

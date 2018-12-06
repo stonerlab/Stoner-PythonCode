@@ -1,7 +1,0 @@
-<map id="inheritancea68979ab0a" name="inheritancea68979ab0a">
-<area shape="rect" id="node5" href="classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" target="_top" title="A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name." alt="" coords="262,5,340,28"/>
-<area shape="rect" id="node6" title="An array class with possibly masked values." alt="" coords="124,5,218,28"/>
-<area shape="rect" id="node7" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" target="_top" title=":py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers." alt="" coords="697,94,763,116"/>
-<area shape="rect" id="node8" title="Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object." alt="" coords="540,94,654,116"/>
-<area shape="rect" id="node10" title="ndarray(shape, dtype=float, buffer=None, offset=0," alt="" coords="10,5,75,28"/>
-</map>

@@ -1,0 +1,732 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Stoner.core.base &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../../../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../../Stoner.html">Stoner</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Stoner.core.base</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Base classes for the Stoner package</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__all__</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;_evaluatable&quot;</span><span class="p">,</span><span class="s2">&quot;regexpDict&quot;</span><span class="p">,</span><span class="s2">&quot;typeHintedDict&quot;</span><span class="p">,</span><span class="s2">&quot;metadataObject&quot;</span><span class="p">]</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span><span class="p">,</span><span class="n">MutableMapping</span><span class="p">,</span><span class="n">Mapping</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">isnan</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">NaN</span>
+
+<span class="kn">from</span> <span class="nn">..compat</span> <span class="k">import</span> <span class="n">python_v3</span><span class="p">,</span><span class="n">string_types</span><span class="p">,</span><span class="n">int_types</span><span class="p">,</span><span class="n">_pattern_type</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="k">import</span> <span class="n">isiterable</span><span class="p">,</span><span class="n">isComparable</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">python_v3</span> <span class="c1"># blist doesn&#39;t seem entirely reliable in 3.5 :-(</span>
+    <span class="kn">from</span> <span class="nn">blist</span> <span class="k">import</span> <span class="n">sorteddict</span>
+<span class="k">except</span> <span class="p">(</span><span class="ne">AssertionError</span><span class="p">,</span><span class="ne">ImportError</span><span class="p">):</span> <span class="c1">#Fail if blist not present or Python 3</span>
+    <span class="n">sorteddict</span><span class="o">=</span><span class="n">OrderedDict</span>
+
+
+<div class="viewcode-block" id="_evaluatable"><a class="viewcode-back" href="../../../classes/Stoner.core.base._evaluatable.html#Stoner._evaluatable">[docs]</a><span class="k">class</span> <span class="nc">_evaluatable</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Just a placeholder to indicate that special action needs to be taken to convert a string representation to a valid Python type.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="regexpDict"><a class="viewcode-back" href="../../../classes/Stoner.core.regexpDict.html#Stoner.regexpDict">[docs]</a><span class="k">class</span> <span class="nc">regexpDict</span><span class="p">(</span><span class="n">sorteddict</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;An ordered dictionary that permits looks up by regular expression.&quot;&quot;&quot;</span>
+
+    <span class="n">allowed_keys</span><span class="o">=</span><span class="p">(</span><span class="nb">object</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="nf">__lookup__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">multiple</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Lookup name and find a matching key or raise KeyError.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            name (str, _pattern_type): The name to be searched for</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            multiple (bool): Return a singl entry ()default, False) or multiple entries</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Canonical key matching the specified name.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if no key matches name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span><span class="o">=</span><span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span> <span class="c1">#name directly as key</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">=</span><span class="n">name</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span><span class="ne">TypeError</span><span class="p">):</span> <span class="c1">#Fall back to regular expression lookup</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">exact</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
+                <span class="n">name</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> not a key and exact match requested.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">nm</span><span class="o">=</span><span class="n">name</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">nm</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">int_types</span><span class="p">):</span> <span class="c1">#We can do this because we&#39;re an OrderedDict!</span>
+                <span class="n">ret</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">nm</span><span class="o">=</span><span class="n">name</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nm</span><span class="p">,</span><span class="n">_pattern_type</span><span class="p">):</span>
+                <span class="n">ret</span><span class="o">=</span><span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">nm</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ret</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a match to any key.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">multiple</span><span class="p">:</span> <span class="c1">#sort out returing multiple entries or not</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+                    <span class="n">ret</span><span class="o">=</span><span class="p">[</span><span class="n">ret</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+                    <span class="n">ret</span><span class="o">=</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a lookup via regular expression when retrieving items.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overwrites any matching key, or if not found adds a new key.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">allowed_keys</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a match to any key.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">name</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deletes keys that match by regular expression as well as exact matches&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if name either is an exact key or matches when interpreted as a regular experssion.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span><span class="ne">TypeError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Define equals operation in terms of xor operation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">^</span><span class="n">other</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">^</span><span class="bp">self</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span>
+        
+    <span class="k">def</span> <span class="nf">__xor__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Give the difference between two arrays.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+        <span class="n">mk</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">ok</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">mk</span><span class="o">!=</span><span class="n">ok</span><span class="p">:</span> <span class="c1"># Keys differ</span>
+            <span class="k">return</span> <span class="n">mk</span><span class="o">^</span><span class="n">ok</span>
+        <span class="c1">#Do values differ?</span>
+        <span class="n">ret</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">mk</span><span class="p">,</span><span class="n">mv</span><span class="p">),(</span><span class="n">ok</span><span class="p">,</span><span class="n">ov</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span><span class="nb">sorted</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">items</span><span class="p">())):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mv</span><span class="o">!=</span><span class="n">ov</span><span class="p">)</span> <span class="ow">and</span> <span class="n">isComparable</span><span class="p">(</span><span class="n">mv</span><span class="p">,</span><span class="n">ov</span><span class="p">):</span>
+                <span class="n">ret</span><span class="p">[</span><span class="n">mk</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">mv</span><span class="p">,</span><span class="n">ov</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+<div class="viewcode-block" id="regexpDict.has_key"><a class="viewcode-back" href="../../../classes/Stoner.core.regexpDict.html#Stoner.regexpDict.has_key">[docs]</a>    <span class="k">def</span> <span class="nf">has_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Key is definitely in dictionary as literal&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="typeHintedDict"><a class="viewcode-back" href="../../../classes/Stoner.core.typeHintedDict.html#Stoner.typeHintedDict">[docs]</a><span class="k">class</span> <span class="nc">typeHintedDict</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.</span>
+
+<span class="sd">    The CM Physics Group at Leeds makes use of a standard file format that closely matches</span>
+<span class="sd">    the :py:class:`DataFile` data structure. However, it is convenient for this file format</span>
+<span class="sd">    to be ASCII text for ease of use with other programs. In order to represent metadata which</span>
+<span class="sd">    can have arbitary types, the LabVIEW code that generates the data file from our measurements</span>
+<span class="sd">    adds a type hint string. The Stoner Python code can then make use of this type hinting to</span>
+<span class="sd">    choose the correct representation for the metadata. The type hinting information is retained</span>
+<span class="sd">    so that files output from Python will retain type hints to permit them to be loaded into</span>
+<span class="sd">    strongly typed languages (sch as LabVIEW).</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        _typehints (dict): The backing store for the type hint information</span>
+<span class="sd">        __regexGetType (re): Used to extract the type hint from a string</span>
+<span class="sd">        __regexSignedInt (re): matches type hint strings for signed intergers</span>
+<span class="sd">        __regexUnsignedInt (re): matches the type hint string for unsigned integers</span>
+<span class="sd">        __regexFloat (re): matches the type hint strings for floats</span>
+<span class="sd">        __regexBoolean (re): matches the type hint string for a boolean</span>
+<span class="sd">        __regexStrng (re): matches the type hint string for a string variable</span>
+<span class="sd">        __regexEvaluatable (re): matches the type hint string for a compoind data type</span>
+<span class="sd">        __types (dict): mapping of type hinted types to actual Python types</span>
+<span class="sd">        __tests (dict): mapping of the regex patterns to actual python types</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        Rather than subclassing a plain dict, this is a subclass of a :py:class:`blist.sorteddict` which stores the entries in a binary list structure.</span>
+<span class="sd">        This makes accessing the keys much faster and also ensures that keys are always returned in alphabetical order.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">allowed_keys</span><span class="o">=</span><span class="n">string_types</span>
+    <span class="c1">#Force metadata keys to be strings</span>
+    <span class="n">_typehints</span> <span class="o">=</span> <span class="n">sorteddict</span><span class="p">()</span>
+
+    <span class="n">__regexGetType</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;([^\{]*)\{([^\}]*)\}&#39;</span><span class="p">)</span>
+    <span class="c1"># Match the contents of the inner most{}</span>
+    <span class="n">__regexSignedInt</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^I\d+&#39;</span><span class="p">)</span>
+    <span class="c1"># Matches all signed integers</span>
+    <span class="n">__regexUnsignedInt</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^U / d+&#39;</span><span class="p">)</span>
+    <span class="c1"># Match unsigned integers</span>
+    <span class="n">__regexFloat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(Extended|Double|Single)\sFloat&#39;</span><span class="p">)</span>
+    <span class="c1"># Match floating point types</span>
+    <span class="n">__regexBoolean</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^Boolean&#39;</span><span class="p">)</span>
+    <span class="n">__regexString</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(String|Path|Enum)&#39;</span><span class="p">)</span>
+    <span class="n">__regexEvaluatable</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(Cluster||\d+D Array|List)&#39;</span><span class="p">)</span>
+
+    <span class="n">__types</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([</span> <span class="c1"># Key order does matter here!</span>
+        <span class="p">(</span><span class="s1">&#39;Boolean&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;I32&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;Double Float&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;Cluster&#39;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;AnonCluster&#39;</span><span class="p">,</span><span class="nb">tuple</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;Array&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;List&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;String&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="c1"># This is the inverse of the __tests below - this gives</span>
+    <span class="c1"># the string type for standard Python classes</span>
+
+    <span class="n">__tests</span> <span class="o">=</span> <span class="p">[(</span><span class="n">__regexSignedInt</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="p">(</span><span class="n">__regexUnsignedInt</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="p">(</span><span class="n">__regexFloat</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="n">__regexBoolean</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span>
+               <span class="p">(</span><span class="n">__regexString</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>  <span class="p">(</span><span class="n">__regexEvaluatable</span><span class="p">,</span> <span class="n">_evaluatable</span><span class="p">())]</span>
+
+    <span class="c1"># This is used to work out the correct python class for</span>
+    <span class="c1"># some string types</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct the typeHintedDict.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            *args, **kargs: Pass any parameters through to the dict() constructor.</span>
+
+
+<span class="sd">        Calls the dict() constructor, then runs through the keys of the</span>
+<span class="sd">        created dictionary and either uses the string type embedded in</span>
+<span class="sd">        the keyname to generate the type hint (and remove the</span>
+<span class="sd">        embedded string type from the keyname) or determines the likely</span>
+<span class="sd">        type hint from the value of the dict element.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>  <span class="c1"># Chekc through all the keys and see if they contain</span>
+            <span class="c1"># type hints. If they do, move them to the</span>
+            <span class="c1"># _typehint dict</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>  <span class="c1">#__Setitem__ has the logic to handle embedded type hints correctly</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the dictrionary of value types.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span>
+
+<div class="viewcode-block" id="typeHintedDict.findtype"><a class="viewcode-back" href="../../../classes/Stoner.core.typeHintedDict.html#Stoner.typeHintedDict.findtype">[docs]</a>    <span class="k">def</span> <span class="nf">findtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Determines the correct string type to return for common python classes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (any): The data value to determine the type hint for.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A type hint string</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Understands booleans, strings, integers, floats and np</span>
+<span class="sd">            arrays(as arrays), and dictionaries (as clusters).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">typ</span> <span class="o">=</span> <span class="s2">&quot;String&quot;</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__types</span><span class="p">[</span><span class="n">t</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">&quot;Cluster&quot;</span> <span class="ow">or</span> <span class="n">t</span><span class="o">==</span><span class="s2">&quot;AnonCluster&quot;</span><span class="p">:</span>
+                    <span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                            <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">findtype</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                            <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">findtype</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+                    <span class="n">tt</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span>
+                    <span class="n">tt</span> <span class="o">=</span> <span class="n">tt</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+                    <span class="n">typ</span> <span class="o">=</span> <span class="s1">&#39;Cluster (&#39;</span> <span class="o">+</span> <span class="n">tt</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+                <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">&#39;Array&#39;</span><span class="p">:</span>
+                    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                    <span class="n">typ</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">D Array (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">value</span><span class="p">)),</span><span class="bp">self</span><span class="o">.</span><span class="n">findtype</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">typ</span> <span class="o">=</span> <span class="n">t</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">typ</span></div>
+
+    <span class="k">def</span> <span class="nf">__mungevalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Based on a string type t, return value cast to an appropriate python class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            t (string): is a string representing the type</span>
+<span class="sd">            value (any): is the data value to be munged into the</span>
+<span class="sd">                        correct class</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Returns the munged data value</span>
+
+<span class="sd">        Detail:</span>
+<span class="sd">            The class has a series of precompiled regular</span>
+<span class="sd">            expressions that will match type strings, a list of these has been</span>
+<span class="sd">            constructed with instances of the matching Python classes. These</span>
+<span class="sd">            are tested in turn and if the type string matches the constructor of</span>
+<span class="sd">            the associated python class is called with value as its argument.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">regexp</span><span class="p">,</span> <span class="n">valuetype</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tests</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">regexp</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">valuetype</span><span class="p">,</span> <span class="n">_evaluatable</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span>
+                        <span class="n">nan</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span> <span class="c1">#we&#39;ve got a string already don&#39;t need repr</span>
+                            <span class="n">ret</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">())</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">ret</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">())</span> <span class="c1"># pylint: disable=eval-used</span>
+                    <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+                        <span class="n">ret</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">SyntaxError</span><span class="p">:</span>
+                        <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ret</span> <span class="o">=</span> <span class="n">valuetype</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+<div class="viewcode-block" id="typeHintedDict.string_to_type"><a class="viewcode-back" href="../../../classes/Stoner.core.typeHintedDict.html#Stoner.typeHintedDict.string_to_type">[docs]</a>    <span class="k">def</span> <span class="nf">string_to_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Given a string value try to work out if there is a better python type dor the value.</span>
+
+<span class="sd">        First of all the first character is checked to see if it is a [ or { which would</span>
+<span class="sd">        suggest this is a list of dictionary. If the value looks like a common boolean</span>
+<span class="sd">        value (i.e. Yes, No, True, Fale, On, Off) then it is assumed to be a boolean value.</span>
+<span class="sd">        Fianlly it interpretation as an int, float or string is tried.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (string): string representation of he value</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A python object of the natural type for value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Value must be a string not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">tests</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;list(&#39;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="s1">&#39;dict(&#39;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="s2">&quot;[{&quot;</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span>
+                <span class="n">nan</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">tests</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>  <span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">())</span> <span class="c1"># pylint: disable=eval-used</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">SyntaxError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;true&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;on&#39;</span><span class="p">,</span> <span class="s1">&#39;false&#39;</span><span class="p">,</span> <span class="s1">&#39;no&#39;</span><span class="p">,</span> <span class="s1">&#39;off&#39;</span><span class="p">]:</span>
+                    <span class="n">ret</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;true&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;on&#39;</span><span class="p">]</span>  <span class="c1">#Boolean</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">ret</span> <span class="o">=</span> <span class="n">trial</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                            <span class="k">break</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">memo</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implements a deepcopy method for typeHintedDict to work around something that gives a hang in newer Python 2.7.x&quot;&quot;&quot;</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_get_name_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks a string name for an embedded type hint and strips it out.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name(string): String containing the name with possible type hint embedeed</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (name,typehint) (tuple): A tuple containing just the name of the mateadata and (if found</span>
+<span class="sd">                the type hint string),</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__regexGetType</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">k</span><span class="p">,</span> <span class="n">t</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">k</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Provides a get item method that checks whether its been given a typehint in the item name and deals with it appropriately.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (string): metadata key to retrieve</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            metadata value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key</span><span class="o">=</span><span class="n">name</span>
+        <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">typehint</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_name_</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">nm</span><span class="p">)</span> <span class="k">for</span> <span class="n">nm</span> <span class="ow">in</span> <span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">typehint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__mungevalue</span><span class="p">(</span><span class="n">typehint</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>  <span class="c1"># pylint: disable=len-as-condition</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a valid key even when interpreted as a sregular expression!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)}</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Provides a method to set an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (string): The metadata keyname</span>
+<span class="sd">            value (any): The value to store in the metadata string</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If you provide an embedded type string it is your responsibility</span>
+<span class="sd">            to make sure that it correctly describes the actual data</span>
+<span class="sd">            typehintDict does not verify that your data and type string are</span>
+<span class="sd">            compatible.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">typehint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_name_</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">typehint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">typehint</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Empty data so reset to string and set empty #RCT changed the test here</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;String&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mungevalue</span><span class="p">(</span><span class="n">typehint</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">pass</span> <span class="c1"># Silently fail</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">findtype</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>  <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deletes the specified key.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (string): The keyname to be deleted</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_name_</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a text representation of the dictionary with type data.&quot;&quot;&quot;</span>
+        <span class="n">ret</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">key</span><span class="p">),</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">key</span><span class="p">),</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+
+<div class="viewcode-block" id="typeHintedDict.copy"><a class="viewcode-back" href="../../../classes/Stoner.core.typeHintedDict.html#Stoner.typeHintedDict.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Provides a copy method that is aware of the type hinting strings.</span>
+
+<span class="sd">        This produces a flat dictionary with the type hint embedded in the key name.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of the current typeHintedDict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">t</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span><span class="n">ret</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+<div class="viewcode-block" id="typeHintedDict.filter"><a class="viewcode-back" href="../../../classes/Stoner.core.typeHintedDict.html#Stoner.typeHintedDict.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Filter the dictionary keys by name</span>
+
+<span class="sd">        Reduce the metadata dictionary leaving only keys satisfied by name.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            name(str or callable):</span>
+<span class="sd">                either a str to match or a callable function that takes metadata key-value</span>
+<span class="sd">                as an argument and returns True or False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rem</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">k</span><span class="p">:</span>
+                    <span class="n">rem</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+                    <span class="n">rem</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;name must be a string or a function&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rem</span><span class="p">:</span>
+            <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="typeHintedDict.type"><a class="viewcode-back" href="../../../classes/Stoner.core.typeHintedDict.html#Stoner.typeHintedDict.type">[docs]</a>    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the typehint for the given k(s).</span>
+
+<span class="sd">        This simply looks up the type hinting dictionary for each key it is given.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (string or sequence of strings): Either a single string key or a iterable type containing</span>
+<span class="sd">                keys</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The string type hint (or a list of string type hints)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="typeHintedDict.export"><a class="viewcode-back" href="../../../classes/Stoner.core.typeHintedDict.html#Stoner.typeHintedDict.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Exports a single metadata value to a string representation with type hint.</span>
+
+<span class="sd">        In the ASCII based file format, the type hinted metadata is represented</span>
+<span class="sd">        in the first column of a tab delimited text file as a series of lines</span>
+<span class="sd">        with format keyname{typhint}=string_value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (string): The metadata key to export</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A string of the format : key{type hint} = value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">string_types</span><span class="p">):</span> <span class="c1">#avoid string within string problems and backslash overdrive</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{</span><span class="si">{}</span><span class="s2">}}=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{</span><span class="si">{}</span><span class="s2">}}=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+<div class="viewcode-block" id="typeHintedDict.export_all"><a class="viewcode-back" href="../../../classes/Stoner.core.typeHintedDict.html#Stoner.typeHintedDict.export_all">[docs]</a>    <span class="k">def</span> <span class="nf">export_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return all the entries in the typeHintedDict as a list of exported lines.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (list of str): A list of exported strings</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            The keys are returned in sorted order as a result of the underlying blist.sorteddict meothd.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="typeHintedDict.import_all"><a class="viewcode-back" href="../../../classes/Stoner.core.typeHintedDict.html#Stoner.typeHintedDict.import_all">[docs]</a>    <span class="k">def</span> <span class="nf">import_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lines</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads multiple lines of strings and tries to import keys from them.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            lines(list of str): The lines of metadata values to import.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">import_key</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="typeHintedDict.import_key"><a class="viewcode-back" href="../../../classes/Stoner.core.typeHintedDict.html#Stoner.typeHintedDict.import_key">[docs]</a>    <span class="k">def</span> <span class="nf">import_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Import a single key from a string like key{type hint} = value.</span>
+
+<span class="sd">        This is the inverse of the :py:meth:`typeHintedDict.export` method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            line(str): The string line to be interpreted as a key-value pair.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parts</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+        <span class="n">k</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">v</span><span class="o">=</span><span class="s2">&quot;=&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="c1">#rejoin any = in the value string</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span></div></div>
+
+<div class="viewcode-block" id="metadataObject"><a class="viewcode-back" href="../../../classes/Stoner.core.metadataObject.html#Stoner.metadataObject">[docs]</a><span class="k">class</span> <span class="nc">metadataObject</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        metadata (typeHintedDict): of key-value metadata pairs. The dictionary tries to retain information about the type of data so as to aid import and</span>
+<span class="sd">            export from CM group LabVIEW code.</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialises the current metadata attribute.&quot;&quot;&quot;</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">metadataObject</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read the metadata dictionary.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span> <span class="c1">#Oops no metadata yet</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">=</span><span class="n">typeHintedDict</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
+
+    <span class="nd">@metadata</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the metadata object with type checking.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">typeHintedDict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">=</span><span class="n">typeHintedDict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">typeHintedDict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">=</span><span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;metadata must be something that can be turned into a dictionary, not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pass through to metadata dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pass through to metadata dictionary.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pass through to metadata dictionary.&quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implement am equality test for metadataObjects.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">metadataObject</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">!=</span><span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">^</span><span class="n">other</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pass through to metadata dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pass through to metadata dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the keys of the metadata dictionary.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">k</span>
+
+    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make sure we implement an items that doesn&#39;t just iterate over self!&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span>
+
+    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the values of the metadata dictionary.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">v</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Stub method for a save function.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Save is not implemented in the base class.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Stub method for a load function.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Save is not implemented in the base class.&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../../Stoner.html">Stoner</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.7.9
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>
