@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-setas module provides the _setas class for DataFile and friends
+setas module provides the setas class for DataFile and friends
 """
-__all__=["_setas"]
+__all__=["setas"]
 import re
 import copy
 import numpy as _np_
@@ -13,7 +13,7 @@ from ..tools import _attribute_store,isiterable,typedList,islike_list,istuple
 
 from collections import MutableMapping
 
-class _setas(MutableMapping):
+class setas(MutableMapping):
 
     """A Class that provides a mechanism for managing the column assignments in a DataFile like object.
 
@@ -79,7 +79,7 @@ class _setas(MutableMapping):
                 if reset:
                     self.setas=[]
                 value=self._decode_string(value)
-            elif isinstance(value, _setas):
+            elif isinstance(value, setas):
                 if value is not self:
                     value = value.setas
                 else:
@@ -226,7 +226,7 @@ class _setas(MutableMapping):
         """
         if not (args  or kargs): #New - bare call to setas will return the current value.
             return self.setas
-        if len(args)==1 and not (isinstance(args[0], string_types+(_setas,)) or isiterable(args[0])):
+        if len(args)==1 and not (isinstance(args[0], string_types+(setas,)) or isiterable(args[0])):
             raise SyntaxError("setas should be called with eother a string, iterable object or setas object, not a {}".format(type(args[0])))
 
         #If reset is neither in kargs nor a False boolean, then clear the existing setas assignments
@@ -280,7 +280,7 @@ class _setas(MutableMapping):
         ret=False
         if isinstance(other,string_types): # Expand strings and convert to list
             other=[c for c in self._decode_string(other)]
-        if not isinstance(other,_setas): # Ok, need to check whether items match
+        if not isinstance(other,setas): # Ok, need to check whether items match
             if isiterable(other) and len(other)<=self._size:
                 for m in self.setas[len(other):]: #Check that if other is short we don't have assignments there
                     if m!=".":
@@ -302,7 +302,7 @@ class _setas(MutableMapping):
         """Try to see if attribute name is a key in self.cols and return that instead."""
         if name!="_cols" and name in self._cols:
             return self._cols[name]
-        return getattr(super(_setas,self),name)
+        return getattr(super(setas,self),name)
 
     def __getitem__(self, name):
         """Permit the setas attribute to be treated like either a list or a dictionary.
@@ -398,7 +398,7 @@ class _setas(MutableMapping):
 
     def __add_core__(self,new,other):
         """Allow the user to add a dictionary to setas to add extra columns."""
-        if isinstance(other,_setas): #Deal with the other value being a setas attribute already.
+        if isinstance(other,setas): #Deal with the other value being a setas attribute already.
             other=other.to_dict()
         elif istuple(other,index_types,string_types) or istuple(other,string_types,index_types):
             other={other[0]:other[1]}
@@ -527,7 +527,7 @@ class _setas(MutableMapping):
         """"Clear the current setas attrbute.
 
         Notes:
-            Equivalent to doing :py:meth:`_setas.unset` with no argument.
+            Equivalent to doing :py:meth:`setas.unset` with no argument.
         """
         self.unset()
 
@@ -607,7 +607,7 @@ class _setas(MutableMapping):
 
     def update(self,other):
         """Replace any assignments in self with assignments from other."""
-        if isinstance(other,_setas):
+        if isinstance(other,setas):
             other=other.to_dict()
         elif not isinstance(other,dict):
             raise TypeError("setas.update requires a dictionary not a {}".format(type(other)))
