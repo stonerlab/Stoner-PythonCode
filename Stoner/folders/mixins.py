@@ -5,11 +5,8 @@ __all__=["DiskBasedFolder","DataMethodsMixin","PlotMethodsMixin"]
 
 import os
 import os.path as path
-import fnmatch
 import string
 import unicodedata
-import re
-from collections import OrderedDict
 from functools import partial
 from numpy import mean,std,array,append,any,floor,sqrt,ceil
 from matplotlib.pyplot import figure,Figure,subplot,tight_layout
@@ -19,8 +16,8 @@ from Stoner.tools import isiterable
 
 from Stoner.core.base import metadataObject
 from Stoner.Core import DataFile
-from Stoner.folders.core import baseFolder
-
+from .core import baseFolder
+from .utils import scan_dir,discard_earlier, filter_files
 regexp_type=(_pattern_type,)
 
 def _loader(loader,typ,name):
@@ -219,60 +216,22 @@ class DiskBasedFolder(object):
         Returns:
             (metadataObject): The metadataObject
         """
+        assert name is not None,"Cannot get an anonympus entry!"
         try: #Try the parent methods first
             return super(DiskBasedFolder,self).__getter__(name,instantiate=instantiate)
         except (AttributeError,IndexError,KeyError):
             pass
-        if name is not None and not path.exists(name): #Default we assume the name is relative to the root directory
-            fname=path.join(self.directory,name)
-        else: #Fall back to direct
-            fname=name
+        #Find a filename and load
+        fname=name if path.exists(name) else path.join(self.directory,name)
         tmp= self.type(self.loader(fname,**self.extra_args))
-        if not hasattr(tmp,"filename") or not isinstance(tmp.filename,string_types):
+        if not isinstance(getattr(tmp,"filename",None),string_types):
             tmp.filename=path.basename(fname)
+        #Process file hooks
         tmp=self.on_load_process(tmp)
         tmp=self._update_from_object_attrs(tmp)
+        #Store the result
         self.__setter__(name,tmp)
         return tmp
-
-    def _scan_dir(self,root):
-        """Helper function to gather a list of files and directories."""
-        dirs=[]
-        files=[]
-        for f in os.listdir(root):
-            if path.isdir(path.join(root, f)):
-                dirs.append(f)
-            elif path.isfile(path.join(root, f)):
-                files.append(f)
-        return dirs,files
-
-    def _discard_earlier(self,files):
-        """Helper function to discard files where a similar named file with !#### exists."""
-        search=re.compile(r"^(?P<basename>.*)\!(?P<rev>\d+)(?P<ext>\.[^\.]*)$")
-        dups=OrderedDict()
-        ret=[]
-        for f in files:
-            match=search.match(f)
-            if match:
-                fname="{basename}{ext}".format(**match.groupdict())
-                rev=int(match.groupdict()["rev"])
-                if fname in dups:
-                    try:
-                        if dups[fname]>rev:
-                            continue
-                    except TypeError:
-                        pass
-                dups[fname]=rev
-            else:
-                if f not in dups:
-                    dups[f]=None
-        for f,rev in dups.items():
-            if rev is None:
-                ret.append(f)
-            else:
-                base,ext=os.path.splitext(f)
-                ret.append("{}!{:04d}{}".format(base,rev,ext))
-        return ret
 
     @property
     def basenames(self):
@@ -325,7 +284,7 @@ class DiskBasedFolder(object):
             p.join()
         return self
 
-    def getlist(self, recursive=None, directory=None,flatten=None, discard_earlier=None):
+    def getlist(self, **kargs):
         """Scans the current directory, optionally recursively to build a list of filenames
 
         Keyword Arguments:
@@ -342,76 +301,37 @@ class DiskBasedFolder(object):
         directory tree finding sub directories and creating groups in the data folder for each sub directory.
         """
         self.__clear__()
-        if recursive is None:
-            recursive=self.recursive
-        if discard_earlier is None:
-            discard_earlier=self.discard_earlier
-        if flatten is None:
-            flatten=getattr(self,"flat",False) #ImageFolders don't have flat because it clashes with a numpy attribute
+        recursive=kargs.pop("recursive",self.recursive)
+        discard=kargs.pop("discard_earlier",self.discard_earlier)
+        flatten=kargs.pop("flatten",getattr(self,"flat",False))
+        directory=kargs.pop("directory",getattr(self,"directory",None))
+        self.directory=directory
+
         if isinstance(directory,  bool) and not directory:
             self._dialog()
         elif isinstance(directory, string_types):
-            self.directory=directory
             if self.multifile:
                 self._dialog()
-        if self.directory is None:
+        elif directory is None:
             self.directory=os.getcwd()
         root=self.directory
-        dirs,files=self._scan_dir(root)
-        if discard_earlier:
-            files=self._discard_earlier(files)
-        for p in self.exclude: #Remove excluded files
-            if isinstance(p,string_types):
-                for f in list(fnmatch.filter(files,p)):
-                    del files[files.index(f)]
-            if isinstance(p,_pattern_type):
-                matched=[]
-                # For reg expts we iterate over all files, but we can't delete matched
-                # files as we go as we're iterating over them - so we store the
-                # indices and delete them later.
-                for f in files:
-                    if p.search(f):
-                        matched.append(files.index(f))
-                matched.sort(reverse=True)
-                for i in matched: # reverse sort the matching indices to safely delete
-                    del(files[i])
-
-        for p in self.pattern: # pattern is a list of strings and regeps
-            if isinstance(p,string_types):
-                for f in fnmatch.filter(files, p):
-                    self.append(f)
-                    # Now delete the matched file from the list of candidates
-                    #This stops us double adding fles that match multiple patterns
-                    del(files[files.index(f)])
-            if isinstance(p,_pattern_type):
-                matched=[]
-                # For reg expts we iterate over all files, but we can't delete matched
-                # files as we go as we're iterating over them - so we store the
-                # indices and delete them later.
-                for f in files:
-                    if p.search(f):
-                        self.__setter__(f,path.join(root,f))
-                        matched.append(files.index(f))
-                matched.sort(reverse=True)
-                for i in matched: # reverse sort the matching indices to safely delete
-                    del(files[i])
+        dirs,files=scan_dir(root)
+        if discard:
+            files=discard_earlier(files)
+        files=filter_files(files,self.exclude,keep=False)
+        files=filter_files(files,self.pattern,keep=True)
+        for f in files:
+            self.__setter__(f,f)
         if recursive:
             for d in dirs:
                 if self.debug: print("Entering directory {}".format(d))
                 self.add_group(d)
-                self.groups[d].directory=path.join(root,d)
-                self.groups[d].getlist(recursive=recursive,flatten=flatten)
+                self.groups[d].getlist(directory=path.join(root,d),
+                           recursive=recursive,
+                           flatten=flatten,
+                           discard_earlier=discard_earlier)
         if flatten and not self.is_empty:
             self.flatten()
-            #Now collapse out the common path in the names
-            self.directory=path.commonprefix(self.__names__())
-            if self.directory[-1]!=path.sep:
-                self.directory=path.dirname(self.directory)
-            relpaths=[path.relpath(f,self.directory) for f in self.__names__()]
-            for n,o in zip(relpaths,self.__names__()):
-                if n!=o:
-                    self.__setter__(n,self.__getter__(o))
-                    self.__deleter__(o)
         return self
 
     def keep_latest(self):
@@ -426,7 +346,7 @@ class DiskBasedFolder(object):
             A copy of the DataFolder.
         """
         files=list(self.ls)
-        keep=set(self._discard_earlier(files))
+        keep=set(discard_earlier(files))
         for f in list(set(files)-keep):
             self.__deleter__(self.__lookup__(f))
         return self

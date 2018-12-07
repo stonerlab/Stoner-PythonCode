@@ -38,7 +38,7 @@ class Folders_test(unittest.TestCase):
         pass
 
     def test_Folders(self):
-        self.fldr=SF.DataFolder(self.datadir,debug=False)
+        self.fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
         fldr=self.fldr
         fl=len(fldr)
         datfiles=fnmatch.filter(os.listdir(self.datadir),"*.dat")
@@ -58,7 +58,7 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(list(fldr2.ls),list(fldr3.ls),"Folder.keep_latest didn't do the same as discard_earliest in constructor.")
 
     def test_Operators(self):
-        fldr=SF.DataFolder(self.datadir,debug=False)
+        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
         fl=len(fldr)
         d=Data(np.ones((100,5)))
         fldr+=d
@@ -75,12 +75,12 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
 
     def test_Properties(self):
-        fldr=SF.DataFolder(self.datadir,debug=False)
+        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
         fldr/="Loaded as"
         fldr["QDFile"].group("Byapp")
         self.assertEqual(fldr.mindepth,1,"mindepth attribute of folder failed.")
         self.assertEqual(fldr.depth,2,"depth attribute failed.")
-        fldr=SF.DataFolder(self.datadir,debug=False)
+        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
         fldr+=Data()
         self.assertEqual(len(list(fldr.loaded)),1,"loaded attribute failed {}".format(len(list(fldr.loaded))))
         self.assertEqual(len(list(fldr.not_empty)),len(fldr)-1,"not_empty attribute failed.")
@@ -92,6 +92,7 @@ class Folders_test(unittest.TestCase):
        'DataFile', 'DataFile'],
           dtype='<U12')
         fldr=SF.DataFolder(self.datadir, pattern='*.txt').sort()
+        self.fldr=fldr
         test_sliced=fldr.slice_metadata("Loaded as")
         self.assertEqual(len(sliced),len(test_sliced),"Test slice not equal length - sample-data changed? {}".format(test_sliced))
         self.assertTrue(np.all(test_sliced==sliced),"Slicing metadata failed to work.")
@@ -207,15 +208,8 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-#    test.test_each()
-#    test.test_Operators()
-#    print("Clone")
-#    test.test_clone()
-#    print("Folders")
-#    test.test_Folders()
-    unittest.main()
-#    print("Group")
-#    test.test_grouping()
-#    print("Each")
-#    test.fldr.each.title
-    pass
+    test.test_methods()
+#    unittest.main()
+    test.fldr.flatten()
+    test.fldr.unflatten()
+

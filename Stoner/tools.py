@@ -11,6 +11,7 @@ from .compat import string_types,bytes2str,python_v3
 import re
 import os
 import inspect
+import copy
 
 from numpy import log10,floor,abs,logical_and,isnan,round,ndarray,dtype #pylint: disable=redefined-builtin
 from cgi import escape as html_escape
@@ -53,6 +54,7 @@ prefs={"text":{
 
 _options={"short_repr":False,
           "short_data_repr":False,
+          "short_folder_rrepr":True,
           "short_img_repr":True,
           "no_figs":True,
           "multiprocessing":os.name!="nt" and python_v3, #multiprocess doesn't run too well under Windows due to spawn()
@@ -602,3 +604,39 @@ class typedList(MutableSequence):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         else:
             self._store.insert(index,obj)
+
+class _Options(object):
+
+    """Dead simple class to allow access to package options."""
+
+    def __init__(self):
+        self._defaults=copy.copy(_options)
+
+    def __setattr__(self,name,value):
+        if name.startswith("_"):
+            return super(_Options,self).__setattr__(name,value)
+        if name not in _options:
+            raise AttributeError("{} is not a recognised option.".format(name))
+        if not isinstance(value,type(_options[name])):
+            raise ValueError("{} takes a {} not a {}".format(name,type(_options[name]),type(value)))
+        set_option(name,value)
+
+    def __getattr__(self,name):
+        if name not in _options:
+            raise AttributeError("{} is not a recognised option.".format(name))
+        return get_option(name)
+
+    def __delattr__(self,name):
+        if name not in _options:
+            raise AttributeError("{} is not a recognised option.".format(name))
+        set_option(name,self.defaults[name])
+
+    def __dir__(self):
+        return list(_options.keys())
+
+    def __repr__(self):
+        s="Stoner Package Options\n"
+        s+="~~~~~~~~~~~~~~~~~~~~~~\n"
+        for k in dir(self):
+            s+="{} : {}\n".format(k,get_option(k))
+        return s

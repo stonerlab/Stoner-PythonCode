@@ -876,10 +876,14 @@ class baseFolder(MutableSequence):
         Returns:
             A string representation of the current objectFolder object
         """
+        short=get_option("short_folder_rrepr")
         cls=self.__class__.__name__
         pth=self.key
         pattern=getattr(self,"pattern","")
         s="{}({}) with pattern {} has {} files and {} groups\n".format(cls,pth,pattern,len(self),len(self.groups))
+        if not short:
+            for r in self.ls:
+                s+="\t"+r+"\n"
         for g in self.groups: # iterate over groups
             r=self.groups[g].__repr__()
             for l in r.split("\n"): # indent each line by one tab
@@ -1175,7 +1179,7 @@ class baseFolder(MutableSequence):
         tmp=self
         for ix,section in enumerate(pth):
             if ix==len(pth)-1:
-                existing=self.__getter__(section,instantiate=None) if section in self.__names__() else None
+                existing=tmp.__getter__(section,instantiate=None) if section in tmp.__names__() else None
                 if existing is None or (
                             isinstance(value,self.type) and id(existing)!=id(value)) or (
                             isinstance(existing,string_types) and existing!=value): #skip if this is a nul op
@@ -1278,6 +1282,8 @@ class baseFolder(MutableSequence):
                 if hasattr(value,"filename"):
                     value.filename=new_name
 
+                if isinstance(value,string_types): #We haven't loaded this yet, in which case change value to new_name
+                    value=new_name
                 self.__setter__(new_name,value)
             self.groups[g].__clear__()
         self.groups={}
@@ -1618,7 +1624,10 @@ class baseFolder(MutableSequence):
             A copy of the objectFolder
         """
         if len(self):
-            self.directory=commonpath([path.realpath(path.join(self.directory, x)) for x in self.__names__()])
+            if len(self)==1:
+                self.directory=path.join(self.directory,path.dirname(self.__names__()[0]))
+            else:
+                self.directory=commonpath([path.realpath(path.join(self.directory, x)) for x in self.__names__()])
             names=self.__names__()
             relpaths=[path.relpath(path.join(self.directory,f),self.directory) for f in names]
             dels=list()
