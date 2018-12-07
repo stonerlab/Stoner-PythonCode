@@ -30,3 +30,15 @@ checks:
   identical-code:
     config:
       threshold: # language-specific defaults. an override will affect all languages.
+plugins:
+  sonar-python:
+    enabled: true
+exclude_patterns:
+  - "build/"
+  - "dist/"
+  - "recipe/"
+  - "sample-data/"
+  - "scripts/"
+  - "Stoner.egg-info/"
+  - "tests/"
+  - "doc/"
