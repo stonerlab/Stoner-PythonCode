@@ -696,8 +696,7 @@ class setas(MutableMapping):
 
         Keyword Arguments:
             what (string): Returns either xcol, ycol, zcol, ycols,xcols rather than the full dictionary
-            starts (int): Start looking for x columns at this column.
-
+            startx (int): Start looking for x columns at this column.
         Returns:
             A single integer, a list of integers or a dictionary of all columns.
         """
@@ -714,7 +713,10 @@ class setas(MutableMapping):
         elif self.setas.count("x")>1:
             xcol = self.setas[startx:].index("x") + startx
             startx=xcol
-            maxcol = self.setas[xcol + 1:].index("x") + xcol + 1
+            try:
+                maxcol = self.setas[xcol + 1:].index("x") + xcol + 1
+            except ValueError:
+                maxcol=len(self.setas)
             xerr=self.setas[startx:maxcol].index("d") if "d" in self.setas[startx:maxcol] else None
         else:
             xcol = None

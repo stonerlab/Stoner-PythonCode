@@ -76,6 +76,9 @@ class SetasTest(unittest.TestCase):
         self.assertFalse("x" in self.d4.setas,"setas del item by column type failed.")
         del self.d4.setas["rho"]
         self.assertFalse("y" in self.d4.setas,"setas del by column named failed")
+        self.d4.setas({"T (K)":"x","y":"rho"})
+        self.assertTrue(self.d4.setas=="..y.x...","Setting setas by call with dictionary failed")
+
 
     def test_setas_dict_interface(self):
         self.assertEqual(list(self.d.setas.items()),[('X-Data', 'x'), ('Y-Data', 'y')],"Items method of setas failed.")
@@ -94,6 +97,17 @@ class SetasTest(unittest.TestCase):
         self.assertEqual(self.d.setas,".y","residual after popitem wrong on setas.")
         self.assertEqual(self.d.setas.setdefault("x","X-Data"),"X-Data","setas setdefault failed.")
         self.assertEqual(self.d.setas,"xy","Result after set default wrong.")
+        self.d4.setas="2.y.x3."
+        self.assertEqual(self.d4.setas["#x"],4,"Indexing setas by #type failed.")
+        self.assertEqual(self.d4.setas[1::2],['.', '.', '.', '.'],"Indexing setas with a slice failed.")
+        self.assertEqual(self.d4.setas[[1,3,5,7]],['.', '.', '.', '.'],"Indexing setas with a slice failed.")
+        self.d4.setas.clear()
+        self.d4.setas+={"x":"T (K)","rho":"y"}
+        self.assertEqual(self.d4.setas,"2.y.x3.","Adding dictionary with type:column and column:type to setas failed.")
+        self.assertTrue(self.d4.setas.pop("x")=="T (K)" and self.d4.setas=="2.y5.","Pop from setas failed.")
+        self.d4.setas.update({"x":"T (K)","rho":"y"})
+        self.assertEqual(self.d4.setas,"2.y.x3.","setas.update failed.")
+
 
     def test_setas_metadata(self):
         d2=self.d2.clone
@@ -147,6 +161,12 @@ class SetasTest(unittest.TestCase):
         self.assertTrue(d.setas.x==0 and d.setas.y==[1] and d.setas.z==[2])
         d.setas(x=1, y='Column 2')
         self.assertTrue(d.setas.x==1 and d.setas.y==[2])
+        self.d4.setas="xyxy4."
+        m1=self.d4.setas._get_cols()
+        m2=self.d4.setas._get_cols(startx=2)
+        self.assertEqual("{xcol} {ycol}".format(**m1),"0 [1]","setas._get_cols without startx failed.\n{}".format(m1))
+        self.assertEqual("{xcol} {ycol}".format(**m2),"2 [3]","setas._get_cols without startx failed.\n{}".format(m1))
+
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=SetasTest("test_setas_metadata")

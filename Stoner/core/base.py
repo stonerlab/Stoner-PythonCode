@@ -53,7 +53,7 @@ class regexpDict(sorteddict):
             super(regexpDict,self).__getitem__(name)
             ret=name
         except (KeyError,TypeError): #Fall back to regular expression lookup
-            if not exact and not isinstance(name,string_types):
+            if not exact and not isinstance(name,string_types+int_types):
                 name=repr(name)
             if exact:
                 raise KeyError("{} not a key and exact match requested.".format(name))
@@ -64,7 +64,10 @@ class regexpDict(sorteddict):
                 except Exception:
                     pass
             elif isinstance(name,int_types): #We can do this because we're an OrderedDict!
-                ret=list(self.keys())[name]
+                try:
+                    ret=sorted(self.keys())[name]
+                except IndexError:
+                    raise KeyError("{} is not a match to any key.".format(name))
             else:
                 nm=name
             if isinstance(nm,_pattern_type):
@@ -105,11 +108,11 @@ class regexpDict(sorteddict):
             return True
         except (KeyError,TypeError):
             return False
-        
+
     def __eq__(self,other):
         """Define equals operation in terms of xor operation."""
         return len(self^other)==0 and len(other^self)==0
-        
+
     def __xor__(self,other):
         """Give the difference between two arrays."""
         if not isinstance(other, Mapping):
@@ -355,15 +358,14 @@ class typeHintedDict(regexpDict):
             (name,typehint) (tuple): A tuple containing just the name of the mateadata and (if found
                 the type hint string),
         """
-        name = str(name)
-        m = self.__regexGetType.search(name)
+        search = str(name)
+        m = self.__regexGetType.search(search)
         if m is not None:
-            k = m.group(1)
-            t = m.group(2)
-            return k, t
-        k = name
-        t = None
-        return k, None
+            return m.group(1), m.group(2)
+        elif not isinstance(name,string_types+int_types):
+            return search,None
+        else:
+            return name,None
 
     def __getitem__(self, name):
         """Provides a get item method that checks whether its been given a typehint in the item name and deals with it appropriately.
@@ -429,7 +431,7 @@ class typeHintedDict(regexpDict):
 
     def __repr__(self):
         """Create a text representation of the dictionary with type data."""
-        ret=["{}:{}:{}".format(repr(key),self.type(key),repr(self[key])) for key in self]
+        ret=["{}:{}:{}".format(repr(key),self.type(key),repr(self[key])) for key in sorted(self)]
         return "\n".join(ret)
 
     def copy(self):

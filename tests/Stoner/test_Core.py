@@ -158,9 +158,7 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         self.assertTrue(np.all(d[0]==np.array([5,6,7,1,1,1,1,1,1,1])),"setitem on Data to index into Data.data failed.\n{}".format(d[0]))
         self.assertEqual(d.metadata["Column_3"],[1,2,2,4],"Tuple indexing into metadata Failed.")
         self.assertEqual(d.metadata[0,5],12,"Indexing of pre-existing metadta keys rather than Data./data failed.")
-
-
-
+        self.assertEqual(d.metadata[1],[1, 2, 2, 4],"Indexing metadata by integer failed.")
 
     def test_len(self):
         # Check that length of the column is the same as length of the data
@@ -350,7 +348,6 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         d2.data=d2.data[::-1,:]
         self.assertEqual(d.sort(reverse=True),d2,"Sorting revserse not the same as manually reversed data.")
 
-
     def test_metadata_save(self):
         local = path.dirname(__file__)
         t = np.arange(12).reshape(3,4) #set up a test data file with mixed metadata
@@ -429,18 +426,6 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         self.assertEqual(d.metadata.type(["User","Timestamp"]),['String', 'String'],"Metadata.type with slice failed")
         d.data["Column 2",:]=np.zeros(len(d)) #TODO make this work with d["Column 2",:] as well
         self.assertTrue(d.z.max()==0.0 and d.z.min()==0.0,"Failed to set Dataarray using string indexing")
-
-class typeHintedDictTest(unittest.TestCase):
-    """Test typeHintedDict class"""
-
-    def test_filter(self):
-        d = typeHintedDict([('el1',1),('el2',2),('el3',3),('other',4)])
-        d.filter('el')
-        self.assertTrue(len(d)==3)
-        d.filter(lambda x: x.endswith('3'))
-        self.assertTrue(len(d)==1)
-        self.assertTrue(d['el3']==3)
-
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
