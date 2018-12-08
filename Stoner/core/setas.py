@@ -49,16 +49,13 @@ class setas(MutableMapping):
 
     def _decode_string(self,value):
         """Expands a string of column assignments, replacing numbers with repeated characters."""
-        pattern = re.compile("[^0-9]*(([0-9]+?)(x|y|z|d|e|f|u|v|w|\.|\-))")
+        pattern = re.compile("(([0-9]+)(x|y|z|d|e|f|u|v|w|\.|\-))")
         while True:
-            res = pattern.match(value)
+            res = pattern.search(value)
             if res is None:
                 break
             (total, count, code) = res.groups()
-            if count == "":
-                count = 1
-            else:
-                count = int(count)
+            count = int(count)
             value = value.replace(total, code * count, 1)
         return value
 
@@ -468,8 +465,7 @@ class setas(MutableMapping):
                 new=self.__sub_core__(new,o)
                 if new is NotImplemented:
                     return NotImplemented
-        else:
-            return NotImplemented
+            return new
         return NotImplemented
 
 

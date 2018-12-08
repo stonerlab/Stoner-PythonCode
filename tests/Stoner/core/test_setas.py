@@ -54,6 +54,19 @@ class SetasTest(unittest.TestCase):
         self.assertEqual(self.d4.setas._unique_headers,['Voltage', 'Current', '$\\rho$ ($\\Omega$m)', 'Resistance', 'T (K)', 'Column', 6, 7],
                                                         "Unique Headers failed in setas.")
         self.d4.setas("2.y.x3.")
+        s=self.d4.setas.clone
+        self.d4.setas.clear()
+        self.d4.setas(s)
+        self.assertTrue(self.d4.setas=="..y.x...","setas set by call with setas argument failed")
+        self.d4.setas(self.d4.setas)
+        self.assertTrue(self.d4.setas=="..y.x...","setas set by call with self argument failed")
+        self.d4.setas()
+        self.assertTrue(self.d4.setas=="..y.x...","setas set by call with no argument failed")
+
+        self.d4.setas-=["x","y"]
+        self.assertTrue(self.d4.setas=="8.","setas __sub__ with iterable failed")
+
+        self.d4.setas("2.y.x3.")
         self.assertTrue(self.d4.setas=="..y.x...","Equality test by string failed.")
         self.assertTrue(self.d4.setas=="2.y.x3.","Equality test by numbered string failed.")
         self.assertEqual(self.d4.setas.to_string(),"..y.x...","To_string() failed.")
@@ -105,6 +118,7 @@ class SetasTest(unittest.TestCase):
         self.d4.setas+={"x":"T (K)","rho":"y"}
         self.assertEqual(self.d4.setas,"2.y.x3.","Adding dictionary with type:column and column:type to setas failed.")
         self.assertTrue(self.d4.setas.pop("x")=="T (K)" and self.d4.setas=="2.y5.","Pop from setas failed.")
+        self.assertEqual(self.d4.setas.pop("z",False),False,"Pop with non existent key and default value failed")
         self.d4.setas.update({"x":"T (K)","rho":"y"})
         self.assertEqual(self.d4.setas,"2.y.x3.","setas.update failed.")
 
