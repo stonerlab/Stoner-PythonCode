@@ -11,10 +11,10 @@ The :mod:`Stoner.Image` package provides a means to carry out image processing f
 
 :class:`ImageFile`
 ===================
-This class inherits from :class:`Stoner.Core.metadataObject` and is analagous to :class:`Stoner.Data` but focussed on handling and manipulating grey scale 
+This class inherits from :class:`Stoner.Core.metadataObject` and is analagous to :class:`Stoner.Data` but focussed on handling and manipulating grey scale
 images. The data is stored internally as an :class:`ImageArray` attribute which inherits itself from numpy.ndarray type.
 :class:`ImageFile` provides the same metadata faciltities as the general :class:`Stoner.Data` and also contains load routines that allow it to extract
-certain metadata stored in image files. 
+certain metadata stored in image files.
 
 Loading an Image
 ----------------
@@ -24,7 +24,7 @@ image data is used to form the contents of the :attr:`ImageFile.image` which hol
 
    from Stoner.Image import ImageFile
    im = ImageFile('my_image.png')
-   
+
 Like :class:`Stoner.Data` :class:`ImageFile` supports image metadata. Where this can be stored in the file, e.g. in png and tiff images, this is read in
 automatically. This metadata is stored as a :class:`Stoner.Core.typeHintedDict` dictionary. This metadata can be set directly in the
 construction of the :class:`ImageFile`::
@@ -39,7 +39,7 @@ Local functions and properties
 
 Typical start functions might be to convert the image into floating point form which is more precise than
 integer format and crop the image::
-  
+
   im.asfloat()
   im.crop(1,8,40,200) #(xmin, xmax, ymin, ymax)
   copyofim = im.clone #behaviour similar to data file
@@ -47,10 +47,10 @@ integer format and crop the image::
 #get a metadata item::
 
   im['mymeta'] = 5
-  
+
 Then view parts of the array::
 
-	im[:,10:50] 
+	im[:,10:50]
 	im.metadata.keys()
 	im.view()
 
@@ -58,18 +58,18 @@ Further functions
 ^^^^^^^^^^^^^^^^^
 
 Further functions that could be useful:
-  
+
   - im.threshold_minmax(0.2,0.8)
       Returns a binary image
-  - im.plot_histogram() 
+  - im.plot_histogram()
       Plot a histogram of the pixel intensities
-  - im.level_image() 
+  - im.level_image()
       Flatten a skewed image background
   - im.subtract_image(otherim)
       Subtract another image and enhance contrast
   - im.align(otherim)
       Translate image to line up with other im
-  
+
 Scikit-Image & scipy.ndimage Functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -81,7 +81,7 @@ calls is handled a bit carefully:
     #. If the return value is a 2d numpy.ndarray like type that has the same size as the original, or if the *_* keyword argument is set to **True** then the original
         :attr:`ImageFile.image` is replaced with the returned result.
     #. If the return value is anything else then it is simply passed back to the calling program.
-    
+
 In this way, many operations can be carried out 'in-place' on a :class:`ImageFile`. For example::
 
 ImageFile Representation
@@ -94,12 +94,12 @@ contents of the ImageFile instead.::
     i = Stopner.Image.ImageFile("kermit.png")
     i
     >>> kermit.png(<class 'Stoner.Image.core.ImageFile'>) of shape (479, 359) (uint16) and 53 items of metadata
-    from Stoner import set_option
-    set_option("short_repr",False)
-    set_option("shoft_img_repr",False)
+    from Stoner import Options
+    Options.short_repr=False
+    Options.shoft_img_repr=False
     i
-    >>> 
-    
+    >>>
+
 .. image:: ../../sample-data/kermit.png
 
 Alternatively the :meth:`ImageArray.imshow` method (accessible to :class:`ImagerFile`) will show the image data in a matplotlib window.
@@ -115,7 +115,7 @@ Working with Lots of Images: :class:`ImageFolder` and :class:`ImageStack2`
 ==========================================================================
 
 Just as :class:`Stoner.DataFolder` allows you to efficiently process lots of separate :class:`Stoner.Data` files, :class:`ImageFolder` does the same for lots
-of :class:`ImageFile` files. It is based on the same parent :class:`Stoner.Fodlers.baseFolder` class - so has similar abilities to iterate, form into 
+of :class:`ImageFile` files. It is based on the same parent :class:`Stoner.Fodlers.baseFolder` class - so has similar abilities to iterate, form into
 sub-folders and so on. In addition, an :class:`Imagefolder` has additional attributes and methods for working with multiple images.
 
 Due to the potentially large amount of data involved in processing images it is good to take advantage of native numpy's speed wherever possible. To this end
@@ -126,7 +126,7 @@ For example::
 	imst.translate(5,3) #instantiate the stack and translate all images
 
 You can request and manipulate this 3d array directly with the imarray property, alternatively you can ask for any function accepted by the underlying ImageFile
-(including the scikit-image and scipy library). 
+(including the scikit-image and scipy library).
 
 
 

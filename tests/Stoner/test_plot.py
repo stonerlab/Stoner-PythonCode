@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
-from Stoner import Data,__home__,set_option,get_option
+from Stoner import Data,__home__,Options
 from Stoner.Core import typeHintedDict
 
 class Plottest(unittest.TestCase):
@@ -30,12 +30,12 @@ class Plottest(unittest.TestCase):
         self.d=Data(path.join(__home__,"..","sample-data","New-XRay-Data.dql"))
 
     def test_set_no_figs(self):
-        self.assertTrue(get_option("no_figs"),"Default setting for no_figs option is incorrect.")
-        set_option("no_figs",True)
+        self.assertTrue(Options.no_figs,"Default setting for no_figs option is incorrect.")
+        Options.no_figs=True
         e=self.d.clone
         ret=e.plot()
         self.assertTrue(ret is None,"Output of Data.plot() was not None when no_figs is True  and showfig is not set({})".format(type(ret)))
-        set_option("no_figs",False)
+        Options.no_figs=False
         e.showfig=False
         ret=e.plot()
         self.assertTrue(isinstance(ret,Data),"Return value of Data.plot() was not self when Data.showfig=False ({})".format(type(ret)))
@@ -45,13 +45,13 @@ class Plottest(unittest.TestCase):
         e.showfig=None
         ret=e.plot()
         self.assertTrue(ret is None,"Output of Data.plot() was not None when Data.showfig is None ({})".format(type(ret)))
-        set_option("no_figs",True)
-        self.assertTrue(get_option("no_figs"),"set_option no_figs failed.")
+        Options.no_figs=True
+        self.assertTrue(Options.no_figs,"set_option no_figs failed.")
         self.d=Data(path.join(__home__,"..","sample-data","New-XRay-Data.dql"))
         self.d.showfig=False
         ret=self.d.plot()
         self.assertTrue(ret is None,"Output of Data.plot() was not None when no_figs is True ({})".format(type(ret)))
-        set_option("no_figs",True)
+        Options.no_figs=True
         plt.close("all")
 
 
@@ -62,4 +62,3 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test=Plottest("test_set_no_figs")
     test.setUp()
     unittest.main()
-    #set_option("no_figs",True)
