@@ -9,6 +9,7 @@ import string
 import unicodedata
 from functools import partial
 from numpy import mean,std,array,append,any,floor,sqrt,ceil
+from numpy.ma import masked_invalid
 from matplotlib.pyplot import figure,Figure,subplot,tight_layout
 
 from Stoner.compat import string_types,get_filedialog,_pattern_type
@@ -20,9 +21,10 @@ from .core import baseFolder
 from .utils import scan_dir,discard_earlier, filter_files
 regexp_type=(_pattern_type,)
 
-def _loader(loader,typ,name):
+def _loader(name,loader=None,typ=None,directory=None):
     """Lods and returns an object."""
-    return typ(loader(name)),name
+    filename=name if path.exists(name) else path.join(directory,name)
+    return typ(loader(filename)),name
 
 
 class DiskBasedFolder(object):
@@ -64,7 +66,7 @@ class DiskBasedFolder(object):
               "read_means":False,
               "recursive":True,
               "flat":False,
-              "prefetch":True,
+              "prefetch":False,
               "directory":None,
               "multifile":False,
               "pruned":True,
@@ -250,9 +252,10 @@ class DiskBasedFolder(object):
     @property
     def not_loaded(self):
         """Return an array of True/False for whether we've loaded a metadataObject yet."""
-        for ix,n in enumerate(self.__names__()):
-            if isinstance(self.__getter__(n,instantiate=False),self._type):
+        for n in self.__names__():
+            if not isinstance(self.__getter__(n,instantiate=None),self._type):
                 yield n
+
     @property
     def pattern(self):
         """Provide support for getting the pattern attribute."""
@@ -275,10 +278,10 @@ class DiskBasedFolder(object):
 
         With multiprocess enabled this will parallel load the contents of the folder into memory.
         """
+        print("Fetched!")
         p,imap=self._get_pool()
-        for ix,(f,name) in enumerate(imap(partial(_loader,loader=self.loader,typ=self._type),self.not_loaded)):
-            self._folder.__setter__(name,f)
-
+        for ix,(f,name) in enumerate(imap(partial(_loader,loader=self.loader,typ=self._type,directory=self.directory),self.not_loaded)):
+            self.__setter__(name,self.on_load_process(f)) # This doesn't run on_load_process in parallel, but it's not expensive enough to make it worth it.
         if p is not None:
             p.close()
             p.join()
@@ -367,8 +370,8 @@ class DiskBasedFolder(object):
                     tmp["{}_stdev".format(h)]=None
             else:
                 for h in tmp.column_headers:
-                    tmp[h]=mean(tmp.column(h))
-                    tmp["{}_stdev".format(h)]=std(tmp.column(h))
+                    tmp[h]=mean(masked_invalid(tmp.column(h)))
+                    tmp["{}_stdev".format(h)]=std(masked_invalid(tmp.column(h)))
         tmp['Loaded from']=tmp.filename
         return tmp
 
@@ -384,17 +387,21 @@ class DiskBasedFolder(object):
         """
         return self.walk_groups(self._save,walker_args={"root",root})
 
-    def unload(self,name):
+    def unload(self,name=None):
         """Removes the instance from memory without losing the name in the Folder.
 
         Args:
-            name(string or int): Specifies the entry to unload from memeory.
+            name(string,int or None): Specifies the entry to unload from memeory. If set to None all loaded entries are unloaded.
 
         Returns:
             (DataFolder): returns a copy of itself.
         """
-        name = self.__lookup__(name)
-        self.__setter__(name,None)
+        if name is not None:
+            name = [self.__lookup__(name)]
+        else:
+            name=self.__names__()
+        for n in name:
+            self.__setter__(n,n)
         return self
 
 class DataMethodsMixin(object):

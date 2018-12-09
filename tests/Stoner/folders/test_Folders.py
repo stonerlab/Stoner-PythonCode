@@ -26,7 +26,7 @@ from Stoner.Util import hysteresis_correct
 import matplotlib.pyplot as plt
 
 pth=path.dirname(__file__)
-pth=path.realpath(path.join(pth,"../../"))
+pth=path.realpath(path.join(pth,"../../../"))
 sys.path.insert(0,pth)
 
 class Folders_test(unittest.TestCase):
@@ -48,6 +48,18 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(fldr.count(path.basename(fldr[-1].filename)),1,"Failed to count filename with string")
         self.assertEqual(fldr.count("*.dat"),len(datfiles),"Count with a glob pattern failed")
         self.assertEqual(len(fldr[::2]),ceil(len(fldr)/2.0),"Failed to get the correct number of elements in a folder slice")
+
+    def test_loader_opts(self):
+        self.fldr7=SF.DataFolder(path.join(self.datadir,"NLIV"),pattern=re.compile(r".*at (?P<field>[0-9\-\.]*)\.txt"),read_means=True)
+        x=self.fldr7.metadata.slice(["field","Voltage","Current"],output="Data")
+        self.assertEqual(x.span("field"),(-0.05,0.04),"Extract from name pattern and slice into metadata failed.")
+        self.assertTrue(all(x//"Current"<0) and all(x//"Current">-1E-20),"Extract means failed.")
+        self.assertEqual(list(self.fldr7.not_loaded),[],"Not loaded attribute failed.")
+        self.fldr7.unload(0)
+        self.assertEqual(len(list(self.fldr7.not_loaded)),1,"Unload by index failed.")
+        self.fldr7.unload()
+        self.assertEqual(len(list(self.fldr7.not_loaded)),len(self.fldr7),"Unload all failed.")
+
 
     def test_discard_earlier(self):
         fldr2=SF.DataFolder(path.join(pth,"tests/Stoner/folder_data"),pattern="*.dat",discard_earlier=True)
@@ -96,47 +108,6 @@ class Folders_test(unittest.TestCase):
         test_sliced=fldr.slice_metadata("Loaded as")
         self.assertEqual(len(sliced),len(test_sliced),"Test slice not equal length - sample-data changed? {}".format(test_sliced))
         self.assertTrue(np.all(test_sliced==sliced),"Slicing metadata failed to work.")
-
-    def test_metadata(self):
-        os.chdir(self.datadir)
-        fldr6=SF.DataFolder(".",pattern="QD*.dat",pruned=True)
-        self.assertEqual(repr(fldr6.metadata),"The DataFolder . has 9 common keys of metadata in 4 Data objects",
-                         "Representation method of metadata wrong.")
-        self.assertEqual(len(fldr6.metadata),9,"Length of common metadata not right.")
-        self.assertEqual(list(fldr6.metadata.keys()),['Byapp',
-                                                       'Datatype,Comment',
-                                                       'Datatype,Time',
-                                                       'Fileopentime',
-                                                       'Loaded as',
-                                                       'Loaded from',
-                                                       'Startupaxis-X',
-                                                       'Startupaxis-Y1',
-                                                       'Stoner.class'],"metadata.keys() not right.")
-        self.assertEqual(len(list(fldr6.metadata.all_keys())),49,"metadata.all_keys() the wrong length.")
-        self.assertTrue(isinstance(fldr6.metadata.slice("Loaded from")[0],dict),"metadata.slice not returtning a dictionary.")
-        self.assertTrue(isinstance(fldr6.metadata.slice("Loaded from",values_only=True),list),"metadata.slice not returtning a list with values_only=True.")
-        self.assertTrue(isinstance(fldr6.metadata.slice("Loaded from",output="Data"),Data),"metadata.slice not returtning Data with outpt='data'.")
-
-    def test_each(self):
-        os.chdir(self.datadir)
-        fldr6=SF.DataFolder(".",pattern="QD*.dat",pruned=True)
-        fldr4=SF.DataFolder(self.datadir,pattern="QD-SQUID-VSM.dat")
-        fldr5=fldr4.clone
-        shaper=lambda f:f.shape
-        fldr6.sort()
-        res=fldr6.each(shaper)
-        self.assertEqual(res,[(6048, 88), (3025, 41), (1409, 57), (411, 72)],"__call__ on each fauiled.")
-        fldr6.each.del_column(0)
-        res=fldr6.each(shaper)
-        self.assertEqual(res,[(6048, 87), (3025, 40), (1409, 56), (411, 71)],"Proxy method call via each failed")
-        paths=['QD-MH.dat', 'QD-PPMS.dat', 'QD-PPMS2.dat','QD-SQUID-VSM.dat']
-        filenames=[path.relpath(x,start=fldr6.directory) for x in fldr6.each.filename.tolist()]
-        self.assertEqual(filenames,paths,"Reading attributes from each failed.")
-        if python_v3:
-            eval('(hysteresis_correct@fldr4)(setas="3.xy",saturated_fraction=0.25)')
-            self.assertTrue("Hc" in fldr4[0],"Matrix multiplication of callable by DataFolder failed test.")
-        fldr5.each(hysteresis_correct,setas="3.xy",saturated_fraction=0.25)
-        self.assertTrue("Hc" in fldr5[0],"Call on DataFolder.each() failed to apply function to folder")
 
     def test_clone(self):
          fldr=SF.DataFolder(self.datadir, pattern='*.txt')
@@ -208,8 +179,6 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-    test.test_methods()
-#    unittest.main()
-    test.fldr.flatten()
-    test.fldr.unflatten()
+    unittest.main()
+    #test.test_Properties()
 
