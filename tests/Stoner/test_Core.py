@@ -400,15 +400,15 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
                      'has_yerr': True,
                      'has_zcol': False,
                      'has_zerr': False,
-                     'ucol': None,
-                     'vcol': None,
-                     'wcol': None,
+                     'ucol': [],
+                     'vcol': [],
+                     'wcol': [],
                      'xcol': 0,
                      'xerr': None,
-                     'ycol': 1,
-                     'yerr': 2,
-                     'zcol': None,
-                     'zerr': None}
+                     'ycol': [1],
+                     'yerr': [2],
+                     'zcol': [],
+                     'zerr': []}
         self.assertEqual(self.d2.setas._get_cols(),auto_setas,"Automatic guessing of setas failed!")
         d2.setas.clear()
         self.assertEqual(list(d2.setas),["."]*3,"Failed to clear() setas")
