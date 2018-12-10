@@ -37,6 +37,7 @@ class folders_each_test(unittest.TestCase):
     def test_each(self):
         os.chdir(self.datadir)
         fldr6=SF.DataFolder(".",pattern="QD*.dat",pruned=True)
+        print("X")
         fldr4=SF.DataFolder(self.datadir,pattern="QD-SQUID-VSM.dat")
         fldr5=fldr4.clone
         shaper=lambda f:f.shape
@@ -55,7 +56,7 @@ class folders_each_test(unittest.TestCase):
         fldr5.each(hysteresis_correct,setas="3.xy",saturated_fraction=0.25)
         self.assertTrue("Hc" in fldr5[0],"Call on DataFolder.each() failed to apply function to folder")
         meths=[x for x in dir(fldr6.each) if not x.startswith("_")]
-        self.assertEqual(len(meths),124,"Dir of folders.each failed.")
+        self.assertEqual(len(meths),124 if python_v3 else 127,"Dir of folders.each failed ({}).".format(len(meths)))
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging

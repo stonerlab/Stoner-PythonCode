@@ -278,7 +278,6 @@ class DiskBasedFolder(object):
 
         With multiprocess enabled this will parallel load the contents of the folder into memory.
         """
-        print("Fetched!")
         p,imap=self._get_pool()
         for ix,(f,name) in enumerate(imap(partial(_loader,loader=self.loader,typ=self._type,directory=self.directory),self.not_loaded)):
             self.__setter__(name,self.on_load_process(f)) # This doesn't run on_load_process in parallel, but it's not expensive enough to make it worth it.
