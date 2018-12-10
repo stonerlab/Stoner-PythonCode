@@ -408,42 +408,6 @@ class DataMethodsMixin(object):
     """A mixin class that provides a :py:class:`Stoner.folders.core.baseFolder` with methods for working with :py:class:`Stoner.Data` objects.
     """
 
-    def __read__(self,f):
-        """Reads a single filename in and creates an instance of metadataObject.
-
-        Args:
-            f(string or :py:class:`Stoner.Core.metadataObject`): A filename or metadataObject object
-
-        Returns:
-            A metadataObject object
-
-        Note:
-             If self.pattern is a regular expression then use any named groups in it to create matadata from the
-            filename. If self.read_means is true then create metadata from the mean of the data columns.
-        """
-        if isinstance(f,DataFile):
-            return f
-        tmp= self.type(self.loader(f,**self.extra_args))
-        if not isinstance(tmp.filename,string_types):
-            tmp.filename=path.basename(f)
-        for p in self.pattern:
-            if isinstance(p,_pattern_type) and (p.search(tmp.filename) is not None):
-                m=p.search(tmp.filename)
-                for k in m.groupdict():
-                    tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
-        if self.read_means:
-            if len(tmp)==0:
-                pass
-            elif len(tmp)==1:
-                for h in tmp.column_headers:
-                    tmp[h]=tmp.column(h)[0]
-            else:
-                for h in tmp.column_headers:
-                    tmp[h]=mean(tmp.column(h))
-        tmp['Loaded from']=tmp.filename
-        for k in self._file_attrs:
-            tmp.__setattr__(k,self._file_attrs[k])
-        return tmp
 
     def concatenate(self,sort=None,reverse=False):
         """Concatentates all the files in a objectFolder into a single metadataObject like object.
@@ -463,7 +427,7 @@ class DataMethodsMixin(object):
 
         if not isinstance(sort,bool) or sort:
             if isinstance(sort, bool) or sort is None:
-                sort=self[0].setas["x"]
+                sort=self[0].setas.cols["xcol"]
             self[0].sort(order=sort,reverse=True)
 
         return self

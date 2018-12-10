@@ -59,6 +59,11 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(list(self.fldr7.not_loaded)),1,"Unload by index failed.")
         self.fldr7.unload()
         self.assertEqual(len(list(self.fldr7.not_loaded)),len(self.fldr7),"Unload all failed.")
+        def add_col(d):
+            d.add_column(np.ones(len(d))*d["field"],header="field")
+        self.fldr7.each(add_col)
+        self.fldr7.concatenate()
+        self.assertEqual(self.fldr7[0].shape,(909, 4),"Concatenate failed.")
 
 
     def test_discard_earlier(self):
@@ -179,6 +184,6 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-    unittest.main()
-    #test.test_Properties()
+#    unittest.main()
+    test.test_loader_opts()
 
