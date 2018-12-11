@@ -567,13 +567,23 @@ class PlotMethodsMixin(object):
             :include-source:
             :outname:  plotfolder
     """
+    
+    _defaults={"plots_per_page":12,
+               "fig_defaults":{"figsize":(8,6),
+                               },
+               }
+
 
     def figure(self,*args,**kargs):
         """Pass through for :py:func:`matplotlib.pyplot.figure` but alos takes a note of the arguments for later."""
         self._fig_args=args
-        self._fig_kargs=kargs
-        self.__figure=figure(*args,**kargs)
-        return self.__fiogure
+        
+        kargs["figsize"]
+        self._fig_kargs=getattr(self,"fig_defaults",{})
+        self._fig_kargs.update(kargs)
+        self.__figure=figure(*self._fig_args,**self._fig_kargs)
+        self.each.fig=self.__figure
+        return self.__figure
 
     def plot(self,*args,**kargs):
         """Call the plot method for each metadataObject, but switching to a subplot each time.
@@ -626,20 +636,23 @@ class PlotMethodsMixin(object):
         else:
             fig=figure(fig_num,**fig_args)
         w,h=fig.get_size_inches()
-        plt_x=floor(sqrt(plts*w/h))
-        plt_y=ceil(plts/plt_x)
+        plt_x=int(floor(sqrt(plts*w/h)))
+        plt_y=int(ceil(plts/plt_x))
 
         kargs["figure"]=fig
         ret=[]
         j=0
+        fignum=fig.number
         for i,d in enumerate(self):
             if i%plts==0 and i!=0:
                 if isinstance(tight,dict):
                     tight_layout(**tight)
                 fig=figure(*fig_args,**fig_kargs)
+                fignum=fig.number
                 j=1
             else:
                 j+=1
+            fig=figure(fignum)
             ax=subplot(plt_y,plt_x,j)
             kargs["fig"]=fig
             kargs["ax"]=ax

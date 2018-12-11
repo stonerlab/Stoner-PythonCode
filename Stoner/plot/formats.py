@@ -25,7 +25,7 @@ class TexFormatter(Formatter):
     """An axis tick label formatter that emits Tex formula mode code.
 
     Formating is set so that large numbers are registered as \\times 10^{power}
-    rather than ysing E notation."""
+    rather than using E notation."""
 
     def __call__(self, value, pos=None):
         """Return the value ina  suitable texable format"""
@@ -62,7 +62,7 @@ class TexEngFormatter(EngFormatter):
     """An axis tick label formatter that emits Tex formula mode code.
 
     Formatting is set so that large numbers are registered as with SI prefixes
-    rather than ysing E notation.
+    rather than using E notation.
     """
 
     prefix = {

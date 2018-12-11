@@ -139,7 +139,6 @@ class PlotMixin(object):
     def fig(self,value):
         """Set the current figure."""
         if isinstance(value,plt.Figure):
-            self.__figure = value
             self.__figure, ax = self.template.new_figure(value.number)
         elif isinstance(value,int):
             value=plt.Figure(value)

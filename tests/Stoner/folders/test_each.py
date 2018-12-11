@@ -34,6 +34,7 @@ class folders_each_test(unittest.TestCase):
 
     def setUp(self):
         pass
+
     def test_each(self):
         os.chdir(self.datadir)
         fldr6=SF.DataFolder(".",pattern="QD*.dat",pruned=True)
@@ -58,8 +59,12 @@ class folders_each_test(unittest.TestCase):
         meths=[x for x in dir(fldr6.each) if not x.startswith("_")]
         self.assertEqual(len(meths),124 if python_v3 else 127,"Dir of folders.each failed ({}).".format(len(meths)))
 
+    def test_attr_access(self):
+        self.fldr=SF.PlotFolder(path.join(self.datadir,"NLIV"),pattern="*.txt",setas="yx")
+
+
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=folders_each_test("test_each")
     #unittest.main()
-    test.test_each()
+    test.test_attr_access()

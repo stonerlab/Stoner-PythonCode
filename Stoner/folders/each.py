@@ -120,7 +120,7 @@ class item(object):
             name(str): Attribute to set
             value (any): Value to set
         """
-        if hasattr(self,name) or name.startswith("_"): #Handle setting our own attributes
+        if name in self.__dict__ or name.startswith("_"): #Handle setting our own attributes
             super(item,self).__setattr__(name,value)
         elif name in dir(self._folder.instance): #This is an instance attribute
             self._folder._object_attrs[name]=value #Add to attributes to be set on load
@@ -128,6 +128,8 @@ class item(object):
                 if isinstance(self._folder.__getter__(d,instantiate=False),self._folder.type):
                     d=self._folder.__gett__(d)
                     setattr(d,name,value)
+        else:
+            raise AttributeError("Unknown attribute {}".format(name))
 
 
     def __getattr_proxy(self,item):
