@@ -155,7 +155,7 @@ class SetasTest(unittest.TestCase):
                      'yerr': [2],
                      'zcol': [],
                      'zerr': []}
-        self.assertEqual(self.d2.setas._get_cols(),auto_setas,"Automatic guessing of setas failed!")
+        self.assertTrue(all(self.d2.setas._get_cols()==auto_setas),"Automatic guessing of setas failed!")
         d2.setas.clear()
         self.assertEqual(list(d2.setas),["."]*3,"Failed to clear() setas")
         d2.setas[[0,1,2]]="x","y","z"
