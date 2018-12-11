@@ -16,7 +16,7 @@ pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../../"))
 sys.path.insert(0,pth)
 
-from Stoner import Data,__home__
+from Stoner import Data,__home__,Options
 from Stoner.Folders import PlotFolder
 from Stoner.plot.formats import TexEngFormatter,DefaultPlotStyle
 import matplotlib.pyplot as plt
@@ -37,9 +37,10 @@ class folders_mixins_test(unittest.TestCase):
         self.fldr.template=DefaultPlotStyle()
         self.fldr.template.xformatter=TexEngFormatter
         self.fldr.template.yformatter=TexEngFormatter
-        
-        
+
+
     def test_plotting(self):
+        Options.multiprocessing=False
         self.fldr.figure(figsize=(9,6))
         self.fldr.each.plot()
         self.assertEqual(len(plt.get_fignums()),1,"Plotting to a single figure in PlotFolder failed.")
@@ -47,6 +48,8 @@ class folders_mixins_test(unittest.TestCase):
         self.fldr.plot(extra=extra)
         self.assertEqual(len(plt.get_fignums()),2,"Plotting to a single figure in PlotFolder failed.")
         plt.close("all")
+        Options.multiprocessing=True
+
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=folders_mixins_test("test_plotting")
