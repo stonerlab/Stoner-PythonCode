@@ -21,21 +21,6 @@ from Stoner import Data,__home__
 from Stoner.tools import isiterable
 from Stoner.Core import typeHintedDict
 
-def dict_cmp(a,b):
-    a=sorted(a.items())
-    b=sorted(b.items())
-    for a1,b1 in zip(a,b):
-        if isiterable(a1) or isiterable(b1):
-            for a2,b2 in zip(a1,b1):
-                if a2!=b2:
-                    return False
-
-        else:
-            continue
-        if a1!=b1:
-            return False
-    return True
-
 class SetasTest(unittest.TestCase):
 
     """Path to sample Data File"""
@@ -150,28 +135,8 @@ class SetasTest(unittest.TestCase):
         d3.setas="..e"
         d2.setas.update(d3.setas)
         self.assertEqual(d2.setas.to_dict(),{'x': 'Temperature', 'y': 'Resistance', 'e': 'Column 2'},"__iadd__ failure {}".format(repr(d2.setas.to_dict())))
-        auto_setas={ 'axes': 2,
-                     'has_axes': True,
-                     'has_ucol': False,
-                     'has_uvw': False,
-                     'has_vcol': False,
-                     'has_wcol': False,
-                     'has_xcol': True,
-                     'has_xerr': False,
-                     'has_ycol': True,
-                     'has_yerr': True,
-                     'has_zcol': False,
-                     'has_zerr': False,
-                     'ucol': [],
-                     'vcol': [],
-                     'wcol': [],
-                     'xcol': 0,
-                     'xerr': None,
-                     'ycol': [1],
-                     'yerr': [2],
-                     'zcol': [],
-                     'zerr': []}
-        self.assertTrue(dict_cmp(self.d2.setas._get_cols(),auto_setas),"Automatic guessing of setas failed!")
+        auto_setas={'xcol': 0, 'xerr': None, 'ycol': [1], 'yerr': [2], 'zcol': [], 'zerr': [], 'ucol': [], 'vcol': [], 'wcol': [], 'axes': 2, 'has_xcol': True, 'has_xerr': False, 'has_ycol': True, 'has_yerr': True, 'has_zcol': False, 'has_zerr': False, 'has_ucol': False, 'has_vcol': False, 'has_wcol': False, 'has_axes': True, 'has_uvw': False}
+        self.assertEqual(str(self.d2.setas._get_cols()),str(auto_setas),"Automatic guessing of setas failed!")
         d2.setas.clear()
         self.assertEqual(list(d2.setas),["."]*3,"Failed to clear() setas")
         d2.setas[[0,1,2]]="x","y","z"
