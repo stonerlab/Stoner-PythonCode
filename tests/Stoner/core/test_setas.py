@@ -135,7 +135,7 @@ class SetasTest(unittest.TestCase):
         d3.setas="..e"
         d2.setas.update(d3.setas)
         self.assertEqual(d2.setas.to_dict(),{'x': 'Temperature', 'y': 'Resistance', 'e': 'Column 2'},"__iadd__ failure {}".format(repr(d2.setas.to_dict())))
-        auto_setas={'xcol': 0, 'xerr': None, 'ycol': [1], 'yerr': [2], 'zcol': [], 'zerr': [], 'ucol': [], 'vcol': [], 'wcol': [], 'axes': 2, 'has_xcol': True, 'has_xerr': False, 'has_ycol': True, 'has_yerr': True, 'has_zcol': False, 'has_zerr': False, 'has_ucol': False, 'has_vcol': False, 'has_wcol': False, 'has_axes': True, 'has_uvw': False}
+        auto_setas={'axes': 2, 'xcol': 0, 'ycol': [1], 'zcol': [], 'ucol': [], 'vcol': [], 'wcol': [], 'xerr': None, 'yerr': [2], 'zerr': [], 'has_xcol': True, 'has_xerr': False, 'has_ycol': True, 'has_yerr': True, 'has_zcol': False, 'has_zerr': False, 'has_ucol': False, 'has_vcol': False, 'has_wcol': False, 'has_axes': True, 'has_uvw': False}
         self.assertEqual(str(self.d2.setas._get_cols()),str(auto_setas),"Automatic guessing of setas failed!")
         d2.setas.clear()
         self.assertEqual(list(d2.setas),["."]*3,"Failed to clear() setas")

@@ -771,8 +771,9 @@ class setas(MutableMapping):
             "axes": axes
         })
         if ret["axes"]==0 and len(self.shape)>=2 and self.shape[1] in self._col_defaults and not no_guess:
-            ret.update(self._col_defaults[self.shape[1]])
-        for n in list(ret.keys()):
+            ret=self._col_defaults[self.shape[1]]
+        keys=["xcol","xerr","ycol","yerr","zcol","zerr","ucol","vcol","wcol","axes"]
+        for n in keys:
             if ret[n] is None or (isinstance(ret[n],list) and  not ret[n]):
                 ret["has_{}".format(n)]=False
             else:
