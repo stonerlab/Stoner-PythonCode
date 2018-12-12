@@ -18,12 +18,18 @@ pth=path.realpath(path.join(pth,"../../../"))
 sys.path.insert(0,pth)
 
 from Stoner import Data,__home__
+from Stoner.tools import isiterable
 from Stoner.Core import typeHintedDict
 
 def dict_cmp(a,b):
     a=sorted(a.items())
     b=sorted(b.items())
     for a1,b1 in zip(a,b):
+        if isiterable(a1) or isiterable(b1):
+            if not all(a1==b1):
+                return False
+            else:
+                continue
         if a1!=b1:
             return False
     return True
