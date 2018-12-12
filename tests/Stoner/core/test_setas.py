@@ -20,6 +20,14 @@ sys.path.insert(0,pth)
 from Stoner import Data,__home__
 from Stoner.Core import typeHintedDict
 
+def dict_cmp(a,b):
+    a=sorted(a.items())
+    b=sorted(b.items())
+    for a1,b1 in zip(a,b):
+        if a1!=b1:
+            return False
+    return True
+
 class SetasTest(unittest.TestCase):
 
     """Path to sample Data File"""
@@ -155,7 +163,7 @@ class SetasTest(unittest.TestCase):
                      'yerr': [2],
                      'zcol': [],
                      'zerr': []}
-        self.assertTrue(all(self.d2.setas._get_cols()==auto_setas),"Automatic guessing of setas failed!")
+        self.assertTrue(dict_cmp(self.d2.setas._get_cols(),auto_setas),"Automatic guessing of setas failed!")
         d2.setas.clear()
         self.assertEqual(list(d2.setas),["."]*3,"Failed to clear() setas")
         d2.setas[[0,1,2]]="x","y","z"
