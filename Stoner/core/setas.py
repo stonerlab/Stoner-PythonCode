@@ -24,13 +24,6 @@ class setas(MutableMapping):
         the interface is essentially as a Mapping class.
     """
 
-    _col_defaults={2: {"axes":2,"xcol":0,"ycol":[1],"zcol":[],"ucol":[],"vcol":[],"wcol":[],"xerr":None,"yerr":[],"zerr":[]}, # xy
-                  3: {"axes":2,"xcol":0,"ycol":[1],"zcol":[],"ucol":[],"vcol":[],"wcol":[],"xerr":None,"yerr":[2],"zerr":[]}, # xye
-                  4: {"axes":2,"xcol":0,"ycol":[2],"zcol":[],"ucol":[],"vcol":[],"wcol":[],"xerr":1,"yerr":[3],"zerr":[]}, #xdye
-                  5: {"axes":5,"xcol":0,"ycol":[1],"zcol":None,"ucol":[2],"vcol":[3],"wcol":[4],"xerr":None,"yerr":[],"zerr":[]}, #xyuvw
-                  6: {"axes":6,"xcol":0,"ycol":[1],"zcol":[2],"ucol":[3],"vcol":[4],"wcol":[5],"xerr":None,"yerr":[],"zerr":[]},} # xyzuvw
-
-
     def __init__(self, row=False,bless=None):
         """Constructs the setas instance and sets an initial value.
 
@@ -46,6 +39,12 @@ class setas(MutableMapping):
         self._setas = list()
         self._column_headers = typedList(string_types)
         self._object=bless
+        self._col_defaults={2: {"axes":2,"xcol":0,"ycol":[1],"zcol":[],"ucol":[],"vcol":[],"wcol":[],"xerr":None,"yerr":[],"zerr":[]}, # xy
+                  3: {"axes":2,"xcol":0,"ycol":[1],"zcol":[],"ucol":[],"vcol":[],"wcol":[],"xerr":None,"yerr":[2],"zerr":[]}, # xye
+                  4: {"axes":2,"xcol":0,"ycol":[2],"zcol":[],"ucol":[],"vcol":[],"wcol":[],"xerr":1,"yerr":[3],"zerr":[]}, #xdye
+                  5: {"axes":5,"xcol":0,"ycol":[1],"zcol":None,"ucol":[2],"vcol":[3],"wcol":[4],"xerr":None,"yerr":[],"zerr":[]}, #xyuvw
+                  6: {"axes":6,"xcol":0,"ycol":[1],"zcol":[2],"ucol":[3],"vcol":[4],"wcol":[5],"xerr":None,"yerr":[],"zerr":[]},} # xyzuvw
+
 
     def _decode_string(self,value):
         """Expands a string of column assignments, replacing numbers with repeated characters."""
