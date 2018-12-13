@@ -229,7 +229,7 @@ class setas(MutableMapping):
                             self._setas[v_item]=k
                         except:
                             pass
-                            elif isinstance(k, index_types) and isinstance(v,string_types) and len(v)==1 and v in "xyzuvwdef": #of the form column_name:x
+                elif isinstance(k, index_types) and isinstance(v,string_types) and len(v)==1 and v in "xyzuvwdef": #of the form column_name:x
                     k=self.find_col(k)
                     self._setas[k]=v
                 else:
