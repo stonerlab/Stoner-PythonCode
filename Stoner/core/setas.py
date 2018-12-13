@@ -228,8 +228,8 @@ class setas(MutableMapping):
                         try:
                             self._setas[v_item]=k
                         except:
-                            print(len(self._setas),v,v_item,k)
-                elif isinstance(k, index_types) and isinstance(v,string_types) and len(v)==1 and v in "xyzuvwdef": #of the form column_name:x
+                            pass
+                            elif isinstance(k, index_types) and isinstance(v,string_types) and len(v)==1 and v in "xyzuvwdef": #of the form column_name:x
                     k=self.find_col(k)
                     self._setas[k]=v
                 else:
@@ -745,9 +745,7 @@ class setas(MutableMapping):
             ret[rk]=columns[ck]
 
         if axes==0 and len(self.shape)>=2 and self.shape[1] in self._col_defaults and not no_guess:
-            print(">>>>",ret)
             ret=self._col_defaults[self.shape[1]]
-            print(ret,"<<<<")
         for n in ["xcol","xerr","ycol","yerr","zcol","zerr","ucol","vcol","wcol","axes"]:
             ret["has_{}".format(n)]=not (ret[n] is None or (isinstance(ret[n],list) and  not ret[n]))
 
