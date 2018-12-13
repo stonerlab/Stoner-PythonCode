@@ -698,9 +698,6 @@ class setas(MutableMapping):
         """
         #Do the xcolumn and xerror first. If only one x column then special case to reset startx to get any
         #y columns
-        if len(self.setas) < len(self.column_headers):
-            self.setas.extend(list("." * (len(self.column_headers) - len(self.setas))))
-
         if self.setas.count("x")==1:
             xcol=self.setas.index("x")
             maxcol=len(self.setas)+1
@@ -720,67 +717,45 @@ class setas(MutableMapping):
             startx=0
             xerr=None
 
-
         #No longer enforce ordering of yezf - allow them to appear in any order.
-        ycol = list()
-        yerr = list()
-        zcol = list()
-        zerr = list()
-        ucol = list()
-        vcol = list()
-        wcol =  list()
-
-        columns=[ycol,yerr,zcol,zerr,ucol,vcol,wcol]
-        letters="yezfuvw"
-        for col,lett in zip(columns,letters):
-            col.extend([None] * self.setas[startx:maxcol].count(lett))
-            start=startx
-            for i,n in enumerate(col):
-                try:
-                    col[i]=self.setas[start:maxcol].index(lett)+start
-                    start=col[i]+1
-                except ValueError:
-                    break
+        columns={"y":[],"e":[],"z":[],"f":[],"u":[],"v":[],"w":[]}
+        for ix,lett in enumerate(self.setas[startx:maxcol]):
+            if lett in columns:
+                columns[lett].append(ix+startx)
 
         if xcol is None:
             axes = 0
-        elif not ycol:
+        elif not columns["y"]:
             axes = 1
-        elif not zcol:
+        elif not columns["z"]:
             axes = 2
         else:
             axes = 3
-        if axes == 2 and len(ucol) * len(vcol) > 0:
+        if axes == 2 and len(columns["u"]) * len(columns["v"]) > 0:
             axes = 4
         elif axes == 3:
-            if len(ucol) * len(vcol) * len(wcol) > 0:
+            if len(columns["u"]) * len(columns["v"]) * len(columns["w"]) > 0:
                 axes = 6
-            elif len(ucol) * len(vcol) > 0:
+            elif len(columns["u"]) * len(columns["v"]) > 0:
                 axes = 5
+
         ret = _attribute_store()
-        ret.update({
-            "xcol": xcol,
-            "xerr": xerr,
-            "ycol": ycol,
-            "yerr": yerr,
-            "zcol": zcol,
-            "zerr": zerr,
-            "ucol": ucol,
-            "vcol": vcol,
-            "wcol": wcol,
-            "axes": axes
-        })
+        ret.update({"axes":axes,"xcol":xcol,"xerr":xerr})
+
+        for ck,rk in {"y":"ycol","z":"zcol","e":"yerr","f":"zerr","u":"ucol","v":"vcol","w":"wcol"}.items():
+            ret[rk]=columns[ck]
+
         if ret["axes"]==0 and len(self.shape)>=2 and self.shape[1] in self._col_defaults and not no_guess:
             ret=self._col_defaults[self.shape[1]]
-        keys=["xcol","xerr","ycol","yerr","zcol","zerr","ucol","vcol","wcol","axes"]
-        for n in keys:
-            if ret[n] is None or (isinstance(ret[n],list) and  not ret[n]):
-                ret["has_{}".format(n)]=False
-            else:
-                ret["has_{}".format(n)]=True
+            print("C"*80,"\nGuessed!\n","C"*80)
+
+        for n in ["xcol","xerr","ycol","yerr","zcol","zerr","ucol","vcol","wcol","axes"]:
+            ret["has_{}".format(n)]=not (ret[n] is None or (isinstance(ret[n],list) and  not ret[n]))
+
         ret["has_uvw"] = ret["has_ucol"] & ret["has_vcol"] & ret["has_wcol"]
-        if what == "xcol":
-            ret = ret["xcol"]
+
+        if what in ["xcol","xerr"]:
+            ret = ret[what]
         elif what in ("ycol", "zcol", "ucol", "vcol", "wcol", "yerr", "zerr"):
             ret = ret[what][0]
         elif what in ("ycols", "zcols", "ucols", "vcols", "wcols", "yerrs", "zerrs"):
