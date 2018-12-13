@@ -745,10 +745,10 @@ class setas(MutableMapping):
         for ck,rk in {"y":"ycol","z":"zcol","e":"yerr","f":"zerr","u":"ucol","v":"vcol","w":"wcol"}.items():
             ret[rk]=columns[ck]
 
-        if ret["axes"]==0 and len(self.shape)>=2 and self.shape[1] in self._col_defaults and not no_guess:
+        if axes==0 and len(self.shape)>=2 and self.shape[1] in self._col_defaults and not no_guess:
+            print(">>>>",ret)
             ret=self._col_defaults[self.shape[1]]
-            print("C"*80,"\nGuessed!\n","C"*80)
-
+            print(ret,"<<<<")
         for n in ["xcol","xerr","ycol","yerr","zcol","zerr","ucol","vcol","wcol","axes"]:
             ret["has_{}".format(n)]=not (ret[n] is None or (isinstance(ret[n],list) and  not ret[n]))
 
