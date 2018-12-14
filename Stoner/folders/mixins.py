@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """mixin calsses for :py:class:`Stoner.folders.core.baseFoler`."""
+from __future__ import division
 __all__=["DiskBasedFolder","DataMethodsMixin","PlotMethodsMixin"]
 
 import os
@@ -567,7 +568,7 @@ class PlotMethodsMixin(object):
             :include-source:
             :outname:  plotfolder
     """
-    
+
     _defaults={"plots_per_page":12,
                "fig_defaults":{"figsize":(8,6),
                                },
@@ -577,7 +578,7 @@ class PlotMethodsMixin(object):
     def figure(self,*args,**kargs):
         """Pass through for :py:func:`matplotlib.pyplot.figure` but alos takes a note of the arguments for later."""
         self._fig_args=args
-        
+
         kargs["figsize"]
         self._fig_kargs=getattr(self,"fig_defaults",{})
         self._fig_kargs.update(kargs)
