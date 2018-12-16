@@ -67,7 +67,9 @@ class Plottest(unittest.TestCase):
         self.assertEqual(template["font.weight"],"normal","Resettting template parameter failed.")
         keys=sorted([x for x in template])
         self.assertEqual(sorted(template.keys()),keys,"template.keys() and template.iter() disagree.")
-        self.assertEqual(len(template),323,"templa length wrong.")
+        attrs=[x for x in dir(template) if template._allowed_attr(x)]
+        length=len(dict(plt.rcParams))+len(attrs)
+        self.assertEqual(len(template),length,"templa length wrong.")
 
 
 
