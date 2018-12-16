@@ -16,10 +16,12 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 
 pth=path.dirname(__file__)
-pth=path.realpath(path.join(pth,"../../"))
+pth=path.realpath(path.join(pth,"../../../"))
 sys.path.insert(0,pth)
 from Stoner import Data,__home__,Options
 from Stoner.Core import typeHintedDict
+
+from Stoner.plot.formats import DefaultPlotStyle
 
 class Plottest(unittest.TestCase):
 
@@ -53,6 +55,20 @@ class Plottest(unittest.TestCase):
         self.assertTrue(ret is None,"Output of Data.plot() was not None when no_figs is True ({})".format(type(ret)))
         Options.no_figs=True
         plt.close("all")
+
+    def test_template_settings(self):
+        template=DefaultPlotStyle(font__weight="bold")
+        self.assertEqual(template["font.weight"],"bold","Setting ytemplate parameter in init failed.")
+        template(font__weight="normal")
+        self.assertEqual(template["font.weight"],"normal","Setting ytemplate parameter in call failed.")
+        template["font.weight"]="bold"
+        self.assertEqual(template["font.weight"],"bold","Setting ytemplate parameter in setitem failed.")
+        del template["font.weight"]
+        self.assertEqual(template["font.weight"],"normal","Resettting template parameter failed.")
+        keys=sorted([x for x in template])
+        self.assertEqual(sorted(template.keys()),keys,"template.keys() and template.iter() disagree.")
+        self.assertEqual(len(template),323,"templa length wrong.")
+
 
 
 

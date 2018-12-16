@@ -20,6 +20,14 @@ except ImportError:
 import numpy as _np_
 
 
+def _add_dots(key):
+    """replace __ with . in key."""
+    return key.replace("__", ".").replace("..", "__")
+
+def _remove_dots(key):
+    return key.replace(".","__")
+
+
 class TexFormatter(Formatter):
 
     """An axis tick label formatter that emits Tex formula mode code.
@@ -193,25 +201,30 @@ class DefaultPlotStyle(MutableMapping):
         """Calling the template object can manipulate the rcParams that will be set."""
         for k,v in kargs.items():
             if k.startswith("template_"):
-                nk = k[:9].replace("__", ".").replace("..", "__")
+                nk = _add_dots(k[:9])
                 if nk in plt.rcParams:
-                    super(DefaultPlotStyle, self).__setattr__(k,v)
-                    self[k]=v
+                    super(DefaultPlotStyle, self).__setattr__(nk,v)
+                    self[nk]=v
+            else:
+                self.update({_add_dots(k):v})
 
     def __delitem__(self,name):
         if hasattr(self,name):
             default=getattr(self.__class__(),name)
             setattr(self,name,default)
         elif name in plt.rcParams:
-            plt.rcParams[name]=plt.rcdefaults[name]
-            super(DefaultPlotStyle,self).__delattr__("template_{}".format(name.replace(".","__")))
+            params=dict(plt.rcParams)
+            del params[name]
+            plt.rcdefaults()
+            plt.rcParams.update(params)
+            super(DefaultPlotStyle,self).__delattr__(_remove_dots("template_{}".format(name)))
         else:
             raise KeyError("{} is not recognised as part of the template".format(name))
 
     def __getattr__(self, name):
         """Provide magic to read certain attributes of the template."""
         if name.startswith("template_"):  #Magic conversion to rcParams
-            attrname = name[9:].replace("__", ".").replace("..", "__")
+            attrname = _add_dots(name[9:])
             if attrname in plt.rcParams:
                 return plt.rcParams[attrname]
             else:
@@ -247,7 +260,7 @@ class DefaultPlotStyle(MutableMapping):
     def __setattr__(self, name, value):
         """Ensure stylesheet can't be overwritten and provide magic for template attributes."""
         if name.startswith("template_"):
-            attrname = name[9:].replace("__", ".").replace("..", "__")
+            attrname = _add_dots(name[9:])
             plt.rcParams[attrname] = value
             super(DefaultPlotStyle, self).__setattr__(name, value)
         else:
@@ -259,7 +272,7 @@ class DefaultPlotStyle(MutableMapping):
         else:
             if name in plt.rcParams:
                 plt.rcParams[name]=value
-                name="template_{}".format(name.replace(".","__"))
+                name=_remove_dots("template_{}".format(name))
                 super(DefaultPlotStyle, self).__setattr__(name, value)
             else:
                 raise KeyError("{} is not recognised as part of the template".format(name))
@@ -269,6 +282,7 @@ class DefaultPlotStyle(MutableMapping):
                 (not template)^x.startswith("template_") and
                 not callable(x) and
                 not isinstance(getattr(type(self),x,None),property) )
+
 
     @property
     def stylesheet(self):
@@ -355,7 +369,7 @@ class DefaultPlotStyle(MutableMapping):
             self.template_figure__figsize = (self.fig_width, self.fig_height)
         for attr in dir(self):
             if attr.startswith("template_"):
-                attrname = attr[9:].replace("__", ".").replace("..", "__")
+                attrname = _add_dots(attr[9:])
                 value = self.__getattribute__(attr)
                 if attrname in plt.rcParams.keys():
                     params[attrname] = value
@@ -400,7 +414,7 @@ class DefaultPlotStyle(MutableMapping):
             v=getattr(self,attr)
             if not attr.startswith("template_"):
                 continue
-            attr=attr[9:].replace("__",".").replace("..","__")
+            attr=_add_dots(attr[9:])
             if attr in plt.rcParams:
                 plt.rcParams[attr]=v
 
