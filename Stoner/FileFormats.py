@@ -1517,6 +1517,67 @@ class PinkLibFile(_SC_.DataFile):
             self.setas(x='T (C)', y='R (Ohm)')
         return self
 
+class BirgeIVFile(_SC_.DataFile):
+    
+    """Implements the IV File format used by the Birge Group in Michigan State University Condesned Matter Physiscs."""
+    
+    patterns=["*.dat"]
+
+    def _load(self, filename=None, *args, **kargs):
+        """File loader for PinkLib.
+
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+
+        Returns:
+            A copy of the itself after loading the data.
+        """
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        ix=0
+        with io.open(self.filename, "r",errors="ignore",encoding="utf-8") as f:  # Read filename linewise
+            if not re.compile(r'\d{1,2}/\d{1,2}/\d{4}').match(f.readline()):
+                raise _SC_.StonerLoadError("Not a BirgeIVFile as no date on first line")
+            data=f.readlines()
+            expected=["Vo(-))","Vo(+))","Ic(+)","Ic(-)"]
+            for l,m in zip(data[-4:],expected):
+                if not l.startswith(m):
+                    raise _SC_.StonerLoadError("Not a BirgeIVFile as wrong footer line")
+                key=l[:len(m)]
+                val=l[len(m):]
+                if "STDEV" in val:
+                    ix2=val.index("STDEV")
+                    key2=val[ix2:ix2+4+len(key)]
+                    val2=val[ix2+4+len(key):]
+                    self.metadata[key2]=self.metadata.string_to_type(val2.strip())
+                    val=val[:ix2]
+                self.metadata[key]=self.metadata.string_to_type(val.strip())
+            for ix,line in enumerate(data): #Scan the ough lines to get metadata
+                if ":" in line:
+                    parts=line.split(":")
+                    self.metadata[parts[0].strip()]=self.metadata.string_to_type(parts[1].strip())
+                elif "," in line:
+                    for part in line.split(","):
+                        parts=part.split(" ")
+                        self.metadata[parts[0].strip()]=self.metadata.string_to_type(parts[1].strip())
+                elif line.startswith("H "):
+                    self.metadata["H"]=self.metadata.string_to_type(line.split(" ")[1].strip())
+                else:
+                    headers=[x.strip() for x in line.split(" ")]
+                    break
+            else:
+                raise _SC_.StonerLoadError("Oops ran off the end of the file!")
+        self.data=_np_.genfromtxt(filename,skip_header=ix+2,skip_footer=4)
+        self.column_headers=headers
+        
+        self.setas="xy"
+        return self
+                    
+    
+
 class KermitPNGFile(_SC_.DataFile):
 
     """Loads PNG files with additional metadata embedded in them and extracts as metadata"""

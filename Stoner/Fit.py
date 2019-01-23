@@ -1627,3 +1627,80 @@ class FMR_Power(Model):
         pars["H_res"].min=_np_.min(x)
         pars["H_res"].max=_np_.max(x)
         return update_param_vals(pars, self.prefix, **kwargs)
+    
+def rsj_noiseless(I,Ic_p,Ic_n,Rn,V_offset):
+    r"""Implements a simple noiseless RSJ model.
+
+    Args:
+        I (array-like): Current values
+        Ic_p (foat): Critical current on positive branch
+        Ic_n (foat): Critical current on negative branch
+        Rn (float): Normal state resistance
+        V_offset(float): Offset volage in measurement
+        
+    Returns:
+        (array) Calculated volatages
+        
+    Notes:
+        Impleemtns a simple form of the RSJ model for a Josephson Junction:
+            
+            $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
+    """
+    
+    normal_p=_np_.sign(I)*_np_.real(_np_.sqrt(I**2-Ic_p**2))*Rn
+    normal_n=_np_.sign(I)*_np_.real(_np_.sqrt(I**2-Ic_n**2))*Rn
+    p_branch=_np_.where(I>Ic_p,normal_p,_np_.zeros_like(I))
+    n_branch=_np_.where(I<Ic_n,normal_n,p_branch)
+    return n_branch+V_offset
+
+class RSJ_Noiseless(Model):
+    r"""Implements a simple noiseless RSJ model.
+
+    Args:
+        I (array-like): Current values
+        Ic_p (foat): Critical current on positive branch
+        Ic_n (foat): Critical current on negative branch
+        Rn (float): Normal state resistance
+        V_offset(float): Offset volage in measurement
+        
+    Returns:
+        (array) Calculated volatages
+        
+    Notes:
+        Impleemtns a simple form of the RSJ model for a Josephson Junction:
+            
+            $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
+    """
+
+    display_names=["I_c^p","I_c^n","R_N","V_{offset}"]
+
+    def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
+        super(RSJ_Noiseless, self).__init__(rsj_noiseless, *args, **kwargs)
+
+    def guess(self, data, x=None, **kwargs):
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+
+        if x is None:
+            x=_np_.linspace(1,len(data),len(data)+1)
+            
+        v_offset_guess=_np_.mean(data)
+        v=_np_.abs(data-v_offset_guess)
+        x=_np_.abs(x)
+            
+        v_low=_np_.max(v)*0.05
+        v_high=_np_.max(v)*0.90
+        
+        ic_index=v<v_low
+        rn_index=v>v_high
+        ic_guess=_np_.max(x[ic_index]) #Guess Ic from a 2% of max V threhsold creiteria
+               
+        rn_guess=_np_.mean(v[rn_index]/x[rn_index])
+        
+        pars = self.make_params(Ic_p=ic_guess,Ic_n=-ic_guess,Rn=rn_guess,V_offset=v_offset_guess)
+        pars["Ic_p"].min=0
+        pars["Ic_n"].max=0
+        return update_param_vals(pars, self.prefix, **kwargs)
+
+    
+    
