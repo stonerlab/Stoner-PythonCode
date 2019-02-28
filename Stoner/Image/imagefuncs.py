@@ -23,12 +23,16 @@ If you want to add new functions that's great. There's a few important points:
 __all__ = ["adjust_contrast","align","correct_drift","subtract_image","fft","filter_image","gridimage","hist","imshow","level_image","normalise",
            "profile_line","quantize","rotate","translate","translate_limits","plot_histogram","threshold_minmax","defect_mask","do_nothing",
            "float_and_croptext","denoise"]
+from Stoner.compat import string_types
 import copy
 import warnings
 import numpy as np,matplotlib.pyplot as plt, os
 from Stoner.tools import istuple,isiterable
 from scipy.interpolate import griddata
 from skimage import exposure,feature,filters,measure,transform,util
+from matplotlib.colors import Normalize
+import matplotlib.cm as cm
+
 try: #Make OpenCV an optional import
     import cv2
 except ImportError:
@@ -329,9 +333,16 @@ def imshow(im, **kwargs):
     figure=kwargs.pop("figure","new")
     title=kwargs.pop("title",False)
     cmap=kwargs.pop("cmap","gray")
+    if isinstance(cmap,string_types):
+        cmap=getattr(cm,cmap)
     if np.ma.is_masked(im):
-        im_data=im.clone
-        im_data[im_data.mask]=np.NaN
+        im_data=im.data
+        vmax=np.max(im_data.data)
+        vmin=np.min(im_data.data)
+        alpha=np.where(im.mask,0.15,1.0)
+        colors=cmap(Normalize(vmin,vmax)(im_data))
+        colors[...,-1]=alpha
+        im_data=colors
     else:
         im_data=im
     if figure is not None and isinstance(figure,int):
@@ -439,6 +450,8 @@ def normalise(im,scale=None,sample=None,limits=(0.0,1.0)):
         this setting can be used to clip the input range before normalising. The parameters in the limit are the values at
         the *low* and *high* fractions of the cumulative distribution functions.
     """
+    mask=im.mask
+    cls=im.__class__
     im=im.astype(float)
     if scale is None:
         scale=(-1.0,1.0)
@@ -457,10 +470,12 @@ def normalise(im,scale=None,sample=None,limits=(0.0,1.0)):
 
     if not istuple(scale,float,float,strict=False):
         raise ValueError("scale should be a 2-tuple of floats.")
-    scaled=(im-low)/(high-low)
+    scaled=(im.data-low)/(high-low)
     delta=scale[1]-scale[0]
     offset=scale[0]
     im=scaled*delta+offset
+    im=im.view(cls)
+    im.mask=mask
     return im
 
 def clip_neg(im):

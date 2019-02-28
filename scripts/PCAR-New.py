@@ -7,7 +7,7 @@ from __future__ import print_function
 # Import packages
 
 import numpy as np
-from Stoner.Core import Data
+from Stoner import Data
 from Stoner.Fit import cfg_data_from_ini,cfg_model_from_ini,quadratic
 from Stoner.compat import python_v3
 if python_v3:
@@ -16,7 +16,7 @@ else:
     import ConfigParser
 
 class working(Data):
-    
+
     """Utility class to manipulate data and plot it"""
 
     def __init__(self,*args,**kargs):
@@ -32,7 +32,7 @@ class working(Data):
         self.vcol=self.find_col(self.setas["x"])
         self.gcol=self.find_col(self.setas["y"])
         self.filename=tmp.filename
-        
+
         model,p0=cfg_model_from_ini(inifile,data=self)
 
         if python_v3:
@@ -48,18 +48,19 @@ class working(Data):
         self.save_fit=config.getboolean('Options', 'save_fit')
         self.report=config.getboolean('Options', 'print_report')
         self.fancyresults=config.has_option("Options","fancy_result") and config.getboolean("Options","fancy_result")
+        self.method=config.get('Options','method')
         self.model=model
         self.p0=p0
 
     def Discard(self):
-        """Optionally throw out some high bias data."""        
+        """Optionally throw out some high bias data."""
         discard=self.config.has_option("Data","dicard") and self.config.getboolean("Data",'discard')
         if discard:
             v_limit=self.config.get("Data",'v_limit')
             print("Discarding data beyond v_limit={}".format(v_limit))
             self.del_rows(self.vcol,lambda x,y:abs(x)>v_limit)
         return self
-            
+
 
 
     def Normalise(self):
@@ -87,7 +88,7 @@ class working(Data):
 
     def offset_correct(self):
         """Centre the data.
-        
+
         - look for peaks and troughs within 5 of the initial delta value
         take the average of these and then subtract it.
         """
@@ -113,8 +114,10 @@ class working(Data):
         """Run the fitting code."""
         self.Discard().Normalise().offset_correct()
         chi2= self.p0.shape[0]>1
-        
-        fit=self.lmfit(self.model,p0=self.p0,result=True,header="Fit")
+
+        method=getattr(self,self.method)
+
+        fit=method(self.model,p0=self.p0,result=True,header="Fit",output="report")
 
         if not chi2: # Single fit mode, consider whether to plot and save etc
             if self.show_plot:
@@ -155,7 +158,7 @@ class working(Data):
             if self.save_fit:
                 ret.filename=None
                 ret.save(False)
-            
+
 
 if __name__=="__main__":
     d=working()

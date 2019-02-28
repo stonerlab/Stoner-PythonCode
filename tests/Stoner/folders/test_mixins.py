@@ -47,6 +47,9 @@ class folders_mixins_test(unittest.TestCase):
         plt.close("all")
         self.fldr.plot(extra=extra)
         self.assertEqual(len(plt.get_fignums()),2,"Plotting to a single figure in PlotFolder failed.")
+        self.ax=self.fldr[0].subplots
+        self.assertEqual(len(self.ax),12,"Subplots check failed.")
+
         plt.close("all")
         Options.multiprocessing=True
 

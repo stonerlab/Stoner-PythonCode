@@ -100,9 +100,9 @@ class _odr_Model(odrModel):
 
         super(_odr_Model,self).__init__(model,*args,**kargs)
 
-        @property
-        def p0(self):
-            return getattr(self,"estimate",None)
+    @property
+    def p0(self):
+        return getattr(self,"estimate",None)
 
 class _curve_fit_result(object):
 
@@ -242,7 +242,7 @@ def _get_model_parnames(model):
     """get a list of the model parameter names."""
     if isinstance(model,type) and (isubclass(model,Model) or issubclass(model,odrmodel)):
         model=Model()
-        
+
     if isinstance(model,Model):
         return model.param_names
     if isinstance(model,odrmodel):
@@ -257,17 +257,17 @@ def _get_model_parnames(model):
 
 def _curve_fit_p0_list(p0,model):
     """Takes something containing an initial vector and turns it into a list for curve_fit.
-    
+
     Args:
         model (callable, lmfit/Model, odr.Model): miodel object for parameter names
         o0 (list,array,type or Mapping): Object containing the parameter gues values
-        
+
     Returns:
         A list of starting values in the order in which they appear in the model.
     """
     if p0 is None:
         return p0
-    
+
     if isinstance(p0,Mapping):
         p_new=OrderedDict()
         for x,v in p0.items():
@@ -276,7 +276,7 @@ def _curve_fit_p0_list(p0,model):
         for x in _get_model_parnames(model):
             ret.append(p_new.get(x,None))
     elif isiterable(p0):
-        return [float(x) for x in p0]                  
+        return [float(x) for x in p0]
 
 def _prep_lmfit_model(model,p0,kargs):
     """Prepare an lmfit model instance.
@@ -585,7 +585,7 @@ class AnalysisMixin(object):
             If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used
             to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
             for differentiating data. This is now a pass through to :py:func:`scipy.signal.savgol_filter`
-            
+
             Padding can help stop wildly wrong artefacts in the data at the start and enf of the data, particularly when the differntial order is >1.
 
         See Also:
@@ -605,7 +605,7 @@ class AnalysisMixin(object):
             col=_.ycol
             data = self.column(list(col)).T
             data = _np_.row_stack((data,_np_.arange(data.shape[1])))
-        
+
         ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
         if isinstance(pad, bool) and pad:
             offset=int(points*order**2/8)
@@ -616,7 +616,7 @@ class AnalysisMixin(object):
         elif isinstance(pad,float):
             offset=int(points/2)
             pad=_np_.ones((ddata.shape[0],offset))*pad
-            
+
         if _np_.all(pad) and offset>0:
             ddata[:,:offset]=pad
             ddata[:,-offset:]=pad
@@ -1252,7 +1252,7 @@ class AnalysisMixin(object):
             except:
                 p0=None
 
-        p0=_curve_fit_p0_list(p0,func)            
+        p0=_curve_fit_p0_list(p0,func)
 
         retvals=[]
         i=None
@@ -1657,7 +1657,7 @@ class AnalysisMixin(object):
             relevant information about the fit.
 
         The return value is determined by the *output* parameter. Options are
-            - "ffit"    just the :py:class:`lmfit.model.ModelFit` instance
+            - "fit"    just the :py:class:`lmfit.model.ModelFit` instance
             - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
             - "full"    a tuple of the fit instance and the row.
             - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally as a column of data.
@@ -2127,10 +2127,9 @@ class AnalysisMixin(object):
 
         xdata = working[:, self.find_col(_.xcol)]
         ydata = working[:, self.find_col(_.ycol)]
-        if callable(p0): # Allow callable p0
-            p0=p0(ydata,xdata)
-        if p0 is not None:
-            model.estimate=p0
+
+        p0,single_fit = _prep_lmfit_p0(model,ydata,xdata,p0,kargs)
+
         if not _.has_xerr:
             sx=_np_.ones_like(xdata)
         else:
@@ -2148,6 +2147,13 @@ class AnalysisMixin(object):
         fit=_sp_.odr.ODR(data,model,beta0=model.estimate)
         try:
             fit_result=fit.run()
+            tmp="Beta:{}\nBeta Std Error:{}\nBeta Covariance:{}\n".format(fit_result.beta,fit_result.sd_beta,fit_result.cov_beta)
+            if hasattr(fit_result, 'info'):
+                tmp+="Residual Variance:{}\nInverse Condition #:{}\nReason(s) for Halting:\n".format(
+                                                fit_result.res_var,fit_result.inv_condnum)
+                for r in fit_result.stopreason:
+                    tmp+='  %s\n' % r
+            fit_result.fit_report=lambda :tmp
         except _sp_.odr.OdrError as err:
             print(err)
             return None
@@ -2315,7 +2321,7 @@ class AnalysisMixin(object):
         index_offset=int(width/2)
         d1=d1[index_offset:-index_offset]
         d2=d2[index_offset:-index_offset]
-        
+
         #Pad the ends of d2 with the mean value
         pad=_np_.mean(d2[index_offset:-index_offset])
         d2[:index_offset]=pad

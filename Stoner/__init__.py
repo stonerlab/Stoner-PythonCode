@@ -174,6 +174,8 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
             elif "arrowprops" in kargs:
                 ax.annotate(text, xy=(x,y), **kargs)
             else:
+                kargs.pop("xycoords",None)
+                kargs["transform"]=ax.transAxes
                 ax.text(x,y,text,  **kargs)
             ret=self
         else:

@@ -417,6 +417,7 @@ class ImageArray(np.ma.MaskedArray,metadataObject):
     def clone(self):
         """return a copy of the instance"""
         ret = ImageArray(np.copy(self))
+        self._optinfo["mask"]=self.mask #Make sure we've updated our mask record
         for k,v in self._optinfo.items():
             try:
                 setattr(ret, k, deepcopy(v))
@@ -1282,9 +1283,15 @@ class ImageFile(metadataObject):
     def _func_generator(self, workingfunc):
         """ImageFile generator.
 
-        If function called returns ImageArray type
-        of the same shape as our current image then
-        use that to update image attribute, otherwise return given output.
+        Note:
+            The wrapped functions take additional keyword arguments that are stripped off from the call.
+
+            _box(:py:meth:`Stoner.ImageArray.crop` arguments): Crops the image first before calling the parent method.
+            _ (bool, None): Controls whether a :py:class:`ImageArray` return will be substituted for the current :py:class:`ImageArray`.
+
+            * True: - all ImageArray return types are substituted.
+            * False (default) - Imagearray return types are substituted if they are the same size as the original
+            * None - A copy of the current object is taken and the returned ImageArray provides the data.
         """
         @wraps(workingfunc)
         def gen_func(*args, **kargs):
@@ -1300,7 +1307,7 @@ class ImageFile(metadataObject):
             else:
                 force=kargs.pop("_",False)
             r = workingfunc(*args, **kargs)
-            if isinstance(r,ImageArray) and (force or r.shape==self.image[self.image._box(box)].shape):
+            if force is not None and isinstance(r,ImageArray) and (force or r.shape==self.image[self.image._box(box)].shape):
                 #Enure that we've captured any metadata added inside the working function
                 self.metadata.update(r.metadata)
                 #Now swap the iamge in, but keep the metadata
@@ -1310,6 +1317,15 @@ class ImageFile(metadataObject):
                 self.filename=filename
 
                 return self
+            elif force is None:
+                ret=self.clone
+                ret.metadata.update(r.metadata)
+                #Now swap the iamge in, but keep the metadata
+                r.metadata=ret.metadata
+                filename=ret.filename
+                ret.image = r
+                ret.filename=filename
+                return ret
             else:
                 return r
         return fix_signature(gen_func,workingfunc)
@@ -1471,15 +1487,15 @@ class MaskProxy(object):
     def _mask(self):
         self._IA.mask=np.ma.getmaskarray(self._IA)
         return self._IA.mask
-    
+
     @property
     def data(self):
         return self[:]
-    
+
     @property
     def image(self):
         return self[:]
-    
+
     @property
     def draw(self):
         return DrawProxy(self._mask)
@@ -1543,4 +1559,4 @@ class MaskProxy(object):
 
     def invert(self):
         """Invert the mask."""
-        self._IA.mask=-self._IA.mask
+        self._IA.mask=~self._IA.mask
