@@ -71,7 +71,7 @@ class Analysis_test(unittest.TestCase):
         self.assertTrue(np.sum(d.threshold([0.0,0.5,1.0])-np.array([[24.5,36.74999999, 49.]]))<1E-6,"Multiple threshold failed.")
         self.assertAlmostEqual(d.threshold(0,interpolate=False,all_vals=True)[1],124.5,6,"Threshold without interpolation failed.")
         result=d.threshold(0,interpolate=False,all_vals=True,xcol=False)
-        self.assertTrue(np.all(result==np.array([[ 24.5,   0. ],[124.5,   0. ],[224.5,   0. ],[324.5,   0. ]])),
+        self.assertTrue(np.allclose(result,np.array([[ 24.5,   0. ],[124.5,   0. ],[224.5,   0. ],[324.5,   0. ]])),
                         "Failed threshold with False scol - result was {}".format(result))
 
     def test_apply(self):
