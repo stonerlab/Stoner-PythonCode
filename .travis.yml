@@ -42,7 +42,7 @@ install:
   # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
   - conda install --yes stoner
   # Force upgraded scikit-image
-  - conda install --yes 0c conda-forge scikit-image=0.14.2
+  - conda install --yes -c conda-forge scikit-image=0.14.2
   # Now we unistall the stable stoner - use force to stop downgrading packages!
   - conda remove --yes --force stoner
   - pip install opencv_python
