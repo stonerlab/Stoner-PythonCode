@@ -42,7 +42,7 @@ install:
   # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
   - conda install --yes stoner
   # Downgrade numpy to avoid problems with scikit-image<0.14.2
-  - conda install --yes numpy=0.15,4
+  - conda install --yes numpy<0.16.0
   # Now we unistall the stable stoner - use force to stop downgrading packages!
   - conda remove --yes --force stoner
   - pip install opencv_python
