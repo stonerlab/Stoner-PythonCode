@@ -70,7 +70,9 @@ class Analysis_test(unittest.TestCase):
         self.thresh=d
         self.assertTrue(np.sum(d.threshold([0.0,0.5,1.0])-np.array([[24.5,36.74999999, 49.]]))<1E-6,"Multiple threshold failed.")
         self.assertAlmostEqual(d.threshold(0,interpolate=False,all_vals=True)[1],124.5,6,"Threshold without interpolation failed.")
-        self.assertTrue(np.all(d.threshold(0,interpolate=False,all_vals=True,xcol=False)==np.array([[ 24.5,   0. ],[124.5,   0. ],[224.5,   0. ],[324.5,   0. ]])),"Failed threshold with False scol")
+        result=d.threshold(0,interpolate=False,all_vals=True,xcol=False)
+        self.assertTrue(np.all(result==np.array([[ 24.5,   0. ],[124.5,   0. ],[224.5,   0. ],[324.5,   0. ]])),
+                        "Failed threshold with False scol - result was {}".format(result))
 
     def test_apply(self):
         self.app=Data(np.zeros((100,1)),setas="y")
