@@ -61,8 +61,6 @@ class working(Data):
             self.del_rows(self.vcol,lambda x,y:abs(x)>v_limit)
         return self
 
-
-
     def Normalise(self):
         """Normalise the data if the relevant options are turned on in the config file.
 
@@ -126,6 +124,7 @@ class working(Data):
                 self.save(False)
             if self.report:
                 print(fit.fit_report())
+            return fit
         else: #chi^2 mapping mode
             ret=Data()
             ret.data=fit
@@ -162,7 +161,7 @@ class working(Data):
 
 if __name__=="__main__":
     d=working()
-    d.Fit()
+    fit=d.Fit()
 
 
 

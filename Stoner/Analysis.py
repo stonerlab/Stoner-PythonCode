@@ -57,6 +57,11 @@ class _odr_Model(odrModel):
     def __init__(self,*args,**kargs):
         """Initialise with lmfit.models.Model or callable."""
         meta=kargs.pop("meta",dict())
+        kargs=copy(kargs)
+        for n in list(kargs.keys()):
+            if n in ["replace","header","result","output","residuals","prefix"]:
+                del kargs[n]
+        p0=kargs.pop("p0",kargs.pop("estimate",None))
         if args:
             args=list(args)
             model=args.pop(0)
@@ -65,25 +70,37 @@ class _odr_Model(odrModel):
 
         if isclass(model) and issubclass(model,Model): #Instantiate if only a class passed in
             model=model()
+        if isclass(model) and issubclass(model,odrModel):
+            model=model()
         if isinstance(model,Model):
             self.model=model
             self.func=model.func
             model=lambda beta,x,**kargs: self.model.func(x,*beta,**kargs)
             meta["param_names"]=self.model.param_names
+            meta["param_hints"]=self.model.param_hints
             meta["name"]=self.model.__class__.__name__
+        elif isinstance(model,odrModel):
+            self.model=model
+            def _func(x,*beta):
+                return model.fcn(beta,x)
+            self.func=_func
+            meta["param_names"]=model.meta.pop("param_names",["Param_{}".format(ix) for ix,p in enumerate(p0)])
+            meta["name"]=model.fcn.__name__
         elif callable(model):
             self.model=None
             meta["name"]=model.__name__
             arguments,carargs,jeywords,defaults=getfullargspec(model)[0:4] # pylint: disable=W1505
             meta["param_names"]=list(arguments[1:])
+            meta["param_hints"]={x:{"value":1.0} for x in arguments[1:]}
             #print(arguments,carargs,jeywords,defaults)
             func=model
             self.func=model
             def model(beta,x,**_): # pylint: disable=E0102
                 """Warapper for model function."""
                 return func(x,*beta)
-        meta["__name__"]=meta["name"]
-        p0=kargs.pop("p0",kargs.pop("estimate",None))
+            meta["__name__"]=meta["name"]
+        else:
+            raise ValueError("Cannot construct a model instance from a {} - need a callable, lmfit.Model or scipy.odr.Model".format(type(model)))
         if p0 is None or (isiterable(p0) and len(p0)!=len(meta["param_names"])):
             p0=list()
             for k in meta["param_names"]:
@@ -92,17 +109,22 @@ class _odr_Model(odrModel):
                 elif hasattr(self.model,"param_hints") and k in self.model.param_hints:
                     p0.append(self.model.param_hints[k]["value"])
                 else:
-                    raise RuntimeError(("You must either supply a p0 of length {} or supply a value for keyword "+
-                                       "{} for your model function").format(len(meta["param_names"]),k))
+                    p0.append(1.0)
         kargs["estimate"]=p0
 
         kargs["meta"]=meta
+
 
         super(_odr_Model,self).__init__(model,*args,**kargs)
 
     @property
     def p0(self):
         return getattr(self,"estimate",None)
+
+    @property
+    def param_names(self):
+        return self.meta["param_names"]
+
 
 class _curve_fit_result(object):
 
@@ -318,6 +340,39 @@ def _prep_lmfit_model(model,p0,kargs):
 
     return model,p0,prefix
 
+def _prep_odr_model(model,p0,kargs):
+    """Prepare an odr model instance.
+
+    Arguments:
+        model (odr.Model or lmfit Model class or instance, or callable): the model to be fitted to the data.
+        p0 (iterable or floats): The initial values of the fitting parameters.
+        kargs (dict):Other keyword arguments passed to the fitting function
+
+    Returns:
+        model,p0, prefix (odr.Model instance, iterable, str)
+
+    Converts the model parameter into an instance of odr.Model - either by instantiating the class or wrapping a
+    callable into an lmfit.Model class. If the latter, then determines the p0 starting parameter vector and finally
+    establishes a prefix string from the model if not provided in the keyword arguments.
+    """
+
+    if isinstance(model, _sp_.odr.Model):
+        model.name=model.__class__.__name__
+    elif isclass(model) and issubclass(model,_sp_.odr.Model):
+        model=model()
+        model.name=model.__class__.__name__
+    elif (isclass(model) and issubclass(model,Model)) or isinstance(model,Model) or callable(model):
+        model=_odr_Model(model,p0=p0,**kargs)
+        if p0 is None:
+            p0=model.p0
+    else:
+        raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
+
+    prefix = str(kargs.pop("prefix",  model.name))
+
+    return model,p0,prefix
+
+
 def _prep_lmfit_p0(model,ydata,xdata,p0,kargs):
     """Prepare the initial start vector for an lmfit.
 
@@ -333,6 +388,8 @@ def _prep_lmfit_p0(model,ydata,xdata,p0,kargs):
     if p0 is not None:
         if callable(p0): # Allow p0 to be a callbale function
             p0=p0(ydata,xdata)
+        if isinstance(p0,(tuple,list)):
+            p0=_np_.atleast_2d(p0)
         if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
             if p0.shape[0]==1: # Actually a single fit
                 p0=_lmfit_p0_dict(p0[0],model)
@@ -351,6 +408,44 @@ def _prep_lmfit_p0(model,ydata,xdata,p0,kargs):
             p0=model.guess(ydata,x=xdata)
             p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
     return p0,single_fit
+
+def _prep_odr_p0(model,ydata,xdata,p0,kargs):
+    """Prepare the initial start vector for an lmfit.
+
+    Arguments:
+        model (lmfit.Model instance): model to fit with
+        ydata,xdata (array): y and x data ppoints for fitting
+        p0 (iterable of float): Existing p0 vector if defined
+        kargs (dict): Other keyword arguments for the lmfit method.
+
+    Returns:
+        p0,single_fit (iterable of floats, bool): The revised initial starting vector and whether this is a single fit operation.
+    """
+    if p0 is not None:
+        if callable(p0): # Allow p0 to be a callbale function
+            p0=p0(ydata,xdata)
+        if isinstance(p0,(tuple,list)):
+            p0=_np_.atleast_2d(p0)
+        if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
+            if p0.shape[0]==1: # Actually a single fit
+                p0=p0[0]
+                single_fit=True
+            else: # Is chi^2 mapping
+                single_fit=False
+        else:
+            raise RuntimeError("Cannot construct a p0 for odr fitting with a {}".format(type(p0)))
+    else: #Do we already have parameter hints ?
+        check=True
+        single_fit = True
+        if not isinstance(model,_odr_Model):
+            model=_odr_Model(model)
+        for p in model.param_names:
+            check&=p in model.param_hints and "value" in model.param_hints[p]
+        if not check: # Ok, param_hints didn't have all the parameter values setup.
+            p0=model.guess(ydata,x=xdata)
+            p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
+    return p0,single_fit
+
 
 def _outlier(row, window, metric,ycol=None):
     """Internal function for outlier detector.
@@ -752,7 +847,7 @@ class AnalysisMixin(object):
             f_name=func.__name__
             func=func.func
         elif isinstance(func,(_sp_.odr.Model)):
-            f_name=func.__name__
+            f_name=func.meta["name"]
             func=func.func
         else:
             f_name=func.__name__
@@ -840,6 +935,68 @@ class AnalysisMixin(object):
         row=cls(row)
         row.column_headers=ch
         return row
+
+    def _odr_one(self,data,model,prefix,_,**kargs):
+        """Carry out a single fit wioth odr.
+
+        Args:
+            data (odr.Data): configured data
+            model (odr.Model): Configured model
+            prefix (str): Prefix for labels in metadata
+
+        Keyword Arguments:
+            result (bool,str): Where the result goes
+            header (str): Name of new data column if used
+            replace (bool): whether to add new dataa
+            output (str): What to return
+
+        Returns:
+            Results froma  fit or raises and exception.
+        """
+        result = kargs.pop("result", None)
+        replace = kargs.pop("replace", False)
+        header = kargs.pop("header", None)
+        residuals=kargs.pop("residuals",False)
+        asrow = kargs.pop("asrow", False)
+        output = kargs.pop("output", "row" if asrow else "fit")
+
+
+        fit=_sp_.odr.ODR(data,model,beta0=model.estimate)
+        try:
+            fit_result=fit.run()
+            fit_result.redchi=fit_result.sum_square/(len(fit_result.y)-len(fit_result.beta))
+            fit_result.chisqr=fit_result.sum_square
+
+            tmp="Beta:{}\nBeta Std Error:{}\nBeta Covariance:{}\n".format(fit_result.beta,fit_result.sd_beta,fit_result.cov_beta)
+            if hasattr(fit_result, 'info'):
+                tmp+="Residual Variance:{}\nInverse Condition #:{}\nReason(s) for Halting:\n".format(
+                                                fit_result.res_var,fit_result.inv_condnum)
+                for r in fit_result.stopreason:
+                    tmp+='  %s\n' % r
+            tmp+="Sum of orthogonal distance (~chi^2):{}\nReduced Sum of Orthogonal distances (~reduced chi^2): {}\n".format(fit_result.chisqr,fit_result.redchi)
+            fit_result.fit_report=lambda :tmp
+
+        except _sp_.odr.OdrError as err:
+            print(err)
+            return None
+        except _sp_.odr.OdrStop as err:
+            print(err)
+            return None
+        self._record_curve_fit_result(model,fit_result,_.xcol,header,result,replace,residuals,ycol=_.ycol,prefix=prefix)
+
+
+        row = []
+        # Store our current mask, calculate new column's mask and turn off mask
+
+        param_names=getattr(model,"param_names",None)
+        for i,p in enumerate(param_names):
+            row.extend([fit_result.beta[i],fit_result.sd_beta[i]])
+        row.append(fit_result.redchi)
+        retval = {"fit":(row[::2],fit_result.cov_beta),"report": fit_result, "row": row, "full": (fit_result, row),"data":self}
+        if output not in retval:
+            raise RuntimeError("Failed to recognise output format:{}".format(output))
+        else:
+            return retval[output]
 
     def __threshold(self, threshold, data, rising=True, falling=False):
         """Internal function that implements the threshold method - also used in peak-finder
@@ -2087,10 +2244,6 @@ class AnalysisMixin(object):
             User guide section :ref:`fitting_with_limits`
         """
         bounds = kargs.pop("bounds", lambda x, y: not _np_.any(y.mask))
-        result = kargs.pop("result", None)
-        replace = kargs.pop("replace", False)
-        header = kargs.pop("header", None)
-        residuals=kargs.pop("residuals",False)
         #First of all check for a sigma keyword
         sigma=kargs.pop("sigma",None)
         #Now check for sigma_y and sigma_x and have them default to sigma (which in turn defaults to None)
@@ -2100,26 +2253,7 @@ class AnalysisMixin(object):
         absolute_sigma = kargs.pop("absolute_sigma", True)
         kargs.pop("scale_covar", not absolute_sigma)
         #Support both asrow and output, the latter wins if both supplied
-        asrow = kargs.pop("asrow", False)
-        output = kargs.pop("output", "row" if asrow else "fit")
-        prefix = kargs.pop("prefix",None)
-
-        if isinstance(model, _sp_.odr.Model):
-            model.name=model.__class__.__name__
-        elif isclass(model) and issubclass(model,_sp_.odr.Model):
-            model=model()
-            model.name=model.__class__.__name__
-        elif (isclass(model) and issubclass(model,Model)) or isinstance(model,Model) or callable(model):
-            model=_odr_Model(model,**kargs)
-        else:
-            raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
-
-        if prefix is None:
-            prefix=str(model.name)
-        else:
-            prefix=str(prefix)
-        #Get the inital guess if possible
-        p0=kargs.pop("p0",getattr(model,"p0",None))
+        p0=kargs.pop("p0",None)
 
         _=self._col_args(xcol=xcol,ycol=ycol,xerr=sigma_x,yerr=sigma_y)
         working = self.search(_.xcol, bounds)
@@ -2128,7 +2262,9 @@ class AnalysisMixin(object):
         xdata = working[:, self.find_col(_.xcol)]
         ydata = working[:, self.find_col(_.ycol)]
 
-        p0,single_fit = _prep_lmfit_p0(model,ydata,xdata,p0,kargs)
+        p0,single_fit = _prep_odr_p0(model,ydata,xdata,p0,kargs)
+        model,p0,prefix=_prep_odr_model(model,p0,kargs)
+
 
         if not _.has_xerr:
             sx=_np_.ones_like(xdata)
@@ -2144,40 +2280,11 @@ class AnalysisMixin(object):
         else:
             data=_sp_.odr.RealData(xdata,ydata,sx=sx,sy=sy)
 
-        fit=_sp_.odr.ODR(data,model,beta0=model.estimate)
-        try:
-            fit_result=fit.run()
-            tmp="Beta:{}\nBeta Std Error:{}\nBeta Covariance:{}\n".format(fit_result.beta,fit_result.sd_beta,fit_result.cov_beta)
-            if hasattr(fit_result, 'info'):
-                tmp+="Residual Variance:{}\nInverse Condition #:{}\nReason(s) for Halting:\n".format(
-                                                fit_result.res_var,fit_result.inv_condnum)
-                for r in fit_result.stopreason:
-                    tmp+='  %s\n' % r
-            fit_result.fit_report=lambda :tmp
-        except _sp_.odr.OdrError as err:
-            print(err)
-            return None
-        except _sp_.odr.OdrStop as err:
-            print(err)
-            return None
-        self._record_curve_fit_result(model,fit_result,_.xcol,header,result,replace,residuals,ycol=_.ycol,prefix=prefix)
-
-
-        row = []
-        # Store our current mask, calculate new column's mask and turn off mask
-
-        param_names=getattr(model,"param_names",None)
-        for i,p in enumerate(param_names):
-            row.extend([fit_result.beta[i],fit_result.sd_beta[i]])
-        delta,eps=fit_result.delta,fit_result.eps
-        nfree=len(xdata)-len(fit_result.beta)
-        chisq=_np_.sum(delta**2/_np_.abs(fit_result.xplus))+_np_.sum(eps**2/_np_.abs(fit_result.y))/nfree
-        row.append(chisq)
-        retval = {"fit":(row[::2],fit_result.cov_beta),"report": fit_result, "row": row, "full": (fit_result, row),"data":self}
-        if output not in retval:
-            raise RuntimeError("Failed to recognise output format:{}".format(output))
-        else:
-            return retval[output]
+        if single_fit:
+            ret_val=self._odr_one(data,model,prefix,_,**kargs)
+        else: # chi^2 mode
+            raise NotImplementedError("Sorry cannot do chi^2 mode for orthogonal distance regression yet!")
+        return ret_val
 
     def outlier_detection(self, column=None, window=7, certainty=3.0, action='mask', width=1, func=None, **kargs):
         """Function to detect outliers in a column of data.
