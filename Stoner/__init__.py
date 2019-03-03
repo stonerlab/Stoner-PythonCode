@@ -6,18 +6,17 @@ __all__=['Core', 'Analysis', 'plot', 'Image','tools','FileFormats','folders','Fo
 
 # These fake the old namespace if you do an import Stoner
 from sys import float_info
-import inspect as _inspect_
 
 
 import Stoner.Core as Core
 import Stoner.FileFormats as FileFormats
 import Stoner.plot.core as plot
 import Stoner.Analysis as Analysis
+from Stoner.analysis.fitting.mixins import FittingMixin
 import Stoner.tools as tools
 import Stoner.Folders as Folders
 from .Folders import DataFolder
 
-from .compat import _lmfit,Model
 from .tools import format_error,set_option,get_option,_Options
 
 Options=_Options()
@@ -28,7 +27,7 @@ __version__ = '.'.join(__version_info__)
 
 __home__=_path_.realpath(_path_.dirname(__file__))
 
-class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
+class Data(Analysis.AnalysisMixin,FittingMixin,plot.PlotMixin,Core.DataFile):
 
     """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`
 
@@ -80,105 +79,5 @@ class Data(Analysis.AnalysisMixin,plot.PlotMixin,Core.DataFile):
             error=float_info.epsilon
         return format_error(value,error,fmt=fmt,mode=mode,units=units,prefix=prefix,scape=escape)
 
-    def annotate_fit(self,model,x=None,y=None,z=None,text_only=False,**kargs):
-        """Annotate a plot with some information about a fit.
 
-        Args:
-            mode (callable or lmfit.Model): The function/model used to describe the fit to be annotated.
-
-        Keyword Parameters:
-            x (float): x co-ordinate of the label
-            y (float): y co-ordinate of the label
-            z (float): z co-ordinbate of the label if the current axes are 3D
-            prefix (str): The prefix placed ahead of the model parameters in the metadata.
-            text_only (bool): If False (default), add the text to the plot and return the current object, otherwise,
-                return just the text and don't add to a plot.
-            prefix(str): If given  overridges the prefix from the model to determine a prefix to the parameter names in the metadata
-
-        Returns:
-            (Datam, str): A copy of the current Data instance if text_only is False, otherwise returns the text.
-
-        If *prefix* is not given, then the first prefix in the metadata lmfit.prefix is used if present,
-        otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
-        are set to be 0.75 * maximum x and y limit of the plot.
-        """
-        mode=kargs.pop("mode","float")
-        if _inspect_.isclass(model) and ((_lmfit  and issubclass(model,Model)) or issubclass(model, Analysis.odrModel)):
-            model=model() #Instantiate a bare class first
-
-        if isinstance(model,Analysis.odrModel): #Get predix from odrModel
-            model_prefix=model.meta.get("__name__",model.__class__.__name__)
-            prefix=kargs.pop("prefix",self.get("odr.prefix",model_prefix))
-            param_names = model.meta.get("param_names",[])
-            display_names= model.meta.get("display_names",param_names)
-        elif _lmfit and isinstance(model,Model): #Get prefix from lmfit
-            prefix=kargs.pop("prefix",self.get("lmfit.prefix",model.__class__.__name__))
-            param_names=model.param_names
-            display_names=getattr(model,"display_names",model.param_names)
-        elif callable(model): #Get prefix from callable name
-            prefix=kargs.pop("prefix",model.__name__)
-            model=Model(model)
-            param_names=model.param_names
-            display_names=getattr(model,"display_names",model.param_names)
-        else:
-            raise RuntimeError("model should be either an lmfit.Model or a callable function, not a {}".format(type(model)))
-
-        if prefix is not None:
-
-            if isinstance(prefix,(list,tuple)):
-                prefix=prefix[0]
-
-            prefix=prefix.strip(" :")
-            prefix="" if prefix == "" else prefix+":"
-
-        else:
-            if isinstance(prefix,(list,tuple)):
-                prefix=prefix[0]
-
-            if model.prefix=="":
-                prefix=""
-            else:
-                prefix=model.prefix+":"
-
-        if x is None:
-            xl,xr=self.xlim() # pylint: disable=not-callable
-            x=(xr-xl)*0.75+xl
-        if y is None:
-            yb,yt=self.ylim() # pylint: disable=not-callable
-            y=0.5*(yt-yb)+yb
-
-        try: # if the model has an attribute display params then use these as the parameter anmes
-            for k,display_name in zip(param_names,display_names):
-                if prefix:
-                    self["{}{} label".format(prefix,k)]=display_name
-                else:
-                    self[k+" label"]=display_name
-        except (AttributeError,KeyError):
-            pass
-
-        text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex",mode=mode) for k in model.param_names])
-        try:
-            self["{}chi^2 label".format(prefix)]=r"\chi^2"
-            text+="\n"+self.format("{}chi^2".format(prefix),fmt="latex",mode=mode)
-        except KeyError:
-            pass
-
-        if not text_only:
-            ax=self.fig.gca()
-            if "zlim" in ax.properties():
-                #3D plot then
-                if z is None:
-                    zb,zt=ax.properties()["zlim"]
-                    z=0.5*(zt-zb)+zb
-                ax.text3D(x,y,z,text)
-            elif "arrowprops" in kargs:
-                ax.annotate(text, xy=(x,y), **kargs)
-            else:
-                kargs.pop("xycoords",None)
-                kargs["transform"]=ax.transAxes
-                ax.text(x,y,text,  **kargs)
-            ret=self
-        else:
-            ret=text
-        return ret
 
