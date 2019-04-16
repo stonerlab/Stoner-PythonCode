@@ -13,7 +13,8 @@ import numpy.ma as ma
 
 import scipy as _sp_
 from scipy.odr import Model as odrModel
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit,differential_evolution
+from scipy.optimize import approx_fprime
 
 from Stoner.compat import python_v3, string_types,  index_types, LooseVersion,get_func_params
 from Stoner.tools import isNone, isiterable,  islike_list
@@ -112,6 +113,78 @@ class odr_Model(odrModel):
     @property
     def param_names(self):
         return self.meta["param_names"]
+
+class MimizerAdaptor(object):
+    """A class that will work with an lmfit.Model or generic callable to use with scipy.optimize global minimization functions.
+
+    The :pymod:`scipy.optimize` module's minimizers generally expect functions  which take an array like parameter space variable and
+    then other arguments. This class will produce a suitable wrapper function and bounds variables from information int he lmfit.Model.
+    """
+
+    def __init__(self,model,*args,**kargs):
+        """Setup the wrapper from the minimuzer."""
+
+        func=model.func
+        hints=model.param_hints
+        p0=list()
+        upper=list()
+        lower=list()
+        for name,hint in hints.items():
+            if "value" not in hint:
+                raise RuntimeError("At the very least we need a starting value for the {} parameter".format(name))
+            v=hint["value"]
+            p0.append(v)
+            limits=[v*10,v*0.1]
+            upper.append(hint.get("max",max(limits)))
+            lower.append(hint.get("min",min(limits)))
+        self.p0=p0
+        self.bounds=[ix for ix in zip(upper,lower)]
+        def wrapper(beta,x,y,sigma,*args):
+            """Function that calculates a least-squares goodness from the model functiuon."""
+            beta=tuple(beta)+tuple(args)
+            if sigma is None:
+                sigma=_np_.ones_like(x)
+            sigma=sigma/sigma.sum() # normalise uncertainties
+            sigma+=_np_.finfo(float).eps
+            weights=1.0/sigma**2
+            variance=((y-func(x,*beta))**2)*weights
+            return _np_.sum(variance)/(len(x)-len(beta))
+        self.minimize_func=wrapper
+
+    def hessian (self, epsilon=1.e-5, linear_approx=False, args=() ):
+        """
+        A numerical approximation to the Hessian matrix of cost function at
+        location x0 (hopefully, the minimum)
+        """
+        if not hasattr(self,"popt"):
+            raise RuntimeError("You need to have determined the optimnal parameters first !")
+
+        # ``calculate_cost_function`` is the cost function implementation
+        # The next line calculates an approximation to the first
+        # derivative
+        f1 = approx_fprime( self.popt, self.minimize_func,epsilon, *args)
+
+        # This is a linear approximation. Obviously much more efficient
+        # if cost function is linear
+        if linear_approx:
+            f1 = _np_.matrix(f1)
+            return f1.transpose() * f1
+        # Allocate space for the hessian
+        n = self.popt.shape[0]
+        hessian = _np_.zeros ( ( n, n ) )
+        # The next loop fill in the matrix
+        xx = self.popt
+        for j in range( n ):
+            xx0 = xx[j] # Store old value
+            xx[j] = xx0 + epsilon # Perturb with finite difference
+            # Recalculate the partial derivatives for this new point
+            f2 = approx_fprime( self.popt, self.minimize_func, epsilon,*args)
+            hessian[:, j] = (f2 - f1)/epsilon # scale...
+            xx[j] = xx0 # Restore initial value of x0
+        return hessian
+
+    def covariance(self,*args):
+        return _np_.linalg.inv(self.hessian(args=args))
 
 
 class _curve_fit_result(object):
@@ -325,6 +398,9 @@ def _prep_lmfit_model(model,p0,kargs):
         raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
 
     prefix = str(kargs.pop("prefix",  model.__class__.__name__))
+    if len(model.param_hints)==0:
+        for k in model.param_names:
+            model.set_param_hint(k,value=p0[k])
 
     return model,p0,prefix
 
@@ -940,6 +1016,100 @@ class FittingMixin(object):
         if i==0:
             retvals=retvals[0]
         return retvals
+
+    def differential_evolution(self,model,xcol=None,ycol=None,p0=None, sigma=None, **kargs):
+        """Fit model to the data using a differential evolution algorithm.
+          Args:
+            model (lmfit.Model): An instance of an lmfit.Model that represents the model to be fitted to the data
+            xcol (index or None): Columns to be used for the x  data for the fitting. If not givem defaults to the
+            :py:attr:`Stoner.Core.DataFile.setas` x column
+            ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the
+            :py:attr:`Stoner.Core.DataFile.setas` y column
+
+        Keyword Arguments:
+            p0 (list, tuple, array or callable): A vector of initial parameter values to try. See the notes in :py:meth:`Stoner.Data.curve_fit` for more details.
+            sigma (index): The index of the column with the y-error bars
+            bounds (callable): A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+            result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
+                the last column will be used. If result is a string or an integer then it is used as a column index.
+                Default to None for not adding fitted data
+            replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
+            header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
+            scale_covar (bool) : whether to automatically scale covariance matrix (leastsq only)
+            output (str, default "fit"): Specifiy what to return.
+
+        Returns:
+            The lmfit module will refurn an instance of the :py:class:`lmfit.models.ModelFit` class that contains all
+            relevant information about the fit.
+
+        The return value is determined by the *output* parameter. Options are
+            - "fit"    just the :py:class:`lmfit.model.ModelFit` instance
+            - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+            - "full"    a tuple of the fit instance and the row.
+            - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally as a column of data.
+        """
+        bounds = kargs.pop("bounds", lambda x, y: True)
+        result = kargs.pop("result", None)
+        replace = kargs.pop("replace", False)
+        residuals = kargs.pop("residuals",False)
+        header = kargs.pop("header", None)
+        # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
+        absolute_sigma = kargs.pop("absolute_sigma", True)
+        scale_covar = kargs.pop("scale_covar", not absolute_sigma)
+        #Support both asrow and output, the latter wins if both supplied
+        asrow = kargs.pop("asrow", False)
+        output = kargs.pop("output", "row" if asrow else "fit")
+
+        model,p0,prefix=_prep_lmfit_model(model,p0,kargs)
+
+        _=self._col_args(xcol=xcol,ycol=ycol)
+        working = self.search(_.xcol, bounds)
+        working = ma.mask_rowcols(working, axis=0)
+
+        xdata = working[:, self.find_col(_.xcol)]
+        ydata = working[:, self.find_col(_.ycol)]
+
+        p0,single_fit = _prep_lmfit_p0(model,ydata,xdata,p0,kargs)
+
+        if sigma is not None:
+            if isinstance(sigma, index_types):
+                sigma = working[:, self.find_col(sigma)]
+            elif isinstance(sigma, (list, tuple)):
+                sigma = ma.array(sigma)
+            elif isinstance(sigma,_np_.ndarray):
+                sigma = ma.array(sigma) #ensure masked
+            else:
+                raise RuntimeError("Sigma should have been a column index or list of values")
+        elif not isNone(_.yerr):
+            sigma = working[:, self.find_col(_.yerr)]
+        else:
+            sigma = ma.ones(len(xdata))
+            scale_covar = True
+        mask=_np_.invert(ydata.mask)
+        sigma = sigma[mask]
+        ydata = ydata[mask]
+        xdata = xdata[mask] #lmfit doesn't seem to work well with masked data - here we just delete masked points
+        if isinstance(p0,Parameters):
+            for p,pp in p0.items():
+                model.set_param_hint(p,value=pp.value,vary=pp.vary,min=pp.min,max=pp.max,expr=pp.expr)
+        for k in model.param_names:
+            kargs.pop(k,None)
+
+        model=MimizerAdaptor(model)
+
+        kargs["polish"]=kargs.get("polish",True)
+
+        res=differential_evolution(model.minimize_func,model.bounds,(xdata,ydata,sigma),**kargs)
+        if not res.success:
+            raise RuntimeError(res.message)
+        popt=res.x
+        model.popt=popt
+        covar=model.covariance(xdata,ydata,sigma)
+        perr=_np_.sqrt(_np_.diag(covar))
+        pass
+
+
+
 
     def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None,**kargs):
         r"""Wrapper around lmfit module fitting.
