@@ -15,6 +15,10 @@ test:
 check:
 	prospector -E -0 --profile-path=. -P .landscape.yml Stoner > prospector-report.txt
 
+black:
+	find Stoner -name '*.py' -exec black -l 119 {} \;
+	find doc/samples -name '*.py' -exec black -l 119 {} \;
+
 commit:
 	$(MAKE) -C doc readme
 	git commit -a

@@ -5,34 +5,37 @@ Created on Sun Mar  3 16:44:56 2019
 
 @author: phygbu
 """
-__all__=["odr_Model","FittingMixin"]
+__all__ = ["odr_Model", "FittingMixin"]
 from inspect import isclass
-from collections import Mapping,OrderedDict
+from collections import Mapping, OrderedDict
 import numpy as _np_
 import numpy.ma as ma
 
 import scipy as _sp_
 from scipy.odr import Model as odrModel
-from scipy.optimize import curve_fit,differential_evolution
+from scipy.optimize import curve_fit, differential_evolution
 from scipy.optimize import approx_fprime
 
-from Stoner.compat import python_v3, string_types,  index_types, LooseVersion,get_func_params
-from Stoner.tools import isNone, isiterable,  islike_list
+from Stoner.compat import python_v3, string_types, index_types, LooseVersion, get_func_params
+from Stoner.tools import isNone, isiterable, islike_list, _attribute_store
 
-try:  #Allow lmfit to be optional
+try:  # Allow lmfit to be optional
     import lmfit
-    if LooseVersion(lmfit.__version__)<LooseVersion("0.9.0"):
+
+    if LooseVersion(lmfit.__version__) < LooseVersion("0.9.0"):
         from lmfit.model import Model
     else:
         from lmfit.model import Model
     from lmfit import Parameters
-    _lmfit=True
+
+    _lmfit = True
 except ImportError:
     Model = None
     Parameters = None
-    _lmfit=False
+    _lmfit = False
 from copy import deepcopy as copy
-#from matplotlib.pylab import * #Surely not?
+
+# from matplotlib.pylab import * #Surely not?
 if python_v3:
     from inspect import getfullargspec
 else:
@@ -43,76 +46,83 @@ class odr_Model(odrModel):
 
     """A wrapper for converting lmfit models to odr models."""
 
-    def __init__(self,*args,**kargs):
+    def __init__(self, *args, **kargs):
         """Initialise with lmfit.models.Model or callable."""
-        meta=kargs.pop("meta",dict())
-        kargs=copy(kargs)
+        meta = kargs.pop("meta", dict())
+        kargs = copy(kargs)
         for n in list(kargs.keys()):
-            if n in ["replace","header","result","output","residuals","prefix"]:
+            if n in ["replace", "header", "result", "output", "residuals", "prefix"]:
                 del kargs[n]
-        p0=kargs.pop("p0",kargs.pop("estimate",None))
+        p0 = kargs.pop("p0", kargs.pop("estimate", None))
         if args:
-            args=list(args)
-            model=args.pop(0)
+            args = list(args)
+            model = args.pop(0)
         else:
-            raise RuntimeError("Need at least one argument to make a fitting model.""")
+            raise RuntimeError("Need at least one argument to make a fitting model." "")
 
-        if isclass(model) and issubclass(model,Model): #Instantiate if only a class passed in
-            model=model()
-        if isclass(model) and issubclass(model,odrModel):
-            model=model()
-        if isinstance(model,Model):
-            self.model=model
-            self.func=model.func
-            model=lambda beta,x,**kargs: self.model.func(x,*beta,**kargs)
-            meta["param_names"]=self.model.param_names
-            meta["param_hints"]=self.model.param_hints
-            meta["name"]=self.model.__class__.__name__
-        elif isinstance(model,odrModel):
-            self.model=model
-            def _func(x,*beta):
-                return model.fcn(beta,x)
-            self.func=_func
-            meta["param_names"]=model.meta.pop("param_names",["Param_{}".format(ix) for ix,p in enumerate(p0)])
-            meta["name"]=model.fcn.__name__
+        if isclass(model) and issubclass(model, Model):  # Instantiate if only a class passed in
+            model = model()
+        if isclass(model) and issubclass(model, odrModel):
+            model = model()
+        if isinstance(model, Model):
+            self.model = model
+            self.func = model.func
+            model = lambda beta, x, **kargs: self.model.func(x, *beta, **kargs)
+            meta["param_names"] = self.model.param_names
+            meta["param_hints"] = self.model.param_hints
+            meta["name"] = self.model.__class__.__name__
+        elif isinstance(model, odrModel):
+            self.model = model
+
+            def _func(x, *beta):
+                return model.fcn(beta, x)
+
+            self.func = _func
+            meta["param_names"] = model.meta.pop("param_names", ["Param_{}".format(ix) for ix, p in enumerate(p0)])
+            meta["name"] = model.fcn.__name__
         elif callable(model):
-            self.model=None
-            meta["name"]=model.__name__
-            arguments,carargs,jeywords,defaults=getfullargspec(model)[0:4] # pylint: disable=W1505
-            meta["param_names"]=list(arguments[1:])
-            meta["param_hints"]={x:{"value":1.0} for x in arguments[1:]}
-            #print(arguments,carargs,jeywords,defaults)
-            func=model
-            self.func=model
-            def model(beta,x,**_): # pylint: disable=E0102
+            self.model = None
+            meta["name"] = model.__name__
+            arguments, carargs, jeywords, defaults = getfullargspec(model)[0:4]  # pylint: disable=W1505
+            meta["param_names"] = list(arguments[1:])
+            meta["param_hints"] = {x: {"value": 1.0} for x in arguments[1:]}
+            # print(arguments,carargs,jeywords,defaults)
+            func = model
+            self.func = model
+
+            def model(beta, x, **_):  # pylint: disable=E0102
                 """Warapper for model function."""
-                return func(x,*beta)
-            meta["__name__"]=meta["name"]
+                return func(x, *beta)
+
+            meta["__name__"] = meta["name"]
         else:
-            raise ValueError("Cannot construct a model instance from a {} - need a callable, lmfit.Model or scipy.odr.Model".format(type(model)))
-        if p0 is None or (isiterable(p0) and len(p0)!=len(meta["param_names"])):
-            p0=list()
-            for k in meta["param_names"]:
-                if k in kargs:
-                    p0.append(kargs.pop(k))
-                elif hasattr(self.model,"param_hints") and k in self.model.param_hints:
-                    p0.append(self.model.param_hints[k]["value"])
-                else:
-                    p0.append(1.0)
-        kargs["estimate"]=p0
+            raise ValueError(
+                "Cannot construct a model instance from a {} - need a callable, lmfit.Model or scipy.odr.Model".format(
+                    type(model)
+                )
+            )
+        if not isinstance(p0, lmfit.Parameters):  # This can happen if we are creating an odr_Model in advance.
+            tmp_model = _attribute_store(meta)
+            p0, single_fit = _prep_lmfit_p0(tmp_model, None, None, p0, kargs)
+        p_new = list()
+        meta["params"] = copy(p0)
+        for k, p in p0.items():
+            p_new.append(p.value)
+        p0 = p_new
+        kargs["estimate"] = p0
 
-        kargs["meta"]=meta
+        kargs["meta"] = meta
 
-
-        super(odr_Model,self).__init__(model,*args,**kargs)
+        super(odr_Model, self).__init__(model, *args, **kargs)
 
     @property
     def p0(self):
-        return getattr(self,"estimate",None)
+        return getattr(self, "estimate", None)
 
     @property
     def param_names(self):
         return self.meta["param_names"]
+
 
 class MimizerAdaptor(object):
     """A class that will work with an lmfit.Model or generic callable to use with scipy.optimize global minimization functions.
@@ -121,48 +131,54 @@ class MimizerAdaptor(object):
     then other arguments. This class will produce a suitable wrapper function and bounds variables from information int he lmfit.Model.
     """
 
-    def __init__(self,model,*args,**kargs):
+    def __init__(self, model, *args, **kargs):
         """Setup the wrapper from the minimuzer."""
 
-        func=model.func
-        hints=model.param_hints
-        p0=list()
-        upper=list()
-        lower=list()
-        for name,hint in hints.items():
-            if "value" not in hint:
+        self.func = model.func
+        hints = kargs.pop("params")
+        p0 = list()
+        upper = list()
+        lower = list()
+        for name, hint in hints.items():
+            if not isinstance(hint, lmfit.Parameter):
+                hint = lmfit.Parameter(**hint)
+            if not hasattr(hint, "value"):
                 raise RuntimeError("At the very least we need a starting value for the {} parameter".format(name))
-            v=hint["value"]
+            v = hint.value
             p0.append(v)
-            limits=[v*10,v*0.1]
-            upper.append(hint.get("max",max(limits)))
-            lower.append(hint.get("min",min(limits)))
-        self.p0=p0
-        self.bounds=[ix for ix in zip(upper,lower)]
-        def wrapper(beta,x,y,sigma,*args):
-            """Function that calculates a least-squares goodness from the model functiuon."""
-            beta=tuple(beta)+tuple(args)
-            if sigma is None:
-                sigma=_np_.ones_like(x)
-            sigma=sigma/sigma.sum() # normalise uncertainties
-            sigma+=_np_.finfo(float).eps
-            weights=1.0/sigma**2
-            variance=((y-func(x,*beta))**2)*weights
-            return _np_.sum(variance)/(len(x)-len(beta))
-        self.minimize_func=wrapper
+            limits = [v * 10, v * 0.1]
+            u = getattr(hint, "max", max(limits))
+            l = getattr(hint, "min", min(limits))
+            upper.append(u if not _np_.isinf(u) else max(limits))
+            lower.append(l if not _np_.isinf(l) else min(limits))
+        self.p0 = p0
+        self.bounds = [ix for ix in zip(upper, lower)]
 
-    def hessian (self, epsilon=1.e-5, linear_approx=False, args=() ):
+        def wrapper(beta, x, y, sigma, *args):
+            """Function that calculates a least-squares goodness from the model functiuon."""
+            beta = tuple(beta) + tuple(args)
+            if sigma is None:
+                sigma = _np_.ones_like(x)
+            sigma = sigma / sigma.sum()  # normalise uncertainties
+            sigma += _np_.finfo(float).eps
+            weights = 1.0 / sigma ** 2
+            variance = ((y - self.func(x, *beta)) ** 2) * weights
+            return _np_.sum(variance) / (len(x) - len(beta))
+
+        self.minimize_func = wrapper
+
+    def hessian(self, epsilon=1.0e-5, linear_approx=False, args=()):
         """
         A numerical approximation to the Hessian matrix of cost function at
         location x0 (hopefully, the minimum)
         """
-        if not hasattr(self,"popt"):
+        if not hasattr(self, "popt"):
             raise RuntimeError("You need to have determined the optimnal parameters first !")
 
         # ``calculate_cost_function`` is the cost function implementation
         # The next line calculates an approximation to the first
         # derivative
-        f1 = approx_fprime( self.popt, self.minimize_func,epsilon, *args)
+        f1 = approx_fprime(self.popt, self.minimize_func, epsilon, *args)
 
         # This is a linear approximation. Obviously much more efficient
         # if cost function is linear
@@ -171,19 +187,19 @@ class MimizerAdaptor(object):
             return f1.transpose() * f1
         # Allocate space for the hessian
         n = self.popt.shape[0]
-        hessian = _np_.zeros ( ( n, n ) )
+        hessian = _np_.zeros((n, n))
         # The next loop fill in the matrix
         xx = self.popt
-        for j in range( n ):
-            xx0 = xx[j] # Store old value
-            xx[j] = xx0 + epsilon # Perturb with finite difference
+        for j in range(n):
+            xx0 = xx[j]  # Store old value
+            xx[j] = xx0 + epsilon  # Perturb with finite difference
             # Recalculate the partial derivatives for this new point
-            f2 = approx_fprime( self.popt, self.minimize_func, epsilon,*args)
-            hessian[:, j] = (f2 - f1)/epsilon # scale...
-            xx[j] = xx0 # Restore initial value of x0
+            f2 = approx_fprime(self.popt, self.minimize_func, epsilon, *args)
+            hessian[:, j] = (f2 - f1) / epsilon  # scale...
+            xx[j] = xx0  # Restore initial value of x0
         return hessian
 
-    def covariance(self,*args):
+    def covariance(self, *args):
         return _np_.linalg.inv(self.hessian(args=args))
 
 
@@ -191,18 +207,18 @@ class _curve_fit_result(object):
 
     """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit` as a class to make handling easier."""
 
-    def __init__(self,popt,pcov,infodict,mesg,ier):
+    def __init__(self, popt, pcov, infodict, mesg, ier):
         """Store the results of the curve fit full_output fit."""
-        self.popt=popt
-        self.pcov=pcov
-        self.perr=_np_.sqrt(_np_.diag(pcov))
-        self.mesg=mesg
-        self.ier=ier
-        self.infodict=infodict
+        self.popt = popt
+        self.pcov = pcov
+        self.perr = _np_.sqrt(_np_.diag(pcov))
+        self.mesg = mesg
+        self.ier = ier
+        self.infodict = infodict
         for k in infodict:
-            setattr(self,k,infodict[k])
+            setattr(self, k, infodict[k])
 
-    #Following peroperties used to return desired information
+    # Following peroperties used to return desired information
 
     @property
     def name(self):
@@ -212,31 +228,31 @@ class _curve_fit_result(object):
     @property
     def full(self):
         """The same as :py:attr:`_curve_fit_result.row`"""
-        return self,self.row
+        return self, self.row
 
     @property
     def row(self):
         """Optimal parameters and errors as a single row."""
-        ret=_np_.zeros(self.popt.size*2)
-        ret[0::2]=self.popt
-        ret[1::2]=self.perr
+        ret = _np_.zeros(self.popt.size * 2)
+        ret[0::2] = self.popt
+        ret[1::2] = self.perr
         return ret
 
     @property
     def fit(self):
         """Copy of the fit report and optimal parameters and covariance."""
-        return (self.popt,self.pcov)
+        return (self.popt, self.pcov)
 
     @property
     def data(self):
         """The data that was fitted."""
-        self._data=getattr(self,"_data",_np_.array([]))
+        self._data = getattr(self, "_data", _np_.array([]))
         return self._data
 
     @data.setter
-    def data(self,data):
+    def data(self, data):
         """The data that was fitted."""
-        self._data=data
+        self._data = data
 
     @property
     def report(self):
@@ -261,17 +277,17 @@ class _curve_fit_result(object):
     @property
     def chisqr(self):
         r"""$\chi^2$ Statistic."""
-        return self.chisq*(self.N-self.n_p)
+        return self.chisq * (self.N - self.n_p)
 
     @property
     def aic(self):
         """Akaike Information Criterion statistic"""
-        return self.N*_np_.log(self.chisqr/self.N)+2*self.n_p
+        return self.N * _np_.log(self.chisqr / self.N) + 2 * self.n_p
 
     @property
     def bic(self):
         """Bayesian Information Criterion statistic"""
-        return self.N*_np_.log(self.chisqr/self.N)+_np_.log(self.N)*self.n_p
+        return self.N * _np_.log(self.chisqr / self.N) + _np_.log(self.N) * self.n_p
 
     @property
     def params(self):
@@ -280,7 +296,7 @@ class _curve_fit_result(object):
 
     def fit_report(self):
         """A Fit report like lmfit does."""
-        template="""[[ Model ]]
+        template = """[[ Model ]]
     {}
 [[ Fit Statistics ]]
     # function evals   = {}
@@ -290,17 +306,20 @@ class _curve_fit_result(object):
     reduced chi-square = {}
     Akaike info crit   = {}
     Bayesian info crit = {}
-[[ Variables ]]\n""".format(self.name,self.nfev,self.N,self.n_p,self.chisqr,self.redchi,self.aic,self.bic)
-        for p,v,e,p0 in zip(self.params,self.popt,self.perr,self.p0):
-            template+="\t{}: {} +/- {} ({:.3f}%) (init {})\n".format(p,v,e,(e*100/v),p0)
-        template+="[[Correlations]] (unreported correlations are <  0.100)\n"
-        for i,p in enumerate(self.params):
-            for j in range(i+1,len(self.params)):
-                if _np_.abs(self.pcov[i,j])>0.1:
-                    template+="\t({},{})\t\t={:.3f}".format(p,list(self.params)[j],self.pcov[i,j])
+[[ Variables ]]\n""".format(
+            self.name, self.nfev, self.N, self.n_p, self.chisqr, self.redchi, self.aic, self.bic
+        )
+        for p, v, e, p0 in zip(self.params, self.popt, self.perr, self.p0):
+            template += "\t{}: {} +/- {} ({:.3f}%) (init {})\n".format(p, v, e, (e * 100 / v), p0)
+        template += "[[Correlations]] (unreported correlations are <  0.100)\n"
+        for i, p in enumerate(self.params):
+            for j in range(i + 1, len(self.params)):
+                if _np_.abs(self.pcov[i, j]) > 0.1:
+                    template += "\t({},{})\t\t={:.3f}".format(p, list(self.params)[j], self.pcov[i, j])
         return template
 
-def _lmfit_p0_dict(p0,model):
+
+def _lmfit_p0_dict(p0, model):
     """Works out an initial starting value dictionary for lmfit.
 
     Args:
@@ -312,33 +331,41 @@ def _lmfit_p0_dict(p0,model):
     if not _lmfit:
         raise RuntimeError("lmfit module not available.")
     if isinstance(p0, (list, tuple, _np_.ndarray)):
-        p0 = {p: pv for p, pv in zip(model.param_names, p0)}
-    elif isinstance(p0,Parameters):
+        p_new = lmfit.Parameters()
+        for p, pv in zip(model.param_names, p0):
+            p_new[p] = lmfit.Parameter(value=pv)
+        p0 = p_new
+    elif isinstance(p0, Parameters):
         pass
-        #p0={k:p0[k].value for k in p0}
+        # p0={k:p0[k].value for k in p0}
     if not isinstance(p0, dict):
         raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
-    #p0={p0[k] for k in model.param_names}
+    # p0={p0[k] for k in model.param_names}
     return p0
+
 
 def _get_model_parnames(model):
     """get a list of the model parameter names."""
-    if isinstance(model,type) and (issubclass(model,Model) or issubclass(model,odrModel)):
-        model=Model()
+    if isinstance(model, type) and (issubclass(model, Model) or issubclass(model, odrModel)):
+        model = Model()
 
-    if isinstance(model,Model):
+    if isinstance(model, Model):
         return model.param_names
-    if isinstance(model,odrModel):
+    if isinstance(model, odrModel):
         if "param_names" in model.meta:
             return model.meta["param_names"]
         else:
-            model=model.fcn
+            model = model.fcn
     if not callable(model):
-        raise ValueError("Unrecognised type for model! - should be lmfit.Model, scipy.odr.Model or callable, not {}",format(type(model)))
-    arguments,carargs,jeywords,defaults=getfullargspec(model)[0:4] # pylint: disable=W1505
+        raise ValueError(
+            "Unrecognised type for model! - should be lmfit.Model, scipy.odr.Model or callable, not {}",
+            format(type(model)),
+        )
+    arguments, carargs, jeywords, defaults = getfullargspec(model)[0:4]  # pylint: disable=W1505
     return list(arguments[1:])
 
-def _curve_fit_p0_list(p0,model):
+
+def _curve_fit_p0_list(p0, model):
     """Takes something containing an initial vector and turns it into a list for curve_fit.
 
     Args:
@@ -351,17 +378,18 @@ def _curve_fit_p0_list(p0,model):
     if p0 is None:
         return p0
 
-    if isinstance(p0,Mapping):
-        p_new=OrderedDict()
-        for x,v in p0.items():
-            p_new[x]=getattr(v,"value",float(v))
-        ret=[]
+    if isinstance(p0, Mapping):
+        p_new = OrderedDict()
+        for x, v in p0.items():
+            p_new[x] = getattr(v, "value", float(v))
+        ret = []
         for x in _get_model_parnames(model):
-            ret.append(p_new.get(x,None))
+            ret.append(p_new.get(x, None))
     elif isiterable(p0):
         return [float(x) for x in p0]
 
-def _prep_lmfit_model(model,p0,kargs):
+
+def _prep_lmfit_model(model, kargs):
     """Prepare an lmfit model instance.
 
     Arguments:
@@ -373,38 +401,28 @@ def _prep_lmfit_model(model,p0,kargs):
         model,p0, prefix (lmfit.Model instance, iterable, str)
 
     Converts the model parameter into an instance of lmfit.Model - either by instantiating the class or wrapping a
-    callable into an lmfit.Model class. If the latter, then determines the p0 starting parameter vector and finally
-    establishes a prefix string from the model if not provided in the keyword arguments.
+    callable into an lmfit.Model class and establishes a prefix string from the model if not provided in the keyword arguments.
     """
-    if Model is None:  #Will be the case if lmfit is not imported.
+    if Model is None:  # Will be the case if lmfit is not imported.
         raise RuntimeError(
-            "To use the lmfit function you need to be able to import the lmfit module\n Try pip install lmfit\nat a command prompt.")
-
+            "To use the lmfit function you need to be able to import the lmfit module\n Try pip install lmfit\nat a command prompt."
+        )
+    # Enure that model is an instance of an lmfit.Model() class
     if isinstance(model, Model):
         pass
-    elif isclass(model) and issubclass(model,Model):
-        model=model()
+    elif isclass(model) and issubclass(model, Model):
+        model = model()
     elif callable(model):
-        model=Model(model)
-        if p0 is None or len(p0)!=len(model.param_names):
-            p0=dict()
-            for k in model.param_names:
-                if k not in kargs:
-                    raise RuntimeError(("You must either supply a p0 of length {} or supply a value for keyword {} for your model"+
-                                        "function {}").format(len(model.param_names),k,model.func.__name__))
-                else:
-                    p0[k] = kargs[k]
+        model = Model(model)
     else:
         raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
+    # Nprmalise p0 to be lmfit.Parameters
+    # Get a default prefix for the model
+    prefix = str(kargs.pop("prefix", model.__class__.__name__))
+    return model, prefix
 
-    prefix = str(kargs.pop("prefix",  model.__class__.__name__))
-    if len(model.param_hints)==0:
-        for k in model.param_names:
-            model.set_param_hint(k,value=p0[k])
 
-    return model,p0,prefix
-
-def _prepodr_Model(model,p0,kargs):
+def _prepodr_Model(model, p0, kargs):
     """Prepare an odr model instance.
 
     Arguments:
@@ -421,23 +439,23 @@ def _prepodr_Model(model,p0,kargs):
     """
 
     if isinstance(model, _sp_.odr.Model):
-        model.name=model.__class__.__name__
-    elif isclass(model) and issubclass(model,_sp_.odr.Model):
-        model=model()
-        model.name=model.__class__.__name__
-    elif (isclass(model) and issubclass(model,Model)) or isinstance(model,Model) or callable(model):
-        model=odr_Model(model,p0=p0,**kargs)
+        model.name = model.__class__.__name__
+    elif isclass(model) and issubclass(model, _sp_.odr.Model):
+        model = model()
+        model.name = model.__class__.__name__
+    elif (isclass(model) and issubclass(model, Model)) or isinstance(model, Model) or callable(model):
+        model = odr_Model(model, p0=p0, **kargs)
         if p0 is None:
-            p0=model.p0
+            p0 = model.p0
     else:
         raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
 
-    prefix = str(kargs.pop("prefix",  model.name))
+    prefix = str(kargs.pop("prefix", model.name))
 
-    return model,p0,prefix
+    return model, p0, prefix
 
 
-def _prep_lmfit_p0(model,ydata,xdata,p0,kargs):
+def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
     """Prepare the initial start vector for an lmfit.
 
     Arguments:
@@ -449,31 +467,46 @@ def _prep_lmfit_p0(model,ydata,xdata,p0,kargs):
     Returns:
         p0,single_fit (iterable of floats, bool): The revised initial starting vector and whether this is a single fit operation.
     """
-    if p0 is not None:
-        if callable(p0): # Allow p0 to be a callbale function
-            p0=p0(ydata,xdata)
-        if isinstance(p0,(tuple,list)):
-            p0=_np_.atleast_2d(p0)
-        if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
-            if p0.shape[0]==1: # Actually a single fit
-                p0=_lmfit_p0_dict(p0[0],model)
-                single_fit=True
-            else: # Is chi^2 mapping
-                single_fit=False
-        else:
-            p0=_lmfit_p0_dict(p0,model)
-            single_fit=True
-    else: #Do we already have parameter hints ?
-        check=True
+    single_fit = True
+    if p0 is None:  # First guess the p0 values using the model
+        try:
+            p0 = model.guess(ydata, x=xdata)
+        except Exception:  # Don't be fussy here
+            p0 = lmfit.Parameters()
+        for p_name in model.param_names:
+            if p_name in kargs:
+                p0[p_name] = lmfit.Parameter(value=kargs.pop(p_name))
         single_fit = True
-        for p in model.param_names:
-            check&=p in model.param_hints and "value" in model.param_hints[p]
-        if not check: # Ok, param_hints didn't have all the parameter values setup.
-            p0=model.guess(ydata,x=xdata)
-            p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
-    return p0,single_fit
 
-def _prep_odr_p0(model,ydata,xdata,p0,kargs):
+    if callable(p0):
+        p0 = p0(ydata, xdata)
+    if isinstance(p0, (list, tuple)):
+        p0 = _np_.array(p0)
+
+    if isinstance(p0, _np_.ndarray) and (p0.ndim == 1 or (p0.ndim == 2 and p0.shape[1] == 1)):
+        single_fit = True
+        p_new = lmfit.Parameters()
+        for n, v in zip(model.param_names, p0):
+            p_new[n] = lmfit.Parameter(value=v)
+        p0 = p_new
+        for p_name in model.param_names:
+            if p_name in kargs:
+                p0[p_name] = lmfit.Parameter(value=kargs.pop(p_name))
+    elif isinstance(p0, _np_.ndarray) and p0.ndim == 2:  # chi^2 mapping
+        single_fit = False
+        return p0, single_fit
+
+    if not isinstance(p0, lmfit.Parameters):
+        raise RuntimeError("Unknown data type for initial guess vector p0: {}".format(type(p0)))
+    if set(p0.keys()) < set(model.param_names):
+        raise RuntimeError(
+            "Missing some values from the initial guess vector p0: {}".format(set(model.param_names) - set(p0.keys()))
+        )
+
+    return p0, single_fit
+
+
+def _prep_odr_p0(model, ydata, xdata, p0, kargs):
     """Prepare the initial start vector for an lmfit.
 
     Arguments:
@@ -486,41 +519,42 @@ def _prep_odr_p0(model,ydata,xdata,p0,kargs):
         p0,single_fit (iterable of floats, bool): The revised initial starting vector and whether this is a single fit operation.
     """
     if p0 is not None:
-        if callable(p0): # Allow p0 to be a callbale function
-            p0=p0(ydata,xdata)
-        if isinstance(p0,(tuple,list)):
-            p0=_np_.atleast_2d(p0)
-        if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
-            if p0.shape[0]==1: # Actually a single fit
-                p0=p0[0]
-                single_fit=True
-            else: # Is chi^2 mapping
-                single_fit=False
+        if callable(p0):  # Allow p0 to be a callbale function
+            p0 = p0(ydata, xdata)
+        if isinstance(p0, (tuple, list)):
+            p0 = _np_.atleast_2d(p0)
+        if isinstance(p0, _np_.ndarray) and len(p0.shape) == 2:  # 2D p0 might be chi^2 mapping
+            if p0.shape[0] == 1:  # Actually a single fit
+                p0 = p0[0]
+                single_fit = True
+            else:  # Is chi^2 mapping
+                single_fit = False
         else:
             raise RuntimeError("Cannot construct a p0 for odr fitting with a {}".format(type(p0)))
-    else: #Do we already have parameter hints ?
-        check=True
+    else:  # Do we already have parameter hints ?
+        check = True
         single_fit = True
-        if not isinstance(model,odr_Model):
-            model=odr_Model(model)
+        if not isinstance(model, odr_Model):
+            model = odr_Model(model)
         for p in model.param_names:
-            check&=p in model.param_hints and "value" in model.param_hints[p]
-        if not check: # Ok, param_hints didn't have all the parameter values setup.
-            p0=model.guess(ydata,x=xdata)
-            p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
-    return p0,single_fit
+            check &= p in model.param_hints and "value" in model.param_hints[p]
+        if not check:  # Ok, param_hints didn't have all the parameter values setup.
+            p0 = model.guess(ydata, x=xdata)
+            p0 = {k: kargs[k] if k in kargs else p0[k].value for k in p0}
+    return p0, single_fit
 
 
 class FittingMixin(object):
 
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional curve_fiotting methods."""
 
-    def __init__(self,*args,**kargs):
+    def __init__(self, *args, **kargs):
         """Just call super."""
-        super(FittingMixin,self).__init__(*args,**kargs)
-        if self.debug: print("Done FittingMixin init")
+        super(FittingMixin, self).__init__(*args, **kargs)
+        if self.debug:
+            print("Done FittingMixin init")
 
-    def annotate_fit(self,model,x=None,y=None,z=None,text_only=False,**kargs):
+    def annotate_fit(self, model, x=None, y=None, z=None, text_only=False, **kargs):
         """Annotate a plot with some information about a fit.
 
         Args:
@@ -542,127 +576,187 @@ class FittingMixin(object):
         otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
         are set to be 0.75 * maximum x and y limit of the plot.
         """
-        mode=kargs.pop("mode","float")
-        if isclass(model) and ((_lmfit  and issubclass(model,Model)) or issubclass(model, odrModel)):
-            model=model() #Instantiate a bare class first
+        mode = kargs.pop("mode", "float")
+        if isclass(model) and ((_lmfit and issubclass(model, Model)) or issubclass(model, odrModel)):
+            model = model()  # Instantiate a bare class first
 
-        if isinstance(model,odrModel): #Get predix from odrModel
-            model_prefix=model.meta.get("__name__",model.__class__.__name__)
-            prefix=kargs.pop("prefix",self.get("odr.prefix",model_prefix))
-            param_names = model.meta.get("param_names",[])
-            display_names= model.meta.get("display_names",param_names)
-        elif _lmfit and isinstance(model,Model): #Get prefix from lmfit
-            prefix=kargs.pop("prefix",self.get("lmfit.prefix",model.__class__.__name__))
-            param_names=model.param_names
-            display_names=getattr(model,"display_names",model.param_names)
-        elif callable(model): #Get prefix from callable name
-            prefix=kargs.pop("prefix",model.__name__)
-            model=Model(model)
-            param_names=model.param_names
-            display_names=getattr(model,"display_names",model.param_names)
+        if isinstance(model, odrModel):  # Get predix from odrModel
+            model_prefix = model.meta.get("__name__", model.__class__.__name__)
+            prefix = kargs.pop("prefix", self.get("odr.prefix", model_prefix))
+            param_names = model.meta.get("param_names", [])
+            display_names = model.meta.get("display_names", param_names)
+        elif _lmfit and isinstance(model, Model):  # Get prefix from lmfit
+            prefix = kargs.pop("prefix", self.get("lmfit.prefix", model.__class__.__name__))
+            param_names = model.param_names
+            display_names = getattr(model, "display_names", model.param_names)
+        elif callable(model):  # Get prefix from callable name
+            prefix = kargs.pop("prefix", model.__name__)
+            model = Model(model)
+            param_names = model.param_names
+            display_names = getattr(model, "display_names", model.param_names)
         else:
-            raise RuntimeError("model should be either an lmfit.Model or a callable function, not a {}".format(type(model)))
+            raise RuntimeError(
+                "model should be either an lmfit.Model or a callable function, not a {}".format(type(model))
+            )
 
         if prefix is not None:
 
-            if isinstance(prefix,(list,tuple)):
-                prefix=prefix[0]
+            if isinstance(prefix, (list, tuple)):
+                prefix = prefix[0]
 
-            prefix=prefix.strip(" :")
-            prefix="" if prefix == "" else prefix+":"
+            prefix = prefix.strip(" :")
+            prefix = "" if prefix == "" else prefix + ":"
 
         else:
-            if isinstance(prefix,(list,tuple)):
-                prefix=prefix[0]
+            if isinstance(prefix, (list, tuple)):
+                prefix = prefix[0]
 
-            if model.prefix=="":
-                prefix=""
+            if model.prefix == "":
+                prefix = ""
             else:
-                prefix=model.prefix+":"
+                prefix = model.prefix + ":"
 
-        x=0.75 if x is None else x
-        y=0.5 if y is None else y
+        x = 0.75 if x is None else x
+        y = 0.5 if y is None else y
 
-        try: # if the model has an attribute display params then use these as the parameter anmes
-            for k,display_name in zip(param_names,display_names):
+        try:  # if the model has an attribute display params then use these as the parameter anmes
+            for k, display_name in zip(param_names, display_names):
                 if prefix:
-                    self["{}{} label".format(prefix,k)]=display_name
+                    self["{}{} label".format(prefix, k)] = display_name
                 else:
-                    self[k+" label"]=display_name
-        except (AttributeError,KeyError):
+                    self[k + " label"] = display_name
+        except (AttributeError, KeyError):
             pass
 
-        text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex",mode=mode) for k in model.param_names])
+        text = "\n".join([self.format("{}{}".format(prefix, k), fmt="latex", mode=mode) for k in model.param_names])
         try:
-            self["{}chi^2 label".format(prefix)]=r"\chi^2"
-            text+="\n"+self.format("{}chi^2".format(prefix),fmt="latex",mode=mode)
+            self["{}chi^2 label".format(prefix)] = r"\chi^2"
+            text += "\n" + self.format("{}chi^2".format(prefix), fmt="latex", mode=mode)
         except KeyError:
             pass
 
         if not text_only:
-            ax=self.fig.gca()
+            ax = self.fig.gca()
             if "zlim" in ax.properties():
-                #3D plot then
+                # 3D plot then
                 if z is None:
-                    zb,zt=ax.properties()["zlim"]
-                    z=0.5*(zt-zb)+zb
-                ax.text3D(x,y,z,text)
+                    zb, zt = ax.properties()["zlim"]
+                    z = 0.5 * (zt - zb) + zb
+                ax.text3D(x, y, z, text)
             elif "arrowprops" in kargs:
-                ax.annotate(text, xy=(x,y), **kargs)
+                ax.annotate(text, xy=(x, y), **kargs)
             else:
-                kargs.pop("xycoords",None)
-                kargs["transform"]=ax.transAxes
-                ax.text(x,y,text,  **kargs)
-            ret=self
+                kargs.pop("xycoords", None)
+                kargs["transform"] = ax.transAxes
+                ax.text(x, y, text, **kargs)
+            ret = self
         else:
-            ret=text
+            ret = text
         return ret
 
-    def _get_curve_fit_data(self,xcol,ycol,bounds,sigma):
+    def _get_curve_fit_data(self, xcol, ycol, bounds, sigma):
         """Gather up the xdata and sigma columns for curve_fit."""
         working = self.search(xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
         if not isNone(sigma):
             sigma = working[:, self.find_col(sigma)]
         else:
-            sigma=None
-        if isinstance(xcol,string_types):
+            sigma = None
+        if isinstance(xcol, string_types):
             xdat = working[:, self.find_col(xcol)]
         elif isiterable(xcol):
-            xdat=()
+            xdat = ()
             for c in xcol:
-                xdat = xdat  + (working[:, self.find_col(c)],)
+                xdat = xdat + (working[:, self.find_col(c)],)
         else:
             xdat = working[:, self.find_col(xcol)]
 
-        for i,yc in enumerate(ycol):
+        for i, yc in enumerate(ycol):
 
-            if isinstance(yc,index_types):
+            if isinstance(yc, index_types):
                 ydat = working[:, self.find_col(yc)]
-            elif isinstance(yc,_np_.ndarray) and len(yc.shape)==1 and len(yc)==len(self):
-                ydat=yc
+            elif isinstance(yc, _np_.ndarray) and len(yc.shape) == 1 and len(yc) == len(self):
+                ydat = yc
             else:
-                raise RuntimeError("Y-data for fitting not defined - should either be an index or a 1D numpy array of the same length as the dataset")
-            if i==0:
-                ydata=_np_.atleast_2d(ydat)
+                raise RuntimeError(
+                    "Y-data for fitting not defined - should either be an index or a 1D numpy array of the same length as the dataset"
+                )
+            if i == 0:
+                ydata = _np_.atleast_2d(ydat)
             else:
-                ydata=_np_.row_stack([ydata,ydat])
+                ydata = _np_.row_stack([ydata, ydat])
 
-        return xdat,ydata,sigma
+        return xdat, ydata, sigma
 
+    def _assemnle_data_to_fit(self, xcol, ycol, sigma, bounds, scale_covar, sigma_x=None):
+        """Marshall the data for doing a curve_fit or equivalent.
 
+        Parameters:
+            xcol (index): Column with xdata in it
+            ycol(index): Column with ydata in it
+            sigma (index or array-like): column of y-errors or uncertainity values.
+            bounds (callable): Used to select the data rows to fit
+            scale_covar (bool,None): If set the flag to scale the covariance.
 
-    def __lmfit_one(self,model,xcol,ydata,scale_covar,sigma,p0,prefix,**kargs):
+        Returns:
+            (data,scale_covar,col_assignments): data is a tuple of (x,y,sigma). scale_covar is False if sigma is real errors.
+        """
+        _ = self._col_args(xcol=xcol, ycol=ycol)
+        working = self.search(_.xcol, bounds)
+        working = ma.mask_rowcols(working, axis=0)
+        xdata = working[:, self.find_col(_.xcol)]
+        ydata = working[:, self.find_col(_.ycol)]
+        # Now check for sigma_y and sigma_x and have them default to sigma (which in turn defaults to None)
+
+        if sigma is not None:
+            if isinstance(sigma, index_types):
+                _ = self._col(xcol=xcol, ycol=ycol, yerr=sigma)
+                sigma = working[:, self.find_col(sigma)]
+            elif isinstance(sigma, (list, tuple)):
+                sigma = ma.array(sigma)
+            elif isinstance(sigma, _np_.ndarray):
+                sigma = ma.array(sigma)  # ensure masked
+            else:
+                raise RuntimeError("Sigma should have been a column index or list of values")
+        elif not isNone(_.yerr):
+            sigma = working[:, self.find_col(_.yerr)]
+        else:
+            sigma = ma.ones(len(xdata))
+            scale_covar = True
+
+        if sigma_x is None:
+            if _.xerr is None:
+                sigma_x = sigma
+            else:
+                sigma_x = working[:, self.find_col(_.xerr)]
+        else:
+            if isinstance(sigma_x, index_types):
+                _ = self._col(xcol=xcol, ycol=ycol, yerr=_.yerr, xerr=sigma_x)
+                sigma_x = working[:, self.find_col(sigma_x)]
+            elif isinstance(sigma_x, (list, tuple)):
+                sigma_x = ma.array(sigma_x)
+            elif isinstance(sigma_x, _np_.ndarray):
+                sigma_x = ma.array(sigma_x)  # ensure masked
+            else:
+                raise RuntimeError("Sigma_x should have been a column index or list of values")
+
+        mask = _np_.invert(ydata.mask)
+        sigma = sigma[mask]
+        ydata = ydata[mask]
+        xdata = xdata[mask]  # lmfit doesn't seem to work well with masked data - here we just delete masked points
+
+        return (xdata, ydata, sigma, sigma_x), scale_covar, _
+
+    def __lmfit_one(self, model, data, params, prefix, columns, scale_covar, **kargs):
         """Carry out a single fit wioth lmfit.
 
         Args:
             model (lmfit.Model): Configured model
-            xcol (int,str): index for x data
-            ydata (array): y data to fit
-            scale_covat (bool): Whether sigmas are absolute or relative.
-            sigma (array): Uncertainties of ydata.
-            p0 (dict): Dictionary of parameters including independent data
+            data (tuple of xdata,ydata,sigma): Data and errors to use in fitting
+            params (lmfit.Parameters): The parameters to use on the model for the fitting.
             prefix (str): Prefix for labels in metadata
+            columns (attribute dict): Column assignments
+            scale_covat (bool): Whether sigmas are absolute or relative.
 
         Keyword Arguments:
             result (bool,str): Where the result goes
@@ -676,17 +770,27 @@ class FittingMixin(object):
         if not _lmfit:
             raise RuntimeError("lmfit module not available.")
 
-        replace=kargs.pop("replace",False)
-        result=kargs.pop("result",False)
-        header=kargs.pop("header","")
-        residuals=kargs.pop("residuals",False)
-        output=kargs.pop("output","row")
-        ycol=kargs.pop("ycol",None)
-        fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
+        replace = kargs.pop("replace", False)
+        result = kargs.pop("result", False)
+        header = kargs.pop("header", "")
+        residuals = kargs.pop("residuals", False)
+        output = kargs.pop("output", "row")
+        kargs[model.independent_vars[0]] = data[0]
+        fit = model.fit(data[1], params, scale_covar=scale_covar, weights=1.0 / data[2], **kargs)
         if fit.success:
-            row=self._record_curve_fit_result(model,fit,xcol,header,result,replace,residuals=residuals,prefix=prefix,ycol=ycol)
+            row = self._record_curve_fit_result(
+                model,
+                fit,
+                columns.xcol,
+                header,
+                result,
+                replace,
+                residuals=residuals,
+                prefix=prefix,
+                ycol=columns.ycol,
+            )
 
-            retval = {"fit":(row[::2],fit.covar),"report": fit, "row": row, "full": (fit, row),"data":self}
+            retval = {"fit": (row[::2], fit.covar), "report": fit, "row": row, "full": (fit, row), "data": self}
             if output not in retval:
                 raise RuntimeError("Failed to recognise output format:{}".format(output))
             else:
@@ -694,105 +798,112 @@ class FittingMixin(object):
         else:
             raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
 
-    def _record_curve_fit_result(self,func,fit,xcol,header,result,replace,residuals=False,ycol=None,prefix=None):
+    def _record_curve_fit_result(
+        self, func, fit, xcol, header, result, replace, residuals=False, ycol=None, prefix=None
+    ):
         """Annotate the DataFile object with the curve_fit result."""
-        if isinstance(func,(lmfit.Model)):
-            f_name=func.__class__.__name__
-            func=func.func
-        elif isclass(func) and issubclass(func,lmfit.Model):
-            f_name=func.__name__
-            func=func.func
-        elif isinstance(func,(_sp_.odr.Model)):
-            f_name=func.meta["name"]
-            func=func.func
+        if isinstance(func, (lmfit.Model)):
+            f_name = func.__class__.__name__
+            func = func.func
+        elif isclass(func) and issubclass(func, lmfit.Model):
+            f_name = func.__name__
+            func = func.func
+        elif isinstance(func, (_sp_.odr.Model)):
+            f_name = func.meta["name"]
+            func = func.func
         else:
-            f_name=func.__name__
+            f_name = func.__name__
         if prefix is not None:
-            f_name=prefix
+            f_name = prefix
 
-        args = getfullargspec(func)[0] # pylint: disable=W1505
+        args = getfullargspec(func)[0]  # pylint: disable=W1505
         del args[0]
-        if isinstance(fit,_curve_fit_result): # Come from curve_fit
-            popt=fit.popt
-            perr=fit.perr
-            nfev=fit.nfev
-            chisq=fit.chisq
-        elif isinstance(fit,lmfit.model.ModelResult): # Come form an lmfit operation
-            popt=[fit.params[x].value for x in args]
-            perr=[fit.params[x].stderr for x in args]
-            nfev=fit.nfev
-            chisq=fit.redchi
-        elif isinstance(fit,_sp_.odr.Output):
-            popt=fit.beta
-            perr=fit.sd_beta
-            delta,eps=fit.delta,fit.eps
-            nfree=len(delta)-len(popt)
-            chisq=_np_.sum((delta**2+eps**2))/nfree
-            nfev=None
+        if isinstance(fit, _curve_fit_result):  # Come from curve_fit
+            popt = fit.popt
+            perr = fit.perr
+            nfev = fit.nfev
+            chisq = fit.chisq
+        elif isinstance(fit, lmfit.model.ModelResult):  # Come form an lmfit operation
+            popt = [fit.params[x].value for x in args]
+            perr = [fit.params[x].stderr for x in args]
+            nfev = fit.nfev
+            chisq = fit.redchi
+        elif isinstance(fit, _sp_.odr.Output):
+            popt = fit.beta
+            perr = fit.sd_beta
+            delta, eps = fit.delta, fit.eps
+            nfree = len(delta) - len(popt)
+            chisq = _np_.sum((delta ** 2 + eps ** 2)) / nfree
+            nfev = None
+        elif isinstance(fit, _sp_.optimize.OptimizeResult):
+            popt = fit.popt
+            perr = fit.perr
+            nfev = fit.nfev
+            nfree = len(self) - len(popt)
+            data = self.data[:, ycol]
+            fit_data = func(self.data[:, xcol], *popt)
+            chisq = _np_.sum((data - fit_data) ** 2) / nfree
         else:
             raise RuntimeError("Unable to understand {} as a fitting result".format(type(fit)))
 
-
-
-        for val,err,name in zip(popt,perr,args):
-            self['{}:{}'.format(f_name,name)] = val
-            self['{}:{} err'.format(f_name,name)] = err
-            self['{}:{} label'.format(f_name,name)]=name
+        for val, err, name in zip(popt, perr, args):
+            self["{}:{}".format(f_name, name)] = val
+            self["{}:{} err".format(f_name, name)] = err
+            self["{}:{} label".format(f_name, name)] = name
 
         if not isinstance(header, string_types):
-            header = 'Fitted with ' + func.__name__
+            header = "Fitted with " + func.__name__
 
         # Store our current mask, calculate new column's mask and turn off mask
-        tmp_mask=self.mask
-        col_mask=_np_.any(tmp_mask,axis=1)
-        self.mask=False
+        tmp_mask = self.mask
+        col_mask = _np_.any(tmp_mask, axis=1)
+        self.mask = False
 
-        if isinstance(result, bool) and result:#Appending data to end of data
+        if isinstance(result, bool) and result:  # Appending data to end of data
             result = None
-            tmp_mask=_np_.column_stack((tmp_mask,col_mask))
-        else: # Inserting data
-            tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
+            tmp_mask = _np_.column_stack((tmp_mask, col_mask))
+        else:  # Inserting data
+            tmp_mask = _np_.column_stack((tmp_mask[:, 0:result], col_mask, tmp_mask[:, result:]))
         if islike_list(xcol):
-            new_col=func(self[:,xcol].T,*popt)
+            new_col = func(self[:, xcol].T, *popt)
         else:
-            new_col=func(self.column(xcol),*popt)
-        self.add_column(new_col,index=result, replace=replace, header=header)
+            new_col = func(self.column(xcol), *popt)
+        self.add_column(new_col, index=result, replace=replace, header=header)
         if residuals:
             if not islike_list(ycol):
-                ycol=[ycol]
+                ycol = [ycol]
             for yc in ycol:
-                residual_vals=self.column(yc)-new_col
-                if isinstance(residuals,bool) and residuals:
+                residual_vals = self.column(yc) - new_col
+                if isinstance(residuals, bool) and residuals:
                     if result is None:
-                        residuals_idx=None
+                        residuals_idx = None
                     else:
-                        residuals_idx=self.find_col(result)+1
+                        residuals_idx = self.find_col(result) + 1
                 else:
-                    residuals_idx=residuals
-                self.add_column(residual_vals,index=residuals_idx, replace=False, header=header+":residuals")
-                self["{}:mean residual".format(f_name)]=_np_.mean(residual_vals)
+                    residuals_idx = residuals
+                self.add_column(residual_vals, index=residuals_idx, replace=False, header=header + ":residuals")
+                self["{}:mean residual".format(f_name)] = _np_.mean(residual_vals)
                 self["{}:std residual".format(f_name)] = _np_.std(residual_vals)
                 self["{}:chi^2".format(f_name)] = chisq
-                self["{}:chi^2 err".format(f_name)] = _np_.sqrt(2/len(residual_vals))*chisq
+                self["{}:chi^2 err".format(f_name)] = _np_.sqrt(2 / len(residual_vals)) * chisq
         if nfev is not None:
-            self["{}:nfev".format(f_name)]=nfev
+            self["{}:nfev".format(f_name)] = nfev
 
-
-        self.mask=tmp_mask
-        #Make row object
-        row=[]
-        ch=[]
-        for v,e,a in zip(popt,perr,args):
-            row.extend([v,e])
-            ch.extend([a,"{} stderr".format(a)])
+        self.mask = tmp_mask
+        # Make row object
+        row = []
+        ch = []
+        for v, e, a in zip(popt, perr, args):
+            row.extend([v, e])
+            ch.extend([a, "{} stderr".format(a)])
         row.append(chisq)
         ch.append("$\\chi^2$")
-        cls=self.data.__class__
-        row=cls(row)
-        row.column_headers=ch
+        cls = self.data.__class__
+        row = cls(row)
+        row.column_headers = ch
         return row
 
-    def _odr_one(self,data,model,prefix,_,**kargs):
+    def _odr_one(self, data, model, prefix, _, **kargs):
         """Carry out a single fit wioth odr.
 
         Args:
@@ -812,25 +923,29 @@ class FittingMixin(object):
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
         header = kargs.pop("header", None)
-        residuals=kargs.pop("residuals",False)
+        residuals = kargs.pop("residuals", False)
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
 
-
-        fit=_sp_.odr.ODR(data,model,beta0=model.estimate)
+        fit = _sp_.odr.ODR(data, model, beta0=model.estimate)
         try:
-            fit_result=fit.run()
-            fit_result.redchi=fit_result.sum_square/(len(fit_result.y)-len(fit_result.beta))
-            fit_result.chisqr=fit_result.sum_square
+            fit_result = fit.run()
+            fit_result.redchi = fit_result.sum_square / (len(fit_result.y) - len(fit_result.beta))
+            fit_result.chisqr = fit_result.sum_square
 
-            tmp="Beta:{}\nBeta Std Error:{}\nBeta Covariance:{}\n".format(fit_result.beta,fit_result.sd_beta,fit_result.cov_beta)
-            if hasattr(fit_result, 'info'):
-                tmp+="Residual Variance:{}\nInverse Condition #:{}\nReason(s) for Halting:\n".format(
-                                                fit_result.res_var,fit_result.inv_condnum)
+            tmp = "Beta:{}\nBeta Std Error:{}\nBeta Covariance:{}\n".format(
+                fit_result.beta, fit_result.sd_beta, fit_result.cov_beta
+            )
+            if hasattr(fit_result, "info"):
+                tmp += "Residual Variance:{}\nInverse Condition #:{}\nReason(s) for Halting:\n".format(
+                    fit_result.res_var, fit_result.inv_condnum
+                )
                 for r in fit_result.stopreason:
-                    tmp+='  %s\n' % r
-            tmp+="Sum of orthogonal distance (~chi^2):{}\nReduced Sum of Orthogonal distances (~reduced chi^2): {}\n".format(fit_result.chisqr,fit_result.redchi)
-            fit_result.fit_report=lambda :tmp
+                    tmp += "  %s\n" % r
+            tmp += "Sum of orthogonal distance (~chi^2):{}\nReduced Sum of Orthogonal distances (~reduced chi^2): {}\n".format(
+                fit_result.chisqr, fit_result.redchi
+            )
+            fit_result.fit_report = lambda: tmp
 
         except _sp_.odr.OdrError as err:
             print(err)
@@ -838,17 +953,24 @@ class FittingMixin(object):
         except _sp_.odr.OdrStop as err:
             print(err)
             return None
-        self._record_curve_fit_result(model,fit_result,_.xcol,header,result,replace,residuals,ycol=_.ycol,prefix=prefix)
-
+        self._record_curve_fit_result(
+            model, fit_result, _.xcol, header, result, replace, residuals, ycol=_.ycol, prefix=prefix
+        )
 
         row = []
         # Store our current mask, calculate new column's mask and turn off mask
 
-        param_names=getattr(model,"param_names",None)
-        for i,p in enumerate(param_names):
-            row.extend([fit_result.beta[i],fit_result.sd_beta[i]])
+        param_names = getattr(model, "param_names", None)
+        for i, p in enumerate(param_names):
+            row.extend([fit_result.beta[i], fit_result.sd_beta[i]])
         row.append(fit_result.redchi)
-        retval = {"fit":(row[::2],fit_result.cov_beta),"report": fit_result, "row": row, "full": (fit_result, row),"data":self}
+        retval = {
+            "fit": (row[::2], fit_result.cov_beta),
+            "report": fit_result,
+            "row": row,
+            "full": (fit_result, row),
+            "data": self,
+        }
         if output not in retval:
             raise RuntimeError("Failed to recognise output format:{}".format(output))
         else:
@@ -921,103 +1043,112 @@ class FittingMixin(object):
             User guide section :ref:`curve_fit_guide`
         """
 
-        _=self._col_args(scalar=False,xcol=xcol,ycol=ycol,yerr=sigma)
-        xcol,ycol,sigma=_.xcol,_.ycol,_.yerr
+        _ = self._col_args(scalar=False, xcol=xcol, ycol=ycol, yerr=sigma)
+        xcol, ycol, sigma = _.xcol, _.ycol, _.yerr
 
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
         header = kargs.pop("header", None)
-        residuals = kargs.pop("residuals",False)
-        prefix=kargs.pop("prefix",None)
+        residuals = kargs.pop("residuals", False)
+        prefix = kargs.pop("prefix", None)
 
-        #Support either scale_covar or absolute_sigma, the latter wins if both supplied
-        #If neither are specified, then if sigma is not given, absolute sigma will be False.
+        # Support either scale_covar or absolute_sigma, the latter wins if both supplied
+        # If neither are specified, then if sigma is not given, absolute sigma will be False.
 
         scale_covar = kargs.pop("scale_covar", sigma is not None)
         absolute_sigma = kargs.pop("absolute_sigma", not scale_covar)
-        #Support both asrow and output, the latter wins if both supplied
+        # Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
         kargs["full_output"] = True
 
-        if not isinstance(ycol,list):
-            ycol=[ycol,]
+        if not isinstance(ycol, list):
+            ycol = [ycol]
 
-        xdat,ydata,sigma = self._get_curve_fit_data(xcol,ycol, bounds,sigma)
+        xdat, ydata, sigma = self._get_curve_fit_data(xcol, ycol, bounds, sigma)
 
-        #Support any of our alternatives for the fitting function
-        if isinstance(func,type) and issubclass(func,(Model,_sp_.odr.Model)):
-            func=func()
-        if isinstance(func,_sp_.odr.Model): # scipy othrothogonal model hack
-            def _func(x,*beta):
-                return func.fcn(beta,x)
-            p0=kargs.pop("p0",func.estimate)
-        elif isinstance(func,Model):
-            _func=func.func
+        # Support any of our alternatives for the fitting function
+        if isinstance(func, type) and issubclass(func, (Model, _sp_.odr.Model)):
+            func = func()
+        if isinstance(func, _sp_.odr.Model):  # scipy othrothogonal model hack
+
+            def _func(x, *beta):
+                return func.fcn(beta, x)
+
+            p0 = kargs.pop("p0", func.estimate)
+        elif isinstance(func, Model):
+            _func = func.func
             try:
-                if "p0" not in kargs: #Avoid expensive guess if we have a p0
-                    pguess=func.guess
+                if "p0" not in kargs:  # Avoid expensive guess if we have a p0
+                    pguess = func.guess
                 else:
-                    pguess=None
+                    pguess = None
             except:
-                pguess=None
-            p0=kargs.pop("p0",pguess)
+                pguess = None
+            p0 = kargs.pop("p0", pguess)
         elif callable(func):
-            _func=func
-            p0=kargs.pop("p0",None)
+            _func = func
+            p0 = kargs.pop("p0", None)
         else:
-            raise TypeError("curve_fit parameter 1 must be either a Model class from lmfit or scipy.odr, or a callable, not a {}".format(type(func)))
+            raise TypeError(
+                "curve_fit parameter 1 must be either a Model class from lmfit or scipy.odr, or a callable, not a {}".format(
+                    type(func)
+                )
+            )
 
-        if callable(p0): # Allow the user to suppy p0 as a callanble function
-            if ydata.ndim!=1:
-                yy=ydata.ravel()
+        if callable(p0):  # Allow the user to suppy p0 as a callanble function
+            if ydata.ndim != 1:
+                yy = ydata.ravel()
             else:
-                yy=ydata
-            try: #Skip the guess if it fails
-                p0=p0(yy,xdat)
+                yy = ydata
+            try:  # Skip the guess if it fails
+                p0 = p0(yy, xdat)
             except:
-                p0=None
+                p0 = None
 
-        p0=_curve_fit_p0_list(p0,func)
+        p0 = _curve_fit_p0_list(p0, func)
 
-        retvals=[]
-        i=None
-        for i,ydat in enumerate(ydata):
+        retvals = []
+        i = None
+        for i, ydat in enumerate(ydata):
 
-            if isinstance(sigma,_np_.ndarray) and sigma.shape[0]>1:
-                if sigma.shape[0]==len(ycol):
-                    s=sigma[i]
-                elif len(sigma.shape)==2 and sigma.shape[1]==len(ycol):
-                    s=sigma[:,i]
+            if isinstance(sigma, _np_.ndarray) and sigma.shape[0] > 1:
+                if sigma.shape[0] == len(ycol):
+                    s = sigma[i]
+                elif len(sigma.shape) == 2 and sigma.shape[1] == len(ycol):
+                    s = sigma[:, i]
                 else:
-                    s=sigma # probably this will fail!
+                    s = sigma  # probably this will fail!
             else:
-                s=sigma
-            report=_curve_fit_result(*curve_fit(_func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs))
-            report.func=func
+                s = sigma
+            report = _curve_fit_result(
+                *curve_fit(_func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs)
+            )
+            report.func = func
             if p0 is None:
-                report.p0=_np_.ones(len(report.popt))
+                report.p0 = _np_.ones(len(report.popt))
             else:
-                report.p0=p0
-            report.data=self
-            report.residual_vals=ydata-report.fvec
-            report.chisq=(report.residual_vals**2).sum()
-            report.nfree=len(self)-len(report.popt)
-            report.chisq/=report.nfree
-
+                report.p0 = p0
+            report.data = self
+            report.residual_vals = ydata - report.fvec
+            report.chisq = (report.residual_vals ** 2).sum()
+            report.nfree = len(self) - len(report.popt)
+            report.chisq /= report.nfree
 
             if result is not None:
-                self._record_curve_fit_result(func,report,xcol,header,result,replace,residuals=residuals,ycol=ycol,prefix=prefix)
+                self._record_curve_fit_result(
+                    func, report, xcol, header, result, replace, residuals=residuals, ycol=ycol, prefix=prefix
+                )
             try:
-                retvals.append(getattr(report,output))
+                retvals.append(getattr(report, output))
             except AttributeError:
                 raise RuntimeError("Specified output: {}, from curve_fit not recognised".format(kargs["output"]))
-        if i==0:
-            retvals=retvals[0]
+        if i == 0:
+            retvals = retvals[0]
         return retvals
 
-    def differential_evolution(self,model,xcol=None,ycol=None,p0=None, sigma=None, **kargs):
+    def differential_evolution(self, model, xcol=None, ycol=None, p0=None, sigma=None, **kargs):
         """Fit model to the data using a differential evolution algorithm.
           Args:
             model (lmfit.Model): An instance of an lmfit.Model that represents the model to be fitted to the data
@@ -1051,67 +1182,50 @@ class FittingMixin(object):
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
-        residuals = kargs.pop("residuals",False)
+        residuals = kargs.pop("residuals", False)
         header = kargs.pop("header", None)
         # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
         absolute_sigma = kargs.pop("absolute_sigma", True)
         scale_covar = kargs.pop("scale_covar", not absolute_sigma)
-        #Support both asrow and output, the latter wins if both supplied
+        # Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
 
-        model,p0,prefix=_prep_lmfit_model(model,p0,kargs)
+        data, scale_covar, _ = self._assemnle_data_to_fit(xcol, ycol, sigma, bounds, scale_covar)
+        data = data[0:3]
+        model, prefix = _prep_lmfit_model(model, kargs)
+        p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kargs)
 
-        _=self._col_args(xcol=xcol,ycol=ycol)
-        working = self.search(_.xcol, bounds)
-        working = ma.mask_rowcols(working, axis=0)
-
-        xdata = working[:, self.find_col(_.xcol)]
-        ydata = working[:, self.find_col(_.ycol)]
-
-        p0,single_fit = _prep_lmfit_p0(model,ydata,xdata,p0,kargs)
-
-        if sigma is not None:
-            if isinstance(sigma, index_types):
-                sigma = working[:, self.find_col(sigma)]
-            elif isinstance(sigma, (list, tuple)):
-                sigma = ma.array(sigma)
-            elif isinstance(sigma,_np_.ndarray):
-                sigma = ma.array(sigma) #ensure masked
-            else:
-                raise RuntimeError("Sigma should have been a column index or list of values")
-        elif not isNone(_.yerr):
-            sigma = working[:, self.find_col(_.yerr)]
-        else:
-            sigma = ma.ones(len(xdata))
-            scale_covar = True
-        mask=_np_.invert(ydata.mask)
-        sigma = sigma[mask]
-        ydata = ydata[mask]
-        xdata = xdata[mask] #lmfit doesn't seem to work well with masked data - here we just delete masked points
-        if isinstance(p0,Parameters):
-            for p,pp in p0.items():
-                model.set_param_hint(p,value=pp.value,vary=pp.vary,min=pp.min,max=pp.max,expr=pp.expr)
         for k in model.param_names:
-            kargs.pop(k,None)
+            kargs.pop(k, None)
 
-        model=MimizerAdaptor(model)
+        diff_model = MimizerAdaptor(model, params=p0)
 
-        kargs["polish"]=kargs.get("polish",True)
+        kargs["polish"] = kargs.get("polish", True)
 
-        res=differential_evolution(model.minimize_func,model.bounds,(xdata,ydata,sigma),**kargs)
-        if not res.success:
-            raise RuntimeError(res.message)
-        popt=res.x
-        model.popt=popt
-        covar=model.covariance(xdata,ydata,sigma)
-        perr=_np_.sqrt(_np_.diag(covar))
-        pass
+        if not single_fit:
+            raise NotImplementedError("Sorry chi^2 mapping not implemented for differential evolution yet.")
+        fit = differential_evolution(diff_model.minimize_func, diff_model.bounds, data, **kargs)
+        if not fit.success:
+            raise RuntimeError(fit.message)
+        popt, pcov = _sp_.optimize.curve_fit(
+            model.func, data[0], data[1], sigma=data[2], p0=fit.x, absolute_sigma=not scale_covar
+        )
+        model.popt = popt
+        fit.covar = pcov
+        fit.popt = popt
+        fit.perr = _np_.sqrt(_np_.diag(fit.covar))
+        row = self._record_curve_fit_result(
+            model, fit, _.xcol, header, result, replace, residuals=residuals, prefix=prefix, ycol=_.ycol
+        )
 
+        retval = {"fit": (row[::2], fit.covar), "report": fit, "row": row, "full": (fit, row), "data": self}
+        if output not in retval:
+            raise RuntimeError("Failed to recognise output format:{}".format(output))
+        else:
+            return retval[output]
 
-
-
-    def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None,**kargs):
+    def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None, **kargs):
         r"""Wrapper around lmfit module fitting.
 
         Args:
@@ -1163,63 +1277,41 @@ class FittingMixin(object):
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
-        residuals = kargs.pop("residuals",False)
+        residuals = kargs.pop("residuals", False)
         header = kargs.pop("header", None)
         # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
         absolute_sigma = kargs.pop("absolute_sigma", True)
         scale_covar = kargs.pop("scale_covar", not absolute_sigma)
-        #Support both asrow and output, the latter wins if both supplied
+        # Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
 
-        model,p0,prefix=_prep_lmfit_model(model,p0,kargs)
-
-        _=self._col_args(xcol=xcol,ycol=ycol)
-        working = self.search(_.xcol, bounds)
-        working = ma.mask_rowcols(working, axis=0)
-
-        xdata = working[:, self.find_col(_.xcol)]
-        ydata = working[:, self.find_col(_.ycol)]
-
-        p0,single_fit = _prep_lmfit_p0(model,ydata,xdata,p0,kargs)
-
-        if sigma is not None:
-            if isinstance(sigma, index_types):
-                sigma = working[:, self.find_col(sigma)]
-            elif isinstance(sigma, (list, tuple)):
-                sigma = ma.array(sigma)
-            elif isinstance(sigma,_np_.ndarray):
-                sigma = ma.array(sigma) #ensure masked
-            else:
-                raise RuntimeError("Sigma should have been a column index or list of values")
-        elif not isNone(_.yerr):
-            sigma = working[:, self.find_col(_.yerr)]
-        else:
-            sigma = ma.ones(len(xdata))
-            scale_covar = True
-        mask=_np_.invert(ydata.mask)
-        sigma = sigma[mask]
-        ydata = ydata[mask]
-        xdata = xdata[mask] #lmfit doesn't seem to work well with masked data - here we just delete masked points
-        xvar = model.independent_vars[0]
-        if isinstance(p0,Parameters):
-            for p,pp in p0.items():
-                model.set_param_hint(p,value=pp.value,vary=pp.vary,min=pp.min,max=pp.max,expr=pp.expr)
-            p0=None
-        if p0 is None: # We're working off parameter hints, but still need to set the independent var
-            p0=dict()
+        data, scale_covar, _ = self._assemnle_data_to_fit(xcol, ycol, sigma, bounds, scale_covar)
+        model, prefix = _prep_lmfit_model(model, kargs)
+        p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kargs)
 
         if single_fit:
-            p0[xvar] = xdata
-
-            ret_val=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix,result=result,header=header,replace=replace,output=output,residuals=residuals,ycol=_.ycol)
-        else: # chi^2 mode
-            pn=p0
-            ret_val=_np_.zeros((pn.shape[0],pn.shape[1]*2+1))
-            for i,pn_i in enumerate(pn): # iterate over every row in the supplied p0 values
-                pn_i=_lmfit_p0_dict(pn_i,model)
-                pn_i[xvar] = xdata
-                ret_val[i,:]=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,pn_i,prefix,ycol=_.ycol)
+            ret_val = self.__lmfit_one(
+                model,
+                data,
+                p0,
+                prefix,
+                _,
+                scale_covar,
+                result=result,
+                header=header,
+                replace=replace,
+                output=output,
+                residuals=residuals,
+            )
+        else:  # chi^2 mode
+            pn = p0
+            ret_val = _np_.zeros((pn.shape[0], pn.shape[1] * 2 + 1))
+            for i, pn_i in enumerate(pn):  # iterate over every row in the supplied p0 values
+                p0 = _prep_lmfit_p0(
+                    model, data[1], data[0], p0, kargs
+                )  # model, data, params, prefix, columns, scale_covar,**kargs)
+                ret_val[i, :] = self.__lmfit_one(model, data, p0, prefix, _, scale_covar, output="row")
         return ret_val
 
     def odr(self, model, xcol=None, ycol=None, **kargs):
@@ -1276,45 +1368,26 @@ class FittingMixin(object):
             :py:meth:`AnalysisMixin.lmfit`
             User guide section :ref:`fitting_with_limits`
         """
-        bounds = kargs.pop("bounds", lambda x, y: not _np_.any(y.mask))
-        #First of all check for a sigma keyword
-        sigma=kargs.pop("sigma",None)
-        #Now check for sigma_y and sigma_x and have them default to sigma (which in turn defaults to None)
-        sigma_y=kargs.pop("sigma_y",sigma)
-        sigma_x=kargs.pop("sigma_x",sigma)
         # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
         absolute_sigma = kargs.pop("absolute_sigma", True)
-        kargs.pop("scale_covar", not absolute_sigma)
-        #Support both asrow and output, the latter wins if both supplied
-        p0=kargs.pop("p0",None)
-
-        _=self._col_args(xcol=xcol,ycol=ycol,xerr=sigma_x,yerr=sigma_y)
-        working = self.search(_.xcol, bounds)
-        working = ma.mask_rowcols(working, axis=0)
-
-        xdata = working[:, self.find_col(_.xcol)]
-        ydata = working[:, self.find_col(_.ycol)]
-
-        p0,single_fit = _prep_odr_p0(model,ydata,xdata,p0,kargs)
-        model,p0,prefix=_prepodr_Model(model,p0,kargs)
-
-
-        if not _.has_xerr:
-            sx=_np_.ones_like(xdata)
-        else:
-            sx=working[:, self.find_col(_.xerr)]
-        if not _.has_yerr:
-            sy=_np_.ones_like(ydata)
-        else:
-            sy=working[:, self.find_col(_.yerr)]
-
+        scale_covar = kargs.pop("scale_covar", not absolute_sigma)
+        # Support both asrow and output, the latter wins if both supplied
+        sigma = kargs.pop("sigma", None)
+        sigma_x = kargs.pop("sigma_x", None)
+        bounds = kargs.pop("boinds", lambda x, r: True)
+        p0 = kargs.pop("p0", None)
+        data, scale_covar, _ = self._assemnle_data_to_fit(xcol, ycol, sigma, bounds, scale_covar, sigma_x=sigma_x)
+        model, prefix = _prep_lmfit_model(model, kargs)
+        p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kargs)
+        kargs["p0"] = p0
+        model = odr_Model(model, p0=p0)
         if not absolute_sigma:
-            data=_sp_.odr.Data(xdata,ydata,wd=1/sx**2,we=1/sy**2)
+            data = _sp_.odr.Data(data[0], data[1], wd=1 / data[3] ** 2, we=1 / data[2] ** 2)
         else:
-            data=_sp_.odr.RealData(xdata,ydata,sx=sx,sy=sy)
+            data = _sp_.odr.RealData(data[0], data[1], sx=data[3], sy=data[2])
 
         if single_fit:
-            ret_val=self._odr_one(data,model,prefix,_,**kargs)
-        else: # chi^2 mode
+            ret_val = self._odr_one(data, model, prefix, _, **kargs)
+        else:  # chi^2 mode
             raise NotImplementedError("Sorry cannot do chi^2 mode for orthogonal distance regression yet!")
         return ret_val

@@ -2,20 +2,30 @@
 """Plot Templates module - contains classes that style plots produced by :class:`.Data`
 """
 
-__all__=["TexFormatter","DefaultPlotStyle","GBPlotStyle","JTBPlotStyle","JTBinsetStyle","PRBPlotStyle","SketchPlot","SeabornPlotStyle"]
+__all__ = [
+    "TexFormatter",
+    "DefaultPlotStyle",
+    "GBPlotStyle",
+    "JTBPlotStyle",
+    "JTBinsetStyle",
+    "PRBPlotStyle",
+    "SketchPlot",
+    "SeabornPlotStyle",
+]
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter, Formatter
 from matplotlib.ticker import AutoLocator
-from os.path import join, dirname, realpath,exists
+from os.path import join, dirname, realpath, exists
 from numpy.random import normal
 from inspect import getfile
-from collections import MutableMapping,Mapping
+from collections import MutableMapping, Mapping
 
 try:
     import seaborn as sns
-    SEABORN=True
+
+    SEABORN = True
 except ImportError:
-    SEABORN=False
+    SEABORN = False
 
 import numpy as _np_
 
@@ -24,8 +34,9 @@ def _add_dots(key):
     """replace __ with . in key."""
     return key.replace("__", ".").replace("..", "__")
 
+
 def _remove_dots(key):
-    return key.replace(".","__")
+    return key.replace(".", "__")
 
 
 class TexFormatter(Formatter):
@@ -56,11 +67,11 @@ class TexFormatter(Formatter):
     def format_data_short(self, value):
         return "{:g}".format(value)
 
-    def _round(self,value):
+    def _round(self, value):
         for i in range(5):
-            vt=_np_.round(value,i)
-            if _np_.abs(value-vt)<10**(-i-2):
-                value=vt
+            vt = _np_.round(value, i)
+            if _np_.abs(value - vt) < 10 ** (-i - 2):
+                value = vt
                 break
         return value
 
@@ -81,7 +92,15 @@ class TexEngFormatter(EngFormatter):
         15: "P",
         18: "E",
         21: "Z",
-        24: "Y", -3: "m", -6: "\\mu", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
+        24: "Y",
+        -3: "m",
+        -6: "\\mu",
+        -9: "n",
+        -12: "p",
+        -15: "f",
+        -18: "a",
+        -21: "z",
+        -24: "y",
     }
 
     def __call__(self, value, pos=None):
@@ -90,9 +109,9 @@ class TexEngFormatter(EngFormatter):
             ret = ""
         elif value != 0.0:
             power = _np_.floor(_np_.log10(_np_.abs(value)))
-            pre=_np_.ceil(power/3.0)*3
+            pre = _np_.ceil(power / 3.0) * 3
             power = power % 3
-            if pre==0:
+            if pre == 0:
                 ret = "${}\\,\\mathrm{{{}}}$".format(self._round(value), self.unit)
             else:
                 v = self._round(value / (10 ** pre))
@@ -107,14 +126,13 @@ class TexEngFormatter(EngFormatter):
     def format_data_short(self, value):
         return "{:g}".format(value)
 
-    def _round(self,value):
+    def _round(self, value):
         for i in range(5):
-            vt=_np_.round(value,i)
-            if _np_.abs(value-vt)<10**(-i-4):
-                value=vt
+            vt = _np_.round(value, i)
+            if _np_.abs(value - vt) < 10 ** (-i - 4):
+                value = vt
                 break
         return value
-
 
 
 class DefaultPlotStyle(MutableMapping):
@@ -143,15 +161,15 @@ class DefaultPlotStyle(MutableMapping):
 
     """
 
-    #Internal class attributes.
+    # Internal class attributes.
     _inches_per_pt = 1.0 / 72.27  # Convert pt to inch
     _mm_per_inch = 25.4
     _golden_mean = (_np_.sqrt(5) - 1.0) / 2.0  # Aesthetic ratio
 
-    #Settings for this figure type. All instance attributes which start template_
-    #will be used. Once the leading template_ is stripped, all _ characters are replaced
-    #with . and then the attributes are mapped to a dictionary and used to update the rcParams
-    #dictionary
+    # Settings for this figure type. All instance attributes which start template_
+    # will be used. Once the leading template_ is stripped, all _ characters are replaced
+    # with . and then the attributes are mapped to a dictionary and used to update the rcParams
+    # dictionary
 
     show_xlabel = True
     show_ylabel = True
@@ -171,59 +189,59 @@ class DefaultPlotStyle(MutableMapping):
             "xlabel": (False, False, True),
             "ylabel": (True, True, True),
             "zlabel": (False, False, False),
-            "title": (True, False, False)
+            "title": (True, False, False),
         },
         "subplots": {
             "xlabel": (True, True, True),
             "ylabel": (True, True, True),
             "zlabel": (False, False, False),
-            "title": (True, True, True)
+            "title": (True, True, True),
         },
         "y2": {
             "xlabel": (True, False, False),
             "ylabel": (True, True, True),
             "zlabel": (False, False, False),
-            "title": (True, False, False)
-        }
+            "title": (True, False, False),
+        },
     }
 
-    def __init__(self, *args,**kargs):
+    def __init__(self, *args, **kargs):
         """Create a template instance of this template.
 
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
         may be specified, with .'s replaced with __. A Mapping type object may be supplied as the first argument
         which will be used to upodate the rcParams first.
         """
-        self._stylesheet=None
+        self._stylesheet = None
         self.update(**kargs)
 
     def __call__(self, **kargs):
         """Calling the template object can manipulate the rcParams that will be set."""
-        for k,v in kargs.items():
+        for k, v in kargs.items():
             if k.startswith("template_"):
                 nk = _add_dots(k[:9])
                 if nk in plt.rcParams:
-                    super(DefaultPlotStyle, self).__setattr__(nk,v)
-                    self[nk]=v
+                    super(DefaultPlotStyle, self).__setattr__(nk, v)
+                    self[nk] = v
             else:
-                self.update({_add_dots(k):v})
+                self.update({_add_dots(k): v})
 
-    def __delitem__(self,name):
-        if hasattr(self,name):
-            default=getattr(self.__class__(),name)
-            setattr(self,name,default)
+    def __delitem__(self, name):
+        if hasattr(self, name):
+            default = getattr(self.__class__(), name)
+            setattr(self, name, default)
         elif name in plt.rcParams:
-            params=dict(plt.rcParams)
+            params = dict(plt.rcParams)
             del params[name]
             plt.rcdefaults()
             plt.rcParams.update(params)
-            super(DefaultPlotStyle,self).__delattr__(_remove_dots("template_{}".format(name)))
+            super(DefaultPlotStyle, self).__delattr__(_remove_dots("template_{}".format(name)))
         else:
             raise KeyError("{} is not recognised as part of the template".format(name))
 
     def __getattr__(self, name):
         """Provide magic to read certain attributes of the template."""
-        if name.startswith("template_"):  #Magic conversion to rcParams
+        if name.startswith("template_"):  # Magic conversion to rcParams
             attrname = _add_dots(name[9:])
             if attrname in plt.rcParams:
                 return plt.rcParams[attrname]
@@ -234,7 +252,7 @@ class DefaultPlotStyle(MutableMapping):
         else:
             return super(DefaultPlotStyle, self).__getattribute__(name)
 
-    def __getitem__(self,name):
+    def __getitem__(self, name):
         try:
             return self.__getattr__(name)
         except AttributeError:
@@ -245,17 +263,17 @@ class DefaultPlotStyle(MutableMapping):
             raise KeyError("{} is not recognised as part of the template".format(name))
 
     def __iter__(self):
-        attrs=[x for x in dir(self) if self._allowed_attr(x)]
-        attrs+=list(plt.rcParams.keys())
+        attrs = [x for x in dir(self) if self._allowed_attr(x)]
+        attrs += list(plt.rcParams.keys())
         attrs.sort()
         for f in attrs:
             yield f
 
     def __len__(self):
-        i=-1
-        for i,x in enumerate(self):
+        i = -1
+        for i, x in enumerate(self):
             pass
-        return i+1
+        return i + 1
 
     def __setattr__(self, name, value):
         """Ensure stylesheet can't be overwritten and provide magic for template attributes."""
@@ -266,50 +284,55 @@ class DefaultPlotStyle(MutableMapping):
         else:
             super(DefaultPlotStyle, self).__setattr__(name, value)
 
-    def __setitem__(self,name,value):
-        if hasattr(self,name):
-            setattr(self,name,value)
+    def __setitem__(self, name, value):
+        if hasattr(self, name):
+            setattr(self, name, value)
         else:
             if name in plt.rcParams:
-                plt.rcParams[name]=value
-                name=_remove_dots("template_{}".format(name))
+                plt.rcParams[name] = value
+                name = _remove_dots("template_{}".format(name))
                 super(DefaultPlotStyle, self).__setattr__(name, value)
             else:
                 raise KeyError("{} is not recognised as part of the template".format(name))
 
-    def _allowed_attr(self,x,template=False):
-        return ( not x.startswith("_") and
-                (not template)^x.startswith("template_") and
-                not callable(x) and
-                not isinstance(getattr(type(self),x,None),property) )
-
+    def _allowed_attr(self, x, template=False):
+        return (
+            not x.startswith("_")
+            and (not template) ^ x.startswith("template_")
+            and not callable(x)
+            and not isinstance(getattr(type(self), x, None), property)
+        )
 
     @property
     def stylesheet(self):
         """Horribly hacky method to traverse over the class heirarchy for style sheet names."""
-        if self._stylesheet is not None and self._stylesheet[0]==self.stylename: # Have we cached a copy of our stylesheets ?
+        if (
+            self._stylesheet is not None and self._stylesheet[0] == self.stylename
+        ):  # Have we cached a copy of our stylesheets ?
             return self._stylesheet[1]
         levels = type.mro(type(self))[:-1]
-        sheets=[]
-        classes=[]
-        for c in levels: # Iterate through all possible parent classes and build a list of stylesheets
-            if c is self.__class__ or c in classes or not isinstance(c,DefaultPlotStyle):
+        sheets = []
+        classes = []
+        for c in levels:  # Iterate through all possible parent classes and build a list of stylesheets
+            if c is self.__class__ or c in classes or not isinstance(c, DefaultPlotStyle):
                 continue
-            for f in [join(realpath(dirname(getfile(c))), c.stylename + ".mplstyle"),
-                      join(dirname(realpath(getfile(c))), "stylelib",c.stylename + ".mplstyle"),
-                      join(dirname(realpath(__file__)), "stylelib",c.stylename + ".mplstyle"),
-                ]: # Look in first of all the same directory as the class file and then in a stylib folder
+            for f in [
+                join(realpath(dirname(getfile(c))), c.stylename + ".mplstyle"),
+                join(dirname(realpath(getfile(c))), "stylelib", c.stylename + ".mplstyle"),
+                join(dirname(realpath(__file__)), "stylelib", c.stylename + ".mplstyle"),
+            ]:  # Look in first of all the same directory as the class file and then in a stylib folder
                 if exists(f):
                     sheets.append(f)
                     break
-            else: # Fallback, does the parent class define a builtin stylesheet ?
+            else:  # Fallback, does the parent class define a builtin stylesheet ?
                 if c.stylename in plt.style.available:
                     sheets.append(c.stylename)
-            classes.append(c) # Stop double visiting files
-        #Now do the same for this class, but allow the stylename to be an instance variable as well
-        for f in [join(dirname(realpath(getfile(self.__class__))), self.stylename + ".mplstyle"),
-                  join(dirname(realpath(getfile(self.__class__))), "stylelib",self.stylename + ".mplstyle"),
-            ]:
+            classes.append(c)  # Stop double visiting files
+        # Now do the same for this class, but allow the stylename to be an instance variable as well
+        for f in [
+            join(dirname(realpath(getfile(self.__class__))), self.stylename + ".mplstyle"),
+            join(dirname(realpath(getfile(self.__class__))), "stylelib", self.stylename + ".mplstyle"),
+        ]:
             if exists(f):
                 sheets.append(f)
                 break
@@ -317,26 +340,26 @@ class DefaultPlotStyle(MutableMapping):
             if self.stylename in plt.style.available:
                 sheets.append(self.stylename)
 
-        self._stylesheet=self.stylename,sheets
+        self._stylesheet = self.stylename, sheets
         return sheets
 
     @stylesheet.setter
-    def stylesheet(self,value):
+    def stylesheet(self, value):
         """Just stop the stylesheet from being set."""
         raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
 
     def clear(self):
         """Custom clear method that resets everything back o defaults."""
-        attrs=[x for x in dir(self) if self._allowed_attr(x)]
-        defaults=self.__class__()
+        attrs = [x for x in dir(self) if self._allowed_attr(x)]
+        defaults = self.__class__()
         for attr in attrs:
-            setattr(self,attr,getattr(defaults,attr))
+            setattr(self, attr, getattr(defaults, attr))
         plt.rcdefaults()
-        attrs=[x for x in dir(self) if self._allowed_attr(x,template=True)]
+        attrs = [x for x in dir(self) if self._allowed_attr(x, template=True)]
         for attr in attrs:
-            delattr(self,attr)
+            delattr(self, attr)
 
-    def update(self, *args,**kargs):
+    def update(self, *args, **kargs):
         """Update the template with new attributes from keyword arguments.
 
         Up to one positional argument may be supplied
@@ -344,13 +367,15 @@ class DefaultPlotStyle(MutableMapping):
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
-        if len(args)==1 and isinstance(args[0],Mapping):
-            super(DefaultPlotStyle,self).update(args[0])
-        elif len(args)>0:
-            raise SyntaxError("Only one posotional argument which should be a Mapping subclass can be supplied toi update.")
+        if len(args) == 1 and isinstance(args[0], Mapping):
+            super(DefaultPlotStyle, self).update(args[0])
+        elif len(args) > 0:
+            raise SyntaxError(
+                "Only one posotional argument which should be a Mapping subclass can be supplied toi update."
+            )
         for k in kargs:
             if k in dir(self) and not callable(self.__getattr__(k)):
-                self.__setattr__(k,kargs[k])
+                self.__setattr__(k, kargs[k])
             elif not k.startswith("_"):
                 self.__setattr__("template_" + k, kargs[k])
 
@@ -374,12 +399,12 @@ class DefaultPlotStyle(MutableMapping):
                 if attrname in plt.rcParams.keys():
                     params[attrname] = value
         plt.rcParams.update(params)  # Apply these parameters
-        projection=kargs.pop("projection","rectilinear")
-        self.template_figure__figsize=kargs.pop("figsize",self.template_figure__figsize)
-        if "ax" in kargs: # Giving an axis instance in kargs means we can use that as out figure
-            ax=kargs.get("ax")
+        projection = kargs.pop("projection", "rectilinear")
+        self.template_figure__figsize = kargs.pop("figsize", self.template_figure__figsize)
+        if "ax" in kargs:  # Giving an axis instance in kargs means we can use that as out figure
+            ax = kargs.get("ax")
             plt.sca(ax)
-            figure=plt.gcf().number
+            figure = plt.gcf().number
         if isinstance(figure, bool) and not figure:
             ret = None
         elif figure is not None:
@@ -394,9 +419,9 @@ class DefaultPlotStyle(MutableMapping):
                     ax = fig.add_axes(rect)
             else:
                 if projection == "3d":
-                    ax = kargs.pop("ax",fig.gca(projection="3d"))
+                    ax = kargs.pop("ax", fig.gca(projection="3d"))
                 else:
-                    ax = kargs.pop("ax",fig.gca())
+                    ax = kargs.pop("ax", fig.gca())
 
             ret = fig
         else:
@@ -411,12 +436,12 @@ class DefaultPlotStyle(MutableMapping):
         """Scan for all attributes that start template_ and build them into a dictionary to update matplotlib settings with."""
         plt.style.use(self.stylesheet)
         for attr in dir(self):
-            v=getattr(self,attr)
+            v = getattr(self, attr)
             if not attr.startswith("template_"):
                 continue
-            attr=_add_dots(attr[9:])
+            attr = _add_dots(attr[9:])
             if attr in plt.rcParams:
-                plt.rcParams[attr]=v
+                plt.rcParams[attr] = v
 
         self.customise()
 
@@ -490,6 +515,7 @@ class DefaultPlotStyle(MutableMapping):
         except AttributeError:
             pass
 
+
 class GBPlotStyle(DefaultPlotStyle):
 
     """Template developed for Gavin's plotting.
@@ -516,8 +542,8 @@ class GBPlotStyle(DefaultPlotStyle):
         ax.spines["right"].set_visible(False)
         ax.xaxis.set_ticks_position("bottom")
         ax.yaxis.set_ticks_position("left")
-        ax.spines["left"].set_position('zero')
-        ax.spines["bottom"].set_position('zero')
+        ax.spines["left"].set_position("zero")
+        ax.spines["bottom"].set_position("zero")
         plt.draw
 
 
@@ -620,7 +646,8 @@ class SketchPlot(DefaultPlotStyle):
 
         plt.draw
 
-if SEABORN: # extra classes if we have seaborn available
+
+if SEABORN:  # extra classes if we have seaborn available
 
     class SeabornPlotStyle(DefaultPlotStyle):
 
@@ -637,9 +664,9 @@ if SEABORN: # extra classes if we have seaborn available
                 :outname: seabornstyle
         """
 
-        _stylename=None
-        _context=None
-        _palette=None
+        _stylename = None
+        _context = None
+        _palette = None
 
         @property
         def context(self):
@@ -647,10 +674,10 @@ if SEABORN: # extra classes if we have seaborn available
             return self._context
 
         @context.setter
-        def context(self,name):
+        def context(self, name):
             """Limit context to allowed values."""
             if name in ["paper", "notebook", "talk", "poster"]:
-                self._context=name
+                self._context = name
             else:
                 raise AttributeError("style name should be one of  {paper,notebook,talk,poster}")
 
@@ -660,12 +687,12 @@ if SEABORN: # extra classes if we have seaborn available
             return self._palette
 
         @context.setter
-        def palette(self,name):
+        def palette(self, name):
             """Force palette to take allowed values."""
             try:
                 with sns.color_palette(name):
                     pass
-                self._palette=name
+                self._palette = name
             except Exception as e:
                 raise e
 
@@ -675,13 +702,12 @@ if SEABORN: # extra classes if we have seaborn available
             return self._stylename
 
         @stylename.setter
-        def stylename(self,name):
+        def stylename(self, name):
             """Force stylename to take allowed values only."""
             if name in ["darkgrid", "whitegrid", "dark", "white", "ticks"]:
-                self._stylename=name
+                self._stylename = name
             else:
                 raise AttributeError("style name should be one of  {darkgrid, whitegrid, dark, white, ticks}")
-
 
         def apply(self):
             """Override base method to apply seaborn style sheets."""
@@ -690,5 +716,6 @@ if SEABORN: # extra classes if we have seaborn available
             sns.set_palette(sns.color_palette(self._palette))
             self.customise()
 
+
 else:
-    SeabornPlotStyle=DefaultPlotStyle
+    SeabornPlotStyle = DefaultPlotStyle

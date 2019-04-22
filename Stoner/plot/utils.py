@@ -34,27 +34,31 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-__all__ = ["errorfill","extrema_from_error_input","fill_between","fill_between_x"]
+__all__ = ["errorfill", "extrema_from_error_input", "fill_between", "fill_between_x"]
 import warnings
 
 import numpy as np
 import matplotlib.pyplot as plt
-from Stoner.compat import LooseVersion,mpl_version
+from Stoner.compat import LooseVersion, mpl_version
 
-__all__ = ['errorfill']
+__all__ = ["errorfill"]
 
 
-def errorfill(x, y,
-              yerr=None,
-              xerr=None,
-              color=None,
-              ls=None,
-              lw=None,
-              alpha=1,
-              alpha_fill=0.5,
-              label='',
-              label_fill='',
-              ax=None, **kargs):
+def errorfill(
+    x,
+    y,
+    yerr=None,
+    xerr=None,
+    color=None,
+    ls=None,
+    lw=None,
+    alpha=1,
+    alpha_fill=0.5,
+    label="",
+    label_fill="",
+    ax=None,
+    **kargs
+):
     """Plot data with errors marked by a filled region.
 
     Args:
@@ -76,14 +80,14 @@ def errorfill(x, y,
     alpha_fill *= alpha
 
     if color is None:
-        if LooseVersion(mpl_version)<LooseVersion('1.5.0'):
+        if LooseVersion(mpl_version) < LooseVersion("1.5.0"):
             color = next(ax._get_lines.color_cycle)
         else:
             color = next(ax._get_lines.prop_cycler)["color"]
     if ls is None:
-        ls = plt.rcParams['lines.linestyle']
+        ls = plt.rcParams["lines.linestyle"]
     if lw is None:
-        lw = plt.rcParams['lines.linewidth']
+        lw = plt.rcParams["lines.linewidth"]
     ax.plot(x, y, color, linestyle=ls, linewidth=lw, alpha=alpha, label=label, **kargs)
 
     if yerr is not None and xerr is not None:
@@ -93,7 +97,7 @@ def errorfill(x, y,
     kwargs_fill = dict(color=color, alpha=alpha_fill, label=label_fill)
     if yerr is not None:
         ymin, ymax = extrema_from_error_input(y, yerr)
-        if x.size>1:
+        if x.size > 1:
             fill_between(x, ymax, ymin, ax=ax, **kwargs_fill)
     elif xerr is not None:
         xmin, xmax = extrema_from_error_input(x, xerr)
@@ -109,6 +113,7 @@ def extrema_from_error_input(z, zerr):
         zmin, zmax = z - zerr[0], z + zerr[1]
     return zmin, zmax
 
+
 # Wrappers around `fill_between` and `fill_between_x` that create proxy artists
 # so that filled regions show up correctly legends.
 
@@ -118,20 +123,20 @@ def fill_between(x, y1, y2=0, ax=None, **kwargs):
     ax = ax if ax is not None else plt.gca()
     ym = (y1 + y2) / 2.0
     yd = (y1 - y2) / 3.0
-    #Remove any bad data points
+    # Remove any bad data points
     keep = np.logical_not(np.isnan(ym))
-    x=x[keep]
-    ym=ym[keep]
-    yd=yd[keep]
+    x = x[keep]
+    ym = ym[keep]
+    yd = yd[keep]
     alpha = kwargs["alpha"]
     a = np.linspace(0.1, 0.9, 15)
-    z = lambda x, s,y: s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
+    z = lambda x, s, y: s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
     for h in a:
         y = h / (np.sqrt(2 * np.pi) * yd)
-        y1 = ym - (z(y, yd,y))
-        y2 = ym + (z(y, yd,y))
+        y1 = ym - (z(y, yd, y))
+        y2 = ym + (z(y, yd, y))
         kwargs["alpha"] = alpha * h
-        if x.size>1:
+        if x.size > 1:
             ax.fill_between(x, y1, y2, **kwargs)
     ax.add_patch(plt.Rectangle((0, 0), 0, 0, **kwargs))
 
@@ -143,17 +148,17 @@ def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
     yd = (y1 - y2) / 3.0
     alpha = kwargs["alpha"]
     a = np.linspace(0.1, 0.9, 15)
-    z = lambda x, s,y: s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
+    z = lambda x, s, y: s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
     for h in a:
         y = h / (np.sqrt(2 * np.pi) * yd)
-        y1 = ym - (z(y, yd,y))
-        y2 = ym + (z(y, yd,y))
+        y1 = ym - (z(y, yd, y))
+        y2 = ym + (z(y, yd, y))
         kwargs["alpha"] = alpha * h
         ax.fill_betweenx(x, y1, y2, **kwargs)
     ax.add_patch(plt.Rectangle((0, 0), 0, 0, **kwargs))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     x = np.linspace(0, 2 * np.pi)
     y_sin = np.sin(x)
     y_cos = np.cos(x)

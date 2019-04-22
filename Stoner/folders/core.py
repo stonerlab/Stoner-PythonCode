@@ -2,11 +2,11 @@
 """
 :py:mod:`Stoner.folders.core` provides the base class and functions for the :py:class:`Stoner.DataFolder` class.
 """
-__all__=["baseFolder"]
+__all__ = ["baseFolder"]
 
 from itertools import islice
-from copy import copy,deepcopy
-from collections import Iterable,MutableSequence
+from copy import copy, deepcopy
+from collections import Iterable, MutableSequence
 import itertools
 from multiprocessing.pool import ThreadPool
 import multiprocess as multiprocessing
@@ -15,8 +15,8 @@ import os.path as path
 import fnmatch
 import re
 
-from Stoner.compat import python_v3,int_types,string_types,commonpath,_pattern_type,cmp
-from Stoner.tools import operator,isiterable,isproperty,all_type,get_option
+from Stoner.compat import python_v3, int_types, string_types, commonpath, _pattern_type, cmp
+from Stoner.tools import operator, isiterable, isproperty, all_type, get_option
 from Stoner.core.base import regexpDict
 from Stoner.core.base import metadataObject
 from .utils import pathjoin
@@ -24,7 +24,8 @@ from .utils import pathjoin
 from .each import item as each_item
 from .metadata import proxy as combined_metadata_proxy
 
-regexp_type=(_pattern_type,)
+regexp_type = (_pattern_type,)
+
 
 class baseFolder(MutableSequence):
 
@@ -66,35 +67,35 @@ class baseFolder(MutableSequence):
         - __clone__ create a new copy of the mixin's state kinformation
     """
 
-    _defaults={} # A Dictionary of default values that will be combined with other classes to make a global set of defaults
-    _no_defaults=[] #A list of dewfaults to remove becayse they clash with subclass methods etc.
+    _defaults = (
+        {}
+    )  # A Dictionary of default values that will be combined with other classes to make a global set of defaults
+    _no_defaults = []  # A list of dewfaults to remove becayse they clash with subclass methods etc.
 
-
-    def __new__(cls,*args,**kargs):
+    def __new__(cls, *args, **kargs):
         """The __new__ method is used to create the underlying storage attributes.
 
         We do this in __new__ so that the mixin classes can access baseFolders state storage before baseFolder does further __init__() work.
         """
         if python_v3:
-            self=super(baseFolder,cls).__new__(cls)
+            self = super(baseFolder, cls).__new__(cls)
         else:
-            self=super(baseFolder,cls).__new__(cls,*args,**kargs)
-        self._debug=kargs.pop("debug",False)
-        self._object_attrs=dict()
-        self._last_name=0
-        self._groups=regexpDict()
-        self._objects=regexpDict()
-        self._instance=None
-        self._object_attrs=dict()
-        self._key=None
-        self._type=metadataObject
-        self._loader=None
-        self._instance_attrs=set()
-        self._root="."
+            self = super(baseFolder, cls).__new__(cls, *args, **kargs)
+        self._debug = kargs.pop("debug", False)
+        self._object_attrs = dict()
+        self._last_name = 0
+        self._groups = regexpDict()
+        self._objects = regexpDict()
+        self._instance = None
+        self._object_attrs = dict()
+        self._key = None
+        self._type = metadataObject
+        self._loader = None
+        self._instance_attrs = set()
+        self._root = "."
         return self
 
-
-    def __init__(self,*args,**kargs):
+    def __init__(self, *args, **kargs):
         """Initialise the baseFolder.
 
         Notes:
@@ -106,25 +107,26 @@ class baseFolder(MutableSequence):
             - calls the mixin init methods.
         """
         for k in self.defaults:
-            setattr(self,k,kargs.pop(k,self.defaults[k]))
+            setattr(self, k, kargs.pop(k, self.defaults[k]))
 
-        if len(args)==1 and isinstance(args[0],baseFolder): # Special case for type changing.
-            self.args=()
-            self.kargs={}
+        if len(args) == 1 and isinstance(args[0], baseFolder):  # Special case for type changing.
+            self.args = ()
+            self.kargs = {}
             self.__init_from_other(args[0])
         else:
-            self.args=copy(args)
-            self.kargs=copy(kargs)
-            #List of routines that define the interface for manipulating the objects stored in the folder
-            for k in list(self.kargs.keys()): # Store keyword parameters as attributes
-                if not hasattr(self,k) or k in ["type","kargs","args"]:
-                    value=kargs.pop(k,None)
-                    self.__setattr__(k,value)
-                    if self.debug: print("Setting self.{} to {}".format(k,value))
+            self.args = copy(args)
+            self.kargs = copy(kargs)
+            # List of routines that define the interface for manipulating the objects stored in the folder
+            for k in list(self.kargs.keys()):  # Store keyword parameters as attributes
+                if not hasattr(self, k) or k in ["type", "kargs", "args"]:
+                    value = kargs.pop(k, None)
+                    self.__setattr__(k, value)
+                    if self.debug:
+                        print("Setting self.{} to {}".format(k, value))
         if python_v3:
-            super(baseFolder,self).__init__()
+            super(baseFolder, self).__init__()
         else:
-            super(baseFolder,self).__init__(*args,**kargs)
+            super(baseFolder, self).__init__(*args, **kargs)
 
     ###########################################################################
     ################### Properties of baseFolder ##############################
@@ -137,15 +139,15 @@ class baseFolder(MutableSequence):
     @property
     def defaults(self):
         """Build a single list of all of our defaults by iterating over the __mro__, caching the result."""
-        if not hasattr(self,"_default_store"):
-            self._default_store=dict()
+        if not hasattr(self, "_default_store"):
+            self._default_store = dict()
             for cls in reversed(self.__class__.__mro__):
-                if hasattr(cls,"_defaults"):
+                if hasattr(cls, "_defaults"):
                     self._default_store.update(cls._defaults)
             for cls in reversed(self.__class__.__mro__):
-                if hasattr(cls,"_no_defaults"):
+                if hasattr(cls, "_no_defaults"):
                     for k in cls._no_defaults:
-                        self._default_store.pop(k,None)
+                        self._default_store.pop(k, None)
         return self._default_store
 
     @property
@@ -154,21 +156,21 @@ class baseFolder(MutableSequence):
         return self._debug
 
     @debug.setter
-    def debug(self,value):
+    def debug(self, value):
         """Recursively set the debug value"""
-        self._debug=value
+        self._debug = value
         for g in self.groups:
-            self.groups[g].debug=value
+            self.groups[g].debug = value
 
     @property
     def depth(self):
         """Gives the maximum number of levels of group below the current objectFolder."""
-        if len(self.groups)==0:
-            r=0
+        if len(self.groups) == 0:
+            r = 0
         else:
-            r=1
+            r = 1
             for g in self.groups:
-                r=max(r,self.groups[g].depth+1)
+                r = max(r, self.groups[g].depth + 1)
         return r
 
     @property
@@ -179,15 +181,15 @@ class baseFolder(MutableSequence):
     @property
     def files(self):
         """Return an iterator of potentially unloaded named objects."""
-        return [self.__getter__(i,instantiate=None) for i in range(len(self))]
+        return [self.__getter__(i, instantiate=None) for i in range(len(self))]
 
     @files.setter
-    def files(self,value):
+    def files(self, value):
         """Just a wrapper to clear and then set the objects."""
         if isiterable(value):
             self.__clear__()
-            for i,v in enumerate(value):
-                self.insert(i,v)
+            for i, v in enumerate(value):
+                self.insert(i, v)
 
     @property
     def groups(self):
@@ -195,18 +197,18 @@ class baseFolder(MutableSequence):
         return self._groups
 
     @groups.setter
-    def groups(self,value):
+    def groups(self, value):
         """Ensure groups gets set as a :py:class:`regexpDict`"""
-        if not isinstance(value,regexpDict):
-            self._groups=regexpDict(value)
+        if not isinstance(value, regexpDict):
+            self._groups = regexpDict(value)
         else:
-            self._groups=value
+            self._groups = value
 
     @property
     def instance(self):
         """A default instance of the type of object in the folder."""
         if self._instance is None:
-            self._instance=self._type()
+            self._instance = self._type()
         return self._instance
 
     @property
@@ -219,28 +221,28 @@ class baseFolder(MutableSequence):
         return self._key
 
     @key.setter
-    def key(self,value):
+    def key(self, value):
         """Set the folder's key."""
-        self._key=value
+        self._key = value
 
     @property
     def loaded(self):
         """An iterator that indicates wether the contents of the :py:class:`Stoner.Folders.objectFolder` has been loaded into memory."""
         for f in self.__names__():
-            val=self.__getter__(f,instantiate=None)
-            if isinstance(val,self.type):
-                yield f,val
+            val = self.__getter__(f, instantiate=None)
+            if isinstance(val, self.type):
+                yield f, val
 
     @property
     def loader(self):
         if self._loader is None:
-            self._loader=self.type
+            self._loader = self.type
         return self._loader
 
     @loader.setter
-    def loader(self,value):
-        if issubclass(value,metadataObject):
-            self._loader=value
+    def loader(self, value):
+        if issubclass(value, metadataObject):
+            self._loader = value
 
     @property
     def ls(self):
@@ -262,12 +264,12 @@ class baseFolder(MutableSequence):
     @property
     def mindepth(self):
         """Gives the minimum number of levels of group below the current objectFolder."""
-        if len(self.groups)==0:
-            r=0
+        if len(self.groups) == 0:
+            r = 0
         else:
-            r=1E6
+            r = 1e6
             for g in self.groups:
-                r=min(r,self.groups[g].depth+1)
+                r = min(r, self.groups[g].depth + 1)
         return r
 
     @property
@@ -281,10 +283,10 @@ class baseFolder(MutableSequence):
             and exception.
         """
         for d in self:
-            if len(d)==0:
+            if len(d) == 0:
                 continue
             else:
-                yield(d)
+                yield (d)
 
     @property
     def objects(self):
@@ -292,33 +294,33 @@ class baseFolder(MutableSequence):
         return self._objects
 
     @objects.setter
-    def objects(self,value):
+    def objects(self, value):
         """Ensure we keep the objects in a :py:class:`regexpDict`."""
-        if not isinstance(value,regexpDict):
-            self._objects=regexpDict(value)
+        if not isinstance(value, regexpDict):
+            self._objects = regexpDict(value)
         else:
-            self._objects=value
+            self._objects = value
 
     @property
     def shape(self):
         """Return a data structure that is characteristic of the objectFolder's shape."""
-        grp_shape={k:self[k].shape for k in self.groups}
-        return (len(self),grp_shape)
+        grp_shape = {k: self[k].shape for k in self.groups}
+        return (len(self), grp_shape)
 
     @property
     def root(self):
         return self._root
 
     @root.setter
-    def root(self,value):
-        self._root=value
+    def root(self, value):
+        self._root = value
 
     @property
     def trunkdepth(self):
         """The number of levels of group before a group with files is found."""
         if self.files:
             return 0
-        return min([self.groups[g].trunkdepth for g in self.groups])+1
+        return min([self.groups[g].trunkdepth for g in self.groups]) + 1
 
     @property
     def type(self):
@@ -326,18 +328,18 @@ class baseFolder(MutableSequence):
         return self._type
 
     @type.setter
-    def type(self,value):
+    def type(self, value):
         """Ensures that type is a subclass of metadataObject."""
-        if issubclass(value,metadataObject):
-            self._type=value
-        elif isinstance(value,metadataObject):
-            self._type=value.__class__
+        if issubclass(value, metadataObject):
+            self._type = value
+        elif isinstance(value, metadataObject):
+            self._type = value.__class__
         else:
             raise TypeError("{} os neither a subclass nor instance of metadataObject".format(type(value)))
-        self._instance=None #Reset the instance cache
+        self._instance = None  # Reset the instance cache
 
     ################### Methods for subclasses to override to handle storage #####
-    def __lookup__(self,name):
+    def __lookup__(self, name):
         """Stub for other classes to implement.
 
         Parameters:
@@ -349,10 +351,10 @@ class baseFolder(MutableSequence):
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
-        if isinstance(name,int_types):
-            name=self.__names__()[name]
+        if isinstance(name, int_types):
+            name = self.__names__()[name]
         elif name not in self.__names__():
-            name=self._objects.__lookup__(name)
+            name = self._objects.__lookup__(name)
         return name
 
     def __names__(self):
@@ -363,7 +365,7 @@ class baseFolder(MutableSequence):
         """
         return list(self.objects.keys())
 
-    def __getter__(self,name,instantiate=True):
+    def __getter__(self, name, instantiate=True):
         """Stub method to do whatever is needed to transform a key to a metadataObject.
 
         Parameters:
@@ -383,18 +385,18 @@ class baseFolder(MutableSequence):
 
 
         """
-        name=self.__lookup__(name)
+        name = self.__lookup__(name)
         if instantiate is None:
             return self.objects[name]
         elif not instantiate:
             return name
         else:
-            name=self.objects[name]
-            if not isinstance(name,self._type):
-                raise KeyError("{} is not a valid {}".format(name,self._type))
+            name = self.objects[name]
+            if not isinstance(name, self._type):
+                raise KeyError("{} is not a valid {}".format(name, self._type))
         return self._update_from_object_attrs(name)
 
-    def __setter__(self,name,value,force_insert=False):
+    def __setter__(self, name, value, force_insert=False):
         """Stub to setting routine to store a metadataObject.
 
         Parameters:
@@ -405,13 +407,13 @@ class baseFolder(MutableSequence):
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         if name is None:
-            name=self.make_name()
+            name = self.make_name()
         if force_insert:
-           self.objects.update({name:value})
+            self.objects.update({name: value})
         else:
-            self.objects[name]=value
+            self.objects[name] = value
 
-    def __inserter__(self,ix,name,value):
+    def __inserter__(self, ix, name, value):
         """Insert the element into a specific place in our data folder.
 
         Parameters:
@@ -422,15 +424,15 @@ class baseFolder(MutableSequence):
         Note:
             This is written in a way to be generic, but might be better implemented if storage is customised.
         """
-        names=list(self.__names__())
-        values=[self.__getter__(n,instantiate=None) for n in names]
-        names.insert(ix,name)
-        values.insert(ix,value)
+        names = list(self.__names__())
+        values = [self.__getter__(n, instantiate=None) for n in names]
+        names.insert(ix, name)
+        values.insert(ix, value)
         self.__clear__()
-        for n,v in zip(names,values):
-            self.__setter__(n,v)
+        for n, v in zip(names, values):
+            self.__setter__(n, v)
 
-    def __deleter__(self,ix):
+    def __deleter__(self, ix):
         """Deletes an object from the baseFolder.
 
         Parameters:
@@ -452,7 +454,7 @@ class baseFolder(MutableSequence):
         for n in self.__names__():
             self.__deleter__(self.__lookup__(n))
 
-    def __clone__(self,other=None,attrs_only=False):
+    def __clone__(self, other=None, attrs_only=False):
         """Do whatever is necessary to copy attributes from self to other.
 
         Note:
@@ -463,31 +465,31 @@ class baseFolder(MutableSequence):
         if other is None and not attrs_only:
             return deepcopy(self)
         elif other is None:
-            other=self.__class__()
+            other = self.__class__()
         for arg in self.defaults:
-            if hasattr(self,arg):
-                setattr(other,arg,getattr(self,arg))
-        other.key=self.key
-        other.args=self.args
-        other.kargs=self.kargs
-        other.type=self.type
+            if hasattr(self, arg):
+                setattr(other, arg, getattr(self, arg))
+        other.key = self.key
+        other.args = self.args
+        other.kargs = self.kargs
+        other.type = self.type
         for k in self.kargs:
-            if not hasattr(other,k):
-                setattr(other,k,self.kargs[k])
+            if not hasattr(other, k):
+                setattr(other, k, self.kargs[k])
         for k in self._instance_attrs:
-            setattr(other,k,getattr(self,k))
+            setattr(other, k, getattr(self, k))
         if not attrs_only:
             for g in self.groups:
-                other.groups[g]=self.groups[g].__clone__(other=other.__class__(),attrs_only=attrs_only)
+                other.groups[g] = self.groups[g].__clone__(other=other.__class__(), attrs_only=attrs_only)
             for k in self.__names__():
-                other.__setter__(k,self.__getter__(k,instantiate=None))
+                other.__setter__(k, self.__getter__(k, instantiate=None))
         return other
 
     ###########################################################################
     ######## Methods to implement the MutableMapping abstract methods #########
     ######## And to provide a mapping interface that mainly access groups #####
 
-    def __getitem__(self,name):
+    def __getitem__(self, name):
         """Try to get either a group or an object.
 
         Parameters:
@@ -514,58 +516,59 @@ class baseFolder(MutableSequence):
         """
         if name in self.groups:
             return self.groups[name]
-        if isinstance(name,string_types+regexp_type):
+        if isinstance(name, string_types + regexp_type):
             if name in self.objects:
-                name=self.__lookup__(name)
+                name = self.__lookup__(name)
                 return self.__getter__(name)
             else:
-                name=self.__lookup__(name)
+                name = self.__lookup__(name)
                 return self.__getter__(name)
-        elif isinstance(name,int_types):
-            if -len(self)<name<len(self):
-                return self.__getter__(self.__lookup__(name),instantiate=True)
+        elif isinstance(name, int_types):
+            if -len(self) < name < len(self):
+                return self.__getter__(self.__lookup__(name), instantiate=True)
             else:
                 raise IndexError("{} is out of range.".format(name))
-        elif isinstance(name,slice): #Possibly ought to return another Folder?
-            other=self.__clone__(attrs_only=True)
-            for ix,iname in enumerate(islice(self.__names__(),name.start,name.stop,name.step)):
-                item=self.__getter__(iname)
-                if hasattr(item,"filename"):
-                    item.filename=iname
+        elif isinstance(name, slice):  # Possibly ought to return another Folder?
+            other = self.__clone__(attrs_only=True)
+            for ix, iname in enumerate(islice(self.__names__(), name.start, name.stop, name.step)):
+                item = self.__getter__(iname)
+                if hasattr(item, "filename"):
+                    item.filename = iname
                 other.append(item)
             return other
-        elif isinstance(name,tuple): # Recursive indexing through tree with a tuple
-            item=self[name[0]]
-            if len(name)>2:
-                name=tuple(name[1:])
-            elif len(name)==1:
+        elif isinstance(name, tuple):  # Recursive indexing through tree with a tuple
+            item = self[name[0]]
+            if len(name) > 2:
+                name = tuple(name[1:])
+            elif len(name) == 1:
                 return item
             else:
-                name=name[1]
-            if isinstance(item,self._type):
+                name = name[1]
+            if isinstance(item, self._type):
                 return item[name]
-            elif isinstance(item,self.__class__):
-                if all_type(name,(int_types,slice)): #Looks like we're accessing data arrays
-                    test=(len(item),)+item[0].data[name].shape
-                    output=_np_.array([]).view(item[0].data.__class__)
-                    for ix,data in enumerate(item):
-                        output=_np_.append(output,data[name])
-                    output=output.reshape(test)
+            elif isinstance(item, self.__class__):
+                if all_type(name, (int_types, slice)):  # Looks like we're accessing data arrays
+                    test = (len(item),) + item[0].data[name].shape
+                    output = _np_.array([]).view(item[0].data.__class__)
+                    for ix, data in enumerate(item):
+                        output = _np_.append(output, data[name])
+                    output = output.reshape(test)
                     return output
                 else:  # Slicing metadata
                     try:
                         return item[name]
                     except KeyError as e:
                         if name in item.metadata.common_keys:
-                            return item.metadata.slice(name,output="Data")
-                        if self.debug: print(name)
+                            return item.metadata.slice(name, output="Data")
+                        if self.debug:
+                            print(name)
                         raise e
-            else: # Continuing to index into the tree of groups
+            else:  # Continuing to index into the tree of groups
                 raise KeyError("Can't index the baseFolder with {}".format(name))
         else:
             raise KeyError("Can't index the baseFolder with {}".format(name))
 
-    def __setitem__(self,name,value):
+    def __setitem__(self, name, value):
         """Attempts to store a value in either the groups or objects.
 
         Parameters:
@@ -573,47 +576,47 @@ class baseFolder(MutableSequence):
                 if name is an integer, then it must be a metadataObject.
             value (baseFolder,metadataObject,str): The value to be storred.
         """
-        if isinstance(name,string_types):
-            if isinstance(value,baseFolder):
-                self.groups[name]=value
+        if isinstance(name, string_types):
+            if isinstance(value, baseFolder):
+                self.groups[name] = value
             else:
-                self.__setter__(self.__lookup__(name),value)
-        elif isinstance(name,int_types):
-            if -len(self)<name<len(self):
-                self.__setter__(self.__lookup__(name),value)
+                self.__setter__(self.__lookup__(name), value)
+        elif isinstance(name, int_types):
+            if -len(self) < name < len(self):
+                self.__setter__(self.__lookup__(name), value)
             else:
                 raise IndexError("{} is out of range".format(name))
         else:
             raise KeyError("{} is not a valid key for baseFolder".format(name))
 
-    def __delitem__(self,name):
+    def __delitem__(self, name):
         """Attempt to delete an item from either a group or list of files.
 
         Parameters:
             name(str,int): IF name is a string, then it is checked first against the groups and then
                 against the objects. If name is an int then it s checked against the _index.
         """
-        if isinstance(name,string_types):
+        if isinstance(name, string_types):
             if name in self.groups:
                 del self.groups[name]
             elif name in self.objects:
                 self.__deleter__(self.__lookup__(name))
             else:
-                raise KeyError("Can't use {} as a key to delete from baseFolder. ({})".format(name,self.__names__()))
-        elif isinstance(name,int_types):
-            if -len(self)<name<=len(self):
+                raise KeyError("Can't use {} as a key to delete from baseFolder. ({})".format(name, self.__names__()))
+        elif isinstance(name, int_types):
+            if -len(self) < name <= len(self):
                 self.__deleter__(self.__lookup__(name))
             else:
                 raise IndexError("{} is out of range.".format(name))
-        elif isinstance(name,slice):
+        elif isinstance(name, slice):
             indices = name.indices(len(self))
             name = range(*indices)
-            for ix in sorted(name,reverse=True):
+            for ix in sorted(name, reverse=True):
                 del self[ix]
         else:
-            raise KeyError("Can't use {} as a key to delete from baseFolder. ({})".format(name,self.__names__()))
+            raise KeyError("Can't use {} as a key to delete from baseFolder. ({})".format(name, self.__names__()))
 
-    def __contains__(self,name):
+    def __contains__(self, name):
         """Check whether name is in a list of groups or in the list of names"""
         return name in self.groups or name in self.__names__()
 
@@ -621,50 +624,54 @@ class baseFolder(MutableSequence):
         """Allow len(:py:class:`baseFolder`) works as expected."""
         return len(self.__names__())
 
-    def __add_core__(self,result,other):
+    def __add_core__(self, result, other):
         """Implements the core logic of the addition operator.
 
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
-        if isinstance(other,baseFolder):
-            if issubclass(other.type,self.type):
+        if isinstance(other, baseFolder):
+            if issubclass(other.type, self.type):
                 result.extend([f for f in other.files])
                 for grp in other.groups:
                     if grp in self.groups:
-                        result.groups[grp]+=other.groups[grp] # recursively merge groups
+                        result.groups[grp] += other.groups[grp]  # recursively merge groups
                     else:
-                        result.groups[grp]=copy(other.groups[grp])
+                        result.groups[grp] = copy(other.groups[grp])
             else:
-                raise RuntimeError("Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type,result.type))
-        elif isinstance(other,result.type):
+                raise RuntimeError(
+                    "Incompatible types ({} must be a subclass of {}) in the two folders.".format(
+                        other.type, result.type
+                    )
+                )
+        elif isinstance(other, result.type):
             result.append(other)
         else:
-            result=NotImplemented
+            result = NotImplemented
         return result
 
-    def __div_core__(self,result,other):
+    def __div_core__(self, result, other):
         """Implements the divide operator as a grouping function."""
-        if isinstance(other,string_types+(list,tuple)):
+        if isinstance(other, string_types + (list, tuple)):
             result.group(other)
             return result
-        elif isinstance(other,int_types): #Simple decimate
+        elif isinstance(other, int_types):  # Simple decimate
             for i in range(other):
                 result.add_group("Group {}".format(i))
             for ix in range(len(self)):
-                d=self.__getter__(ix,instantiate=None)
-                group=ix%other
-                result.groups["Group {}".format(group)].__setter__(self.__lookup__(ix),d)
+                d = self.__getter__(ix, instantiate=None)
+                group = ix % other
+                result.groups["Group {}".format(group)].__setter__(self.__lookup__(ix), d)
             result.__clear__()
             return result
 
-    def __sub_core_int__(self,result,other):
+    def __sub_core_int__(self, result, other):
         """Remove indexed file."""
-        delname=result.__names__()[other]
+        delname = result.__names__()[other]
         result.__deleter__(delname)
         return result
 
-    def __sub_core_string__(self,result,other):
+    def __sub_core_string__(self, result, other):
         """"Removed named file."""
         if other in result.__names__():
             result.__deleter__(other)
@@ -672,93 +679,97 @@ class baseFolder(MutableSequence):
             raise RuntimeError("{} is not in the folder.".format(other))
         return result
 
-    def __sub_core_data__(self,result,other):
+    def __sub_core_data__(self, result, other):
         """Remove a data object."""
-        othername=getattr(other,"filename",getattr(other,"title",None))
+        othername = getattr(other, "filename", getattr(other, "title", None))
         if othername in result.__names__():
             result.__deleter__(othername)
         else:
             raise RuntimeError("{} is not in the folder.".format(othername))
         return result
 
-    def __sub_core_folder__(self,result,other):
+    def __sub_core_folder__(self, result, other):
         """Remove a folder."""
-        if issubclass(other.type,self.type):
+        if issubclass(other.type, self.type):
             for othername in other.ls:
                 if othername in result:
                     result.__deleter__(othername)
             for othergroup in other.groups:
                 if othergroup in result.groups:
-                    result.groups[othergroup].__sub_core__(result.groups[othergroup],other.groups[othergroup])
+                    result.groups[othergroup].__sub_core__(result.groups[othergroup], other.groups[othergroup])
         else:
-            raise RuntimeError("Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type,result.type))
+            raise RuntimeError(
+                "Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type, result.type)
+            )
         return result
 
-    def __sub_core_iterable__(self,result,other):
+    def __sub_core_iterable__(self, result, other):
         """Iterate to remove iterables."""
         for c in sorted(other):
-            result.__sub_core__(result,c)
+            result.__sub_core__(result, c)
         return result
 
-    def __sub_core__(self,result,other):
+    def __sub_core__(self, result, other):
         """Implemenets the core logic of the subtraction operator.
 
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
         """
-        calls=[(int_types,self.__sub_core_int__),
-               (string_types,self.__sub_core_string__),
-               (metadataObject,self.__sub_core_data__),
-               (baseFolder,self.__sub_core_folder__),
-               (Iterable,self.__sub_core_iterable__)]
-        for typ,func in calls:
-            if isinstance(other,typ):
-                result=func(result,other)
+        calls = [
+            (int_types, self.__sub_core_int__),
+            (string_types, self.__sub_core_string__),
+            (metadataObject, self.__sub_core_data__),
+            (baseFolder, self.__sub_core_folder__),
+            (Iterable, self.__sub_core_iterable__),
+        ]
+        for typ, func in calls:
+            if isinstance(other, typ):
+                result = func(result, other)
                 break
         else:
-            result=NotImplemented
+            result = NotImplemented
 
         return result
-
 
     ###########################################################################
     ###################### Standard Special Methods ###########################
 
-
-
-    def __add__(self,other):
+    def __add__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
-        result=deepcopy(self)
-        result=self.__add_core__(result,other)
+        result = deepcopy(self)
+        result = self.__add_core__(result, other)
         return result
 
-    def __iadd__(self,other):
+    def __iadd__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
-        result=self
-        result=self.__add_core__(result,other)
+        result = self
+        result = self.__add_core__(result, other)
         return result
 
     if python_v3:
-        def __truediv__(self,other):
-            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
-            result=deepcopy(self)
-            return self.__div_core__(result,other)
 
-        def __itruediv__(self,other):
+        def __truediv__(self, other):
             """The divide operator is a grouping function for a :py:class:`baseFolder`."""
-            result=self
-            return self.__div_core__(result,other)
+            result = deepcopy(self)
+            return self.__div_core__(result, other)
+
+        def __itruediv__(self, other):
+            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+            result = self
+            return self.__div_core__(result, other)
+
     else:
-        def __div__(self,other):
-            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
-            result=deepcopy(self)
-            return self.__div_core__(result,other)
 
-        def __idiv__(self,other):
+        def __div__(self, other):
             """The divide operator is a grouping function for a :py:class:`baseFolder`."""
-            result=self
-            return self.__div_core__(result,other)
+            result = deepcopy(self)
+            return self.__div_core__(result, other)
+
+        def __idiv__(self, other):
+            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+            result = self
+            return self.__div_core__(result, other)
 
     def __invert__(self):
         """For a :py:class:`naseFolder`, inverting means either flattening or unflattening the folder.
@@ -766,8 +777,8 @@ class baseFolder(MutableSequence):
         If we have no sub-groups then we assume we are unflattening the Folder and that the object names have embedded path separators.
         If we have sub-groups then we assume that we need to flatten the data..
         """
-        result=deepcopy(self)
-        if len(result.groups)==0:
+        result = deepcopy(self)
+        if len(result.groups) == 0:
             result.unflatten()
         else:
             result.flatten()
@@ -780,14 +791,14 @@ class baseFolder(MutableSequence):
     def __next__(self):
         """Python 3.x style iterator function."""
         for n in self.__names__():
-            yield self.__getter__(n,instantiate=True)
+            yield self.__getter__(n, instantiate=True)
 
     def next(self):
         """Python 2.7 style iterator function."""
         for n in self.__names__():
-            yield self.__getter__(n,instantiate=True)
+            yield self.__getter__(n, instantiate=True)
 
-    def __rmatmul__(self,other):
+    def __rmatmul__(self, other):
         """Implement callable@DataFolder as a generic iterate a function over DataFolder members.
 
         Returns:
@@ -795,18 +806,18 @@ class baseFolder(MutableSequence):
         """
         if not callable(other):
             return NotImplemented
-        return self.each.__rmatmul__(other)  #Just bounce it onto the each object
+        return self.each.__rmatmul__(other)  # Just bounce it onto the each object
 
-    def __sub__(self,other):
+    def __sub__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
-        result=deepcopy(self)
-        result=self.__sub_core__(result,other)
+        result = deepcopy(self)
+        result = self.__sub_core__(result, other)
         return result
 
-    def __isub__(self,other):
+    def __isub__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
-        result=self
-        result=self.__sub_core__(result,other)
+        result = self
+        result = self.__sub_core__(result, other)
         return result
 
     def __getattr__(self, item):
@@ -820,29 +831,31 @@ class baseFolder(MutableSequence):
 
         """
         try:
-            ret=super(baseFolder,self).__getattribute__(item)
+            ret = super(baseFolder, self).__getattribute__(item)
         except AttributeError:
             if item.startswith("_"):
-                raise AttributeError("{} is not an Attribute of {}".format(item,self.__class__))
+                raise AttributeError("{} is not an Attribute of {}".format(item, self.__class__))
 
             try:
-                instance=super(baseFolder,self).__getattribute__("instance")
-                if callable(getattr(instance,item,None)): # It's a method
-                    ret=self._getattr_proxy(item) #make it a single underscore name that can be overwritten in mixin classes
-                else: # It's a static attribute
+                instance = super(baseFolder, self).__getattribute__("instance")
+                if callable(getattr(instance, item, None)):  # It's a method
+                    ret = self._getattr_proxy(
+                        item
+                    )  # make it a single underscore name that can be overwritten in mixin classes
+                else:  # It's a static attribute
                     if item in self._object_attrs:
-                        ret=self._object_attrs[item]
-                    elif len(self)>0:
-                        ret=getattr(instance,item,None)
+                        ret = self._object_attrs[item]
+                    elif len(self) > 0:
+                        ret = getattr(instance, item, None)
                     else:
-                        ret=None
+                        ret = None
                     if ret is None:
                         raise AttributeError
-            except AttributeError: # Ok, pass back
-                raise AttributeError("{} is not an Attribute of {} or {}".format(item,type(self),type(instance)))
+            except AttributeError:  # Ok, pass back
+                raise AttributeError("{} is not an Attribute of {} or {}".format(item, type(self), type(instance)))
         return ret
 
-    def _getattr_proxy(self,item):
+    def _getattr_proxy(self, item):
         """Make a proxy call to access a method of the metadataObject like types.
 
         Args:
@@ -855,7 +868,7 @@ class baseFolder(MutableSequence):
         Notes:
             This is now simply a proxy into getting the attribute on the baseFolder.each instead. This then makes use of multiprocess Pools to speed things up.
         """
-        return getattr(self.each,item)
+        return getattr(self.each, item)
 
     def __deepcopy__(self, memo):
         """Provides support for copy.deepcopy to work."""
@@ -869,90 +882,117 @@ class baseFolder(MutableSequence):
                 setattr(result, k, copy(v))
         return result
 
-
     def __repr__(self):
         """Prints a summary of the objectFolder structure
 
         Returns:
             A string representation of the current objectFolder object
         """
-        short=get_option("short_folder_rrepr")
-        cls=self.__class__.__name__
-        pth=self.key
-        pattern=getattr(self,"pattern","")
-        s="{}({}) with pattern {} has {} files and {} groups\n".format(cls,pth,pattern,len(self),len(self.groups))
+        short = get_option("short_folder_rrepr")
+        cls = self.__class__.__name__
+        pth = self.key
+        pattern = getattr(self, "pattern", "")
+        s = "{}({}) with pattern {} has {} files and {} groups\n".format(
+            cls, pth, pattern, len(self), len(self.groups)
+        )
         if not short:
             for r in self.ls:
-                s+="\t"+r+"\n"
-        for g in self.groups: # iterate over groups
-            r=self.groups[g].__repr__()
-            for l in r.split("\n"): # indent each line by one tab
-                s+="\t"+l+"\n"
+                s += "\t" + r + "\n"
+        for g in self.groups:  # iterate over groups
+            r = self.groups[g].__repr__()
+            for l in r.split("\n"):  # indent each line by one tab
+                s += "\t" + l + "\n"
         return s.strip()
 
     def __reversed__(self):
         """Create an iterator function that runs backwards through the stored objects."""
+
         def reverse_iterator(self):
             """Reverse iterator function."""
             for n in reversed(self.__names__()):
-                yield self.__getter__(n,instantiate=True)
+                yield self.__getter__(n, instantiate=True)
+
         return reverse_iterator
 
-    def __delattr__(self,name):
+    def __delattr__(self, name):
         """Handles removing an attribute from the folder, including proxied attributes."""
-        if name.startswith("_") or name in ["debug","groups","args","kargs","objects","key"]: # pass ddirectly through for private attributes
+        if name.startswith("_") or name in [
+            "debug",
+            "groups",
+            "args",
+            "kargs",
+            "objects",
+            "key",
+        ]:  # pass ddirectly through for private attributes
             raise AttributeError("{} is a protected attribute and may not be deleted!".format(name))
-        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type() and not callable(getattr(self._type,name))):
-            #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
+        elif (
+            hasattr(self, "_object_attrs")
+            and hasattr(self, "_type")
+            and name in dir(self._type() and not callable(getattr(self._type, name)))
+        ):
+            # If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
             del self._object_attrs[name]
         elif name in self._instance_attrs:
             del self._instance_attrs[name]
-            super(baseFolder,self).__delattr__(name)
+            super(baseFolder, self).__delattr__(name)
         else:
             raise AttributeError("Unrecognised attribute {}".format(name))
 
-    def __setattr__(self,name,value):
+    def __setattr__(self, name, value):
         """Pass through to set the sample attributes."""
-        if name.startswith("_") or name in ["debug","groups","args","kargs","objects","key","multifile"]: # pass ddirectly through for private attributes
-            super(baseFolder,self).__setattr__(name,value)
-        elif name in dir(self) and (isproperty(self,name) or not callable(getattr(self,name,None))): #If we recognise this our own attribute, then just set it
-            super(baseFolder,self).__setattr__(name,value)
-        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type) and not callable(getattr(self._type,name)):
-            #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
-            self._object_attrs[name]=value
+        if name.startswith("_") or name in [
+            "debug",
+            "groups",
+            "args",
+            "kargs",
+            "objects",
+            "key",
+            "multifile",
+        ]:  # pass ddirectly through for private attributes
+            super(baseFolder, self).__setattr__(name, value)
+        elif name in dir(self) and (
+            isproperty(self, name) or not callable(getattr(self, name, None))
+        ):  # If we recognise this our own attribute, then just set it
+            super(baseFolder, self).__setattr__(name, value)
+        elif (
+            hasattr(self, "_object_attrs")
+            and hasattr(self, "_type")
+            and name in dir(self._type)
+            and not callable(getattr(self._type, name))
+        ):
+            # If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
+            self._object_attrs[name] = value
         else:
             self._instance_attrs.add(name)
-            super(baseFolder,self).__setattr__(name,value)
-
-
+            super(baseFolder, self).__setattr__(name, value)
 
     ###########################################################################
     ###################### Private Methods ####################################
 
-    def __init_from_other(self,other):
+    def __init_from_other(self, other):
         other.__clone__(other=self)
-#        for k in dir(other):
-#            if k.startswith("_"): # Short circuit before we even get the value
-#                continue
-#            v=getattr(other,k)
-#            if ismethod(v)  or isgenerator(v):
-#                continue
-#            if isproperty(self,k) and not hasattr(v,"__set__"):
-#                continue
-#            if k in ["groups","_groups","objects","_objects","key"]:
-#                continue
-#            try:
-#                setattr(result, k, deepcopy(v))
-#            except Exception:
-#                setattr(result, k, copy(v))
-#
-#        result.key=other.key
-#
-#        for g in other.groups:
-#            self.groups[g]=cls(other.groups[g])
-#        for n in other.__names__():
-#            self.__setter__(n,other.__getter__(n,instantiate=None))
 
+    #        for k in dir(other):
+    #            if k.startswith("_"): # Short circuit before we even get the value
+    #                continue
+    #            v=getattr(other,k)
+    #            if ismethod(v)  or isgenerator(v):
+    #                continue
+    #            if isproperty(self,k) and not hasattr(v,"__set__"):
+    #                continue
+    #            if k in ["groups","_groups","objects","_objects","key"]:
+    #                continue
+    #            try:
+    #                setattr(result, k, deepcopy(v))
+    #            except Exception:
+    #                setattr(result, k, copy(v))
+    #
+    #        result.key=other.key
+    #
+    #        for g in other.groups:
+    #            self.groups[g]=cls(other.groups[g])
+    #        for n in other.__names__():
+    #            self.__setter__(n,other.__getter__(n,instantiate=None))
 
     def _get_pool(self):
         """Utility method to get a Pool and map implementation depending on options.
@@ -963,45 +1003,44 @@ class baseFolder(MutableSequence):
         if get_option("multiprocessing"):
             try:
                 if get_option("threading"):
-                    p=ThreadPool(processes=int(multiprocessing.cpu_count()-1))
+                    p = ThreadPool(processes=int(multiprocessing.cpu_count() - 1))
                 else:
-                    p=multiprocessing.Pool(int(multiprocessing.cpu_count()/2))
-                imap=p.imap
-            except: #Fallback to non-multiprocessing if necessary
-                p=None
+                    p = multiprocessing.Pool(int(multiprocessing.cpu_count() / 2))
+                imap = p.imap
+            except:  # Fallback to non-multiprocessing if necessary
+                p = None
                 if python_v3:
-                    imap=map
+                    imap = map
                 else:
-                    imap=itertools.imap
+                    imap = itertools.imap
         else:
-            p=None
+            p = None
             if python_v3:
-                imap=map
+                imap = map
             else:
-                imap=itertools.imap
-        return p,imap
+                imap = itertools.imap
+        return p, imap
 
-    def _update_from_object_attrs(self,obj):
+    def _update_from_object_attrs(self, obj):
         """Updates an object from object_attrs store."""
-        if hasattr(self,"_object_attrs") and isinstance(self._object_attrs,dict):
+        if hasattr(self, "_object_attrs") and isinstance(self._object_attrs, dict):
             for k in self._object_attrs:
                 try:
-                    setattr(obj,k,self._object_attrs[k])
+                    setattr(obj, k, self._object_attrs[k])
                 except AttributeError:
-                    raise AttributeError("Can't set attribute {} to {}".format(k,self._object_attrs[k]))
+                    raise AttributeError("Can't set attribute {} to {}".format(k, self._object_attrs[k]))
         return obj
 
-
-    def _pruner_(self,grp,breadcrumb,prunelist=None):
+    def _pruner_(self, grp, breadcrumb, prunelist=None):
         """Removes any empty groups fromthe objectFolder tree."""
-        if len(grp)==0 and len(grp.groups)==0:
+        if len(grp) == 0 and len(grp.groups) == 0:
             prunelist.append(breadcrumb)
-            ret=True
+            ret = True
         else:
-            ret=False
+            ret = False
         return ret
 
-    def __walk_groups(self,walker,**kargs):
+    def __walk_groups(self, walker, **kargs):
         """"Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
 
         Args:
@@ -1021,39 +1060,40 @@ class baseFolder(MutableSequence):
                 walker(f,list_of_group_names,**walker_args)
                 where f is either a objectFolder or metadataObject.
         """
-        group=kargs.pop("group",False)
-        replace_terminal=kargs.pop("replace_terminal",False)
-        only_terminal=kargs.pop("only_terminal",True)
-        walker_args=kargs.pop("walker_args",dict())
-        breadcrumb=kargs.pop("breadcrumb",dict())
-        if (len(self.groups)>0):
-            ret=[]
-            removeGroups=[]
+        group = kargs.pop("group", False)
+        replace_terminal = kargs.pop("replace_terminal", False)
+        only_terminal = kargs.pop("only_terminal", True)
+        walker_args = kargs.pop("walker_args", dict())
+        breadcrumb = kargs.pop("breadcrumb", dict())
+        if len(self.groups) > 0:
+            ret = []
+            removeGroups = []
             if replace_terminal:
                 self.__clear__()
             for g in self.groups:
-                bcumb=copy(breadcrumb)
+                bcumb = copy(breadcrumb)
                 bcumb.append(g)
-                tmp=self.groups[g].__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=bcumb)
-                if group and  replace_terminal and isinstance (tmp, metadataObject):
+                tmp = self.groups[g].__walk_groups(
+                    walker, group=group, replace_terminal=replace_terminal, walker_args=walker_args, breadcrumb=bcumb
+                )
+                if group and replace_terminal and isinstance(tmp, metadataObject):
                     removeGroups.append(g)
-                    tmp.filename="{}-{}".format(g,tmp.filename)
+                    tmp.filename = "{}-{}".format(g, tmp.filename)
                     self.append(tmp)
                     ret.append(tmp)
             for g in removeGroups:
-                del(self.groups[g])
-        elif len(self.groups)==0 or not only_terminal:
+                del self.groups[g]
+        elif len(self.groups) == 0 or not only_terminal:
             if group:
-                ret=walker(self,breadcrumb,**walker_args)
+                ret = walker(self, breadcrumb, **walker_args)
             else:
-                ret=[walker(f,breadcrumb,**walker_args) for f in self]
+                ret = [walker(f, breadcrumb, **walker_args) for f in self]
         return ret
-
 
     ###########################################################################
     ############# Normal Methods ##############################################
 
-    def add_group(self,key):
+    def add_group(self, key):
         """Add a new group to the current baseFolder with the given key.
 
         Args:
@@ -1067,13 +1107,13 @@ class baseFolder(MutableSequence):
         Todo:
             Propagate any extra attributes into the groups.
         """
-        if key in self.groups: # do nothing here
+        if key in self.groups:  # do nothing here
             pass
         else:
-            new_group=self.__clone__(attrs_only=True)
-            self.groups[key]=new_group
-            self.groups[key].key=key
-            self.groups[key].root=path.join(self.root,str(key))
+            new_group = self.__clone__(attrs_only=True)
+            self.groups[key] = new_group
+            self.groups[key].key = key
+            self.groups[key].root = path.join(self.root, str(key))
         return self
 
     def all(self):
@@ -1083,19 +1123,18 @@ class baseFolder(MutableSequence):
             (path/filename,file)
         """
         for g in self.groups.values():
-            for p,d in g.all():
-                p=path.join(self.key,p)
-                yield p,d
+            for p, d in g.all():
+                p = path.join(self.key, p)
+                yield p, d
         for d in self:
-            yield d.filename,d
-
+            yield d.filename, d
 
     def clear(self):
         """Clear the subgroups."""
         self.groups.clear()
         self.__clear__()
 
-    def compress(self,base=None,key="."):
+    def compress(self, base=None, key="."):
         """Compresses all empty groups from the root up until the first non-empty group is located.
 
         Keyword Arguments:
@@ -1105,27 +1144,24 @@ class baseFolder(MutableSequence):
             A copy of the now flattened DatFolder
         """
         if base is None:
-            base=self
+            base = self
         if not len(self):
             for g in list(self.groups.keys()):
-                nk=path.join(key,g)
-                base.groups[nk]=self.groups[g]
+                nk = path.join(key, g)
+                base.groups[nk] = self.groups[g]
                 del self.groups[g]
-                base.groups[nk].compress(base=base,key=nk)
-                if len(base.groups[nk].groups)==0:
+                base.groups[nk].compress(base=base, key=nk)
+                if len(base.groups[nk].groups) == 0:
                     for f in base.groups[nk].__names__():
-                        obj=base.groups[nk].__getter__(f,instantiate=None)
-                        nf=path.join(nk,f)
-                        base.__setter__(nf,obj)
+                        obj = base.groups[nk].__getter__(f, instantiate=None)
+                        nf = path.join(nk, f)
+                        base.__setter__(nf, obj)
                         base.groups[nk].__deleter__(f)
-                if len(base.groups[nk])==0 and len(base.groups[nk].groups)==0:
+                if len(base.groups[nk]) == 0 and len(base.groups[nk].groups) == 0:
                     del base.groups[nk]
         return self
 
-
-
-
-    def count(self,name):
+    def count(self, name):
         """Provide a count method like a sequence.
 
         Args:
@@ -1138,16 +1174,16 @@ class baseFolder(MutableSequence):
         *name* may also be a regular expressiuon, in which case matches are made on the basis of  the match with the name of the metadataObject. Finally,
         if *name* is a metadataObject, then it matches for an equyality test.
         """
-        if isinstance(name,string_types):
-            if "*" in name or "?" in name: # globbing pattern
-                return len(fnmatch.filter(self.__names__(),name))
+        if isinstance(name, string_types):
+            if "*" in name or "?" in name:  # globbing pattern
+                return len(fnmatch.filter(self.__names__(), name))
             else:
                 return self.__names__().count(self.__lookup__(name))
-        if isinstance(name,_pattern_type):
-            match=[1 for n in self.__names__() if name.match(n)]
+        if isinstance(name, _pattern_type):
+            match = [1 for n in self.__names__() if name.match(n)]
             return len(match)
-        if isinstance(name,metadataObject):
-            match=[1 for d in self if d==name ]
+        if isinstance(name, metadataObject):
+            match = [1 for d in self if d == name]
             return len(match)
 
     def fetch(self):
@@ -1173,35 +1209,35 @@ class baseFolder(MutableSequence):
 
         """
         if pathsplit is None:
-            pathsplit=r"[\\/]+"
-        pathsplit=re.compile(pathsplit)
-        pth=pathsplit.split(name)
-        tmp=self
-        for ix,section in enumerate(pth):
-            if ix==len(pth)-1:
-                existing=tmp.__getter__(section,instantiate=None) if section in tmp.__names__() else None
-                if existing is None or (
-                            isinstance(value,self.type) and id(existing)!=id(value)) or (
-                            isinstance(existing,string_types) and existing!=value): #skip if this is a nul op
-                    if hasattr(value,"filename"):
-                        value.filename=section
-                    tmp.__setter__(section,value)
+            pathsplit = r"[\\/]+"
+        pathsplit = re.compile(pathsplit)
+        pth = pathsplit.split(name)
+        tmp = self
+        for ix, section in enumerate(pth):
+            if ix == len(pth) - 1:
+                existing = tmp.__getter__(section, instantiate=None) if section in tmp.__names__() else None
+                if (
+                    existing is None
+                    or (isinstance(value, self.type) and id(existing) != id(value))
+                    or (isinstance(existing, string_types) and existing != value)
+                ):  # skip if this is a nul op
+                    if hasattr(value, "filename"):
+                        value.filename = section
+                    tmp.__setter__(section, value)
                 else:
-                    return False # Return False if we didn't need to move the filing.
+                    return False  # Return False if we didn't need to move the filing.
                 break
 
             if section not in tmp.groups and create:
                 tmp.add_group(section)
 
             if section in tmp.groups:
-                tmp=tmp.groups[section]
+                tmp = tmp.groups[section]
             else:
                 raise KeyError("No group {} exists and not creating groups.".format(section))
         return tmp
 
-
-
-    def filter(self, filter=None,  invert=False,copy=False): # pylint: disable=redefined-builtin
+    def filter(self, filter=None, invert=False, copy=False):  # pylint: disable=redefined-builtin
         """Filter the current set of files by some criterion
 
         Args:
@@ -1215,14 +1251,14 @@ class baseFolder(MutableSequence):
         Returns:
             The current objectFolder object
         """
-        names=[]
+        names = []
         if copy:
-            result=deepcopy(self)
+            result = deepcopy(self)
         else:
-            result=self
+            result = self
         if isinstance(filter, string_types):
             for f in result.__names__():
-                if fnmatch.fnmatch(f, filter)  ^ invert:
+                if fnmatch.fnmatch(f, filter) ^ invert:
                     names.append(result.__getter__(f))
         elif isinstance(filter, _pattern_type):
             for f in result.__names__():
@@ -1232,13 +1268,13 @@ class baseFolder(MutableSequence):
             raise ValueError("A filter must be defined !")
         else:
             for x in result:
-                if filter(x)  ^ invert:
+                if filter(x) ^ invert:
                     names.append(x)
         result.__clear__()
         result.extend(names)
         return result
 
-    def filterout(self, filter,copy=False): # pylint: disable=redefined-builtin
+    def filterout(self, filter, copy=False):  # pylint: disable=redefined-builtin
         """Synonym for self.filter(filter,invert=True)
 
         Args:
@@ -1251,7 +1287,7 @@ class baseFolder(MutableSequence):
         Returns:
             The current objectFolder object with the files in the file list filtered.
         """
-        return self.filter(filter, invert=True,copy=copy)
+        return self.filter(filter, invert=True, copy=copy)
 
     def flatten(self, depth=None):
         """Compresses all the groups and sub-groups iunto a single flat file list.
@@ -1262,8 +1298,8 @@ class baseFolder(MutableSequence):
         Returns:
             A copy of the now flattened DatFolder
         """
-        if isinstance(depth,int_types):
-            if self.depth<=depth:
+        if isinstance(depth, int_types):
+            if self.depth <= depth:
                 return self.flatten()
             else:
                 for g in self.groups:
@@ -1271,30 +1307,34 @@ class baseFolder(MutableSequence):
                 return self
 
         for g in self.groups:
-            if self.debug: print("{}->{}".format(self.key,self.groups[g].key))
+            if self.debug:
+                print("{}->{}".format(self.key, self.groups[g].key))
             self.groups[g].flatten()
             for n in self.groups[g].__names__():
-                value=self.groups[g].__getter__(n,instantiate=None)
-                old_name=pathjoin(self.groups[g].root,n)
-                new_name=path.relpath(old_name,start=self.root)
-                if self.debug: print("\t{}::{}=>{}".format(g,old_name,new_name))
+                value = self.groups[g].__getter__(n, instantiate=None)
+                old_name = pathjoin(self.groups[g].root, n)
+                new_name = path.relpath(old_name, start=self.root)
+                if self.debug:
+                    print("\t{}::{}=>{}".format(g, old_name, new_name))
 
-                if hasattr(value,"filename"):
-                    value.filename=new_name
+                if hasattr(value, "filename"):
+                    value.filename = new_name
 
-                if isinstance(value,string_types): #We haven't loaded this yet, in which case change value to new_name
-                    value=new_name
-                self.__setter__(new_name,value)
+                if isinstance(
+                    value, string_types
+                ):  # We haven't loaded this yet, in which case change value to new_name
+                    value = new_name
+                self.__setter__(new_name, value)
             self.groups[g].__clear__()
-        self.groups={}
+        self.groups = {}
         return self
 
-    def get(self,name,default=None):
+    def get(self, name, default=None):
         """Return either a sub-group or named object from this folder."""
         try:
-            ret=self[name]
-        except (KeyError,IndexError):
-            ret=default
+            ret = self[name]
+        except (KeyError, IndexError):
+            ret = default
         return ret
 
     def group(self, key):
@@ -1311,25 +1351,25 @@ class baseFolder(MutableSequence):
         with key None. Metadata keys that are generated from the filename are supported.
         """
         if isinstance(key, list):
-            next_keys=key[1:]
-            key=key[0]
+            next_keys = key[1:]
+            key = key[0]
         else:
-            next_keys=[]
+            next_keys = []
         if isinstance(key, string_types):
-            k=key
-            key=lambda x:x.get(k,"None")
+            k = key
+            key = lambda x: x.get(k, "None")
         for x in self:
-            v=key(x)
+            v = key(x)
             if not v in self.groups:
                 self.add_group(v)
             self.groups[v].append(x)
         self.__clear__()
-        if len(next_keys)>0:
+        if len(next_keys) > 0:
             for g in self.groups:
                 self.groups[g].group(next_keys)
         return self
 
-    def index(self,name,start=None,end=None):
+    def index(self, name, start=None, end=None):
         """Provide an index method like a sequence.
 
         Args:
@@ -1346,44 +1386,46 @@ class baseFolder(MutableSequence):
         if *name* is a metadataObject, then it matches for an equyality test.
         """
         if start is None:
-            start=0
+            start = 0
         if end is None:
-            end=len(self)
-        search=self.__names__()[start:end]
-        if isinstance(name,string_types):
-            if "*" in name or "?" in name: # globbing pattern
-                m=fnmatch.filter(search,name)
-                if len(m)>0:
-                    return search.index(m[0]+start)
+            end = len(self)
+        search = self.__names__()[start:end]
+        if isinstance(name, string_types):
+            if "*" in name or "?" in name:  # globbing pattern
+                m = fnmatch.filter(search, name)
+                if len(m) > 0:
+                    return search.index(m[0] + start)
                 else:
                     raise ValueError("{} is not a name of a metadataObject in this baseFolder.".format(name))
             else:
-                return search.index(self.__lookup__(name))+start
-        if isinstance(name,_pattern_type):
-            for i,n in enumerate(search):
-                if name.match(n): return i+start
+                return search.index(self.__lookup__(name)) + start
+        if isinstance(name, _pattern_type):
+            for i, n in enumerate(search):
+                if name.match(n):
+                    return i + start
             raise ValueError("No match for any name of a metadataObject in this baseFolder.")
-        if isinstance(name,metadataObject):
-            for i,n in enumerate(search):
-                if name==n: return i+start
+        if isinstance(name, metadataObject):
+            for i, n in enumerate(search):
+                if name == n:
+                    return i + start
             raise ValueError("No match for any name of a metadataObject in this baseFolder.")
 
-    def insert(self,ix,value):
+    def insert(self, ix, value):
         """Implements the insert method with the option to append as well."""
-        name= self.make_name(value)
-        names=self.__names__()
-        i=1
-        while name in names: # Since we're adding a new entry, make sure we have a unique name !
-            name,ext=path.splitext(name)
-            name="{}({}).{}".format(name,i,ext)
-            i+=1
-        if -len(self)<ix<len(self):
-            ix=ix%len(self)
-            self.__inserter__(ix,name,value)
-            name=self.__names__()[ix]
-            self.__setter__(self.__lookup__(name),value)
-        elif ix>=len(self):
-            self.__setter__(name,value,force_insert=True)
+        name = self.make_name(value)
+        names = self.__names__()
+        i = 1
+        while name in names:  # Since we're adding a new entry, make sure we have a unique name !
+            name, ext = path.splitext(name)
+            name = "{}({}).{}".format(name, i, ext)
+            i += 1
+        if -len(self) < ix < len(self):
+            ix = ix % len(self)
+            self.__inserter__(ix, name, value)
+            name = self.__names__()[ix]
+            self.__setter__(self.__lookup__(name), value)
+        elif ix >= len(self):
+            self.__setter__(name, value, force_insert=True)
 
     def append(self, value):
         """Append an item to the folder object"""
@@ -1397,33 +1439,32 @@ class baseFolder(MutableSequence):
         """Return the keys used to access the sub-=groups of this folder."""
         return self.groups.keys()
 
-    def make_name(self,value=None):
+    def make_name(self, value=None):
         """Construct a name from the value object if possible."""
-        if isinstance(value,self.type):
-            name=getattr(value,"filename","")
-            if name=="":
-                name="Untitled-{}".format(self._last_name)
+        if isinstance(value, self.type):
+            name = getattr(value, "filename", "")
+            if name == "":
+                name = "Untitled-{}".format(self._last_name)
                 while name in self:
-                    self._last_name+=1
-                    name="Untitled-{}".format(self._last_name)
+                    self._last_name += 1
+                    name = "Untitled-{}".format(self._last_name)
             return name
-        elif isinstance(value,string_types):
+        elif isinstance(value, string_types):
             return value
         else:
-            name="Untitled-{}".format(self._last_name)
+            name = "Untitled-{}".format(self._last_name)
             while name in self:
-                self._last_name+=1
-                name="Untitled-{}".format(self._last_name)
+                self._last_name += 1
+                name = "Untitled-{}".format(self._last_name)
             return name
 
-
-    def pop(self,name=-1,default=None): # pylint: disable=arguments-differ
+    def pop(self, name=-1, default=None):  # pylint: disable=arguments-differ
         """Return and remove either a subgroup or named object from this folder."""
         try:
-            ret=self[name]
+            ret = self[name]
             del self[name]
-        except (KeyError,IndexError):
-            ret=default
+        except (KeyError, IndexError):
+            ret = default
         return ret
 
     def popitem(self):
@@ -1436,15 +1477,15 @@ class baseFolder(MutableSequence):
         Returns:
             A copy of thte pruned objectFolder.
         """
-        keys=list(self.groups.keys())
+        keys = list(self.groups.keys())
         for grp in keys:
-            g=self.groups[grp]
+            g = self.groups[grp]
             g.prune()
             if not len(g) and not len(g.groups):
                 del self.groups[grp]
         return self
 
-    def select(self,*args, **kargs):
+    def select(self, *args, **kargs):
         """A generator that can be used to select particular data files from the objectFolder
 
         Args:
@@ -1492,62 +1533,62 @@ class baseFolder(MutableSequence):
             *__eq* in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
             then pass them via the first positional dictionary value.
         """
-        recurse=kargs.pop("recurse",False)
-        negate=kargs.pop("negate",False)
-        if len(args)==1:
+        recurse = kargs.pop("recurse", False)
+        negate = kargs.pop("negate", False)
+        if len(args) == 1:
             if callable(args[0]):
-                kargs["__"]=args[0]
-            elif isinstance(args[0],dict):
+                kargs["__"] = args[0]
+            elif isinstance(args[0], dict):
                 kargs.update(args[0])
-        result=self.__clone__(attrs_only=True)
+        result = self.__clone__(attrs_only=True)
         if recurse:
-            gkargs={}
+            gkargs = {}
             gkargs.update(kargs)
-            gkargs["recurse"]=True
+            gkargs["recurse"] = True
             for g in self.groups:
-                result.groups[g]=self.groups[g].select(*args,**gkargs)
+                result.groups[g] = self.groups[g].select(*args, **gkargs)
         for f in self:
             for arg in kargs:
                 if callable(kargs[arg]) and kargs[arg](f):
                     break
-                elif isinstance(arg,string_types):
-                    val=kargs[arg]
-                    parts=arg.split("__")
-                    if parts[-1] in operator and len(parts)>1:
-                        if len(parts)>2 and parts[-2]=="not":
-                            end=-2
-                            negate=True
+                elif isinstance(arg, string_types):
+                    val = kargs[arg]
+                    parts = arg.split("__")
+                    if parts[-1] in operator and len(parts) > 1:
+                        if len(parts) > 2 and parts[-2] == "not":
+                            end = -2
+                            negate = True
                         else:
-                            end=-1
-                            negate=False
-                        arg="__".join(parts[:end])
-                        op=parts[-1]
+                            end = -1
+                            negate = False
+                        arg = "__".join(parts[:end])
+                        op = parts[-1]
                     else:
-                        if isinstance(kargs[arg],tuple) and len(kargs[arg]==2):
-                            op="between" #Assume two length tuples are testing for range
-                        elif not isinstance(kargs[arg],string_types) and isiterable(kargs[arg]):
-                            op="in" # Assume other iterables are testing for memebership
-                        else: #Everything else is exact matches
-                            op="eq"
-                    func=operator[op]
-                    if arg in f and negate^func(f[arg],val):
+                        if isinstance(kargs[arg], tuple) and len(kargs[arg] == 2):
+                            op = "between"  # Assume two length tuples are testing for range
+                        elif not isinstance(kargs[arg], string_types) and isiterable(kargs[arg]):
+                            op = "in"  # Assume other iterables are testing for memebership
+                        else:  # Everything else is exact matches
+                            op = "eq"
+                    func = operator[op]
+                    if arg in f and negate ^ func(f[arg], val):
                         break
-            else: # No tests matched - contineu to next line
+            else:  # No tests matched - contineu to next line
                 continue
-            #Something matched, so append to result
-            if hasattr(f,"filename"):
-                name=f.filename
-                result.__setter__(name,f)
+            # Something matched, so append to result
+            if hasattr(f, "filename"):
+                name = f.filename
+                result.__setter__(name, f)
             else:
                 result.append(f)
         return result
 
-    def setdefault(self,k,d=None):
+    def setdefault(self, k, d=None):
         """Return or set a subgroup or named object."""
-        self[k]=self.get(k,d)
+        self[k] = self.get(k, d)
         return self[k]
 
-    def slice_metadata(self, key,output="smart"):
+    def slice_metadata(self, key, output="smart"):
         """Return an array of the metadata values for each item/file in the top level group
 
         Args:
@@ -1570,7 +1611,7 @@ class baseFolder(MutableSequence):
         TODO:
             Add options to recurse through all groups? Put back RCT's values only functionality?
         """
-        return self.metadata.slice(key,output=output)
+        return self.metadata.slice(key, output=output)
 
     def sort(self, key=None, reverse=False):
         """Sort the files by some key
@@ -1587,34 +1628,42 @@ class baseFolder(MutableSequence):
             A copy of the current objectFolder object
         """
         if isinstance(key, string_types):
-            k=[(x.get(key),i) for i,x in enumerate(self)]
-            k=sorted(k,reverse=reverse)
-            new_order=[self[i] for x,i in k]
-            new_names=[self.__names__()[i] for x,i in k]
+            k = [(x.get(key), i) for i, x in enumerate(self)]
+            k = sorted(k, reverse=reverse)
+            new_order = [self[i] for x, i in k]
+            new_names = [self.__names__()[i] for x, i in k]
         elif key is None:
-            fnames=self.__names__()
+            fnames = self.__names__()
             fnames.sort(reverse=reverse)
-            new_order=[self.__getter__(name,instantiate=False) for name in fnames]
-            new_names=fnames
-        elif isinstance(key,_pattern_type):
+            new_order = [self.__getter__(name, instantiate=False) for name in fnames]
+            new_names = fnames
+        elif isinstance(key, _pattern_type):
             if python_v3:
-                new_names=sorted(self.__names__(),key=lambda x:key.match(x).groups(), reverse=reverse)
+                new_names = sorted(self.__names__(), key=lambda x: key.match(x).groups(), reverse=reverse)
             else:
-                new_names=sorted(self.__names__(),cmp=lambda x, y:cmp(key.match(x).groups(), # NOQA pylint: disable=undefined-variable
-                                 key.match(y).groups()), reverse=reverse)
-            new_order=[self.__getter__(x) for x in new_names]
+                new_names = sorted(
+                    self.__names__(),
+                    cmp=lambda x, y: cmp(
+                        key.match(x).groups(), key.match(y).groups()  # NOQA pylint: disable=undefined-variable
+                    ),
+                    reverse=reverse,
+                )
+            new_order = [self.__getter__(x) for x in new_names]
         else:
-            order=range(len(self))
+            order = range(len(self))
             if python_v3:
-                new_order=sorted(order,key=lambda x:key(self[x]), reverse=reverse)
+                new_order = sorted(order, key=lambda x: key(self[x]), reverse=reverse)
             else:
-                new_order=sorted(order,cmp=lambda x, y:cmp(key(self[x]),  # NOQA pylint: disable=undefined-variable
-                                 key(self[y])), reverse=reverse)
-            new_order=[self.__names__()[i] for i in new_order]
-            new_names=new_order
+                new_order = sorted(
+                    order,
+                    cmp=lambda x, y: cmp(key(self[x]), key(self[y])),  # NOQA pylint: disable=undefined-variable
+                    reverse=reverse,
+                )
+            new_order = [self.__names__()[i] for i in new_order]
+            new_names = new_order
         self.__clear__()
-        for obj,k in zip(new_order,new_names):
-            self.__setter__(k,obj)
+        for obj, k in zip(new_order, new_names):
+            self.__setter__(k, obj)
         return self
 
     def unflatten(self):
@@ -1624,33 +1673,33 @@ class baseFolder(MutableSequence):
             A copy of the objectFolder
         """
         if len(self):
-            if len(self)==1:
-                self.directory=path.join(self.directory,path.dirname(self.__names__()[0]))
+            if len(self) == 1:
+                self.directory = path.join(self.directory, path.dirname(self.__names__()[0]))
             else:
-                self.directory=commonpath([path.realpath(path.join(self.directory, x)) for x in self.__names__()])
-            names=self.__names__()
-            relpaths=[path.relpath(path.join(self.directory,f),self.directory) for f in names]
-            dels=list()
-            for i,f in enumerate(relpaths):
-                ret=self.file(f,self.__getter__(names[i],instantiate=None))
-                if isinstance(ret,baseFolder): # filed ok
+                self.directory = commonpath([path.realpath(path.join(self.directory, x)) for x in self.__names__()])
+            names = self.__names__()
+            relpaths = [path.relpath(path.join(self.directory, f), self.directory) for f in names]
+            dels = list()
+            for i, f in enumerate(relpaths):
+                ret = self.file(f, self.__getter__(names[i], instantiate=None))
+                if isinstance(ret, baseFolder):  # filed ok
                     dels.append(i)
-            for i in sorted(dels,reverse=True):
+            for i in sorted(dels, reverse=True):
                 del self[i]
         for g in self.groups:
             self.groups[g].unflatten()
         return self
 
-    def update(self,other):
+    def update(self, other):
         """Update this folder with a dictionary or another folder."""
-        if isinstance(other,dict):
+        if isinstance(other, dict):
             for k in other:
-                self[k]=other[k]
-        elif isinstance(other,baseFolder):
+                self[k] = other[k]
+        elif isinstance(other, baseFolder):
             for k in other.groups:
-                self.groups[k]=other.groups[k]
+                self.groups[k] = other.groups[k]
             for k in self.__names__():
-                self.__setter__(self.__lookup__(k),other.__getter__(other.__lookup__(k)))
+                self.__setter__(self.__lookup__(k), other.__getter__(other.__lookup__(k)))
 
     def values(self):
         """Return the sub-groups of this folder."""
@@ -1675,12 +1724,19 @@ class baseFolder(MutableSequence):
                 walker(f,list_of_group_names,**walker_args)
                 where f is either a objectFolder or metadataObject.
         """
-        group=kargs.pop("group",False)
-        replace_terminal=kargs.pop("replace_terminal",False)
-        only_terminal=kargs.pop("only_terminal",True)
-        walker_args=kargs.pop("walker_args",dict())
-        walker_args=dict() if walker_args is None else walker_args
-        return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,only_terminal=only_terminal,walker_args=walker_args,breadcrumb=[])
+        group = kargs.pop("group", False)
+        replace_terminal = kargs.pop("replace_terminal", False)
+        only_terminal = kargs.pop("only_terminal", True)
+        walker_args = kargs.pop("walker_args", dict())
+        walker_args = dict() if walker_args is None else walker_args
+        return self.__walk_groups(
+            walker,
+            group=group,
+            replace_terminal=replace_terminal,
+            only_terminal=only_terminal,
+            walker_args=walker_args,
+            breadcrumb=[],
+        )
 
     def zip_groups(self, groups):
         """Return a list of tuples of metadataObjects drawn from the specified groups
@@ -1694,7 +1750,5 @@ class baseFolder(MutableSequence):
         """
         if not isinstance(groups, list):
             raise SyntaxError("groups must be a list of groups")
-        grps=[[y for y in self.groups[x]] for x in groups]
+        grps = [[y for y in self.groups[x]] for x in groups]
         return zip(*grps)
-
-

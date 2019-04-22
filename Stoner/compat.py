@@ -12,19 +12,33 @@ from sys import version_info as __vi__
 from matplotlib import __version__ as mpl_version
 from distutils.version import LooseVersion
 from os import walk
-from os.path import join, commonprefix,sep
+from os.path import join, commonprefix, sep
 import fnmatch
 import numpy as np
 
 try:
     from lmfit import Model  # pylint: disable=unused-import
-    _lmfit=True
+
+    _lmfit = True
 except ImportError:
-    Model=object
-    _lmfit=False
+    Model = object
+    _lmfit = False
 
 
-__all__ = ["python_v3","str2bytes","bytes2str","get_filedialog","string_types","int_types","index_types","LooseVersion","classproperty","mpl_version","_lmfit","cmp"]
+__all__ = [
+    "python_v3",
+    "str2bytes",
+    "bytes2str",
+    "get_filedialog",
+    "string_types",
+    "int_types",
+    "index_types",
+    "LooseVersion",
+    "classproperty",
+    "mpl_version",
+    "_lmfit",
+    "cmp",
+]
 
 # Nasty hacks to sort out some naming conventions
 if __vi__[0] == 2:
@@ -33,22 +47,21 @@ if __vi__[0] == 2:
     from __builtin__ import cmp
 
     def get_func_params(func):
-        ret=[]
+        ret = []
         for arg in getargspec(func)[0][1:]:
             ret.append(arg)
         return ret
 
-
     range = xrange  # NOQA pylint:disable=redefined-builtin, undefined-variable
     string_types = (str, unicode)  # NOQA pylint: disable=undefined-variable
-    int_types=(int,long)  # NOQA pylint: disable=undefined-variable
+    int_types = (int, long)  # NOQA pylint: disable=undefined-variable
     python_v3 = False
 
-    #|Define symbvols for equivalence to Python 3
+    # |Define symbvols for equivalence to Python 3
     str2bytes = str
     bytes2str = str
 
-    def bytes(arg,*args,**kargs):
+    def bytes(arg, *args, **kargs):
         return str(arg)
 
     def get_filedialog(what="file", **opts):
@@ -63,13 +76,14 @@ if __vi__[0] == 2:
         """
         from Tkinter import Tk
         import tkFileDialog as filedialog
+
         r = Tk()
         r.withdraw()
         funcs = {
             "file": filedialog.askopenfilename,
             "directory": filedialog.askdirectory,
             "files": filedialog.askopenfilenames,
-            "save": filedialog.asksaveasfilename
+            "save": filedialog.asksaveasfilename,
         }
         if what not in funcs:
             raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
@@ -80,40 +94,39 @@ if __vi__[0] == 2:
         """Given a sequence of path names, returns the longest common sub-path."""
 
         if not paths:
-            raise ValueError('commonpath() arg is an empty sequence')
+            raise ValueError("commonpath() arg is an empty sequence")
 
-        prefix=commonprefix(paths)
-        prefix=prefix[::-1]
-        split=prefix.index(sep)
-        if split>0:
-            prefix=prefix[split:]
+        prefix = commonprefix(paths)
+        prefix = prefix[::-1]
+        split = prefix.index(sep)
+        if split > 0:
+            prefix = prefix[split:]
         return prefix[::-1]
-
 
 
 elif __vi__[0] == 3:
 
-    if __vi__[1] <7:
+    if __vi__[1] < 7:
         from re import _pattern_type
     else:
         from re import Pattern as _pattern_type
 
-    cmp=None
+    cmp = None
     from builtins import bytes as _bytes
     from os.path import commonpath
     from inspect import signature
 
     def get_func_params(func):
-        sig=signature(func)
-        ret={}
-        for i,k in enumerate(sig.parameters):
-            if i==0:
+        sig = signature(func)
+        ret = {}
+        for i, k in enumerate(sig.parameters):
+            if i == 0:
                 continue
-            ret[k]=sig.parameters[k]
+            ret[k] = sig.parameters[k]
         return list(ret.keys())
 
-    string_types = (str, )
-    int_types=(int,)
+    string_types = (str,)
+    int_types = (int,)
     python_v3 = True
 
     def str2bytes(s):
@@ -126,7 +139,7 @@ elif __vi__[0] == 3:
             return b.decode("utf-8", "ignore")
         return b
 
-    bytes=_bytes
+    bytes = _bytes
 
     def get_filedialog(what="file", **opts):
         """Wrapper around Tk file dialog to mange creating file dialogs in a cross platform way.
@@ -139,13 +152,14 @@ elif __vi__[0] == 3:
             A file name or directory or list of files.
         """
         from tkinter import Tk, filedialog
+
         r = Tk()
         r.withdraw()
         funcs = {
             "file": filedialog.askopenfilename,
             "directory": filedialog.askdirectory,
             "files": filedialog.askopenfilenames,
-            "save": filedialog.asksaveasfilename
+            "save": filedialog.asksaveasfilename,
         }
         if what not in funcs:
             raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
@@ -153,19 +167,21 @@ elif __vi__[0] == 3:
             return funcs[what](**opts)
 
 
-int_types+=(np.int,np.int0,np.int8,np.int16,np.int32,np.int64,)
+int_types += (np.int, np.int0, np.int8, np.int16, np.int32, np.int64)
 
-index_types = string_types + int_types +(_pattern_type,)
+index_types = string_types + int_types + (_pattern_type,)
 
-def listdir_recursive(dirname,glob=None):
+
+def listdir_recursive(dirname, glob=None):
     """Generator that does a recursive file list with optional globbing."""
     for dp, _, fn in walk(dirname):
         for f in fn:
-            ret=join(dp,f)
+            ret = join(dp, f)
             if glob is not None:
-                if not fnmatch.fnmatch(ret,glob):
+                if not fnmatch.fnmatch(ret, glob):
                     continue
             yield ret
+
 
 class ClassPropertyDescriptor(object):
 
@@ -181,6 +197,7 @@ class ClassPropertyDescriptor(object):
         if klass is None:
             klass = type(obj)
         return self.fget.__get__(obj, klass)()
+
 
 def classproperty(func):
     """Define a property to be a class property and not an instance property."""

@@ -2,7 +2,21 @@
 of the `Condensed Matter Group<http://www.stoner.leeds.ac.uk/>` at the `University of Leeds<http://www.leeds.ac.uk>`.
 """
 # pylint: disable=import-error
-__all__=['Core', 'Analysis', 'plot', 'Image','tools','FileFormats','folders','Folders','Data','DataFolder','set_option','get_option','Options']
+__all__ = [
+    "Core",
+    "Analysis",
+    "plot",
+    "Image",
+    "tools",
+    "FileFormats",
+    "folders",
+    "Folders",
+    "Data",
+    "DataFolder",
+    "set_option",
+    "get_option",
+    "Options",
+]
 
 # These fake the old namespace if you do an import Stoner
 from sys import float_info
@@ -17,17 +31,19 @@ import Stoner.tools as tools
 import Stoner.Folders as Folders
 from .Folders import DataFolder
 
-from .tools import format_error,set_option,get_option,_Options
+from .tools import format_error, set_option, get_option, _Options
 
-Options=_Options()
+Options = _Options()
 
 from os import path as _path_
-__version_info__ = ('0', '9', '0b1')
-__version__ = '.'.join(__version_info__)
 
-__home__=_path_.realpath(_path_.dirname(__file__))
+__version_info__ = ("0", "9", "0b1")
+__version__ = ".".join(__version_info__)
 
-class Data(Analysis.AnalysisMixin,FittingMixin,plot.PlotMixin,Core.DataFile):
+__home__ = _path_.realpath(_path_.dirname(__file__))
+
+
+class Data(Analysis.AnalysisMixin, FittingMixin, plot.PlotMixin, Core.DataFile):
 
     """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`
 
@@ -36,7 +52,7 @@ class Data(Analysis.AnalysisMixin,FittingMixin,plot.PlotMixin,Core.DataFile):
     analysis on data files.
     """
 
-    def format(self,key,**kargs):
+    def format(self, key, **kargs):
         r"""Return the contents of key pretty formatted using :py:func:`format_error`.
 
         Args:
@@ -62,22 +78,21 @@ class Data(Analysis.AnalysisMixin,FittingMixin,plot.PlotMixin,Core.DataFile):
         the units are self["key units"] or "".
 
         """
-        mode=kargs.pop("mode","float")
-        units=kargs.pop("units",self.get(key+" units","")	)
-        prefix=kargs.pop("prefix","{} = ".format(self.get(key+" label","{}".format(key))))
-        latex=kargs.pop("latex",False)
-        fmt=kargs.pop("fmt","latex" if latex else "text")
-        escape=kargs.pop("escape",False)
+        mode = kargs.pop("mode", "float")
+        units = kargs.pop("units", self.get(key + " units", ""))
+        prefix = kargs.pop("prefix", "{} = ".format(self.get(key + " label", "{}".format(key))))
+        latex = kargs.pop("latex", False)
+        fmt = kargs.pop("fmt", "latex" if latex else "text")
+        escape = kargs.pop("escape", False)
 
         try:
-            value=float(self[key])
+            value = float(self[key])
         except (ValueError, TypeError):
-            raise KeyError("{} should be a floating point value of the metadata not a {}.".format(key,type(self[key])))
+            raise KeyError(
+                "{} should be a floating point value of the metadata not a {}.".format(key, type(self[key]))
+            )
         try:
-            error=float(self[key+" err"])
+            error = float(self[key + " err"])
         except KeyError:
-            error=float_info.epsilon
-        return format_error(value,error,fmt=fmt,mode=mode,units=units,prefix=prefix,scape=escape)
-
-
-
+            error = float_info.epsilon
+        return format_error(value, error, fmt=fmt, mode=mode, units=units, prefix=prefix, scape=escape)

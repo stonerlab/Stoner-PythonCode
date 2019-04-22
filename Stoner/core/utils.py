@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 """Utility functions to support :py:mod:`Stoner.Core`."""
 
-__all__=["copy_into","itersubclasses","tab_delimited"]
+__all__ = ["copy_into", "itersubclasses", "tab_delimited"]
 
 import copy
 import csv
 
-def copy_into(source,dest):
+
+def copy_into(source, dest):
     """Copies the data associated with source to dest.
 
     Args:
@@ -21,15 +22,16 @@ def copy_into(source,dest):
     overwrites the attributes that represent the data in the DataFile.
     """
     dest.data = source.data.copy()
-    dest.setas=source.setas
+    dest.setas = source.setas
     for attr in source._public_attrs:
-        if not hasattr(source,attr) or callable(getattr(source,attr)) or attr in ["data"]:
+        if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data"]:
             continue
         try:
-            setattr(dest,attr,copy.deepcopy(getattr(source,attr)))
-        except NotImplementedError: # Deepcopying failed, so just copy a reference instead
-            setattr(dest,attr,getattr(source,attr))
+            setattr(dest, attr, copy.deepcopy(getattr(source, attr)))
+        except NotImplementedError:  # Deepcopying failed, so just copy a reference instead
+            setattr(dest, attr, getattr(source, attr))
     return dest
+
 
 class tab_delimited(csv.Dialect):
 
@@ -65,8 +67,9 @@ def itersubclasses(cls, _seen=None):
     ['type', ...'tuple', ...]
     """
     if not isinstance(cls, type):
-        raise TypeError('itersubclasses must be called with ' 'new-style classes, not %.100r' % cls)
-    if _seen is None: _seen = set()
+        raise TypeError("itersubclasses must be called with " "new-style classes, not %.100r" % cls)
+    if _seen is None:
+        _seen = set()
     try:
         subs = cls.__subclasses__()
     except TypeError:  # fails only when cls is type

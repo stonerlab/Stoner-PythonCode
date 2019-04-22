@@ -4,6 +4,7 @@
 Stoner Package specific exceptions
 """
 
+
 class StonerLoadError(Exception):
 
     """An exception thrown by the file loading routines in the Stoner Package.
@@ -16,9 +17,9 @@ class StonerLoadError(Exception):
 
     pass
 
+
 class StonerSetasError(AttributeError):
 
     """An exception tjrown when we try to access a column in data without setas being set."""
 
     pass
-

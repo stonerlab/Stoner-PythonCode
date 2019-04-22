@@ -10,19 +10,62 @@ Please do keep documentation up to date, see other functions for documentation e
 All the functions here defined for scipy.optimize.curve\_fit to call themm
 i.e. the parameters are expanded to separate arguements.
 """
-__all__ = ['Arrhenius', 'BDR', 'BlochGrueneisen',  'FMR_Power', 'FluchsSondheimer', 'FowlerNordheim', 'Inverse_Kittel', 'KittelEquation', 'Langevin',
-            'Linear', 'Lorentzian_diff', 'make_model','ModArrhenius', 'NDimArrhenius', 'PowerLaw', 'Quadratic', 'Simmons', 'StretchedExp', 'Strijkers', 'TersoffHammann',
-             'VFTEquation', 'WLfit', '_strijkers_core', 'arrhenius', 'bdr', 'blochGrueneisen', 'cfg_data_from_ini', 'cfg_model_from_ini', 'fluchsSondheimer',
-              'fmr_power', 'fowlerNordheim', 'inverse_kittel', 'kittelEquation', 'langevin', 'linear', 'lorentzian_diff', 'modArrhenius', 'nDimArrhenius',
-               'powerLaw', 'quadratic', 'simmons', 'stretchedExp', 'strijkers', 'vftEquation', 'wlfit']
+__all__ = [
+    "Arrhenius",
+    "BDR",
+    "BlochGrueneisen",
+    "FMR_Power",
+    "FluchsSondheimer",
+    "FowlerNordheim",
+    "Inverse_Kittel",
+    "KittelEquation",
+    "Langevin",
+    "Linear",
+    "Lorentzian_diff",
+    "make_model",
+    "ModArrhenius",
+    "NDimArrhenius",
+    "PowerLaw",
+    "Quadratic",
+    "Simmons",
+    "StretchedExp",
+    "Strijkers",
+    "TersoffHammann",
+    "VFTEquation",
+    "WLfit",
+    "_strijkers_core",
+    "arrhenius",
+    "bdr",
+    "blochGrueneisen",
+    "cfg_data_from_ini",
+    "cfg_model_from_ini",
+    "fluchsSondheimer",
+    "fmr_power",
+    "fowlerNordheim",
+    "inverse_kittel",
+    "kittelEquation",
+    "langevin",
+    "linear",
+    "lorentzian_diff",
+    "modArrhenius",
+    "nDimArrhenius",
+    "powerLaw",
+    "quadratic",
+    "simmons",
+    "stretchedExp",
+    "strijkers",
+    "vftEquation",
+    "wlfit",
+]
 import Stoner.Core as _SC_
-from .compat import python_v3,string_types, get_func_params
+from .compat import python_v3, string_types, get_func_params
 from . import Data
 from functools import wraps
 import numpy as _np_
 from collections import Mapping
 from io import IOBase
 from scipy.special import digamma
+
 try:
     from lmfit import Model
     from lmfit.models import LinearModel as _Linear  # NOQA pylint: disable=unused-import
@@ -30,42 +73,45 @@ try:
     from lmfit.models import QuadraticModel as _Quadratic  # NOQA pylint: disable=unused-import
     from lmfit.models import update_param_vals
 except ImportError:
-    Model=object
-    _Linear=object
-    _PowerLaw=object
-    _Quadratic=object
-    update_param_vals=None
+    Model = object
+    _Linear = object
+    _PowerLaw = object
+    _Quadratic = object
+    update_param_vals = None
 
 from scipy.integrate import quad
 import scipy.constants.codata as consts
 import scipy.constants as cnst
+
 try:
     if python_v3:
         from configparser import ConfigParser as SafeConfigParser
     else:
         from ConfigParser import SafeConfigParser
 except ImportError:
-    SafeConfigParser=None
+    SafeConfigParser = None
 
-try: # numba is an optional dependency
-    from numba import jit,float64
+try:  # numba is an optional dependency
+    from numba import jit, float64
 except ImportError:
-    def jit(func,*args):
+
+    def jit(func, *args):
         """Null decorator function."""
         return func
 
     class _dummy(object):
         """A class that does nothing so that float64 can be an instance of it safely."""
 
-        def __call__(self,*args):
+        def __call__(self, *args):
             return self
 
-        def __getitem__(self,*args):
+        def __getitem__(self, *args):
             return self
 
-    float64=_dummy()
+    float64 = _dummy()
 
 from matplotlib.pyplot import plot
+
 
 def _get_model_(model):
     """Utility meothd to manage creating an lmfit.Model.
@@ -87,18 +133,21 @@ def _get_model_(model):
     -   A Model instance - in which case no further action is necessary.
 
     """
-    if isinstance(model,string_types): #model is a string, so we;ll try importing it now
-        parts=model.split(".")
-        model=parts[-1]
-        module=".".join(parts[:-1])
-        model=__import__(module,globals(),locals(),(model)).__getattribute__(model)
-    if type(model).__name__=="type" and issubclass(model,Model): # ok perhaps we've got a model class rather than an instance
-        model=model()
-    if not isinstance(model,Model) and callable(model): # Ok, wrap the callable in a model
-        model=Model(model)
-    if not isinstance(model,Model):
+    if isinstance(model, string_types):  # model is a string, so we;ll try importing it now
+        parts = model.split(".")
+        model = parts[-1]
+        module = ".".join(parts[:-1])
+        model = __import__(module, globals(), locals(), (model)).__getattribute__(model)
+    if type(model).__name__ == "type" and issubclass(
+        model, Model
+    ):  # ok perhaps we've got a model class rather than an instance
+        model = model()
+    if not isinstance(model, Model) and callable(model):  # Ok, wrap the callable in a model
+        model = Model(model)
+    if not isinstance(model, Model):
         raise TypeError("model {} is not an instance of llmfit.Model".format(model.__name__))
     return model
+
 
 def make_model(model_func):
     """A decorator that turns a function into an lmfit model.
@@ -131,20 +180,19 @@ def make_model(model_func):
 
         __doc__ = model_func.__doc__
 
-        def __init__(self,*args,**kargs):
-            super(_ModelDecorator,self).__init__(model_func,*args,**kargs)
-            if hasattr(self,"_limits"):
-                for param,limit in self._limits().items():
-                    self.set_param_hint(param,**limit)
-            self.__name__=self.func.__name__
+        def __init__(self, *args, **kargs):
+            super(_ModelDecorator, self).__init__(model_func, *args, **kargs)
+            if hasattr(self, "_limits"):
+                for param, limit in self._limits().items():
+                    self.set_param_hint(param, **limit)
+            self.__name__ = self.func.__name__
 
-        def guess(self,y,x=None):
+        def guess(self, y, x=None):
             """A default parameter guess method that just guesses 1.0 for everything like :py:func:`scipy.optimize.curve_fit` does."""
             return _np_.ones(len(self.param_names))
 
-
         @classmethod
-        def hinter(cls,func):
+        def hinter(cls, func):
             """Use the given function to determine the parameter hints.
 
             Args:
@@ -158,20 +206,22 @@ def make_model(model_func):
 
                 func should only take keyword arguments as by default it will be called with no arguments during model initialisation.
             """
+
             @wraps(func)
-            def _limits_proxy(self,**kargs):
-                limits=func(**kargs)
+            def _limits_proxy(self, **kargs):
+                limits = func(**kargs)
                 for param in limits:
                     if param not in self.param_names:
                         raise RuntimeError("Unrecognised parameter in hinter function: {}".format(param))
-                    if not isinstance(limits[param],Mapping):
+                    if not isinstance(limits[param], Mapping):
                         raise RuntimeError("{Arameter hint for {} was not a mapping".format(param))
                 return limits
-            cls._limits=_limits_proxy
+
+            cls._limits = _limits_proxy
             return _limits_proxy
 
         @classmethod
-        def guesser(cls,func):
+        def guesser(cls, func):
             """Use the given function as the guess method.
 
             Args:
@@ -186,13 +236,15 @@ def make_model(model_func):
                 func should take at least one positional argument, being the y-data values used to guess parameters.
                 It should return a list, tuple of guesses parameter values with one entry for each parameter in the model.
             """
+
             @wraps(func)
-            def guess_proxy(self,*args,**kargs):
-                guesses=func(*args,**kargs)
-                pars={x:y for x,y in zip(self.param_names,guesses)}
+            def guess_proxy(self, *args, **kargs):
+                guesses = func(*args, **kargs)
+                pars = {x: y for x, y in zip(self.param_names, guesses)}
                 pars = self.make_params(**pars)
                 return update_param_vals(pars, self.prefix, **kargs)
-            cls.guess=guess_proxy
+
+            cls.guess = guess_proxy
             return guess_proxy
 
     return _ModelDecorator
@@ -202,13 +254,15 @@ def linear(x, intercept, slope):
     """Simple linear function"""
     return slope * x + intercept
 
+
 class Linear(_Linear):
 
     """Simple linear fit"""
 
     pass
 
-def cfg_data_from_ini(inifile,filename=None,**kargs):
+
+def cfg_data_from_ini(inifile, filename=None, **kargs):
     """Read an inifile and load and configure a DataFile from it.
 
     Args:
@@ -232,38 +286,38 @@ def cfg_data_from_ini(inifile,filename=None,**kargs):
     if SafeConfigParser is None:
         raise RuntimeError("Need to have ConfigParser module installed for this to work.")
     config = SafeConfigParser()
-    if isinstance(inifile,string_types):
+    if isinstance(inifile, string_types):
         config.read(inifile)
-    elif isinstance(inifile,IOBase):
+    elif isinstance(inifile, IOBase):
         config.readfp(inifile)
     if not config.has_section("Data"):
         raise RuntimeError("Configuration file lacks a [Data] section to describe data.")
 
-    if config.has_option("Data","type"):
-        typ=config.get("Data","type").split(".")
-        typ_mod=".".join(typ[:-1])
-        typ=typ[-1]
-        typ = __import__(typ_mod,fromlist=[typ]).__getattribute__(typ)
+    if config.has_option("Data", "type"):
+        typ = config.get("Data", "type").split(".")
+        typ_mod = ".".join(typ[:-1])
+        typ = typ[-1]
+        typ = __import__(typ_mod, fromlist=[typ]).__getattribute__(typ)
     else:
         typ = None
-    data=Data(**kargs)
+    data = Data(**kargs)
     if filename is None:
-        if not config.has_option("Data","filename"):
-            filename=False
+        if not config.has_option("Data", "filename"):
+            filename = False
         else:
-            filename=config.get("Data","filename")
-            if filename in ["False","True"]:
-                filename=bool(filename)
-    data.load(filename,auto_load=False,filetype=typ)
-    cols={"x":0,"y":1,"e":None} # Defaults
+            filename = config.get("Data", "filename")
+            if filename in ["False", "True"]:
+                filename = bool(filename)
+    data.load(filename, auto_load=False, filetype=typ)
+    cols = {"x": 0, "y": 1, "e": None}  # Defaults
 
-    for c in ["x","y","e"]:
-        if not config.has_option("Data",c):
+    for c in ["x", "y", "e"]:
+        if not config.has_option("Data", c):
             pass
         else:
             try:
-                cols[c]=config.get("Data",c)
-                cols[c]=int(cols[c])
+                cols[c] = config.get("Data", c)
+                cols[c] = int(cols[c])
             except ValueError:
                 pass
         if cols[c] is None:
@@ -272,7 +326,8 @@ def cfg_data_from_ini(inifile,filename=None,**kargs):
     data.setas(**cols)
     return data
 
-def cfg_model_from_ini(inifile,model=None,data=None):
+
+def cfg_model_from_ini(inifile, model=None, data=None):
     r"""Utility function to configure an lmfit Model from an inifile.
 
     Args:
@@ -300,58 +355,68 @@ def cfg_model_from_ini(inifile,model=None,data=None):
     the :math:`\Chi^2` as a function of the parameters, then this array has a separate row for each iteration.
     """
     config = SafeConfigParser()
-    if isinstance(inifile,string_types):
+    if isinstance(inifile, string_types):
         config.read(inifile)
-    elif isinstance(inifile,IOBase):
+    elif isinstance(inifile, IOBase):
         config.readfp(inifile)
 
-    if model is None: # Check to see if config file specified a model
+    if model is None:  # Check to see if config file specified a model
         try:
-            model=config.get("Options","model")
+            model = config.get("Options", "model")
         except Exception:
             raise RuntimeError("Model is notspecifed either as keyword argument or in inifile")
-    model=_get_model_(model)
-    if config.has_option("option","prefix"):
-        prefix = config.get("option","prefix")
+    model = _get_model_(model)
+    if config.has_option("option", "prefix"):
+        prefix = config.get("option", "prefix")
     else:
         prefix = model.__class__.__name__
     prefix += ":"
-    vals=[]
+    vals = []
     for p in model.param_names:
         if not config.has_section(p):
             raise RuntimeError("Config file does not have a section for parameter {}".format(p))
-        keys={"vary":bool,"value":float,"min":float,"max":float,"expr":str,"step":float,"label":str,"units":str}
-        kargs=dict()
+        keys = {
+            "vary": bool,
+            "value": float,
+            "min": float,
+            "max": float,
+            "expr": str,
+            "step": float,
+            "label": str,
+            "units": str,
+        }
+        kargs = dict()
         for k in keys:
-            if config.has_option(p,k):
-                if keys[k]==bool:
-                    kargs[k]=config.getboolean(p,k)
-                elif keys[k]==float:
-                    kargs[k]=config.getfloat(p,k)
-                elif keys[k]==str:
-                    kargs[k]=config.get(p,k)
-        if isinstance(data,_SC_.DataFile): # stuff the parameter hint data into metadata
-            for k in keys: # remove keywords not needed
+            if config.has_option(p, k):
+                if keys[k] == bool:
+                    kargs[k] = config.getboolean(p, k)
+                elif keys[k] == float:
+                    kargs[k] = config.getfloat(p, k)
+                elif keys[k] == str:
+                    kargs[k] = config.get(p, k)
+        if isinstance(data, _SC_.DataFile):  # stuff the parameter hint data into metadata
+            for k in keys:  # remove keywords not needed
                 if k in kargs:
-                    data["{}{} {}".format(prefix,p,k)]=kargs[k]
+                    data["{}{} {}".format(prefix, p, k)] = kargs[k]
             if "lmfit.prerfix" in data:
                 data["lmfit.prefix"].append(prefix)
             else:
-                data["lmfit.prefix"]=[prefix]
-        if "step" in kargs: #We use step for creating a chi^2 mapping, but not for a parameter hint
-            step=kargs.pop("step")
-            if "vary" in kargs and "min" in kargs and "max" in kargs and not kargs["vary"]: # Make chi^2?
-                vals.append(_np_.arange(kargs["min"],kargs["max"]+step/10,step))
-            else: # Nope, just make a single value step here
+                data["lmfit.prefix"] = [prefix]
+        if "step" in kargs:  # We use step for creating a chi^2 mapping, but not for a parameter hint
+            step = kargs.pop("step")
+            if "vary" in kargs and "min" in kargs and "max" in kargs and not kargs["vary"]:  # Make chi^2?
+                vals.append(_np_.arange(kargs["min"], kargs["max"] + step / 10, step))
+            else:  # Nope, just make a single value step here
                 vals.append(_np_.array(kargs["value"]))
-        else: # Nope, just make a single value step here
+        else:  # Nope, just make a single value step here
             vals.append(_np_.array(kargs["value"]))
-        kargs={k:kargs[k] for k in kargs if k in ["value","max","min","vary"]}
-        model.set_param_hint(p,**kargs) # set the model parameter hint
-    msh=_np_.meshgrid(*vals) # make a mesh of all possible parameter values to test
-    msh=[m.ravel() for m in msh] # tidy it up and combine into one 2D array
-    msh=_np_.column_stack(msh)
-    return model,msh
+        kargs = {k: kargs[k] for k in kargs if k in ["value", "max", "min", "vary"]}
+        model.set_param_hint(p, **kargs)  # set the model parameter hint
+    msh = _np_.meshgrid(*vals)  # make a mesh of all possible parameter values to test
+    msh = [m.ravel() for m in msh]  # tidy it up and combine into one 2D array
+    msh = _np_.column_stack(msh)
+    return model, msh
+
 
 def arrhenius(x, A, DE):
     r"""Arrhenius Equation without T dependendent prefactor.
@@ -373,7 +438,7 @@ def arrhenius(x, A, DE):
             :outname: arrhenius
 
     """
-    _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
+    _kb = consts.physical_constants["Boltzmann constant"][0] / consts.physical_constants["elementary charge"][0]
     return A * _np_.exp(-DE / (_kb * x))
 
 
@@ -398,8 +463,7 @@ class Arrhenius(Model):
             :outname: arrhenius-class
     """
 
-    display_names=["A",r"\Delta E"]
-
+    display_names = ["A", r"\Delta E"]
 
     def __init__(self, *args, **kwargs):
         """Configure default function to fit."""
@@ -407,9 +471,9 @@ class Arrhenius(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Estimate fitting parameters from data."""
-        _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
+        _kb = consts.physical_constants["Boltzmann constant"][0] / consts.physical_constants["elementary charge"][0]
 
-        d1, d2 = 1., 0.0
+        d1, d2 = 1.0, 0.0
         if x is not None:
             d1, d2 = _np_.polyfit(-1.0 / x, _np_.log(data), 1)
         pars = self.make_params(A=_np_.exp(d2), DE=_kb * d1)
@@ -461,7 +525,7 @@ class NDimArrhenius(Model):
             :outname: nDimarrhenius-class
     """
 
-    display_names=["A",r"\Delta E","n"]
+    display_names = ["A", r"\Delta E", "n"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -469,9 +533,9 @@ class NDimArrhenius(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Guess paramneters from a set of data."""
-        _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
+        _kb = consts.physical_constants["Boltzmann constant"][0] / consts.physical_constants["elementary charge"][0]
 
-        d1, d2 = 1., 0.0
+        d1, d2 = 1.0, 0.0
         if x is not None:
             d1, d2 = _np_.polyfit(-1.0 / x, _np_.log(data), 1)
         pars = self.make_params(A=_np_.exp(d2), DE=_kb * d1, n=1.0)
@@ -523,7 +587,7 @@ class ModArrhenius(Model):
             :outname: modarrhenius-class
     """
 
-    display_names=["A",r"\Delta E","n"]
+    display_names = ["A", r"\Delta E", "n"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -531,9 +595,9 @@ class ModArrhenius(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Guess paramneters from a set of data."""
-        _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
+        _kb = consts.physical_constants["Boltzmann constant"][0] / consts.physical_constants["elementary charge"][0]
 
-        d1, d2 = 1., 0.0
+        d1, d2 = 1.0, 0.0
         if x is not None:
             d1, d2 = _np_.polyfit(-1.0 / x, _np_.log(data), 1)
         pars = self.make_params(A=_np_.exp(d2), DE=_kb * d1, n=1.0)
@@ -559,6 +623,7 @@ def powerLaw(x, A, k):
             :outname: powerlaw
     """
     return A * x ** k
+
 
 class PowerLaw(_PowerLaw):
 
@@ -604,6 +669,7 @@ def quadratic(x, a, b, c):
     """
     return a * x ** 2 + b * x + c
 
+
 class Quadratic(_Quadratic):
 
     r"""A Simple quadratic fitting function.
@@ -627,6 +693,7 @@ class Quadratic(_Quadratic):
 
     pass
 
+
 def simmons(V, A, phi, d):
     """Simmons model of electron tunnelling.
 
@@ -648,8 +715,15 @@ def simmons(V, A, phi, d):
             :include-source:
             :outname: simmons
     """
-    I = 6.2e6 * A / d ** 2 * ((phi - V / 2) * _np_.exp(-1.025 * d * _np_.sqrt(phi - V / 2)) -
-                              (phi + V / 2) * _np_.exp(-1.025 * d * _np_.sqrt(phi + V / 2)))
+    I = (
+        6.2e6
+        * A
+        / d ** 2
+        * (
+            (phi - V / 2) * _np_.exp(-1.025 * d * _np_.sqrt(phi - V / 2))
+            - (phi + V / 2) * _np_.exp(-1.025 * d * _np_.sqrt(phi + V / 2))
+        )
+    )
     return I
 
 
@@ -676,7 +750,7 @@ class Simmons(Model):
             :outname: simmons-class
     """
 
-    display_names=["A",r"\phi","d"]
+    display_names = ["A", r"\phi", "d"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -684,7 +758,7 @@ class Simmons(Model):
 
     def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
         """Just set the A, phi and d values to typical answers for a small tunnel junction"""
-        pars = self.make_params(A=1E3, phi=3.0, d=10.0)
+        pars = self.make_params(A=1e3, phi=3.0, d=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -710,11 +784,17 @@ def bdr(V, A, phi, dphi, d, mass):
             :include-source:
             :outname: bdr
     """
-    mass=abs(mass)
-    phi=abs(phi)
-    d=abs(d)
-    I = 3.16e10 * A ** 2 * _np_.sqrt(phi) / d * _np_.exp(-1.028 * _np_.sqrt(phi) * d) * (
-        V - 0.0214 * _np_.sqrt(mass) * d * dphi / phi ** 1.5 * V ** 2 + 0.0110 * mass * d ** 2 / phi * V ** 3)
+    mass = abs(mass)
+    phi = abs(phi)
+    d = abs(d)
+    I = (
+        3.16e10
+        * A ** 2
+        * _np_.sqrt(phi)
+        / d
+        * _np_.exp(-1.028 * _np_.sqrt(phi) * d)
+        * (V - 0.0214 * _np_.sqrt(mass) * d * dphi / phi ** 1.5 * V ** 2 + 0.0110 * mass * d ** 2 / phi * V ** 3)
+    )
     return I
 
 
@@ -749,7 +829,7 @@ class BDR(Model):
 
     def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
         """Just set the A, phi,dphi,d and mass values to typical answers for a small tunnel junction"""
-        pars = self.make_params(A=1E-12, phi=3.0, d=10.0, dphi=1.0, mass=1.0)
+        pars = self.make_params(A=1e-12, phi=3.0, d=10.0, dphi=1.0, mass=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -799,7 +879,7 @@ class FowlerNordheim(Model):
 
     def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
         """Just set the A, phi and d values to typical answers for a small tunnel junction"""
-        pars = self.make_params(A=1E-12, phi=3.0, d=10.0)
+        pars = self.make_params(A=1e-12, phi=3.0, d=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -863,16 +943,16 @@ def wlfit(B, s0, DS, B1, B2):
             :outname: wlfit
     """
 
-    e = 1.6e-19  #C
-    h = 6.62e-34  #Js
-    #Sets up conductivity fit array
+    e = 1.6e-19  # C
+    h = 6.62e-34  # Js
+    # Sets up conductivity fit array
     cond = _np_.zeros(len(B))
     if B2 == B1:
-        B2 = B1 * 1.00001  #prevent dividing by zero
+        B2 = B1 * 1.00001  # prevent dividing by zero
 
-#performs calculation for all parts
+    # performs calculation for all parts
     for tt in range(len(B)):
-        if B[tt] != 0:  #prevent dividing by zero
+        if B[tt] != 0:  # prevent dividing by zero
             WLpt1 = digamma(0.5 + B2 / _np_.abs(B[tt]))
             WLpt2 = digamma(0.5 + B1 / _np_.abs(B[tt]))
         else:
@@ -881,9 +961,9 @@ def wlfit(B, s0, DS, B1, B2):
 
         WLpt3 = _np_.log(B2 / B1)
 
-        #Calculates fermi level smearing
+        # Calculates fermi level smearing
         cond[tt] = (e ** 2 / (h * _np_.pi)) * (WLpt1 - WLpt2 - WLpt3)
-    #cond = s0*cond / min(cond)
+    # cond = s0*cond / min(cond)
     cond = s0 + DS * cond
     return cond
 
@@ -913,7 +993,7 @@ class WLfit(Model):
             :outname: wlfit-class
     """
 
-    display_names=[r"\sigma_0","D_S","B_1","B_2"]
+    display_names = [r"\sigma_0", "D_S", "B_1", "B_2"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -931,7 +1011,7 @@ class WLfit(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
-@jit(float64[:](float64[:],float64,float64,float64,float64))
+@jit(float64[:](float64[:], float64, float64, float64, float64))
 def _strijkers_core(V, omega, delta, P, Z):
     """strijkers Model for point-contact Andreev Reflection Spectroscopy
     Args:
@@ -952,46 +1032,54 @@ def _strijkers_core(V, omega, delta, P, Z):
     """
     #   Parameters
 
-    mv=_np_.max(_np_.abs(V)) # Limit for evaluating the integrals
-    E = _np_.linspace(-2*mv,2*mv, len(V)*20)  # Energy range in meV - we use a mesh 20x denser than data points
-    gauss = (1 / _np_.sqrt(2  * _np_.pi*omega**2)) * _np_.exp(-(E**2 / (2 * omega**2)))
-    gauss/=gauss.sum() # Normalised gaussian for the convolution
+    mv = _np_.max(_np_.abs(V))  # Limit for evaluating the integrals
+    E = _np_.linspace(-2 * mv, 2 * mv, len(V) * 20)  # Energy range in meV - we use a mesh 20x denser than data points
+    gauss = (1 / _np_.sqrt(2 * _np_.pi * omega ** 2)) * _np_.exp(-(E ** 2 / (2 * omega ** 2)))
+    gauss /= gauss.sum()  # Normalised gaussian for the convolution
 
-    #Conductance calculation
-#    For ease of calculation, epsilon = E/(sqrt(E^2 - delta^2))
-#    Calculates reflection probabilities when E < or > delta
-#    A denotes Andreev Reflection probability
-#    B denotes normal reflection probability
-#    subscript p for polarised, u for unpolarised
-#    Ap is always zero as the polarised current has 0 prob for an Andreev
-#    event
+    # Conductance calculation
+    #    For ease of calculation, epsilon = E/(sqrt(E^2 - delta^2))
+    #    Calculates reflection probabilities when E < or > delta
+    #    A denotes Andreev Reflection probability
+    #    B denotes normal reflection probability
+    #    subscript p for polarised, u for unpolarised
+    #    Ap is always zero as the polarised current has 0 prob for an Andreev
+    #    event
 
     Au1 = (delta ** 2) / ((E ** 2) + (((delta ** 2) - (E ** 2)) * (1 + 2 * (Z ** 2)) ** 2))
-    Au2 = (((_np_.abs(E) / (_np_.sqrt((E ** 2) - (delta ** 2)))) ** 2) - 1) / (((_np_.abs(E) /
-                                                                                 (_np_.sqrt((E ** 2) - (delta ** 2)))) +
-                                                                                (1 + 2 * (Z ** 2))) ** 2)
-    Bu2 = (4 * (Z ** 2) * (1 + (Z ** 2))) / (((_np_.abs(E) / (_np_.sqrt((E ** 2) - (delta ** 2)))) + (1 + 2 *
-                                                                                                      (Z ** 2))) ** 2)
+    Au2 = (((_np_.abs(E) / (_np_.sqrt((E ** 2) - (delta ** 2)))) ** 2) - 1) / (
+        ((_np_.abs(E) / (_np_.sqrt((E ** 2) - (delta ** 2)))) + (1 + 2 * (Z ** 2))) ** 2
+    )
+    Bu2 = (4 * (Z ** 2) * (1 + (Z ** 2))) / (
+        ((_np_.abs(E) / (_np_.sqrt((E ** 2) - (delta ** 2)))) + (1 + 2 * (Z ** 2))) ** 2
+    )
     Bp2 = Bu2 / (1 - Au2)
 
-    unpolarised_prefactor=(1 - P) * (1 + (Z ** 2))
-    polarised_prefactor=1 * (P) * (1 + (Z ** 2))
-    #Optimised for a single use of np.where
-    G = unpolarised_prefactor+ polarised_prefactor++ _np_.where(_np_.abs(E) <= delta,
-                                                                 unpolarised_prefactor*(2*Au1-1)-_np_.ones_like(E)*polarised_prefactor,
-                                                                 unpolarised_prefactor*(Au2-Bu2)- Bp2*polarised_prefactor)
+    unpolarised_prefactor = (1 - P) * (1 + (Z ** 2))
+    polarised_prefactor = 1 * (P) * (1 + (Z ** 2))
+    # Optimised for a single use of np.where
+    G = (
+        unpolarised_prefactor
+        + polarised_prefactor
+        + +_np_.where(
+            _np_.abs(E) <= delta,
+            unpolarised_prefactor * (2 * Au1 - 1) - _np_.ones_like(E) * polarised_prefactor,
+            unpolarised_prefactor * (Au2 - Bu2) - Bp2 * polarised_prefactor,
+        )
+    )
 
-    #Convolve and chop out the central section
-    cond=_np_.convolve(G,gauss)
-    cond=cond[int(E.size/2):3*int(E.size/2)]
-    #Linear interpolation back onto the V data point
-    matches=_np_.searchsorted(E,V)
-    condl=cond[matches-1]
-    condh=cond[matches]
-    El=E[matches-1]
-    Er=E[matches]
-    cond=(condh-condl)/(Er-El)*(V-El)+condl
+    # Convolve and chop out the central section
+    cond = _np_.convolve(G, gauss)
+    cond = cond[int(E.size / 2) : 3 * int(E.size / 2)]
+    # Linear interpolation back onto the V data point
+    matches = _np_.searchsorted(E, V)
+    condl = cond[matches - 1]
+    condh = cond[matches]
+    El = E[matches - 1]
+    Er = E[matches]
+    cond = (condh - condl) / (Er - El) * (V - El) + condl
     return cond
+
 
 def strijkers(V, omega, delta, P, Z):
     """strijkers Model for point-contact Andreev Reflection Spectroscopy.
@@ -1046,7 +1134,7 @@ class Strijkers(Model):
             :outname: strijkers-class
     """
 
-    display_names=[r"\omega",r"\Delta","P","Z"]
+    display_names = [r"\omega", r"\Delta", "P", "Z"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1087,7 +1175,7 @@ def fluchsSondheimer(t, l, p, sigma_0):
         v = k[i]
         ret1 = 1 - (3 * (1 - p) / (8 * v)) + (3 * (1 - p) / (2 * v))
         ret2 = quad(kernel, 0, 1, (v,))[0]
-        result[i]=ret1*ret2
+        result[i] = ret1 * ret2
     return result / sigma_0
 
 
@@ -1113,7 +1201,7 @@ class FluchsSondheimer(Model):
             :outname: fluchsdondheimer-class
     """
 
-    display_names=[r"\lambda_{mfp}","p_{refl}",r"\sigma_0"]
+    display_names = [r"\lambda_{mfp}", "p_{refl}", r"\sigma_0"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1150,7 +1238,7 @@ def blochGrueneisen(T, thetaD, rho0, A, n):
     """
     ret = _np_.zeros(T.shape)
     for i, t in enumerate(T):
-        intg = quad(_bgintegrand, 0, thetaD / (t), (n, ))[0]
+        intg = quad(_bgintegrand, 0, thetaD / (t), (n,))[0]
         ret[i] = rho0 + A * (t / thetaD) ** n * intg
     return ret
 
@@ -1175,7 +1263,7 @@ class BlochGrueneisen(Model):
             :outname: blochgruneisen-class
     """
 
-    display_names=[r"\theta_D",r"\rho_0","A","n"]
+    display_names = [r"\theta_D", r"\rho_0", "A", "n"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1209,10 +1297,11 @@ def langevin(H, M_s, m, T):
     """
     from scipy.constants import k, mu_0
 
-    x = mu_0 * H*m / (k * T)
-    n=M_s/m
+    x = mu_0 * H * m / (k * T)
+    n = M_s / m
 
-    return m*n*(1.0/_np_.tanh(x)-1.0/x)
+    return m * n * (1.0 / _np_.tanh(x) - 1.0 / x)
+
 
 class Langevin(Model):
 
@@ -1255,10 +1344,10 @@ class Langevin(Model):
             yd = dd[1] / dd[0]
             chi = _np_.interp(_np_.array([0]), d[0], yd)[0]
             mT = chi / M_s * (k / mu_0)
-            #Assume T=150K for no good reason
+            # Assume T=150K for no good reason
             m = mT * 150
         else:
-            m = 1E6 * (e * hbar) / (2 * electron_mass)  # guess 1 million Bohr Magnetrons
+            m = 1e6 * (e * hbar) / (2 * electron_mass)  # guess 1 million Bohr Magnetrons
         T = 150
         pars = self.make_params(M_s=M_s, m=m, T=T)
         return update_param_vals(pars, self.prefix, **kwargs)
@@ -1284,7 +1373,7 @@ def vftEquation(x, A, DE, x_0):
             :include-source:
             :outname: vft
     """
-    _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
+    _kb = consts.physical_constants["Boltzmann constant"][0] / consts.physical_constants["elementary charge"][0]
     return A * _np_.exp(-DE / (_kb * (x - x_0)))
 
 
@@ -1312,7 +1401,7 @@ class VFTEquation(Model):
             :outname: vft-class
     """
 
-    display_names=["A",r"\Delta E","x_0"]
+    display_names = ["A", r"\Delta E", "x_0"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1320,9 +1409,9 @@ class VFTEquation(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Guess paramneters from a set of data."""
-        _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
+        _kb = consts.physical_constants["Boltzmann constant"][0] / consts.physical_constants["elementary charge"][0]
 
-        d1, d2, x0 = 1., 0.0, 1.0
+        d1, d2, x0 = 1.0, 0.0, 1.0
         if x is not None:
             x0 = x[_np_.argmin(_np_.abs(data))]
             d1, d2 = _np_.polyfit(-1.0 / (x - x0), _np_.log(data), 1)
@@ -1363,7 +1452,7 @@ class StretchedExp(Model):
     The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.
     """
 
-    display_names=["A",r"\beta","x_0"]
+    display_names = ["A", r"\beta", "x_0"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1374,18 +1463,19 @@ class StretchedExp(Model):
         A, beta, x0 = 1.0, 1.0, 1.0
         if x is not None:
             A = data[_np_.argmin(_np_.abs(x))]
-            x=_np_.log(x)
-            y=_np_.log(-_np_.log(data / A))
-            d=_np_.column_stack((x,y))
-            d=d[~_np_.isnan(d).any(axis=1)]
-            d=d[~_np_.isinf(d).any(axis=1)]
-            d1, d2 = _np_.polyfit(d[:,0],d[:,1], 1)
+            x = _np_.log(x)
+            y = _np_.log(-_np_.log(data / A))
+            d = _np_.column_stack((x, y))
+            d = d[~_np_.isnan(d).any(axis=1)]
+            d = d[~_np_.isinf(d).any(axis=1)]
+            d1, d2 = _np_.polyfit(d[:, 0], d[:, 1], 1)
             beta = d1
             x0 = _np_.exp(d2 / beta)
         pars = self.make_params(A=A, beta=beta, x_0=x0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
-def kittelEquation(H,g,M_s,H_k):
+
+def kittelEquation(H, g, M_s, H_k):
     r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
@@ -1404,10 +1494,11 @@ def kittelEquation(H,g,M_s,H_k):
             :include-source:
             :outname: kittel
     """
-    gamma=g*cnst.e/(2*cnst.m_e)
-    return (consts.mu0*gamma/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
+    gamma = g * cnst.e / (2 * cnst.m_e)
+    return (consts.mu0 * gamma / (2 * _np_.pi)) * _np_.sqrt((H + H_k) * (H + H_k + M_s))
 
-def inverse_kittel(f,g,M_s,H_k):
+
+def inverse_kittel(f, g, M_s, H_k):
     r"""Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency
 
     Args:
@@ -1427,8 +1518,13 @@ def inverse_kittel(f,g,M_s,H_k):
 
        :math:`H_{res}=- H_{k} - \frac{M_{s}}{2} + \frac{1}{2 \gamma \mu_{0}} \sqrt{M_{s}^{2} \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}`
     """
-    gamma=g*cnst.e/(2*cnst.m_e)
-    return -H_k - M_s/2 + _np_.sqrt(M_s**2*gamma**2*cnst.mu_0**2 + 16*_np_.pi**2*f**2)/(2*gamma*cnst.mu_0)
+    gamma = g * cnst.e / (2 * cnst.m_e)
+    return (
+        -H_k
+        - M_s / 2
+        + _np_.sqrt(M_s ** 2 * gamma ** 2 * cnst.mu_0 ** 2 + 16 * _np_.pi ** 2 * f ** 2) / (2 * gamma * cnst.mu_0)
+    )
+
 
 class KittelEquation(Model):
 
@@ -1451,7 +1547,7 @@ class KittelEquation(Model):
             :outname: kittel-class
     """
 
-    display_names=["g","M_s","H_k"]
+    display_names = ["g", "M_s", "H_k"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1459,17 +1555,19 @@ class KittelEquation(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
-        g=2
-        H_k=100
-        gamma=g*cnst.e/(2*cnst.m_e)
-        M_s=(4*_np_.pi**2*data**2 - gamma**2*cnst.mu_0**2*(x**2 + 2*x*H_k + H_k**2))/(gamma**2*cnst.mu_0**2*(x + H_k))
-        M_s=_np_.mean(M_s)
+        g = 2
+        H_k = 100
+        gamma = g * cnst.e / (2 * cnst.m_e)
+        M_s = (4 * _np_.pi ** 2 * data ** 2 - gamma ** 2 * cnst.mu_0 ** 2 * (x ** 2 + 2 * x * H_k + H_k ** 2)) / (
+            gamma ** 2 * cnst.mu_0 ** 2 * (x + H_k)
+        )
+        M_s = _np_.mean(M_s)
 
         pars = self.make_params(g=g, M_s=M_s, H_k=H_k)
-        pars["M_s"].min=0
-        pars["g"].min=g/100
-        pars["H_k"].min=0
-        pars["H_k"].max=M_s.max()
+        pars["M_s"].min = 0
+        pars["g"].min = g / 100
+        pars["H_k"].min = 0
+        pars["H_k"].max = M_s.max()
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -1490,7 +1588,7 @@ class Inverse_Kittel(Model):
 
     """
 
-    display_names=["g","M_s","H_k"]
+    display_names = ["g", "M_s", "H_k"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1498,20 +1596,23 @@ class Inverse_Kittel(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
-        g=2
-        H_k=100
-        gamma=g*cnst.e/(2*cnst.m_e)
-        M_s=(4*_np_.pi**2*x**2 - gamma**2*cnst.mu_0**2*(data**2 + 2*data*H_k + H_k**2))/(gamma**2*cnst.mu_0**2*(data + H_k))
-        M_s=_np_.mean(M_s)
+        g = 2
+        H_k = 100
+        gamma = g * cnst.e / (2 * cnst.m_e)
+        M_s = (4 * _np_.pi ** 2 * x ** 2 - gamma ** 2 * cnst.mu_0 ** 2 * (data ** 2 + 2 * data * H_k + H_k ** 2)) / (
+            gamma ** 2 * cnst.mu_0 ** 2 * (data + H_k)
+        )
+        M_s = _np_.mean(M_s)
 
         pars = self.make_params(g=g, M_s=M_s, H_k=H_k)
-        pars["M_s"].min=0
-        pars["g"].min=g/100
-        pars["H_k"].min=0
-        pars["H_k"].max=M_s.max()
+        pars["M_s"].min = 0
+        pars["g"].min = g / 100
+        pars["H_k"].min = 0
+        pars["H_k"].max = M_s.max()
         return update_param_vals(pars, self.prefix, **kwargs)
 
-def lorentzian_diff(x,A,sigma,mu):
+
+def lorentzian_diff(x, A, sigma, mu):
     r"""Implement a differential form of a Lorentzian peak.
 
     Args:
@@ -1523,7 +1624,8 @@ def lorentzian_diff(x,A,sigma,mu):
         Returns
             :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`
         """
-    return A*sigma*(2*mu - 2*x)/(_np_.pi*(sigma**2 + (-mu + x)**2)**2)
+    return A * sigma * (2 * mu - 2 * x) / (_np_.pi * (sigma ** 2 + (-mu + x) ** 2) ** 2)
+
 
 class Lorentzian_diff(Model):
     r"""lmfit Model rerprenting the differential form of a Lorentzian Peak.
@@ -1537,7 +1639,7 @@ class Lorentzian_diff(Model):
         Returns
             :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`
     """
-    display_names=["A",r"\sigma",r"\mu"]
+    display_names = ["A", r"\sigma", r"\mu"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1547,26 +1649,26 @@ class Lorentzian_diff(Model):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
 
         if x is None:
-            x=_np_.linspace(1,len(data),len(data)+1)
+            x = _np_.linspace(1, len(data), len(data) + 1)
 
-        x1=x[_np_.argmax(data)]
-        x2=x[_np_.argmin(data)]
-        sigma=abs(x1-x2)
-        mu=(x1+x2)/2.0
-        y1=_np_.max(data)
-        y2=_np_.min(data)
-        dy=y1-y2
-        A=dy*(4*_np_.pi*sigma**2)/(3*_np_.sqrt(3))
+        x1 = x[_np_.argmax(data)]
+        x2 = x[_np_.argmin(data)]
+        sigma = abs(x1 - x2)
+        mu = (x1 + x2) / 2.0
+        y1 = _np_.max(data)
+        y2 = _np_.min(data)
+        dy = y1 - y2
+        A = dy * (4 * _np_.pi * sigma ** 2) / (3 * _np_.sqrt(3))
 
-        pars = self.make_params(A=A,sigma=sigma,mu=mu)
-        pars["A"].min=0
-        pars["sigma"].min=0
-        pars["mu"].min=_np_.min(x)
-        pars["mu"].max=_np_.max(x)
+        pars = self.make_params(A=A, sigma=sigma, mu=mu)
+        pars["A"].min = 0
+        pars["sigma"].min = 0
+        pars["mu"].min = _np_.min(x)
+        pars["mu"].max = _np_.max(x)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
-def fmr_power(H,H_res,Delta_H,K_1,K_2):
+def fmr_power(H, H_res, Delta_H, K_1, K_2):
     r"""A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
 
     Args:
@@ -1580,7 +1682,11 @@ def fmr_power(H,H_res,Delta_H,K_1,K_2):
 
     :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
     """
-    return 4*Delta_H*K_1*(H - H_res)/(Delta_H**2 + 4*(H - H_res)**2)**2 - K_2*(Delta_H**2 - 4*(H - H_res)**2)/(Delta_H**2 + 4*(H - H_res)**2)**2
+    return (
+        4 * Delta_H * K_1 * (H - H_res) / (Delta_H ** 2 + 4 * (H - H_res) ** 2) ** 2
+        - K_2 * (Delta_H ** 2 - 4 * (H - H_res) ** 2) / (Delta_H ** 2 + 4 * (H - H_res) ** 2) ** 2
+    )
+
 
 class FMR_Power(Model):
     r"""A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
@@ -1596,7 +1702,7 @@ class FMR_Power(Model):
 
     :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
     """
-    display_names=["H_{res}",r"\Delta_H","K_1","K_2"]
+    display_names = ["H_{res}", r"\Delta_H", "K_1", "K_2"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1606,29 +1712,29 @@ class FMR_Power(Model):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
 
         if x is None:
-            x=_np_.linspace(1,len(data),len(data)+1)
+            x = _np_.linspace(1, len(data), len(data) + 1)
 
-        x1=x[_np_.argmax(data)]
-        x2=x[_np_.argmin(data)]
-        Delta_H=abs(x1-x2)
-        H_res=(x1+x2)/2.0
-        y1=_np_.max(data)
-        y2=_np_.min(data)
-        dy=y1-y2
-        K_2=dy*(4*_np_.pi*Delta_H**2)/(3*_np_.sqrt(3))
-        ay=(y1+y2)/2
-        K_1=ay*_np_.pi/Delta_H
+        x1 = x[_np_.argmax(data)]
+        x2 = x[_np_.argmin(data)]
+        Delta_H = abs(x1 - x2)
+        H_res = (x1 + x2) / 2.0
+        y1 = _np_.max(data)
+        y2 = _np_.min(data)
+        dy = y1 - y2
+        K_2 = dy * (4 * _np_.pi * Delta_H ** 2) / (3 * _np_.sqrt(3))
+        ay = (y1 + y2) / 2
+        K_1 = ay * _np_.pi / Delta_H
 
-
-        pars = self.make_params(Delta_H=Delta_H,H_res=H_res,K_1=K_1,K_2=K_2)
-        pars["K_1"].min=0
-        pars["K_2"].min=0
-        pars["Delta_H"].min=0
-        pars["H_res"].min=_np_.min(x)
-        pars["H_res"].max=_np_.max(x)
+        pars = self.make_params(Delta_H=Delta_H, H_res=H_res, K_1=K_1, K_2=K_2)
+        pars["K_1"].min = 0
+        pars["K_2"].min = 0
+        pars["Delta_H"].min = 0
+        pars["H_res"].min = _np_.min(x)
+        pars["H_res"].max = _np_.max(x)
         return update_param_vals(pars, self.prefix, **kwargs)
-    
-def rsj_noiseless(I,Ic_p,Ic_n,Rn,V_offset):
+
+
+def rsj_noiseless(I, Ic_p, Ic_n, Rn, V_offset):
     r"""Implements a simple noiseless RSJ model.
 
     Args:
@@ -1646,12 +1752,13 @@ def rsj_noiseless(I,Ic_p,Ic_n,Rn,V_offset):
             
             $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
     """
-    
-    normal_p=_np_.sign(I)*_np_.real(_np_.sqrt(I**2-Ic_p**2))*Rn
-    normal_n=_np_.sign(I)*_np_.real(_np_.sqrt(I**2-Ic_n**2))*Rn
-    p_branch=_np_.where(I>Ic_p,normal_p,_np_.zeros_like(I))
-    n_branch=_np_.where(I<Ic_n,normal_n,p_branch)
-    return n_branch+V_offset
+
+    normal_p = _np_.sign(I) * _np_.real(_np_.sqrt(I ** 2 - Ic_p ** 2)) * Rn
+    normal_n = _np_.sign(I) * _np_.real(_np_.sqrt(I ** 2 - Ic_n ** 2)) * Rn
+    p_branch = _np_.where(I > Ic_p, normal_p, _np_.zeros_like(I))
+    n_branch = _np_.where(I < Ic_n, normal_n, p_branch)
+    return n_branch + V_offset
+
 
 class RSJ_Noiseless(Model):
     r"""Implements a simple noiseless RSJ model.
@@ -1672,7 +1779,7 @@ class RSJ_Noiseless(Model):
             $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
     """
 
-    display_names=["I_c^p","I_c^n","R_N","V_{offset}"]
+    display_names = ["I_c^p", "I_c^n", "R_N", "V_{offset}"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1682,25 +1789,22 @@ class RSJ_Noiseless(Model):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
 
         if x is None:
-            x=_np_.linspace(1,len(data),len(data)+1)
-            
-        v_offset_guess=_np_.mean(data)
-        v=_np_.abs(data-v_offset_guess)
-        x=_np_.abs(x)
-            
-        v_low=_np_.max(v)*0.05
-        v_high=_np_.max(v)*0.90
-        
-        ic_index=v<v_low
-        rn_index=v>v_high
-        ic_guess=_np_.max(x[ic_index]) #Guess Ic from a 2% of max V threhsold creiteria
-               
-        rn_guess=_np_.mean(v[rn_index]/x[rn_index])
-        
-        pars = self.make_params(Ic_p=ic_guess,Ic_n=-ic_guess,Rn=rn_guess,V_offset=v_offset_guess)
-        pars["Ic_p"].min=0
-        pars["Ic_n"].max=0
-        return update_param_vals(pars, self.prefix, **kwargs)
+            x = _np_.linspace(1, len(data), len(data) + 1)
 
-    
-    
+        v_offset_guess = _np_.mean(data)
+        v = _np_.abs(data - v_offset_guess)
+        x = _np_.abs(x)
+
+        v_low = _np_.max(v) * 0.05
+        v_high = _np_.max(v) * 0.90
+
+        ic_index = v < v_low
+        rn_index = v > v_high
+        ic_guess = _np_.max(x[ic_index])  # Guess Ic from a 2% of max V threhsold creiteria
+
+        rn_guess = _np_.mean(v[rn_index] / x[rn_index])
+
+        pars = self.make_params(Ic_p=ic_guess, Ic_n=-ic_guess, Rn=rn_guess, V_offset=v_offset_guess)
+        pars["Ic_p"].min = 0
+        pars["Ic_n"].max = 0
+        return update_param_vals(pars, self.prefix, **kwargs)

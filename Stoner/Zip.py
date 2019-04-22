@@ -7,7 +7,7 @@ Classes Include
 * ZippedFile - A :py:class:`Stoner.Code.DataFile` subclass that can save and load data from a zip files
 * ZipFolder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single zip file
 """
-__all__ = ['test_is_zip','ZippedFile','ZipFolderMixin','ZipFolder']
+__all__ = ["test_is_zip", "ZippedFile", "ZipFolderMixin", "ZipFolder"]
 import zipfile as zf
 import os.path as path
 from traceback import format_exc
@@ -15,11 +15,12 @@ from copy import copy
 import fnmatch
 import re
 
-from .compat import string_types,bytes2str,str2bytes,get_filedialog,_pattern_type
-from .Core import DataFile,StonerLoadError
+from .compat import string_types, bytes2str, str2bytes, get_filedialog, _pattern_type
+from .Core import DataFile, StonerLoadError
 from .Folders import DiskBasedFolder
 from .folders.core import baseFolder
 from .folders.utils import pathjoin
+
 
 def test_is_zip(filename, member=""):
     """Recursively searches for a zipfile in the tree.
@@ -41,7 +42,7 @@ def test_is_zip(filename, member=""):
     else:
         part = path.basename(filename)
         newfile = path.dirname(filename)
-        if newfile == filename:  #reached the end of the line
+        if newfile == filename:  # reached the end of the line
             part = filename
             newfile = ""
         if member != "":
@@ -64,32 +65,33 @@ class ZippedFile(DataFile):
     priority = 32
     patterns = ["*.zip"]
 
-    mime_type=["application/zip"]
-
+    mime_type = ["application/zip"]
 
     def __init__(self, *args, **kargs):
         "Constructor to catch initialising with an open zf.ZipFile"
         if len(args) > 0:
             other = args[0]
             if isinstance(other, zf.ZipFile):
-                otherdir=other.namelist()
-                if len(args) == 2 and isinstance(args[1], string_types): #ZippedFile(open_zip,"filename")
-                    kargs["filename"] = args[1].replace("\\","/")
-                elif "filename" not in kargs: # ZippedFile(open_zip) - assume we use tyhe first zipped file in there
+                otherdir = other.namelist()
+                if len(args) == 2 and isinstance(args[1], string_types):  # ZippedFile(open_zip,"filename")
+                    kargs["filename"] = args[1].replace("\\", "/")
+                elif "filename" not in kargs:  # ZippedFile(open_zip) - assume we use tyhe first zipped file in there
                     kargs["filename"] = other.namelist()[0]
-                #Attempt to normalise start of path
-                if kargs["filename"].startswith("./") and not (otherdir[0].startswith("/") or otherdir[0].startswith("./")):
-                    kargs["filename"]=kargs["filename"][2:]
-                if kargs["filename"] not in other.namelist(): # New file not in the zip file yet
+                # Attempt to normalise start of path
+                if kargs["filename"].startswith("./") and not (
+                    otherdir[0].startswith("/") or otherdir[0].startswith("./")
+                ):
+                    kargs["filename"] = kargs["filename"][2:]
+                if kargs["filename"] not in other.namelist():  # New file not in the zip file yet
                     raise StonerLoadError("File {} not found in zip file {}".format(kargs["filename"], other.filename))
-                #Ok, by this point we have a zipfile which has a file in it. Construct ourselves and then load
+                # Ok, by this point we have a zipfile which has a file in it. Construct ourselves and then load
                 super(ZippedFile, self).__init__(**kargs)
                 self._extract(other, kargs["filename"])
             elif isinstance(other, string_types):  # Passed a string - so try as a zipfile
                 if zf.is_zipfile(other):
                     other = zf.ZipFile(other, "a")
-                    args = args=list(args)
-                    args[0]=other
+                    args = args = list(args)
+                    args[0] = other
                 elif test_is_zip(other):
                     args = test_is_zip(other)
                 self.__init__(*args, **kargs)
@@ -108,7 +110,7 @@ class ZippedFile(DataFile):
         """
         tmp = DataFile()
         info = archive.getinfo(member)
-        data = bytes2str(archive.read(info)) # In Python 3 this would be a bytes
+        data = bytes2str(archive.read(info))  # In Python 3 this would be a bytes
         self.__init__(tmp << data)
         self.filename = path.join(archive.filename, member)
         return self
@@ -116,49 +118,53 @@ class ZippedFile(DataFile):
     def _load(self, filename=None, *args, **kargs):
         "Load a file from the zip file, openining it as necessary"
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
         try:
-            if isinstance(self.filename, zf.ZipFile): # Loading from an ZipFile
-                if not self.filename.fp: # Open zipfile if necessarry
+            if isinstance(self.filename, zf.ZipFile):  # Loading from an ZipFile
+                if not self.filename.fp:  # Open zipfile if necessarry
                     other = zf.ZipFile(self.filename.filename, "r")
                     close_me = True
-                else: #Zip file is already open
+                else:  # Zip file is already open
                     other = self.filename
                     close_me = False
-                member = kargs.get("member",other.namelist()[0])
-                solo_file=len(other.namelist())==1
-            elif isinstance(self.filename, string_types) and zf.is_zipfile(self.filename): #filename is a string that is a zip file
+                member = kargs.get("member", other.namelist()[0])
+                solo_file = len(other.namelist()) == 1
+            elif isinstance(self.filename, string_types) and zf.is_zipfile(
+                self.filename
+            ):  # filename is a string that is a zip file
                 other = zf.ZipFile(self.filename, "a")
-                member = kargs.get("member",other.namelist()[0])
+                member = kargs.get("member", other.namelist()[0])
                 close_me = True
-                solo_file=len(other.namelist())==1
-            elif isinstance(self.filename, string_types) and test_is_zip(self.filename): #Filename is something buried in a zipfile
+                solo_file = len(other.namelist()) == 1
+            elif isinstance(self.filename, string_types) and test_is_zip(
+                self.filename
+            ):  # Filename is something buried in a zipfile
                 other, member = test_is_zip(other)
                 other = zf.ZipFile(other, "r")
                 close_me = True
-                solo_file=len(other.namelist())==1
+                solo_file = len(other.namelist()) == 1
             else:
                 raise StonerLoadError("{} does  not appear to be a real zip file".format(self.filename))
         except StonerLoadError as e:
             raise e
         except Exception as e:
             try:
-                exc=format_exc()
+                exc = format_exc()
                 other.close()
             except Exception:
                 pass
-            raise StonerLoadError("{} threw an error when opening\n{}".format(self.filename,exc))
-#Ok we can try reading now
+            raise StonerLoadError("{} threw an error when opening\n{}".format(self.filename, exc))
+        # Ok we can try reading now
         self._extract(other, member)
         if close_me:
             other.close()
         if solo_file:
-            self.filename=str(filename)
+            self.filename = str(filename)
         return self
 
-    def save(self, filename=None,compression=zf.ZIP_DEFLATED):
+    def save(self, filename=None, compression=zf.ZIP_DEFLATED):
         """Overrides the save method to allow ZippedFile to be written out to disc (as a mininmalist output)
 
         Args:
@@ -170,10 +176,10 @@ class ZippedFile(DataFile):
         if filename is None:
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-            filename = self.__file_dialog('w')
+            filename = self.__file_dialog("w")
 
         try:
-            if isinstance(filename, string_types):  #We;ve got a string filename
+            if isinstance(filename, string_types):  # We;ve got a string filename
                 if test_is_zip(filename):  # We can find an existing zip file somewhere in the filename
                     zipfile, member = test_is_zip(filename)
                     zipfile = zf.ZipFile(zipfile, "a")
@@ -187,37 +193,40 @@ class ZippedFile(DataFile):
                             break
                     else:
                         raise IOError("Can't figure out where the zip file is in {}".format(filename))
-                    zipfile = zf.ZipFile(path.join(*parts[:i + 1]), "w",compression,True)
+                    zipfile = zf.ZipFile(path.join(*parts[: i + 1]), "w", compression, True)
                     close_me = True
-                    member = path.join("/",*parts[i + 1:])
-            elif isinstance(filename, zf.ZipFile):  #Handle\ zipfile instance, opening if necessary
+                    member = path.join("/", *parts[i + 1 :])
+            elif isinstance(filename, zf.ZipFile):  # Handle\ zipfile instance, opening if necessary
                 if not filename.fp:
-                    filename = zf.ZipFile(filename.filename, 'a')
+                    filename = zf.ZipFile(filename.filename, "a")
                     close_me = True
                 else:
                     close_me = False
                 zipfile = filename
                 member = ""
 
-            if member == "" or member =="/":  # Is our file object a bare zip file - if so create a default member name
+            if (
+                member == "" or member == "/"
+            ):  # Is our file object a bare zip file - if so create a default member name
                 if len(zipfile.namelist()) > 0:
                     member = zipfile.namelist()[-1]
-                    self.filename=path.join(filename,member)
+                    self.filename = path.join(filename, member)
                 else:
                     member = "DataFile.txt"
-                    self.filename=filename
+                    self.filename = filename
 
             zipfile.writestr(member, str2bytes(str(self)))
             if close_me:
                 zipfile.close()
         except Exception:
-            error=format_exc()
+            error = format_exc()
             try:
                 zipfile.close()
             except Exception:
                 pass
             raise IOError("Error saving zipfile\n{}".format(error))
         return self
+
 
 class ZipFolderMixin(object):
 
@@ -230,15 +239,15 @@ class ZipFolderMixin(object):
         provides a __setter__ method without causing a problem.
     """
 
-    _defaults={"pattern":["*.*"],
-              "type":None,
-              "exclude":["*.tdms_index"],
-              "read_means":False,
-              "recursive":True,
-              "flat":False,
-              "readlist":True,
-              }
-
+    _defaults = {
+        "pattern": ["*.*"],
+        "type": None,
+        "exclude": ["*.tdms_index"],
+        "read_means": False,
+        "recursive": True,
+        "flat": False,
+        "readlist": True,
+    }
 
     def __init__(self, *args, **kargs):
         "Constructor for the ZipFolderMixin Class."
@@ -247,18 +256,17 @@ class ZipFolderMixin(object):
 
     @property
     def full_key(self):
-        return path.relpath(self.path,self.File.filename).replace(path.sep,"/")
+        return path.relpath(self.path, self.File.filename).replace(path.sep, "/")
 
     @property
     def key(self):
         return path.basename(self.directory)
 
     @key.setter
-    def key(self,value):
-        self.path=pathjoin(self.directory,value)
+    def key(self, value):
+        self.path = pathjoin(self.directory, value)
 
-
-    def _dialog(self, message="Select Folder", new_directory=True, mode='r'):
+    def _dialog(self, message="Select Folder", new_directory=True, mode="r"):
         """Creates a file dialog box for working with
 
         Args:
@@ -268,7 +276,7 @@ class ZipFolderMixin(object):
         Returns:
             A directory to be used for the file operation.
         """
-        file_wildcard = [("zip file","*.zip"),("All files","*.*")]
+        file_wildcard = [("zip file", "*.zip"), ("All files", "*.*")]
 
         if mode == "r":
             what = "file"
@@ -292,10 +300,10 @@ class ZipFolderMixin(object):
         self.groups = {}
 
         if flatten is None:
-            flatten=self.flat
+            flatten = self.flat
 
         if self.File is None and directory is None:
-            self.File=zf.ZipExtFile(self._dialog(),"r")
+            self.File = zf.ZipExtFile(self._dialog(), "r")
             close_me = True
         elif isinstance(directory, zf.ZipFile):
             if directory.fp:
@@ -304,12 +312,12 @@ class ZipFolderMixin(object):
             else:
                 self.File = zf.ZipFile(directory, "r")
                 close_me = True
-        elif isinstance(directory, string_types) and path.isdir(directory):  #Fall back to DataFolder
+        elif isinstance(directory, string_types) and path.isdir(directory):  # Fall back to DataFolder
             return super(ZipFolderMixin, self).getlist(recursive, directory, flatten)
-        elif isinstance(directory,string_types) and zf.is_zipfile(directory):
-                self.File = zf.ZipFile(directory, "r")
-                close_me = True
-        elif isinstance(self.File,zf.ZipFile):
+        elif isinstance(directory, string_types) and zf.is_zipfile(directory):
+            self.File = zf.ZipFile(directory, "r")
+            close_me = True
+        elif isinstance(self.File, zf.ZipFile):
             if self.File.fp:
                 close_me = False
             else:
@@ -317,15 +325,15 @@ class ZipFolderMixin(object):
                 close_me = True
         else:
             raise IOError("{} does not appear to be zip file!".format(directory))
-        #At this point directory contains an open h5py.File object, or possibly a group
-        self.path=self.File.filename
-        files=[x.filename for x in self.File.filelist]
-        for p in self.exclude: #Remove excluded files
-            if isinstance(p,string_types):
-                for f in list(fnmatch.filter(files,p)):
+        # At this point directory contains an open h5py.File object, or possibly a group
+        self.path = self.File.filename
+        files = [x.filename for x in self.File.filelist]
+        for p in self.exclude:  # Remove excluded files
+            if isinstance(p, string_types):
+                for f in list(fnmatch.filter(files, p)):
                     del files[files.index(f)]
-            if isinstance(p,_pattern_type):
-                matched=[]
+            if isinstance(p, _pattern_type):
+                matched = []
                 # For reg expts we iterate over all files, but we can't delete matched
                 # files as we go as we're iterating over them - so we store the
                 # indices and delete them later.
@@ -333,30 +341,30 @@ class ZipFolderMixin(object):
                     if p.search(f):
                         matched.append(files.index(f))
                 matched.sort(reverse=True)
-                for i in matched: # reverse sort the matching indices to safely delete
-                    del(files[i])
+                for i in matched:  # reverse sort the matching indices to safely delete
+                    del files[i]
 
-        for p in self.pattern: # pattern is a list of strings and regeps
-            if isinstance(p,string_types):
+        for p in self.pattern:  # pattern is a list of strings and regeps
+            if isinstance(p, string_types):
                 for f in fnmatch.filter(files, p):
-                    del(files[files.index(f)])
-                    f.replace(path.sep,"/")
+                    del files[files.index(f)]
+                    f.replace(path.sep, "/")
                     self.append(f)
-            elif isinstance(p,_pattern_type):
-                matched=[]
+            elif isinstance(p, _pattern_type):
+                matched = []
                 # For reg expts we iterate over all files, but we can't delete matched
                 # files as we go as we're iterating over them - so we store the
                 # indices and delete them later.
-                for ix,f in enumerate(files):
+                for ix, f in enumerate(files):
                     if p.search(f):
-                        f.replace(path.sep,"/")
+                        f.replace(path.sep, "/")
                         self.append(f)
                     else:
                         matched.append(ix)
-                for i in reversed(matched): # reverse sort the matching indices to safely delete
-                    del(files[i])
+                for i in reversed(matched):  # reverse sort the matching indices to safely delete
+                    del files[i]
 
-        self._zip_contents=files
+        self._zip_contents = files
 
         if flatten is None or not flatten:
             self.unflatten()
@@ -364,16 +372,16 @@ class ZipFolderMixin(object):
             self.File.close()
         return self
 
-    def __clone__(self,other=None,attrs_only=False):
+    def __clone__(self, other=None, attrs_only=False):
         """Do whatever is necessary to copy attributes from self to other."""
         if other is None and attrs_only:
-            other=self.__class__(readlist=False)
+            other = self.__class__(readlist=False)
         for arg in self._defaults:
-            if hasattr(self,arg):
-                setattr(other,arg,getattr(self,arg))
-        return super(ZipFolderMixin,self).__clone__(other=other,attrs_only=attrs_only)
+            if hasattr(self, arg):
+                setattr(other, arg, getattr(self, arg))
+        return super(ZipFolderMixin, self).__clone__(other=other, attrs_only=attrs_only)
 
-    def __getter__(self,name,instantiate=True):
+    def __getter__(self, name, instantiate=True):
         """Loads the specified name from a compressed archive.
 
         Parameters:
@@ -388,24 +396,25 @@ class ZipFolderMixin(object):
             (metadataObject): The metadataObject
         """
         try:
-            return super(ZipFolderMixin,self).__getter__(name,instantiate=instantiate)
-        except (AttributeError,IndexError,KeyError,OSError,IOError) as err:
-            if self.debug: print(err)
+            return super(ZipFolderMixin, self).__getter__(name, instantiate=instantiate)
+        except (AttributeError, IndexError, KeyError, OSError, IOError) as err:
+            if self.debug:
+                print(err)
             pass
 
         if instantiate:
             try:
-                return self.type(ZippedFile(path.join(self.File.filename,name)))
-            except AttributeError: # closed zip file?
-                filename=test_is_zip(self.directory)[0]
+                return self.type(ZippedFile(path.join(self.File.filename, name)))
+            except AttributeError:  # closed zip file?
+                filename = test_is_zip(self.directory)[0]
                 self.File = zf.ZipFile(filename, "a")
-                tmp=self.type(ZippedFile(path.join(self.File.filename,name)))
+                tmp = self.type(ZippedFile(path.join(self.File.filename, name)))
                 self.File.close()
                 return tmp
         else:
             return name
 
-    def __lookup__(self,name):
+    def __lookup__(self, name):
         """Look for a given name in the ZipFolder namelist.
 
         Parameters:
@@ -418,24 +427,23 @@ class ZipFolderMixin(object):
             We try two things - first a direct lookup in the namelist if there is an exact match to the key and then
             we preprend the ZipFolder's path to try for a match with just the final part of the filename.
         """
-        try: # try to go back to the base to see if it's already loaded
-            return self._storage_class.__lookup__(self,name)
-        except (AttributeError,IndexError,KeyError): #Ok, that failed, so let's
+        try:  # try to go back to the base to see if it's already loaded
+            return self._storage_class.__lookup__(self, name)
+        except (AttributeError, IndexError, KeyError):  # Ok, that failed, so let's
             pass
 
         try:
-            if isinstance(name,string_types):
-                name=name.replace(path.sep,"/")
-                #First try tthe direct lookup - will work if we have a full name
+            if isinstance(name, string_types):
+                name = name.replace(path.sep, "/")
+                # First try tthe direct lookup - will work if we have a full name
                 if name in self.File.namelist():
                     return name
-                pth=path.normpath(path.join(self.full_key,name)).replace(path.sep,"/")
+                pth = path.normpath(path.join(self.full_key, name)).replace(path.sep, "/")
                 if pth in self.File.namelist():
                     return pth
         except AttributeError:
             pass
-        return super(ZipFolderMixin,self).__lookup__(name)
-
+        return super(ZipFolderMixin, self).__lookup__(name)
 
     def save(self, root=None):
         """Saves a load of files to a single Zip file, creating members as it goes.
@@ -447,13 +455,13 @@ class ZipFolderMixin(object):
             A list of group paths in the Zip file
         """
         if root is None:
-            root = self._dialog(mode='w')
+            root = self._dialog(mode="w")
         elif isinstance(root, bool) and not root and isinstance(self.File, zf.ZipFile):
             root = self.File.filename
             self.File.close()
-        mode="a" if path.exists(root) else "w"
+        mode = "a" if path.exists(root) else "w"
         self.File = zf.ZipFile(root, mode)
-        self.File.close()#Close the file having created it
+        self.File.close()  # Close the file having created it
         tmp = self.walk_groups(self._save)
         self.File.close()
         return tmp
@@ -477,19 +485,20 @@ class ZipFolderMixin(object):
         """
         if not isinstance(f, DataFile):
             f = DataFile(f)
-        filename=path.splitdrive(f.filename)[1]
-        bits=[self.File.filename,]+trail+[filename]
-        pathsep=path.join("a","b")[1]
-        for ix,b in enumerate(bits):
-            if ix==0 or not b.startswith(pathsep):
+        filename = path.splitdrive(f.filename)[1]
+        bits = [self.File.filename] + trail + [filename]
+        pathsep = path.join("a", "b")[1]
+        for ix, b in enumerate(bits):
+            if ix == 0 or not b.startswith(pathsep):
                 continue
-            bits[ix]=b[1:]
-        member=path.join(*bits)
+            bits[ix] = b[1:]
+        member = path.join(*bits)
         f = ZippedFile(f)
         f.save(member)
         return f.filename
 
-class ZipFolder(ZipFolderMixin,DiskBasedFolder,baseFolder):
+
+class ZipFolder(ZipFolderMixin, DiskBasedFolder, baseFolder):
 
     """A sub class of DataFile that sores itself in a zip file.
 
@@ -502,4 +511,3 @@ class ZipFolder(ZipFolderMixin,DiskBasedFolder,baseFolder):
     def __init__(self, *args, **kargs):
         "Constructor for the ZipFolderMixin Class."
         super(ZipFolder, self).__init__(*args, **kargs)
-

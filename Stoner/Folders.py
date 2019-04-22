@@ -2,12 +2,13 @@
 
 The core classes provides a means to access them as an ordered collection or as a mapping.
 """
-__all__ = ["DataFolder","PlotFolder"]
+__all__ = ["DataFolder", "PlotFolder"]
 
 from .folders.core import baseFolder
-from .folders.mixins import DiskBasedFolder,DataMethodsMixin,PlotMethodsMixin
+from .folders.mixins import DiskBasedFolder, DataMethodsMixin, PlotMethodsMixin
 
-class DataFolder(DataMethodsMixin,DiskBasedFolder,baseFolder):
+
+class DataFolder(DataMethodsMixin, DiskBasedFolder, baseFolder):
 
     """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
 
@@ -18,11 +19,13 @@ class DataFolder(DataMethodsMixin,DiskBasedFolder,baseFolder):
 
     """
 
-    def __init__(self,*args,**kargs):
+    def __init__(self, *args, **kargs):
         from Stoner import Data
-        self.type=kargs.pop("type",Data)
-        super(DataFolder,self).__init__(*args,**kargs)
 
-class PlotFolder(PlotMethodsMixin,DataFolder):
+        self.type = kargs.pop("type", Data)
+        super(DataFolder, self).__init__(*args, **kargs)
 
-        """A :py:class:`Stoner.folders.baseFolder` that knows how to ploth its underlying data files."""
+
+class PlotFolder(PlotMethodsMixin, DataFolder):
+
+    """A :py:class:`Stoner.folders.baseFolder` that knows how to ploth its underlying data files."""

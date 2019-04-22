@@ -12,8 +12,9 @@ d.plot(fmt="ro")  # plot our data
 
 func = lambda x, A, B, C: A + B * exp(-x / C)
 
+
 # Do the fitting and plot the result
-fit = d.odr(func, result=True, header="Fit", A=1, B=1, C=1, prefix="Model", residuals=True)
+fit = d.differential_evolution(func, result=True, header="Fit", A=1, B=1, C=1, prefix="Model", residuals=True)
 
 # Reset labels
 d.labels = []
@@ -26,7 +27,7 @@ d.title = ""
 
 ax = d.subplot2grid((3, 1), (0, 0), rowspan=2)
 d.setas = "xyy"
-d.plot(fmt=["ro", "b-"])
+d.plot(fmt=["r.", "b-"])
 d.xticklabels = [[]]
 d.xlabel = ""
 
@@ -34,4 +35,4 @@ d.xlabel = ""
 d.annotate_fit(func, prefix="Model", x=0.7, y=0.3, fontdict={"size": "x-small"})
 text = r"$y=A+Be^{-x/C}$" + "\n\n"
 d.text(7.2, 3.9, text, fontdict={"size": "x-small"})
-d.title = u"Orthogonal Distance Regression  Fit"
+d.title = u"Differential Evolution  Fit"

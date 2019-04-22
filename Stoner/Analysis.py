@@ -1,7 +1,7 @@
 """Stoner .Analysis provides a subclass of :class:`.Data` that has extra analysis routines builtin.
 """
 
-__all__ = ["AnalysisMixin","GetAffineTransform","ApplyAffineTransform"]
+__all__ = ["AnalysisMixin", "GetAffineTransform", "ApplyAffineTransform"]
 from warnings import warn
 import numpy as _np_
 import numpy.ma as ma
@@ -9,48 +9,50 @@ import numpy.ma as ma
 from scipy.integrate import cumtrapz
 from scipy.signal import get_window, convolve
 from scipy.interpolate import interp1d, UnivariateSpline
-from scipy.optimize import curve_fit,newton
+from scipy.optimize import curve_fit, newton
 from scipy.signal import savgol_filter
 
-from .compat import python_v3, string_types, int_types, index_types, LooseVersion,get_func_params
+from .compat import python_v3, string_types, int_types, index_types, LooseVersion, get_func_params
 from .tools import isNone, isiterable, all_type, istuple
 
-try:  #Allow lmfit to be optional
+try:  # Allow lmfit to be optional
     import lmfit
-    if LooseVersion(lmfit.__version__)<LooseVersion("0.9.0"):
+
+    if LooseVersion(lmfit.__version__) < LooseVersion("0.9.0"):
         from lmfit.model import Model
     else:
         from lmfit.model import Model
     from lmfit import Parameters
-    _lmfit=True
+
+    _lmfit = True
 except ImportError:
     Model = None
     Parameters = None
-    _lmfit=False
+    _lmfit = False
 from copy import deepcopy as copy
-#from matplotlib.pylab import * #Surely not?
+
+# from matplotlib.pylab import * #Surely not?
 if python_v3:
     from inspect import getfullargspec
 else:
     from inspect import getargspec as getfullargspec
 
 
-#==========================================================================================================================================
+# ==========================================================================================================================================
 # Module Private Functions
-#==========================================================================================================================================
+# ==========================================================================================================================================
 
 
-
-
-def _outlier(row, window, metric,ycol=None):
+def _outlier(row, window, metric, ycol=None):
     """Internal function for outlier detector.
 
     Calculates if the current row is an outlier from the surrounding data by looking
     at the number of standard deviations away from the average of the window it is.
     """
     av = _np_.average(window[:, ycol])
-    std = _np_.std(window[:, ycol])  #standard deviation
+    std = _np_.std(window[:, ycol])  # standard deviation
     return abs(row[ycol] - av) > metric * std
+
 
 def _threshold(threshold, data, rising=True, falling=False):
     """Internal function that implements the threshold method - also used in peak-finder
@@ -81,17 +83,18 @@ def _threshold(threshold, data, rising=True, falling=False):
     # Now we refine the estimate of zero crossing with a cubic interpolation
     # and use Newton's root finding method to locate the zero in the interpolated data
 
-    intr=interp1d(index,data.ravel()-threshold,kind="cubic")
-    roots=[]
-    for ix,x in enumerate(sdat):
-        if ix>0 and expr(x): # There's a root somewhere here !
+    intr = interp1d(index, data.ravel() - threshold, kind="cubic")
+    roots = []
+    for ix, x in enumerate(sdat):
+        if ix > 0 and expr(x):  # There's a root somewhere here !
             try:
-                roots.append(newton(intr,ix))
-            except (ValueError,RuntimeError): # fell off the end here
+                roots.append(newton(intr, ix))
+            except (ValueError, RuntimeError):  # fell off the end here
                 pass
     return _np_.array(roots)
 
-def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
+
+def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
     r"""Calculae an optimal transformation of points :math:`(x_1,y_1)\rightarrow(x_2,y_2)`.
 
     Arguments:
@@ -116,83 +119,85 @@ def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
         balues of the free parameters. Which elelemnts of *m0* that are free parameters and which are fixed is determined by the *xmode*
         and *ymode* parameters. IF *xmode* and *ymode* are both fixed, however, no scaling is done at all.
     """
-    if xy1.shape!=xy2.shape or xy1.shape[1]!=2:
-        raise RuntimeError("co-ordinate arrays must be equal length with two columns, not {} and {}".format(xy1.shape,xy2.shape))
-    xvarp={"affine":[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]],
-           "linear":[[0,0],[0,2]],
-           "scale":[[0,0]],
-           "offset":[[0,2]],
-           "fixed":[[]]}
-    yvarp={"linear":[[1,1],[1,2]],
-           "scale":[[1,1]],
-           "offset":[[1,2]],
-           "fixed":[[]]}
+    if xy1.shape != xy2.shape or xy1.shape[1] != 2:
+        raise RuntimeError(
+            "co-ordinate arrays must be equal length with two columns, not {} and {}".format(xy1.shape, xy2.shape)
+        )
+    xvarp = {
+        "affine": [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2]],
+        "linear": [[0, 0], [0, 2]],
+        "scale": [[0, 0]],
+        "offset": [[0, 2]],
+        "fixed": [[]],
+    }
+    yvarp = {"linear": [[1, 1], [1, 2]], "scale": [[1, 1]], "offset": [[1, 2]], "fixed": [[]]}
 
     if xmode not in xvarp or ymode not in yvarp:
-        raise RuntimeError("xmode and ymode must be one of 'linear','scale','offset','fixed' not {} and {}".format(xmode,ymode))
+        raise RuntimeError(
+            "xmode and ymode must be one of 'linear','scale','offset','fixed' not {} and {}".format(xmode, ymode)
+        )
 
-    if xmode=="affine":
-        ymode="fixed"
+    if xmode == "affine":
+        ymode = "fixed"
 
-    xunknowns=len(xvarp[xmode])
-    yunknowns=len(yvarp[ymode])
-    if xunknowns+yunknowns==0: # shortcircuit for the trivial case
-        return _np_.array([[1,0],[1,0]]),_np_.zeros((2,2)),lambda x:x
+    xunknowns = len(xvarp[xmode])
+    yunknowns = len(yvarp[ymode])
+    if xunknowns + yunknowns == 0:  # shortcircuit for the trivial case
+        return _np_.array([[1, 0], [1, 0]]), _np_.zeros((2, 2)), lambda x: x
 
-    mapping=xvarp[xmode]+yvarp[ymode]
-    mapping=[m for m in mapping if m!=[]] # remove empty mappings
-    data=_np_.column_stack((xy1,xy2)).T
+    mapping = xvarp[xmode] + yvarp[ymode]
+    mapping = [m for m in mapping if m != []]  # remove empty mappings
+    data = _np_.column_stack((xy1, xy2)).T
 
-    if isinstance(m0,list):
-        m0=_np_.array(m0)
+    if isinstance(m0, list):
+        m0 = _np_.array(m0)
 
     if m0 is None:
-        p0s={"affine":[1,0,0,0,1,0],"linear":[1,0],"scale":[1],"offset":[0],"fixed":[]}
-        p0=p0s[xmode]+p0s[ymode]
-        default=_np_.array([[1.00,0.0,0.0],[0.0,1.0,0.0]])
-    elif isinstance(m0,_np_.ndarray) and m0.shape==(2,3):
-        p0=[0]*len(mapping)
-        for i,[u,v] in enumerate(mapping):
-            p0[i]=m0[u,v]
-            default=m0
+        p0s = {"affine": [1, 0, 0, 0, 1, 0], "linear": [1, 0], "scale": [1], "offset": [0], "fixed": []}
+        p0 = p0s[xmode] + p0s[ymode]
+        default = _np_.array([[1.00, 0.0, 0.0], [0.0, 1.0, 0.0]])
+    elif isinstance(m0, _np_.ndarray) and m0.shape == (2, 3):
+        p0 = [0] * len(mapping)
+        for i, [u, v] in enumerate(mapping):
+            p0[i] = m0[u, v]
+            default = m0
     else:
         raise RuntimeError("m0 starting matrix should be a numpy array of size (2,3) not {}".format(m0))
 
-    result=_np_.zeros(len(xy1))
+    result = _np_.zeros(len(xy1))
 
-    def transform(xy,*p):#Construct the fitting function
+    def transform(xy, *p):  # Construct the fitting function
         """Fitting function to find the transfoprm."""
-        xy1=_np_.column_stack((xy[:2,:].T,_np_.ones(xy.shape[1]))).T
-        xy2=xy[2:,:]
-        for pi,(u,v) in zip(p,mapping):
-            default[u,v]=pi
-        xyt=_np_.dot(default, xy1)
-        ret= _np_.sqrt(_np_.sum((xy2-xyt)**2,axis=0))
+        xy1 = _np_.column_stack((xy[:2, :].T, _np_.ones(xy.shape[1]))).T
+        xy2 = xy[2:, :]
+        for pi, (u, v) in zip(p, mapping):
+            default[u, v] = pi
+        xyt = _np_.dot(default, xy1)
+        ret = _np_.sqrt(_np_.sum((xy2 - xyt) ** 2, axis=0))
         return ret
 
+    popt, pcov = curve_fit(transform, data, result, p0=p0)
+    perr = _np_.sqrt(_np_.diag(pcov))
 
-    popt,pcov=curve_fit(transform,data,result,p0=p0)
-    perr=_np_.sqrt(_np_.diag(pcov))
+    # Initialise the return values
+    default = _np_.array([[1.00, 0.0, 0.0], [0.0, 1.0, 0.0]])
+    for pi, (u, v) in zip(popt, mapping):
+        default[u, v] = pi
+    default_err = _np_.zeros((2, 3))
+    for pi, (u, v) in zip(perr, mapping):
+        default_err[u, v] = pi
 
-    #Initialise the return values
-    default=_np_.array([[1.00,0.0,0.0],[0.0,1.0,0.0]])
-    for pi,(u,v) in zip(popt,mapping):
-        default[u,v]=pi
-    default_err=_np_.zeros((2,3))
-    for pi,(u,v) in zip(perr,mapping):
-        default_err[u,v]=pi
+    transform = lambda xy: ApplyAffineTransform(xy, default)
 
-    transform=lambda xy:ApplyAffineTransform(xy,default)
-
-    return (default,default_err,transform)
-
+    return (default, default_err, transform)
 
 
-def ApplyAffineTransform(xy,transform):
+def ApplyAffineTransform(xy, transform):
     """Apply a given afffine transform to a set of xy data points."""
-    xyt=_np_.row_stack((xy.T,_np_.ones(len(xy))))
-    xyt=_np_.dot(transform,xyt)
+    xyt = _np_.row_stack((xy.T, _np_.ones(len(xy))))
+    xyt = _np_.dot(transform, xyt)
     return xyt.T
+
 
 def GetAffineTransform(p, pd):
     """Calculate an affine transofrm from 2 sets of three points.
@@ -204,14 +209,15 @@ def GetAffineTransform(p, pd):
     Returns:
         2x3 matrix representing the affine transform.
     """
-    if _np_.shape(p)!=(3, 2) and _np_.shape(pd)!=(3, 2):
+    if _np_.shape(p) != (3, 2) and _np_.shape(pd) != (3, 2):
         raise RuntimeError("Must supply three points")
 
-    p=_np_.append(p,_np_.atleast_2d( _np_.ones(3)).T, axis=1)
-    transform=_np_.linalg.solve(p, pd)
-    return  transform.T
+    p = _np_.append(p, _np_.atleast_2d(_np_.ones(3)).T, axis=1)
+    transform = _np_.linalg.solve(p, pd)
+    return transform.T
 
-def _poly_outlier(row, window, metric=3.0, ycol=None,xcol=None, order=1,yerr=None):
+
+def _poly_outlier(row, window, metric=3.0, ycol=None, xcol=None, order=1, yerr=None):
     """Alternative outlier detection function that fits a polynomial locally over the window.
 
     Args:
@@ -228,32 +234,34 @@ def _poly_outlier(row, window, metric=3.0, ycol=None,xcol=None, order=1,yerr=Non
         True if current row is an outlier
     """
     if order > window.shape[0] - 2:
-        raise ValueError("order should be smaller than the window length. {} vs {}".format(order,window.shape[0]-2))
+        raise ValueError("order should be smaller than the window length. {} vs {}".format(order, window.shape[0] - 2))
 
-
-    x=window[:,xcol]-row[xcol]
-    y=window[:,ycol]
+    x = window[:, xcol] - row[xcol]
+    y = window[:, ycol]
     if yerr:
-        w=1.0/window[:,yerr]
+        w = 1.0 / window[:, yerr]
     else:
-        w=None
+        w = None
 
-    popt, pcov = _np_.polyfit(x,y, w=w,deg=order, cov=True)
+    popt, pcov = _np_.polyfit(x, y, w=w, deg=order, cov=True)
     pval = _np_.polyval(popt, 0.0)
-    perr=_np_.sqrt(_np_.diag(pcov))[-1]
-    return (pval-row[ycol])**2 > metric * perr
+    perr = _np_.sqrt(_np_.diag(pcov))[-1]
+    return (pval - row[ycol]) ** 2 > metric * perr
 
 
 class AnalysisMixin(object):
 
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods."""
 
-    def __init__(self,*args,**kargs):
+    def __init__(self, *args, **kargs):
         """Just call super."""
-        super(AnalysisMixin,self).__init__(*args,**kargs)
-        if self.debug: print("Done AnlaysisMixin init")
+        super(AnalysisMixin, self).__init__(*args, **kargs)
+        if self.debug:
+            print("Done AnlaysisMixin init")
 
-    def SG_Filter(self, col=None, xcol=None, points=15, poly=1, order=0, pad=True, result=None, replace=False, header=None):
+    def SG_Filter(
+        self, col=None, xcol=None, points=15, poly=1, order=0, pad=True, result=None, replace=False, header=None
+    ):
         """Implements Savitsky-Golay filtering of data for smoothing and differentiating data.
 
         Args:
@@ -283,48 +291,50 @@ class AnalysisMixin(object):
             User guide section :ref:`smoothing_guide`
         """
         from Stoner.Util import ordinal
-        points=int(points)
-        if points % 2 == 0:  #Ensure window length is odd
+
+        points = int(points)
+        if points % 2 == 0:  # Ensure window length is odd
             points += 1
 
-        _=self._col_args(scalar=False,ycol=col,xcol=xcol)
+        _ = self._col_args(scalar=False, ycol=col, xcol=xcol)
 
         if _.xcol is not None:
-            col=_.ycol+[_.xcol]
+            col = _.ycol + [_.xcol]
             data = self.column(list(col)).T
         else:
-            col=_.ycol
+            col = _.ycol
             data = self.column(list(col)).T
-            data = _np_.row_stack((data,_np_.arange(data.shape[1])))
+            data = _np_.row_stack((data, _np_.arange(data.shape[1])))
 
         ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
         if isinstance(pad, bool) and pad:
-            offset=int(points*order**2/8)
-            padv=_np_.mean(ddata[:,offset:-offset],axis=1)
-            pad=_np_.ones((ddata.shape[0],offset))
-            for ix,v in enumerate(padv):
-                pad[ix]*=v
-        elif isinstance(pad,float):
-            offset=int(points/2)
-            pad=_np_.ones((ddata.shape[0],offset))*pad
+            offset = int(points * order ** 2 / 8)
+            padv = _np_.mean(ddata[:, offset:-offset], axis=1)
+            pad = _np_.ones((ddata.shape[0], offset))
+            for ix, v in enumerate(padv):
+                pad[ix] *= v
+        elif isinstance(pad, float):
+            offset = int(points / 2)
+            pad = _np_.ones((ddata.shape[0], offset)) * pad
 
-        if _np_.all(pad) and offset>0:
-            ddata[:,:offset]=pad
-            ddata[:,-offset:]=pad
-        if order>=1:
-            r=ddata[:-1] / ddata[-1]
+        if _np_.all(pad) and offset > 0:
+            ddata[:, :offset] = pad
+            ddata[:, -offset:] = pad
+        if order >= 1:
+            r = ddata[:-1] / ddata[-1]
         else:
-            r=ddata[:,:-1]
+            r = ddata[:, :-1]
 
         if result is not None:
             if not isinstance(header, string_types):
-                header=[]
+                header = []
                 for column in col[:-1]:
-                    header.append('{} after {} order Savitsky-Golay Filter'.format(self.column_headers[column],
-                                                                          ordinal(order)))
+                    header.append(
+                        "{} after {} order Savitsky-Golay Filter".format(self.column_headers[column], ordinal(order))
+                    )
             else:
-                header=[header]*(len(col)-1)
-            for column,head in zip(r[:-1],header):
+                header = [header] * (len(col) - 1)
+            for column, head in zip(r[:-1], header):
                 self.add_column(column.ravel(), header=head, index=result, replace=replace)
             return self
         else:
@@ -371,7 +381,7 @@ class AnalysisMixin(object):
         """
         # First we find all points where we cross zero in the correct direction
         current = data
-        mask=ma.getmaskarray(data)
+        mask = ma.getmaskarray(data)
         previous = _np_.roll(current, 1)
         index = _np_.arange(len(current))
         sdat = _np_.column_stack((index, current, previous))
@@ -384,18 +394,18 @@ class AnalysisMixin(object):
         else:
             expr = lambda x: False
 
-        current=ma.masked_array(current)
-        current.mask=mask
+        current = ma.masked_array(current)
+        current.mask = mask
         # Now we refine the estimate of zero crossing with a cubic interpolation
         # and use Newton's root finding method to locate the zero in the interpolated data
 
-        intr=interp1d(index,data-threshold,kind="cubic")
-        roots=[]
-        for ix,x in enumerate(sdat):
-            if expr(x) and ix>0 and ix<len(data)-1: # There's a root somewhere here !
+        intr = interp1d(index, data - threshold, kind="cubic")
+        roots = []
+        for ix, x in enumerate(sdat):
+            if expr(x) and ix > 0 and ix < len(data) - 1:  # There's a root somewhere here !
                 try:
-                    roots.append(newton(intr,ix))
-                except ValueError: # fell off the end here
+                    roots.append(newton(intr, ix))
+                except ValueError:  # fell off the end here
                     pass
         return _np_.array(roots)
 
@@ -426,7 +436,9 @@ class AnalysisMixin(object):
         additional column with the uncertainites will be added to the data.
         """
         a = self.find_col(a)
-        if isinstance(a, (tuple,list)) and isinstance(b, (tuple,list)) and len(a) == 2 and len(b) == 2:  #Error columns on
+        if (
+            isinstance(a, (tuple, list)) and isinstance(b, (tuple, list)) and len(a) == 2 and len(b) == 2
+        ):  # Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
@@ -481,39 +493,39 @@ class AnalysisMixin(object):
             self: The newly modified :py:class:`AnalysisMixin`.
         """
         if col is None:
-            col = self.setas.get("y",[0])[0]
+            col = self.setas.get("y", [0])[0]
         col = self.find_col(col)
-        kargs.update(kargs.pop("_extra",dict()))
-        #Check the dimension of the output
-        ret = func(next(self.rows()),**kargs)
+        kargs.update(kargs.pop("_extra", dict()))
+        # Check the dimension of the output
+        ret = func(next(self.rows()), **kargs)
         try:
             next(self.rows(reset=True))
-        except (RuntimeError,StopIteration):
+        except (RuntimeError, StopIteration):
             pass
         if isiterable(ret):
-            nc=_np_.zeros((len(self),len(ret)))
+            nc = _np_.zeros((len(self), len(ret)))
         else:
-            nc=_np_.zeros(len(self))
-        #Evaluate the data row by row
-        for ix,r in enumerate(self.rows()):
-            ret = func(r,**kargs)
-            if isiterable(ret) and not isinstance(ret,_np_.ndarray):
-                ret=_np_.ma.MaskedArray(ret)
-            nc[ix]=ret
-        #Work out how to handle the result
-        if nc.ndim==1:
+            nc = _np_.zeros(len(self))
+        # Evaluate the data row by row
+        for ix, r in enumerate(self.rows()):
+            ret = func(r, **kargs)
+            if isiterable(ret) and not isinstance(ret, _np_.ndarray):
+                ret = _np_.ma.MaskedArray(ret)
+            nc[ix] = ret
+        # Work out how to handle the result
+        if nc.ndim == 1:
             if header is None:
                 header = func.__name__
-            self = self.add_column(nc, header=header, index=col,replace=replace,setas=self.setas[col])
-            ret=self
+            self = self.add_column(nc, header=header, index=col, replace=replace, setas=self.setas[col])
+            ret = self
         else:
             if not replace:
-                ret=self.clone
+                ret = self.clone
             else:
-                ret=self
-            ret.data=nc
+                ret = self
+            ret.data = nc
             if header is not None:
-                ret.column_headers=header
+                ret.column_headers = header
         return ret
 
     def bin(self, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, **kargs):
@@ -573,47 +585,49 @@ class AnalysisMixin(object):
 
         for limits in zip(bin_left, bin_right):
             data = self.search(xcol, limits)
-            if len(data)>1:
-                ok=_np_.logical_not(_np_.isnan(data.y))
-                data=data[ok]
-            elif len(data)==1 and _np_.isnan(data.y):
-                shape=list(data.shape)
-                shape[0]=0
-                data=_np_.zeros(shape)
+            if len(data) > 1:
+                ok = _np_.logical_not(_np_.isnan(data.y))
+                data = data[ok]
+            elif len(data) == 1 and _np_.isnan(data.y):
+                shape = list(data.shape)
+                shape[0] = 0
+                data = _np_.zeros(shape)
             if yerr is not None:
                 w = 1.0 / data[:, yerr] ** 2
                 W = _np_.sum(w, axis=0)
-                if data.shape[0]>3:
-                    e = max(_np_.std(data[:, ycol], axis=0) / _np_.sqrt(data.shape[0]),
-                                  (1.0/_np_.sqrt(W))/data.shape[0])
+                if data.shape[0] > 3:
+                    e = max(
+                        _np_.std(data[:, ycol], axis=0) / _np_.sqrt(data.shape[0]),
+                        (1.0 / _np_.sqrt(W)) / data.shape[0],
+                    )
                 else:
-                    e=1.0/_np_.sqrt(W)
+                    e = 1.0 / _np_.sqrt(W)
             else:
                 w = _np_.ones((data.shape[0], len(ycol)))
                 W = data.shape[0]
-                if data[:, ycol].size>1:
+                if data[:, ycol].size > 1:
                     e = _np_.std(data[:, ycol], axis=0) / _np_.sqrt(W)
                 else:
-                    e=_np_.nan
-            if data.shape[0]==0:
+                    e = _np_.nan
+            if data.shape[0] == 0:
                 warn("Empty bin at {}".format(limits))
             y = _np_.sum(data[:, ycol] * (w / W), axis=0)
-            ybin[i,:] = y
-            ebin[i,:] = e
-            nbins[i,:] = data.shape[0]
+            ybin[i, :] = y
+            ebin[i, :] = e
+            nbins[i, :] = data.shape[0]
             i += 1
         if clone:
             ret = self.clone
             ret.data = _np_.atleast_2d(bin_centres).T
-            ret.column_headers= [self.column_headers[xcol]]
+            ret.column_headers = [self.column_headers[xcol]]
             ret.setas = ["x"]
             for i in range(ybin.shape[1]):
                 head = str(self.column_headers[ycol[i]])
 
-                ret.add_column(ybin[:, i],header=head)
-                ret.add_column(ebin[:, i],header="d{}".format(head))
-                ret.add_column(nbins[:, i],header="#/bin {}".format(head))
-                s=list(ret.setas)
+                ret.add_column(ybin[:, i], header=head)
+                ret.add_column(ebin[:, i], header="d{}".format(head))
+                ret.add_column(nbins[:, i], header="#/bin {}".format(head))
+                s = list(ret.setas)
                 s[-3:] = ["y", "e", "."]
                 ret.setas = s
         else:
@@ -712,16 +726,18 @@ class AnalysisMixin(object):
         additional column with the uncertainites will be added to the data.
         """
         a = self.find_col(a)
-        if isinstance(a, (list,tuple)) and isinstance(b, (list,tuple)) and len(a) == 2 and len(b) == 2:  #Error columns on
+        if (
+            isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)) and len(a) == 2 and len(b) == 2
+        ):  # Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
-            err_calc = lambda adata, bdata, e1data, e2data: _np_.sqrt((1.0 / (adata + bdata) - (adata - bdata) /
-                                                                       (adata + bdata) ** 2) ** 2 * e1data ** 2 +
-                                                                      (-1.0 / (adata + bdata) - (adata - bdata) /
-                                                                       (adata + bdata) ** 2) ** 2 * e2data ** 2)
+            err_calc = lambda adata, bdata, e1data, e2data: _np_.sqrt(
+                (1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e1data ** 2
+                + (-1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e2data ** 2
+            )
         else:
             err_calc = None
         adata, aname = self.__get_math_val(a)
@@ -758,14 +774,19 @@ class AnalysisMixin(object):
         additional column with the uncertainites will be added to the data.
         """
         a = self.find_col(a)
-        if isinstance(a, (list,tuple)) and isinstance(b, (list,tuple)) and len(a) == 2 and len(b) == 2:  #Error columns on
+        if (
+            isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)) and len(a) == 2 and len(b) == 2
+        ):  # Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
-            err_calc = lambda adata, bdata, e1data, e2data: _np_.sqrt((e1data / adata) ** 2 +
-                                                                      (e2data / bdata) ** 2) * adata / bdata
+            err_calc = (
+                lambda adata, bdata, e1data, e2data: _np_.sqrt((e1data / adata) ** 2 + (e2data / bdata) ** 2)
+                * adata
+                / bdata
+            )
         else:
             err_calc = None
         adata, aname = self.__get_math_val(a)
@@ -783,7 +804,7 @@ class AnalysisMixin(object):
             self.add_column(err_data, header=err_header, index=a + 1, replace=False)
         return self
 
-    def extrapolate(self,new_x,xcol=None,ycol=None,yerr=None,overlap=20,kind='linear'):
+    def extrapolate(self, new_x, xcol=None, ycol=None, yerr=None, overlap=20, kind="linear"):
         """Extrapolate data based on local fit to x,y data.
 
         Args:
@@ -809,65 +830,71 @@ class AnalysisMixin(object):
             If *kind* is callable, it should take x values in the first parameter and free fitting parameters as the other
             parameters (i.e. as with :py:meth:`AnalysisMixin.curve_fit`).
         """
-        _=self._col_args(xcol=xcol,ycol=ycol,yerr=yerr,scalar=False)
-        kinds={"linear":lambda x,m,c:m*x+c,
-               "quadratic":lambda x,a,b,c:a*x**2+b*x+c,
-               "cubic":lambda x,a,b,c,d: a*x**3+b*x**2+c*x+d}
-        errs={"linear":lambda x,me,ce:_np_.sqrt((me*x)**2+ce**2),
-              "quadratic":lambda x,ae,be,ce:_np_.sqrt((2*x**2*ae)**2+(x*be)**2+ce**2),
-              "cubic":lambda x,ae,be,ce,de:_np_.sqrt((3*ae*x**3)**2+(2*x**2*be)**2+(x*ce)**2+de**2)}
+        _ = self._col_args(xcol=xcol, ycol=ycol, yerr=yerr, scalar=False)
+        kinds = {
+            "linear": lambda x, m, c: m * x + c,
+            "quadratic": lambda x, a, b, c: a * x ** 2 + b * x + c,
+            "cubic": lambda x, a, b, c, d: a * x ** 3 + b * x ** 2 + c * x + d,
+        }
+        errs = {
+            "linear": lambda x, me, ce: _np_.sqrt((me * x) ** 2 + ce ** 2),
+            "quadratic": lambda x, ae, be, ce: _np_.sqrt((2 * x ** 2 * ae) ** 2 + (x * be) ** 2 + ce ** 2),
+            "cubic": lambda x, ae, be, ce, de: _np_.sqrt(
+                (3 * ae * x ** 3) ** 2 + (2 * x ** 2 * be) ** 2 + (x * ce) ** 2 + de ** 2
+            ),
+        }
 
         if callable(kind):
             pass
         elif kind in kinds:
-            kindf=kinds[kind]
+            kindf = kinds[kind]
         else:
             raise RuntimeError("Failed to recognise extrpolation function '{}'".format(kind))
-        scalar_x=not isiterable(new_x)
+        scalar_x = not isiterable(new_x)
         if scalar_x:
-            new_x=[new_x]
-        if isinstance(new_x,ma.MaskedArray):
-            new_x=new_x.compressed
-        results=_np_.zeros((len(new_x),2*len(_.ycol)))
-        work=self.clone
-        for ix,x in enumerate(new_x):
-            r=self.closest(x,xcol=_.xcol)
-            if isinstance(overlap,int):
-                if (r.i-overlap/2)<0:
-                    ll=0
-                    hl=min(len(self),overlap)
-                elif (r.i+overlap/2)>len(self):
-                    hl=len(self)
-                    ll=max(hl-overlap,0)
+            new_x = [new_x]
+        if isinstance(new_x, ma.MaskedArray):
+            new_x = new_x.compressed
+        results = _np_.zeros((len(new_x), 2 * len(_.ycol)))
+        work = self.clone
+        for ix, x in enumerate(new_x):
+            r = self.closest(x, xcol=_.xcol)
+            if isinstance(overlap, int):
+                if (r.i - overlap / 2) < 0:
+                    ll = 0
+                    hl = min(len(self), overlap)
+                elif (r.i + overlap / 2) > len(self):
+                    hl = len(self)
+                    ll = max(hl - overlap, 0)
                 else:
-                    ll=r.i-overlap/2
-                    hl=r.i+overlap/2
-                bounds={"_i__between":(ll,hl)}
-                mid_x=(self[ll,_.xcol]+self[hl-1,_.xcol])/2.0
-            elif isinstance(overlap,float):
-                if (r[_.xcol]-overlap/2)<self.min(_.xcol)[0]:
-                    ll=self.min(_.xcol)[0]
-                    hl=ll+overlap
-                elif (r[_.xcol]+overlap/2)>self.max(_.xcol)[0]:
-                    hl=self.max(_.xcol)[0]
-                    ll=hl-overlap
+                    ll = r.i - overlap / 2
+                    hl = r.i + overlap / 2
+                bounds = {"_i__between": (ll, hl)}
+                mid_x = (self[ll, _.xcol] + self[hl - 1, _.xcol]) / 2.0
+            elif isinstance(overlap, float):
+                if (r[_.xcol] - overlap / 2) < self.min(_.xcol)[0]:
+                    ll = self.min(_.xcol)[0]
+                    hl = ll + overlap
+                elif (r[_.xcol] + overlap / 2) > self.max(_.xcol)[0]:
+                    hl = self.max(_.xcol)[0]
+                    ll = hl - overlap
                 else:
-                    ll=r[_.xcol]-overlap/2
-                    hl=r[_.xcol]+overlap/2
-                bounds={"{}__between".format(self.column_headers[_.xcol]):(ll,hl)}
-                mid_x=(ll+hl)/2.0
-            pointdata=work.select(**bounds)
-            pointdata.data[:,_.xcol]=pointdata.column(_.xcol)-mid_x
-            ret=pointdata.curve_fit(kindf,_.xcol,_.ycol,sigma=_.yerr,absolute_sigma=True)
-            if isinstance(ret,tuple):
-                ret=[ret]
-            for iy,rt in enumerate(ret):
-                popt,pcov=rt
-                perr=_np_.sqrt(_np_.diag(pcov))
-                results[ix,2*iy]=kindf(x-mid_x,*popt)
-                results[ix,2*iy+1]=errs[kind](x-mid_x,*perr)
+                    ll = r[_.xcol] - overlap / 2
+                    hl = r[_.xcol] + overlap / 2
+                bounds = {"{}__between".format(self.column_headers[_.xcol]): (ll, hl)}
+                mid_x = (ll + hl) / 2.0
+            pointdata = work.select(**bounds)
+            pointdata.data[:, _.xcol] = pointdata.column(_.xcol) - mid_x
+            ret = pointdata.curve_fit(kindf, _.xcol, _.ycol, sigma=_.yerr, absolute_sigma=True)
+            if isinstance(ret, tuple):
+                ret = [ret]
+            for iy, rt in enumerate(ret):
+                popt, pcov = rt
+                perr = _np_.sqrt(_np_.diag(pcov))
+                results[ix, 2 * iy] = kindf(x - mid_x, *popt)
+                results[ix, 2 * iy + 1] = errs[kind](x - mid_x, *perr)
         if scalar_x:
-            results=results[0]
+            results = results[0]
         return results
 
     def integrate(self, xcol=None, ycol=None, result=None, result_name=None, bounds=lambda x, y: True, **kargs):
@@ -920,7 +947,7 @@ class AnalysisMixin(object):
             final = _np_.array(final)
         return final
 
-    def interpolate(self, newX, kind='linear', xcol=None,replace=False):
+    def interpolate(self, newX, kind="linear", xcol=None, replace=False):
         """Interpolate a dataset to get a new set of values for a given set of x data.
 
         Args:
@@ -946,7 +973,7 @@ class AnalysisMixin(object):
             - if *xcol* was None, this argument is interpreted as array indices, but if *xcol* was specified, then this argument is interpreted as
             an array of xvalues.
         """
-        DataArray=self.data.__class__
+        DataArray = self.data.__class__
         l = _np_.shape(self.data)[0]
         index = _np_.arange(l)
         if xcol is None:
@@ -954,33 +981,35 @@ class AnalysisMixin(object):
         elif isinstance(xcol, bool) and not xcol:
             xcol = None
 
-        if isinstance(newX,ma.MaskedArray):
-            newX=newX.compressed()
+        if isinstance(newX, ma.MaskedArray):
+            newX = newX.compressed()
 
         if xcol is not None and newX is not None:  # We need to convert newX to row indices
             xfunc = interp1d(self.column(xcol), index, kind, 0)  # xfunc(x) returns partial index
             newX = xfunc(newX)
         inter = interp1d(index, self.data, kind, 0)
 
-        if newX is None: #Ok, we're going to return an interpolation function
+        if newX is None:  # Ok, we're going to return an interpolation function
+
             def wrapper(newX):
                 """Wrapper for interpolation function."""
-                if isinstance(newX,ma.MaskedArray):
-                    newX=newX.compressed()
+                if isinstance(newX, ma.MaskedArray):
+                    newX = newX.compressed()
                 else:
-                    newX=_np_.array(newX)
+                    newX = _np_.array(newX)
                 if xcol is not None and newX is not None:  # We need to convert newX to row indices
                     xfunc = interp1d(self.column(xcol), index, kind, 0)  # xfunc(x) returns partial index
                     newX = xfunc(newX)
                 return inter(newX)
+
             return wrapper
 
         if replace:
-            self.data=inter(newX)
-            ret=self
+            self.data = inter(newX)
+            ret = self
         else:
-            ret=DataArray(inter(newX),isrow=True)
-            ret.setas=self.setas.clone
+            ret = DataArray(inter(newX), isrow=True)
+            ret.setas = self.setas.clone
         return ret
 
     def make_bins(self, xcol, bins, mode="lin", **kargs):
@@ -1000,7 +1029,7 @@ class AnalysisMixin(object):
             boundaries and centres for each bin.
         """
         (xmin, xmax) = self.span(xcol)
-        if mode not in ["lin","log"]:
+        if mode not in ["lin", "log"]:
             raise ValueError("Mode should be either  'lin' or 'log' not {}".format(mode))
 
         if "bin_start" in kargs:
@@ -1050,13 +1079,13 @@ class AnalysisMixin(object):
                 bin_centres = _np_.array(centers)
             else:
                 raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
-        elif isinstance(bins,_np_.ndarray) and bins.ndim==1: # Yser provided manuals bins
-            bin_start=bins[:-1]
-            bin_stop=bins[1:]
+        elif isinstance(bins, _np_.ndarray) and bins.ndim == 1:  # Yser provided manuals bins
+            bin_start = bins[:-1]
+            bin_stop = bins[1:]
             if mode.lower().startwith("lin"):
-                bin_centres=(bin_start+bin_stop)/2.0
+                bin_centres = (bin_start + bin_stop) / 2.0
             elif mode.lower().startswith("log"):
-                bin_centres=_np_.exp(_np_.log(bin_start)+_np_.log(bin_stop)/2.0)
+                bin_centres = _np_.exp(_np_.log(bin_start) + _np_.log(bin_stop) / 2.0)
             else:
                 raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
         else:
@@ -1094,7 +1123,7 @@ class AnalysisMixin(object):
             self._pop_mask()
         return result
 
-    def mean(self, column=None,sigma=None, bounds=None):
+    def mean(self, column=None, sigma=None, bounds=None):
         """Find mean value of a data column.
 
         Args:
@@ -1115,27 +1144,26 @@ class AnalysisMixin(object):
         .. todo::
             Fix the row index when the bounds function is used - see note of :py:meth:`AnalysisMixin.max`
         """
-        _=self._col_args(scalar=True,ycol=column,yerr=sigma)
+        _ = self._col_args(scalar=True, ycol=column, yerr=sigma)
 
         if bounds is not None:
             self._push_mask()
             self._set_mask(bounds, True, _.ycol)
 
-        if isiterable(sigma) and len(sigma)==len(self) and all_type(sigma,float):
-            sigma=_np_.array(sigma)
-            _["has_yerr"]=True
+        if isiterable(sigma) and len(sigma) == len(self) and all_type(sigma, float):
+            sigma = _np_.array(sigma)
+            _["has_yerr"] = True
         elif _.has_yerr:
-            sigma=self.data[:,_.yerr]
-
+            sigma = self.data[:, _.yerr]
 
         if not _.has_yerr:
             result = self.data[:, _.ycol].mean()
         else:
-            ydata=self.data[:,_.ycol]
-            w=1/(sigma**2+1E-8)
-            norm=w.sum(axis=0)
-            error=_np_.sqrt((sigma**2).sum(axis=0))/len(sigma)
-            result=(ydata*w).mean(axis=0)/norm,error
+            ydata = self.data[:, _.ycol]
+            w = 1 / (sigma ** 2 + 1e-8)
+            norm = w.sum(axis=0)
+            error = _np_.sqrt((sigma ** 2).sum(axis=0)) / len(sigma)
+            result = (ydata * w).mean(axis=0) / norm, error
         if bounds is not None:
             self._pop_mask()
         return result
@@ -1188,14 +1216,19 @@ class AnalysisMixin(object):
         additional column with the uncertainites will be added to the data.
         """
         a = self.find_col(a)
-        if isinstance(a, (list,tuple)) and isinstance(b, (list,tuple)) and len(a) == 2 and len(b) == 2:  #Error columns on
+        if (
+            isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)) and len(a) == 2 and len(b) == 2
+        ):  # Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
-            err_calc = lambda adata, bdata, e1data, e2data: _np_.sqrt((e1data / adata) ** 2 +
-                                                                      (e2data / bdata) ** 2) * adata * bdata
+            err_calc = (
+                lambda adata, bdata, e1data, e2data: _np_.sqrt((e1data / adata) ** 2 + (e2data / bdata) ** 2)
+                * adata
+                * bdata
+            )
         else:
             err_calc = None
         adata, aname = self.__get_math_val(a)
@@ -1213,7 +1246,7 @@ class AnalysisMixin(object):
             self.add_column(err_data, header=err_header, index=a + 1, replace=False)
         return self
 
-    def normalise(self, target=None, base=None, replace=True, header=None,scale=None,limits=(0.0,1.0)):
+    def normalise(self, target=None, base=None, replace=True, header=None, scale=None, limits=(0.0, 1.0)):
         """Normalise data columns by dividing through by a base column value.
 
         Args:
@@ -1236,9 +1269,9 @@ class AnalysisMixin(object):
             this setting can be used to clip the input range before normalising. The parameters in the limit are the values at
             the *low* and *high* fractions of the cumulative distribution function of the data.
         """
-        _=self._col_args(scalar=True,ycol=target)
+        _ = self._col_args(scalar=True, ycol=target)
 
-        target=_.ycol
+        target = _.ycol
         if not isinstance(target, list):
             target = [self.find_col(target)]
         for t in target:
@@ -1246,34 +1279,34 @@ class AnalysisMixin(object):
                 header = self.column_headers[self.find_col(t)] + "(norm)"
             else:
                 header = str(header)
-            if not istuple(base,float,float) and base is not None:
+            if not istuple(base, float, float) and base is not None:
                 self.divide(t, base, header=header, replace=replace)
             else:
-                if istuple(base,float,float):
-                    scale=base
+                if istuple(base, float, float):
+                    scale = base
                 elif scale is None:
-                    scale=(-1.0,1.0)
-                if not istuple(scale,float,float):
+                    scale = (-1.0, 1.0)
+                if not istuple(scale, float, float):
                     raise ValueError("limit parameter is either None, or limit or base is a tuple of two floats.")
-                data=self.column(t).ravel()
-                data=_np_.sort(data[~_np_.isnan(data)])
-                if limits!=(0.,1.):
-                    low,high=limits
-                    low=data[int(low*data.size)]
-                    high=data[int(high*data.size)]
+                data = self.column(t).ravel()
+                data = _np_.sort(data[~_np_.isnan(data)])
+                if limits != (0.0, 1.0):
+                    low, high = limits
+                    low = data[int(low * data.size)]
+                    high = data[int(high * data.size)]
                 else:
-                    high=data.max()
-                    low=data.min()
-                data=_np_.copy(self.data[:,t])
-                data=_np_.where(data>high,high,_np_.where(data<low,low,data))
-                scl,sch=scale
-                data=(data-low)/(high-low)*(sch-scl)+scl
-                setas=self.setas.clone
-                self.add_column(data,index=t,replace=replace,header=header)
-                self.setas=setas
+                    high = data.max()
+                    low = data.min()
+                data = _np_.copy(self.data[:, t])
+                data = _np_.where(data > high, high, _np_.where(data < low, low, data))
+                scl, sch = scale
+                data = (data - low) / (high - low) * (sch - scl) + scl
+                setas = self.setas.clone
+                self.add_column(data, index=t, replace=replace, header=header)
+                self.setas = setas
         return self
 
-    def outlier_detection(self, column=None, window=7, certainty=3.0, action='mask', width=1, func=None, **kargs):
+    def outlier_detection(self, column=None, window=7, certainty=3.0, action="mask", width=1, func=None, **kargs):
         """Function to detect outliers in a column of data.
 
         Args:
@@ -1330,27 +1363,27 @@ class AnalysisMixin(object):
         if func is None:
             func = _outlier
 
-        _=self._col_args(scalar=True,ycol=column,**kargs)
-        params=get_func_params(func)
+        _ = self._col_args(scalar=True, ycol=column, **kargs)
+        params = get_func_params(func)
         for p in params:
             if p in _:
-                kargs[p]=_[p]
+                kargs[p] = _[p]
 
-        if action not in ["delete","mask","mask row"] and not callable(action):
+        if action not in ["delete", "mask", "mask row"] and not callable(action):
             raise ValueError("Do'n know what to do with action={}".format(action))
         index = []
         for i, t in enumerate(self.rolling_window(window, wrap=False, exclude_centre=width)):
             if func(self.data[i], t, metric=certainty, **kargs):
                 index.append(i)
-        self['outliers'] = index  #add outlier indecies to metadata
-        index.reverse()  #Always reverse the index in case we're deleting rows in sucession
-        if action == 'mask' or action == 'mask row':
+        self["outliers"] = index  # add outlier indecies to metadata
+        index.reverse()  # Always reverse the index in case we're deleting rows in sucession
+        if action == "mask" or action == "mask row":
             for i in index:
-                if action == 'mask':
+                if action == "mask":
                     self.mask[i, column] = True
                 else:
-                    self.mask[i,:] = True
-        elif action == 'delete':
+                    self.mask[i, :] = True
+        elif action == "delete":
             for i in index:
                 self.del_rows(i)
         elif callable(action):  # this will call the action function with each row in turn from back to start
@@ -1389,82 +1422,87 @@ class AnalysisMixin(object):
         See Also:
             User guide section :ref:`peak_finding`
         """
-        width=kargs.pop("width",int(len(self) / 20))
-        peaks=kargs.pop("peaks",True)
-        troughs=kargs.pop("troughs",False)
-        poly=kargs.pop("poly",2)
+        width = kargs.pop("width", int(len(self) / 20))
+        peaks = kargs.pop("peaks", True)
+        troughs = kargs.pop("troughs", False)
+        poly = kargs.pop("poly", 2)
         assert poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or trough"
 
-        sort=kargs.pop("sort",False)
-        modify=kargs.pop("modify",False)
-        full_data=kargs.pop("full_data",True)
-        _=self._col_args(scalar=False,xcol=kargs.pop("xcol",None),ycol=kargs.pop("ycol",None))
-        xcol,ycol=_.xcol,_.ycol
+        sort = kargs.pop("sort", False)
+        modify = kargs.pop("modify", False)
+        full_data = kargs.pop("full_data", True)
+        _ = self._col_args(scalar=False, xcol=kargs.pop("xcol", None), ycol=kargs.pop("ycol", None))
+        xcol, ycol = _.xcol, _.ycol
         if isiterable(ycol):
-            ycol=ycol[0]
-        if isinstance(width,float): # Convert a floating point width unto an integer.
-            xmin,xmax=self.span(xcol)
-            width=int(len(self)*width/(xmax-xmin))
-        width=max(width,poly+1)
-        setas=self.setas.clone
-        self.setas=""
-        d1 = self.SG_Filter(ycol, xcol=xcol,points=width,poly= poly, order=1).ravel()
-        d2 = self.SG_Filter(ycol, xcol=xcol,points=2*width,poly=poly, order=2).ravel() # 2nd differential requires more smoothing
+            ycol = ycol[0]
+        if isinstance(width, float):  # Convert a floating point width unto an integer.
+            xmin, xmax = self.span(xcol)
+            width = int(len(self) * width / (xmax - xmin))
+        width = max(width, poly + 1)
+        setas = self.setas.clone
+        self.setas = ""
+        d1 = self.SG_Filter(ycol, xcol=xcol, points=width, poly=poly, order=1).ravel()
+        d2 = self.SG_Filter(
+            ycol, xcol=xcol, points=2 * width, poly=poly, order=2
+        ).ravel()  # 2nd differential requires more smoothing
 
-        #We're going to ignore the start and end of the arrays
-        index_offset=int(width/2)
-        d1=d1[index_offset:-index_offset]
-        d2=d2[index_offset:-index_offset]
+        # We're going to ignore the start and end of the arrays
+        index_offset = int(width / 2)
+        d1 = d1[index_offset:-index_offset]
+        d2 = d2[index_offset:-index_offset]
 
-        #Pad the ends of d2 with the mean value
-        pad=_np_.mean(d2[index_offset:-index_offset])
-        d2[:index_offset]=pad
-        d2[-index_offset:]=pad
+        # Pad the ends of d2 with the mean value
+        pad = _np_.mean(d2[index_offset:-index_offset])
+        d2[:index_offset] = pad
+        d2[-index_offset:] = pad
 
-        #Set the significance from the 2nd ifferential if not already set
-        significance = kargs.pop("significance",_np_.max(_np_.abs(d2))/(2*width)) # Base an apriori significance on max d2y/dx2 / 20
-        if isinstance(significance, int): # integer significance is inverse to floating
-            significance = _np_.max(_np_.abs(d2))/significance # Base an apriori significance on max d2y/dx2 / 20
+        # Set the significance from the 2nd ifferential if not already set
+        significance = kargs.pop(
+            "significance", _np_.max(_np_.abs(d2)) / (2 * width)
+        )  # Base an apriori significance on max d2y/dx2 / 20
+        if isinstance(significance, int):  # integer significance is inverse to floating
+            significance = _np_.max(_np_.abs(d2)) / significance  # Base an apriori significance on max d2y/dx2 / 20
 
-        d2_interp = interp1d(_np_.arange(len(d2)), d2,kind='cubic')
+        d2_interp = interp1d(_np_.arange(len(d2)), d2, kind="cubic")
         # Ensure we have some X-data
         if xcol is None:
             xdata = _np_.arange(len(self))
         else:
             xdata = self.column(xcol)
-        xdata = interp1d(_np_.arange(len(self)), xdata,kind="cubic")
-
+        xdata = interp1d(_np_.arange(len(self)), xdata, kind="cubic")
 
         possible_peaks = _np_.array(_threshold(0, d1, rising=troughs, falling=peaks))
-        curvature=_np_.abs(d2_interp(possible_peaks))
+        curvature = _np_.abs(d2_interp(possible_peaks))
 
         # Filter just the significant peaks
-        possible_peaks=_np_.array([p for ix,p in enumerate(possible_peaks) if abs(curvature[ix])>significance])
+        possible_peaks = _np_.array([p for ix, p in enumerate(possible_peaks) if abs(curvature[ix]) > significance])
         # Sort in order of significance
         if sort:
             possible_peaks = _np_.take(possible_peaks, _np_.argsort(_np_.abs(d2_interp(possible_peaks))))
 
-        xdat=xdata(possible_peaks+index_offset)
+        xdat = xdata(possible_peaks + index_offset)
 
         if modify:
-            self.data=self.interpolate(xdat,xcol=xcol,kind="cubic")
-            ret=self
+            self.data = self.interpolate(xdat, xcol=xcol, kind="cubic")
+            ret = self
         elif full_data:
-            ret=self.interpolate(xdat,kind="cubic",xcol=False)
+            ret = self.interpolate(xdat, kind="cubic", xcol=False)
         else:
-            ret=xdat
-        self.setas=setas
+            ret = xdat
+        self.setas = setas
         # Return - but remembering to add back on the offset that we took off due to differentials not working at start and end
         return ret
 
-    def polyfit(self,
-                xcol=None,
-                ycol=None,
-                polynomial_order=2,
-                bounds=lambda x, y: True,
-                result=None,
-                replace=False,
-                header=None):
+    def polyfit(
+        self,
+        xcol=None,
+        ycol=None,
+        polynomial_order=2,
+        bounds=lambda x, y: True,
+        result=None,
+        replace=False,
+        header=None,
+    ):
         """ Pass through to numpy.polyfit.
 
             Args:
@@ -1485,25 +1523,31 @@ class AnalysisMixin(object):
                 This method is depricated and may be removed in a future version in favour of the more general curve_fit
             """
         from Stoner.Util import ordinal
-        _=self._col_args(xcol=xcol,ycol=ycol,scalar=False)
+
+        _ = self._col_args(xcol=xcol, ycol=ycol, scalar=False)
 
         working = self.search(_.xcol, bounds)
         if not isiterable(_.ycol):
-            _.ycol=[_.ycol]
-        p=_np_.zeros((len(_.ycol),polynomial_order+1))
-        for i,ycol in enumerate(_.ycol):
-            p[i,:] = _np_.polyfit(working[:, self.find_col(_.xcol)], working[:, self.find_col(ycol)], polynomial_order)
+            _.ycol = [_.ycol]
+        p = _np_.zeros((len(_.ycol), polynomial_order + 1))
+        for i, ycol in enumerate(_.ycol):
+            p[i, :] = _np_.polyfit(
+                working[:, self.find_col(_.xcol)], working[:, self.find_col(ycol)], polynomial_order
+            )
             if result is not None:
                 if header is None:
-                    header = "Fitted {} with {} order polynomial".format(self.column_headers[self.find_col(ycol)],
-                                                                         ordinal(polynomial_order))
-                self.add_column(_np_.polyval(p[i,:], x=self.column(_.xcol)), index=result, replace=replace, header=header)
-        if len(_.ycol)==1:
-            p=p[0,:]
-        self["{}-order polyfit coefficients".format(ordinal(polynomial_order))]=list(p)
+                    header = "Fitted {} with {} order polynomial".format(
+                        self.column_headers[self.find_col(ycol)], ordinal(polynomial_order)
+                    )
+                self.add_column(
+                    _np_.polyval(p[i, :], x=self.column(_.xcol)), index=result, replace=replace, header=header
+                )
+        if len(_.ycol) == 1:
+            p = p[0, :]
+        self["{}-order polyfit coefficients".format(ordinal(polynomial_order))] = list(p)
         return p
 
-    def scale(self,other,xcol=None,ycol=None,**kargs):
+    def scale(self, other, xcol=None, ycol=None, **kargs):
         """Scale the x and y data in this DataFile to match the x and y data in another DataFile.
 
         Args:
@@ -1532,17 +1576,17 @@ class AnalysisMixin(object):
                 :include-source:
                 :outname: scale
         """
-        _=self._col_args(xcol=xcol,ycol=ycol)
+        _ = self._col_args(xcol=xcol, ycol=ycol)
         #
         # Sort out keyword srguments
         #
-        bounds=kargs.pop("bounds",lambda x,r:True)
-        otherbounds=kargs.pop("otherbounds",bounds)
-        replace=kargs.pop("replace",True)
-        headers=kargs.pop("headers",None)
-        xmode=kargs.pop("xmode","linear")
-        ymode=kargs.pop("ymode","linear")
-        use_estimate=kargs.pop("use_estimate",False)
+        bounds = kargs.pop("bounds", lambda x, r: True)
+        otherbounds = kargs.pop("otherbounds", bounds)
+        replace = kargs.pop("replace", True)
+        headers = kargs.pop("headers", None)
+        xmode = kargs.pop("xmode", "linear")
+        ymode = kargs.pop("ymode", "linear")
+        use_estimate = kargs.pop("use_estimate", False)
 
         # Get our working data from this DataFile and remove masked rows
 
@@ -1553,64 +1597,71 @@ class AnalysisMixin(object):
 
         # Get data from the other. If it is already an ndarray, check size and dimensions
 
-        if isinstance(other,self._baseclass):
-            working2 = other.search(_.xcol,otherbounds)
+        if isinstance(other, self._baseclass):
+            working2 = other.search(_.xcol, otherbounds)
             working2 = ma.mask_rowcols(working2, axis=0)
             xdat2 = working2[:, other.find_col(_.xcol)]
             ydat2 = working2[:, other.find_col(_.ycol)]
-            if len(xdat2)!=len(xdat):
-                raise RuntimeError("Data lengths don't match {}!={}".format(len(xdat),len(xdat2)))
-        elif isinstance(other,_np_.ndarray):
-            if len(other.shape)==1:
-                other=_np_.atleast_2d(other).T
-            if other.shape[0]!=len(xdat) or not 1<=other.shape[1]<=2:
-                raise RuntimeError(("If other is a numpy array it must be the same length as the number of points to match "+
-                                    "to and 1 or 2 columns. (other shape={})").format(other.shape))
-            if other.shape[1]==1:
-                xdat2=xdat
-                ydat2=other[:,0]
+            if len(xdat2) != len(xdat):
+                raise RuntimeError("Data lengths don't match {}!={}".format(len(xdat), len(xdat2)))
+        elif isinstance(other, _np_.ndarray):
+            if len(other.shape) == 1:
+                other = _np_.atleast_2d(other).T
+            if other.shape[0] != len(xdat) or not 1 <= other.shape[1] <= 2:
+                raise RuntimeError(
+                    (
+                        "If other is a numpy array it must be the same length as the number of points to match "
+                        + "to and 1 or 2 columns. (other shape={})"
+                    ).format(other.shape)
+                )
+            if other.shape[1] == 1:
+                xdat2 = xdat
+                ydat2 = other[:, 0]
             else:
-                xdat2=other[:,0]
-                ydat2=other[:,1]
+                xdat2 = other[:, 0]
+                ydat2 = other[:, 1]
         else:
-            raise RuntimeError("other should be either a numpy array or subclass of DataFile, not a {}".format(type(other)))
-
+            raise RuntimeError(
+                "other should be either a numpy array or subclass of DataFile, not a {}".format(type(other))
+            )
 
         # Need two nx2 arrays of points now
 
-        xy1=_np_.column_stack((xdat,ydat))
-        xy2=_np_.column_stack((xdat2,ydat2))
+        xy1 = _np_.column_stack((xdat, ydat))
+        xy2 = _np_.column_stack((xdat2, ydat2))
 
         # We're going to use three points to get an estimate for the affine transform to apply
 
-        if isinstance(use_estimate,bool) and use_estimate:
-            mid=len(xdat)/2
-            try: # may go wrong if three points are co-linear
-                m0=GetAffineTransform(xy1[[0,mid,-1],:],xy2[[0,mid,-1],:])
-            except Exception: # So use an idnetify transformation instead
-                m0=_np_.array([[1.0,0.0,0.0],[0.0,1.0,0.0]])
-        elif isinstance(use_estimate,_np_.ndarray) and use_estimate.shape==(2,3): #use_estimate is an initial value transformation
-            m0=use_estimate
-        else: # Don't try to be clever
-            m0=_np_.array([[1.0,0.0,0.0],[0.0,1.0,0.0]])
-        popt,perr,trans=_twoD_fit(xy1,xy2,xmode=xmode,ymode=ymode,m0=m0)
-        data=self.data[:,[_.xcol,_.ycol]]
-        new_data=trans(data)
-        if replace: # In place scaling, replace and return self
-            self.metadata["Transform"]=popt
-            self.metadata["Transform Err"]=perr
-            self.data[:,_.xcol]=new_data[:,0]
-            self.data[:,_.ycol]=new_data[:,1]
+        if isinstance(use_estimate, bool) and use_estimate:
+            mid = len(xdat) / 2
+            try:  # may go wrong if three points are co-linear
+                m0 = GetAffineTransform(xy1[[0, mid, -1], :], xy2[[0, mid, -1], :])
+            except Exception:  # So use an idnetify transformation instead
+                m0 = _np_.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+        elif isinstance(use_estimate, _np_.ndarray) and use_estimate.shape == (
+            2,
+            3,
+        ):  # use_estimate is an initial value transformation
+            m0 = use_estimate
+        else:  # Don't try to be clever
+            m0 = _np_.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+        popt, perr, trans = _twoD_fit(xy1, xy2, xmode=xmode, ymode=ymode, m0=m0)
+        data = self.data[:, [_.xcol, _.ycol]]
+        new_data = trans(data)
+        if replace:  # In place scaling, replace and return self
+            self.metadata["Transform"] = popt
+            self.metadata["Transform Err"] = perr
+            self.data[:, _.xcol] = new_data[:, 0]
+            self.data[:, _.ycol] = new_data[:, 1]
             if headers:
-                self.column_headers[_.xcol]=headers[0]
-                self.column_headers[_.ycol]=headers[1
-            ]
-            ret=self
-        else: # Return results but don't change self.
-            ret=popt,perr,new_data
+                self.column_headers[_.xcol] = headers[0]
+                self.column_headers[_.ycol] = headers[1]
+            ret = self
+        else:  # Return results but don't change self.
+            ret = popt, perr, new_data
         return ret
 
-    def smooth(self,window="boxcar",xcol=None,ycol=None,size=None,**kargs):
+    def smooth(self, window="boxcar", xcol=None, ycol=None, size=None, **kargs):
         """Smooth data by convoluting with a window.
 
         Args:
@@ -1634,48 +1685,46 @@ class AnalysisMixin(object):
             lenfth. Then the data is interpolated to a new set of evenly space X over the same range, smoothed and then interpoalted back
             to the original x values.
         """
-        _=self._col_args(xcol=xcol,ycol=ycol)
-        replace=kargs.pop("replace",True)
-        result=kargs.pop("result",True) # overwirte existing y column data
-        header=kargs.pop("header",self.column_headers[_.ycol])
+        _ = self._col_args(xcol=xcol, ycol=ycol)
+        replace = kargs.pop("replace", True)
+        result = kargs.pop("result", True)  # overwirte existing y column data
+        header = kargs.pop("header", self.column_headers[_.ycol])
 
-
-        #Sort out window size
-        if isinstance(size,float):
-            interp_data=True
-            xl,xh=self.span(_.xcol)
-            size=int(_np_.ceil((size/(xh-xl))*len(self)))
-            nx=_np_.linspace(xl,xh,len(self))
-            data=self.interpolate(nx,kind="linear",xcol=_.xcol,replace=False)
-            self["Smoothing window size"]=size
-        elif isinstance(size,int_types):
-            data=copy(self.data)
-            interp_data=False
+        # Sort out window size
+        if isinstance(size, float):
+            interp_data = True
+            xl, xh = self.span(_.xcol)
+            size = int(_np_.ceil((size / (xh - xl)) * len(self)))
+            nx = _np_.linspace(xl, xh, len(self))
+            data = self.interpolate(nx, kind="linear", xcol=_.xcol, replace=False)
+            self["Smoothing window size"] = size
+        elif isinstance(size, int_types):
+            data = copy(self.data)
+            interp_data = False
         else:
             raise ValueError("size should either be a float or integer, not a {}".format(type(size)))
 
-        window=get_window(window,size)
+        window = get_window(window, size)
         # Handle multiple or single y columns
         if not isiterable(_.ycol):
-            _.ycol=[_.ycol]
+            _.ycol = [_.ycol]
 
-        #Do the convolution itself
+        # Do the convolution itself
         for yc in _.ycol:
-            data[:,yc]=convolve(data[:,yc],window,mode="same")/size
-
+            data[:, yc] = convolve(data[:, yc], window, mode="same") / size
 
         # Reinterpolate the smoothed data back if necessary
         if interp_data:
-            nx=self.data[:,_.xcol]
-            tmp=self.clone
-            tmp.data=data
-            data=tmp.interpolate(nx,kind="linear",xcol=_.xcol,replace=False)
+            nx = self.data[:, _.xcol]
+            tmp = self.clone
+            tmp.data = data
+            data = tmp.interpolate(nx, kind="linear", xcol=_.xcol, replace=False)
 
-        #Fix return value
-        if isinstance(result,bool) and not result:
-            return data[:,_.ycol]
+        # Fix return value
+        if isinstance(result, bool) and not result:
+            return data[:, _.ycol]
         for yc in _.ycol:
-            self.add_column(data[:,yc],header=header,index=result,replace=replace)
+            self.add_column(data[:, yc], header=header, index=result, replace=replace)
         return self
 
     def span(self, column=None, bounds=None):
@@ -1698,7 +1747,7 @@ class AnalysisMixin(object):
         """
         return (self.min(column, bounds)[0], self.max(column, bounds)[0])
 
-    def spline(self,xcol=None,ycol=None,sigma=None,**kargs):
+    def spline(self, xcol=None, ycol=None, sigma=None, **kargs):
         """Construct a spline through x and y data and replace, add new data or return spline function.
 
         Keyword Arguments:
@@ -1722,28 +1771,28 @@ class AnalysisMixin(object):
         This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the extrapolate
         function.
         """
-        _=self._col_args(xcol=xcol,ycol=ycol)
+        _ = self._col_args(xcol=xcol, ycol=ycol)
         if sigma is None and (isNone(_.yerr) or _.yerr):
             if not isNone(_.yerr):
-                sigma=1.0/(self//_.yerr)
+                sigma = 1.0 / (self // _.yerr)
             else:
-                sigma=_np_.ones(len(self))
-        replace=kargs.pop("replace",True)
-        result=kargs.pop("result",True) # overwirte existing y column data
-        header=kargs.pop("header",self.column_headers[_.ycol])
-        k=kargs.pop("order",3)
-        s=kargs.pop("smoothing",None)
-        bbox=kargs.pop("bbox",[None]*2)
-        ext=kargs.pop("ext","extrapolate")
-        x=self//_.xcol
-        y=self//(_.ycol)
-        spline=UnivariateSpline(x,y,w=sigma,bbox=bbox,k=k,s=s,ext=ext)
-        new_y=spline(x)
+                sigma = _np_.ones(len(self))
+        replace = kargs.pop("replace", True)
+        result = kargs.pop("result", True)  # overwirte existing y column data
+        header = kargs.pop("header", self.column_headers[_.ycol])
+        k = kargs.pop("order", 3)
+        s = kargs.pop("smoothing", None)
+        bbox = kargs.pop("bbox", [None] * 2)
+        ext = kargs.pop("ext", "extrapolate")
+        x = self // _.xcol
+        y = self // (_.ycol)
+        spline = UnivariateSpline(x, y, w=sigma, bbox=bbox, k=k, s=s, ext=ext)
+        new_y = spline(x)
 
         if header is None:
-            header=self.column_headers[_.ycol]
+            header = self.column_headers[_.ycol]
 
-        if not (result is None or (isinstance(result,bool) and not result)):
+        if not (result is None or (isinstance(result, bool) and not result)):
             self.add_column(new_y, header, index=result, replace=replace)
             return self
         elif result is None:
@@ -1787,12 +1836,12 @@ class AnalysisMixin(object):
         See Also:
             User Guide section :ref:`stitch_guide`
         """
-        _=self._col_args(xcol=xcol,ycol=ycol,scalar=True)
+        _ = self._col_args(xcol=xcol, ycol=ycol, scalar=True)
         points = self.column([_.xcol, _.ycol])
-        points = points[points[:, 0].argsort(),:]
+        points = points[points[:, 0].argsort(), :]
         points[:, 0] += min_overlap
         otherpoints = other.column([_.xcol, _.ycol])
-        otherpoints = otherpoints[otherpoints[:, 0].argsort(),:]
+        otherpoints = otherpoints[otherpoints[:, 0].argsort(), :]
         self_second = _np_.max(points[:, 0]) > _np_.max(otherpoints[:, 0])
         if overlap is None:  # Calculate the overlap
             lower = max(_np_.min(points[:, 0]), _np_.min(otherpoints[:, 0]))
@@ -1804,15 +1853,18 @@ class AnalysisMixin(object):
             else:
                 lower = points[0, -overlap - 1]
                 upper = points[0, -1]
-        elif isinstance(overlap, tuple) and len(overlap) == 2 and isinstance(overlap[0], float and
-                                                                             isinstance(overlap[1], float)):
+        elif (
+            isinstance(overlap, tuple)
+            and len(overlap) == 2
+            and isinstance(overlap[0], float and isinstance(overlap[1], float))
+        ):
             lower = min(overlap)
             upper = max(overlap)
         inrange = _np_.logical_and(points[:, 0] >= lower, points[:, 0] <= upper)
         points = points[inrange]
         num_pts = points.shape[0]
         if self_second:
-            otherpoints = otherpoints[-num_pts - 1:-1]
+            otherpoints = otherpoints[-num_pts - 1 : -1]
         else:
             otherpoints = otherpoints[0:num_pts]
         x = points[:, 0]
@@ -1826,7 +1878,7 @@ class AnalysisMixin(object):
                 "scale and shift y": (lambda x, y, B, C: (x, y * B + C)),
                 "scale y": (lambda x, y, B: (x, y * B)),
                 "shift y": (lambda x, y, C: (x, y + C)),
-                "shift both": (lambda x, y, A, C: (x + A, y + C))
+                "shift both": (lambda x, y, A, C: (x + A, y + C)),
             }
             defaults = {
                 "all": [1, 2, 3],
@@ -1834,7 +1886,7 @@ class AnalysisMixin(object):
                 "scale and shift y": [2, 3],
                 "scale y": [2],
                 "shift y": [3],
-                "shift both": [1, 3]
+                "shift both": [1, 3],
             }
             A0 = _np_.mean(xp) - _np_.mean(x)
             C0 = _np_.mean(yp) - _np_.mean(y)
@@ -1847,7 +1899,7 @@ class AnalysisMixin(object):
             p0 = p[defaults[mode]]
         else:
             assert callable(func), "Keyword func should be callable if given"
-            (args, __, keywords, defaults) = getfullargspec(func) # pylint: disable=W1505
+            (args, __, keywords, defaults) = getfullargspec(func)  # pylint: disable=W1505
             assert isiterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given"
             assert len(p0) == len(args) - 2, "Keyword p0 should be the same length as the optional arguments to func"
         # This is a bit of a hack, we turn (x,y) points into a 1D array of x and then y data
@@ -1893,7 +1945,9 @@ class AnalysisMixin(object):
         additional column with the uncertainites will be added to the data.
         """
         a = self.find_col(a)
-        if isinstance(a, (list,tuple)) and isinstance(b, (list,tuple)) and len(a) == 2 and len(b) == 2:  #Error columns on
+        if (
+            isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)) and len(a) == 2 and len(b) == 2
+        ):  # Error columns on
             (a, e1) = a
             (b, e2) = b
             e1data = self.__get_math_val(e1)[0]
@@ -1915,7 +1969,7 @@ class AnalysisMixin(object):
         self.add_column((adata - bdata), header=header, index=a, replace=replace)
         if err_calc is not None:
             a = self.find_col(a)
-            self.add_column(err_data, header=err_header, index=a+1, replace=False)
+            self.add_column(err_data, header=err_header, index=a + 1, replace=False)
         return self
 
     def threshold(self, threshold, **kargs):
@@ -1946,82 +2000,83 @@ class AnalysisMixin(object):
             There has been an API change. Versions prior to 0.1.9 placed the column before the threshold in the positional
             argument list. In order to support the use of assigned columns, this has been swapped to the present order.
         """
-        DataArray=self.data.__class__
-        col=kargs.pop("col",None)
+        DataArray = self.data.__class__
+        col = kargs.pop("col", None)
         if col is None:
             col = self.setas._get_cols("ycol")
-            xcol = kargs.pop("xcol",self.setas._get_cols("xcol"))
+            xcol = kargs.pop("xcol", self.setas._get_cols("xcol"))
         else:
-            xcol = kargs.pop("xcol",None)
+            xcol = kargs.pop("xcol", None)
 
-        rising=kargs.pop("rising",True)
-        falling=kargs.pop("falling",False)
-        all_vals=kargs.pop("all_vals",False)
+        rising = kargs.pop("rising", True)
+        falling = kargs.pop("falling", False)
+        all_vals = kargs.pop("all_vals", False)
 
         current = self.column(col)
 
-        #Recursively call if we've got an iterable threshold
+        # Recursively call if we've got an iterable threshold
         if isiterable(threshold):
-            if isinstance(xcol,bool) and not xcol:
-                ret=_np_.zeros((len(threshold),self.shape[1]))
+            if isinstance(xcol, bool) and not xcol:
+                ret = _np_.zeros((len(threshold), self.shape[1]))
             else:
                 ret = _np_.zeros_like(threshold).view(type=DataArray)
-            for ix,th in enumerate(threshold):
-                ret[ix]=self.threshold(th,col=col,xcol=xcol,rising=rising,falling=falling,all_vals=all_vals)
-            #Now we have to clean up the  retujrn list into a DataArray
-            if isinstance(xcol,bool) and not xcol: # if xcol was False we got a complete row back
-                ch=self.column_headers
-                ret.setas=self.setas.clone
-                ret.column_headers=ch
-                ret.i=ret[0].i
-            else: #Either xcol was None so we got indices or we got a specified column back
-                if xcol is not None: # Specific column
-                    ret=_np_.atleast_2d(ret)
-                    ret.column_headers=[self.column_headers[self.find_col(xcol)]]
-                    ret.i=[r.i for r in ret]
-                    ret.setas="x"
-                    ret.isrow=False
+            for ix, th in enumerate(threshold):
+                ret[ix] = self.threshold(th, col=col, xcol=xcol, rising=rising, falling=falling, all_vals=all_vals)
+            # Now we have to clean up the  retujrn list into a DataArray
+            if isinstance(xcol, bool) and not xcol:  # if xcol was False we got a complete row back
+                ch = self.column_headers
+                ret.setas = self.setas.clone
+                ret.column_headers = ch
+                ret.i = ret[0].i
+            else:  # Either xcol was None so we got indices or we got a specified column back
+                if xcol is not None:  # Specific column
+                    ret = _np_.atleast_2d(ret)
+                    ret.column_headers = [self.column_headers[self.find_col(xcol)]]
+                    ret.i = [r.i for r in ret]
+                    ret.setas = "x"
+                    ret.isrow = False
                 else:
-                    ret.column_headers=["Index"]
-                    ret.isrow=False
+                    ret.column_headers = ["Index"]
+                    ret.isrow = False
             return ret
         else:
             ret = _threshold(threshold, current, rising=rising, falling=falling)
             if not all_vals:
-                ret=[ret[0]] if _np_.any(ret) else []
+                ret = [ret[0]] if _np_.any(ret) else []
 
-        if isinstance(xcol,bool) and not xcol:
+        if isinstance(xcol, bool) and not xcol:
             retval = self.interpolate(ret, xcol=False)
-            retval.setas=self.setas.clone
-            retval.setas.shape=retval.shape
-            retval.i=ret
-            ret=retval
+            retval.setas = self.setas.clone
+            retval.setas.shape = retval.shape
+            retval.i = ret
+            ret = retval
         elif xcol is not None:
-            retval = self.interpolate(ret, xcol=False)[:,self.find_col(xcol)]
-            #if retval.ndim>0:   #not sure what this bit does but it's throwing errors for a simple threshold
-                #retval.setas=self.setas.clone
-                #retval.setas.shape=retval.shape
-                #retval.i=ret
-            ret=retval
+            retval = self.interpolate(ret, xcol=False)[:, self.find_col(xcol)]
+            # if retval.ndim>0:   #not sure what this bit does but it's throwing errors for a simple threshold
+            # retval.setas=self.setas.clone
+            # retval.setas.shape=retval.shape
+            # retval.i=ret
+            ret = retval
         else:
-            ret=DataArray(ret)
+            ret = DataArray(ret)
         if not all_vals:
-            if ret.size==1:
+            if ret.size == 1:
                 pass
-            elif ret.size>1:
-                ret=ret[0]
+            elif ret.size > 1:
+                ret = ret[0]
             else:
-                ret=[]
-        if isinstance(ret,DataArray):
-            ret.isrow=True
+                ret = []
+        if isinstance(ret, DataArray):
+            ret.isrow = True
         return ret
 
-def AnalyseFile(*args,**kargs):
+
+def AnalyseFile(*args, **kargs):
     """Issue a warning and then create a class anyway."""
-    warn("AnalyseFile is deprecated in favour of Stoner.Data or the AnalysisMixin",DeprecationWarning)
+    warn("AnalyseFile is deprecated in favour of Stoner.Data or the AnalysisMixin", DeprecationWarning)
     import Stoner.Core as _SC_
 
-    class AnalyseFile(AnalysisMixin,_SC_.DataFile):
+    class AnalyseFile(AnalysisMixin, _SC_.DataFile):
 
         """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
 
@@ -2032,4 +2087,4 @@ def AnalyseFile(*args,**kargs):
 
         pass
 
-    return AnalyseFile(*args,**kargs)
+    return AnalyseFile(*args, **kargs)

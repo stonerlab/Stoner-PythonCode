@@ -11,9 +11,32 @@ Eacg class should implement a load() method and optionally a save() method. Clas
 positively identify that the file is one that they understand and throw a :py:exception:Stoner.Core._SC_.StonerLoadError` if not.
 """
 from __future__ import print_function
-__all__=['BNLFile', 'BigBlueFile', 'CSVFile', 'EasyPlotFile', 'FmokeFile', 'GenXFile', 'KermitPNGFile', 'LSTemperatureFile', 'MDAASCIIFile', 'MokeFile',
-          'OVFFile', 'OpenGDAFile', 'PIL', 'PinkLibFile', 'QDFile', 'RasorFile', 'RigakuFile', 'SNSFile', 'SPCFile', 'TDMSFile', 'TdmsFile', 'VSMFile',
-           'XRDFile',]
+
+__all__ = [
+    "BNLFile",
+    "BigBlueFile",
+    "CSVFile",
+    "EasyPlotFile",
+    "FmokeFile",
+    "GenXFile",
+    "KermitPNGFile",
+    "LSTemperatureFile",
+    "MDAASCIIFile",
+    "MokeFile",
+    "OVFFile",
+    "OpenGDAFile",
+    "PIL",
+    "PinkLibFile",
+    "QDFile",
+    "RasorFile",
+    "RigakuFile",
+    "SNSFile",
+    "SPCFile",
+    "TDMSFile",
+    "TdmsFile",
+    "VSMFile",
+    "XRDFile",
+]
 # pylint: disable=unused-argument
 import Stoner.Core as _SC_
 import linecache
@@ -29,11 +52,11 @@ import numpy.ma as ma
 
 import PIL
 import PIL.PngImagePlugin as png
-from .compat import python_v3,str2bytes,bytes2str
+from .compat import python_v3, str2bytes, bytes2str
 
-#Expand png size limits as we have big text blocks full of metadata
-png.MAX_TEXT_CHUNK=2**22
-png.MAX_TEXT_MEMORY=2**28
+# Expand png size limits as we have big text blocks full of metadata
+png.MAX_TEXT_CHUNK = 2 ** 22
+png.MAX_TEXT_MEMORY = 2 ** 28
 
 
 class CSVFile(_SC_.DataFile):
@@ -44,12 +67,12 @@ class CSVFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=128 # Rather generic file format so make it a low priority
+    priority = 128  # Rather generic file format so make it a low priority
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.csv","*.txt"] # Recognised filename patterns
+    patterns = ["*.csv", "*.txt"]  # Recognised filename patterns
 
-    def _load(self, filename=None, header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
+    def _load(self, filename=None, header_line=0, data_line=1, data_delim=",", header_delim=",", **kargs):
         """Generic deliminated file loader routine.
 
         Args:
@@ -67,15 +90,15 @@ class CSVFile(_SC_.DataFile):
             A copy of the current object after loading the data.
         """
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
         if header_line is not None:
             try:
-                header_string = linecache.getline(self.filename, header_line+1)
-                header_string = re.sub(r'["\n]', '', header_string)
+                header_string = linecache.getline(self.filename, header_line + 1)
+                header_string = re.sub(r'["\n]', "", header_string)
                 header_string.index(header_delim)
-            except (ValueError,SyntaxError):
+            except (ValueError, SyntaxError):
                 linecache.clearcache()
                 raise _SC_.StonerLoadError("No Delimiters in header line")
             column_headers = [x.strip() for x in header_string.split(header_delim)]
@@ -88,8 +111,8 @@ class CSVFile(_SC_.DataFile):
                 linecache.clearcache()
                 raise _SC_.StonerLoadError("No delimiters in data lines")
 
-        self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=data_delim, skip_header=data_line)
-        self.column_headers=column_headers
+        self.data = _np_.genfromtxt(self.filename, dtype="float", delimiter=data_delim, skip_header=data_line)
+        self.column_headers = column_headers
         linecache.clearcache()
         return self
 
@@ -105,19 +128,19 @@ class CSVFile(_SC_.DataFile):
         Returns:
             A copy of itself.
         """
-        delimiter=kargs.pop("deliminator",",")
+        delimiter = kargs.pop("deliminator", ",")
         if filename is None:
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-            filename = self.__file_dialog('w')
-        with open(filename, 'w') as outfile:
+            filename = self.__file_dialog("w")
+        with open(filename, "w") as outfile:
             spamWriter = csv.writer(outfile, delimiter=delimiter, quotechar='"', quoting=csv.QUOTE_MINIMAL)
             i = 0
             spamWriter.writerow(self.column_headers)
             while i < self.data.shape[0]:
-                spamWriter.writerow(self.data[i,:])
+                spamWriter.writerow(self.data[i, :])
                 i += 1
-        self.filename=filename
+        self.filename = filename
         return self
 
 
@@ -129,13 +152,12 @@ class VSMFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=16 # Now makes a positive ID of its contents
+    priority = 16  # Now makes a positive ID of its contents
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.fld"] # Recognised filename patterns
+    patterns = ["*.fld"]  # Recognised filename patterns
 
-
-    def __parse_VSM(self, header_line=3, data_line=3, header_delim=','):
+    def __parse_VSM(self, header_line=3, data_line=3, header_delim=","):
         """An intrernal function for parsing deliminated data without a leading column of metadata.copy
 
         Keyword Arguments:
@@ -151,7 +173,7 @@ class VSMFile(_SC_.DataFile):
             The default values are configured fir read VSM data files
         """
         try:
-            with io.open(self.filename,errors="ignore",encoding="utf-8") as f:
+            with io.open(self.filename, errors="ignore", encoding="utf-8") as f:
                 for i, line in enumerate(f):
                     if i == 0:
                         self["Timestamp"] = line.strip()
@@ -171,19 +193,21 @@ class VSMFile(_SC_.DataFile):
                     elif i > 3:
                         break
         except (ValueError, AssertionError, TypeError) as e:
-            raise _SC_.StonerLoadError('Not a VSM File' + str(e.args))
-        self.data = _np_.genfromtxt(self.filename,
-                                    dtype='float',
-                                    usemask=True,
-                                    skip_header=data_line - 1,
-                                    missing_values=['6:0', '---'],
-                                    invalid_raise=False)
+            raise _SC_.StonerLoadError("Not a VSM File" + str(e.args))
+        self.data = _np_.genfromtxt(
+            self.filename,
+            dtype="float",
+            usemask=True,
+            skip_header=data_line - 1,
+            missing_values=["6:0", "---"],
+            invalid_raise=False,
+        )
 
         self.data = ma.mask_rows(self.data)
         cols = self.data.shape[1]
         self.data = _np_.reshape(self.data.compressed(), (-1, cols))
-        self.column_headers=column_headers
-        self.setas(x="H_vsm (T)",y="m (emu)")
+        self.column_headers = column_headers
+        self.setas(x="H_vsm (T)", y="m (emu)")
 
     def _load(self, filename=None, *args, **kargs):
         """VSM file loader routine.
@@ -196,7 +220,7 @@ class VSMFile(_SC_.DataFile):
             A copy of the itself after loading the data.
         """
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
         self.__parse_VSM()
@@ -211,11 +235,10 @@ class BigBlueFile(CSVFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=64 # Also rather generic file format so make a lower priority
+    priority = 64  # Also rather generic file format so make a lower priority
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.dat","*.iv","*.rvt"] # Recognised filename patterns
-
+    patterns = ["*.dat", "*.iv", "*.rvt"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """Just call the parent class but with the right parameters set
@@ -228,14 +251,17 @@ class BigBlueFile(CSVFile):
             A copy of the itself after loading the data.
         """
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
 
-        super(BigBlueFile, self)._load(self.filename, *args,header_line=3, data_line=7, data_delim=' ', header_delim=',')
+        super(BigBlueFile, self)._load(
+            self.filename, *args, header_line=3, data_line=7, data_delim=" ", header_delim=","
+        )
         if _np_.all(_np_.isnan(self.data)):
             raise _SC_.StonerLoadError("All data was NaN in Big Blue format")
         return self
+
 
 class QDFile(_SC_.DataFile):
 
@@ -245,10 +271,10 @@ class QDFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=15 # Is able to make a positive ID of its file content, so get priority to check
+    priority = 15  # Is able to make a positive ID of its file content, so get priority to check
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.dat"] # Recognised filename patterns
+    patterns = ["*.dat"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """QD system file loader routine.
@@ -261,12 +287,12 @@ class QDFile(_SC_.DataFile):
             A copy of the itself after loading the data.
         """
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
-        setas={}
-        i=0
-        with io.open(self.filename, "r",encoding="utf-8",errors="ignore") as f:  # Read filename linewise
+        setas = {}
+        i = 0
+        with io.open(self.filename, "r", encoding="utf-8", errors="ignore") as f:  # Read filename linewise
             for i, line in enumerate(f):
                 line = line.strip()
                 if i == 0 and line != "[Header]":
@@ -277,34 +303,34 @@ class QDFile(_SC_.DataFile):
                     break
                 elif "," not in line:
                     raise _SC_.StonerLoadError("No data in file!")
-                parts = [x.strip() for x in line.split(',')]
-                if parts[1].split(":")[0]=="SEQUENCE FILE":
+                parts = [x.strip() for x in line.split(",")]
+                if parts[1].split(":")[0] == "SEQUENCE FILE":
                     key = parts[1].split(":")[0].title()
                     value = parts[1].split(":")[1]
                 elif parts[0] == "INFO":
-                    if parts[1]=="APPNAME":
-                        parts[1],parts[2]=parts[2],parts[1]
-                    if len(parts)>2:
-                        key = "{}.{}".format(parts[0],parts[2])
+                    if parts[1] == "APPNAME":
+                        parts[1], parts[2] = parts[2], parts[1]
+                    if len(parts) > 2:
+                        key = "{}.{}".format(parts[0], parts[2])
                     else:
                         raise _SC_.StonerLoadError("No data in file!")
                     key = key.title()
                     value = parts[1]
-                elif parts[0] in ['BYAPP', 'FILEOPENTIME']:
+                elif parts[0] in ["BYAPP", "FILEOPENTIME"]:
                     key = parts[0].title()
-                    value = ' '.join(parts[1:])
-                elif parts[0]=="FIELDGROUP":
-                    key="{}.{}".format(parts[0],parts[1]).title()
-                    value="[{}]".format(",".join(parts[2:]))
-                elif parts[0]=="STARTUPAXIS":
-                    axis=parts[1][0].lower()
-                    setas[axis]=setas.get(axis,[])+[int(parts[2])]
-                    key="Startupaxis-{}".format(parts[1].strip())
-                    value=parts[2].strip()
+                    value = " ".join(parts[1:])
+                elif parts[0] == "FIELDGROUP":
+                    key = "{}.{}".format(parts[0], parts[1]).title()
+                    value = "[{}]".format(",".join(parts[2:]))
+                elif parts[0] == "STARTUPAXIS":
+                    axis = parts[1][0].lower()
+                    setas[axis] = setas.get(axis, []) + [int(parts[2])]
+                    key = "Startupaxis-{}".format(parts[1].strip())
+                    value = parts[2].strip()
                 else:
                     key = parts[0] + "," + parts[1]
                     key = key.title()
-                    value = ' '.join(parts[2:])
+                    value = " ".join(parts[2:])
                 self.metadata[key] = self.metadata.string_to_type(value)
             else:
                 raise _SC_.StonerLoadError("No data in file!")
@@ -312,27 +338,28 @@ class QDFile(_SC_.DataFile):
                 raise _SC_.StonerLoadError("Not a Quantum Design File !")
 
             if python_v3:
-                column_headers = f.readline().strip().split(',')
-                if ',' not in f.readline():
+                column_headers = f.readline().strip().split(",")
+                if "," not in f.readline():
                     assert False
                     raise _SC_.StonerLoadError("No data in file!")
             else:
-                column_headers = f.next().strip().split(',')
-                if ',' not in f.next():
+                column_headers = f.next().strip().split(",")
+                if "," not in f.next():
                     raise _SC_.StonerLoadError("No data in file!")
-            data = _np_.genfromtxt([str2bytes(l) for l in f],
-                                        dtype='float', delimiter=',',
-                                        invalid_raise=False)
-            if data.shape[1]!=len(column_headers): #Trap for buggy QD software not giving ewnough columns of data
-                data=_np_.append(data,_np_.ones((data.shape[0],len(column_headers)-data.shape[1]))*_np_.NaN,axis=1)
-            self.data=data
-        self.column_headers=column_headers
-        s=self.setas
+            data = _np_.genfromtxt([str2bytes(l) for l in f], dtype="float", delimiter=",", invalid_raise=False)
+            if data.shape[1] != len(column_headers):  # Trap for buggy QD software not giving ewnough columns of data
+                data = _np_.append(
+                    data, _np_.ones((data.shape[0], len(column_headers) - data.shape[1])) * _np_.NaN, axis=1
+                )
+            self.data = data
+        self.column_headers = column_headers
+        s = self.setas
         for k in setas:
             for ix in setas[k]:
-                s[ix-1]=k
-        self.setas=s
+                s[ix - 1] = k
+        self.setas = s
         return self
+
 
 class OpenGDAFile(_SC_.DataFile):
 
@@ -342,10 +369,10 @@ class OpenGDAFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=16 # Makes a positive ID of it's file type so give priority
+    priority = 16  # Makes a positive ID of it's file type so give priority
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.dat"] # Recognised filename patterns
+    patterns = ["*.dat"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """Load an OpenGDA file.
@@ -358,18 +385,18 @@ class OpenGDAFile(_SC_.DataFile):
             A copy of the itself after loading the data.
         """
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
-        i=0
-        with io.open(self.filename, "r",errors="ignore",encoding="utf-8") as f:
+        i = 0
+        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as f:
             for i, line in enumerate(f):
                 line = line.strip()
                 if i == 0 and line != "&SRS":
                     raise _SC_.StonerLoadError("Not a GDA File from Rasor ?" + str(line))
                 if "&END" in line:
                     break
-                parts = line.split('=')
+                parts = line.split("=")
                 if len(parts) != 2:
                     continue
                 key = parts[0]
@@ -379,8 +406,8 @@ class OpenGDAFile(_SC_.DataFile):
                 column_headers = f.readline().strip().split("\t")
             else:
                 column_headers = f.next().strip().split("\t")
-            self.data = _np_.genfromtxt([str2bytes(l) for l in f], dtype='float', invalid_raise=False)
-        self.column_headers=column_headers
+            self.data = _np_.genfromtxt([str2bytes(l) for l in f], dtype="float", invalid_raise=False)
+        self.column_headers = column_headers
         return self
 
 
@@ -399,86 +426,95 @@ class SPCFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=16 # Can't make a positive ID of itself
+    priority = 16  # Can't make a positive ID of itself
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.spc"] # Recognised filename patterns
+    patterns = ["*.spc"]  # Recognised filename patterns
 
-    mime_type=["application/octet-stream"]
+    mime_type = ["application/octet-stream"]
 
-    def _read_xdata(self,f):
+    def _read_xdata(self, f):
         """Read the xdata from the spc file."""
-        self._pts = self._header['fnpts']
-        if self._header['ftflgs'] & 128:  # We need to read some X Data
+        self._pts = self._header["fnpts"]
+        if self._header["ftflgs"] & 128:  # We need to read some X Data
             if 4 * self._pts > self._filesize - f.tell():
                 raise _SC_.StonerLoadError("Trying to read too much data!")
             xvals = f.read(4 * self._pts)  # I think storing X vals directly implies that each one is 4 bytes....
             xdata = _np_.array(struct.unpack(str2bytes(str(self._pts) + "f"), xvals))
         else:  # Generate the X Data ourselves
-            first = self._header['ffirst']
-            last = self._header['flast']
-            if self._pts > 1E6:  # Something not right here !
+            first = self._header["ffirst"]
+            last = self._header["flast"]
+            if self._pts > 1e6:  # Something not right here !
                 raise _SC_.StonerLoadError("More than 1 million points requested. Bugging out now!")
             xdata = _np_.linspace(first, last, self._pts)
         return xdata
 
-    def _read_ydata(self,f,data,column_headers):
+    def _read_ydata(self, f, data, column_headers):
         """Read the y data and column headers from spc file."""
-        n = self._header['fnsub']
-        subhdr_keys = ("subflgs", "subexp", "subindx", "subtime", "subnext", "subnois", "subnpts", "subscan",
-                       "subwlevel", "subresv")
-        if self._header['ftflgs'] & 1:
+        n = self._header["fnsub"]
+        subhdr_keys = (
+            "subflgs",
+            "subexp",
+            "subindx",
+            "subtime",
+            "subnext",
+            "subnois",
+            "subnpts",
+            "subscan",
+            "subwlevel",
+            "subresv",
+        )
+        if self._header["ftflgs"] & 1:
             y_width = 2
-            y_fmt = 'h'
+            y_fmt = "h"
             divisor = 2 ** 16
         else:
             y_width = 4
-            y_fmt = 'i'
+            y_fmt = "i"
             divisor = 2 ** 32
         if n * (y_width * self._pts + 32) > self._filesize - f.tell():
             raise _SC_.StonerLoadError("No good, going to read too much data!")
         for j in range(n):  # We have n sub-scans
             # Read the subheader and import into the main metadata dictionary as scan#:<subheader item>
-            subhdr = struct.unpack(b'BBHfffIIf4s', f.read(32))
+            subhdr = struct.unpack(b"BBHfffIIf4s", f.read(32))
             subheader = dict(zip(["scan" + str(j) + ":" + x for x in subhdr_keys], subhdr))
 
             # Now read the y-data
-            exponent = subheader["scan" + str(j) + ':subexp']
+            exponent = subheader["scan" + str(j) + ":subexp"]
             if int(exponent) & -128:  # Data is unscaled direct floats
                 ydata = _np_.array(struct.unpack(str2bytes(str(self._pts) + "f"), f.read(self._pts * y_width)))
             else:  # Data is scaled by exponent
                 yvals = struct.unpack(str2bytes(str(self._pts) + y_fmt), f.read(self._pts * y_width))
-                ydata = _np_.array(yvals, dtype='float64') * (2 ** exponent) / divisor
+                ydata = _np_.array(yvals, dtype="float64") * (2 ** exponent) / divisor
             data[:, j + 1] = ydata
             self._header = dict(self._header, **subheader)
-            column_headers.append("Scan" + str(j) + ":" + self._yvars[self._header['fytype']])
+            column_headers.append("Scan" + str(j) + ":" + self._yvars[self._header["fytype"]])
 
         return data
 
-    def _read_loginfo(self,f):
+    def _read_loginfo(self, f):
         """Read the log info section of the spc file."""
-        logstc = struct.unpack(b'IIIII44s', f.read(64))
+        logstc = struct.unpack(b"IIIII44s", f.read(64))
         logstc_keys = ("logsizd", "logsizm", "logtxto", "logbins", "logdsks", "logrsvr")
         logheader = dict(zip(logstc_keys, logstc))
         self._header = dict(self._header, **logheader)
 
         # Can't handle either binary log information or ion disk log information (wtf is this anyway !)
-        if self._header['logbins'] + self._header['logdsks'] > self._filesize - f.tell():
+        if self._header["logbins"] + self._header["logdsks"] > self._filesize - f.tell():
             raise _SC_.StonerLoadError("Too much logfile data to read")
-        f.read(self._header['logbins'] + self._header['logdsks'])
+        f.read(self._header["logbins"] + self._header["logdsks"])
 
         # The renishaw seems to put a 16 character timestamp next - it's not in the spec but never mind that.
-        self._header['Date-Time'] = f.read(16)
+        self._header["Date-Time"] = f.read(16)
         # Now read the rest of the file as log text
         logtext = f.read()
         # We expect things to be single lines terminated with a CR-LF of the format key=value
         for line in split(b"[\r\n]+", logtext):
             if b"=" in line:
-                parts = line.split(b'=')
+                parts = line.split(b"=")
                 key = parts[0].decode()
                 value = parts[1].decode()
                 self._header[key] = value
-
 
     def _load(self, filename=None, *args, **kargs):
         """Reads a .scf file produced by the Renishaw Raman system (amongs others)
@@ -497,48 +533,142 @@ class SPCFile(_SC_.DataFile):
             Metadata keys are pretty much as specified in the spc.h file that defines the filerformat.
         """
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
         # Open the file and read the main file header and unpack into a dict
         self._filesize = os.stat(self.filename).st_size
-        with io.open(filename, 'rb') as f:
-            spchdr = struct.unpack(b'BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s', f.read(512))
-            keys = ("ftflgs", "fversn", "fexper", "fexp", "fnpts", "ffirst", "flast", "fnsub", "fxtype", "fytype",
-                    "fztype", "fpost", "fres", "fsource", "fpeakpt", "fspare1", "fspare2", "fspare3", "fspare4",
-                    "fspare5", "fspare6", "fspare7", "fspare8", "fcm", "nt", "fcatx", "flogoff", "fmods", "fprocs",
-                    "flevel", "fsampin", "ffactor", "fmethod", "fzinc", "fwplanes", "fwinc", "fwtype", "fwtype",
-                    "fresv")
-            self._xvars = ["Arbitrary", "Wavenumber (cm-1)", "Micrometers (um)", "Nanometers (nm)", "Seconds", "Minutes",
-                         "Hertz (Hz)", "Kilohertz (KHz)", "Megahertz (MHz)", "Mass (M/z)", "Parts per million (PPM)",
-                         "Days", "Years", "Raman Shift (cm-1)", "Raman Shift (cm-1)", "eV",
-                         "XYZ text labels in fcatxt (old 0x4D version only)", "Diode Number", "Channel", "Degrees",
-                         "Temperature (F)", "Temperature (C)", "Temperature (K)", "Data Points", "Milliseconds (mSec)",
-                         "Microseconds (uSec)", "Nanoseconds (nSec)", "Gigahertz (GHz)", "Centimeters (cm)",
-                         "Meters (m)", "Millimeters (mm)", "Hours", "Hours"]
-            self._yvars = ["Arbitrary Intensity", "Interferogram", "Absorbance", "Kubelka-Monk", "Counts", "Volts",
-                         "Degrees", "Milliamps", "Millimeters", "Millivolts", "Log(1/R)", "Percent", "Percent",
-                         "Intensity", "Relative Intensity", "Energy", "Decibel", "Temperature (F)", "Temperature (C)",
-                         "Temperature (K)", "Index of Refraction [N]", "Extinction Coeff. [K]", "Real", "Imaginary",
-                         "Complex", "Complex", "Transmission (ALL HIGHER MUST HAVE VALLEYS!)", "Reflectance",
-                         "Arbitrary or Single Beam with Valley Peaks", "Emission", "Emission"]
+        with io.open(filename, "rb") as f:
+            spchdr = struct.unpack(b"BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s", f.read(512))
+            keys = (
+                "ftflgs",
+                "fversn",
+                "fexper",
+                "fexp",
+                "fnpts",
+                "ffirst",
+                "flast",
+                "fnsub",
+                "fxtype",
+                "fytype",
+                "fztype",
+                "fpost",
+                "fres",
+                "fsource",
+                "fpeakpt",
+                "fspare1",
+                "fspare2",
+                "fspare3",
+                "fspare4",
+                "fspare5",
+                "fspare6",
+                "fspare7",
+                "fspare8",
+                "fcm",
+                "nt",
+                "fcatx",
+                "flogoff",
+                "fmods",
+                "fprocs",
+                "flevel",
+                "fsampin",
+                "ffactor",
+                "fmethod",
+                "fzinc",
+                "fwplanes",
+                "fwinc",
+                "fwtype",
+                "fwtype",
+                "fresv",
+            )
+            self._xvars = [
+                "Arbitrary",
+                "Wavenumber (cm-1)",
+                "Micrometers (um)",
+                "Nanometers (nm)",
+                "Seconds",
+                "Minutes",
+                "Hertz (Hz)",
+                "Kilohertz (KHz)",
+                "Megahertz (MHz)",
+                "Mass (M/z)",
+                "Parts per million (PPM)",
+                "Days",
+                "Years",
+                "Raman Shift (cm-1)",
+                "Raman Shift (cm-1)",
+                "eV",
+                "XYZ text labels in fcatxt (old 0x4D version only)",
+                "Diode Number",
+                "Channel",
+                "Degrees",
+                "Temperature (F)",
+                "Temperature (C)",
+                "Temperature (K)",
+                "Data Points",
+                "Milliseconds (mSec)",
+                "Microseconds (uSec)",
+                "Nanoseconds (nSec)",
+                "Gigahertz (GHz)",
+                "Centimeters (cm)",
+                "Meters (m)",
+                "Millimeters (mm)",
+                "Hours",
+                "Hours",
+            ]
+            self._yvars = [
+                "Arbitrary Intensity",
+                "Interferogram",
+                "Absorbance",
+                "Kubelka-Monk",
+                "Counts",
+                "Volts",
+                "Degrees",
+                "Milliamps",
+                "Millimeters",
+                "Millivolts",
+                "Log(1/R)",
+                "Percent",
+                "Percent",
+                "Intensity",
+                "Relative Intensity",
+                "Energy",
+                "Decibel",
+                "Temperature (F)",
+                "Temperature (C)",
+                "Temperature (K)",
+                "Index of Refraction [N]",
+                "Extinction Coeff. [K]",
+                "Real",
+                "Imaginary",
+                "Complex",
+                "Complex",
+                "Transmission (ALL HIGHER MUST HAVE VALLEYS!)",
+                "Reflectance",
+                "Arbitrary or Single Beam with Valley Peaks",
+                "Emission",
+                "Emission",
+            ]
 
             self._header = dict(zip(keys, spchdr))
-            n = self._header['fnsub']
+            n = self._header["fnsub"]
 
-            if self._header['ftflgs'] &64 == 64 or not (75 <= self._header['fversn'] <=
-                                             77):  # This is the multiple XY curves in file flag.
-                raise _SC_.StonerLoadError("Filetype not implemented yet ! ftflgs={ftflgs}, fversn={fversn}".format(**self._header))
+            if self._header["ftflgs"] & 64 == 64 or not (
+                75 <= self._header["fversn"] <= 77
+            ):  # This is the multiple XY curves in file flag.
+                raise _SC_.StonerLoadError(
+                    "Filetype not implemented yet ! ftflgs={ftflgs}, fversn={fversn}".format(**self._header)
+                )
             else:  # A single XY curve in the file.
-                #Read the xdata and add it to the file.
-                xdata=self._read_xdata(f)
+                # Read the xdata and add it to the file.
+                xdata = self._read_xdata(f)
                 data = _np_.zeros((self._pts, (n + 1)))  # initialise the data soace
                 data[:, 0] = xdata  # Put in the X-Data
-                column_headers = [self._xvars[self._header['fxtype']]]  # And label the X column correctly
+                column_headers = [self._xvars[self._header["fxtype"]]]  # And label the X column correctly
 
-                #Now we're going to read the Y-data
-                data=self._read_ydata(f,data,column_headers)
-                if self._header['flogoff'] != 0:  # Ok, we've got a log, so read the log header and merge into metadata
+                # Now we're going to read the Y-data
+                data = self._read_ydata(f, data, column_headers)
+                if self._header["flogoff"] != 0:  # Ok, we've got a log, so read the log header and merge into metadata
                     self._read_loginfo(f)
             # Ok now build the Stoner._SC_.DataFile instance to return
             self.data = data
@@ -551,6 +681,7 @@ class SPCFile(_SC_.DataFile):
                 self.setas = "xy"
             return self
 
+
 class RigakuFile(_SC_.DataFile):
 
     """Loads a .ras file as produced by Rigaku X-ray diffractormeters"""
@@ -559,11 +690,10 @@ class RigakuFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=16 #Can make a positive id of file from first line
+    priority = 16  # Can make a positive id of file from first line
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.ras"] # Recognised filename patterns
-
+    patterns = ["*.ras"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """Reads an Rigaku ras file including handling the metadata nicely
@@ -576,14 +706,15 @@ class RigakuFile(_SC_.DataFile):
             A copy of the itself after loading the data.
         """
         from ast import literal_eval
+
         if filename is None or not filename:
-            self.get_filename('rb')
+            self.get_filename("rb")
         else:
             self.filename = filename
-        sh = re.compile(r'^\*([^\s]+)\s+(.*)$')  # Regexp to grab the keys
-        ka = re.compile(r'(.*)\-(\d+)$')
+        sh = re.compile(r"^\*([^\s]+)\s+(.*)$")  # Regexp to grab the keys
+        ka = re.compile(r"(.*)\-(\d+)$")
         header = dict()
-        i=0
+        i = 0
         with io.open(self.filename, "rb") as f:
             for i, line in enumerate(f):
                 line = bytes2str(line).strip()
@@ -591,14 +722,14 @@ class RigakuFile(_SC_.DataFile):
                     raise _SC_.StonerLoadError("Not a Rigaku file!")
                 if line == "*RAS_HEADER_START":
                     break
-            i2=None
+            i2 = None
             for i2, line in enumerate(f):
                 line = bytes2str(line).strip()
                 m = sh.match(line)
                 if m:
-                    key = m.groups()[0].lower().replace('_', '.')
+                    key = m.groups()[0].lower().replace("_", ".")
                     try:
-                        value = m.groups()[1].decode('utf-8', 'ignore')
+                        value = m.groups()[1].decode("utf-8", "ignore")
                     except AttributeError:
                         value = m.groups()[1]
                     header[key] = value
@@ -615,7 +746,7 @@ class RigakuFile(_SC_.DataFile):
                     newvalue = literal_eval(value)
                 if m:
                     key = m.groups()[0]
-                    if key in self.metadata and not (isinstance(self[key], (_np_.ndarray,list))):
+                    if key in self.metadata and not (isinstance(self[key], (_np_.ndarray, list))):
                         if isinstance(self[key], str):
                             self[key] = list([self[key]])
                         else:
@@ -626,27 +757,24 @@ class RigakuFile(_SC_.DataFile):
                         else:
                             self[key] = _np_.array([newvalue])
                     else:
-                        if isinstance(self[key][0], str) and isinstance(self[key],list):
+                        if isinstance(self[key][0], str) and isinstance(self[key], list):
                             self[key].append(newvalue)
                         else:
                             self[key] = _np_.append(self[key], newvalue)
                 else:
                     self.metadata[key] = newvalue
 
-        with io.open(self.filename,"rb") as data:
-            self.data = _np_.genfromtxt(data,
-                                    dtype='float',
-                                    delimiter=' ',
-                                    invalid_raise=False,
-                                    comments="*",
-                                    skip_header=i + i2 + 1)
-        column_headers = ['Column' + str(i) for i in range(self.data.shape[1])]
-        column_headers[0:2] = [self.metadata['meas.scan.unit.x'], self.metadata['meas.scan.unit.y']]
+        with io.open(self.filename, "rb") as data:
+            self.data = _np_.genfromtxt(
+                data, dtype="float", delimiter=" ", invalid_raise=False, comments="*", skip_header=i + i2 + 1
+            )
+        column_headers = ["Column" + str(i) for i in range(self.data.shape[1])]
+        column_headers[0:2] = [self.metadata["meas.scan.unit.x"], self.metadata["meas.scan.unit.y"]]
         for key in self.metadata:
             if isinstance(self[key], list):
                 self[key] = _np_.array(self[key])
         self.setas = "xy"
-        self.column_headers=column_headers
+        self.column_headers = column_headers
         return self
 
     def to_Q(self, l=1.540593):
@@ -655,7 +783,9 @@ class RigakuFile(_SC_.DataFile):
         Returns:
             a copy of itself.
         """
-        self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA$)")
+        self.add_column(
+            (4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA$)"
+        )
 
 
 class XRDFile(_SC_.DataFile):
@@ -666,17 +796,17 @@ class XRDFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=16 # Makes a positive id of its file contents
+    priority = 16  # Makes a positive id of its file contents
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.dql"] # Recognised filename patterns
+    patterns = ["*.dql"]  # Recognised filename patterns
 
-    def __init__(self,*args,**kargs):
+    def __init__(self, *args, **kargs):
         """Add a public attribute to XRD File."""
-        super(XRDFile,self).__init__(*args,**kargs)
-        self._public_attrs={"four_bounce":bool}
+        super(XRDFile, self).__init__(*args, **kargs)
+        self._public_attrs = {"four_bounce": bool}
 
-    def _load(self,filename=None,*args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """Reads an XRD _SC_.DataFile as produced by the Brucker diffractometer
 
         Args:
@@ -691,19 +821,19 @@ class XRDFile(_SC_.DataFile):
             one can have multiple sections with the same name (!)
         """
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
-        sh = re.compile(r'\[(.+)\]')  # Regexp to grab section name
-        with io.open(self.filename,errors="ignore",encoding="utf-8") as f: # Read filename linewise
+        sh = re.compile(r"\[(.+)\]")  # Regexp to grab section name
+        with io.open(self.filename, errors="ignore", encoding="utf-8") as f:  # Read filename linewise
             if f.readline().strip() != ";RAW4.00":  # Check we have the corrrect fileformat
                 raise _SC_.StonerLoadError("File Format Not Recognized !")
             drive = 0
-            for line in f:  #for each line
+            for line in f:  # for each line
                 m = sh.search(line)
                 if m:  # This is a new section
                     section = m.group(1)
-                    if section == "Drive":  #If this is a Drive section we need to know which Drive Section it is
+                    if section == "Drive":  # If this is a Drive section we need to know which Drive Section it is
                         section = section + str(drive)
                         drive = drive + 1
                     elif section == "Data":  # Data section contains the business but has a redundant first line
@@ -711,28 +841,29 @@ class XRDFile(_SC_.DataFile):
                             f.readline()
                         else:
                             f.next()
-                    for line in f:  #Now start reading lines in this section...
-                        if line.strip(
-                        ) == "":  # A blank line marks the end of the section, so go back to the outer loop which will handle a new section
+                    for line in f:  # Now start reading lines in this section...
+                        if (
+                            line.strip() == ""
+                        ):  # A blank line marks the end of the section, so go back to the outer loop which will handle a new section
                             break
-                        elif section=="Data": # In the Data section read lines of data value,vale
-                            parts=line.split(',')
-                            angle=parts[0].strip()
-                            counts=parts[1].strip()
-                            dataline=_np_.array([float(angle), float(counts)])
-                            self.data=_np_.append(self.data, dataline)
-                        else: # Other sections contain metadata
-                            parts=line.split('=')
-                            key=parts[0].strip()
-                            data=parts[1].strip()
+                        elif section == "Data":  # In the Data section read lines of data value,vale
+                            parts = line.split(",")
+                            angle = parts[0].strip()
+                            counts = parts[1].strip()
+                            dataline = _np_.array([float(angle), float(counts)])
+                            self.data = _np_.append(self.data, dataline)
+                        else:  # Other sections contain metadata
+                            parts = line.split("=")
+                            key = parts[0].strip()
+                            data = parts[1].strip()
                             # Keynames in main metadata are section:key - use the_SC_.DataFile magic to do type determination
-                            self[section+":"+key]=self.metadata.string_to_type(data)
-            column_headers=['Angle', 'Counts'] # Assume the columns were Angles and Counts
+                            self[section + ":" + key] = self.metadata.string_to_type(data)
+            column_headers = ["Angle", "Counts"]  # Assume the columns were Angles and Counts
 
-        self.data=_np_.reshape(self.data, (-1, 2))
-        self.setas="xy"
-        self.four_bounce=self["HardwareConfiguration:Monochromator"]==1
-        self.column_headers=column_headers
+        self.data = _np_.reshape(self.data, (-1, 2))
+        self.setas = "xy"
+        self.four_bounce = self["HardwareConfiguration:Monochromator"] == 1
+        self.column_headers = column_headers
         return self
 
     def to_Q(self, l=1.540593):
@@ -740,7 +871,9 @@ class XRDFile(_SC_.DataFile):
 
         returns a copy of itself.
         """
-        self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA$)")
+        self.add_column(
+            (4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA$)"
+        )
 
 
 class BNLFile(_SC_.DataFile):
@@ -759,10 +892,10 @@ class BNLFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=64
+    priority = 64
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.txt"] # Recognised filename patterns
+    patterns = ["*.txt"]  # Recognised filename patterns
 
     def __init__(self, *params):
         """Constructor modification.
@@ -776,19 +909,24 @@ class BNLFile(_SC_.DataFile):
 
     def __find_lines(self):
         """Returns an array of ints [header_line,data_line,scan_line,date_line,motor_line]."""
-        with io.open(self.filename, 'r',errors="ignore",encoding="utf-8") as fp:
+        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as fp:
             self.line_numbers = [0, 0, 0, 0, 0]
             counter = 0
             for line in fp:
                 counter += 1
-                if counter == 1 and line[0] != '#':
+                if counter == 1 and line[0] != "#":
                     raise _SC_.StonerLoadError("Not a BNL File ?")
-                if len(line) < 2: continue  #if there's nothing written on the line go to the next
-                elif line[0:2] == '#L': self.line_numbers[0] = counter
-                elif line[0:2] == '#S': self.line_numbers[2] = counter
-                elif line[0:2] == '#D': self.line_numbers[3] = counter
-                elif line[0:2] == '#P': self.line_numbers[4] = counter
-                elif line[0] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                if len(line) < 2:
+                    continue  # if there's nothing written on the line go to the next
+                elif line[0:2] == "#L":
+                    self.line_numbers[0] = counter
+                elif line[0:2] == "#S":
+                    self.line_numbers[2] = counter
+                elif line[0:2] == "#D":
+                    self.line_numbers[3] = counter
+                elif line[0:2] == "#P":
+                    self.line_numbers[4] = counter
+                elif line[0] in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
                     self.line_numbers[1] = counter
                     break
 
@@ -801,11 +939,11 @@ class BNLFile(_SC_.DataFile):
         scanLine = linecache.getline(self.filename, self.line_numbers[2])
         dateLine = linecache.getline(self.filename, self.line_numbers[3])
         motorLine = linecache.getline(self.filename, self.line_numbers[4])
-        self.__setitem__('Snumber', scanLine.split()[1])
+        self.__setitem__("Snumber", scanLine.split()[1])
         tmp = "".join(scanLine.split()[2:])
-        self.__setitem__('Stype', "".join(tmp.split(',')))  #get rid of commas
-        self.__setitem__('Sdatetime', dateLine[3:-1])  #don't want \n at end of line so use -1
-        self.__setitem__('Smotor', motorLine.split()[3])
+        self.__setitem__("Stype", "".join(tmp.split(",")))  # get rid of commas
+        self.__setitem__("Sdatetime", dateLine[3:-1])  # don't want \n at end of line so use -1
+        self.__setitem__("Smotor", motorLine.split()[3])
 
     def __parse_BNL_data(self):
         """Internal function for parsing BNL data.
@@ -814,20 +952,20 @@ class BNLFile(_SC_.DataFile):
         so easy to find but #L must be excluded from the result.
         """
         self.__find_lines()
-        #creates a list, line_numbers, formatted [header_line,data_line,scan_line,date_line,motor_line]
+        # creates a list, line_numbers, formatted [header_line,data_line,scan_line,date_line,motor_line]
         header_string = linecache.getline(self.filename, self.line_numbers[0])
-        header_string = re.sub(r'["\n]', '', header_string)  #get rid of new line character
-        header_string = re.sub(r'#L', '', header_string)  #get rid of line indicator character
+        header_string = re.sub(r'["\n]', "", header_string)  # get rid of new line character
+        header_string = re.sub(r"#L", "", header_string)  # get rid of line indicator character
         column_headers = map(lambda x: x.strip(), header_string.split())
         self.__get_metadata()
         try:
             self.data = _np_.genfromtxt(self.filename, skip_header=self.line_numbers[1] - 1)
         except IOError:
             self.data = _np_.array([0])
-            print('Did not import any data for {}'.format(self.filename))
-        self.column_headers=column_headers
+            print("Did not import any data for {}".format(self.filename))
+        self.column_headers = column_headers
 
-    def _load(self, filename, *args, **kargs):  #fileType omitted, implicit in class call
+    def _load(self, filename, *args, **kargs):  # fileType omitted, implicit in class call
         """BNLFile.load(filename)
 
         Args:
@@ -846,7 +984,7 @@ class BNLFile(_SC_.DataFile):
             a new method below.
         """
         self.filename = filename
-        self.__parse_BNL_data()  #call an internal function rather than put it in load function
+        self.__parse_BNL_data()  # call an internal function rather than put it in load function
         linecache.clearcache()
         return self
 
@@ -859,11 +997,10 @@ class MokeFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priotity=16
+    priotity = 16
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.dat","*.txt"]
-
+    patterns = ["*.dat", "*.txt"]
 
     def _load(self, filename=None, *args, **kargs):
         """Leeds  MOKE file loader routine.
@@ -876,7 +1013,7 @@ class MokeFile(_SC_.DataFile):
             A copy of the itself after loading the data.
         """
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
         with io.open(self.filename, mode="rb") as f:
@@ -893,7 +1030,7 @@ class MokeFile(_SC_.DataFile):
             column_headers = [x.strip() for x in line.split(",")]
             self.data = _np_.genfromtxt(f, delimiter=",")
         self.setas = "xy.de"
-        self.column_headers=column_headers
+        self.column_headers = column_headers
         return self
 
 
@@ -905,10 +1042,10 @@ class FmokeFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=16 # Makes a positive ID check of its contents so give it priority in autoloading
+    priority = 16  # Makes a positive ID check of its contents so give it priority in autoloading
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.dat"] # Recognised filename patterns
+    patterns = ["*.dat"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """Sheffield Focussed MOKE file loader routine.
@@ -921,25 +1058,25 @@ class FmokeFile(_SC_.DataFile):
             A copy of the itself after loading the data.
         """
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
         with io.open(self.filename, mode="rb") as f:
             try:
-                value = [float(x.strip()) for x in bytes2str(f.readline()).split('\t')]
+                value = [float(x.strip()) for x in bytes2str(f.readline()).split("\t")]
             except Exception:
                 f.close()
                 raise _SC_.StonerLoadError("Not an FMOKE file?")
-            label = [x.strip() for x in bytes2str(f.readline()).split('\t')]
+            label = [x.strip() for x in bytes2str(f.readline()).split("\t")]
             if label[0] != "Header:":
                 f.close()
                 raise _SC_.StonerLoadError("Not a Focussed MOKE file !")
-            del (label[0])
+            del label[0]
             for k, v in zip(label, value):
                 self.metadata[k] = v  # Create metatdata from first 2 lines
-            column_headers = [x.strip() for x in bytes2str(f.readline()).split('\t')]
-            self.data = _np_.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
-            self.column_headers=column_headers
+            column_headers = [x.strip() for x in bytes2str(f.readline()).split("\t")]
+            self.data = _np_.genfromtxt(f, dtype="float", delimiter="\t", invalid_raise=False)
+            self.column_headers = column_headers
         return self
 
 
@@ -951,21 +1088,20 @@ class GenXFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=64
+    priority = 64
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.dat"] # Recognised filename patterns
-
+    patterns = ["*.dat"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
         pattern = re.compile(r'# Dataset "([^\"]*)" exported from GenX on (.*)$')
         pattern2 = re.compile(r"#\sFile\sexported\sfrom\sGenX\'s\sReflectivity\splugin")
-        with io.open(self.filename, "r",errors="ignore",encoding="utf-8") as datafile:
+        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as datafile:
             line = datafile.readline()
             match = pattern.match(line)
             match2 = pattern2.match(line)
@@ -978,18 +1114,18 @@ class GenXFile(_SC_.DataFile):
                 self["date"] = date
             elif match2 is not None:
                 line = datafile.readline()
-                self["date"] = line.split(':')[1].strip()
+                self["date"] = line.split(":")[1].strip()
                 datafile.readline()
                 line = datafile.readline()
                 line = line[1:]
                 dataset = "asymmetry"
             else:
                 raise _SC_.StonerLoadError("Not a GenXFile")
-        column_headers = [f.strip() for f in line.strip().split('\t')]
-        self.data = _np_.genfromtxt(self.filename,skip_header=4)
+        column_headers = [f.strip() for f in line.strip().split("\t")]
+        self.data = _np_.genfromtxt(self.filename, skip_header=4)
         self["dataset"] = dataset
         self.setas = "xye"
-        self.column_headers=column_headers
+        self.column_headers = column_headers
         return self
 
 
@@ -1005,19 +1141,19 @@ class SNSFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=16
+    priority = 16
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.dat"] # Recognised filename patterns
+    patterns = ["*.dat"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
 
-        with io.open(self.filename, "r",errors="ignore",encoding="utf-8") as data:  # Slightly ugly text handling
+        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
             line = data.readline()
             if line.strip() != "# datafile created by QuickNXS 0.9.39":  # bug out oif we don't like the header
                 raise _SC_.StonerLoadError("Not a file from the SNS BL4A line")
@@ -1029,7 +1165,7 @@ class SNSFile(_SC_.DataFile):
                     section = line.strip().strip("[]")
                     if section == "Data":  # The Data section has one line of colum headers and then data
                         header = next(data)[2:].split("\t")
-                        column_headers = [h.strip().decode('ascii', 'ignore') for h in header]
+                        column_headers = [h.strip().decode("ascii", "ignore") for h in header]
                         self.data = _np_.genfromtxt(data)  # we end by reading the raw data
                     elif section == "Global Options":  # This section can go into metadata
                         for line in data:
@@ -1038,26 +1174,28 @@ class SNSFile(_SC_.DataFile):
                                 break
                             else:
                                 self[line[2:10].strip()] = line[11:].strip()
-                    elif section == "Direct Beam Runs" or section == "Data Runs":  # These are constructed into lists ofg dictionaries for each file
+                    elif (
+                        section == "Direct Beam Runs" or section == "Data Runs"
+                    ):  # These are constructed into lists ofg dictionaries for each file
                         sec = list()
                         header = next(data)
                         header = header[2:].strip()
-                        keys = [s.strip() for s in header.split('  ') if s.strip()]
+                        keys = [s.strip() for s in header.split("  ") if s.strip()]
                         for line in data:
                             line = line[2:].strip()
                             if line == "":
                                 break
                             else:
-                                values = [s.strip() for s in line.split('  ') if s.strip()]
+                                values = [s.strip() for s in line.split("  ") if s.strip()]
                                 sec.append(dict(zip(keys, values)))
                         self[section] = sec
                 else:  # We must still be in the opening un-labelled section of meta data
                     if ":" in line:
                         i = line.index(":")
                         key = line[:i].strip()
-                        value = line[i + 1:].strip()
+                        value = line[i + 1 :].strip()
                         self[key.strip()] = value.strip()
-        self.column_headers=column_headers
+        self.column_headers = column_headers
         return self
 
 
@@ -1072,58 +1210,57 @@ class OVFFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=16
+    priority = 16
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.ovf"] # Recognised filename patterns
+    patterns = ["*.ovf"]  # Recognised filename patterns
 
-
-    def _read_uvwdata(self,filename,fmt,lineno):
+    def _read_uvwdata(self, filename, fmt, lineno):
         """Read the numerical data taking account of the format."""
         if fmt == "Text":
             uvwdata = _np_.genfromtxt(self.filename, skip_header=lineno + 2)
         elif fmt == "Binary 4":
             if self["version"] == 1:
-                dt = _np_.dtype('>f4')
+                dt = _np_.dtype(">f4")
             else:
-                dt = _np_.dtype('<f4')
+                dt = _np_.dtype("<f4")
             with io.open(filename, "rb") as bindata:
                 bindata.seek(self._ptr)
-                uvwdata = _np_.fromfile(bindata,
-                                        dtype=dt,
-                                        count=1 + self["xnodes"] * self["ynodes"] * self["znodes"] * self["valuedim"])
+                uvwdata = _np_.fromfile(
+                    bindata, dtype=dt, count=1 + self["xnodes"] * self["ynodes"] * self["znodes"] * self["valuedim"]
+                )
                 assert uvwdata[0] == 1234567.0, "Binary 4 format check value incorrect ! Actual Value was {}".format(
-                    uvwdata[0])
+                    uvwdata[0]
+                )
             uvwdata = uvwdata[1:]
             uvwdata = _np_.reshape(uvwdata, (-1, self["valuedim"]))
         elif fmt == "Binary 8":
             if self["version"] == 1:
-                dt = _np_.dtype('>f8')
+                dt = _np_.dtype(">f8")
             else:
-                dt = _np_.dtype('<f8')
+                dt = _np_.dtype("<f8")
             with io.open(filename, "rb") as bindata:
                 bindata.seek(self._ptr)
-                uvwdata = _np_.fromfile(bindata,
-                                        dtype=dt,
-                                        count=1 + self["xnodes"] * self["ynodes"] * self["znodes"] * self["valuedim"])
-                assert uvwdata[
-                    0
-                ] == 123456789012345.0, "Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0])
+                uvwdata = _np_.fromfile(
+                    bindata, dtype=dt, count=1 + self["xnodes"] * self["ynodes"] * self["znodes"] * self["valuedim"]
+                )
+                assert (
+                    uvwdata[0] == 123456789012345.0
+                ), "Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0])
             uvwdata = _np_.reshape(uvwdata, (-1, self["valuedim"]))
         else:
             raise _SC_.StonerLoadError("Unknow OVF Format {}".format(fmt))
         return uvwdata
 
-
     def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
 
         self._ptr = 0
-        with io.open(self.filename, "r",errors="ignore",encoding="utf-8") as data:  # Slightly ugly text handling
+        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
             line = next(data)
             self._ptr += len(line)
             line = line.strip()
@@ -1154,22 +1291,24 @@ class OVFFile(_SC_.DataFile):
                     else:
                         raise _SC_.StonerLoadError("Failed to understand metadata")
             fmt = re.match(r".*Data\s+(.*)", line).group(1).strip()
-            assert self["meshtype"] == "rectangular", "Sorry only OVF files with rectnagular meshes are currently supported."
+            assert (
+                self["meshtype"] == "rectangular"
+            ), "Sorry only OVF files with rectnagular meshes are currently supported."
             if self["version"] == 1:
                 if self["meshtype"] == "rectangular":
                     self["valuedim"] = 3
                 else:
                     self["valuedim"] = 6
-            uvwdata=self._read_uvwdata(filename,fmt,i)
+            uvwdata = self._read_uvwdata(filename, fmt, i)
 
-        x = (_np_.linspace(self["xmin"], self["xmax"], self["xnode"] + 1)[:-1] + self["xbase"]) * 1E9
-        y = (_np_.linspace(self["ymin"], self["ymax"], self["ynode"] + 1)[:-1] + self["ybase"]) * 1E9
-        z = (_np_.linspace(self["zmin"], self["zmax"], self["znode"] + 1)[:-1] + self["zbase"]) * 1E9
+        x = (_np_.linspace(self["xmin"], self["xmax"], self["xnode"] + 1)[:-1] + self["xbase"]) * 1e9
+        y = (_np_.linspace(self["ymin"], self["ymax"], self["ynode"] + 1)[:-1] + self["ybase"]) * 1e9
+        z = (_np_.linspace(self["zmin"], self["zmax"], self["znode"] + 1)[:-1] + self["zbase"]) * 1e9
         (y, z, x) = (_np_.ravel(i) for i in _np_.meshgrid(y, z, x))
         self.data = _np_.column_stack((x, y, z, uvwdata))
         column_headers = ["X (nm)", "Y (nm)", "Z (nm)", "U", "V", "W"]
         self.setas = "xyzuvw"
-        self.column_headers=column_headers
+        self.column_headers = column_headers
         return self
 
 
@@ -1181,22 +1320,23 @@ class MDAASCIIFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=16
+    priority = 16
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.txt"] # Recognised filename patterns
-
+    patterns = ["*.txt"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
-        i=[0,0,0,0]
-        with io.open(self.filename, "r",errors="ignore",encoding="utf-8") as data:  # Slightly ugly text handling
+        i = [0, 0, 0, 0]
+        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
             for i[0], line in enumerate(data):
-                if i[0] == 0 and line.strip() != "## mda2ascii 1.2 generated output":  # bug out oif we don't like the header
+                if (
+                    i[0] == 0 and line.strip() != "## mda2ascii 1.2 generated output"
+                ):  # bug out oif we don't like the header
                     raise _SC_.StonerLoadError("Not a file mda2ascii")
                 line.strip()
                 if "=" in line:
@@ -1205,13 +1345,13 @@ class MDAASCIIFile(_SC_.DataFile):
                 elif line.startswith("#  Extra PV:"):
                     # Onto the next metadata bit
                     break
-            pvpat = re.compile(r'^#\s+Extra\s+PV\s\d+\:(.*)')
+            pvpat = re.compile(r"^#\s+Extra\s+PV\s\d+\:(.*)")
             for i[1], line in enumerate(data):
                 if line.strip() == "":
                     continue
                 elif line.startswith("# Extra PV"):
                     res = pvpat.match(line)
-                    bits = [b.strip().strip(r'"') for b in res.group(1).split(',')]
+                    bits = [b.strip().strip(r'"') for b in res.group(1).split(",")]
                     if bits[1] == "":
                         key = bits[0]
                     else:
@@ -1260,7 +1400,7 @@ class MDAASCIIFile(_SC_.DataFile):
             else:
                 raise _SC_.StonerLoadError("Overand the end of file without reading data")
         self.data = _np_.genfromtxt(self.filename, skip_header=sum(i))  # so that's ok then !
-        self.column_headers=column_headers
+        self.column_headers = column_headers
         return self
 
 
@@ -1279,15 +1419,15 @@ class LSTemperatureFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=16
+    priority = 16
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.340"]
+    patterns = ["*.340"]
 
     def _load(self, filename=None, *args, **kargs):
         """Data loader function for 340 files."""
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
 
@@ -1306,8 +1446,14 @@ class LSTemperatureFile(_SC_.DataFile):
                     vals.append(parts[1])
             else:
                 raise _SC_.StonerLoadError("Overan the end of the file")
-            if keys != ["Sensor Model", "Serial Number", "Data Format", "SetPoint Limit", "Temperature coefficient",
-                        "Number of Breakpoints"]:
+            if keys != [
+                "Sensor Model",
+                "Serial Number",
+                "Data Format",
+                "SetPoint Limit",
+                "Temperature coefficient",
+                "Number of Breakpoints",
+            ]:
                 raise _SC_.StonerLoadError("Header did not contain recognised keys.")
             for (k, v) in zip(keys, vals):
                 v = v.split()[0]
@@ -1316,7 +1462,7 @@ class LSTemperatureFile(_SC_.DataFile):
             column_headers = headers[1:]
             dat = _np_.genfromtxt(data)
             self.data = dat[:, 1:]
-        self.column_headers=column_headers
+        self.column_headers = column_headers
         return self
 
     def save(self, filename=None):
@@ -1334,21 +1480,29 @@ class LSTemperatureFile(_SC_.DataFile):
         if filename is None:
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-            filename = self.__file_dialog('w')
-        if self.shape[1]==2: #2 columns, let's hope they're the right way round!
-            cols=[0,1]
-        elif self.setas.has_xcol and self.setas.has_ycol: #Use ycol, x col but assume x is real temperature and y is resistance
-            cols=[self.setas.ycol[0],self.setas.xcol]
+            filename = self.__file_dialog("w")
+        if self.shape[1] == 2:  # 2 columns, let's hope they're the right way round!
+            cols = [0, 1]
+        elif (
+            self.setas.has_xcol and self.setas.has_ycol
+        ):  # Use ycol, x col but assume x is real temperature and y is resistance
+            cols = [self.setas.ycol[0], self.setas.xcol]
         else:
-            cols=range(self.shape[1])
-        with io.open(filename, "w",errors="ignore",encoding="utf-8", newline="\r\n") as f:
-            for k,v in (("Sensor Model","CX-1070-SD"), ("Serial Number","Unknown"), ("Data Format",4), ("SetPoint Limit",300.0), ("Temperature coefficient",1),
-                      ("Number of Breakpoints",len(self))):
+            cols = range(self.shape[1])
+        with io.open(filename, "w", errors="ignore", encoding="utf-8", newline="\r\n") as f:
+            for k, v in (
+                ("Sensor Model", "CX-1070-SD"),
+                ("Serial Number", "Unknown"),
+                ("Data Format", 4),
+                ("SetPoint Limit", 300.0),
+                ("Temperature coefficient", 1),
+                ("Number of Breakpoints", len(self)),
+            ):
                 if k in ["Sensor Model", "Serial Number", "Data Format", "SetPoint Limit"]:
                     kstr = "{:16s}".format(k + ":")
                 else:
                     kstr = "{}:   ".format(k)
-                v = self.get(k,v)
+                v = self.get(k, v)
                 if k == "Data Format":
                     units = ["()", "()", "()", "()", "(Log Ohms/Kelvin)", "(Log Ohms/Log Kelvin)"]
                     vstr = "{}      {}".format(v, units[int(v)])
@@ -1367,11 +1521,12 @@ class LSTemperatureFile(_SC_.DataFile):
                 f.write(u"{:11s}".format(self.column_headers[i]))
             f.write(u"\n\n")
             for i in range(
-                len(self.data)):  # This is a slow way to write the data, but there should only ever be 200 lines
-                line = "\t".join(["{:<10.8f}".format(n) for n in self.data[i,cols]])
+                len(self.data)
+            ):  # This is a slow way to write the data, but there should only ever be 200 lines
+                line = "\t".join(["{:<10.8f}".format(n) for n in self.data[i, cols]])
                 f.write(u"{}\t".format(i))
                 f.write(u"{}\n".format(line))
-        self.filename=filename
+        self.filename = filename
         return self
 
 
@@ -1383,20 +1538,20 @@ class EasyPlotFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=32 # Fairly generic, but can do some explicit testing
+    priority = 32  # Fairly generic, but can do some explicit testing
 
-    def _load(self,filename, *args, **kargs):
+    def _load(self, filename, *args, **kargs):
         """Private loader method."""
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
 
         datastart = -1
         dataend = -1
 
-        i=0
-        with io.open(self.filename, "r",errors="ignore",encoding="utf-8") as data:
+        i = 0
+        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as data:
             if "******** EasyPlot save file ********" not in data.read(1024):
                 raise _SC_.StonerLoadError("Not an EasyPlot Save file?")
             else:
@@ -1408,15 +1563,15 @@ class EasyPlotFile(_SC_.DataFile):
                 if line[0] not in "-0123456789" and datastart > 0 and dataend < 0:
                     dataend = i
                 if line.startswith('"') and ":" in line:
-                    parts = [x.strip() for x in line.strip('"').split(':')]
+                    parts = [x.strip() for x in line.strip('"').split(":")]
                     self[parts[0]] = self.metadata.string_to_type(":".join(parts[1:]))
                 elif line.startswith("/"):  # command
                     parts = [x.strip('"') for x in next(csv.reader([line], delimiter=" ")) if x != ""]
                     cmd = parts[0].strip("/")
                     if len(cmd) > 1:
                         cmdname = "_{}_cmd".format(cmd)
-                        if cmdname in dir(self):  #If this command is implemented as a function run it
-                            cmd=getattr(self,"_{}_cmd".format(cmd))
+                        if cmdname in dir(self):  # If this command is implemented as a function run it
+                            cmd = getattr(self, "_{}_cmd".format(cmd))
                             cmd(parts[1:])
                         else:
                             if len(parts[1:]) > 1:
@@ -1427,7 +1582,7 @@ class EasyPlotFile(_SC_.DataFile):
                             else:
                                 value = True
                             self[cmd] = value
-                elif line[0] in "-0123456789" and datastart < 0:  #start of data
+                elif line[0] in "-0123456789" and datastart < 0:  # start of data
                     datastart = i
                     if "," in line:
                         delimiter = ","
@@ -1444,7 +1599,9 @@ class EasyPlotFile(_SC_.DataFile):
         """Ensure the column headers are at least i long."""
         if len(self.column_headers) < i:
             l = len(self.column_headers)
-            self.data=_np_.append(self.data,_np_.zeros((self.shape[0],i-l)),axis=1) # Need to expand the array first
+            self.data = _np_.append(
+                self.data, _np_.zeros((self.shape[0], i - l)), axis=1
+            )  # Need to expand the array first
             self.column_headers.extend(["Column {}".format(x) for x in range(l, i)])
 
     def _et_cmd(self, parts):
@@ -1463,10 +1620,11 @@ class EasyPlotFile(_SC_.DataFile):
 
     def _sa_cmd(self, parts):
         """The sa (set-axis?) command."""
-        if parts[0] == "l":  #Legend
+        if parts[0] == "l":  # Legend
             col = int(parts[2])
             self._extend_columns(col + 1)
             self.column_headers[col] = parts[1]
+
 
 class PinkLibFile(_SC_.DataFile):
 
@@ -1476,11 +1634,10 @@ class PinkLibFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=32 # reasonably generic format
+    priority = 32  # reasonably generic format
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.dat"] # Recognised filename patterns
-
+    patterns = ["*.dat"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """File loader for PinkLib.
@@ -1493,35 +1650,36 @@ class PinkLibFile(_SC_.DataFile):
             A copy of the itself after loading the data.
         """
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
-        with io.open(self.filename, "r",errors="ignore",encoding="utf-8") as f:  # Read filename linewise
+        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as f:  # Read filename linewise
             if "PINKlibrary" not in f.readline():
                 raise _SC_.StonerLoadError("Not a PINK file")
-            f=f.readlines()
-            happened_before=False
+            f = f.readlines()
+            happened_before = False
             for i, line in enumerate(f):
-                if line[0]!='#' and not happened_before:
-                    header_line=i-2 #-2 because there's a commented out data line
-                    happened_before=True
-                    continue #want to get the metadata at the bottom of the file too
-                elif any(s in line for s in ('Start time', 'End time', 'Title')):
-                    tmp=line.strip('#').split(':')
-                    self.metadata[tmp[0].strip()] = ':'.join(tmp[1:]).strip()
-            column_headers = f[header_line].strip('#\t ').split('\t')
-        data = _np_.genfromtxt(self.filename, dtype='float', delimiter='\t', invalid_raise=False, comments='#')
-        self.data=data[:,0:-2] #Deal with an errant tab at the end of each line
-        self.column_headers=column_headers
-        if _np_.all([h in column_headers for h in ('T (C)', 'R (Ohm)')]):
-            self.setas(x='T (C)', y='R (Ohm)')
+                if line[0] != "#" and not happened_before:
+                    header_line = i - 2  # -2 because there's a commented out data line
+                    happened_before = True
+                    continue  # want to get the metadata at the bottom of the file too
+                elif any(s in line for s in ("Start time", "End time", "Title")):
+                    tmp = line.strip("#").split(":")
+                    self.metadata[tmp[0].strip()] = ":".join(tmp[1:]).strip()
+            column_headers = f[header_line].strip("#\t ").split("\t")
+        data = _np_.genfromtxt(self.filename, dtype="float", delimiter="\t", invalid_raise=False, comments="#")
+        self.data = data[:, 0:-2]  # Deal with an errant tab at the end of each line
+        self.column_headers = column_headers
+        if _np_.all([h in column_headers for h in ("T (C)", "R (Ohm)")]):
+            self.setas(x="T (C)", y="R (Ohm)")
         return self
 
+
 class BirgeIVFile(_SC_.DataFile):
-    
+
     """Implements the IV File format used by the Birge Group in Michigan State University Condesned Matter Physiscs."""
-    
-    patterns=["*.dat"]
+
+    patterns = ["*.dat"]
 
     def _load(self, filename=None, *args, **kargs):
         """File loader for PinkLib.
@@ -1534,49 +1692,48 @@ class BirgeIVFile(_SC_.DataFile):
             A copy of the itself after loading the data.
         """
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
-        ix=0
-        with io.open(self.filename, "r",errors="ignore",encoding="utf-8") as f:  # Read filename linewise
-            if not re.compile(r'\d{1,2}/\d{1,2}/\d{4}').match(f.readline()):
+        ix = 0
+        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as f:  # Read filename linewise
+            if not re.compile(r"\d{1,2}/\d{1,2}/\d{4}").match(f.readline()):
                 raise _SC_.StonerLoadError("Not a BirgeIVFile as no date on first line")
-            data=f.readlines()
-            expected=["Vo(-))","Vo(+))","Ic(+)","Ic(-)"]
-            for l,m in zip(data[-4:],expected):
+            data = f.readlines()
+            expected = ["Vo(-))", "Vo(+))", "Ic(+)", "Ic(-)"]
+            for l, m in zip(data[-4:], expected):
                 if not l.startswith(m):
                     raise _SC_.StonerLoadError("Not a BirgeIVFile as wrong footer line")
-                key=l[:len(m)]
-                val=l[len(m):]
+                key = l[: len(m)]
+                val = l[len(m) :]
                 if "STDEV" in val:
-                    ix2=val.index("STDEV")
-                    key2=val[ix2:ix2+4+len(key)]
-                    val2=val[ix2+4+len(key):]
-                    self.metadata[key2]=self.metadata.string_to_type(val2.strip())
-                    val=val[:ix2]
-                self.metadata[key]=self.metadata.string_to_type(val.strip())
-            for ix,line in enumerate(data): #Scan the ough lines to get metadata
+                    ix2 = val.index("STDEV")
+                    key2 = val[ix2 : ix2 + 4 + len(key)]
+                    val2 = val[ix2 + 4 + len(key) :]
+                    self.metadata[key2] = self.metadata.string_to_type(val2.strip())
+                    val = val[:ix2]
+                self.metadata[key] = self.metadata.string_to_type(val.strip())
+            for ix, line in enumerate(data):  # Scan the ough lines to get metadata
                 if ":" in line:
-                    parts=line.split(":")
-                    self.metadata[parts[0].strip()]=self.metadata.string_to_type(parts[1].strip())
+                    parts = line.split(":")
+                    self.metadata[parts[0].strip()] = self.metadata.string_to_type(parts[1].strip())
                 elif "," in line:
                     for part in line.split(","):
-                        parts=part.split(" ")
-                        self.metadata[parts[0].strip()]=self.metadata.string_to_type(parts[1].strip())
+                        parts = part.split(" ")
+                        self.metadata[parts[0].strip()] = self.metadata.string_to_type(parts[1].strip())
                 elif line.startswith("H "):
-                    self.metadata["H"]=self.metadata.string_to_type(line.split(" ")[1].strip())
+                    self.metadata["H"] = self.metadata.string_to_type(line.split(" ")[1].strip())
                 else:
-                    headers=[x.strip() for x in line.split(" ")]
+                    headers = [x.strip() for x in line.split(" ")]
                     break
             else:
                 raise _SC_.StonerLoadError("Oops ran off the end of the file!")
-        self.data=_np_.genfromtxt(filename,skip_header=ix+2,skip_footer=4)
-        self.column_headers=headers
-        
-        self.setas="xy"
+        self.data = _np_.genfromtxt(filename, skip_header=ix + 2, skip_footer=4)
+        self.column_headers = headers
+
+        self.setas = "xy"
         return self
-                    
-    
+
 
 class KermitPNGFile(_SC_.DataFile):
 
@@ -1586,28 +1743,29 @@ class KermitPNGFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=16 # We're checking for a the specoific PNG signature
+    priority = 16  # We're checking for a the specoific PNG signature
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.png"] # Recognised filename patterns
+    patterns = ["*.png"]  # Recognised filename patterns
 
-    mime_type="image/png"
+    mime_type = "image/png"
 
-    def _check_signature(self,filename):
+    def _check_signature(self, filename):
         """Check that this is a PNG file and raie a _SC_.StonerLoadError if not."""
         try:
-            with io.open(filename,"rb") as test:
-                sig=test.read(8)
+            with io.open(filename, "rb") as test:
+                sig = test.read(8)
             if python_v3:
-                sig=[x for x in sig]
+                sig = [x for x in sig]
             else:
-                sig=[ord(b) for b in sig]
+                sig = [ord(b) for b in sig]
             if self.debug:
                 print(sig)
-            if sig!=[137,80,78,71,13,10,26,10]:
+            if sig != [137, 80, 78, 71, 13, 10, 26, 10]:
                 raise _SC_.StonerLoadError("Signature mismatrch")
         except Exception:
             from traceback import format_exc
+
             raise _SC_.StonerLoadError("Not a PNG file!>\n{}".format(format_exc()))
         return True
 
@@ -1622,21 +1780,21 @@ class KermitPNGFile(_SC_.DataFile):
             A copy of the itself after loading the data.
         """
         if filename is None or not filename:
-            self.get_filename('r')
+            self.get_filename("r")
         else:
             self.filename = filename
         self._check_signature(filename)
         try:
-            with PIL.Image.open(self.filename,"r") as img:
+            with PIL.Image.open(self.filename, "r") as img:
                 for k in img.info:
-                    self.metadata[k]=img.info[k]
-                self.data=_np_.asarray(img)
+                    self.metadata[k] = img.info[k]
+                self.data = _np_.asarray(img)
         except IOError:
             raise _SC_.StonerLoadError("Unable to read as a PNG file.")
 
         return self
 
-    def save(self, filename,**kargs):
+    def save(self, filename, **kargs):
         """Overrides the save method to allow KermitPNGFiles to be written out to disc
 
         Args:
@@ -1651,20 +1809,21 @@ class KermitPNGFile(_SC_.DataFile):
         if filename is None:
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-            filename = self.__file_dialog('w')
+            filename = self.__file_dialog("w")
 
-        metadata=PIL.PngImagePlugin.PngInfo()
+        metadata = PIL.PngImagePlugin.PngInfo()
         for k in self.metadata:
-            parts=self.metadata.export(k).split("=")
-            key=parts[0]
-            val=str2bytes("=".join(parts[1:]))
-            metadata.add_text(key,val)
-        img=PIL.Image.fromarray(self.data)
-        img.save(filename,"png",pnginfo=metadata)
-        self.filename=filename
+            parts = self.metadata.export(k).split("=")
+            key = parts[0]
+            val = str2bytes("=".join(parts[1:]))
+            metadata.add_text(key, val)
+        img = PIL.Image.fromarray(self.data)
+        img.save(filename, "png", pnginfo=metadata)
+        self.filename = filename
         return self
 
-try: #Optional tdms support
+
+try:  # Optional tdms support
     from nptdms import TdmsFile
 
     class TDMSFile(_SC_.DataFile):
@@ -1675,12 +1834,12 @@ try: #Optional tdms support
         #   .. note::
         #      Subclasses with priority<=32 should make some positive identification that they have the right
         #      file type before attempting to read data.
-        priority=16 # Makes a positive ID of its file contents
+        priority = 16  # Makes a positive ID of its file contents
         #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
         # the file load/save dialog boxes.
-        patterns=["*.tdms"] # Recognised filename patterns
+        patterns = ["*.tdms"]  # Recognised filename patterns
 
-        mime_type="application/octet-stream"
+        mime_type = "application/octet-stream"
 
         def _load(self, filename=None, *args, **kargs):
             """TDMS file loader routine.
@@ -1693,40 +1852,41 @@ try: #Optional tdms support
                 A copy of the itself after loading the data.
             """
             if filename is None or not filename:
-                self.get_filename('r')
+                self.get_filename("r")
             else:
                 self.filename = filename
             # Open the file and read the main file header and unpack into a dict
             try:
-                f=TdmsFile(self.filename)
+                f = TdmsFile(self.filename)
 
-                column_headers=[]
-                data=_np_.array([])
-
+                column_headers = []
+                data = _np_.array([])
 
                 for grp in f.objects.keys():
-                    if grp=="/":
-                        pass #skip the rooot group
-                    elif grp=="/'TDI Format 1.5'":
-                        metadata=f.object("TDI Format 1.5")
-                        for k,v in metadata.properties.items():
-                            self.metadata[k]=self.metadata.string_to_type(str(v))
+                    if grp == "/":
+                        pass  # skip the rooot group
+                    elif grp == "/'TDI Format 1.5'":
+                        metadata = f.object("TDI Format 1.5")
+                        for k, v in metadata.properties.items():
+                            self.metadata[k] = self.metadata.string_to_type(str(v))
                     else:
                         if f.objects[grp].has_data:
-                            chnl=grp.split("/")[-1]
+                            chnl = grp.split("/")[-1]
                             chnl.strip().strip("'")
                             column_headers.append(chnl)
-                            if data.size==0:
-                                data=f.objects[grp].data
+                            if data.size == 0:
+                                data = f.objects[grp].data
                             else:
-                                data=_np_.column_stack([data,f.objects[grp].data])
-                self.data=data
-                self.column_headers=column_headers
+                                data = _np_.column_stack([data, f.objects[grp].data])
+                self.data = data
+                self.column_headers = column_headers
             except Exception:
                 from traceback import format_exc
-                raise _SC_.StonerLoadError('Not a TDMS File \n{}'.format(format_exc()))
+
+                raise _SC_.StonerLoadError("Not a TDMS File \n{}".format(format_exc()))
 
             return self
+
 
 except ImportError:
     pass

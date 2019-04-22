@@ -2,34 +2,48 @@
 """Code adapted from skimage module   
 """
 from __future__ import division
+
 __all__ = ["convert"]
 
 import numpy as np
 from warnings import warn
 
 
-dtype_range = {np.bool_: (False, True),
-               np.bool8: (False, True),
-               np.uint8: (0, 255),
-               np.uint16: (0, 65535),
-               np.int8: (-128, 127),
-               np.int16: (-32768, 32767),
-               np.int64: (-2**63, 2**63 - 1),
-               np.uint64: (0, 2**64 - 1),
-               np.int32: (-2**31, 2**31 - 1),
-               np.uint32: (0, 2**32 - 1),
-               np.float32: (-1., 1.),
-               np.float64: (-1., 1.)}
+dtype_range = {
+    np.bool_: (False, True),
+    np.bool8: (False, True),
+    np.uint8: (0, 255),
+    np.uint16: (0, 65535),
+    np.int8: (-128, 127),
+    np.int16: (-32768, 32767),
+    np.int64: (-2 ** 63, 2 ** 63 - 1),
+    np.uint64: (0, 2 ** 64 - 1),
+    np.int32: (-2 ** 31, 2 ** 31 - 1),
+    np.uint32: (0, 2 ** 32 - 1),
+    np.float32: (-1.0, 1.0),
+    np.float64: (-1.0, 1.0),
+}
 
 integer_types = (np.uint8, np.uint16, np.int8, np.int16)
 
-_supported_types = (np.bool_, np.bool8,
-                    np.uint8, np.uint16, np.uint32, np.uint64,
-                    np.int8, np.int16, np.int32, np.int64,
-                    np.float32, np.float64)
+_supported_types = (
+    np.bool_,
+    np.bool8,
+    np.uint8,
+    np.uint16,
+    np.uint32,
+    np.uint64,
+    np.int8,
+    np.int16,
+    np.int32,
+    np.int64,
+    np.float32,
+    np.float64,
+)
 
 dtype_range[np.float16] = (-1, 1)
-_supported_types += (np.float16, )
+_supported_types += (np.float16,)
+
 
 def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
     """
@@ -90,25 +104,26 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
         raise ValueError("can not convert %s to %s." % (dtypeobj_in, dtypeobj))
 
     def sign_loss():
-        warn("Possible sign loss when converting negative image of type "
-             "%s to positive image of type %s." % (dtypeobj_in, dtypeobj))
+        warn(
+            "Possible sign loss when converting negative image of type "
+            "%s to positive image of type %s." % (dtypeobj_in, dtypeobj)
+        )
 
     def prec_loss():
-        warn("Possible precision loss when converting from "
-             "%s to %s" % (dtypeobj_in, dtypeobj))
+        warn("Possible precision loss when converting from " "%s to %s" % (dtypeobj_in, dtypeobj))
 
     def _dtype(itemsize, *dtypes):
         # Return first of `dtypes` with itemsize greater than `itemsize
         try:
-            ret=next(dt for dt in dtypes if itemsize < np.dtype(dt).itemsize)
+            ret = next(dt for dt in dtypes if itemsize < np.dtype(dt).itemsize)
         except StopIteration:
-            ret=dtypes[0]
+            ret = dtypes[0]
         return ret
 
     def _dtype2(kind, bits, itemsize=1):
         # Return dtype of `kind` that can store a `bits` wide unsigned int
-        c = lambda x, y: x <= y if kind == 'u' else x < y
-        s = next(i for i in (itemsize, ) + (2, 4, 8) if c(bits, i * 8))
+        c = lambda x, y: x <= y if kind == "u" else x < y
+        s = next(i for i in (itemsize,) + (2, 4, 8) if c(bits, i * 8))
         return np.dtype(kind + str(s))
 
     def _scale(a, n, m, copy=True):
@@ -123,8 +138,12 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
             else:
                 dtype = "uint%s" % mnew
             n = int(np.ceil(n / 2) * 2)
-            msg = ("Downcasting %s to %s without scaling because max "
-                   "value %s fits in %s" % (a.dtype, dtype, a.max(), dtype))
+            msg = "Downcasting %s to %s without scaling because max " "value %s fits in %s" % (
+                a.dtype,
+                dtype,
+                a.max(),
+                dtype,
+            )
             warn(msg)
             return a.astype(_dtype2(kind, m))
         elif n == m:
@@ -134,21 +153,20 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
             prec_loss()
             if copy:
                 b = np.empty(a.shape, _dtype2(kind, m))
-                np.floor_divide(a, 2**(n - m), out=b, dtype=a.dtype,
-                                casting='unsafe')
+                np.floor_divide(a, 2 ** (n - m), out=b, dtype=a.dtype, casting="unsafe")
                 return b
             else:
-                a //= 2**(n - m)
+                a //= 2 ** (n - m)
                 return a
         elif m % n == 0:
             # exact upscale to a multiple of n bits
             if copy:
                 b = np.empty(a.shape, _dtype2(kind, m))
-                np.multiply(a, (2**m - 1) // (2**n - 1), out=b, dtype=b.dtype)
+                np.multiply(a, (2 ** m - 1) // (2 ** n - 1), out=b, dtype=b.dtype)
                 return b
             else:
                 a = np.array(a, _dtype2(kind, m, a.dtype.itemsize), copy=False)
-                a *= (2**m - 1) // (2**n - 1)
+                a *= (2 ** m - 1) // (2 ** n - 1)
                 return a
         else:
             # upscale to a multiple of n bits,
@@ -157,13 +175,13 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
             o = (m // n + 1) * n
             if copy:
                 b = np.empty(a.shape, _dtype2(kind, o))
-                np.multiply(a, (2**o - 1) // (2**n - 1), out=b, dtype=b.dtype)
-                b //= 2**(o - m)
+                np.multiply(a, (2 ** o - 1) // (2 ** n - 1), out=b, dtype=b.dtype)
+                b //= 2 ** (o - m)
                 return b
             else:
                 a = np.array(a, _dtype2(kind, o, a.dtype.itemsize), copy=False)
-                a *= (2**o - 1) // (2**n - 1)
-                a //= 2**(o - m)
+                a *= (2 ** o - 1) // (2 ** n - 1)
+                a //= 2 ** (o - m)
                 return a
 
     kind = dtypeobj.kind
@@ -171,31 +189,31 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
     itemsize = dtypeobj.itemsize
     itemsize_in = dtypeobj_in.itemsize
 
-    if kind == 'b':
+    if kind == "b":
         # to binary image
         if kind_in in "fi":
             sign_loss()
         prec_loss()
         return image > dtype_in(dtype_range[dtype_in][1] / 2)
 
-    if kind_in == 'b':
+    if kind_in == "b":
         # from binary image, to float and to integer
         result = image.astype(dtype)
-        if kind != 'f':
+        if kind != "f":
             result *= dtype(dtype_range[dtype][1])
         return result
 
-    if kind in 'ui':
+    if kind in "ui":
         imin = np.iinfo(dtype).min
         imax = np.iinfo(dtype).max
-    if kind_in in 'ui':
+    if kind_in in "ui":
         imin_in = np.iinfo(dtype_in).min
         imax_in = np.iinfo(dtype_in).max
 
-    if kind_in == 'f':
+    if kind_in == "f":
         if np.min(image) < -1.0 or np.max(image) > 1.0:
             raise ValueError("Images of type float must be between -1 and 1.")
-        if kind == 'f':
+        if kind == "f":
             # floating point -> floating point
             if itemsize_in > itemsize:
                 prec_loss()
@@ -204,10 +222,9 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
         # floating point -> integer
         prec_loss()
         # use float type that can represent output integer type
-        image = np.array(image, _dtype(itemsize, dtype_in,
-                                       np.float32, np.float64))
+        image = np.array(image, _dtype(itemsize, dtype_in, np.float32, np.float64))
         if not uniform:
-            if kind == 'u':
+            if kind == "u":
                 image *= imax
             else:
                 image *= imax - imin
@@ -215,7 +232,7 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
                 image /= 2.0
             np.rint(image, out=image)
             np.clip(image, imin, imax, out=image)
-        elif kind == 'u':
+        elif kind == "u":
             image *= imax + 1
             np.clip(image, 0, imax, out=image)
         else:
@@ -224,18 +241,17 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
             np.clip(image, imin, imax, out=image)
         return image.astype(dtype)
 
-    if kind == 'f':
+    if kind == "f":
         # integer -> floating point
         if itemsize_in >= itemsize:
             prec_loss()
         # use float type that can exactly represent input integers
-        image = np.array(image, _dtype(itemsize_in, dtype,
-                                       np.float32, np.float64))
-        if normalise: #normalise floats by maximum value of int type
-            if kind_in == 'u':
+        image = np.array(image, _dtype(itemsize_in, dtype, np.float32, np.float64))
+        if normalise:  # normalise floats by maximum value of int type
+            if kind_in == "u":
                 image /= imax_in
                 # DirectX uses this conversion also for signed ints
-                #if imin_in:
+                # if imin_in:
                 #    np.maximum(image, -1.0, out=image)
             else:
                 image *= 2.0
@@ -243,8 +259,8 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
                 image /= imax_in - imin_in
         return image.astype(dtype)
 
-    if kind_in == 'u':
-        if kind == 'i':
+    if kind_in == "u":
+        if kind == "i":
             # unsigned integer -> signed integer
             image = _scale(image, 8 * itemsize_in, 8 * itemsize - 1)
             return image.view(dtype)
@@ -252,18 +268,18 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
             # unsigned integer -> unsigned integer
             return _scale(image, 8 * itemsize_in, 8 * itemsize)
 
-    if kind == 'u':
+    if kind == "u":
         # signed integer -> unsigned integer
         sign_loss()
         image = _scale(image, 8 * itemsize_in - 1, 8 * itemsize)
         result = np.empty(image.shape, dtype)
-        np.maximum(image, 0, out=result, dtype=image.dtype, casting='unsafe')
+        np.maximum(image, 0, out=result, dtype=image.dtype, casting="unsafe")
         return result
 
     # signed integer -> signed integer
     if itemsize_in > itemsize:
         return _scale(image, 8 * itemsize_in - 1, 8 * itemsize - 1)
-    image = image.astype(_dtype2('i', itemsize * 8))
+    image = image.astype(_dtype2("i", itemsize * 8))
     image -= imin_in
     image = _scale(image, 8 * itemsize_in, 8 * itemsize, copy=False)
     image += imin
