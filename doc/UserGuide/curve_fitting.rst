@@ -32,6 +32,12 @@ In order of increasing complexity, the Stoner package supports the following:
 -   `Orthogonal distance regression`_
     Finally, if your data has uncertainties in both *x* and *y* you may want to use the :py:meth:`Data.odr` method to do an analysis that
     minimizes the distance of the model function in both *x* and *y*.
+-   `Differential Evolution Algorithm`
+    Differential evolution algorithms attempt to find optimal fits by evaluating a population of possible solutions and then combining those that
+    were scored by some costing function to be the best fits - thereby creating a new population of possible (hopefully better) solutions. In general
+    some level of random fluctuation is permitted to stop the minimizer getting stuck in local minima. These algorithms can be effective when there are a
+    karge number of parametgers to search or the cost is not a smooth function of the parmaeters and thus cannot be differentiated. The algorithm here
+    uses a standard weighted variance as the cost function - like *lmfit* and *curve_fit* do.
 
 Why Use the Stoner Package Fitting Wrappers?
 --------------------------------------------
@@ -222,6 +228,24 @@ The :py:meth:`Data.odr` method allows uncertainities in *x* and *y* to be specif
 a *sigma* parameter is given, then that is used instead. If they are either explictly set to **None** or not given, then the :py:attr:`Data.setas` attribute is
 used instead.
 
+Differential Evolution Algorithm
+--------------------------------
+
+When the number of parameters gets large it can get increasingly difficult to get fits using the techniques above. In these situations, the differential evolution
+approach may be valuable. The :py:meth:`Stoner.Data.differential_evolution` method provides a wrapper around the :py:func:`scipt.optimize.differential_evolution`
+minimizer with the advantage that the model sepcification, and calling signatures are essentially the same as for the other fitting functions and thus there is
+little programmer overhead to switching to it:
+
+.. plot:: samples/differential_evolution_simple.py
+    :include-source:
+    :outname: diffev2
+
+Intrinsically, the differential evolution algorithm does not caculate a variance-covariance matrix since it never needs to find the gradient of the :math:`\chi^2`
+of the fit with the parameters. In order to provide such an estimate, the :py:meth:`Stroner.Data.differential_evolution` method carries out a standard least-squares
+non-linear fit (using :py:func:`scipy.optimize.curve_fit`) as a second stage once :py:func:`scipy.optimize.differential_evolution` has foind a likely goot fitting
+set of parameters. This hybrid approach allows a good fit localtion to be identified, but also the physically useful fitting errors to be estimated.
+
+
 Included Fitting Models
 =======================
 
@@ -378,7 +402,9 @@ returns the configured model and also a 2D array of values to feed as the starti
 on the presence and values of the *vary* and *step* keys, tnhe code will either perform a single fitting attempt, or do a mapping of the
 :math:`\\chi^2` goodeness of fit.
 
-Since the :py:meth:`Data.odr` supports the same interface, it can be used as a drop-in replacement as well.
+Since both the :py:meth:`Data.odr` and :py:meth:`Data.differential_evolution` supports the same interface, either can be used as a
+drop-in replacement as well. (Although it is interesting to note that in this example, they give quite different results - a matter of interest
+for the physics!)
 
 .. plot:: samples/odr_demo.py
     :include-source:

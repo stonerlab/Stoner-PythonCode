@@ -1040,6 +1040,7 @@ class FittingMixin(object):
         See Also:
             :py:meth:`Stoner.Data.lmfit`
             :py:meth:`Stoner.Data.odr`
+            :py:meth:`Stoner.Data.differential_evolution`
             User guide section :ref:`curve_fit_guide`
         """
 
@@ -1150,7 +1151,8 @@ class FittingMixin(object):
 
     def differential_evolution(self, model, xcol=None, ycol=None, p0=None, sigma=None, **kargs):
         """Fit model to the data using a differential evolution algorithm.
-          Args:
+
+        Args:
             model (lmfit.Model): An instance of an lmfit.Model that represents the model to be fitted to the data
             xcol (index or None): Columns to be used for the x  data for the fitting. If not givem defaults to the
             :py:attr:`Stoner.Core.DataFile.setas` x column
@@ -1178,6 +1180,22 @@ class FittingMixin(object):
             - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
             - "full"    a tuple of the fit instance and the row.
             - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally as a column of data.
+
+        This function is essentially a wrapper around the :py:func:`scipy.optimize.differential_evolution` funtion that presents the same interface as the other
+        Stoner package curve fitting functions. The parent function, however, does not provide the variance-covariance matrix to estimate the fitting errors. To
+        work around this, this function does the initial fit with the differential evolution, but then uses that to give a starting vector to a call to
+        :py:func:`scipy.optimize.curve_fit` to calculate the covariance matrix.
+
+        See Also:
+            :py:meth:Stoner.Data.curve_fit
+            :py:meth:`Stoner.Data.lmfit`
+            :py:meth:`Stoner.Data.odr`
+            User guide section :ref:`curve_fit_guide`
+
+        Example:
+            .. plot:: samples/differential_evolution_simple.py
+                :include-source:
+                :outname: diffev1
         """
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
@@ -1260,6 +1278,7 @@ class FittingMixin(object):
         See Also:
             :py:meth:`Stoner.Data.curve_fit`
             :py:meth:`Stoner.Data.odr`
+            :py:meth:`Stoner.Data.differential_evolution`
             User guide section :ref:`fitting_with_limits`
 
         .. note::
