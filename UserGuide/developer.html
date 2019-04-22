@@ -60,7 +60,7 @@
 From the end-user perspective, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> class contains several attributes that behave like data types that the user is familiar with:</p>
 <ul class="simple">
 <li>data
-Although this is essentially a numpy array, it is in fact a subclass of a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code>, with an extra attribute
+Although this is essentially a numpy array, it is in fact a subclass of a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.16)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code>, with an extra attribute
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataArray.setas</span></code> that is used to label the columns of data and to track assignments to types of columns (x,y,z etc). As
 <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code> can thus track what columns mean in cartersian co-ordinate systems, it can provide an on-the-fly conversion to polar
 co-ordinate sustems. <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code> also keeps track of the row numbers of the array and can label its rows with the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataArray.i</span></code>
@@ -207,7 +207,7 @@ strings so that the API documentation is picked up correctly.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

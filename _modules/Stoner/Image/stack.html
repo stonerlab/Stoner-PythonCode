@@ -47,27 +47,29 @@
   <h1>Source code for Stoner.Image.stack</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Provide variants of :class:`Stoner.Image.ImageFolder` that store images efficiently in 3D numpy arrays.&quot;&quot;&quot;</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ImageStackMixin&quot;</span><span class="p">,</span><span class="s2">&quot;ImageStack2&quot;</span><span class="p">,</span><span class="s2">&quot;ImageStack&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ImageStackMixin&quot;</span><span class="p">,</span> <span class="s2">&quot;ImageStack2&quot;</span><span class="p">,</span> <span class="s2">&quot;ImageStack&quot;</span><span class="p">]</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">numbers</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">skimage.viewer</span> <span class="k">import</span> <span class="n">CollectionViewer</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span>  <span class="n">string_types</span><span class="p">,</span><span class="n">int_types</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">int_types</span>
 <span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">all_type</span>
-<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">ImageArray</span><span class="p">,</span><span class="n">dtype_range</span><span class="p">,</span> <span class="n">ImageFile</span>
-<span class="kn">from</span> <span class="nn">.folders</span> <span class="k">import</span> <span class="n">ImageFolder</span><span class="p">,</span><span class="n">ImageFolderMixin</span>
-<span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">regexpDict</span><span class="p">,</span><span class="n">metadataObject</span><span class="p">,</span><span class="n">typeHintedDict</span>
+<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">ImageArray</span><span class="p">,</span> <span class="n">dtype_range</span><span class="p">,</span> <span class="n">ImageFile</span>
+<span class="kn">from</span> <span class="nn">.folders</span> <span class="k">import</span> <span class="n">ImageFolder</span><span class="p">,</span> <span class="n">ImageFolderMixin</span>
+<span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">regexpDict</span><span class="p">,</span> <span class="n">metadataObject</span><span class="p">,</span> <span class="n">typeHintedDict</span>
 <span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="k">import</span> <span class="n">DiskBasedFolder</span><span class="p">,</span> <span class="n">baseFolder</span>
 <span class="kn">from</span> <span class="nn">Stoner.Image.util</span> <span class="k">import</span> <span class="n">convert</span>
 
-<span class="n">IM_SIZE</span><span class="o">=</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span><span class="mi">672</span><span class="p">)</span> <span class="c1">#Standard Kerr image size</span>
-<span class="n">AN_IM_SIZE</span><span class="o">=</span><span class="p">(</span><span class="mi">554</span><span class="p">,</span><span class="mi">672</span><span class="p">)</span> <span class="c1">#Kerr image with annotation not cropped</span>
+<span class="n">IM_SIZE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">672</span><span class="p">)</span>  <span class="c1"># Standard Kerr image size</span>
+<span class="n">AN_IM_SIZE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">554</span><span class="p">,</span> <span class="mi">672</span><span class="p">)</span>  <span class="c1"># Kerr image with annotation not cropped</span>
+
 
 <span class="k">def</span> <span class="nf">_load_ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-    <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Img_num&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span> <span class="c1"># REemove img_num if it exists</span>
+    <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Img_num&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># REemove img_num if it exists</span>
     <span class="k">return</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">_average_list</span><span class="p">(</span><span class="n">listob</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Average a list of items picking an appropriate average given the type.</span>
@@ -76,84 +78,86 @@
 <span class="sd">    if listob contains nested lists or dicts of numbers then try to average</span>
 <span class="sd">    individual items within the lists/keys.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">listob</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">listob</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_type</span><span class="p">(</span><span class="n">listob</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">listob</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
-        <span class="k">return</span> <span class="kc">None</span> <span class="c1">#all of the list isn&#39;t the same type</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_type</span><span class="p">(</span><span class="n">listob</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">listob</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+        <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># all of the list isn&#39;t the same type</span>
     <span class="n">typex</span> <span class="o">=</span> <span class="n">listob</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">):</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">listob</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">listob</span><span class="p">))</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">listob</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">listob</span><span class="p">))</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">listob</span><span class="p">))</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span> <span class="c1">#probably incompatible array sizes</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># probably incompatible array sizes</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span><span class="nb">list</span><span class="p">)):</span> <span class="c1">#recursively go through sub lists averaging values</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>  <span class="c1"># recursively go through sub lists averaging values</span>
         <span class="n">nl</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">listob</span><span class="p">)</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="n">_average_list</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nl</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span> <span class="c1">#recursively go through dictionary keys averaging values</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># recursively go through dictionary keys averaging values</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">typex</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_average_list</span><span class="p">([</span><span class="n">listob</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listob</span><span class="p">])</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">i</span><span class="o">==</span><span class="n">typex</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listob</span><span class="p">):</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">listob</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#all the same text return that string</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">typex</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listob</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">listob</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># all the same text return that string</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">return</span> <span class="n">ret</span>
 
+
 <div class="viewcode-block" id="ImageStackMixin"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.ImageStackMixin">[docs]</a><span class="k">class</span> <span class="nc">ImageStackMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Implement an interface for a baseFolder to store images in a 3D numpy array for faster access.&quot;&quot;&quot;</span>
 
-    <span class="n">_defaults</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span><span class="n">ImageFile</span><span class="p">}</span>
+    <span class="n">_defaults</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">ImageFile</span><span class="p">}</span>
 
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialise an ImageStack&#39;s pricate data and provide a type argument.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_3d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">([]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">=</span><span class="n">regexpDict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="o">=</span><span class="nb">list</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_3d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">([]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">regexpDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span> <span class="c1"># No further initialisation</span>
-        <span class="n">other</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">ImageStackMixin</span><span class="p">):</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">_stack</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">_metadata</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">_names</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">_sizes</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">ImageFolder</span><span class="p">):</span> <span class="c1">#ImageFolder can already init from itself</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span> <span class="c1">#Initialise with 3D numpy array, first coordinate is number of images</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">=</span><span class="n">other</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># No further initialisation</span>
+        <span class="n">other</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ImageStackMixin</span><span class="p">):</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">_stack</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">_metadata</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">_names</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">_sizes</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ImageFolder</span><span class="p">):</span>  <span class="c1"># ImageFolder can already init from itself</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="p">):</span>  <span class="c1"># Initialise with 3D numpy array, first coordinate is number of images</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="n">other</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">shape</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span><span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Untitled-</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Untitled-</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
             <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">typeHintedDict</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">typeHintedDict</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">other</span> <span class="o">=</span> <span class="p">[</span><span class="n">ImageFile</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">other</span><span class="p">]</span>
             <span class="k">except</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Failed to initialise ImageStack with list input&#39;</span><span class="p">)</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Failed to initialise ImageStack with list input&quot;</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">ot</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ot</span><span class="p">)</span>
-            <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#Bit of a hack to get rid of initialised zeros data -</span>
-                          <span class="c1">#this poss needs changing in the append method</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Bit of a hack to get rid of initialised zeros data -</span>
+            <span class="c1"># this poss needs changing in the append method</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__lookup__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__lookup__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Stub for other classes to implement.</span>
 
 <span class="sd">        Parameters:</span>
@@ -165,15 +169,15 @@
 <span class="sd">        Note:</span>
 <span class="sd">            We&#39;re in the base class here, so we don&#39;t call super() if we can&#39;t handle this, then we&#39;re stuffed!</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">int_types</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">int_types</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">[:,:,</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">name</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is out of range for accessing the ImageStack.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">name</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
-            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="c1">#return the matching index of the name</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># return the matching index of the name</span>
 
     <span class="k">def</span> <span class="nf">__names__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Stub method to return a list of names of all objects that can be indexed for __getter__.</span>
@@ -183,7 +187,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span>
 
-    <span class="k">def</span> <span class="nf">__getter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Stub method to do whatever is needed to transform a key to a metadataObject.</span>
 
 <span class="sd">        Parameters:</span>
@@ -204,16 +208,16 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1"># If we don&#39;t seem to have the name then see if we can fall back to something else like a DiskBasedFolder</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">instantiate</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instantiate</span><span class="p">,</span><span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">instantiate</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># If we don&#39;t seem to have the name then see if we can fall back to something else like a DiskBasedFolder</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ImageStackMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">instantiate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instantiate</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">instantiate</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()[</span><span class="n">idx</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">instance</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instantiate</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instantiate</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_from_object_attrs</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__setter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">force_insert</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__setter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">force_insert</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Stub to setting routine to store a metadataObject.</span>
 
 <span class="sd">        Parameters:</span>
@@ -223,53 +227,52 @@
 <span class="sd">        Note:</span>
 <span class="sd">            We&#39;re in the base class here, so we don&#39;t call super() if we can&#39;t handle this, then we&#39;re stuffed!</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">int_types</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">int_types</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">make_name</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_name</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">make_name</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_name</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">force_insert</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Fake force insert&quot;</span><span class="p">)</span>
-            <span class="n">idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1">#Ok we&#39;re appending here</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span> <span class="c1"># Append with a filename, call __getter__</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># self.__getter__ will also insert if necessary</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># Ok we&#39;re appending here</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>  <span class="c1"># Append with a filename, call __getter__</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># self.__getter__ will also insert if necessary</span>
                 <span class="k">return</span> <span class="kc">None</span>
-            <span class="k">else</span><span class="p">:</span> <span class="c1"># Append with real value</span>
-                <span class="n">idx</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__inserter__</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># Append with real value</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__inserter__</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="c1">#ensure type if a bare numpy array was given</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="s2">&quot;image&quot;</span><span class="p">):</span>
-            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">image</span>
-        <span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span>
-        <span class="n">pag</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">)</span>
-        <span class="n">new_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="o">+</span><span class="p">(</span><span class="n">pag</span><span class="p">,)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># ensure type if a bare numpy array was given</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">image</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">pag</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">)</span>
+        <span class="n">new_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">+</span> <span class="p">(</span><span class="n">pag</span><span class="p">,)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resize_stack</span><span class="p">(</span><span class="n">new_size</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">[:</span><span class="n">row</span><span class="p">,:</span><span class="n">col</span><span class="p">,</span><span class="n">idx</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">[:</span><span class="n">row</span><span class="p">,</span> <span class="p">:</span><span class="n">col</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">__inserter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ix</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__inserter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provide an efficient insert into the stack.</span>
 
 <span class="sd">        The default implementation is rather slow about inserting since it has to clear the data folder and then rebuild it entry by entry. This does</span>
 <span class="sd">        a simple insert.&quot;&quot;&quot;</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">ImageFile</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="c1">#ensure we have some metadata</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">,</span><span class="n">ix</span><span class="p">,</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">new_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="o">+</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">),)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">ImageFile</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># ensure we have some metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">new_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">),)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resize_stack</span><span class="p">(</span><span class="n">new_size</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">,</span><span class="n">ix</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">row</span><span class="p">,</span><span class="n">col</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">[:</span><span class="n">row</span><span class="p">,:</span><span class="n">col</span><span class="p">,</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">[:</span><span class="n">row</span><span class="p">,</span> <span class="p">:</span><span class="n">col</span><span class="p">,</span> <span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
 
-
-    <span class="k">def</span> <span class="nf">__deleter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ix</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__deleter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ix</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Deletes an object from the baseFolder.</span>
 
 <span class="sd">        Parameters:</span>
@@ -279,12 +282,12 @@
 <span class="sd">            We&#39;re in the base class here, so we don&#39;t call super() if we can&#39;t handle this, then we&#39;re stuffed!</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
-        <span class="n">name</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">())[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">())[</span><span class="n">idx</span><span class="p">]</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">,</span><span class="n">idx</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">,</span><span class="n">ix</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__clear__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;Clears all stored :py:class:`Stoner.Core.metadataObject` instances stored.</span>
@@ -293,50 +296,52 @@
 <span class="sd">            We&#39;re in the base class here, so we don&#39;t call super() if we can&#39;t handle this, then we&#39;re stuffed!</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">=</span><span class="n">regexpDict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_3d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">([]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">regexpDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_3d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">([]))</span>
 
-<span class="c1">#    def __clone__(self,other=None,attrs_only=False):</span>
-<span class="c1">#        &quot;&quot;&quot;Do whatever is necessary to copy attributes from self to other.</span>
-<span class="c1">#</span>
-<span class="c1">#        Note:</span>
-<span class="c1">#            We&#39;re in the base class here, so we don&#39;t call super() if we can&#39;t handle this, then we&#39;re stuffed!</span>
-<span class="c1">#        &quot;&quot;&quot;</span>
-<span class="c1">#        if other is None:</span>
-<span class="c1">#            other=self.__class__()</span>
-<span class="c1">##        if not attrs_only:</span>
-<span class="c1">##            other._metadata=copy.deepcopy(self._metadata)</span>
-<span class="c1">##            other._stack=copy.deepcopy(self._stack)</span>
-<span class="c1">##            other._names=copy.deepcopy(self._names)</span>
-<span class="c1">##            other._sizes=np.copy(self._sizes)</span>
-<span class="c1">#        return super(ImageStackMixin,self).__clone__(other=other,attrs_only=attrs_only)</span>
+    <span class="c1">#    def __clone__(self,other=None,attrs_only=False):</span>
+    <span class="c1">#        &quot;&quot;&quot;Do whatever is necessary to copy attributes from self to other.</span>
+    <span class="c1">#</span>
+    <span class="c1">#        Note:</span>
+    <span class="c1">#            We&#39;re in the base class here, so we don&#39;t call super() if we can&#39;t handle this, then we&#39;re stuffed!</span>
+    <span class="c1">#        &quot;&quot;&quot;</span>
+    <span class="c1">#        if other is None:</span>
+    <span class="c1">#            other=self.__class__()</span>
+    <span class="c1">##        if not attrs_only:</span>
+    <span class="c1">##            other._metadata=copy.deepcopy(self._metadata)</span>
+    <span class="c1">##            other._stack=copy.deepcopy(self._stack)</span>
+    <span class="c1">##            other._names=copy.deepcopy(self._names)</span>
+    <span class="c1">##            other._sizes=np.copy(self._sizes)</span>
+    <span class="c1">#        return super(ImageStackMixin,self).__clone__(other=other,attrs_only=attrs_only)</span>
 
     <span class="c1">###########################################################################</span>
     <span class="c1">###################      Private methods     ##############################</span>
 
-    <span class="k">def</span> <span class="nf">_instantiate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">idx</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_instantiate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reconstructs the data type.&quot;&quot;&quot;</span>
-        <span class="n">r</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span><span class="n">ImageArray</span><span class="p">):</span> <span class="c1">#IF the underlying type is an ImageArray, then return as a view with extra metadata</span>
-            <span class="n">tmp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">[:</span><span class="n">r</span><span class="p">,:</span><span class="n">c</span><span class="p">,</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span> <span class="c1">#Otherwise it must be something with a data attribute</span>
-            <span class="n">tmp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">()</span>
-            <span class="n">tmp</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">[:</span><span class="n">r</span><span class="p">,:</span><span class="n">c</span><span class="p">,</span><span class="n">idx</span><span class="p">]</span>
-        <span class="n">tmp</span><span class="o">.</span><span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()[</span><span class="n">idx</span><span class="p">]]</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">ImageArray</span>
+        <span class="p">):</span>  <span class="c1"># IF the underlying type is an ImageArray, then return as a view with extra metadata</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">[:</span><span class="n">r</span><span class="p">,</span> <span class="p">:</span><span class="n">c</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Otherwise it must be something with a data attribute</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">()</span>
+            <span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">[:</span><span class="n">r</span><span class="p">,</span> <span class="p">:</span><span class="n">c</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()[</span><span class="n">idx</span><span class="p">]]</span>
         <span class="n">tmp</span><span class="o">.</span><span class="n">_fromstack</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">tmp</span>
 
-    <span class="k">def</span> <span class="nf">_resize_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">new_size</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_resize_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a new stack with a new size.&quot;&quot;&quot;</span>
-        <span class="n">old_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">if</span> <span class="n">old_size</span><span class="o">==</span><span class="n">new_size</span><span class="p">:</span>
+        <span class="n">old_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="n">old_size</span> <span class="o">==</span> <span class="n">new_size</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">new_size</span>
-        <span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="p">,</span><span class="n">pag</span><span class="o">=</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">o</span><span class="p">,</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span><span class="p">,</span><span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">old_size</span><span class="p">,</span><span class="n">new_size</span><span class="p">)])</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">pag</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">old_size</span><span class="p">,</span> <span class="n">new_size</span><span class="p">)])</span>
 
-        <span class="n">new</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">new_size</span><span class="p">)</span>
-        <span class="n">new</span><span class="p">[:</span><span class="n">row</span><span class="p">,:</span><span class="n">col</span><span class="p">,:</span><span class="n">pag</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">[:</span><span class="n">row</span><span class="p">,:</span><span class="n">col</span><span class="p">,:</span><span class="n">pag</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">=</span><span class="n">new</span>
-        <span class="k">return</span> <span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="p">,</span><span class="n">pag</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">new_size</span><span class="p">)</span>
+        <span class="n">new</span><span class="p">[:</span><span class="n">row</span><span class="p">,</span> <span class="p">:</span><span class="n">col</span><span class="p">,</span> <span class="p">:</span><span class="n">pag</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">[:</span><span class="n">row</span><span class="p">,</span> <span class="p">:</span><span class="n">col</span><span class="p">,</span> <span class="p">:</span><span class="n">pag</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="n">new</span>
+        <span class="k">return</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">pag</span>
 
     <span class="c1">###########################################################################</span>
     <span class="c1">################### Properties of ImageStack ##############################</span>
@@ -344,29 +349,28 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">imarray</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;Produce the 3D stack of images - as [image,x,y]&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">,(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
     <span class="nd">@imarray</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">imarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="n">value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_3d</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">value</span><span class="p">,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">imarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_3d</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
     <span class="c1">###########################################################################</span>
     <span class="c1">###################         Public  methods         #######################</span>
 
-
-<div class="viewcode-block" id="ImageStackMixin.asfloat"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.ImageStackMixin.asfloat">[docs]</a>    <span class="k">def</span> <span class="nf">asfloat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageStackMixin.asfloat"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.ImageStackMixin.asfloat">[docs]</a>    <span class="k">def</span> <span class="nf">asfloat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert stack to floating point type.</span>
 <span class="sd">        Analagous behaviour to ImageFile.asfloat()</span>
 
@@ -383,13 +387,15 @@
 <span class="sd">            clip_negative(bool):</span>
 <span class="sd">                clip range further to 0,1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span><span class="o">==</span><span class="s1">&#39;f&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="n">normalise</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;clip_neg&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;clip_neg argument renamed to clip_negative in ImageStack2. This will cause an error in future versions of the Stoner Package.&quot;</span><span class="p">)</span>
-            <span class="n">clip_negative</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;clip_neg&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;clip_neg argument renamed to clip_negative in ImageStack2. This will cause an error in future versions of the Stoner Package.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">clip_negative</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;clip_neg&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">clip</span> <span class="ow">or</span> <span class="n">clip_negative</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clip_intensity</span><span class="p">(</span><span class="n">clip_negative</span><span class="o">=</span><span class="n">clip_negative</span><span class="p">)</span></div>
 
@@ -422,7 +428,7 @@
     <span class="k">def</span> <span class="nf">allmeta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;List of complete metadata for each image in ImageStack&quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;allmeta is depricated in favour of ImageStack.metadata.all&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">all</span><span class="o">=</span><span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">all</span> <span class="o">=</span> <span class="n">value</span>
 
 <div class="viewcode-block" id="ImageStackMixin.correct_drifts"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.ImageStackMixin.correct_drifts">[docs]</a>    <span class="k">def</span> <span class="nf">correct_drifts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refindex</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">upsample_factor</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Align images to correct for image drift.</span>
@@ -439,9 +445,8 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;correct_drift is a depricated method for an image stack - consider using align.&quot;</span><span class="p">)</span>
-        <span class="n">ref</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">refindex</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">apply_all</span><span class="p">(</span><span class="s1">&#39;correct_drift&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-                     <span class="n">upsample_factor</span><span class="o">=</span><span class="n">upsample_factor</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span></div>
+        <span class="n">ref</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">refindex</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_all</span><span class="p">(</span><span class="s2">&quot;correct_drift&quot;</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">upsample_factor</span><span class="o">=</span><span class="n">upsample_factor</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ImageStackMixin.crop_stack"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.ImageStackMixin.crop_stack">[docs]</a>    <span class="k">def</span> <span class="nf">crop_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">box</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Crop the imagestack.</span>
@@ -462,6 +467,7 @@
         <span class="sd">&quot;&quot;&quot;Pass through to :py:meth:`Stoner.Image.ImageFolder.view`&quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">weanr</span><span class="p">(</span><span class="s2">&quot;show() is depricated in favour of ImageFolder.view()&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">()</span></div></div>
+
 
 <span class="k">class</span> <span class="nc">StackAnalysisMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Add some analysis capability to ImageStack. These functions may override</span>
@@ -488,24 +494,24 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">asfloat</span><span class="p">(</span><span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">bg</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">background</span><span class="p">]</span>
+            <span class="n">bg</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">background</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bg</span><span class="o">.</span><span class="n">ImageFile</span><span class="p">):</span>
-            <span class="n">bg</span><span class="o">=</span><span class="n">bg</span><span class="o">.</span><span class="n">image</span>
+            <span class="n">bg</span> <span class="o">=</span> <span class="n">bg</span><span class="o">.</span><span class="n">image</span>
         <span class="n">bg</span> <span class="o">=</span> <span class="n">bg</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span><span class="o">.</span><span class="n">asfloat</span><span class="p">(</span><span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">bg</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">bg</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+        <span class="n">bg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">bg</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="n">contrast</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">-</span> <span class="n">bg</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span>
         <span class="k">if</span> <span class="n">clip_intensity</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clip_intensity</span><span class="p">()</span>
 
 
-
-<div class="viewcode-block" id="ImageStack"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.ImageStack">[docs]</a><span class="k">class</span> <span class="nc">ImageStack</span><span class="p">(</span><span class="n">StackAnalysisMixin</span><span class="p">,</span> <span class="n">ImageStackMixin</span><span class="p">,</span><span class="n">ImageFolderMixin</span><span class="p">,</span><span class="n">DiskBasedFolder</span><span class="p">,</span><span class="n">baseFolder</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageStack"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.ImageStack">[docs]</a><span class="k">class</span> <span class="nc">ImageStack</span><span class="p">(</span><span class="n">StackAnalysisMixin</span><span class="p">,</span> <span class="n">ImageStackMixin</span><span class="p">,</span> <span class="n">ImageFolderMixin</span><span class="p">,</span> <span class="n">DiskBasedFolder</span><span class="p">,</span> <span class="n">baseFolder</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;An akternative implementation of an image stack based on baseFolder.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
-<span class="n">ImageStack2</span><span class="o">=</span><span class="n">ImageStack</span> <span class="c1">#For compatibility with 0.8.x</span>
+
+<span class="n">ImageStack2</span> <span class="o">=</span> <span class="n">ImageStack</span>  <span class="c1"># For compatibility with 0.8.x</span>
 </pre></div>
 
           </div>
@@ -549,7 +555,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

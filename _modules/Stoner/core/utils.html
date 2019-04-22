@@ -49,12 +49,13 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Utility functions to support :py:mod:`Stoner.Core`.&quot;&quot;&quot;</span>
 
-<span class="n">__all__</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;copy_into&quot;</span><span class="p">,</span><span class="s2">&quot;itersubclasses&quot;</span><span class="p">,</span><span class="s2">&quot;tab_delimited&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;copy_into&quot;</span><span class="p">,</span> <span class="s2">&quot;itersubclasses&quot;</span><span class="p">,</span> <span class="s2">&quot;tab_delimited&quot;</span><span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 
-<div class="viewcode-block" id="copy_into"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.copy_into.html#Stoner.core.utils.copy_into">[docs]</a><span class="k">def</span> <span class="nf">copy_into</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="n">dest</span><span class="p">):</span>
+
+<div class="viewcode-block" id="copy_into"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.copy_into.html#Stoner.core.utils.copy_into">[docs]</a><span class="k">def</span> <span class="nf">copy_into</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Copies the data associated with source to dest.</span>
 
 <span class="sd">    Args:</span>
@@ -68,15 +69,16 @@
 <span class="sd">    overwrites the attributes that represent the data in the DataFile.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dest</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">dest</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">source</span><span class="o">.</span><span class="n">setas</span>
+    <span class="n">dest</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">setas</span>
     <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">_public_attrs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="n">attr</span><span class="p">)</span> <span class="ow">or</span> <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="n">attr</span><span class="p">))</span> <span class="ow">or</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">or</span> <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span> <span class="ow">or</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]:</span>
             <span class="k">continue</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span><span class="n">attr</span><span class="p">,</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="n">attr</span><span class="p">)))</span>
-        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span> <span class="c1"># Deepcopying failed, so just copy a reference instead</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span><span class="n">attr</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="n">attr</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">attr</span><span class="p">)))</span>
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>  <span class="c1"># Deepcopying failed, so just copy a reference instead</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">dest</span></div>
+
 
 <div class="viewcode-block" id="tab_delimited"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.tab_delimited.html#Stoner.core.utils.tab_delimited">[docs]</a><span class="k">class</span> <span class="nc">tab_delimited</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">Dialect</span><span class="p">):</span>
 
@@ -112,8 +114,9 @@
 <span class="sd">    [&#39;type&#39;, ...&#39;tuple&#39;, ...]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;itersubclasses must be called with &#39;</span> <span class="s1">&#39;new-style classes, not </span><span class="si">%.100r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">cls</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">_seen</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">_seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;itersubclasses must be called with &quot;</span> <span class="s2">&quot;new-style classes, not </span><span class="si">%.100r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">cls</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_seen</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">subs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>  <span class="c1"># fails only when cls is type</span>
@@ -167,7 +170,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

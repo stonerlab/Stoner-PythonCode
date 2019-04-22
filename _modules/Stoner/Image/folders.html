@@ -47,53 +47,56 @@
   <h1>Source code for Stoner.Image.folders</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Implements a baseFolder type structure for working with collections of images.&quot;&quot;&quot;</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_generator&quot;</span><span class="p">,</span><span class="s2">&quot;ImageFolderMixin&quot;</span><span class="p">,</span><span class="s2">&quot;ImageFolder&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_generator&quot;</span><span class="p">,</span> <span class="s2">&quot;ImageFolderMixin&quot;</span><span class="p">,</span> <span class="s2">&quot;ImageFolder&quot;</span><span class="p">]</span>
 <span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">ImageArray</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="k">import</span> <span class="n">DiskBasedFolder</span><span class="p">,</span> <span class="n">baseFolder</span>
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span>
-<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">isiterable</span><span class="p">,</span><span class="n">islike_list</span>
-<span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">ImageFile</span><span class="p">,</span><span class="n">ImageArray</span>
+<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">isiterable</span><span class="p">,</span> <span class="n">islike_list</span>
+<span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">ImageFile</span><span class="p">,</span> <span class="n">ImageArray</span>
 
 <span class="kn">from</span> <span class="nn">skimage.viewer</span> <span class="k">import</span> <span class="n">CollectionViewer</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
+
 <span class="k">def</span> <span class="nf">_load_ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simple meothd to load an image array.&quot;&quot;&quot;</span>
-    <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;img_num&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;img_num&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="_generator"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders._generator.html#Stoner.Image._generator">[docs]</a><span class="k">class</span> <span class="nc">_generator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;A helper class to iterator over ImageFolder yet remember it&#39;s own length.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fldr</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fldr</span><span class="o">=</span><span class="n">fldr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">fldr</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fldr</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fldr</span> <span class="o">=</span> <span class="n">fldr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fldr</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span>
 
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ix</span><span class="o">=</span><span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ix</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ix</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ix</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ix</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ix</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ix</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ix</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">return</span> <span class="n">ret</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">(</span><span class="s2">&quot;Finished iterating Folder.&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
-        <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fldr</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span><span class="s2">&quot;image&quot;</span><span class="p">):</span>
-            <span class="n">ret</span><span class="o">=</span><span class="n">ret</span><span class="o">.</span><span class="n">image</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fldr</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">image</span>
         <span class="k">return</span> <span class="n">ret</span>
 
 <div class="viewcode-block" id="_generator.next"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders._generator.html#Stoner.Image._generator.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__next__</span><span class="p">()</span></div></div>
+
 
 <div class="viewcode-block" id="ImageFolderMixin"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin">[docs]</a><span class="k">class</span> <span class="nc">ImageFolderMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
@@ -125,24 +128,22 @@
 <span class="sd">        readlist (bool): Whether to read the directory immediately on creation. Default is True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">_defaults</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span><span class="n">ImageArray</span><span class="p">,</span>
-              <span class="s2">&quot;pattern&quot;</span><span class="p">:[</span><span class="s2">&quot;*.png&quot;</span><span class="p">,</span><span class="s2">&quot;*.tiff&quot;</span><span class="p">,</span><span class="s2">&quot;*.jpeg&quot;</span><span class="p">,</span><span class="s2">&quot;*.jpg&quot;</span><span class="p">,</span><span class="s2">&quot;*.tif&quot;</span><span class="p">],</span>
-              <span class="p">}</span>
-    <span class="n">_no_defaults</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;flat&quot;</span><span class="p">,]</span>
+    <span class="n">_defaults</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">ImageArray</span><span class="p">,</span> <span class="s2">&quot;pattern&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;*.png&quot;</span><span class="p">,</span> <span class="s2">&quot;*.tiff&quot;</span><span class="p">,</span> <span class="s2">&quot;*.jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;*.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;*.tif&quot;</span><span class="p">]}</span>
+    <span class="n">_no_defaults</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;flat&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;nitialise the ImageFolder.</span>
 
 <span class="sd">        Mostly a pass through to the :py:class:`Stoner.Folders.baseFolder` class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ImageFolderMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ImageFolderMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the size of an individual image or False if not all images are the same size.&quot;&quot;&quot;</span>
-        <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span><span class="o">!=</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">shape</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="n">shape</span>
 
@@ -151,7 +152,7 @@
         <span class="sd">&quot;&quot;&quot;A generator that iterates over just the images in the Folder.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_getattr_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_getattr_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override baseFolder proxy call to access a method of the ImageFile</span>
 
 <span class="sd">        Args:</span>
@@ -161,8 +162,9 @@
 <span class="sd">            Either a modifed copy of this objectFolder or a list of return values</span>
 <span class="sd">            from evaluating the method for each file in the Folder.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">meth</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">,</span><span class="n">item</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">_wrapper_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="n">meth</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_wrapper_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Wraps a call to the metadataObject type for magic method calling.</span>
 
 <span class="sd">            Keyword Arguments:</span>
@@ -172,22 +174,23 @@
 <span class="sd">                This relies on being defined inside the enclosure of the objectFolder method</span>
 <span class="sd">                so we have access to self and item</span>
 <span class="sd">            &quot;&quot;&quot;</span>
-            <span class="n">retvals</span><span class="o">=</span><span class="p">[]</span>
-            <span class="n">_return</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_return&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-                <span class="n">meth</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">item</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
-                <span class="n">ret</span><span class="o">=</span><span class="n">meth</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="c1">#overwriting array is handled by ImageFile proxy function</span>
+            <span class="n">retvals</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">_return</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_return&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="n">meth</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">meth</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>  <span class="c1"># overwriting array is handled by ImageFile proxy function</span>
                 <span class="n">retvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">item</span><span class="o">==</span><span class="s1">&#39;crop&#39;</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">=</span><span class="n">ret</span>
+                <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s2">&quot;crop&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span>
                 <span class="k">if</span> <span class="n">_return</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_return</span><span class="p">,</span><span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_return</span><span class="p">:</span>
-                        <span class="n">_return</span><span class="o">=</span><span class="n">meth</span><span class="o">.</span><span class="vm">__name__</span>
-                    <span class="bp">self</span><span class="p">[</span><span class="n">ix</span><span class="p">][</span><span class="n">_return</span><span class="p">]</span><span class="o">=</span><span class="n">ret</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_return</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_return</span><span class="p">:</span>
+                        <span class="n">_return</span> <span class="o">=</span> <span class="n">meth</span><span class="o">.</span><span class="vm">__name__</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">ix</span><span class="p">][</span><span class="n">_return</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span>
             <span class="k">return</span> <span class="n">retvals</span>
-        <span class="c1">#Ok that&#39;s the wrapper function, now return  it for the user to mess around with.</span>
-        <span class="n">_wrapper_</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">=</span><span class="n">meth</span><span class="o">.</span><span class="vm">__doc__</span>
-        <span class="n">_wrapper_</span><span class="o">.</span><span class="vm">__name__</span><span class="o">=</span><span class="n">meth</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="c1"># Ok that&#39;s the wrapper function, now return  it for the user to mess around with.</span>
+        <span class="n">_wrapper_</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">meth</span><span class="o">.</span><span class="vm">__doc__</span>
+        <span class="n">_wrapper_</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">meth</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="k">return</span> <span class="n">_wrapper_</span>
 
 <div class="viewcode-block" id="ImageFolderMixin.apply_all"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.apply_all">[docs]</a>    <span class="k">def</span> <span class="nf">apply_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
@@ -204,20 +207,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="n">func</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">quiet</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;quiet&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">quiet</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;quiet&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">im</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-                <span class="n">f</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="n">func</span><span class="p">)</span>
-                <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__call__&quot;</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">im</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-                <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">func</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ImageFolderMixin.average"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.average">[docs]</a>    <span class="k">def</span> <span class="nf">average</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">_box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageFolderMixin.average"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.average">[docs]</a>    <span class="k">def</span> <span class="nf">average</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get an array of average pixel values for the stack.</span>
 
 <span class="sd">        Pass through to numpy average</span>
@@ -227,10 +230,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Cannot average Imagefolder if images have different sizes&quot;</span><span class="p">)</span>
-        <span class="n">stack</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
-        <span class="n">ret</span><span class="o">=</span><span class="n">average</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span>
-        <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">common_metadata</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">average</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">common_metadata</span>
         <span class="k">return</span> <span class="n">ImageFile</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">ret</span><span class="o">.</span><span class="n">_box</span><span class="p">(</span><span class="n">_box</span><span class="p">)])</span></div>
 
 <div class="viewcode-block" id="ImageFolderMixin.loadgroup"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.loadgroup">[docs]</a>    <span class="k">def</span> <span class="nf">loadgroup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -238,48 +241,48 @@
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
             <span class="k">pass</span></div>
 
-
 <div class="viewcode-block" id="ImageFolderMixin.as_stack"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.as_stack">[docs]</a>    <span class="k">def</span> <span class="nf">as_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a ImageStack of the images in the current group.&quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">ImageStack</span>
+
         <span class="n">k</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">k</span></div>
 
-<div class="viewcode-block" id="ImageFolderMixin.mean"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.mean">[docs]</a>    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">_box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageFolderMixin.mean"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.mean">[docs]</a>    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate the mean value of all the images in the stack.</span>
 
 <span class="sd">        Actually a synonym for self.average with not weights</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">_box</span><span class="o">=</span><span class="n">_box</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="ImageFolderMixin.stddev"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.stddev">[docs]</a>    <span class="k">def</span> <span class="nf">stddev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate weighted standard deviation for stack</span>
 
 <span class="sd">        This is a biased standard deviation, may not be appropriate for small sample sizes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">weights</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">weights</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">weights</span>
         <span class="n">avs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
-        <span class="n">sumsqdev</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">avs</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">):</span>
-            <span class="n">sumsqdev</span><span class="o">+=</span><span class="n">weights</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">img</span><span class="o">-</span><span class="n">avs</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-        <span class="n">sumsqdev</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sumsqdev</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">sumsqdev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">avs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">):</span>
+            <span class="n">sumsqdev</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">img</span> <span class="o">-</span> <span class="n">avs</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">sumsqdev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sumsqdev</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sumsqdev</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ImageFolderMixin.stderr"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.stderr">[docs]</a>    <span class="k">def</span> <span class="nf">stderr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Standard error in the stack average&quot;&quot;&quot;</span>
-        <span class="n">serr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="n">serr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">serr</span></div>
 
 <div class="viewcode-block" id="ImageFolderMixin.view"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.view">[docs]</a>    <span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a matplotlib animated view of the contents.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">cv</span><span class="o">=</span><span class="n">CollectionViewer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">)</span>
+        <span class="n">cv</span> <span class="o">=</span> <span class="n">CollectionViewer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">)</span>
         <span class="n">cv</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">cv</span></div></div>
 
-<div class="viewcode-block" id="ImageFolder"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.ImageFolder">[docs]</a><span class="k">class</span> <span class="nc">ImageFolder</span><span class="p">(</span><span class="n">ImageFolderMixin</span><span class="p">,</span><span class="n">DiskBasedFolder</span><span class="p">,</span><span class="n">baseFolder</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ImageFolder"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.ImageFolder">[docs]</a><span class="k">class</span> <span class="nc">ImageFolder</span><span class="p">(</span><span class="n">ImageFolderMixin</span><span class="p">,</span> <span class="n">DiskBasedFolder</span><span class="p">,</span> <span class="n">baseFolder</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Folder object for images.</span>
 
@@ -308,6 +311,7 @@
 
 <span class="sd">        readlist (bool): Whether to read the directory immediately on creation. Default is True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">pass</span></div>
 </pre></div>
 
@@ -352,7 +356,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

@@ -476,8 +476,8 @@ the last column will be shown.:</p>
 <p>Many of the methods in the Stoner package return a copy of the current <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> object and in ipython consoles and jupyter notebooks
 these will get printed out using the table formats above. This may be more than is required, in which case you can set options in the Stoner
 package to control the output format.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>from Stoner import set_option
-set_option(&quot;short_data_repr&quot;,True) # or &quot;short_repr&quot; for short representations of all objects.
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>from Stoner import Options
+Options.short_data_repr = True # or &quot;short_repr&quot; for short representations of all objects.
 print(repr(d))
 &gt;&gt;&gt; TDI_Format_RT.txt(&lt;class &#39;Stoner.Data&#39;&gt;) of shape (1676, 3) (xy.) and 6 items of metadata
 </pre></div>
@@ -1182,7 +1182,7 @@ specifies that the eliminator is a tab character.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

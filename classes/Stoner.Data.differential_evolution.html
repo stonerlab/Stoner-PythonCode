@@ -1,0 +1,184 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Data.differential_evolution &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data.diffsum" href="Stoner.Data.diffsum.html" />
+    <link rel="prev" title="Data.del_rows" href="Stoner.Data.del_rows.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Data.del_rows.html" title="Previous document">Data.del_rows</a>
+        </li>
+        <li>
+          <a href="Stoner.Data.diffsum.html" title="Next document">Data.diffsum</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="Stoner.Data.html">Stoner.Data</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="data-differential-evolution">
+<h1>Data.differential_evolution<a class="headerlink" href="#data-differential-evolution" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Data.differential_evolution">
+<code class="descclassname">Data.</code><code class="descname">differential_evolution</code><span class="sig-paren">(</span><em>model</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>p0=None</em>, <em>sigma=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.differential_evolution" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Fit model to the data using a differential evolution algorithm.</dt>
+<dd><dl class="first last docutils">
+<dt>Args:</dt>
+<dd>model (lmfit.Model): An instance of an lmfit.Model that represents the model to be fitted to the data
+xcol (index or None): Columns to be used for the x  data for the fitting. If not givem defaults to the
+<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> x column
+ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the
+<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> y column</dd>
+</dl>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>, </em><a class="reference internal" href="../Stoner.html#module-Stoner.core.array" title="Stoner.core.array"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A vector of initial parameter values to try. See the notes in <a class="reference internal" href="Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.curve_fit()</span></code></a> for more details.</li>
+<li><strong>sigma</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The index of the column with the y-error bars</li>
+<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
+<li><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
+the last column will be used. If result is a string or an integer then it is used as a column index.
+Default to None for not adding fitted data</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If this is a string then it is used as the name of the fitted data. (default None)</li>
+<li><strong>scale_covar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – whether to automatically scale covariance matrix (leastsq only)</li>
+<li><strong>output</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>default &quot;fit&quot;</em>) – Specifiy what to return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The lmfit module will refurn an instance of the <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.models.ModelFit</span></code> class that contains all
+relevant information about the fit.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>The return value is determined by the <em>output</em> parameter. Options are</dt>
+<dd><ul class="first last simple">
+<li>“fit”    just the <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.ModelFit</span></code> instance</li>
+<li>“row”     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties</li>
+<li>“full”    a tuple of the fit instance and the row.</li>
+<li>“data”    a copy of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> object with the fit recorded in the emtadata and optinally as a column of data.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Data.del_rows.html"
+                        title="previous chapter">Data.del_rows</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Data.diffsum.html"
+                        title="next chapter">Data.diffsum</a></p>
+<div class="sourcelink">
+  <a href="../_sources/classes/Stoner.Data.differential_evolution.rst.txt" rel="nofollow">
+    Show page source
+  </a>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Data.del_rows.html" title="Previous document">Data.del_rows</a>
+        </li>
+        <li>
+          <a href="Stoner.Data.diffsum.html" title="Next document">Data.diffsum</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="Stoner.Data.html">Stoner.Data</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      1.7.9
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

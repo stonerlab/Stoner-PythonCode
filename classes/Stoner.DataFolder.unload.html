@@ -58,13 +58,13 @@
 <h1>DataFolder.unload<a class="headerlink" href="#datafolder-unload" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.DataFolder.unload">
-<code class="descclassname">DataFolder.</code><code class="descname">unload</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.DataFolder.unload" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DataFolder.</code><code class="descname">unload</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.DataFolder.unload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes the instance from memory without losing the name in the Folder.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string or int</em>) – Specifies the entry to unload from memeory.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string,int or None</em>) – Specifies the entry to unload from memeory. If set to None all loaded entries are unloaded.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(DataFolder)</em> – returns a copy of itself.</td>
 </tr>
@@ -135,7 +135,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

@@ -7,36 +7,41 @@ from numpy.random import normal
 from Stoner import Data
 from Stoner.Fit import make_model
 
-#Make our model
+# Make our model
 @make_model
-def simple_model(x,m,c):
+def simple_model(x, m, c):
     """A straight line"""
-    return x*m+c
+    return x * m + c
 
-#Add a function to guess parameters (optional, but)
+
+# Add a function to guess parameters (optional, but)
 @simple_model.guesser
-def guess_vals(y,x=None):
+def guess_vals(y, x=None):
     """Should guess parameter values really!"""
-    return (1.5,1.0) #return one value per parameter
+    m = (y.max() - y.min()) / (x[y.argmax()] - x[y.argmin()])
+    c = x.mean() * m - y.mean()  # return one value per parameter
+    return [m, c]
 
-#Add a function to sry vonstraints on parameters (optional)
+
+# Add a function to sry vonstraints on parameters (optional)
 @simple_model.hinter
 def hint_parameters():
     """Five some hints about the parameter."""
-    return {"m":{"max":10.0,"min":1.0}}
+    return {"m": {"max": 10.0, "min": 0.0}, "c": {"max": 5.0, "min": -5.0}}
 
-#Create some x,y data
-x=linspace(0,10,101)
-y=4.5*x-2.3+normal(scale=0.4,size=len(x))
 
-#Make The Data object
-d=Data(x,y,setas="xy",column_headers=["X","Y"])
+# Create some x,y data
+x = linspace(0, 10, 101)
+y = 4.5 * x - 2.3 + normal(scale=0.4, size=len(x))
 
-#Do the fit
-d.lmfit(simple_model,result=True)
+# Make The Data object
+d = Data(x, y, setas="xy", column_headers=["X", "Y"])
 
-#Plot the result
-d.setas="xyy"
-d.plot(fmt=["r+","b-"])
-d.title="Simple Model Fit"
-d.annotate_fit(simple_model,x=5.0,y=10.0)
+# Do the fit
+d.lmfit(simple_model, result=True)
+
+# Plot the result
+d.setas = "xyy"
+d.plot(fmt=["r+", "b-"])
+d.title = "Simple Model Fit"
+d.annotate_fit(simple_model, x=0.05, y=0.5)

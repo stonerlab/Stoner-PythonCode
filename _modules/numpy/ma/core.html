@@ -493,6 +493,7 @@
 <span class="sd">    If fill_value is not None, its value is forced to the given dtype.</span>
 
 <span class="sd">    The result is always a 0d array.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ndtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">ndtype</span><span class="p">)</span>
     <span class="n">fields</span> <span class="o">=</span> <span class="n">ndtype</span><span class="o">.</span><span class="n">fields</span>
@@ -512,17 +513,19 @@
                                   <span class="n">dtype</span><span class="o">=</span><span class="n">ndtype</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ndtype</span><span class="o">.</span><span class="n">char</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s1">&#39;OSVU&#39;</span><span class="p">):</span>
+            <span class="c1"># Note this check doesn&#39;t work if fill_value is not a scalar</span>
             <span class="n">err_msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot set fill value of string with array of dtype </span><span class="si">%s</span><span class="s2">&quot;</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">err_msg</span> <span class="o">%</span> <span class="n">ndtype</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># In case we want to convert 1e20 to int.</span>
+            <span class="c1"># Also in case of converting string arrays.</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">fill_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ndtype</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
-                <span class="c1"># Raise TypeError instead of OverflowError. OverflowError</span>
-                <span class="c1"># is seldom used, and the real problem here is that the</span>
-                <span class="c1"># passed fill_value is not compatible with the ndtype.</span>
-                <span class="n">err_msg</span> <span class="o">=</span> <span class="s2">&quot;Fill value </span><span class="si">%s</span><span class="s2"> overflows dtype </span><span class="si">%s</span><span class="s2">&quot;</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">OverflowError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="c1"># Raise TypeError instead of OverflowError or ValueError.</span>
+                <span class="c1"># OverflowError is seldom used, and the real problem here is</span>
+                <span class="c1"># that the passed fill_value is not compatible with the ndtype.</span>
+                <span class="n">err_msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot convert fill_value </span><span class="si">%s</span><span class="s2"> to dtype </span><span class="si">%s</span><span class="s2">&quot;</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">err_msg</span> <span class="o">%</span> <span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">ndtype</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fill_value</span><span class="p">)</span>
 
@@ -3054,11 +3057,13 @@
             <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
                 <span class="c1"># When _mask.shape is not writable (because it&#39;s a void)</span>
                 <span class="k">pass</span>
-        <span class="c1"># Finalize the fill_value for structured arrays</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_fill_value</span> <span class="o">=</span> <span class="n">_check_fill_value</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="k">return</span>
+
+        <span class="c1"># Finalize the fill_value</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fill_value</span> <span class="o">=</span> <span class="n">_check_fill_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fill_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Finalize the default fill_value for structured arrays</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fill_value</span> <span class="o">=</span> <span class="n">_check_fill_value</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -4059,6 +4064,16 @@
         <span class="n">check</span> <span class="o">=</span> <span class="n">check</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="n">check</span><span class="o">.</span><span class="n">_update_from</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">check</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">mask</span>
+
+        <span class="c1"># Cast fill value to bool_ if needed. If it cannot be cast, the</span>
+        <span class="c1"># default boolean fill value is used.</span>
+        <span class="k">if</span> <span class="n">check</span><span class="o">.</span><span class="n">_fill_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">fill</span> <span class="o">=</span> <span class="n">_check_fill_value</span><span class="p">(</span><span class="n">check</span><span class="o">.</span><span class="n">_fill_value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="n">fill</span> <span class="o">=</span> <span class="n">_check_fill_value</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
+            <span class="n">check</span><span class="o">.</span><span class="n">_fill_value</span> <span class="o">=</span> <span class="n">fill</span>
+
         <span class="k">return</span> <span class="n">check</span>
 
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -8213,7 +8228,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

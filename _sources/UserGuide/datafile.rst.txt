@@ -443,8 +443,8 @@ Many of the methods in the Stoner package return a copy of the current :class:`S
 these will get printed out using the table formats above. This may be more than is required, in which case you can set options in the Stoner
 package to control the output format.::
 
-    from Stoner import set_option
-    set_option("short_data_repr",True) # or "short_repr" for short representations of all objects.
+    from Stoner import Options
+    Options.short_data_repr = True # or "short_repr" for short representations of all objects.
     print(repr(d))
     >>> TDI_Format_RT.txt(<class 'Stoner.Data'>) of shape (1676, 3) (xy.) and 6 items of metadata
 

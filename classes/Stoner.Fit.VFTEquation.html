@@ -56,7 +56,7 @@
 <dl class="class">
 <dt id="Stoner.Fit.VFTEquation">
 <em class="property">class </em><code class="descclassname">Stoner.Fit.</code><code class="descname">VFTEquation</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#VFTEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.VFTEquation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v0.9.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
 <p>Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -81,54 +81,56 @@ a modifed form of the Arrenhius distribution with a freezing point of <span clas
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example of Arrhenius Fit.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">vftEquation</span><span class="p">,</span><span class="n">VFTEquation</span>
-<span class="kn">from</span>  <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">logspace</span><span class="p">,</span><span class="n">log10</span>
+<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">vftEquation</span><span class="p">,</span> <span class="n">VFTEquation</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">logspace</span><span class="p">,</span> <span class="n">log10</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
 
-<span class="c1">#Make some data</span>
-<span class="n">T</span><span class="o">=</span><span class="n">logspace</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span><span class="n">log10</span><span class="p">(</span><span class="mi">350</span><span class="p">),</span><span class="mi">51</span><span class="p">)</span>
-<span class="n">params</span><span class="o">=</span><span class="p">(</span><span class="mf">1E16</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">150</span><span class="p">)</span>
-<span class="n">noise</span><span class="o">=</span><span class="mf">0.5</span>
-<span class="n">R</span><span class="o">=</span><span class="n">vftEquation</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">)</span><span class="o">*</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">),</span><span class="n">scale</span><span class="o">=</span><span class="n">noise</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="n">dR</span><span class="o">=</span><span class="n">vftEquation</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">)</span><span class="o">*</span><span class="n">noise</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">dR</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy.&quot;</span><span class="p">,</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">,</span><span class="s2">&quot;Rate&quot;</span><span class="p">])</span>
+<span class="c1"># Make some data</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">logspace</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">log10</span><span class="p">(</span><span class="mi">350</span><span class="p">),</span> <span class="mi">51</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1e16</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">R</span> <span class="o">=</span> <span class="n">vftEquation</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">)</span> <span class="o">*</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="n">noise</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">dR</span> <span class="o">=</span> <span class="n">vftEquation</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">dR</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy.&quot;</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;Rate&quot;</span><span class="p">])</span>
 
-<span class="c1">#Plot the data points.</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;k+&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Data Points&quot;</span><span class="p">)</span>
+<span class="c1"># Plot the data points.</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;r.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Data Points&quot;</span><span class="p">)</span>
 
-<span class="c1">#Turn on the sigma column (error bars look messy on plot due to logscale)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;e&quot;</span>
+<span class="c1"># Turn on the sigma column (error bars look messy on plot due to logscale)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;e&quot;</span>
 
-<span class="c1">#Curve_fit on its own</span>
-<span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">vftEquation</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">params</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;curve_fit&quot;</span><span class="p">)</span>
+<span class="c1"># Curve_fit on its own</span>
+<span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">vftEquation</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;curve_fit&quot;</span><span class="p">)</span>
 
 <span class="c1"># lmfit uses some guesses</span>
-<span class="n">p0</span><span class="o">=</span><span class="n">params</span>
-<span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">VFTEquation</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="n">params</span>
+<span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">VFTEquation</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
 
-<span class="c1">#Plot these results too</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x..yy&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r-&quot;</span><span class="p">,</span><span class="s2">&quot;b-&quot;</span><span class="p">])</span>
-<span class="c1">#Annotate the graph</span>
-<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">vftEquation</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mi">290</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">1E-11</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">},</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">VFTEquation</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mi">290</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">1E-22</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;VFTEquation&quot;</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">},</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">)</span>
+<span class="c1"># Plot these results too</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;x..yy&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">])</span>
+<span class="c1"># Annotate the graph</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">vftEquation</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">},</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span>
+    <span class="n">VFTEquation</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;VFTEquation&quot;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">},</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span>
+<span class="p">)</span>
 
-<span class="c1">#reset the columns for the fit</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye..&quot;</span>
-<span class="c1">#Now do the odr fit (will overwrite lmfit&#39;s metadata)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">odr</span><span class="p">(</span><span class="n">VFTEquation</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x4.y&quot;</span>
+<span class="c1"># reset the columns for the fit</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xye..&quot;</span>
+<span class="c1"># Now do the odr fit (will overwrite lmfit&#39;s metadata)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">odr</span><span class="p">(</span><span class="n">VFTEquation</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;x4.y&quot;</span>
 
 <span class="c1"># And plot and annotate</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;g-&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Orthogonal distance&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">VFTEquation</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mi">290</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">1E-33</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">},</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;m-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Orthogonal distance&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">VFTEquation</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;magenta&quot;</span><span class="p">},</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">)</span>
 
 <span class="c1"># Finally tidy up the plot a bit</span>
-<span class="n">d</span><span class="o">.</span><span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mf">1E-35</span><span class="p">,</span><span class="mf">1E10</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;VFT Equation Test Fit&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Rate&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Temperature (K)&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">yscale</span> <span class="o">=</span> <span class="s2">&quot;log&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">ylim</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1e-35</span><span class="p">,</span> <span class="mf">1e10</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;VFT Equation Test Fit&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;Rate&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="s2">&quot;Temperature (K)&quot;</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/Fitting/vft-class.png">png</a>, <a class="reference external" href="../samples/Fitting/vft-class.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/vft-class.pdf">pdf</a>)</p>
@@ -234,7 +236,7 @@ a modifed form of the Arrenhius distribution with a freezing point of <span clas
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

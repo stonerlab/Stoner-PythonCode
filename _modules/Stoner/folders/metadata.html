@@ -49,7 +49,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:py:mod:`Stoner.folders.metadata` provides classes and functions to support the :py:attr:`Stoner.DataFolder.metadata` magic attribute.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="n">__all__</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;proxy&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;proxy&quot;</span><span class="p">]</span>
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span>
 <span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">islike_list</span>
 <span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">DataFile</span>
@@ -57,18 +57,19 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">MutableMapping</span>
 <span class="kn">from</span> <span class="nn">Stoner.core</span> <span class="k">import</span> <span class="n">typeHintedDict</span>
 
+
 <div class="viewcode-block" id="proxy"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.proxy.html#Stoner.folders.metadata.proxy">[docs]</a><span class="k">class</span> <span class="nc">proxy</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Provide methods to interact with a whole collection of metadataObjects&#39; metadata.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">folder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">=</span><span class="n">folder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span> <span class="o">=</span> <span class="n">folder</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A l,ist of all the metadata dictionaries in the Folder.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">,</span><span class="s2">&quot;_metadata&quot;</span><span class="p">):</span> <span class="c1">#Extra logic for Folders like Stack</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">,</span> <span class="s2">&quot;_metadata&quot;</span><span class="p">):</span>  <span class="c1"># Extra logic for Folders like Stack</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">_metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">yield</span> <span class="n">item</span>
         <span class="k">else</span><span class="p">:</span>
@@ -76,38 +77,37 @@
                 <span class="k">yield</span> <span class="n">item</span><span class="o">.</span><span class="n">metadata</span>
 
     <span class="nd">@all</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A l,ist of all the metadata dictionaries in the Folder.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">,</span><span class="s2">&quot;_metadata&quot;</span><span class="p">):</span> <span class="c1">#Direct support for metadata dictionary</span>
-            <span class="k">for</span> <span class="n">new</span><span class="p">,</span><span class="n">old</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">_metadata</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">,</span> <span class="s2">&quot;_metadata&quot;</span><span class="p">):</span>  <span class="c1"># Direct support for metadata dictionary</span>
+            <span class="k">for</span> <span class="n">new</span><span class="p">,</span> <span class="n">old</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">_metadata</span><span class="p">):</span>
                 <span class="n">old</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">new</span><span class="p">,</span><span class="n">item</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">new</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">):</span>
                 <span class="n">item</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
-
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">common_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the set of metadata keys common to all objects int he Folder.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-            <span class="n">keys</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
             <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">:</span>
-                <span class="n">keys</span><span class="o">&amp;=</span><span class="nb">set</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="n">keys</span> <span class="o">&amp;=</span> <span class="nb">set</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">keys</span><span class="o">=</span><span class="nb">set</span><span class="p">()</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">keys</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">common_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a dictionary of the common_keys that have common values.&quot;&quot;&quot;</span>
-        <span class="n">output</span><span class="o">=</span><span class="n">typeHintedDict</span><span class="p">()</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">typeHintedDict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_keys</span><span class="p">:</span>
-            <span class="n">val</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">==</span><span class="n">val</span><span class="p">):</span>
-                <span class="n">output</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">val</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="n">val</span><span class="p">):</span>
+                <span class="n">output</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
         <span class="k">return</span> <span class="n">output</span>
 
-    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check for membership of all possible kes.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_keys</span><span class="p">()</span>
 
@@ -122,61 +122,58 @@
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Give an informative dispaly of the metadata represenation.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s2">&quot;The </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> has </span><span class="si">{}</span><span class="s2"> common keys of metadata in </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> objects&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-                                                                            <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
-                                                                            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
-                                                                            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">),</span>
-                                                                            <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;The </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> has </span><span class="si">{}</span><span class="s2"> common keys of metadata in </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> objects&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Attempt to delte item from all members of the folder.&quot;&quot;&quot;</span>
-        <span class="n">ok</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">ok</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">del</span> <span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
-                <span class="n">ok</span><span class="o">=</span><span class="kc">True</span>
+                <span class="n">ok</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="k">pass</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">:</span> <span class="c1">#item was not a key in any data file</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">:</span>  <span class="c1"># item was not a key in any data file</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> was not recognised as a metadata key in any object in the folder.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return an array formed by getting a single key from each object in the Folder.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a key of any object in the Folder.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_keys</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">])</span>
-        <span class="n">tmp</span><span class="o">=</span><span class="p">[]</span>
-        <span class="n">mask</span><span class="o">=</span><span class="p">[]</span>
-        <span class="n">typ</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">typ</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">value</span><span class="p">])</span>
                 <span class="n">mask</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-                <span class="n">typ</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">value</span><span class="p">])</span>
+                <span class="n">typ</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">value</span><span class="p">])</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
                 <span class="n">mask</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">ret</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="n">typ</span><span class="p">)</span>
-        <span class="n">ret</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span><span class="n">ret</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">)</span>
-        <span class="n">ret</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="n">mask</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">typ</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">ret</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span>
         <span class="k">return</span> <span class="n">ret</span>
-
 
         <span class="k">return</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">:</span>
-            <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">all_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the union of all the metadata keyus for all objects int he Folder.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-            <span class="n">keys</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
             <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">:</span>
-                <span class="n">keys</span><span class="o">|=</span><span class="nb">set</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="n">keys</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">keys</span><span class="o">=</span><span class="nb">set</span><span class="p">()</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">k</span>
 
@@ -187,7 +184,7 @@
 <span class="sd">            key,self[key]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_keys</span><span class="p">():</span>
-            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span><span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">all_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the result of indexing the metadata with all_keys().</span>
@@ -198,7 +195,7 @@
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_keys</span><span class="p">():</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate a function for each item in the folder and store the return value in a metadata key.</span>
 
 <span class="sd">        Args:</span>
@@ -216,11 +213,11 @@
 <span class="sd">            where i is a counter that runs from 0 to the length of the current Folder</span>
 <span class="sd">            and metadataObject will be each object in the Folder in turn.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">):</span>
-            <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">func</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">):</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># pylint: disable=arguments-differ</span>
+    <span class="k">def</span> <span class="nf">slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># pylint: disable=arguments-differ</span>
         <span class="sd">&quot;&quot;&quot;Return a list of the metadata dictionaries for each item/file in the top level group</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -248,53 +245,71 @@
 <span class="sd">            recursive options (build a dictionary of metadata values). And probably</span>
 <span class="sd">            options to extract other parts of objects (first row or whatever).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#Sort out a definitive value of output</span>
-            <span class="n">output</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">values_only</span> <span class="k">else</span> <span class="s2">&quot;smart&quot;</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span><span class="s2">&quot;list&quot;</span><span class="p">,</span><span class="s2">&quot;array&quot;</span><span class="p">,</span><span class="s2">&quot;Data&quot;</span><span class="p">,</span><span class="s2">&quot;smart&quot;</span><span class="p">,</span><span class="nb">dict</span><span class="p">,</span><span class="nb">list</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span><span class="n">DataFile</span><span class="p">]:</span> <span class="c1">#Check for good output value</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Sort out a definitive value of output</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">values_only</span> <span class="k">else</span> <span class="s2">&quot;smart&quot;</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;array&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Data&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;smart&quot;</span><span class="p">,</span>
+            <span class="nb">dict</span><span class="p">,</span>
+            <span class="nb">list</span><span class="p">,</span>
+            <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+            <span class="n">DataFile</span><span class="p">,</span>
+        <span class="p">]:</span>  <span class="c1"># Check for good output value</span>
             <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;output of slice metadata must be either dict, list, or array not </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
-        <span class="n">metadata</span><span class="o">=</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">metadata</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">]</span> <span class="c1">#this can take some time if it&#39;s loading in the contents of the folder</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span> <span class="c1"># Single key given</span>
-            <span class="n">key</span><span class="o">=</span><span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">key</span><span class="o">=</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">islike_list</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">else</span> <span class="n">key</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">k</span><span class="o">.</span><span class="n">metadata</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span>
+        <span class="p">]</span>  <span class="c1"># this can take some time if it&#39;s loading in the contents of the folder</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>  <span class="c1"># Single key given</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">islike_list</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">else</span> <span class="n">key</span>
         <span class="c1"># Expand all keys in case of multiple metadata matches</span>
-        <span class="n">newkey</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">newkey</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
-            <span class="n">newkey</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-        <span class="n">key</span><span class="o">=</span><span class="n">newkey</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">common_keys</span><span class="p">)):</span> <span class="c1">#Is the key in the common keys? # TODO: implement __getitem__&#39;s masked array logic?</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> are missing from some items in the Folder.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">common_keys</span><span class="p">)))</span>
-        <span class="n">results</span><span class="o">=</span><span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">met</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span><span class="c1">#Assemble a list of dictionaries of values</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">})</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">,</span><span class="s2">&quot;array&quot;</span><span class="p">,</span><span class="s2">&quot;Data&quot;</span><span class="p">,</span><span class="nb">list</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span><span class="n">DataFile</span><span class="p">]</span> <span class="ow">or</span> <span class="p">(</span><span class="n">output</span><span class="o">==</span><span class="s2">&quot;smart&quot;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span> <span class="c1"># Reformat output</span>
-            <span class="n">cols</span><span class="o">=</span><span class="p">[]</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span> <span class="c1"># Expand the columns of data we&#39;re going to need if some values are not scalar</span>
+            <span class="n">newkey</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">newkey</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="nb">set</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">common_keys</span><span class="p">)</span>
+        <span class="p">):</span>  <span class="c1"># Is the key in the common keys? # TODO: implement __getitem__&#39;s masked array logic?</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> are missing from some items in the Folder.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">common_keys</span><span class="p">)))</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">met</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>  <span class="c1"># Assemble a list of dictionaries of values</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">]</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;smart&quot;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="p">):</span>  <span class="c1"># Reformat output</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>  <span class="c1"># Expand the columns of data we&#39;re going to need if some values are not scalar</span>
                 <span class="k">if</span> <span class="n">islike_list</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">k</span><span class="p">]):</span>
-                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">k</span><span class="p">]):</span>
-                        <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">i</span><span class="p">))</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">k</span><span class="p">]):</span>
+                        <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">met</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">results</span><span class="p">):</span> <span class="c1">#For each object in the Folder</span>
-                <span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="p">[]</span>
-                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span> <span class="c1"># and for each key in out list</span>
-                    <span class="n">v</span><span class="o">=</span><span class="n">met</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">islike_list</span><span class="p">(</span><span class="n">v</span><span class="p">):</span> <span class="c1"># extend or append depending if the value is scalar. # TODO: This will blowup for values with more than 1 D!</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">met</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>  <span class="c1"># For each object in the Folder</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>  <span class="c1"># and for each key in out list</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="n">met</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">islike_list</span><span class="p">(</span>
+                        <span class="n">v</span>
+                    <span class="p">):</span>  <span class="c1"># extend or append depending if the value is scalar. # TODO: This will blowup for values with more than 1 D!</span>
                         <span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span> <span class="c1">#single key</span>
-                <span class="n">results</span><span class="o">=</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">output</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;array&quot;</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-                <span class="n">results</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">output</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Data&quot;</span><span class="p">,</span><span class="n">DataFile</span><span class="p">]:</span> <span class="c1"># Build oour Data object</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># single key</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">output</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;array&quot;</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">output</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">]:</span>  <span class="c1"># Build oour Data object</span>
                 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
-                <span class="n">tmp</span><span class="o">=</span><span class="n">Data</span><span class="p">()</span>
-                <span class="n">tmp</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-                <span class="n">tmp</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">cols</span>
-                <span class="n">results</span><span class="o">=</span><span class="n">tmp</span>
-        <span class="k">return</span> <span class="n">results</span></div>
 
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">Data</span><span class="p">()</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">cols</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">tmp</span>
+        <span class="k">return</span> <span class="n">results</span></div>
 </pre></div>
 
           </div>
@@ -338,7 +353,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

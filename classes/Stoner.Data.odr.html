@@ -91,7 +91,7 @@ Default to None for not adding fitted data</li>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
 <dt>The return value is determined by the <em>output</em> parameter. Options are</dt>
 <dd><ul class="first last simple">
-<li>”fit”    just the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Output.html#scipy.odr.Output" title="(in SciPy v1.1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Output</span></code></a> instance (default)</li>
+<li>”fit”    just the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Output.html#scipy.odr.Output" title="(in SciPy v1.2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Output</span></code></a> instance (default)</li>
 <li>”row”     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties</li>
 <li>”full”    a tuple of the fit instance and the row.</li>
 <li><dl class="first docutils">
@@ -111,7 +111,7 @@ Default to None for not adding fitted data</li>
 <p>The function tries to make use of whatever model you give it. Specifically, it accepts:</p>
 <blockquote>
 <div><ul class="simple">
-<li>A subclass or an instance of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> : this is the native model type for the underlying scipy
+<li>A subclass or an instance of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> : this is the native model type for the underlying scipy
 odr package.</li>
 <li>A subclass or instance of an lmfit.models.Model: the <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Fit</span></code></a> module has a number of useful prebuilt
 lmfit models that can be used directly
@@ -126,41 +126,41 @@ by this function.</li>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple use of lmfit to fit data.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">exp</span><span class="p">,</span><span class="n">random</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">random</span>
 
-<span class="c1">#Make some data</span>
-<span class="n">x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">10.0</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span>
-<span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="mf">1.7</span><span class="p">)</span><span class="o">+</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">101</span><span class="p">)</span>
+<span class="c1"># Make some data</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="mf">1.7</span><span class="p">)</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">101</span><span class="p">)</span>
 
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span><span class="s2">&quot;Signal&quot;</span><span class="p">],</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="s2">&quot;Signal&quot;</span><span class="p">],</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">)</span> <span class="c1"># plot our data</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">)</span>  <span class="c1"># plot our data</span>
 
-<span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">:</span><span class="n">A</span><span class="o">+</span><span class="n">B</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="n">C</span><span class="p">)</span>
+<span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">:</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">C</span><span class="p">)</span>
 
-<span class="c1">#Do the fitting and plot the result</span>
-<span class="n">fit</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">odr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span><span class="n">A</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">B</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">C</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;Model&quot;</span><span class="p">,</span><span class="n">residuals</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="c1"># Do the fitting and plot the result</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">odr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;Model&quot;</span><span class="p">,</span> <span class="n">residuals</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="c1">#Reset labels</span>
-<span class="n">d</span><span class="o">.</span><span class="n">labels</span><span class="o">=</span><span class="p">[]</span>
+<span class="c1"># Reset labels</span>
+<span class="n">d</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
 
 <span class="c1"># Make nice two panel plot layout</span>
-<span class="n">ax</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x..y&quot;</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;x..y&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;g+&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-<span class="n">ax</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">rowspan</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyy&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ro&quot;</span><span class="p">,</span><span class="s2">&quot;b-&quot;</span><span class="p">])</span>
-<span class="n">d</span><span class="o">.</span><span class="n">xticklabels</span><span class="o">=</span><span class="p">[[]]</span>
-<span class="n">d</span><span class="o">.</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rowspan</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xyy&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ro&quot;</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">xticklabels</span> <span class="o">=</span> <span class="p">[[]]</span>
+<span class="n">d</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
 <span class="c1"># Annotate plot with fitting parameters</span>
-<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;Model&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mf">7.2</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
-<span class="n">text</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$y=A+Be^{-x/C}$&quot;</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">7.2</span><span class="p">,</span><span class="mf">3.9</span><span class="p">,</span><span class="n">text</span><span class="p">,</span><span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
-<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="sa">u</span><span class="s2">&quot;Orthogonal Distance Regression  Fit&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;Model&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
+<span class="n">text</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$y=A+Be^{-x/C}$&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">7.2</span><span class="p">,</span> <span class="mf">3.9</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;Orthogonal Distance Regression  Fit&quot;</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/odrfit1.png">png</a>, <a class="reference external" href="../samples/odrfit1.hires.png">hires.png</a>, <a class="reference external" href="../samples/odrfit1.pdf">pdf</a>)</p>
@@ -238,7 +238,7 @@ User guide section <a class="reference internal" href="../UserGuide/curve_fittin
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

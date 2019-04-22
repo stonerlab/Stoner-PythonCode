@@ -151,10 +151,12 @@ commit the code or tell Gavin.</p>
 <h2>Package Options<a class="headerlink" href="#package-options" title="Permalink to this headline">¶</a></h2>
 <p>The Stoner package supports a set of package level options to control preferences such as whether to show objects using ‘rich’
 representations such as png or html output formats.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">set_option</span>
-<span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;short_repr&quot;</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># set_option(options,True/False)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Options</span>
+<span class="n">Options</span><span class="o">.</span><span class="n">short_repr</span><span class="o">=</span><span class="kc">True</span>
 </pre></div>
 </div>
+<p>The <strong>options</strong> object supports reading and setting options through attribute assignment. Deleting an Option atribute
+resets the Option back to the corresponding default value. <strong>dir(Options)</strong> will give a list of all possible package options.</p>
 </div>
 </div>
 
@@ -231,7 +233,7 @@ representations such as png or html output formats.:</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

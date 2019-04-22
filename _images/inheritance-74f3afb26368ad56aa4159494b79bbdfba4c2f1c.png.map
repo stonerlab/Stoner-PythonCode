@@ -1,0 +1,8 @@
+<map id="inheritance88a7ff70f4" name="inheritance88a7ff70f4">
+<area shape="rect" id="node1" href="classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" target="_top" title="A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods." alt="" coords="3,230,137,245"/>
+<area shape="rect" id="node4" href="classes/Stoner.Data.html#Stoner.Data" target="_top" title="A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`" alt="" coords="245,275,305,291"/>
+<area shape="rect" id="node2" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" target="_top" title=":py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers." alt="" coords="152,230,247,245"/>
+<area shape="rect" id="node3" href="classes/Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject" target="_top" title="Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object." alt="" coords="126,184,273,200"/>
+<area shape="rect" id="node5" title="A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional curve_fiotting methods." alt="" coords="262,230,441,245"/>
+<area shape="rect" id="node6" href="classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" target="_top" title="A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality." alt="" coords="457,230,573,245"/>
+</map>

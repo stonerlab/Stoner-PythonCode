@@ -50,15 +50,16 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">setas module provides the setas class for DataFile and friends</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="n">__all__</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;setas&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;setas&quot;</span><span class="p">]</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
 
-<span class="kn">from</span> <span class="nn">..compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span><span class="n">int_types</span><span class="p">,</span><span class="n">index_types</span><span class="p">,</span><span class="n">_pattern_type</span>
-<span class="kn">from</span> <span class="nn">..tools</span> <span class="k">import</span> <span class="n">_attribute_store</span><span class="p">,</span><span class="n">isiterable</span><span class="p">,</span><span class="n">typedList</span><span class="p">,</span><span class="n">islike_list</span><span class="p">,</span><span class="n">istuple</span>
+<span class="kn">from</span> <span class="nn">..compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">index_types</span><span class="p">,</span> <span class="n">_pattern_type</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="k">import</span> <span class="n">_attribute_store</span><span class="p">,</span> <span class="n">isiterable</span><span class="p">,</span> <span class="n">typedList</span><span class="p">,</span> <span class="n">islike_list</span><span class="p">,</span> <span class="n">istuple</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">MutableMapping</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Mapping</span>
+
 
 <div class="viewcode-block" id="setas"><a class="viewcode-back" href="../../../classes/Stoner.core.setas.setas.html#Stoner.core.setas">[docs]</a><span class="k">class</span> <span class="nc">setas</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
 
@@ -71,14 +72,7 @@
 <span class="sd">        the interface is essentially as a Mapping class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">_col_defaults</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;axes&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;xcol&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;ycol&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;zcol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;ucol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;vcol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;wcol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;xerr&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;yerr&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;zerr&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">},</span> <span class="c1"># xy</span>
-                  <span class="mi">3</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;axes&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;xcol&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;ycol&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;zcol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;ucol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;vcol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;wcol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;xerr&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;yerr&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;zerr&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">},</span> <span class="c1"># xye</span>
-                  <span class="mi">4</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;axes&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;xcol&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;ycol&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;zcol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;ucol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;vcol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;wcol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;xerr&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;yerr&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s2">&quot;zerr&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">},</span> <span class="c1">#xdye</span>
-                  <span class="mi">5</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;axes&quot;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s2">&quot;xcol&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;ycol&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;zcol&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;ucol&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;vcol&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s2">&quot;wcol&quot;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="s2">&quot;xerr&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;yerr&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;zerr&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">},</span> <span class="c1">#xyuvw</span>
-                  <span class="mi">6</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;axes&quot;</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="s2">&quot;xcol&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;ycol&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;zcol&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;ucol&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s2">&quot;vcol&quot;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="s2">&quot;wcol&quot;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s2">&quot;xerr&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;yerr&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;zerr&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">},}</span> <span class="c1"># xyzuvw</span>
-
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bless</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructs the setas instance and sets an initial value.</span>
 
 <span class="sd">        Args:</span>
@@ -87,74 +81,128 @@
 <span class="sd">        Keyword Arguments:</span>
 <span class="sd">            initial_val (string or list or dict): Initial values to set</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_row</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_row&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row</span> <span class="o">=</span> <span class="n">row</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span> <span class="o">=</span> <span class="n">_attribute_store</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="o">=</span><span class="nb">tuple</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span> <span class="o">=</span> <span class="n">typedList</span><span class="p">(</span><span class="n">string_types</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_object</span> <span class="o">=</span> <span class="n">bless</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_col_defaults</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;axes&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;xcol&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;ycol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s2">&quot;zcol&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;ucol&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;vcol&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;wcol&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;xerr&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;yerr&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;zerr&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>  <span class="c1"># xy</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;axes&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;xcol&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;ycol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s2">&quot;zcol&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;ucol&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;vcol&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;wcol&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;xerr&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;yerr&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="s2">&quot;zerr&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>  <span class="c1"># xye</span>
+            <span class="mi">4</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;axes&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;xcol&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;ycol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="s2">&quot;zcol&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;ucol&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;vcol&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;wcol&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;xerr&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;yerr&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                <span class="s2">&quot;zerr&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>  <span class="c1"># xdye</span>
+            <span class="mi">5</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;axes&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="s2">&quot;xcol&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;ycol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s2">&quot;zcol&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;ucol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="s2">&quot;vcol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                <span class="s2">&quot;wcol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                <span class="s2">&quot;xerr&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;yerr&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;zerr&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>  <span class="c1"># xyuvw</span>
+            <span class="mi">6</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;axes&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                <span class="s2">&quot;xcol&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;ycol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s2">&quot;zcol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="s2">&quot;ucol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                <span class="s2">&quot;vcol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                <span class="s2">&quot;wcol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+                <span class="s2">&quot;xerr&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;yerr&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;zerr&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>
+        <span class="p">}</span>  <span class="c1"># xyzuvw</span>
 
-
-        <span class="k">if</span> <span class="n">initial_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="p">(</span><span class="n">initial_val</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">kargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_decode_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_decode_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Expands a string of column assignments, replacing numbers with repeated characters.&quot;&quot;&quot;</span>
-        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;[^0-9]*(([0-9]+?)(x|y|z|d|e|f|u|v|w|\.|\-))&quot;</span><span class="p">)</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;(([0-9]+)(x|y|z|d|e|f|u|v|w|\.|\-))&quot;</span><span class="p">)</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">break</span>
             <span class="p">(</span><span class="n">total</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">total</span><span class="p">,</span> <span class="n">code</span> <span class="o">*</span> <span class="n">count</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">,</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_prepare_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Extract a value to be used to evaluate the setas attribute during a call.&quot;&quot;&quot;</span>
-        <span class="n">reset</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;reset&quot;</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reset</span><span class="p">,</span><span class="nb">bool</span><span class="p">):</span>
-            <span class="n">reset</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">reset</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reset</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="n">reset</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>  <span class="c1"># expand the number-code combos in value</span>
                 <span class="k">if</span> <span class="n">reset</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">[]</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_decode_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">setas</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">:</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">setas</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">kargs</span>
             <span class="k">if</span> <span class="n">reset</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">[]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">return</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate a size of the setas attribute.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row</span><span class="p">:</span>
-            <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">c</span><span class="o">=</span><span class="mi">1</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">c</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span><span class="p">)</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">c</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_unique_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return either a column header or an index if the column_header is duplicated.&quot;&quot;&quot;</span>
-        <span class="n">ret</span><span class="o">=</span><span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">ch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">ch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">:</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -164,7 +212,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create an exact copy of the current object.&quot;&quot;&quot;</span>
-        <span class="bp">cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
         <span class="n">new</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]):</span>
@@ -174,16 +222,8 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the current column assignments.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">())</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span>
-
-    <span class="nd">@cols</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update the current column assignments.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;cols attribute must be a dictionary&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="o">=</span><span class="n">_attribute_store</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -192,41 +232,40 @@
 <span class="sd">        value we should use the setas(x=1,y=2) style call (so that reset can</span>
 <span class="sd">        be handled properly)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s1">&#39;xcol&#39;</span><span class="p">]</span>
-
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Quick access to the y column numbers list&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s1">&#39;ycol&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s2">&quot;ycol&quot;</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Quick access to the z column numbers list&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s1">&#39;zcol&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s2">&quot;zcol&quot;</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">column_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the current column headers.&quot;&quot;&quot;</span>
-        <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_size</span>
-        <span class="n">l</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">l</span><span class="o">&lt;</span><span class="n">c</span><span class="p">:</span> <span class="c1"># Extend the column headers if necessary</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;Column </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="n">l</span><span class="p">)])</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">c</span><span class="p">:</span>  <span class="c1"># Extend the column headers if necessary</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;Column </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="n">l</span><span class="p">)])</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span>
 
     <span class="nd">@column_headers</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">column_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">column_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the colum headers.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="c1">#Convert ndarray to list of strings</span>
-            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span> <span class="c1">#Bare strings get turned into lists</span>
-            <span class="n">value</span><span class="o">=</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span><span class="o">=</span><span class="n">typedList</span><span class="p">(</span><span class="n">string_types</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>  <span class="c1"># Convert ndarray to list of strings</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>  <span class="c1"># Bare strings get turned into lists</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span> <span class="o">=</span> <span class="n">typedList</span><span class="p">(</span><span class="n">string_types</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">not_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a boolean array if not set.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="o">==</span><span class="s2">&quot;.&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">])</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -236,17 +275,17 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">setas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Guard the setas attribute.&quot;&quot;&quot;</span>
-        <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_size</span>
-        <span class="n">l</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">c</span><span class="o">&gt;</span><span class="n">l</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;.&quot;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="n">l</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[:</span><span class="n">c</span><span class="p">]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="n">l</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;.&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="n">l</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[:</span><span class="n">c</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span>
 
     <span class="nd">@setas</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">setas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Minimal attribute setter.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -254,11 +293,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span>
 
     <span class="nd">@shape</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update the note of our shape.&quot;&quot;&quot;</span>
-        <span class="n">value</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">if</span> <span class="mi">0</span><span class="o">&lt;=</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">&lt;=</span><span class="mi">2</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;shape attribute should be a 2-tuple not a </span><span class="si">{}</span><span class="s2">-tuple&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
 
@@ -270,35 +309,50 @@
 <span class="sd">        setas(&quot;xyzuvw&quot;)</span>
 <span class="sd">        setas([&quot;x&quot;],[&quot;y&quot;],[&quot;z&quot;],[&quot;u&quot;],[&quot;v&quot;],[&quot;w&quot;])</span>
 <span class="sd">        setas(x=&quot;column_1&quot;,y=3,column4=&quot;z&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">args</span>  <span class="ow">or</span> <span class="n">kargs</span><span class="p">):</span> <span class="c1">#New - bare call to setas will return the current value.</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">string_types</span><span class="o">+</span><span class="p">(</span><span class="n">setas</span><span class="p">,))</span> <span class="ow">or</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
-            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;setas should be called with eother a string, iterable object or setas object, not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
 
-        <span class="c1">#If reset is neither in kargs nor a False boolean, then clear the existing setas assignments</span>
-        <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prepare_call</span><span class="p">(</span><span class="n">args</span><span class="p">,</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="n">_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="c1"># Forxce setas to be the right length</span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            _self (bool): If True, make the call return a copy of the setas object, if False, return _object attribute, if None, return None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">return_self</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_self&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">args</span> <span class="ow">or</span> <span class="n">kargs</span><span class="p">):</span>  <span class="c1"># New - bare call to setas will return the current value.</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">setas</span><span class="p">):</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">string_types</span> <span class="o">+</span> <span class="p">(</span><span class="n">setas</span><span class="p">,))</span> <span class="ow">or</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span>
+                <span class="s2">&quot;setas should be called with eother a string, iterable object or setas object, not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># If reset is neither in kargs nor a False boolean, then clear the existing setas assignments</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_call</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kargs</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span>  <span class="c1"># Forxce setas to be the right length</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef&quot;</span><span class="p">:</span> <span class="c1">#of the form x:column_name</span>
-                    <span class="k">for</span> <span class="n">v_item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">force_list</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef&quot;</span><span class="p">:</span>  <span class="c1"># of the form x:column_name</span>
+                    <span class="k">for</span> <span class="n">v_item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">force_list</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                         <span class="k">try</span><span class="p">:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">v_item</span><span class="p">]</span><span class="o">=</span><span class="n">k</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">v_item</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
                         <span class="k">except</span><span class="p">:</span>
-                            <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">),</span><span class="n">v</span><span class="p">,</span><span class="n">v_item</span><span class="p">,</span><span class="n">k</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">index_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef&quot;</span><span class="p">:</span> <span class="c1">#of the form column_name:x</span>
-                    <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">v</span>
+                            <span class="k">pass</span>
+                <span class="k">elif</span> <span class="p">(</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">index_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef&quot;</span>
+                <span class="p">):</span>  <span class="c1"># of the form column_name:x</span>
+                    <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Unable to workout what do with </span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2"> when setting the setas attribute.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">))</span>
+                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                        <span class="s2">&quot;Unable to workout what do with </span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2"> when setting the setas attribute.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                    <span class="p">)</span>
         <span class="k">elif</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">]</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">]</span>
             <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>  <span class="c1"># Ensure value is now a list</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="s2">&quot;.&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">))))</span>
-            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">]</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s2">&quot;xyzedfuvw.-&quot;</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Set as column element is invalid: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
@@ -307,49 +361,55 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Set as column string ended with a number&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">return_self</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">return_self</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span>
 
-    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Use getitem to test for membership. Either column assignments or column index types are tested.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">_</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span><span class="ne">KeyError</span><span class="p">,</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Unset either by column index or column assignment.</span>
 
 <span class="sd">        Equivalent to unsetting the same object.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unset</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Checks to see if this is the same object, or has the same headers and the same setas values.&quot;&quot;&quot;</span>
-        <span class="n">ret</span><span class="o">=</span><span class="kc">False</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span> <span class="c1"># Expand strings and convert to list</span>
-            <span class="n">other</span><span class="o">=</span><span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_string</span><span class="p">(</span><span class="n">other</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">setas</span><span class="p">):</span> <span class="c1"># Ok, need to check whether items match</span>
-            <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">&lt;=</span><span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="p">):]:</span> <span class="c1">#Check that if other is short we don&#39;t have assignments there</span>
-                    <span class="k">if</span> <span class="n">m</span><span class="o">!=</span><span class="s2">&quot;.&quot;</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>  <span class="c1"># Expand strings and convert to list</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_string</span><span class="p">(</span><span class="n">other</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">setas</span><span class="p">):</span>  <span class="c1"># Ok, need to check whether items match</span>
+            <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="p">:]:</span>  <span class="c1"># Check that if other is short we don&#39;t have assignments there</span>
+                    <span class="k">if</span> <span class="n">m</span> <span class="o">!=</span> <span class="s2">&quot;.&quot;</span><span class="p">:</span>
                         <span class="k">return</span> <span class="kc">False</span>
-                <span class="k">for</span> <span class="n">o</span><span class="p">,</span><span class="n">m</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">o</span><span class="o">!=</span><span class="n">m</span><span class="p">:</span> <span class="c1"># Look for mis-matched assignments</span>
+                <span class="k">for</span> <span class="n">o</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">o</span> <span class="o">!=</span> <span class="n">m</span><span class="p">:</span>  <span class="c1"># Look for mis-matched assignments</span>
                         <span class="k">return</span> <span class="kc">False</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="kc">True</span>
-            <span class="k">else</span><span class="p">:</span> <span class="c1"># If other is longer then we can&#39;t matchj</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># If other is longer then we can&#39;t matchj</span>
                 <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">elif</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">==</span><span class="nb">id</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
-            <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
+        <span class="k">elif</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">id</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">==</span><span class="n">other</span><span class="o">.</span><span class="n">column_headers</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">==</span><span class="n">other</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">column_headers</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">setas</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Try to see if attribute name is a key in self.cols and return that instead.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span><span class="o">!=</span><span class="s2">&quot;_cols&quot;</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;_cols&quot;</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">setas</span><span class="p">,</span><span class="bp">self</span><span class="p">),</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">setas</span><span class="p">,</span> <span class="bp">self</span><span class="p">),</span> <span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Permit the setas attribute to be treated like either a list or a dictionary.</span>
@@ -365,26 +425,26 @@
 <span class="sd">            list mode, or a single coliumn name or list of names if used in dictionary mode.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef.-&quot;</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">ret</span><span class="o">=</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;#&quot;</span> <span class="ow">and</span> <span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef.-&quot;</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;#&quot;</span> <span class="ow">and</span> <span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef.-&quot;</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">s</span><span class="o">=</span><span class="mi">0</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">while</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">s</span><span class="p">:]:</span>
-                <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
-                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">ret</span><span class="o">=</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">index_types</span><span class="p">):</span>
-            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">index_types</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
             <span class="n">indices</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">))</span>
             <span class="n">name</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">indices</span><span class="p">)</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">name</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-            <span class="n">ret</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span>  <span class="ow">in</span> <span class="n">name</span><span class="p">]</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">name</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> was not found in the setas attribute.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ret</span>
@@ -396,11 +456,11 @@
 
 <span class="sd">            This class does not follow standard Mapping semantics - iterating iterates over the values and not the items.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="c1">#Force setas to fix size</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span>  <span class="c1"># Force setas to fix size</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">c</span>
 
-    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;!= is the same as no ==.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
@@ -413,19 +473,24 @@
 <span class="sd">                a single letter string in the set above.</span>
 <span class="sd">            value (integer or column index): See above.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">islike_list</span><span class="p">(</span><span class="n">name</span><span class="p">):</span> <span class="c1">#Sipport indexing with a list like object</span>
-            <span class="k">if</span> <span class="n">islike_list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">v</span>
+        <span class="k">if</span> <span class="n">islike_list</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>  <span class="c1"># Sipport indexing with a list like object</span>
+            <span class="k">if</span> <span class="n">islike_list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef.-&quot;</span><span class="p">:</span> <span class="c1">#indexing by single letter</span>
-            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">force_list</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">=</span><span class="n">name</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">index_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef.-&quot;</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">force_list</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef.-&quot;</span><span class="p">:</span>  <span class="c1"># indexing by single letter</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">force_list</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">index_types</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="ow">and</span> <span class="n">value</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef.-&quot;</span>
+        <span class="p">):</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">force_list</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return our own length.&quot;&quot;&quot;</span>
@@ -437,73 +502,98 @@
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Our string representation is just fromed by joing the assingments together.&quot;&quot;&quot;</span>
-        <span class="c1">#Quick string conversion routine</span>
+        <span class="c1"># Quick string conversion routine</span>
         <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span>
 
     <span class="c1">#################################################################################################################</span>
     <span class="c1">#############################   Operator Methods ################################################################</span>
 
-    <span class="k">def</span> <span class="nf">__add_core__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">new</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__add_core__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Allow the user to add a dictionary to setas to add extra columns.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">setas</span><span class="p">):</span> <span class="c1">#Deal with the other value being a setas attribute already.</span>
-            <span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="n">istuple</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">index_types</span><span class="p">,</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span> <span class="n">istuple</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">string_types</span><span class="p">,</span><span class="n">index_types</span><span class="p">):</span>
-            <span class="n">other</span><span class="o">=</span><span class="p">{</span><span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">other</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">NotImplemented</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef&quot;</span><span class="p">:</span> <span class="c1">#of the form x:column_name</span>
-                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">new</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">force_list</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-                    <span class="n">new</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">=</span><span class="n">k</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">index_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef&quot;</span><span class="p">:</span> <span class="c1">#of the form column_name:x</span>
-                <span class="n">k</span><span class="o">=</span><span class="n">new</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-                <span class="n">new</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">v</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+                <span class="n">tmp</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+                <span class="n">other</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">NotImplemented</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef&quot;</span><span class="p">:</span>  <span class="c1"># of the form x:column_name</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">new</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">force_list</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="n">new</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+            <span class="k">elif</span> <span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">index_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef&quot;</span>
+            <span class="p">):</span>  <span class="c1"># of the form column_name:x</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">new</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Unable to workout what do with </span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2"> when setting the setas attribute.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Unable to workout what do with </span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2"> when setting the setas attribute.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">new</span>
 
-    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Jump to the core.&quot;&quot;&quot;</span>
-        <span class="n">new</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__add_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__add_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Jump to the core.&quot;&quot;&quot;</span>
-        <span class="n">new</span><span class="o">=</span><span class="bp">self</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__add_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__add_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__sub_core__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">new</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__sub_core__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement subtracting either column indices or x,y,z,d,e,f,u,v,w for the current setas.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">other</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">other</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef&quot;</span><span class="p">:</span>
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">new</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">new</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">other</span><span class="p">)]</span><span class="o">=</span><span class="s2">&quot;.&quot;</span>
+                    <span class="n">new</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">new</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">other</span><span class="p">)]</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
                 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                     <span class="k">break</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">index_types</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">new</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">index_types</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">new</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">new</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">other</span><span class="p">)]</span><span class="o">=</span><span class="s2">&quot;.&quot;</span>
+                <span class="n">new</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">new</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">other</span><span class="p">)]</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+                <span class="k">return</span> <span class="n">new</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="k">pass</span>
+                <span class="n">other</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_self</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">me</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_self</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">me</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">me</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">me</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                                <span class="n">me</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">me</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not set as </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">me</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">del</span> <span class="n">me</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No column is set as </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">new</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">new</span>
         <span class="k">elif</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
-                <span class="n">new</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span><span class="n">o</span><span class="p">)</span>
+                <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">new</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">NotImplemented</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">NotImplemented</span>
-        <span class="k">return</span> <span class="n">new</span>
+            <span class="k">return</span> <span class="n">new</span>
+        <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-
-    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Jump to the core.&quot;&quot;&quot;</span>
-        <span class="n">new</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Jump to the core.&quot;&quot;&quot;</span>
-        <span class="n">new</span><span class="o">=</span><span class="bp">self</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">find_col</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">force_list</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Indexes the column headers in order to locate a column of data.shape.</span>
@@ -532,7 +622,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">int_types</span><span class="p">):</span>  <span class="c1"># col is an int so pass on</span>
             <span class="k">if</span> <span class="n">col</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Attempting to index a non - existant column </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Attempting to index a non - existant column </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">col</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">col</span> <span class="o">=</span> <span class="n">col</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>  <span class="c1"># Ok we have a string</span>
@@ -546,16 +636,20 @@
                     <span class="k">try</span><span class="p">:</span>
                         <span class="n">col</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
                     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Unable to find any possible column matches for &quot;</span><span class="si">{}</span><span class="s1"> in </span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">))</span>
+                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                            <span class="s1">&#39;Unable to find any possible column matches for &quot;</span><span class="si">{}</span><span class="s1"> in </span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                <span class="n">col</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
                     <span class="k">if</span> <span class="n">col</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">col</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Column index out of range&#39;</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Column index out of range&quot;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">possible</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">_pattern_type</span><span class="p">):</span>
             <span class="n">test</span> <span class="o">=</span> <span class="n">col</span>
             <span class="n">possible</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="k">if</span> <span class="n">test</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">possible</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Unable to find any possible column matches for </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">pattern</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Unable to find any possible column matches for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">pattern</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">possible</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
@@ -565,7 +659,7 @@
         <span class="k">elif</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">col</span><span class="p">):</span>
             <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Column index must be an integer, string, list or slice, not a </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Column index must be an integer, string, list or slice, not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
         <span class="k">if</span> <span class="n">force_list</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">col</span>
@@ -578,11 +672,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unset</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement a get method.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span><span class="ne">KeyError</span><span class="p">):</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">default</span>
             <span class="k">else</span><span class="p">:</span>
@@ -600,16 +694,16 @@
 
     <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Mapping items iterates over keys and values.&quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_unique_headers</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">):</span>
-            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_unique_headers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
 
-    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement a get method.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">unset</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">ret</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span><span class="ne">KeyError</span><span class="p">):</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">default</span>
             <span class="k">else</span><span class="p">:</span>
@@ -618,21 +712,21 @@
     <span class="k">def</span> <span class="nf">popitem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="s2">&quot;xdyezfuvw&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
-                <span class="n">v</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">unset</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-                <span class="k">return</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;No columns set in setas!&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement a setdefault method.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span><span class="ne">KeyError</span><span class="p">):</span>
-            <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">default</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
             <span class="k">return</span> <span class="n">default</span>
 
-    <span class="k">def</span> <span class="nf">unset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">what</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">unset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Remove column settings from the setas attribute in  method call.</span>
 
 <span class="sd">        Parameters:</span>
@@ -647,34 +741,34 @@
 <span class="sd">            -   None - all setas assignments are cleared.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">what</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">[]</span>
-            <span class="n">_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">-=</span><span class="n">what</span>
+            <span class="bp">self</span> <span class="o">-=</span> <span class="n">what</span>
 
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Replace any assignments in self with assignments from other.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">setas</span><span class="p">):</span>
-            <span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">setas</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;setas.update requires a dictionary not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)))</span>
-        <span class="n">vals</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="n">keys</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                    <span class="bp">self</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;.&quot;</span>
-                <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span><span class="ne">IndexError</span><span class="p">):</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
                     <span class="k">pass</span>
-                <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">other</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">other</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                    <span class="bp">self</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;.&quot;</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
                 <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
                     <span class="k">pass</span>
-                <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">keys</span><span class="p">[</span><span class="n">vals</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="n">vals</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -682,115 +776,116 @@
 
 <span class="sd">        If multiple columns are assigned to the same type, then the column names are</span>
 <span class="sd">        returned as a list. If column headers are duplicated&quot;&quot;&quot;</span>
-        <span class="n">ret</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">k</span><span class="p">,</span><span class="n">ch</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_unique_headers</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">k</span><span class="o">!=</span><span class="s2">&quot;.&quot;</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">ch</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unique_headers</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;.&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">:</span>
                     <span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">ch</span><span class="p">]</span>
+                    <span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">])</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="k">def</span> <span class="nf">_get_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">startx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">no_guess</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the setas attribute as a list of letter types.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;Return the setas attribute encoded as a string, optionally replacing runs of 3 or more identical characters with a precediung digit.&quot;&quot;&quot;</span>
+        <span class="n">expanded</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">encode</span><span class="p">:</span>
+            <span class="n">pat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;((.)\2{2,9})&quot;</span><span class="p">)</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">pat</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">expanded</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">span</span><span class="p">()</span>
+                <span class="n">let</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">+</span> <span class="n">res</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+                <span class="n">expanded</span> <span class="o">=</span> <span class="n">expanded</span><span class="p">[:</span><span class="n">start</span><span class="p">]</span> <span class="o">+</span> <span class="n">let</span> <span class="o">+</span> <span class="n">expanded</span><span class="p">[</span><span class="n">stop</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">expanded</span>
+
+    <span class="k">def</span> <span class="nf">_get_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">startx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_guess</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Uses the setas attribute to work out which columns to use for x,y,z etc.</span>
 
 <span class="sd">        Keyword Arguments:</span>
 <span class="sd">            what (string): Returns either xcol, ycol, zcol, ycols,xcols rather than the full dictionary</span>
-<span class="sd">            starts (int): Start looking for x columns at this column.</span>
-
+<span class="sd">            startx (int): Start looking for x columns at this column.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            A single integer, a list of integers or a dictionary of all columns.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1">#Do the xcolumn and xerror first. If only one x column then special case to reset startx to get any</span>
-        <span class="c1">#y columns</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="s2">&quot;.&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">))))</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">xcol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
-            <span class="n">maxcol</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
-            <span class="n">startx</span><span class="o">=</span><span class="mi">0</span>
-            <span class="n">xerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;d&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Do the xcolumn and xerror first. If only one x column then special case to reset startx to get any</span>
+        <span class="c1"># y columns</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">xcol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+            <span class="n">maxcol</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">startx</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">xerr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;d&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">xcol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">startx</span><span class="p">:]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">startx</span>
-            <span class="n">startx</span><span class="o">=</span><span class="n">xcol</span>
-            <span class="n">maxcol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">xcol</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">xcol</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">xerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">startx</span><span class="p">:</span><span class="n">maxcol</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;d&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">startx</span><span class="p">:</span><span class="n">maxcol</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">startx</span> <span class="o">=</span> <span class="n">xcol</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">maxcol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">xcol</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">xcol</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">maxcol</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span>
+            <span class="n">xerr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">startx</span><span class="p">:</span><span class="n">maxcol</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;d&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">startx</span><span class="p">:</span><span class="n">maxcol</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">xcol</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">maxcol</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
-            <span class="n">startx</span><span class="o">=</span><span class="mi">0</span>
-            <span class="n">xerr</span><span class="o">=</span><span class="kc">None</span>
+            <span class="n">maxcol</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">startx</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">xerr</span> <span class="o">=</span> <span class="kc">None</span>
 
-
-        <span class="c1">#No longer enforce ordering of yezf - allow them to appear in any order.</span>
-        <span class="n">ycol</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="n">yerr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="n">zcol</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="n">zerr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="n">ucol</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="n">vcol</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="n">wcol</span> <span class="o">=</span>  <span class="nb">list</span><span class="p">()</span>
-
-        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">ycol</span><span class="p">,</span><span class="n">yerr</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">zerr</span><span class="p">,</span><span class="n">ucol</span><span class="p">,</span><span class="n">vcol</span><span class="p">,</span><span class="n">wcol</span><span class="p">]</span>
-        <span class="n">letters</span><span class="o">=</span><span class="s2">&quot;yezfuvw&quot;</span>
-        <span class="k">for</span> <span class="n">col</span><span class="p">,</span><span class="n">lett</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span><span class="n">letters</span><span class="p">):</span>
-            <span class="n">col</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">startx</span><span class="p">:</span><span class="n">maxcol</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">lett</span><span class="p">))</span>
-            <span class="n">start</span><span class="o">=</span><span class="n">startx</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">col</span><span class="p">):</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">maxcol</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">lett</span><span class="p">)</span><span class="o">+</span><span class="n">start</span>
-                    <span class="n">start</span><span class="o">=</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
-                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                    <span class="k">break</span>
+        <span class="c1"># No longer enforce ordering of yezf - allow them to appear in any order.</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;e&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;u&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">lett</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">startx</span><span class="p">:</span><span class="n">maxcol</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">lett</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+                <span class="n">columns</span><span class="p">[</span><span class="n">lett</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ix</span> <span class="o">+</span> <span class="n">startx</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">xcol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">axes</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="n">ycol</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">columns</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]:</span>
             <span class="n">axes</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="n">zcol</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">columns</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]:</span>
             <span class="n">axes</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">axes</span> <span class="o">=</span> <span class="mi">3</span>
-        <span class="k">if</span> <span class="n">axes</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ucol</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">vcol</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">axes</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">axes</span> <span class="o">=</span> <span class="mi">4</span>
         <span class="k">elif</span> <span class="n">axes</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ucol</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">vcol</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">wcol</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="s2">&quot;w&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">axes</span> <span class="o">=</span> <span class="mi">6</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">ucol</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">vcol</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">axes</span> <span class="o">=</span> <span class="mi">5</span>
+
         <span class="n">ret</span> <span class="o">=</span> <span class="n">_attribute_store</span><span class="p">()</span>
-        <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-            <span class="s2">&quot;xcol&quot;</span><span class="p">:</span> <span class="n">xcol</span><span class="p">,</span>
-            <span class="s2">&quot;xerr&quot;</span><span class="p">:</span> <span class="n">xerr</span><span class="p">,</span>
-            <span class="s2">&quot;ycol&quot;</span><span class="p">:</span> <span class="n">ycol</span><span class="p">,</span>
-            <span class="s2">&quot;yerr&quot;</span><span class="p">:</span> <span class="n">yerr</span><span class="p">,</span>
-            <span class="s2">&quot;zcol&quot;</span><span class="p">:</span> <span class="n">zcol</span><span class="p">,</span>
-            <span class="s2">&quot;zerr&quot;</span><span class="p">:</span> <span class="n">zerr</span><span class="p">,</span>
-            <span class="s2">&quot;ucol&quot;</span><span class="p">:</span> <span class="n">ucol</span><span class="p">,</span>
-            <span class="s2">&quot;vcol&quot;</span><span class="p">:</span> <span class="n">vcol</span><span class="p">,</span>
-            <span class="s2">&quot;wcol&quot;</span><span class="p">:</span> <span class="n">wcol</span><span class="p">,</span>
-            <span class="s2">&quot;axes&quot;</span><span class="p">:</span> <span class="n">axes</span>
-        <span class="p">})</span>
-        <span class="k">if</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;axes&quot;</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">2</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_defaults</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">no_guess</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_col_defaults</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-            <span class="k">if</span> <span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="nb">list</span><span class="p">)</span> <span class="ow">and</span>  <span class="ow">not</span> <span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">]):</span>
-                <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;has_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span><span class="o">=</span><span class="kc">False</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;has_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;axes&quot;</span><span class="p">:</span> <span class="n">axes</span><span class="p">,</span> <span class="s2">&quot;xcol&quot;</span><span class="p">:</span> <span class="n">xcol</span><span class="p">,</span> <span class="s2">&quot;xerr&quot;</span><span class="p">:</span> <span class="n">xerr</span><span class="p">})</span>
+
+        <span class="k">for</span> <span class="n">ck</span><span class="p">,</span> <span class="n">rk</span> <span class="ow">in</span> <span class="p">{</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;ycol&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="s2">&quot;zcol&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;e&quot;</span><span class="p">:</span> <span class="s2">&quot;yerr&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="s2">&quot;zerr&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;u&quot;</span><span class="p">:</span> <span class="s2">&quot;ucol&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="s2">&quot;vcol&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="s2">&quot;wcol&quot;</span><span class="p">,</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">ret</span><span class="p">[</span><span class="n">rk</span><span class="p">]</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="n">ck</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">axes</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_defaults</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">no_guess</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_defaults</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">,</span> <span class="s2">&quot;xerr&quot;</span><span class="p">,</span> <span class="s2">&quot;ycol&quot;</span><span class="p">,</span> <span class="s2">&quot;yerr&quot;</span><span class="p">,</span> <span class="s2">&quot;zcol&quot;</span><span class="p">,</span> <span class="s2">&quot;zerr&quot;</span><span class="p">,</span> <span class="s2">&quot;ucol&quot;</span><span class="p">,</span> <span class="s2">&quot;vcol&quot;</span><span class="p">,</span> <span class="s2">&quot;wcol&quot;</span><span class="p">,</span> <span class="s2">&quot;axes&quot;</span><span class="p">]:</span>
+            <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;has_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">]))</span>
+
         <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;has_uvw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;has_ucol&quot;</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;has_vcol&quot;</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;has_wcol&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">what</span> <span class="o">==</span> <span class="s2">&quot;xcol&quot;</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">what</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">,</span> <span class="s2">&quot;xerr&quot;</span><span class="p">]:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="n">what</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">what</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;ycol&quot;</span><span class="p">,</span> <span class="s2">&quot;zcol&quot;</span><span class="p">,</span> <span class="s2">&quot;ucol&quot;</span><span class="p">,</span> <span class="s2">&quot;vcol&quot;</span><span class="p">,</span> <span class="s2">&quot;wcol&quot;</span><span class="p">,</span> <span class="s2">&quot;yerr&quot;</span><span class="p">,</span> <span class="s2">&quot;zerr&quot;</span><span class="p">):</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="n">what</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">what</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;ycols&quot;</span><span class="p">,</span> <span class="s2">&quot;zcols&quot;</span><span class="p">,</span> <span class="s2">&quot;ucols&quot;</span><span class="p">,</span> <span class="s2">&quot;vcols&quot;</span><span class="p">,</span> <span class="s2">&quot;wcols&quot;</span><span class="p">,</span> <span class="s2">&quot;yerrs&quot;</span><span class="p">,</span> <span class="s2">&quot;zerrs&quot;</span><span class="p">):</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="n">what</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
         <span class="k">return</span> <span class="n">ret</span></div>
-
 </pre></div>
 
           </div>
@@ -834,7 +929,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

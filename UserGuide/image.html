@@ -160,9 +160,9 @@ contents of the ImageFile instead.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>i = Stopner.Image.ImageFile(&quot;kermit.png&quot;)
 i
 &gt;&gt;&gt; kermit.png(&lt;class &#39;Stoner.Image.core.ImageFile&#39;&gt;) of shape (479, 359) (uint16) and 53 items of metadata
-from Stoner import set_option
-set_option(&quot;short_repr&quot;,False)
-set_option(&quot;shoft_img_repr&quot;,False)
+from Stoner import Options
+Options.short_repr=False
+Options.shoft_img_repr=False
 i
 &gt;&gt;&gt;
 </pre></div>
@@ -173,7 +173,7 @@ i
 </div>
 <div class="section" id="imagearray-a-numpy-array-like-class">
 <h2><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageArray</span></code>: A numpy array like class<a class="headerlink" href="#imagearray-a-numpy-array-like-class" title="Permalink to this headline">¶</a></h2>
-<p>Somewhat analogous to <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataArray</span></code>, the <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageArray</span></code> is a specialised subclass of <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a> used to
+<p>Somewhat analogous to <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataArray</span></code>, the <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageArray</span></code> is a specialised subclass of <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.16)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a> used to
 store the image data in ImageFile. The numpy.ndarray like data can be accessed at any point via either <code class="xref py py-attr docutils literal notranslate"><span class="pre">ImageFile.image</span></code> or <code class="xref py py-attr docutils literal notranslate"><span class="pre">ImageFile.data</span></code>
 and will be accepted by functions that take an numpy.ndarray as an argument.</p>
 </div>
@@ -274,7 +274,7 @@ For example:</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

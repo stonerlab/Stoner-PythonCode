@@ -245,7 +245,7 @@
 <tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.MaskStack.get" title="Stoner.Image.MaskStack.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(name[,&nbsp;default])</td>
 <td>Return either a sub-group or named object from this folder.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.MaskStack.getlist" title="Stoner.Image.MaskStack.getlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getlist</span></code></a>([recursive,&nbsp;directory,&nbsp;flatten,&nbsp;…])</td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.MaskStack.getlist" title="Stoner.Image.MaskStack.getlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getlist</span></code></a>(**kargs)</td>
 <td>Scans the current directory, optionally recursively to build a list of filenames</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.MaskStack.group" title="Stoner.Image.MaskStack.group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">group</span></code></a>(key)</td>
@@ -338,7 +338,7 @@
 <tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.MaskStack.unflatten" title="Stoner.Image.MaskStack.unflatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unflatten</span></code></a>()</td>
 <td>Takes a file list an unflattens them according to the file paths.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.MaskStack.unload" title="Stoner.Image.MaskStack.unload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unload</span></code></a>(name)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.MaskStack.unload" title="Stoner.Image.MaskStack.unload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unload</span></code></a>([name])</td>
 <td>Removes the instance from memory without losing the name in the Folder.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#Stoner.Image.MaskStack.update" title="Stoner.Image.MaskStack.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(other)</td>
@@ -957,7 +957,7 @@ irrelevant.</p>
 
 <dl class="method">
 <dt id="Stoner.Image.MaskStack.getlist">
-<code class="descname">getlist</code><span class="sig-paren">(</span><em>recursive=None</em>, <em>directory=None</em>, <em>flatten=None</em>, <em>discard_earlier=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.MaskStack.getlist" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getlist</code><span class="sig-paren">(</span><em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.MaskStack.getlist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scans the current directory, optionally recursively to build a list of filenames</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1431,13 +1431,13 @@ False if you want the first image</li>
 
 <dl class="method">
 <dt id="Stoner.Image.MaskStack.unload">
-<code class="descname">unload</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.MaskStack.unload" title="Permalink to this definition">¶</a></dt>
+<code class="descname">unload</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.MaskStack.unload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes the instance from memory without losing the name in the Folder.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string or int</em>) – Specifies the entry to unload from memeory.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string,int or None</em>) – Specifies the entry to unload from memeory. If set to None all loaded entries are unloaded.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(DataFolder)</em> – returns a copy of itself.</td>
 </tr>
@@ -1573,7 +1573,7 @@ where f is either a objectFolder or metadataObject.</dd>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">

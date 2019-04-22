@@ -34,6 +34,7 @@ Stoner.Data
       ~Stoner.Data.del_column
       ~Stoner.Data.del_nan
       ~Stoner.Data.del_rows
+      ~Stoner.Data.differential_evolution
       ~Stoner.Data.diffsum
       ~Stoner.Data.dir
       ~Stoner.Data.divide

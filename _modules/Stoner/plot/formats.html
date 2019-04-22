@@ -49,22 +49,41 @@
 <span class="sd">&quot;&quot;&quot;Plot Templates module - contains classes that style plots produced by :class:`.Data`</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="n">__all__</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TexFormatter&quot;</span><span class="p">,</span><span class="s2">&quot;DefaultPlotStyle&quot;</span><span class="p">,</span><span class="s2">&quot;GBPlotStyle&quot;</span><span class="p">,</span><span class="s2">&quot;JTBPlotStyle&quot;</span><span class="p">,</span><span class="s2">&quot;JTBinsetStyle&quot;</span><span class="p">,</span><span class="s2">&quot;PRBPlotStyle&quot;</span><span class="p">,</span><span class="s2">&quot;SketchPlot&quot;</span><span class="p">,</span><span class="s2">&quot;SeabornPlotStyle&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;TexFormatter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DefaultPlotStyle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;GBPlotStyle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;JTBPlotStyle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;JTBinsetStyle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PRBPlotStyle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SketchPlot&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SeabornPlotStyle&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="k">import</span> <span class="n">EngFormatter</span><span class="p">,</span> <span class="n">Formatter</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="k">import</span> <span class="n">AutoLocator</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">realpath</span><span class="p">,</span><span class="n">exists</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">realpath</span><span class="p">,</span> <span class="n">exists</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">normal</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="k">import</span> <span class="n">getfile</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">MutableMapping</span><span class="p">,</span><span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Mapping</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-    <span class="n">SEABORN</span><span class="o">=</span><span class="kc">True</span>
+
+    <span class="n">SEABORN</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">SEABORN</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">SEABORN</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
+
+
+<span class="k">def</span> <span class="nf">_add_dots</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;replace __ with . in key.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_remove_dots</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="TexFormatter"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter">[docs]</a><span class="k">class</span> <span class="nc">TexFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
@@ -72,7 +91,7 @@
     <span class="sd">&quot;&quot;&quot;An axis tick label formatter that emits Tex formula mode code.</span>
 
 <span class="sd">    Formating is set so that large numbers are registered as \\times 10^{power}</span>
-<span class="sd">    rather than ysing E notation.&quot;&quot;&quot;</span>
+<span class="sd">    rather than using E notation.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="TexFormatter.__call__"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the value ina  suitable texable format&quot;&quot;&quot;</span>
@@ -95,11 +114,11 @@
 <div class="viewcode-block" id="TexFormatter.format_data_short"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter.format_data_short">[docs]</a>    <span class="k">def</span> <span class="nf">format_data_short</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{:g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_round</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_round</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-            <span class="n">vt</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span><span class="o">-</span><span class="n">vt</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">2</span><span class="p">):</span>
-                <span class="n">value</span><span class="o">=</span><span class="n">vt</span>
+            <span class="n">vt</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="n">vt</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">i</span> <span class="o">-</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">vt</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">value</span></div>
 
@@ -109,7 +128,7 @@
     <span class="sd">&quot;&quot;&quot;An axis tick label formatter that emits Tex formula mode code.</span>
 
 <span class="sd">    Formatting is set so that large numbers are registered as with SI prefixes</span>
-<span class="sd">    rather than ysing E notation.</span>
+<span class="sd">    rather than using E notation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">prefix</span> <span class="o">=</span> <span class="p">{</span>
@@ -120,7 +139,15 @@
         <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>
         <span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
         <span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
-        <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">mu&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span>
+        <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">mu&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -129,9 +156,9 @@
             <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">elif</span> <span class="n">value</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
             <span class="n">power</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-            <span class="n">pre</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">power</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span>
+            <span class="n">pre</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">power</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span>
             <span class="n">power</span> <span class="o">=</span> <span class="n">power</span> <span class="o">%</span> <span class="mi">3</span>
-            <span class="k">if</span> <span class="n">pre</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pre</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{}</span><span class="se">\\</span><span class="s2">,</span><span class="se">\\</span><span class="s2">mathrm{{</span><span class="si">{}</span><span class="s2">}}$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_round</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_round</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="n">pre</span><span class="p">))</span>
@@ -146,14 +173,13 @@
     <span class="k">def</span> <span class="nf">format_data_short</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{:g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_round</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_round</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-            <span class="n">vt</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span><span class="o">-</span><span class="n">vt</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">4</span><span class="p">):</span>
-                <span class="n">value</span><span class="o">=</span><span class="n">vt</span>
+            <span class="n">vt</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="n">vt</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">i</span> <span class="o">-</span> <span class="mi">4</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">vt</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">value</span>
-
 
 
 <div class="viewcode-block" id="DefaultPlotStyle"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">DefaultPlotStyle</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
@@ -182,15 +208,15 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#Internal class attributes.</span>
+    <span class="c1"># Internal class attributes.</span>
     <span class="n">_inches_per_pt</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">72.27</span>  <span class="c1"># Convert pt to inch</span>
     <span class="n">_mm_per_inch</span> <span class="o">=</span> <span class="mf">25.4</span>
     <span class="n">_golden_mean</span> <span class="o">=</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>  <span class="c1"># Aesthetic ratio</span>
 
-    <span class="c1">#Settings for this figure type. All instance attributes which start template_</span>
-    <span class="c1">#will be used. Once the leading template_ is stripped, all _ characters are replaced</span>
-    <span class="c1">#with . and then the attributes are mapped to a dictionary and used to update the rcParams</span>
-    <span class="c1">#dictionary</span>
+    <span class="c1"># Settings for this figure type. All instance attributes which start template_</span>
+    <span class="c1"># will be used. Once the leading template_ is stripped, all _ characters are replaced</span>
+    <span class="c1"># with . and then the attributes are mapped to a dictionary and used to update the rcParams</span>
+    <span class="c1"># dictionary</span>
 
     <span class="n">show_xlabel</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">show_ylabel</span> <span class="o">=</span> <span class="kc">True</span>
@@ -210,55 +236,60 @@
             <span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
             <span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
             <span class="s2">&quot;zlabel&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
         <span class="p">},</span>
         <span class="s2">&quot;subplots&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
             <span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
             <span class="s2">&quot;zlabel&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
         <span class="p">},</span>
         <span class="s2">&quot;y2&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
             <span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
             <span class="s2">&quot;zlabel&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="p">}</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">},</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a template instance of this template.</span>
 
 <span class="sd">        Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter</span>
 <span class="sd">        may be specified, with .&#39;s replaced with __. A Mapping type object may be supplied as the first argument</span>
 <span class="sd">        which will be used to upodate the rcParams first.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span><span class="o">=</span><span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calling the template object can manipulate the rcParams that will be set.&quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span><span class="p">):</span>
-                <span class="n">nk</span> <span class="o">=</span> <span class="n">k</span><span class="p">[:</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
+                <span class="n">nk</span> <span class="o">=</span> <span class="n">_add_dots</span><span class="p">(</span><span class="n">k</span><span class="p">[:</span><span class="mi">9</span><span class="p">])</span>
                 <span class="k">if</span> <span class="n">nk</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">:</span>
-                    <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">v</span>
+                    <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">nk</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">nk</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">_add_dots</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span><span class="p">})</span>
 
-    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
-            <span class="n">default</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(),</span><span class="n">name</span><span class="p">)</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">default</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+            <span class="n">default</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(),</span> <span class="n">name</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">rcdefaults</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__delattr__</span><span class="p">(</span><span class="s2">&quot;template_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span><span class="s2">&quot;__&quot;</span><span class="p">)))</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">rcdefaults</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__delattr__</span><span class="p">(</span><span class="n">_remove_dots</span><span class="p">(</span><span class="s2">&quot;template_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not recognised as part of the template&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provide magic to read certain attributes of the template.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span><span class="p">):</span>  <span class="c1">#Magic conversion to rcParams</span>
-            <span class="n">attrname</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span><span class="p">):</span>  <span class="c1"># Magic conversion to rcParams</span>
+            <span class="n">attrname</span> <span class="o">=</span> <span class="n">_add_dots</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">9</span><span class="p">:])</span>
             <span class="k">if</span> <span class="n">attrname</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="n">attrname</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
@@ -268,7 +299,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
@@ -279,70 +310,76 @@
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not recognised as part of the template&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_attr</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
-        <span class="n">attrs</span><span class="o">+=</span><span class="nb">list</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_attr</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+        <span class="n">attrs</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="n">attrs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">f</span>
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">i</span><span class="o">=-</span><span class="mi">1</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">pass</span>
-        <span class="k">return</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Ensure stylesheet can&#39;t be overwritten and provide magic for template attributes.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span><span class="p">):</span>
-            <span class="n">attrname</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
+            <span class="n">attrname</span> <span class="o">=</span> <span class="n">_add_dots</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">9</span><span class="p">:])</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="n">attrname</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">:</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;template_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span><span class="s2">&quot;__&quot;</span><span class="p">))</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">_remove_dots</span><span class="p">(</span><span class="s2">&quot;template_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
                 <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not recognised as part of the template&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_allowed_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="ow">and</span>
-                <span class="p">(</span><span class="ow">not</span> <span class="n">template</span><span class="p">)</span><span class="o">^</span><span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span><span class="p">)</span> <span class="ow">and</span>
-                <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span>
-                <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span><span class="n">x</span><span class="p">,</span><span class="kc">None</span><span class="p">),</span><span class="nb">property</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_allowed_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">template</span><span class="p">)</span> <span class="o">^</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="nb">property</span><span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Horribly hacky method to traverse over the class heirarchy for style sheet names.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="bp">self</span><span class="o">.</span><span class="n">stylename</span><span class="p">:</span> <span class="c1"># Have we cached a copy of our stylesheets ?</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">stylename</span>
+        <span class="p">):</span>  <span class="c1"># Have we cached a copy of our stylesheets ?</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">levels</span> <span class="o">=</span> <span class="nb">type</span><span class="o">.</span><span class="n">mro</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">sheets</span><span class="o">=</span><span class="p">[]</span>
-        <span class="n">classes</span><span class="o">=</span><span class="p">[]</span>
-        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">:</span> <span class="c1"># Iterate through all possible parent classes and build a list of stylesheets</span>
-            <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">or</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">classes</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+        <span class="n">sheets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">classes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">:</span>  <span class="c1"># Iterate through all possible parent classes and build a list of stylesheets</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">or</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">classes</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">DefaultPlotStyle</span><span class="p">):</span>
                 <span class="k">continue</span>
-            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">[</span><span class="n">join</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="n">c</span><span class="p">))),</span> <span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s2">&quot;.mplstyle&quot;</span><span class="p">),</span>
-                      <span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="n">c</span><span class="p">))),</span> <span class="s2">&quot;stylelib&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s2">&quot;.mplstyle&quot;</span><span class="p">),</span>
-                      <span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s2">&quot;stylelib&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s2">&quot;.mplstyle&quot;</span><span class="p">),</span>
-                <span class="p">]:</span> <span class="c1"># Look in first of all the same directory as the class file and then in a stylib folder</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="n">join</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="n">c</span><span class="p">))),</span> <span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s2">&quot;.mplstyle&quot;</span><span class="p">),</span>
+                <span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="n">c</span><span class="p">))),</span> <span class="s2">&quot;stylelib&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s2">&quot;.mplstyle&quot;</span><span class="p">),</span>
+                <span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s2">&quot;stylelib&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s2">&quot;.mplstyle&quot;</span><span class="p">),</span>
+            <span class="p">]:</span>  <span class="c1"># Look in first of all the same directory as the class file and then in a stylib folder</span>
                 <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
                     <span class="n">sheets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
                     <span class="k">break</span>
-            <span class="k">else</span><span class="p">:</span> <span class="c1"># Fallback, does the parent class define a builtin stylesheet ?</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># Fallback, does the parent class define a builtin stylesheet ?</span>
                 <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">available</span><span class="p">:</span>
                     <span class="n">sheets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">stylename</span><span class="p">)</span>
-            <span class="n">classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="c1"># Stop double visiting files</span>
-        <span class="c1">#Now do the same for this class, but allow the stylename to be an instance variable as well</span>
-        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">[</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))),</span> <span class="bp">self</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s2">&quot;.mplstyle&quot;</span><span class="p">),</span>
-                  <span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))),</span> <span class="s2">&quot;stylelib&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s2">&quot;.mplstyle&quot;</span><span class="p">),</span>
-            <span class="p">]:</span>
+            <span class="n">classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>  <span class="c1"># Stop double visiting files</span>
+        <span class="c1"># Now do the same for this class, but allow the stylename to be an instance variable as well</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))),</span> <span class="bp">self</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s2">&quot;.mplstyle&quot;</span><span class="p">),</span>
+            <span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))),</span> <span class="s2">&quot;stylelib&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s2">&quot;.mplstyle&quot;</span><span class="p">),</span>
+        <span class="p">]:</span>
             <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
                 <span class="n">sheets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
                 <span class="k">break</span>
@@ -350,26 +387,26 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stylename</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">available</span><span class="p">:</span>
                 <span class="n">sheets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stylename</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stylename</span><span class="p">,</span><span class="n">sheets</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stylename</span><span class="p">,</span> <span class="n">sheets</span>
         <span class="k">return</span> <span class="n">sheets</span>
 
     <span class="nd">@stylesheet</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Just stop the stylesheet from being set.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t set the stylesheet value, this is dervied from the stylename aatribute.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Custom clear method that resets everything back o defaults.&quot;&quot;&quot;</span>
-        <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_attr</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
-        <span class="n">defaults</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">()</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_attr</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">attr</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">defaults</span><span class="p">,</span><span class="n">attr</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">defaults</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">rcdefaults</span><span class="p">()</span>
-        <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_attr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_attr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
-            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">attr</span><span class="p">)</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update the template with new attributes from keyword arguments.</span>
 
 <span class="sd">        Up to one positional argument may be supplied</span>
@@ -377,13 +414,15 @@
 <span class="sd">        Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter</span>
 <span class="sd">        may be specified, with .&#39;s replaced with _ and )_ replaced with __.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Mapping</span><span class="p">):</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;Only one posotional argument which should be a Mapping subclass can be supplied toi update.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span>
+                <span class="s2">&quot;Only one posotional argument which should be a Mapping subclass can be supplied toi update.&quot;</span>
+            <span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">k</span><span class="p">)):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="k">elif</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
 
@@ -402,17 +441,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">template_figure__figsize</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fig_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig_height</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span><span class="p">):</span>
-                <span class="n">attrname</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
+                <span class="n">attrname</span> <span class="o">=</span> <span class="n">_add_dots</span><span class="p">(</span><span class="n">attr</span><span class="p">[</span><span class="mi">9</span><span class="p">:])</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">attrname</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="n">params</span><span class="p">[</span><span class="n">attrname</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>  <span class="c1"># Apply these parameters</span>
-        <span class="n">projection</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;projection&quot;</span><span class="p">,</span><span class="s2">&quot;rectilinear&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">template_figure__figsize</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;figsize&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">template_figure__figsize</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;ax&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span> <span class="c1"># Giving an axis instance in kargs means we can use that as out figure</span>
-            <span class="n">ax</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ax&quot;</span><span class="p">)</span>
+        <span class="n">projection</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;projection&quot;</span><span class="p">,</span> <span class="s2">&quot;rectilinear&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_figure__figsize</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;figsize&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_figure__figsize</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;ax&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>  <span class="c1"># Giving an axis instance in kargs means we can use that as out figure</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ax&quot;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
-            <span class="n">figure</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">number</span>
+            <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">number</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">figure</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">figure</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">elif</span> <span class="n">figure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -427,9 +466,9 @@
                     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">projection</span> <span class="o">==</span> <span class="s2">&quot;3d&quot;</span><span class="p">:</span>
-                    <span class="n">ax</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ax&quot;</span><span class="p">,</span><span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">))</span>
+                    <span class="n">ax</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ax&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">ax</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ax&quot;</span><span class="p">,</span><span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">())</span>
+                    <span class="n">ax</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ax&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">())</span>
 
             <span class="n">ret</span> <span class="o">=</span> <span class="n">fig</span>
         <span class="k">else</span><span class="p">:</span>
@@ -444,12 +483,12 @@
         <span class="sd">&quot;&quot;&quot;Scan for all attributes that start template_ and build them into a dictionary to update matplotlib settings with.&quot;&quot;&quot;</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stylesheet</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="n">v</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">attr</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span><span class="p">):</span>
                 <span class="k">continue</span>
-            <span class="n">attr</span><span class="o">=</span><span class="n">attr</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">,</span><span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="s2">&quot;__&quot;</span><span class="p">)</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="n">_add_dots</span><span class="p">(</span><span class="n">attr</span><span class="p">[</span><span class="mi">9</span><span class="p">:])</span>
             <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">:</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">=</span><span class="n">v</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">customise</span><span class="p">()</span>
 
@@ -523,6 +562,7 @@
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="k">pass</span></div>
 
+
 <div class="viewcode-block" id="GBPlotStyle"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.GBPlotStyle.html#Stoner.plot.formats.GBPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">GBPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Template developed for Gavin&#39;s plotting.</span>
@@ -549,8 +589,8 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s2">&quot;bottom&quot;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="s1">&#39;zero&#39;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="s1">&#39;zero&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="s2">&quot;zero&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="s2">&quot;zero&quot;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">draw</span></div>
 
 
@@ -653,7 +693,8 @@
 
         <span class="n">plt</span><span class="o">.</span><span class="n">draw</span></div>
 
-<span class="k">if</span> <span class="n">SEABORN</span><span class="p">:</span> <span class="c1"># extra classes if we have seaborn available</span>
+
+<span class="k">if</span> <span class="n">SEABORN</span><span class="p">:</span>  <span class="c1"># extra classes if we have seaborn available</span>
 
 <div class="viewcode-block" id="SeabornPlotStyle"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.SeabornPlotStyle.html#Stoner.plot.formats.SeabornPlotStyle">[docs]</a>    <span class="k">class</span> <span class="nc">SeabornPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
 
@@ -670,9 +711,9 @@
 <span class="sd">                :outname: seabornstyle</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">_stylename</span><span class="o">=</span><span class="kc">None</span>
-        <span class="n">_context</span><span class="o">=</span><span class="kc">None</span>
-        <span class="n">_palette</span><span class="o">=</span><span class="kc">None</span>
+        <span class="n">_stylename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">_context</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">_palette</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="nd">@property</span>
         <span class="k">def</span> <span class="nf">context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -680,10 +721,10 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span>
 
         <span class="nd">@context</span><span class="o">.</span><span class="n">setter</span>
-        <span class="k">def</span> <span class="nf">context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Limit context to allowed values.&quot;&quot;&quot;</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span> <span class="s2">&quot;notebook&quot;</span><span class="p">,</span> <span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="s2">&quot;poster&quot;</span><span class="p">]:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">=</span><span class="n">name</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_context</span> <span class="o">=</span> <span class="n">name</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;style name should be one of  {paper,notebook,talk,poster}&quot;</span><span class="p">)</span>
 
@@ -693,12 +734,12 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_palette</span>
 
         <span class="nd">@context</span><span class="o">.</span><span class="n">setter</span>
-        <span class="k">def</span> <span class="nf">palette</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">palette</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Force palette to take allowed values.&quot;&quot;&quot;</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
                     <span class="k">pass</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_palette</span><span class="o">=</span><span class="n">name</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_palette</span> <span class="o">=</span> <span class="n">name</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">e</span>
 
@@ -708,13 +749,12 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stylename</span>
 
         <span class="nd">@stylename</span><span class="o">.</span><span class="n">setter</span>
-        <span class="k">def</span> <span class="nf">stylename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">stylename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Force stylename to take allowed values only.&quot;&quot;&quot;</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">,</span> <span class="s2">&quot;whitegrid&quot;</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;ticks&quot;</span><span class="p">]:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_stylename</span><span class="o">=</span><span class="n">name</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_stylename</span> <span class="o">=</span> <span class="n">name</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;style name should be one of  {darkgrid, whitegrid, dark, white, ticks}&quot;</span><span class="p">)</span>
-
 
         <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Override base method to apply seaborn style sheets.&quot;&quot;&quot;</span>
@@ -723,8 +763,9 @@
             <span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_palette</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">customise</span><span class="p">()</span></div>
 
+
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">SeabornPlotStyle</span><span class="o">=</span><span class="n">DefaultPlotStyle</span>
+    <span class="n">SeabornPlotStyle</span> <span class="o">=</span> <span class="n">DefaultPlotStyle</span>
 </pre></div>
 
           </div>
@@ -768,7 +809,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 06, 2018.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       1.7.9
         with the <a href="http://github.com/irskep/sphinx-better-theme">
