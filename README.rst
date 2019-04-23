@@ -41,12 +41,12 @@ Getting this Code
     :alt: Introduction and Installation Guide to Stoner Pythin Package
     :width: 320
 
-The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies
+The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies 
 on blist, filemagic, npTDMS, imreg_dft and numba.
 
-Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining
-dependencies are collected together in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner package is,
-therefore, to install the most recent Anaconda Python distribution (Python 3.7, 3.6, 3.5 or 2.7 should work) and then to install
+Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining 
+dependencies are collected together in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner package is, 
+therefore, to install the most recent Anaconda Python distribution (Python 3.7, 3.6, 3.5 or 2.7 should work) and then to install 
 the Stoner package via:
 
 .. code-block:: sh
@@ -63,7 +63,7 @@ This will install the Stoner package and any missing dependencies into your curr
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: https://github.com/gb119/Stoner-PythonCode
 
-The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 3.6 and 3.7  but test with
+The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 3.6 and 3.7  but test with 
 2.7 as well. *NB* Python 3.7 is only supported in version 0.9x onwards and is known to not work with version 0.8.x.
 
 Overview
@@ -132,7 +132,7 @@ contributed code, ideas and bug testing.
 
 The User Guide gives the current list of other contributors to the project.
 
-This code and the sample data are all (C) The University of Leeds 2008-2019 unless otherwise indficated in the source file.
+This code and the sample data are all (C) The University of Leeds 2008-2017 unless otherwise indficated in the source file.
 The contents of this package are licensed under the terms of the GNU Public License v3
 
 Recent Changes
@@ -141,7 +141,8 @@ Recent Changes
 Current PyPi Version
 --------------------
 
-The current PyPi version is based on the 0.9 beta series.
+The current version of the package on PyPi will be the stable branch until the development branch enters beta testing, when we start
+making beta packages available.
 
 
 Development Version
@@ -151,8 +152,6 @@ The next development version will be on version 0.9. Features expected in 0.9 in
 
     *   Refactoring of the Core module into a more granual core package with submodules
     *   Overhaul of the documentation and user guide
-    *   Started refactoring Analysis module with mixin class for data fitting
-    *   Add a differential evolution fitting algorithm
     *   Dropping support for the older Stoner.Image.stack.ImageStack class
     *   Droppping support for matplotlib<2.0
     *   Support for Python 3.7
