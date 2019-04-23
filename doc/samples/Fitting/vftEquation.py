@@ -29,9 +29,20 @@ d.lmfit(VFTEquation, p0=p0, result=True, header="lmfit")
 d.setas = "x..yy"
 d.plot(fmt=["b-", "g-"])
 # Annotate the graph
-d.annotate_fit(vftEquation, x=0.25, y=0.35, fontdict={"size": "x-small", "color": "blue"}, mode="eng")
 d.annotate_fit(
-    VFTEquation, x=0.5, y=0.35, prefix="VFTEquation", fontdict={"size": "x-small", "color": "green"}, mode="eng"
+    vftEquation,
+    x=0.25,
+    y=0.35,
+    fontdict={"size": "x-small", "color": "blue"},
+    mode="eng",
+)
+d.annotate_fit(
+    VFTEquation,
+    x=0.5,
+    y=0.35,
+    prefix="VFTEquation",
+    fontdict={"size": "x-small", "color": "green"},
+    mode="eng",
 )
 
 # reset the columns for the fit
@@ -42,7 +53,13 @@ d.setas = "x4.y"
 
 # And plot and annotate
 d.plot(fmt="m-", label="Orthogonal distance")
-d.annotate_fit(VFTEquation, x=0.75, y=0.35, fontdict={"size": "x-small", "color": "magenta"}, mode="eng")
+d.annotate_fit(
+    VFTEquation,
+    x=0.75,
+    y=0.35,
+    fontdict={"size": "x-small", "color": "magenta"},
+    mode="eng",
+)
 
 # Finally tidy up the plot a bit
 d.yscale = "log"

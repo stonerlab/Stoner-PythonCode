@@ -20,7 +20,9 @@ s2.title = "Stictching Example"
 labels = ["A", "B", "C"]
 txt = []
 lead = r"$x'\rightarrow x+A$" + "\n" + r"$y'=\rightarrow By+C$" + "\n"
-for l, v, e in zip(labels, s2["Stitching Coefficients"], s2["Stitching Coeffient Errors"]):
+for l, v, e in zip(
+    labels, s2["Stitching Coefficients"], s2["Stitching Coeffient Errors"]
+):
     txt.append(format_error(v, e, latex=True, prefix=l + "="))
 plt.text(0.7, 0.65, lead + "\n".join(txt), fontdict={"size": "x-small"})
 plt.draw()

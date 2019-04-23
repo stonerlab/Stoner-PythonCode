@@ -43,7 +43,13 @@ def do_fit(f):
     """Function to fit just one set of data."""
     f.template = template
     f["cut"] = f.threshold(1.75e5, rising=False, falling=True)
-    res = f.lmfit(FMR_Power, result=True, header="Fit", bounds=lambda x, r: x < f["cut"], output="row")
+    res = f.lmfit(
+        FMR_Power,
+        result=True,
+        header="Fit",
+        bounds=lambda x, r: x < f["cut"],
+        output="row",
+    )
     ch = res.column_headers
     res = append(res, [f.mean("Frequency"), f["Field Sign"]])
     res = atleast_2d(res)
@@ -61,7 +67,9 @@ if __name__ == "__main__":
     # Load data
     d = Data(join(__home__, "..", "sample-data", "FMR-data.txt"))
     # Rename columns and reset plot labels
-    d.rename("multi[1]:y", "Field").rename("multi[0]:y", "Frequency").rename("Absorption::X", "FMR")
+    d.rename("multi[1]:y", "Field").rename("multi[0]:y", "Frequency").rename(
+        "Absorption::X", "FMR"
+    )
     d.labels = None
 
     # Deine x and y columns and normalise to a big number
@@ -115,7 +123,9 @@ if __name__ == "__main__":
 
     # Doing the Kittel fit with an orthogonal distance regression as we have x errors not y errors
     p0 = [2, 200e3, 10e3]  # Some sensible guesses
-    result.lmfit(Inverse_Kittel, p0=p0, result=True, header="Kittel Fit", output="report")
+    result.lmfit(
+        Inverse_Kittel, p0=p0, result=True, header="Kittel Fit", output="report"
+    )
     result.setas[-1] = "y"
 
     result.template.yformatter = TexEngFormatter

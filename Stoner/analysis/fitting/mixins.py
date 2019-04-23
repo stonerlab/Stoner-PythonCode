@@ -1187,7 +1187,7 @@ class FittingMixin(object):
         :py:func:`scipy.optimize.curve_fit` to calculate the covariance matrix.
 
         See Also:
-            :py:meth:Stoner.Data.curve_fit
+            :py:meth:`Stoner.Data.curve_fit`
             :py:meth:`Stoner.Data.lmfit`
             :py:meth:`Stoner.Data.odr`
             User guide section :ref:`curve_fit_guide`
@@ -1385,6 +1385,7 @@ class FittingMixin(object):
         See Also:
             :py:meth:`AnalysisMixin.curve_fit`
             :py:meth:`AnalysisMixin.lmfit`
+            :py:meth:`Stoner.Data.differential_evolution`
             User guide section :ref:`fitting_with_limits`
         """
         # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)

@@ -16,7 +16,11 @@ coeefs = [1, -0.5, -1]
 col = linspace(-10, 10, 6)
 X, Y = meshgrid(col, col)
 Z = plane((X, Y), *coeefs) + normal(size=X.shape, scale=7.0)
-d = Data(column_stack((X.ravel(), Y.ravel(), Z.ravel())), filename="Fitting a Plane", setas="xyz")
+d = Data(
+    column_stack((X.ravel(), Y.ravel(), Z.ravel())),
+    filename="Fitting a Plane",
+    setas="xyz",
+)
 
 d.column_headers = ["X", "Y", "Z"]
 d.figure(projection="3d")

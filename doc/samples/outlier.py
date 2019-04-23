@@ -15,10 +15,14 @@ e = d.clone
 e.outlier_detection(window=5, action="delete")
 e.plot(fmt="r-", label="Default Outliers removed")
 f = d.clone
-f.outlier_detection(window=21, order=3, certainty=2, width=3, action="delete", func=_poly_outlier)
+f.outlier_detection(
+    window=21, order=3, certainty=2, width=3, action="delete", func=_poly_outlier
+)
 f.plot(fmt="g-", label="Poly Outliers removed")
 g = d.clone
-g = g.outlier_detection(window=21, order=3, certainty=3, width=3, action="delete", func=_poly_outlier)
+g = g.outlier_detection(
+    window=21, order=3, certainty=3, width=3, action="delete", func=_poly_outlier
+)
 g.plot(color="purple", label="Masked outliers")
 g = d.clone
 e.title = "Outlier detection test"

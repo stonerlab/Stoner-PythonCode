@@ -21,6 +21,12 @@ d.setas = "xyeyy"
 d.plot(fmt=["r.", "b-", "g-"])
 
 d.annotate_fit(SF.blochGrueneisen, x=0.65, y=0.35, fontdict={"size": "x-small"})
-d.annotate_fit(SF.BlochGrueneisen, x=0.65, y=0.05, fontdict={"size": "x-small"}, prefix="BlochGrueneisen")
+d.annotate_fit(
+    SF.BlochGrueneisen,
+    x=0.65,
+    y=0.05,
+    fontdict={"size": "x-small"},
+    prefix="BlochGrueneisen",
+)
 d.title = "Bloch-Grueneisen Fit"
 d.tight_layout()

@@ -19,20 +19,29 @@ to be fitted.
 In order of increasing complexity, the Stoner package supports the following:
 
 -   `Simple polynomial fits`_
+
     If the model is simply a polynomial function and there are no uncerainties in the data and no constraints on the parameters, then this
     is the simplest and easiest to use. This makes use of the :py:meth:`Data.polyfit` method.
+
 -   `Simple function fitting`_
+
     If you need to fit to an arbitary function, have no contraints on the values of the fitting parameters, and have uncertainities in the *y*
     co-ordinates but not in the *x*, then the simple function fitting is probably the best option. The Stoner package provides a wrapper around
     the standard :py:func:`scipy.optimize.curve_fit` function in the form of the :py:meth:`Data.curve_vit` method.
+
 -   `Fitting with limits`_
+
     If your problem has constrained parameters - that is there are physical reasons why the paramters in your model cannot take certain values,
     the you probably want to use the :py:meth:`Data.lmfit` method. This works well when your data has uncertainities in the *y* values but
     not in *x*.
+
 -   `Orthogonal distance regression`_
+
     Finally, if your data has uncertainties in both *x* and *y* you may want to use the :py:meth:`Data.odr` method to do an analysis that
     minimizes the distance of the model function in both *x* and *y*.
--   `Differential Evolution Algorithm`
+
+-   `Differential Evolution Algorithm`_
+
     Differential evolution algorithms attempt to find optimal fits by evaluating a population of possible solutions and then combining those that
     were scored by some costing function to be the best fits - thereby creating a new population of possible (hopefully better) solutions. In general
     some level of random fluctuation is permitted to stop the minimizer getting stuck in local minima. These algorithms can be effective when there are a
@@ -232,7 +241,7 @@ Differential Evolution Algorithm
 --------------------------------
 
 When the number of parameters gets large it can get increasingly difficult to get fits using the techniques above. In these situations, the differential evolution
-approach may be valuable. The :py:meth:`Stoner.Data.differential_evolution` method provides a wrapper around the :py:func:`scipt.optimize.differential_evolution`
+approach may be valuable. The :py:meth:`Stoner.Data.differential_evolution` method provides a wrapper around the :py:func:`scipi.optimize.differential_evolution`
 minimizer with the advantage that the model sepcification, and calling signatures are essentially the same as for the other fitting functions and thus there is
 little programmer overhead to switching to it:
 

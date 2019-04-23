@@ -69,7 +69,19 @@ def guess(self, data, **kwargs):
 
     params = self.make_params()
     for k, p in zip(
-        params, [0.25, x[i1], data[i1] / np.sqrt(2), 0.5, data[i1], 0.25, x[i2], data[i2] / np.sqrt(2), 0.5, data[i2]]
+        params,
+        [
+            0.25,
+            x[i1],
+            data[i1] / np.sqrt(2),
+            0.5,
+            data[i1],
+            0.25,
+            x[i2],
+            data[i2] / np.sqrt(2),
+            0.5,
+            data[i2],
+        ],
     ):
         params[k].value = p
     return params

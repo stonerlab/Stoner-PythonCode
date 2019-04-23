@@ -17,7 +17,7 @@ check:
 
 black:
 	find Stoner -name '*.py' -exec black -l 119 {} \;
-	find doc/samples -name '*.py' -exec black -l 119 {} \;
+	find doc/samples -name '*.py' -exec black {} \;
 
 commit:
 	$(MAKE) -C doc readme

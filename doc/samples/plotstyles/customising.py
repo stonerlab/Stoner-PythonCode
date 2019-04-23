@@ -10,7 +10,9 @@ d = Data(filename, setas="xyy", template=DefaultPlotStyle)
 d.normalise(2, scale=(0.0, 10.0))  # Just to keep the plot sane!
 
 # Change the color and line style cycles
-d.template["axes.prop_cycle"] = cycler(color=["Blue", "Purple"]) + cycler(linestyle=["-", "--"])
+d.template["axes.prop_cycle"] = cycler(color=["Blue", "Purple"]) + cycler(
+    linestyle=["-", "--"]
+)
 
 # Can also access as an attribute
 d.template.template_lines__linewidth = 2.0
