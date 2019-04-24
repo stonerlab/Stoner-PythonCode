@@ -319,31 +319,6 @@ class _curve_fit_result(object):
         return template
 
 
-def _lmfit_p0_dict(p0, model):
-    """Works out an initial starting value dictionary for lmfit.
-
-    Args:
-        p0 (list,tuple,dict,lmfit.Parameter): Starting poiint to use for fitting.
-
-    Returns:
-        Dictionary of parameter starting points.
-    """
-    if not _lmfit:
-        raise RuntimeError("lmfit module not available.")
-    if isinstance(p0, (list, tuple, _np_.ndarray)):
-        p_new = lmfit.Parameters()
-        for p, pv in zip(model.param_names, p0):
-            p_new[p] = lmfit.Parameter(value=pv)
-        p0 = p_new
-    elif isinstance(p0, Parameters):
-        pass
-        # p0={k:p0[k].value for k in p0}
-    if not isinstance(p0, dict):
-        raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
-    # p0={p0[k] for k in model.param_names}
-    return p0
-
-
 def _get_model_parnames(model):
     """get a list of the model parameter names."""
     if isinstance(model, type) and (issubclass(model, Model) or issubclass(model, odrModel)):
@@ -422,39 +397,6 @@ def _prep_lmfit_model(model, kargs):
     return model, prefix
 
 
-def _prepodr_Model(model, p0, kargs):
-    """Prepare an odr model instance.
-
-    Arguments:
-        model (odr.Model or lmfit Model class or instance, or callable): the model to be fitted to the data.
-        p0 (iterable or floats): The initial values of the fitting parameters.
-        kargs (dict):Other keyword arguments passed to the fitting function
-
-    Returns:
-        model,p0, prefix (odr.Model instance, iterable, str)
-
-    Converts the model parameter into an instance of odr.Model - either by instantiating the class or wrapping a
-    callable into an lmfit.Model class. If the latter, then determines the p0 starting parameter vector and finally
-    establishes a prefix string from the model if not provided in the keyword arguments.
-    """
-
-    if isinstance(model, _sp_.odr.Model):
-        model.name = model.__class__.__name__
-    elif isclass(model) and issubclass(model, _sp_.odr.Model):
-        model = model()
-        model.name = model.__class__.__name__
-    elif (isclass(model) and issubclass(model, Model)) or isinstance(model, Model) or callable(model):
-        model = odr_Model(model, p0=p0, **kargs)
-        if p0 is None:
-            p0 = model.p0
-    else:
-        raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
-
-    prefix = str(kargs.pop("prefix", model.name))
-
-    return model, p0, prefix
-
-
 def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
     """Prepare the initial start vector for an lmfit.
 
@@ -487,7 +429,12 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
         single_fit = True
         p_new = lmfit.Parameters()
         for n, v in zip(model.param_names, p0):
-            p_new[n] = lmfit.Parameter(value=v)
+            if hasattr(model, "param_hints"):
+                hint = model.param_hints.get(n, {})
+            else:
+                hint = {}
+            hint["value"] = v
+            p_new[n] = lmfit.Parameter(**hint)
         p0 = p_new
         for p_name in model.param_names:
             if p_name in kargs:
@@ -503,44 +450,6 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
             "Missing some values from the initial guess vector p0: {}".format(set(model.param_names) - set(p0.keys()))
         )
 
-    return p0, single_fit
-
-
-def _prep_odr_p0(model, ydata, xdata, p0, kargs):
-    """Prepare the initial start vector for an lmfit.
-
-    Arguments:
-        model (lmfit.Model instance): model to fit with
-        ydata,xdata (array): y and x data ppoints for fitting
-        p0 (iterable of float): Existing p0 vector if defined
-        kargs (dict): Other keyword arguments for the lmfit method.
-
-    Returns:
-        p0,single_fit (iterable of floats, bool): The revised initial starting vector and whether this is a single fit operation.
-    """
-    if p0 is not None:
-        if callable(p0):  # Allow p0 to be a callbale function
-            p0 = p0(ydata, xdata)
-        if isinstance(p0, (tuple, list)):
-            p0 = _np_.atleast_2d(p0)
-        if isinstance(p0, _np_.ndarray) and len(p0.shape) == 2:  # 2D p0 might be chi^2 mapping
-            if p0.shape[0] == 1:  # Actually a single fit
-                p0 = p0[0]
-                single_fit = True
-            else:  # Is chi^2 mapping
-                single_fit = False
-        else:
-            raise RuntimeError("Cannot construct a p0 for odr fitting with a {}".format(type(p0)))
-    else:  # Do we already have parameter hints ?
-        check = True
-        single_fit = True
-        if not isinstance(model, odr_Model):
-            model = odr_Model(model)
-        for p in model.param_names:
-            check &= p in model.param_hints and "value" in model.param_hints[p]
-        if not check:  # Ok, param_hints didn't have all the parameter values setup.
-            p0 = model.guess(ydata, x=xdata)
-            p0 = {k: kargs[k] if k in kargs else p0[k].value for k in p0}
     return p0, single_fit
 
 
@@ -849,7 +758,7 @@ class FittingMixin(object):
         for val, err, name in zip(popt, perr, args):
             self["{}:{}".format(f_name, name)] = val
             self["{}:{} err".format(f_name, name)] = err
-            self["{}:{} label".format(f_name, name)] = name
+            self["{}:{} label".format(f_name, name)] = self.metadata.get("{}:{} label".format(f_name, name), name)
 
         if not isinstance(header, string_types):
             header = "Fitted with " + func.__name__
@@ -1327,10 +1236,42 @@ class FittingMixin(object):
             pn = p0
             ret_val = _np_.zeros((pn.shape[0], pn.shape[1] * 2 + 1))
             for i, pn_i in enumerate(pn):  # iterate over every row in the supplied p0 values
-                p0 = _prep_lmfit_p0(
-                    model, data[1], data[0], p0, kargs
+                p0, single_fit = _prep_lmfit_p0(
+                    model, data[1], data[0], pn_i, kargs
                 )  # model, data, params, prefix, columns, scale_covar,**kargs)
                 ret_val[i, :] = self.__lmfit_one(model, data, p0, prefix, _, scale_covar, output="row")
+            if output == "data":  # Create a data object and seet column headers etc correctly
+                ret = self.clone
+                ret.data = ret_val
+                prefix = ret["lmfit.prefix"][-1]
+                ix = 0
+                for ix, p in enumerate(model.param_names):
+                    if "{}{} label".format(prefix, p) in self:  # Get a label for the columns
+                        label = self["{}{} label".format(prefix, p)]
+                    else:  # Not already defined, so user parameter name
+                        label = p
+                    if "{}{} units".format(prefix, p) in self:  # Get a value for the units
+                        units = r"({})".format(self["{}{} units".format(prefix, p)])
+                    else:  # Not defined - no units
+                        units = ""
+                    # Set columns
+                    ret.column_headers[2 * ix] = r"${} {}$".format(label, units)
+                    ret.column_headers[2 * ix + 1] = r"$\\delta{} {}$".format(label, units)
+                    if not ret["{}{} vary".format(prefix, p)]:
+                        fixed = 2 * ix
+                ret.column_headers[-1] = "$\\chi^2$"
+                ret.labels = ret.column_headers
+                # Workout which columns are y,e and x
+                plots = list(range(0, ix * 2 + 1, 2))
+                errors = list(range(1, ix * 2 + 2, 2))
+                plots.append(ix * 2 + 2)
+                plots.remove(fixed)
+                errors.remove(fixed + 1)
+                ret.setas[plots] = "y"
+                ret.setas[errors] = "e"
+                ret.setas[fixed] = "x"
+                ret_val = ret
+
         return ret_val
 
     def odr(self, model, xcol=None, ycol=None, **kargs):
