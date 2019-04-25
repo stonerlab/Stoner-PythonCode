@@ -149,8 +149,7 @@ class DiskBasedFolder(object):
             A filename with non ASCII characters stripped out
         """
         validFilenameChars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-        cleanedFilename = unicodedata.normalize("NFKD", filename).encode("ASCII", "ignore")
-        return "".join(c for c in cleanedFilename if c in validFilenameChars)
+        return "".join([c for c in filename if c in validFilenameChars])
 
     def _save(self, grp, trail, root=None):
         """Save a group of files to disc by calling the save() method on each file.
@@ -172,7 +171,7 @@ class DiskBasedFolder(object):
             root = self.directory
 
         pth = path.join(root, *trail)
-        os.makesdirs(pth)
+        os.makedirs(pth, exist_ok=True)
         if isinstance(grp, metadataObject) and not isinstance(grp, self.loader):
             grp = self.loader(grp)
         grp.save(path.join(pth, grp.filename))
@@ -394,7 +393,7 @@ class DiskBasedFolder(object):
         Returns:
             A list of the saved files
         """
-        return self.walk_groups(self._save, walker_args={"root", root})
+        return self.walk_groups(self._save, walker_args={"root": root})
 
     def unload(self, name=None):
         """Removes the instance from memory without losing the name in the Folder.

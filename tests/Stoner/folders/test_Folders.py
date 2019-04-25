@@ -25,6 +25,8 @@ from Stoner.Util import hysteresis_correct
 
 import matplotlib.pyplot as plt
 
+import tempfile
+
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../../"))
 sys.path.insert(0,pth)
@@ -181,9 +183,31 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(plt.get_fignums()),1,"Failed to generate a single plot for PlotFolder.")
         plt.close("all")
 
+    def test_saving(self):
+        fldr4=SF.DataFolder()
+        x=np.linspace(-np.pi,np.pi,181)
+        for phase in np.linspace(0,1.0,5):
+            for amplitude in np.linspace(1,2,6):
+                for frequency in np.linspace(1,2,5):
+                    y=amplitude*np.sin(frequency*x+phase*np.pi)
+                    d=Data(x,y,setas="xy",column_headers=["X","Y"])
+                    d["frequency"]=frequency
+                    d["amplitude"]=amplitude
+                    d["phase"]=phase
+                    d["params"]=[phase,frequency,amplitude]
+                    d.filename="test/{amplitude}/{phase}/{frequency}.dat".format(**d)
+                    fldr4+=d
+        fldr4.unflatten()
+        newdir=tempfile.mkdtemp()
+        fldr4.save(newdir)
+        fldr5=SF.DataFolder(newdir)
+        self.assertEqual(fldr4.shape,fldr5.shape,"Saved DataFolder and loaded DataFolder have different shapes")
+
+
+
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-  #  unittest.main()
-    test.test_discard_earlier()
+    unittest.main()
+    #test.test_saving()
 
