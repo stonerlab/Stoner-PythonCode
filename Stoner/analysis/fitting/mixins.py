@@ -167,41 +167,6 @@ class MimizerAdaptor(object):
 
         self.minimize_func = wrapper
 
-    def hessian(self, epsilon=1.0e-5, linear_approx=False, args=()):
-        """
-        A numerical approximation to the Hessian matrix of cost function at
-        location x0 (hopefully, the minimum)
-        """
-        if not hasattr(self, "popt"):
-            raise RuntimeError("You need to have determined the optimnal parameters first !")
-
-        # ``calculate_cost_function`` is the cost function implementation
-        # The next line calculates an approximation to the first
-        # derivative
-        f1 = approx_fprime(self.popt, self.minimize_func, epsilon, *args)
-
-        # This is a linear approximation. Obviously much more efficient
-        # if cost function is linear
-        if linear_approx:
-            f1 = _np_.matrix(f1)
-            return f1.transpose() * f1
-        # Allocate space for the hessian
-        n = self.popt.shape[0]
-        hessian = _np_.zeros((n, n))
-        # The next loop fill in the matrix
-        xx = self.popt
-        for j in range(n):
-            xx0 = xx[j]  # Store old value
-            xx[j] = xx0 + epsilon  # Perturb with finite difference
-            # Recalculate the partial derivatives for this new point
-            f2 = approx_fprime(self.popt, self.minimize_func, epsilon, *args)
-            hessian[:, j] = (f2 - f1) / epsilon  # scale...
-            xx[j] = xx0  # Restore initial value of x0
-        return hessian
-
-    def covariance(self, *args):
-        return _np_.linalg.inv(self.hessian(args=args))
-
 
 class _curve_fit_result(object):
 
