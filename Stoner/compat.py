@@ -37,6 +37,7 @@ __all__ = [
     "classproperty",
     "mpl_version",
     "_lmfit",
+    "makedirs",
     "cmp",
 ]
 
@@ -45,6 +46,7 @@ if __vi__[0] == 2:
     from re import _pattern_type
     from inspect import getargspec
     from __builtin__ import cmp
+    from os import getcwd, path, mkdir
 
     def get_func_params(func):
         ret = []
@@ -103,6 +105,34 @@ if __vi__[0] == 2:
             prefix = prefix[split:]
         return prefix[::-1]
 
+    def makedirs(name, mode=0o777, exist_ok=False):
+        """makedirs(name [, mode=0o777][, exist_ok=False])
+        Super-mkdir; create a leaf directory and all intermediate ones.  Works like
+        mkdir, except that any intermediate path segment (not just the rightmost)
+        will be created if it does not exist. If the target directory already
+        exists, raise an OSError if exist_ok is False. Otherwise no exception is
+        raised.  This is recursive.
+        """
+        head, tail = path.split(name)
+        if not tail:
+            head, tail = path.split(head)
+        if head and tail and not path.exists(head):
+            try:
+                makedirs(head, exist_ok=exist_ok)
+            except FileExistsError:
+                # Defeats race condition when another thread created the path
+                pass
+            cdir = getcwd()
+            if tail == cdir:  # xxx/newdir/. exists if xxx/newdir exists
+                return
+        try:
+            mkdir(name, mode)
+        except OSError:
+            # Cannot rely on checking for EEXIST, since the operating system
+            # could give priority to other errors like EACCES or EROFS
+            if not exist_ok or not path.isdir(name):
+                raise
+
 
 elif __vi__[0] == 3:
 
@@ -115,6 +145,7 @@ elif __vi__[0] == 3:
     from builtins import bytes as _bytes
     from os.path import commonpath
     from inspect import signature
+    from os import makedirs
 
     def get_func_params(func):
         sig = signature(func)

@@ -14,7 +14,7 @@ from numpy import mean, std, array, append, any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
 from matplotlib.pyplot import figure, Figure, subplot, tight_layout
 
-from Stoner.compat import string_types, get_filedialog, _pattern_type
+from Stoner.compat import string_types, get_filedialog, _pattern_type, makedirs
 from Stoner.tools import isiterable
 
 from Stoner.core.base import metadataObject
@@ -171,7 +171,7 @@ class DiskBasedFolder(object):
             root = self.directory
 
         pth = path.join(root, *trail)
-        os.makedirs(pth, exist_ok=True)
+        makedirs(pth, exist_ok=True)
         if isinstance(grp, metadataObject) and not isinstance(grp, self.loader):
             grp = self.loader(grp)
         grp.save(path.join(pth, grp.filename))
