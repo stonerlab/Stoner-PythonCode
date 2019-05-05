@@ -115,9 +115,9 @@ class working(Data):
 
         method=getattr(self,self.method)
 
-        fit=method(self.model,p0=self.p0,result=True,header="Fit",output="report")
-
         if not chi2: # Single fit mode, consider whether to plot and save etc
+            fit=method(self.model,p0=self.p0,result=True,header="Fit",output="report")
+
             if self.show_plot:
                 self.plot_results()
             if self.save_fit:
@@ -126,37 +126,16 @@ class working(Data):
                 print(fit.fit_report())
             return fit
         else: #chi^2 mapping mode
-            ret=Data()
-            ret.data=fit
-            ret.metadata=self.metadata
-            prefix=ret["lmfit.prefix"][-1]
-            ix=0
-            for ix,p in enumerate(self.model.param_names):
-                if "{}{} label".format(prefix,p) in self:
-                    label=self["{}{} label".format(prefix,p)]
-                else:
-                    label=p
-                if "{}{} units".format(prefix,p) in self:
-                    units="({})".format(self["{}{} units".format(prefix,p)])
-                else:
-                    units=""
-                ret.column_headers[2*ix]="${} {}$".format(label,units)
-                ret.column_headers[2*ix+1]="$\\delta{} {}$".format(label,units)
-                if not ret["{}{} vary".format(prefix,p)]:
-                    fixed=2*ix
-            ret.column_headers[-1]="$\\chi^2$"
-            ret.labels=ret.column_headers
-            plots=list(range(0,ix*2+1,2))
-            errors=list(range(1,ix*2+2,2))
-            plots.append(ix*2+2)
-            plots.remove(fixed)
-            errors.remove(fixed+1)
-            print(ret.column_headers,fixed,plots,errors)
+            d=Data(self)
+            fit = d.lmfit(self.model, p0=self.p0, result=True, header="Fit", output="data")
+
             if self.show_plot:
-                ret.plot_xy(fixed,plots,yerr=tuple(errors),multiple="panels")
+                fit.plot(multiple="panels",capsize=3)
+                fit.yscale = "log"  # Adjust y scale for chi^2
+                fit.tight_layout()
             if self.save_fit:
-                ret.filename=None
-                ret.save(False)
+                fit.filename=None
+                fit.save(False)
 
 
 if __name__=="__main__":

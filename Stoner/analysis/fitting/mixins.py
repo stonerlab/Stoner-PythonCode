@@ -325,6 +325,7 @@ def _curve_fit_p0_list(p0, model):
         ret = []
         for x in _get_model_parnames(model):
             ret.append(p_new.get(x, None))
+        return ret
     elif isiterable(p0):
         return [float(x) for x in p0]
 
@@ -390,9 +391,10 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
     if isinstance(p0, (list, tuple)):
         p0 = _np_.array(p0)
 
-    if isinstance(p0, _np_.ndarray) and (p0.ndim == 1 or (p0.ndim == 2 and p0.shape[1] == 1)):
+    if isinstance(p0, _np_.ndarray) and (p0.ndim == 1 or (p0.ndim == 2 and _np_.product(p0.shape) == p0.size)):
         single_fit = True
         p_new = lmfit.Parameters()
+        p0 = p0.ravel()
         for n, v in zip(model.param_names, p0):
             if hasattr(model, "param_hints"):
                 hint = model.param_hints.get(n, {})
@@ -1100,13 +1102,25 @@ class FittingMixin(object):
         fit = differential_evolution(diff_model.minimize_func, diff_model.bounds, data, **kargs)
         if not fit.success:
             raise RuntimeError(fit.message)
-        popt, pcov = _sp_.optimize.curve_fit(
-            model.func, data[0], data[1], sigma=data[2], p0=fit.x, absolute_sigma=not scale_covar
+        kargs.pop("polish", None)
+        kargs["full_output"] = True
+        polish = _curve_fit_result(
+            *curve_fit(model.func, data[0], data[1], sigma=data[2], p0=fit.x, absolute_sigma=not scale_covar, **kargs)
         )
-        model.popt = popt
-        fit.covar = pcov
-        fit.popt = popt
-        fit.perr = _np_.sqrt(_np_.diag(fit.covar))
+
+        polish.func = model.func
+        polish.p0 = p0
+        polish.data = self
+        polish.residual_vals = data[1] - polish.fvec
+        polish.chisq = (polish.residual_vals ** 2).sum()
+        polish.nfree = len(self) - len(polish.popt)
+        polish.chisq /= polish.nfree
+
+        model.popt = polish.popt
+        fit.covar = polish.pcov
+        fit.popt = polish.popt
+        fit.perr = polish.perr
+        fit.fit_report = polish.fit_report
         row = self._record_curve_fit_result(
             model, fit, _.xcol, header, result, replace, residuals=residuals, prefix=prefix, ycol=_.ycol
         )
@@ -1208,6 +1222,8 @@ class FittingMixin(object):
             if output == "data":  # Create a data object and seet column headers etc correctly
                 ret = self.clone
                 ret.data = ret_val
+                ret.column_headers = []
+                ret.setas = ""
                 prefix = ret["lmfit.prefix"][-1]
                 ix = 0
                 for ix, p in enumerate(model.param_names):
@@ -1221,7 +1237,7 @@ class FittingMixin(object):
                         units = ""
                     # Set columns
                     ret.column_headers[2 * ix] = r"${} {}$".format(label, units)
-                    ret.column_headers[2 * ix + 1] = r"$\\delta{} {}$".format(label, units)
+                    ret.column_headers[2 * ix + 1] = r"$\delta{} {}$".format(label, units)
                     if not ret["{}{} vary".format(prefix, p)]:
                         fixed = 2 * ix
                 ret.column_headers[-1] = "$\\chi^2$"

@@ -325,7 +325,7 @@ class PlotMixin(object):
             wdata = phidata - 0.5
         qdata = 0.5 + (_np_.arctan2(self.column(c.ucol), self.column(c.vcol)) / (2 * _np_.pi))
         rdata = _np_.sqrt(self.column(c.ucol) ** 2 + self.column(c.vcol) ** 2 + wdata ** 2)
-        rdata = rdata / max(rdata)
+        rdata = rdata / rdata.max()
         Z = hsl2rgb(qdata, rdata, phidata).astype("f") / 255.0
         return Z
 
@@ -404,7 +404,7 @@ class PlotMixin(object):
         attr = list(set(attr))
         return sorted(attr)
 
-    def _fix_cols(self, scalar=False, **kargs):
+    def _fix_cols(self, scalar=True, **kargs):
         """Sorts out axis specs, replacing with contents from setas as necessary."""
         startx = kargs.pop("startx", 0)
 
@@ -414,7 +414,7 @@ class PlotMixin(object):
                 kargs[k] = c[k]
         for k in ["ycol", "zcol", "ucol", "vcol", "wcol", "yerr", "zerr"]:
             if k in kargs and kargs[k] is None and isiterable(c[k]) and len(c[k]) > 0:
-                if kargs.get("multi_y", False):
+                if kargs.get("multi_y", not scalar):
                     kargs[k] = c[k]
                 else:
                     kargs[k] = c[k][0]
@@ -1146,7 +1146,7 @@ class PlotMixin(object):
         Returns:
             A matplotlib.figure isntance
         """
-        c = self._fix_cols(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, multi_y=True, **kargs)
+        c = self._fix_cols(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, scalar=False, **kargs)
         (kargs["xerr"], kargs["yerr"]) = (c.xerr, c.yerr)
 
         self.template = kargs.pop("template", self.template)
@@ -1283,8 +1283,9 @@ class PlotMixin(object):
 
             elif isinstance(kargs[err], index_types):
                 kargs[err] = self.column(kargs[err])
-            elif isiterable(kargs[err]) and isinstance(c.ycol, list) and len(kargs[err]) == len(c.ycol):
+            elif isiterable(kargs[err]) and isinstance(c.ycol, list) and len(kargs[err]) <= len(c.ycol):
                 # Ok, so it's a list, so redo the check for each  item.
+                kargs[err].extend([None] * (len(c.ycol) - len(kargs[err])))
                 for i in range(len(kargs[err])):
                     if isinstance(kargs[err][i], index_types):
                         kargs[err][i] = self.column(kargs[err][i])
@@ -1309,9 +1310,9 @@ class PlotMixin(object):
                 self.__figure, _ = self._fix_fig(nonkargs["figure"], **fig_kargs)
         else:
             self.__figure, _ = self._fix_fig(nonkargs["figure"], **fig_kargs)
-        for ix in range(len(c.ycol)):
+        for ix, this_yc in enumerate(c.ycol):
             if multiple != "common":
-                nonkargs["ylabel"] = self._col_label(self.find_col(c.ycol[ix]))
+                nonkargs["ylabel"] = self._col_label(this_yc)
             if ix > 0:
                 if multiple == "y2" and ix == 1:
                     self.y2()
@@ -1371,7 +1372,7 @@ class PlotMixin(object):
         """
         if not _3D:
             raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
-        c = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, multi_y=False, **kargs)
+        c = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, scalar=True, **kargs)
         xdata, ydata, zdata = self.griddata(c.xcol, c.ycol, c.zcol, shape=shape, xlim=xlim, ylim=ylim)
 
         if "template" in kargs:  # Catch template in kargs
@@ -1491,7 +1492,7 @@ class PlotMixin(object):
             mayavi = True
         except ImportError:
             mayavi = False
-        c = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, ucol=ucol, vcol=vcol, wcol=wcol, multi_y=False, **kargs)
+        c = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, ucol=ucol, vcol=vcol, wcol=wcol, scalar=True, **kargs)
 
         if "template" in kargs:  # Catch template in kargs
             self.template = kargs.pop("template")
