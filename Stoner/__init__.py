@@ -5,6 +5,7 @@ of the `Condensed Matter Group<http://www.stoner.leeds.ac.uk/>` at the `Universi
 __all__ = [
     "Core",
     "Analysis",
+    "formats",
     "plot",
     "Image",
     "tools",
@@ -22,13 +23,8 @@ __all__ = [
 from sys import float_info
 
 
-import Stoner.Core as Core
-import Stoner.FileFormats as FileFormats
-import Stoner.plot.core as plot
-import Stoner.Analysis as Analysis
+from . import Core, FileFormats, formats, plot, Analysis, tools, Folders
 from Stoner.analysis.fitting.mixins import FittingMixin
-import Stoner.tools as tools
-import Stoner.Folders as Folders
 from .Folders import DataFolder
 
 from .tools import format_error, set_option, get_option, _Options
@@ -37,7 +33,7 @@ Options = _Options()
 
 from os import path as _path_
 
-__version_info__ = ("0", "9", "0b2")
+__version_info__ = ("0", "9", "0b3")
 __version__ = ".".join(__version_info__)
 
 __home__ = _path_.realpath(_path_.dirname(__file__))
