@@ -44,7 +44,7 @@ install:
   # Force upgraded scikit-image
   - conda install --yes -c conda-forge scikit-image=0.14.2
   # Hyperspy is now an optional dependency
-  - conda install --yes -c confa-forge hyperspy
+  - conda install --yes -c conda-forge hyperspy
   # Now we unistall the stable stoner - use force to stop downgrading packages!
   - conda remove --yes --force stoner
   - pip install opencv_python
