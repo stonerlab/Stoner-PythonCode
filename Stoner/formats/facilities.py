@@ -303,7 +303,7 @@ class SNSFile(Core.DataFile):
 
         with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
             line = data.readline()
-            if line.strip() != "# datafile created by QuickNXS 0.9.39":  # bug out oif we don't like the header
+            if not line.strip().startswith("# Datafile created by QuickNXS 0.9.39"):  # bug out oif we don't like the header
                 raise Core.StonerLoadError("Not a file from the SNS BL4A line")
             for line in data:
                 if line.startswith("# "):  # We're in the header
@@ -313,7 +313,10 @@ class SNSFile(Core.DataFile):
                     section = line.strip().strip("[]")
                     if section == "Data":  # The Data section has one line of colum headers and then data
                         header = next(data)[2:].split("\t")
-                        column_headers = [h.strip().decode("ascii", "ignore") for h in header]
+                        if not python_v3:
+                            column_headers = [h.strip().encode("ascii", errors="replace") for h in header]
+                        else:
+                            column_headers = [h.strip() for h in header]
                         self.data = np.genfromtxt(data)  # we end by reading the raw data
                     elif section == "Global Options":  # This section can go into metadata
                         for line in data:
