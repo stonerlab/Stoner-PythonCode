@@ -303,7 +303,9 @@ class SNSFile(Core.DataFile):
 
         with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
             line = data.readline()
-            if not line.strip().startswith("# Datafile created by QuickNXS 0.9.39"):  # bug out oif we don't like the header
+            if not line.strip().startswith(
+                "# Datafile created by QuickNXS 0.9.39"
+            ):  # bug out oif we don't like the header
                 raise Core.StonerLoadError("Not a file from the SNS BL4A line")
             for line in data:
                 if line.startswith("# "):  # We're in the header

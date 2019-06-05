@@ -12,8 +12,18 @@ import Stoner.Core as _SC_  # pylint: disable=import-error
 from .Folders import DataFolder as _SF_
 from .Fit import linear
 from . import Data
+import numpy as np
 from numpy import max, sqrt, diag, argmax, mean, array  # pylint: disable=redefined-builtin
 from scipy.stats import sem
+
+
+def _step(x, m, c, h):
+
+    mid = (x.max() + x.min()) / 2.0
+
+    X = x - mid
+    y = m * x + c + np.sign(X) * h
+    return y
 
 
 def _up_down(data):
@@ -25,16 +35,46 @@ def _up_down(data):
     Returns:
         (Data, Data): Tuple of two DataFile like instances for the rising and falling data.
     """
-    f = split_up_down(data)
+    lx, hx = data.span(data.setas.xcol)
+    mid = (lx + hx) / 2.0
+    span = hx - lx
+    high = data.x > mid + 0.45 * span
+    low = data.x < mid - 0.45 * span
 
-    ret = [None, None]
-    for i, grp in enumerate(["rising", "falling"]):
-        ret[i] = f[grp][0]
-        for d in f[grp][1:]:
-            ret[i] = ret[i] + d
-        ret[i].sort(data.setas._get_cols("xcol"))
-        ret[i].setas = f["rising"][0].setas.clone  # hack due to bug in sort wiping the setas info
-    return ret
+    t = np.zeros((2, len(data) + 2), dtype=bool)
+    t[0, 1:-1] = high
+    t[1, 1:-1] = low
+
+    t = np.diff(t)
+
+    high_i = np.arange(len(data) + 1, dtype=int)[t[0, :]]
+    low_i = np.arange(len(data) + 1, dtype=int)[t[1, :]]
+    if low_i.size > 2:
+        low_i = np.reshape(low_i, (2, -1)).mean(axis=1)
+    else:
+        low_i = np.array(low_i.mean())
+    if high_i.size > 2:
+        high_i = np.reshape(high_i, (2, -1)).mean(axis=1)
+    else:
+        high_i = np.array(high_i.mean())
+
+    indices = np.unique(np.append(low_i, np.append(high_i, np.array([0, len(data) - 1]))))
+    indices = np.ceil(indices).astype(int)
+    indices.sort()
+    if indices[-1] >= len(data):  # Remove possible over-range element
+        indices = indices[0:-1]
+
+    rising = np.zeros(len(data), dtype=bool)
+
+    for ix, iy in zip(indices[:-1], indices[1:]):
+        if data.x[iy] > data.x[ix]:
+            rising[ix:iy] = True
+
+    up = data.clone
+    up.data = up.data[rising]
+    down = data.clone
+    down.data = down.data[~rising]
+    return up, down
 
 
 def split_up_down(data, col=None, folder=None):
@@ -149,8 +189,8 @@ def hysteresis_correct(data, **kargs):
     if "setas" in kargs:  # Allow us to override the setas variable
         data.setas = kargs.pop("setas")
 
-    xcol = kargs.pop("xcol", data.setas["x"])
-    ycol = kargs.pop("ycol", data.setas["y"])
+    xcol = kargs.pop("xcol", data.setas.xcol)
+    ycol = kargs.pop("ycol", data.setas.ycol)
     # Get xcol and ycols from kargs if specified
     _ = data._col_args(xcol=xcol, ycol=ycol)
     data.setas(x=_.xcol, y=_.ycol)
@@ -161,76 +201,52 @@ def hysteresis_correct(data, **kargs):
     correct_H = kargs.pop("correct_H", True)
     saturation_fraction = kargs.pop("saturated_fraction", 0.2)
 
-    while True:
-        up, down = _up_down(data)
+    up, down = _up_down(data)
 
-        if isinstance(saturation_fraction, int_types) and saturation_fraction > 0:
-            saturation_fraction = saturation_fraction / len(up) + 0.001  # add 0.1% to ensure we get the point
-        mx = max(data.x) * (1 - saturation_fraction)
-        mix = min(data.x) * (1 - saturation_fraction)
+    mid = (data.x.max() + data.x.min()) / 2.0
+    span = data.x.max() - data.x.min()
+    low = mid - span * (1 - saturation_fraction) / 2
+    high = mid + span * (1 - saturation_fraction) / 2
 
-        up._push_mask(up.x >= mix)
-        pts = up.x.count()
-        up._pop_mask()
-        assert pts >= 3, "Not enough points in the negative saturation state.(mix={},pts={},x={})".format(
-            mix, pts, up.x
-        )
+    popt, pcov = data.curve_fit(_step, bounds=lambda x, r: not low < x < high)
 
-        down._push_mask(down.x <= mx)
-        pts = down.x.count()
-        down._pop_mask()
-        assert pts >= 3, "Not enough points in the positive saturation state(mx={},pts={},x={})".format(
-            mx, pts, down.x
-        )
+    perr = np.sqrt(np.diag(pcov))
 
-        # Find upper branch saturated moment slope and offset
-        p1, pcov = data.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x < mix)
-        perr1 = diag(pcov)
-
-        # Find lower branch saturated moment and offset
-        p2, pcov = data.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x > mx)
-        perr2 = diag(pcov)
-        if p1[0] > p2[0]:
-            data.y = -data.y
-        else:
-            break
-
-    # Find mean slope and offset
-    pm = (p1 + p2) / 2
-    perr = sqrt(perr1 + perr2)
-    Ms = array([p1[0], p2[0]])
-    Ms = list(Ms - mean(Ms))
+    Ms = popt[2]
+    Ms_err = perr[2]
 
     data["Ms"] = Ms  # mean(Ms)
-    data["Ms Error"] = perr[0] / 2
-    data["Offset Moment"] = pm[0]
-    data["Offset Moment Error"] = perr[0] / 2
-    data["Background susceptibility"] = pm[1]
-    data["Background Susceptibility Error"] = perr[1] / 2
-
-    p1 = p1 - pm
-    p2 = p2 - pm
+    data["Ms Error"] = Ms_err
+    data["Offset Moment"] = popt[1]
+    data["Offset Moment Error"] = perr[1]
+    data["Background susceptibility"] = popt[0]
+    data["Background Susceptibility Error"] = perr[0]
 
     if correct_background:
-        for d in [data, up, down]:
-            d.y = d.y - linear(d.x, *pm)
+        fixes = [data, up, down]
     else:
-        for d in [up, down]:  # need to do these anyway to find Hc and Hsat
-            d.y = d.y - linear(d.x, *pm)
+        fixes = [up, down]
+    m = popt[0]
+    c = popt[1] - m * mid
+
+    for d in fixes:
+        d.y = d.y - linear(d.x, c, m)
+
     Hc = [None, None]
     Hc_err = [None, None]
     Hsat = [None, None]
     Hsat_err = [None, None]
-    m_sat = [p1[0] + perr[0], p2[0] - perr[0]]
     Mr = [None, None]
     Mr_err = [None, None]
 
+    m_sat = [Ms - 2 * Ms_err, -Ms + 2 * Ms_err]
+
     for i, (d, sat) in enumerate(zip([up, down], m_sat)):
-        hc = d.threshold(0.0, all_vals=True, rising=True, falling=True)  # Get the Hc value
+        hc = d.threshold(0.0, all_vals=True, rising=i == 0, falling=i != 0)  # Get the Hc value
         Hc[i] = mean(hc)
         if hc.size > 1:
             Hc_err[i] = sem(hc)
-        hs = d.threshold(sat, all_vals=True, rising=True, falling=True)  # Get the Hc value
+        hs = d.threshold(sat, all_vals=True, rising=i == 0, falling=i != 0)  # Get the H_sat value
         Hsat[1 - i] = mean(hs)  # Get the H_sat value
         if hs.size > 1:
             Hsat_err[1 - i] = sem(hs)
