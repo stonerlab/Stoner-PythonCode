@@ -48,6 +48,18 @@ def _outlier(row, window, metric, ycol=None):
 
     Calculates if the current row is an outlier from the surrounding data by looking
     at the number of standard deviations away from the average of the window it is.
+    
+    Args:
+        row (array): Single row of the dataset.
+        window (array): Section of data surrounding the row being examined.
+        metric (float): distance the current row is from the local mean.
+        
+    Keyword Arguments:
+        ycol (column index or None): If set, specifies the column containing the data to check.
+
+    Returns:
+        (bool):
+            If True, then the current row is an outlier from the local data.
     """
     av = _np_.average(window[:, ycol])
     std = _np_.std(window[:, ycol])  # standard deviation
@@ -58,13 +70,17 @@ def _threshold(threshold, data, rising=True, falling=False):
     """Internal function that implements the threshold method - also used in peak-finder
 
     Args:
-        threshold (float): Threshold valuye in data to look for
-        rising (bool): Find points where data is rising up past threshold
-        falling (bool): Find points where data is falling below the threshold
+        threshold (float): 
+            Threshold valuye in data to look for
+        rising (bool): 
+            Find points where data is rising up past threshold
+        falling (bool): 
+            Find points where data is falling below the threshold
 
     Returns:
-        A numpy array of fractional indices where the data has crossed the threshold assuming a
-        straight line interpolation between two points.
+        (array):
+            Fractional indices where the data has crossed the threshold assuming a
+            straight line interpolation between two points.
     """
     # First we find all points where we cross zero in the correct direction
     current = data
@@ -98,16 +114,21 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
     r"""Calculae an optimal transformation of points :math:`(x_1,y_1)\rightarrow(x_2,y_2)`.
 
     Arguments:
-        xy1 ( (n,2) array of float): Set of points to be mapped from.
-        xy2 ( (n,2) array of floats): Set of points to be mapped to.
+        xy1 ( n by 2 array of float): 
+            Set of points to be mapped from.
+        xy2 ( n by 2 array of floats): 
+            Set of points to be mapped to.
 
     Keyword Arguments:
-        xmode ('affine', 'linear', 'scale' 'offset' or 'fixed'): How to manipulate the x-data
-        ymode ('linear', 'scale' 'offset' or 'fixed'): How to manipulate the y-data
-        m0 (3x2 array): Initial and fixed values of the transformation. Defaults to using an identity transformation.
+        xmode ('affine', 'linear', 'scale' 'offset' or 'fixed'): 
+            How to manipulate the x-data
+        ymode ('linear', 'scale' 'offset' or 'fixed'): 
+            How to manipulate the y-data
+        m0 (3x2 array): 
+            Initial and fixed values of the transformation. Defaults to using an identity transformation.
 
     Returns:
-        opt_trans,trans_err,mapping func
+        (tuple of opt_trans,trans_err,mapping func)
 
     The most general case is an affine transform which includes rotation, scale, translation and skew. This is represented as a 2 x 3 matrix
     of coordinates. The *xmode* and *ymode* parameters control the possible operations to align the data in x and y directions, in addition
@@ -193,7 +214,19 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
 
 
 def ApplyAffineTransform(xy, transform):
-    """Apply a given afffine transform to a set of xy data points."""
+    """Apply a given afffine transform to a set of xy data points.
+    
+
+    Args:
+        xy (n by 2 array): 
+            Set of x,y coordinates to be transformed
+        transform (2 by 3 array): 
+            Affine transform matrix.
+
+    Returns:
+        (n x 2 array).
+        Transformed co-ordinates.
+    """
     xyt = _np_.row_stack((xy.T, _np_.ones(len(xy))))
     xyt = _np_.dot(transform, xyt)
     return xyt.T
@@ -203,11 +236,14 @@ def GetAffineTransform(p, pd):
     """Calculate an affine transofrm from 2 sets of three points.
 
     Args:
-        p (3x2 array): Coordinates of points to transform from.
-        pd (3x2 array): Cooridinates of points to transform to.
+        p (3x2 array): 
+            Coordinates of points to transform from.
+        pd (3x2 array): 
+            Cooridinates of points to transform to.
 
     Returns:
-        2x3 matrix representing the affine transform.
+        (2x3 array):
+            matrix representing the affine transform.
     """
     if _np_.shape(p) != (3, 2) and _np_.shape(pd) != (3, 2):
         raise RuntimeError("Must supply three points")
@@ -221,17 +257,24 @@ def _poly_outlier(row, window, metric=3.0, ycol=None, xcol=None, order=1, yerr=N
     """Alternative outlier detection function that fits a polynomial locally over the window.
 
     Args:
-        row (1D array): Current row of data
-        column int): Column index of y values to examine
-        window (2D array): Local window of data
+        row (1D array): 
+            Current row of data
+        column int): 
+            Column index of y values to examine
+        window (2D array): 
+            Local window of data
 
     Keyyword Arguments:
-        metric (float): Some measure of how sensitive the dection should be
-        xcol (column index): Column of data to use for X values. Defaults to current setas value
-        order (int): Order of polynomial to fit. Must be < length of window-1
+        metric (float): 
+            Some measure of how sensitive the dection should be
+        xcol (column index): 
+            Column of data to use for X values. Defaults to current setas value
+        order (int): 
+            Order of polynomial to fit. Must be < length of window-1
 
     Returns:
-        True if current row is an outlier
+        (bool):
+            True if current row is an outlier
     """
     if order > window.shape[0] - 2:
         raise ValueError("order should be smaller than the window length. {} vs {}".format(order, window.shape[0] - 2))
@@ -253,32 +296,35 @@ class AnalysisMixin(object):
 
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods."""
 
-    def __init__(self, *args, **kargs):
-        """Just call super."""
-        super(AnalysisMixin, self).__init__(*args, **kargs)
-        if self.debug:
-            print("Done AnlaysisMixin init")
-
     def SG_Filter(
         self, col=None, xcol=None, points=15, poly=1, order=0, pad=True, result=None, replace=False, header=None
     ):
         """Implements Savitsky-Golay filtering of data for smoothing and differentiating data.
 
         Args:
-            col (index): Column of Data to be filtered. if None, first y-column in setas is filtered.
-            points (int): Number of data points to use in the filtering window. Should be an odd number > poly+1 (default 15)
+            col (column index):
+                Column of Data to be filtered. if None, first y-column in setas is filtered.
+            points (int):
+                Number of data points to use in the filtering window. Should be an odd number > poly+1 (default 15)
 
         Keyword Arguments:
-            xcol (coilumn index)@ If *order*>1 then can be used to specify an x-column to differentiate with respect to.
-            poly (int): Order of polynomial to fit to the data. Must be equal or greater than order (default 1)
-            order (int): Order of differentiation to carry out. Default=0 meaning smooth the data only.
-            pad (bool or float): Pad the start and end of the array with the mean value (True, default) or specired value (float) or leave as is.
-            result (None,True, or column_index): If not None, column index to insert new data, or True to append as last column
-            header (string or None): Header for new column if result is not None. If header is Nne, a suitable column header is generated.
+            xcol (coilumn index): 
+                If *order*>1 then can be used to specify an x-column to differentiate with respect to.
+            poly (int): 
+                Order of polynomial to fit to the data. Must be equal or greater than order (default 1)
+            order (int): 
+                Order of differentiation to carry out. Default=0 meaning smooth the data only.
+            pad (bool or float): 
+                Pad the start and end of the array with the mean value (True, default) or specired value (float) or leave as is.
+            result (None,True, or column_index): 
+                If not None, column index to insert new data, or True to append as last column
+            header (string or None): 
+                Header for new column if result is not None. If header is Nne, a suitable column header is generated.
 
         Returns:
-            (numpoy array or self): If result is None, a numpy array representing the smoothed or differentiated data is returned.
-            Otherwise, a copy of the modified AnalysisMixin object is returned.
+            (numpy array or self): 
+                If result is None, a numpy array representing the smoothed or differentiated data is returned.
+                Otherwise, a copy of the modified AnalysisMixin object is returned.
 
         Notes:
             If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used
@@ -344,12 +390,14 @@ class AnalysisMixin(object):
         """Utility routine to interpret col as either a column index or value or an array of values.
 
         Args:
-            col (various): If col can be interpreted as a column index then return the first matching column.
+            col (various): 
+                If col can be interpreted as a column index then return the first matching column.
                 If col is a 1D array of the same length as the data then just return the data. If col is a
                 float then just return it as a float.
 
         Returns:
-            The matching data.
+            (tuple of (:py:class:`Stoner.cpre.DataArray`,str)):
+                The matching data.
         """
         if isinstance(col, index_types):
             col = self.find_col(col)
@@ -371,13 +419,17 @@ class AnalysisMixin(object):
         """Internal function that implements the threshold method - also used in peak-finder
 
         Args:
-            threshold (float): Threshold valuye in data to look for
-            rising (bool): Find points where data is rising up past threshold
-            falling (bool): Find points where data is falling below the threshold
+            threshold (float): 
+                Threshold valuye in data to look for
+            rising (bool): 
+                Find points where data is rising up past threshold
+            falling (bool): 
+                Find points where data is falling below the threshold
 
         Returns:
-            A numpy array of fractional indices where the data has crossed the threshold assuming a
-            straight line interpolation between two points.
+            (array):
+                Fractional indices where the data has crossed the threshold assuming a
+                straight line interpolation between two points.
         """
         # First we find all points where we cross zero in the correct direction
         current = data
@@ -421,15 +473,20 @@ class AnalysisMixin(object):
         """Add one column, number or array (b) to another column (a).
 
         Args:
-            a (index): First column to work with
-            b (index, float or 1D array):  Second column to work with.
+            a (index):
+                First column to work with
+            b (index, float or 1D array):
+                Second column to work with.
 
         Keyword Arguments:
-            header (string or None): new column header  (defaults to a-b
-            replace (bool): Replace the a column with the new data
+            header (string or None):
+                new column header  (defaults to a-b
+            replace (bool):
+                Replace the a column with the new data
 
         Returns:
-            self: The newly modified :py:class:`AnalysisMixin`.
+            (:py:class:`Stoner.Data`):
+                The newly modified Data object.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -466,12 +523,16 @@ class AnalysisMixin(object):
         """Applies the given function to each row in the data set and adds to the data set.
 
         Args:
-            func (callable): The function to apply to each row of the data.
-            col (index): The column in which to place the result of the function
+            func (callable):
+                The function to apply to each row of the data.
+            col (index):
+                The column in which to place the result of the function
 
         Keyword Arguments:
-            replace (bool): Either replace the existing column/complete data or create a new column or data file.
-            header (string or None): The new column header(s) (defaults to the name of the function func
+            replace (bool):
+                Either replace the existing column/complete data or create a new column or data file.
+            header (string or None):
+                The new column header(s) (defaults to the name of the function func
 
         Note:
             If any extra keyword arguments are supplied then these are passed to the function directly. If
@@ -490,7 +551,8 @@ class AnalysisMixin(object):
             the new data file.
 
         Returns:
-            self: The newly modified :py:class:`AnalysisMixin`.
+            (:py:class:`Stoner.Data`):
+                The newly modified Data object.
         """
         if col is None:
             col = self.setas.get("y", [0])[0]
@@ -532,22 +594,31 @@ class AnalysisMixin(object):
         """Bin x-y data into new values of x with an error bar.
 
         Args:
-            xcol (index): Index of column of data with X values
-            ycol (index): Index of column of data with Y values
-            bins (int, float or 1d array): Number of bins (if integer) or size of bins (if float), or bin edges (if array)
-            mode (string): "log" or "lin" for logarithmic or linear binning
+            xcol (index):
+                Index of column of data with X values
+            ycol (index):
+                Index of column of data with Y values
+            bins (int, float or 1d array): 
+                Number of bins (if integer) or size of bins (if float), or bin edges (if array)
+            mode (string): 
+                "log" or "lin" for logarithmic or linear binning
 
         Keyword Arguments:
-            yerr (index): Column with y-error data if present.
-            bin_start (float): Manually override the minimum bin value
-            bin_stop (float): Manually override the maximum bin value
-            clone (bool): Return a clone of the current AnalysisMixin with binned data (True)
-                          or just the numbers (False).
+            yerr (index):
+                Column with y-error data if present.
+            bin_start (float):
+                Manually override the minimum bin value
+            bin_stop (float):
+                Manually override the maximum bin value
+            clone (bool):
+                Return a clone of the current AnalysisMixin with binned data (True)
+                or just the numbers (False).
 
         Returns:
-            Either a clone of the current data set with the new binned data or
-            tuple of (bin centres, bin values, bin errors, number points/bin),
-            depending on the *clone* parameter.
+            (:py:class:`Stoner.Data` or tuple of 4 array-like):
+                Either a clone of the current data set with the new binned data or
+                tuple of (bin centres, bin values, bin errors, number points/bin),
+                depending on the *clone* parameter.
 
         Note:
             Algorithm inspired by MatLab code wbin,    Copyright (c) 2012:
@@ -638,12 +709,15 @@ class AnalysisMixin(object):
         """Clips the data based on the column and the clipper value.
 
         Args:
-            column (index): Column to look for the maximum in
-            clipper (tuple or array): Either a tuple of (min,max) or a numpy.ndarray -
+            column (index):
+                Column to look for the maximum in
+            clipper (tuple or array):
+                Either a tuple of (min,max) or a numpy.ndarray -
                 in which case the max and min values in that array will be
                 used as the clip limits
         Returns:
-            self: The newly modified :py:class:`AnalysisMixin`.
+            (:py:class:`Stoner.Data`):
+                The newly modified Data object.
 
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -661,11 +735,16 @@ class AnalysisMixin(object):
         """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
 
         Keyword Arguments:
-            xcol (index): Index of column with x data - defaults to first x column in self.setas
-            ycol (index or list of indices): indices of y column(s) data
-            sym (index): Index of column to place symmetric data in default, append to end of data
-            asym (index): Index of column for asymmetric part of ata. Defaults to appending to end of data
-            replace (bool): Overwrite data with output (true)
+            xcol (index): 
+                Index of column with x data - defaults to first x column in self.setas
+            ycol (index or list of indices):
+                indices of y column(s) data
+            sym (index):
+                Index of column to place symmetric data in default, append to end of data
+            asym (index):
+                Index of column for asymmetric part of ata. Defaults to appending to end of data
+            replace (bool):
+                Overwrite data with output (true)
 
         Returns:
             self: The newly modified :py:class:`AnalysisMixin`.
@@ -711,15 +790,20 @@ class AnalysisMixin(object):
         r"""Calculate :math:`\frac{a-b}{a+b}` for the two columns *a* and *b*.
 
         Args:
-            a (index): First column to work with
-            b (index, float or 1D array):  Second column to work with.
+            a (index):
+                First column to work with
+            b (index, float or 1D array):  
+                Second column to work with.
 
         Keyword Arguments:
-            header (string or None): new column header  (defaults to a-b
-            replace (bool): Replace the a column with the new data
+            header (string or None): 
+                new column header  (defaults to a-b
+            replace (bool): 
+                Replace the a column with the new data
 
         Returns:
-            self: The newly modified :py:class:`AnalysisMixin`.
+            (:py:class:`Stoner.Data`):
+                The newly modified Data object.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -759,15 +843,20 @@ class AnalysisMixin(object):
         """Divide one column (a) by  another column, number or array (b).
 
         Args:
-            a (index): First column to work with
-            b (index, float or 1D array):  Second column to work with.
+            a (index): 
+                First column to work with
+            b (index, float or 1D array):  
+                Second column to work with.
 
         Keyword Arguments:
-            header (string or None): new column header  (defaults to a-b
-            replace (bool): Replace the a column with the new data
+            header (string or None): 
+                new column header  (defaults to a-b
+            replace (bool): 
+                Replace the a column with the new data
 
         Returns:
-            self: The newly modified :py:class:`AnalysisMixin`.
+            (:py:class:`Stoner.Data`):
+                The newly modified Data object.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -808,19 +897,26 @@ class AnalysisMixin(object):
         """Extrapolate data based on local fit to x,y data.
 
         Args:
-            new_x (float or array): New values of x data.
+            new_x (float or array): 
+                New values of x data.
 
         Keyword Arguments:
-            xcol (column index, None): column containing x-data or None to use setas attribute
-            ycol (column index(es) or None): column(s) containing the y-data or None to use setas attribute.
-            yerr (column index(es) or None): y error data column or None to use setas attribute
-            overlap (float or int): range of x-data used for the local fit for extrapolating. If int then overlap number of
+            xcol (column index, None): 
+                column containing x-data or None to use setas attribute
+            ycol (column index(es) or None): 
+                column(s) containing the y-data or None to use setas attribute.
+            yerr (column index(es) or None): 
+                y error data column or None to use setas attribute
+            overlap (float or int): 
+                range of x-data used for the local fit for extrapolating. If int then overlap number of
                 points is used, if float then that range x-axis space is used.
-            kind (str or callable): Determines local fitting function. If string should be "linear", "quadratic" or "cubic" if
+            kind (str or callable): 
+                Determines local fitting function. If string should be "linear", "quadratic" or "cubic" if
                 callable, then represents a function to be fitted to the data.
 
         Returns:
-            Array of extrapolated values.
+            (array):
+                Extrapolated values.
 
         Note:
             If the new_x values lie outside the span of the x-data, then the nearest *overlap* portion of the data is used
@@ -901,18 +997,25 @@ class AnalysisMixin(object):
         """Inegrate a column of data, optionally returning the cumulative integral.
 
         Args:
-            xcol (index): The X data column index (or header)
-            ycol (index) The Y data column index (or header)
+            xcol (index): 
+                The X data column index (or header)
+            ycol (index) 
+            The Y data column index (or header)
 
         Keyword Arguments:
-            result (index or None): Either a column index (or header) to overwrite with the cumulative data,
+            result (index or None): 
+                Either a column index (or header) to overwrite with the cumulative data,
                 or True to add a new column or None to not store the cumulative result.
-            result_name (string): The new column header for the results column (if specified)
-            bounds (callable): A function that evaluates for each row to determine if the data should be integrated over.
-            kargs: Other keyword arguements are fed direct to the scipy.integrate.cumtrapz method
+            result_name (string): 
+                The new column header for the results column (if specified)
+            bounds (callable): 
+                A function that evaluates for each row to determine if the data should be integrated over.
+            **kargs: 
+                Other keyword arguements are fed direct to the scipy.integrate.cumtrapz method
 
         Returns:
-            The final integration result
+            (:py:class:`Stoner.Data`):
+                The newly modified Data object.
 
         Note:
             This is a pass through to the scipy.integrate.cumtrapz routine which just uses trapezoidal integration. A better alternative would be
@@ -951,19 +1054,24 @@ class AnalysisMixin(object):
         """Interpolate a dataset to get a new set of values for a given set of x data.
 
         Args:
-            ewX (1D array or None): Row indices or X column values to interpolate with. If None, then the
-            :py:meth:`AnalysisMixin.interpolate` returns an interpolation function. Unlike the raw interpolation
-            function from scipy, this interpolation function will work with MaskedArrays by compressing them
-            first.
+            ewX (1D array or None): 
+                Row indices or X column values to interpolate with. If None, then the
+                :py:meth:`AnalysisMixin.interpolate` returns an interpolation function. Unlike the raw interpolation
+                function from scipy, this interpolation function will work with MaskedArrays by compressing them
+                first.
 
         Keyword Arguments:
-            kind (string): Type of interpolation function to use - does a pass through from numpy. Default is linear.
-            xcol (index or None): Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.
-            replace (bool): If true, then the current AnalysisMixin's data is replaced with the  newly interpolated data and the current AnalysisMixin is
+            kind (string): 
+                Type of interpolation function to use - does a pass through from numpy. Default is linear.
+            xcol (index or None): 
+                Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.
+            replace (bool): 
+                If true, then the current AnalysisMixin's data is replaced with the  newly interpolated data and the current AnalysisMixin is
                 returned.
 
         Returns:
-            2D numpy array: representing a section of the current object's data if replace is False(default) or the modofied AnalysisMixin if replace is true.
+            (2D numpy array): 
+                Section of the current object's data if replace is False(default) or the modofied AnalysisMixin if replace is true.
 
         Note:
             Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.
@@ -1016,17 +1124,23 @@ class AnalysisMixin(object):
         """Utility method to generate bin boundaries and centres along an axis.
 
         Args:
-            xcol (index): Column of data with X values
-            bins (1d_)array or int or float): Number of bins (int) or width of bins (if float)
-            mode (string): "lin" for linear binning, "log" for logarithmic binning.
+            xcol (index): 
+                Column of data with X values
+            bins (1d_)array or int or float): 
+                Number of bins (int) or width of bins (if float)
+            mode (string): 
+                "lin" for linear binning, "log" for logarithmic binning.
 
         Keyword Arguments:
-            bin_start (float): Override minimum bin value
-            bin_stop (float): Override the maximum bin value
+            bin_start (float): 
+                Override minimum bin value
+            bin_stop (float): 
+                Override the maximum bin value
 
         Returns:
-            bin_start,bin_stop,bin_centres (1D arrays): The locations of the bin
-            boundaries and centres for each bin.
+            (tuple of 4 arrays):
+                bin_start,bin_stop,bin_centres (1D arrays): The locations of the bin
+                boundaries and centres for each bin.
         """
         (xmin, xmax) = self.span(xcol)
         if mode not in ["lin", "log"]:
@@ -1098,14 +1212,17 @@ class AnalysisMixin(object):
         """Find maximum value and index in a column of data.
 
         Args:
-            column (index): Column to look for the maximum in
+            column (index): 
+                Column to look for the maximum in
 
         Keyword Arguments:
-            bounds (callable): A callable function that takes a single argument list of
+            bounds (callable): 
+                A callable function that takes a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
-            (float,int): (maximum value,row index of max value)
+            (float,int): 
+                (maximum value,row index of max value)
 
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -1127,15 +1244,19 @@ class AnalysisMixin(object):
         """Find mean value of a data column.
 
         Args:
-            column (index): Column to look for the maximum in
+            column (index): 
+                Column to look for the maximum in
 
         Keyword Arguments:
-            sigma (column index or array): The uncertainity noted for each value in the mean
-            bounds (callable): A callable function that takes a single argument list of
+            sigma (column index or array): 
+                The uncertainity noted for each value in the mean
+            bounds (callable): 
+                A callable function that takes a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
-            float: The mean of the data.
+            (float): 
+                The mean of the data.
 
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -1172,14 +1293,17 @@ class AnalysisMixin(object):
         """Find minimum value and index in a column of data.
 
         Args:
-            column (index): Column to look for the maximum in
+            column (index): 
+                Column to look for the maximum in
 
         Keyword Arguments:
-            bounds (callable): A callable function that takes a single argument list of
+            bounds (callable): 
+                A callable function that takes a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
-            (float,int): (minimum value,row index of min value)
+            (float,int): 
+                (minimum value,row index of min value)
 
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -1201,15 +1325,20 @@ class AnalysisMixin(object):
         """Multiply one column (a) by  another column, number or array (b).
 
         Args:
-            a (index): First column to work with
-            b (index, float or 1D array):  Second column to work with.
+            a (index): 
+                First column to work with
+            b (index, float or 1D array):  
+                Second column to work with.
 
         Keyword Arguments:
-            header (string or None): new column header  (defaults to a-b
-            replace (bool): Replace the a column with the new data
+            header (string or None): 
+                new column header  (defaults to a-b
+            replace (bool): 
+                Replace the a column with the new data
 
         Returns:
-            self: The newly modified :py:class:`AnalysisMixin`.
+            (:py:class:`Stoner.Data`):
+                The newly modified Data object.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -1250,18 +1379,25 @@ class AnalysisMixin(object):
         """Normalise data columns by dividing through by a base column value.
 
         Args:
-            target (index): One or more target columns to normalise can be a string, integer or list of strings or integers.
+            target (index):
+                One or more target columns to normalise can be a string, integer or list of strings or integers.
                 If None then the default 'y' column is used.
 
         Keyword Arguments:
-            base (index): The column to normalise to, can be an integer or string. **Depricated** can also be a tuple (low,high) being the output range
-            replace (bool): Set True(default) to overwrite  the target data columns
-            header (string or None): The new column header - default is target name(norm)
-            scale (None or tuple of float,float): Output range after normalising - low,high or None to map to -1,1
-            limits (low,high): Take the input range from the *high* and *low* fraction of the input when sorted.
+            base (index): 
+                The column to normalise to, can be an integer or string. **Depricated** can also be a tuple (low,high) being the output range
+            replace (bool): 
+                Set True(default) to overwrite  the target data columns
+            header (string or None): 
+                The new column header - default is target name(norm)
+            scale (None or tuple of float,float): 
+                Output range after normalising - low,high or None to map to -1,1
+            limits (float,float): 
+                (low,high) - Take the input range from the *high* and *low* fraction of the input when sorted.
 
         Returns:
-            self: The newly modified :py:class:`AnalysisMixin`.
+            (:py:class:`Stoner.Data`):
+                The newly modified Data object.
 
         Notes:
 
@@ -1310,24 +1446,31 @@ class AnalysisMixin(object):
         """Function to detect outliers in a column of data.
 
         Args:
-            column(column index), specifing column for outlier detection. If not set,
+            column(column index):
+                specifing column for outlier detection. If not set,
                 defaults to the current y set column.
 
         Keyword Arguments:
-            window(int): data window for anomoly detection
-            certainty(float): eg 3 detects data 3 standard deviations from average
-            action(str or callable): what to do with outlying points, options are
+            window(int): 
+                data window for anomoly detection
+            certainty(float): 
+                eg 3 detects data 3 standard deviations from average
+            action(str or callable): 
+                what to do with outlying points, options are
                 * 'mask' outlier points are masked (default)
                 * 'mask row' outlier rows are masked
                 * 'delete'  outlier rows are deleted
                 * callable  the value of the action keyword is called with the outlier row
                 * anything else defaults to do nothing.
 
-            width(odd integer): Number of rows that an outliing spike could occupy. Defaults to 1.
-            func (callable): A function that determines if the current row is an outlier.
+            width(odd integer): 
+                Number of rows that an outliing spike could occupy. Defaults to 1.
+            func (callable): 
+                A function that determines if the current row is an outlier.
 
         Returns:
-            self: The newly modified :py:class:`AnalysisMixin`.
+            (:py:class:`Stoner.Data`):
+                The newly modified Data object.
 
         outlier_detection will add row numbers of detected outliers to the metadata
         of d, also will perform action depending on request eg 'mask', 'delete'
@@ -1355,7 +1498,7 @@ class AnalysisMixin(object):
 
         In all cases the indices of the outlier rows are added to the ;outlier' metadata.
 
-        Example
+        Example:
             .. plot:: samples/outlier.py
                 :include-source:
                 :outname: outlier
@@ -1395,29 +1538,40 @@ class AnalysisMixin(object):
         """Locates peaks and/or troughs in a column of data by using SG-differentiation.
 
         Args:
-            ycol (index): is the column name or index of the data in which to search for peaks
-            width (int or float): is the expected minium halalf-width of a peak in terms of the number of data points (int) or distance in x (float).
+            ycol (index): 
+                the column name or index of the data in which to search for peaks
+            width (int or float): 
+                the expected minium halalf-width of a peak in terms of the number of data points (int) or distance in x (float).
                 This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
                 to experimental noise, smaller means better eable to see sharp peaks
-            poly (int): This is the order of polynomial to use when differentiating the data to locate a peak. Must >=2, higher numbers
+            poly (int): 
+                the order of polynomial to use when differentiating the data to locate a peak. Must >=2, higher numbers
                 will find sharper peaks more accurately but at the risk of finding more false positives.
 
         Keyword Arguments:
-            significance (float): is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
+            significance (float): 
+                used to decide whether a local maxmima is a significant peak. Essentially just the curvature
                 of the data. Bigger means less sensistive, smaller means more likely to detect noise. Default is the maximum curvature/(2*width)
-            xcol (index or None): name or index of data column that p[rovides the x-coordinate (default None)
-            peaks (bool): select whether to measure peaks in data (default True)
-            troughs (bool): select whether to measure troughs in data (default False)
-            sort (bool): Sor the results by significance of peak
-            modify (book): If true, then the returned object is a copy of self with only the peaks/troughs left in the data.
-            full_data (bool): If True (default) then all columns of the data at which peaks in the *ycol* column are found. *modify* true implies
-                      *full_data* is also true. If *full_data* is False, then only the x-column values of the peaks are returned.
+            xcol (index or None): 
+                name or index of data column that p[rovides the x-coordinate (default None)
+            peaks (bool): 
+                select whether to measure peaks in data (default True)
+            troughs (bool): 
+                select whether to measure troughs in data (default False)
+            sort (bool): 
+                Sor the results by significance of peak
+            modify (book): 
+                If true, then the returned object is a copy of self with only the peaks/troughs left in the data.
+            full_data (bool): 
+                If True (default) then all columns of the data at which peaks in the *ycol* column are found. *modify* true implies
+                *full_data* is also true. If *full_data* is False, then only the x-column values of the peaks are returned.
 
         Returns:
-            If *modify* is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs. If *modify* is false (default),
-            then the return value depends on *ycol* and *xcol*. If *ycol* is not None and *xcol* is None, then returns conplete rows of
-            data corresponding to the found peaks/troughs. If *xcol* is not None, or *ycol* is None and *xcol* is None, then
-            returns a 1D array of the x positions of the peaks/troughs.
+            (various):
+                If *modify* is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs. If *modify* is false (default),
+                then the return value depends on *ycol* and *xcol*. If *ycol* is not None and *xcol* is None, then returns conplete rows of
+                data corresponding to the found peaks/troughs. If *xcol* is not None, or *ycol* is None and *xcol* is None, then
+                returns a 1D array of the x positions of the peaks/troughs.
 
         See Also:
             User guide section :ref:`peak_finding`
@@ -1506,16 +1660,24 @@ class AnalysisMixin(object):
         """ Pass through to numpy.polyfit.
 
             Args:
-                xcol (index): Index to the column in the data with the X data in it
-                ycol (index): Index to the column int he data with the Y data in it
-                polynomial_order: Order of polynomial to fit (default 2)
-                bounds (callable): A function that evaluates True if the current row should be included in the fit
-                result (index or None): Add the fitted data to the current data object in a new column (default don't add)
-                replace (bool): Overwrite or insert new data if result is not None (default False)
-                header (string or None): Name of column_header of replacement data. Default is construct a string from the y column headser and polynomial order.
+                xcol (index): 
+                    Index to the column in the data with the X data in it
+                ycol (index): 
+                    Index to the column int he data with the Y data in it
+                polynomial_order (int): 
+                    Order of polynomial to fit (default 2)
+                bounds (callable): 
+                    A function that evaluates True if the current row should be included in the fit
+                result (index or None): 
+                    Add the fitted data to the current data object in a new column (default don't add)
+                replace (bool): 
+                    Overwrite or insert new data if result is not None (default False)
+                header (string or None): 
+                    Name of column_header of replacement data. Default is construct a string from the y column headser and polynomial order.
 
             Returns:
-                numpy.poly: The best fit polynomial as a numpy.poly object.
+                (numpy.poly): 
+                    The best fit polynomial as a numpy.poly object.
 
             Note:
                 If the x or y columns are not specified (or are None) the the setas attribute is used instead.
@@ -1551,25 +1713,36 @@ class AnalysisMixin(object):
         """Scale the x and y data in this DataFile to match the x and y data in another DataFile.
 
         Args:
-            other (DataFile): The other isntance of a datafile to match to
+            other (DataFile):
+                The other isntance of a datafile to match to
 
         Keyword Arguments:
-            xcol (column index): Column with x points in it, default to None to use setas attribute value
-            ycol (column index): Column with ypoints in it, default to None to use setas attribute value
-            xmode ('affine', 'linear','scale','offset'): How to manipulate the x-data to match up
-            ymode ('linear','scale','offset'): How to manipulate the y-data to match up.
-            bounds (callable): Used to identiyf the set of (x,y) points to be used for scaling. Defaults to the whole data set if not speicifed.
-            otherbounds (callable): Used to detemrine the set of (x,y) points in the other data file. Defaults to bounds if not given.
-            use_estimate (bool or 3x2 array): Specifies whether to estimate an initial transformation value or to use the provided one, or
+            xcol (column index): 
+                Column with x points in it, default to None to use setas attribute value
+            ycol (column index): 
+                Column with ypoints in it, default to None to use setas attribute value
+            xmode ('affine', 'linear','scale','offset'): 
+                How to manipulate the x-data to match up
+            ymode ('linear','scale','offset'): 
+                How to manipulate the y-data to match up.
+            bounds (callable): 
+                Used to identiyf the set of (x,y) points to be used for scaling. Defaults to the whole data set if not speicifed.
+            otherbounds (callable): 
+                Used to detemrine the set of (x,y) points in the other data file. Defaults to bounds if not given.
+            use_estimate (bool or 3x2 array): 
+                Specifies whether to estimate an initial transformation value or to use the provided one, or
                 start with an identity transformation.
-            replace (bool): Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true) or to just return
+            replace (bool): 
+                Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true) or to just return
                 the results of the scaling.
-            headers (2-element list or tuple of strings): new column headers to use if replace is True.
+            headers (2-element list or tuple of strings): 
+                new column headers to use if replace is True.
 
         Returns:
-            Either a copy of the AnalysisMixin modified so that the x and y columns match *other* if *replace* is True, or
-            *opt_trans*,*trans_err*,*new_xy_data*. Where *opt_trans* is the optimum affine transformation, *trans_err* is a matrix
-            giving the standard error in the transformation matrix components and  *new_xy_data* is an (n x 2) array of the transformed data.
+            (various):
+                Either a copy of the :py:class:Stoner.Data` modified so that the x and y columns match *other* if *replace* is True, or
+                *opt_trans*,*trans_err*,*new_xy_data*. Where *opt_trans* is the optimum affine transformation, *trans_err* is a matrix
+                giving the standard error in the transformation matrix components and  *new_xy_data* is an (n x 2) array of the transformed data.
 
         Example:
             .. plot:: samples/scale_curves.py
@@ -1665,19 +1838,27 @@ class AnalysisMixin(object):
         """Smooth data by convoluting with a window.
 
         Args:
-            window (string or tuple): Defines the window type to use by passing to :py:func:`scipy.signal.get_window`.
+            window (string or tuple): 
+                Defines the window type to use by passing to :py:func:`scipy.signal.get_window`.
 
         Keyword Arguments:
-            xcol(column index or None): Data to use as x data if needed to define a window. If None, use :py:attr:`Stoner.Core.DataFile.setas`
-            ycvol (column index or None): Data to be smoothed
-            size (int or float): If int, then the number of points to use in the smoothing window. If float, then the size in x-data to be used.
-            result (bool or column index): Whether to add the smoothed data to the dataset and if so where.
-            replace (bool): Replace the exiting data or insert as a new column.
-            header (string): New column header for the new data.
+            xcol(column index or None): 
+                Data to use as x data if needed to define a window. If None, use :py:attr:`Stoner.Core.DataFile.setas`
+            ycvol (column index or None): 
+                Data to be smoothed
+            size (int or float): 
+                If int, then the number of points to use in the smoothing window. If float, then the size in x-data to be used.
+            result (bool or column index): 
+                Whether to add the smoothed data to the dataset and if so where.
+            replace (bool): 
+                Replace the exiting data or insert as a new column.
+            header (string): 
+                New column header for the new data.
 
         Returns:
-            (self or array): If result is False, then the return value will be a copy of the smoothed data, otherwise the return value
-            is a copy of the AnalysisMixin object with the smoothed data added,
+            (self or array): 
+                If result is False, then the return value will be a copy of the smoothed data, otherwise the return value
+                is a copy of the AnalysisMixin object with the smoothed data added,
 
         Notes:
             If size is float, then it is necessary to map the X-data to a number of rows and to ensure that the data is evenly spaced in x.
@@ -1731,14 +1912,17 @@ class AnalysisMixin(object):
         """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into :py:meth:`AnalysisMixin.max` and :py:meth:`AnalysisMixin.min`.
 
         Args:
-            column (index): Column to look for the maximum in
+            column (index): 
+                Column to look for the maximum in
 
         Keyword Arguments:
-            bounds (callable): A callable function that takes a single argument list of
+            bounds (callable): 
+                A callable function that takes a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
-            (float,float): A tuple of (min value, max value)
+            (float,float): 
+                A tuple of (min value, max value)
 
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -1751,22 +1935,32 @@ class AnalysisMixin(object):
         """Construct a spline through x and y data and replace, add new data or return spline function.
 
         Keyword Arguments:
-            xcol (column index): Column with x data or if None, use setas attribute.
-            ycol (column index): Column with y data or if None, use the setas attribute
-            sigma (column index, or array of data): Column with weights, or if None use the 1/yerr column.
-            replace (Boolean or column index or None): If True then the y-column data is repalced, if a column index then the
+            xcol (column index): 
+                Column with x data or if None, use setas attribute.
+            ycol (column index): 
+                Column with y data or if None, use the setas attribute
+            sigma (column index, or array of data): 
+                Column with weights, or if None use the 1/yerr column.
+            replace (Boolean or column index or None): 
+                If True then the y-column data is repalced, if a column index then the
                 new data is added after the specified index, if False then the new y-data is returned and if None, then
                 spline object is returned.
-            header (string): If *replace* is True or a column index then use this string as the new column header.
-            order (int): The order of spline to use (1-5)
-            smoothing (float or None): The smoothing factor to use when fitting the spline. A value of zero will create an
+            header (string): 
+                If *replace* is True or a column index then use this string as the new column header.
+            order (int): 
+                The order of spline to use (1-5)
+            smoothing (float or None): 
+                The smoothing factor to use when fitting the spline. A value of zero will create an
                 interpolating spline.
-            bbox (tuple of length 2): Bounding box for the spline - defaults to range of x values
-            ext (int or str): How to extrapolate, default is "extrapolate", but can also be "raise","zeros" or "const".
+            bbox (tuple of length 2): 
+                Bounding box for the spline - defaults to range of x values
+            ext (int or str): 
+                How to extrapolate, default is "extrapolate", but can also be "raise","zeros" or "const".
 
         Returns:
-            Depending on the value of *replace*, returns a copy of the AnalysisMixin, a 1D numpy array of data or an
-            scipy.interpolate.UniverateSpline object.
+            (various):
+                Depending on the value of *replace*, returns a copy of the AnalysisMixin, a 1D numpy array of data or an
+                scipy.interpolate.UniverateSpline object.
 
         This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the extrapolate
         function.
@@ -1804,21 +1998,29 @@ class AnalysisMixin(object):
         r"""Apply a scaling to this data set to make it stich to another dataset.
 
         Args:
-            other (DataFile): Another data set that is used as the base to stitch this one on to
-            xcol,ycol (index or None): The x and y data columns. If left as None then the current setas attribute is used.
+            other (DataFile): 
+                Another data set that is used as the base to stitch this one on to
+            xcol,ycol (index or None): 
+                The x and y data columns. If left as None then the current setas attribute is used.
 
         Keyword Arguments:
-            overlap (tuple of (lower,higher) or None): The band of x values that are used in both data sets to match,
+            overlap (tuple of (lower,higher) or None): 
+                The band of x values that are used in both data sets to match,
                 if left as None, thenthe common overlap of the x data is used.
-            min_overlap (float): If you know that overlap must be bigger than a certain amount, the bounds between the two
+            min_overlap (float): 
+                If you know that overlap must be bigger than a certain amount, the bounds between the two
                 data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.
-            mode (str): Unless *func* is specified, controls which parameters are actually variable, defaults to all of them.
-            func (callable): a stitching function that transforms :math:`(x,y)\rightarrow(x',y')`. Default is to use
+            mode (str): 
+                Unless *func* is specified, controls which parameters are actually variable, defaults to all of them.
+            func (callable): 
+                a stitching function that transforms :math:`(x,y)\rightarrow(x',y')`. Default is to use
                 functions defined by *mode*
-            p0 (iterable): if func is not None then p0 should be the starting values for the stitching function parameters
+            p0 (iterable): 
+                if func is not None then p0 should be the starting values for the stitching function parameters
 
         Returns:
-            self: A copy of the current :py:class:`AnalysisMixin` with the x and y data columns adjusted to stitch
+            (:py:class:`Stoner.Data`):
+                A copy of the current :py:class:`AnalysisMixin` with the x and y data columns adjusted to stitch
 
         To stitch the data together, the x and y data in the current data file is transforms so that
         :math:`x'=x+A` and :math:`y'=By+C` where :math:`A,B,C` are constants and :math:`(x',y')` are close matches to the
@@ -1930,15 +2132,20 @@ class AnalysisMixin(object):
         """Subtract one column, number or array (b) from another column (a).
 
         Args:
-            a (index): First column to work with
-            b (index, float or 1D array):  Second column to work with.
+            a (index): 
+                First column to work with
+            b (index, float or 1D array):  
+                Second column to work with.
 
         Keyword Arguments:
-            header (string or None): new column header  (defaults to a-b
-            replace (bool): Replace the a column with the new data
+            header (string or None): 
+                new column header  (defaults to a-b
+            replace (bool): 
+                Replace the a column with the new data
 
         Returns:
-            self: The newly modified :py:class:`AnalysisMixin`.
+            (:py:class:`Stoner.Data`):
+                The newly modified Data object.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -1976,21 +2183,29 @@ class AnalysisMixin(object):
         """Finds partial indices where the data in column passes the threshold, rising or falling.
 
         Args:
-            threshold (float): Value to look for in column col
+            threshold (float): 
+                Value to look for in column col
 
         Keyword Arguments:
-            col (index): Column index to look for data in
-            rising (bool):  look for case where the data is increasing in value (defaukt True)
-            falling (bool): look for case where data is fallinh in value (default False)
-            xcol (index, bool or None): rather than returning a fractional row index, return the
+            col (index): 
+                Column index to look for data in
+            rising (bool):  
+                look for case where the data is increasing in value (defaukt True)
+            falling (bool): 
+                look for case where data is fallinh in value (default False)
+            xcol (index, bool or None): 
+                rather than returning a fractional row index, return the
                 interpolated value in column xcol. If xcol is False, then return a complete row
                 all_vals (bool): return all crossing points of the threshold or just the first. (default False)
-            transpose (bbool): Swap the x and y columns around - this is most useful when the column assignments
+            transpose (bbool): 
+                Swap the x and y columns around - this is most useful when the column assignments
                 have been done via the setas attribute
-            all_vals (bool): Return all values that match the criteria, or just the first in the file.
+            all_vals (bool): 
+                Return all values that match the criteria, or just the first in the file.
 
         Returns:
-            float: Either a sing;le fractional row index, or an in terpolated x value
+            (float): 
+                Either a sing;le fractional row index, or an in terpolated x value
 
         Note:
             If you don't sepcify a col value or set it to None, then the assigned columns via the

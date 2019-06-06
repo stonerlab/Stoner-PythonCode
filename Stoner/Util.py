@@ -18,6 +18,18 @@ from scipy.stats import sem
 
 
 def _step(x, m, c, h):
+    """
+    Simple sloping step function for fitting to the extrema of a hysteresis loop.
+
+    Args:
+        x (array-like): Field (x) data of loop.
+        m (float): susceptibility(slopee) of loop.
+        c (float): vertical offset of loop.
+        h (float): Saturatted moement (height) of loop.
+
+    Returns:
+        y (Tarray-like): Calculated moment of loop.
+    """
 
     mid = (x.max() + x.min()) / 2.0
 
@@ -29,24 +41,33 @@ def _step(x, m, c, h):
 def _up_down(data):
     """Split data d into rising and falling sections and then add and sort the two sets.
 
+    This routine searches for the local maxima and minima in the x-axis data by identifying points
+    where the x-data is more than 95% of the total span from the mid-point. It thenuses this to identify
+    ranges of rows where the x value passes from one extreme to the other and splits the data file up on
+    that basis. This assumes that the x-data is reasonably well behaved in the the increments between
+    successive x-values are larger than the noise in x. This will work best if the x value is derived from a set value
+    rather than the read-back value.
+
     Args:
         data (Data): DataFile like object with x and y columns set
 
     Returns:
         (Data, Data): Tuple of two DataFile like instances for the rising and falling data.
     """
+    #Calculate x span and mid-point for working out limits to search for maxima.
     lx, hx = data.span(data.setas.xcol)
     mid = (lx + hx) / 2.0
     span = hx - lx
     high = data.x > mid + 0.45 * span
     low = data.x < mid - 0.45 * span
 
+    #Locate points where we cross a threhold
     t = np.zeros((2, len(data) + 2), dtype=bool)
     t[0, 1:-1] = high
     t[1, 1:-1] = low
-
     t = np.diff(t)
 
+    #Find  the indiices of the highest and lowest extrema
     high_i = np.arange(len(data) + 1, dtype=int)[t[0, :]]
     low_i = np.arange(len(data) + 1, dtype=int)[t[1, :]]
     if low_i.size > 2:
@@ -57,23 +78,25 @@ def _up_down(data):
         high_i = np.reshape(high_i, (2, -1)).mean(axis=1)
     else:
         high_i = np.array(high_i.mean())
-
+    #Build a sorted list of extrema positions + the start and end of the data
     indices = np.unique(np.append(low_i, np.append(high_i, np.array([0, len(data) - 1]))))
     indices = np.ceil(indices).astype(int)
     indices.sort()
     if indices[-1] >= len(data):  # Remove possible over-range element
         indices = indices[0:-1]
 
+    # Build a boolean array to index the data for rows that where x is increasing
     rising = np.zeros(len(data), dtype=bool)
-
     for ix, iy in zip(indices[:-1], indices[1:]):
         if data.x[iy] > data.x[ix]:
             rising[ix:iy] = True
 
+    #Clone the data and select rows that are either rising or falling in the two clones.
     up = data.clone
     up.data = up.data[rising]
     down = data.clone
     down.data = down.data[~rising]
+    #Done.
     return up, down
 
 
@@ -81,13 +104,16 @@ def split_up_down(data, col=None, folder=None):
     """Splits the DataFile data into several files where the column *col* is either rising or falling
 
     Args:
-        data (:py:class:`Stoner.Core.DataFile`): object containign the data to be sorted
-        col (index): is something that :py:meth:`Stoner.Core.DataFile.find_col` can use
-        folder (:py:class:`Stoner.Folders.DataFolder` or None): if this is an instance of :py:class:`Stoner.Folders.DataFolder` then add
+        data (:py:class:`Stoner.Core.DataFile`): 
+            object containign the data to be sorted
+        col (index): 
+            is something that :py:meth:`Stoner.Core.DataFile.find_col` can use
+        folder (:py:class:`Stoner.Folders.DataFolder` or None): 
+            if this is an instance of :py:class:`Stoner.Folders.DataFolder` then add
             rising and falling files to groups of this DataFolder, otherwise create a new one
 
     Returns:
-        A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling
+        (:py:class:`Sonter.Folder.DataFolder`): with two groups, rising and falling
     """
     a = Data(data)
     if col is None:
@@ -141,10 +167,11 @@ def ordinal(value):
     """Format an integer into an ordinal string.
 
     Args:
-        value (int): Number to be written as an ordinal string
+        value (int):
+            Number to be written as an ordinal string
 
     Return:
-        Ordinal String such as '1st','2nd' etc.
+        (str): Ordinal String such as '1st','2nd' etc.
     """
     if not isinstance(value, int):
         raise ValueError
@@ -162,23 +189,31 @@ def hysteresis_correct(data, **kargs):
     """Peform corrections to a hysteresis loop.
 
     Args:
-        data (DataFile): The data containing the hysteresis loop. The :py:attr:`DataFile.setas` attribute
+        data (Data):
+            The data containing the hysteresis loop. The :py:attr:`DataFile.setas` attribute
             should be set to give the H and M axes as x and y.
 
     Keyword Arguments:
-        correct_background (bool): Correct for a diamagnetic or paramagnetic background to the hystersis loop
+        correct_background (bool): 
+            Correct for a diamagnetic or paramagnetic background to the hystersis loop
             also recentres the loop about zero moment (default True).
-        correct_H (bool): Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric
+        correct_H (bool): 
+            Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric
             this will remove any offset in filed due to trapped flux (default True)
-        saturated_fraction (float): The fraction of the horizontal (field) range where the moment can be assumed to be
+        saturated_fraction (float):
+            The fraction of the horizontal (field) range where the moment can be assumed to be
             fully saturated. If an integer is given it will use that many data points at the end of the loop.
-        xcol (column index): Column with the x data in it
-        ycol (column_index): Column with the y data in it
-        setas (string or iterable): Column assignments.
+        xcol (column index):
+            Column with the x data in it
+        ycol (column_index): 
+            Column with the y data in it
+        setas (string or iterable): 
+            Column assignments.
 
     Returns:
-        The original loop with the x and y columns replaced with corrected data and extra metadata added to give the
-        background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.
+        (:py:class:`Stoner.Data`):
+            The original loop with the x and y columns replaced with corrected data and extra metadata added to give the
+            background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.
     """
     if isinstance(data, _SC_.DataFile):
         cls = data.__class__

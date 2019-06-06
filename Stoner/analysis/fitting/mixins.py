@@ -132,7 +132,26 @@ class MimizerAdaptor(object):
     """
 
     def __init__(self, model, *args, **kargs):
-        """Setup the wrapper from the minimuzer."""
+        """
+        Setup the wrapper from the minimuzer.
+
+        Args:
+            model (lmfit): 
+                The model that has been fitted.
+            *args (tuple): 
+                Positional parameters to initialise class.
+                
+        Keyword Arguments:
+            params (lmfit:parameter or dict):
+                Parameters used to fit model.
+            **kargs (dict): 
+                Keyword arguments to intialise the reuslt object/.
+
+        Raises:
+            RuntimeError:
+                Fails if a *params* Parameter does not supply a fitted value.
+        """
+        """"""
 
         self.func = model.func
         hints = kargs.pop("params")
@@ -173,7 +192,22 @@ class _curve_fit_result(object):
     """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit` as a class to make handling easier."""
 
     def __init__(self, popt, pcov, infodict, mesg, ier):
-        """Store the results of the curve fit full_output fit."""
+        """
+        Store the results of the curve fit full_output fit.
+
+        Args:
+            popt (1D array): 
+                Optimal parameters for fit.
+            pcov (2D array): 
+                Variance-co-variance matrix.
+            infodict (dict): 
+                Additional information from curve_fit.
+            mesg (str): 
+                Descriptive information frok curve_fit.
+            ier (int): 
+                Numerical error message.
+        """
+        """"""
         self.popt = popt
         self.pcov = pcov
         self.perr = _np_.sqrt(_np_.diag(pcov))
