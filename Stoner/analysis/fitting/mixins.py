@@ -425,7 +425,7 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
     if isinstance(p0, (list, tuple)):
         p0 = _np_.array(p0)
 
-    if isinstance(p0, _np_.ndarray) and (p0.ndim == 1 or (p0.ndim == 2 and _np_.product(p0.shape) == p0.size)):
+    if isinstance(p0, _np_.ndarray) and (p0.ndim == 1 or (p0.ndim == 2 and _np_.max(p0.shape) == p0.size)):
         single_fit = True
         p_new = lmfit.Parameters()
         p0 = p0.ravel()
