@@ -458,29 +458,31 @@ class FittingMixin(object):
 
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional curve_fiotting methods."""
 
-    def __init__(self, *args, **kargs):
-        """Just call super."""
-        super(FittingMixin, self).__init__(*args, **kargs)
-        if self.debug:
-            print("Done FittingMixin init")
-
     def annotate_fit(self, model, x=None, y=None, z=None, text_only=False, **kargs):
         """Annotate a plot with some information about a fit.
 
         Args:
-            mode (callable or lmfit.Model): The function/model used to describe the fit to be annotated.
+            mode (callable or lmfit.Model): 
+                The function/model used to describe the fit to be annotated.
 
         Keyword Parameters:
-            x (float): x co-ordinate of the label
-            y (float): y co-ordinate of the label
-            z (float): z co-ordinbate of the label if the current axes are 3D
-            prefix (str): The prefix placed ahead of the model parameters in the metadata.
-            text_only (bool): If False (default), add the text to the plot and return the current object, otherwise,
+            x (float): 
+                x co-ordinate of the label
+            y (float): 
+                y co-ordinate of the label
+            z (float): 
+                z co-ordinbate of the label if the current axes are 3D
+            prefix (str): 
+                The prefix placed ahead of the model parameters in the metadata.
+            text_only (bool): 
+                If False (default), add the text to the plot and return the current object, otherwise,
                 return just the text and don't add to a plot.
-            prefix(str): If given  overridges the prefix from the model to determine a prefix to the parameter names in the metadata
+            prefix(str): 
+                If given  overridges the prefix from the model to determine a prefix to the parameter names in the metadata
 
         Returns:
-            (Datam, str): A copy of the current Data instance if text_only is False, otherwise returns the text.
+            (Datam, str): 
+                A copy of the current Data instance if text_only is False, otherwise returns the text.
 
         If *prefix* is not given, then the first prefix in the metadata lmfit.prefix is used if present,
         otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
@@ -602,14 +604,20 @@ class FittingMixin(object):
         """Marshall the data for doing a curve_fit or equivalent.
 
         Parameters:
-            xcol (index): Column with xdata in it
-            ycol(index): Column with ydata in it
-            sigma (index or array-like): column of y-errors or uncertainity values.
-            bounds (callable): Used to select the data rows to fit
-            scale_covar (bool,None): If set the flag to scale the covariance.
+            xcol (index): 
+                Column with xdata in it
+            ycol(index): 
+                Column with ydata in it
+            sigma (index or array-like): 
+                column of y-errors or uncertainity values.
+            bounds (callable): 
+                Used to select the data rows to fit
+            scale_covar (bool,None): 
+                If set the flag to scale the covariance.
 
         Returns:
-            (data,scale_covar,col_assignments): data is a tuple of (x,y,sigma). scale_covar is False if sigma is real errors.
+            (data,scale_covar,col_assignments): 
+                data is a tuple of (x,y,sigma). scale_covar is False if sigma is real errors.
         """
         _ = self._col_args(xcol=xcol, ycol=ycol)
         working = self.search(_.xcol, bounds)
@@ -661,21 +669,32 @@ class FittingMixin(object):
         """Carry out a single fit wioth lmfit.
 
         Args:
-            model (lmfit.Model): Configured model
-            data (tuple of xdata,ydata,sigma): Data and errors to use in fitting
-            params (lmfit.Parameters): The parameters to use on the model for the fitting.
-            prefix (str): Prefix for labels in metadata
-            columns (attribute dict): Column assignments
-            scale_covat (bool): Whether sigmas are absolute or relative.
+            model (lmfit.Model): 
+                Configured model
+            data (tuple of xdata,ydata,sigma): 
+                Data and errors to use in fitting
+            params (lmfit.Parameters): 
+                The parameters to use on the model for the fitting.
+            prefix (str): 
+                Prefix for labels in metadata
+            columns (attribute dict): 
+                Column assignments
+            scale_covat (bool): 
+                Whether sigmas are absolute or relative.
 
         Keyword Arguments:
-            result (bool,str): Where the result goes
-            header (str): Name of new data column if used
-            replace (bool): whether to add new dataa
-            output (str): What to return
+            result (bool,str): 
+                Where the result goes
+            header (str): 
+                Name of new data column if used
+            replace (bool): 
+                whether to add new dataa
+            output (str): 
+                What to return
 
         Returns:
-            Results froma  fit or raises and exception.
+            (various):
+                Results froma  fit or raises and exception.
         """
         if not _lmfit:
             raise RuntimeError("lmfit module not available.")
@@ -817,18 +836,26 @@ class FittingMixin(object):
         """Carry out a single fit wioth odr.
 
         Args:
-            data (odr.Data): configured data
-            model (odr.Model): Configured model
-            prefix (str): Prefix for labels in metadata
+            data (odr.Data): 
+                configured data
+            model (odr.Model): 
+                Configured model
+            prefix (str): 
+                Prefix for labels in metadata
 
         Keyword Arguments:
-            result (bool,str): Where the result goes
-            header (str): Name of new data column if used
-            replace (bool): whether to add new dataa
-            output (str): What to return
+            result (bool,str): 
+                Where the result goes
+            header (str): 
+                Name of new data column if used
+            replace (bool): 
+                whether to add new dataa
+            output (str): 
+                What to return
 
         Returns:
-            Results froma  fit or raises and exception.
+            (various):
+                Results froma  fit or raises and exception.
         """
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
@@ -890,34 +917,44 @@ class FittingMixin(object):
         """General curve fitting function passed through from scipy.
 
         Args:
-            func (callable): The fitting function with the form def f(x,*p) where p is a list of fitting parameters
-            xcol (index, Iterable): The index of the x-column data to fit. If list or other iterable sends a tuple of x columns to func for N-d fitting.
-            ycol (index, list of indices or array): The index of the y-column data to fit. If an array, then should be 1D and
+            func (callable, lmfit.Model, odr.Model): 
+                The fitting function with the form def f(x,*p) where p is a list of fitting parameters
+            xcol (index, Iterable): 
+                The index of the x-column data to fit. If list or other iterable sends a tuple of x columns to func for N-d fitting.
+            ycol (index, list of indices or array): 
+                The index of the y-column data to fit. If an array, then should be 1D and
                 the same length as the data. If ycol is a list of indices then the columns are iterated over in turn, fitting occuring
                 for each one. In this case the return value is a list of what would be returned for a single column fit.
 
         Keyword Arguments:
-            p0 (list, tuple, array or callable): A vector of initial parameter values to try. See notes below.
-            sigma (index): The index of the column with the y-error bars
-            bounds (callable): A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
-            result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
+            p0 (list, tuple, array or callable): 
+                A vector of initial parameter values to try. See notes below.
+            sigma (index): 
+                The index of the column with the y-error bars
+            bounds (callable): 
+                A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+            result (bool): 
+                Determines whether the fitted data should be added into the DataFile object. If result is True then
                 the last column will be used. If result is a string or an integer then it is used as a column index.
                 Default to None for not adding fitted data
-            replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
-            header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
-            absolute_sigma (bool): If False, `sigma` denotes relative weights of the data points. The default True means that
+            replace (bool): 
+                Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
+            header (string or None): 
+                If this is a string then it is used as the name of the fitted data. (default None)
+            absolute_sigma (bool): 
+                If False, `sigma` denotes relative weights of the data points. The default True means that
                 the sigma parameter is the reciprocal of the absoluate standard deviation.
-            output (str, default "fit"): Specifiy what to return.
+            output (str, default "fit"): 
+                Specifiy what to return.
 
         Returns:
-            popt, pcov (array, 2D array): Optimal values of the fitting parameters p, and the variance-co-variance matrix
-            for the fitting parameters.
-
-        The return value is determined by the *output* parameter. Options are:
-            * "fit"    (tuple of popt,pcov)
-            * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
-            * "full"    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).
-            * "data"   a copy of the :py:class:`Stoner.Core.DataFile` object with fit recorded in the metadata and optionally as a new column.
+            (various):                
+                The return value is determined by the *output* parameter. Options are:
+                    * "fit"    (tuple of popt,pcov) Optimal values of the fitting parameters p, and the variance-co-variance matrix
+                                for the fitting parameters.
+                    * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+                    * "full"    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).
+                    * "data"   a copy of the :py:class:`Stoner.Core.DataFile` object with fit recorded in the metadata and optionally as a new column.
 
         Note:
             If the columns are not specified (or set to None) then the X and Y data are taken using the
@@ -948,10 +985,10 @@ class FittingMixin(object):
 
 
         See Also:
-            :py:meth:`Stoner.Data.lmfit`
-            :py:meth:`Stoner.Data.odr`
-            :py:meth:`Stoner.Data.differential_evolution`
-            User guide section :ref:`curve_fit_guide`
+            *   :py:meth:`Stoner.Data.lmfit`
+            *   :py:meth:`Stoner.Data.odr`
+            *   :py:meth:`Stoner.Data.differential_evolution`
+            *   User guide section :ref:`curve_fit_guide`
         """
 
         _ = self._col_args(scalar=False, xcol=xcol, ycol=ycol, yerr=sigma)
@@ -1063,33 +1100,43 @@ class FittingMixin(object):
         """Fit model to the data using a differential evolution algorithm.
 
         Args:
-            model (lmfit.Model): An instance of an lmfit.Model that represents the model to be fitted to the data
-            xcol (index or None): Columns to be used for the x  data for the fitting. If not givem defaults to the
-            :py:attr:`Stoner.Core.DataFile.setas` x column
-            ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the
-            :py:attr:`Stoner.Core.DataFile.setas` y column
+            model (lmfit.Model): 
+                An instance of an lmfit.Model that represents the model to be fitted to the data
+            xcol (index or None): 
+                Columns to be used for the x  data for the fitting. If not givem defaults to the
+                :py:attr:`Stoner.Core.DataFile.setas` x column
+            ycol (index or None): 
+                Columns to be used for the  y data for the fitting. If not givem defaults to the
+                :py:attr:`Stoner.Core.DataFile.setas` y column
 
         Keyword Arguments:
-            p0 (list, tuple, array or callable): A vector of initial parameter values to try. See the notes in :py:meth:`Stoner.Data.curve_fit` for more details.
-            sigma (index): The index of the column with the y-error bars
-            bounds (callable): A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
-            result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
+            p0 (list, tuple, array or callable): 
+                A vector of initial parameter values to try. See the notes in :py:meth:`Stoner.Data.curve_fit` for more details.
+            sigma (index): 
+                The index of the column with the y-error bars
+            bounds (callable): 
+                A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+            result (bool): 
+                Determines whether the fitted data should be added into the DataFile object. If result is True then
                 the last column will be used. If result is a string or an integer then it is used as a column index.
                 Default to None for not adding fitted data
-            replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
-            header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
-            scale_covar (bool) : whether to automatically scale covariance matrix (leastsq only)
-            output (str, default "fit"): Specifiy what to return.
+            replace (bool): 
+                Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
+            header (string or None): 
+                If this is a string then it is used as the name of the fitted data. (default None)
+            scale_covar (bool) : 
+                whether to automatically scale covariance matrix (leastsq only)
+            output (str, default "fit"): 
+                Specifiy what to return.
 
         Returns:
-            The lmfit module will refurn an instance of the :py:class:`lmfit.models.ModelFit` class that contains all
-            relevant information about the fit.
+            ( various ) :
 
-        The return value is determined by the *output* parameter. Options are
-            - "fit"    just the :py:class:`lmfit.model.ModelFit` instance
-            - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
-            - "full"    a tuple of the fit instance and the row.
-            - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally as a column of data.
+                The return value is determined by the *output* parameter. Options are
+                    - "fit"    just the :py:class:`lmfit.model.ModelFit` instance that contains all relevant information about the fit.
+                    - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+                    - "full"    a tuple of the fit instance and the row.
+                    - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally as a column of data.
 
         This function is essentially a wrapper around the :py:func:`scipy.optimize.differential_evolution` funtion that presents the same interface as the other
         Stoner package curve fitting functions. The parent function, however, does not provide the variance-covariance matrix to estimate the fitting errors. To
@@ -1097,10 +1144,10 @@ class FittingMixin(object):
         :py:func:`scipy.optimize.curve_fit` to calculate the covariance matrix.
 
         See Also:
-            :py:meth:`Stoner.Data.curve_fit`
-            :py:meth:`Stoner.Data.lmfit`
-            :py:meth:`Stoner.Data.odr`
-            User guide section :ref:`curve_fit_guide`
+            -   :py:meth:`Stoner.Data.curve_fit`
+            -   :py:meth:`Stoner.Data.lmfit`
+            -   :py:meth:`Stoner.Data.odr`
+            -   User guide section :ref:`curve_fit_guide`
 
         Example:
             .. plot:: samples/differential_evolution_simple.py
@@ -1169,39 +1216,48 @@ class FittingMixin(object):
         r"""Wrapper around lmfit module fitting.
 
         Args:
-            model (lmfit.Model): An instance of an lmfit.Model that represents the model to be fitted to the data
-            xcol (index or None): Columns to be used for the x  data for the fitting. If not givem defaults to the
-            :py:attr:`Stoner.Core.DataFile.setas` x column
-            ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the
-            :py:attr:`Stoner.Core.DataFile.setas` y column
+            model (lmfit.Model): 
+                An instance of an lmfit.Model that represents the model to be fitted to the data
+            xcol (index or None): 
+                Columns to be used for the x  data for the fitting. If not givem defaults to the
+                :py:attr:`Stoner.Core.DataFile.setas` x column
+            ycol (index or None): 
+                Columns to be used for the  y data for the fitting. If not givem defaults to the
+                :py:attr:`Stoner.Core.DataFile.setas` y column
 
         Keyword Arguments:
-            p0 (list, tuple, array or callable): A vector of initial parameter values to try. See the notes in :py:meth:`Stoner.Data.curve_fit` for more details.
-            sigma (index): The index of the column with the y-error bars
-            bounds (callable): A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
-            result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
+            p0 (list, tuple, array or callable): 
+                A vector of initial parameter values to try. See the notes in :py:meth:`Stoner.Data.curve_fit` for more details.
+            sigma (index): 
+                The index of the column with the y-error bars
+            bounds (callable): 
+                A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+            result (bool): 
+                Determines whether the fitted data should be added into the DataFile object. If result is True then
                 the last column will be used. If result is a string or an integer then it is used as a column index.
                 Default to None for not adding fitted data
-            replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
-            header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
-            scale_covar (bool) : whether to automatically scale covariance matrix (leastsq only)
-            output (str, default "fit"): Specifiy what to return.
+            replace (bool): 
+                Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
+            header (string or None): 
+                If this is a string then it is used as the name of the fitted data. (default None)
+            scale_covar (bool) : 
+                whether to automatically scale covariance matrix (leastsq only)
+            output (str, default "fit"): 
+                Specifiy what to return.
 
         Returns:
-            The lmfit module will refurn an instance of the :py:class:`lmfit.models.ModelFit` class that contains all
-            relevant information about the fit.
-
-        The return value is determined by the *output* parameter. Options are
-            - "fit"    just the :py:class:`lmfit.model.ModelFit` instance
-            - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
-            - "full"    a tuple of the fit instance and the row.
-            - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally as a column of data.
+            ( various ) :
+                The return value is determined by the *output* parameter. Options are
+                    - "fit"    just the :py:class:`lmfit.model.ModelFit` instance that contains all relevant information about the fit.
+                    - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+                    - "full"    a tuple of the fit instance and the row.
+                    - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally as a column of data.
 
         See Also:
-            :py:meth:`Stoner.Data.curve_fit`
-            :py:meth:`Stoner.Data.odr`
-            :py:meth:`Stoner.Data.differential_evolution`
-            User guide section :ref:`fitting_with_limits`
+            -   :py:meth:`Stoner.Data.curve_fit`
+            -   :py:meth:`Stoner.Data.odr`
+            -   :py:meth:`Stoner.Data.differential_evolution`
+            -   User guide section :ref:`fitting_with_limits`
 
         .. note::
 
@@ -1293,31 +1349,43 @@ class FittingMixin(object):
         """Wrapper around scipy.odr orthogonal distance regression fitting.
 
         Args:
-            model (scipy.odr.Model, lmfit.models.Model or callable): Tje model that describes the data. See below for more details.
-            xcol (index or None): Columns to be used for the x  data for the fitting. If not givem defaults to the
+            model (scipy.odr.Model, lmfit.models.Model or callable): 
+                Tje model that describes the data. See below for more details.
+            xcol (index or None): 
+                Columns to be used for the x  data for the fitting. If not givem defaults to the
                 :py:attr:`Stoner.Core.DataFile.setas` x column
-            ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the
+            ycol (index or None): 
+                Columns to be used for the  y data for the fitting. If not givem defaults to the
                 :py:attr:`Stoner.Core.DataFile.setas` y column
 
         Keyword Arguments:
-            p0 (list, tuple, array or callable): A vector of initial parameter values to try. See the notes to :py:meth:`Stoner.Data.curve_fit` for more details.
-            sigma_x (index): The index of the column with the x-error bars
-            sigma_y (index): The index of the column with the x-error bars
-            bounds (callable): A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
-            result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
+            p0 (list, tuple, array or callable): 
+                A vector of initial parameter values to try. See the notes to :py:meth:`Stoner.Data.curve_fit` for more details.
+            sigma_x (index): 
+                The index of the column with the x-error bars
+            sigma_y (index): 
+                The index of the column with the x-error bars
+            bounds (callable): 
+                A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+            result (bool): 
+                Determines whether the fitted data should be added into the DataFile object. If result is True then
                 the last column will be used. If result is a string or an integer then it is used as a column index.
                 Default to None for not adding fitted data
-            replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
-            header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
-            output (str, default "fit"): Specifiy what to return.
+            replace (bool): 
+                Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
+            header (string or None): 
+                If this is a string then it is used as the name of the fitted data. (default None)
+            output (str, default "fit"): 
+                Specifiy what to return.
 
         Returns:
-            The return value is determined by the *output* parameter. Options are
-                - "fit"    just the :py:class:`scipy.odr.Output` instance (default)
-                - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
-                - "full"    a tuple of the fit instance and the row.
-                - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally
-                    as a column of data.
+            ( various ) :
+                The return value is determined by the *output* parameter. Options are
+                    - "fit"    just the :py:class:`scipy.odr.Output` instance (default)
+                    - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+                    - "full"    a tuple of the fit instance and the row.
+                    - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally
+                        as a column of data.
 
         Notes:
             The function tries to make use of whatever model you give it. Specifically, it accepts:
@@ -1332,17 +1400,16 @@ class FittingMixin(object):
             This function ois designed to be as compatible as possible with :py:meth:`AnalysisMixin.curve_fit` and
                 :py:meth:`AnalysisMixin.lmfit` to facilitate easy of switching between them.
 
+        See Also:
+            -   :py:meth:`AnalysisMixin.curve_fit`
+            -   :py:meth:`AnalysisMixin.lmfit`
+            -   :py:meth:`Stoner.Data.differential_evolution`
+            -   User guide section :ref:`fitting_with_limits`
+
         Example:
             .. plot:: samples/odr_simple.py
                  :include-source:
                  :outname: odrfit1
-
-
-        See Also:
-            :py:meth:`AnalysisMixin.curve_fit`
-            :py:meth:`AnalysisMixin.lmfit`
-            :py:meth:`Stoner.Data.differential_evolution`
-            User guide section :ref:`fitting_with_limits`
         """
         # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
         absolute_sigma = kargs.pop("absolute_sigma", True)
