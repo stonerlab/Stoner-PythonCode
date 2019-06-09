@@ -251,6 +251,8 @@ class proxy(MutableMapping):
                         results[i].extend(v)
                     else:
                         results[i].append(v)
+                if output in ["aaray", "Data", _np_.ndarray, DataFile]:  # Convert each row to an array
+                    results[i] = _np_.array(results[i])
             if len(cols) == 1:  # single key
                 results = [m[0] for m in results]
             if output in ["array", _np_.ndarray]:

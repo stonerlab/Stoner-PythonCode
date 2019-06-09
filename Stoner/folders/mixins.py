@@ -378,8 +378,11 @@ class DiskBasedFolder(object):
                     tmp["{}_stdev".format(h)] = None
             else:
                 for h in tmp.column_headers:
-                    tmp[h] = mean(masked_invalid(tmp.column(h)))
-                    tmp["{}_stdev".format(h)] = std(masked_invalid(tmp.column(h)))
+                    try:
+                        tmp[h] = mean(masked_invalid(tmp.column(h)))
+                        tmp["{}_stdev".format(h)] = std(masked_invalid(tmp.column(h)))
+                    except ValueError:
+                        continue
         tmp["Loaded from"] = tmp.filename
         return tmp
 

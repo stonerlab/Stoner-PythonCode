@@ -1029,6 +1029,9 @@ class baseFolder(MutableSequence):
                     setattr(obj, k, self._object_attrs[k])
                 except AttributeError:
                     raise AttributeError("Can't set attribute {} to {}".format(k, self._object_attrs[k]))
+        for k in self.kargs:  # Set from keyword arguments
+            if hasattr(obj, k):
+                setattr(obj, k, self.kargs[k])
         return obj
 
     def _pruner_(self, grp, breadcrumb, prunelist=None):

@@ -54,20 +54,20 @@ def _up_down(data):
     Returns:
         (Data, Data): Tuple of two DataFile like instances for the rising and falling data.
     """
-    #Calculate x span and mid-point for working out limits to search for maxima.
+    # Calculate x span and mid-point for working out limits to search for maxima.
     lx, hx = data.span(data.setas.xcol)
     mid = (lx + hx) / 2.0
     span = hx - lx
     high = data.x > mid + 0.45 * span
     low = data.x < mid - 0.45 * span
 
-    #Locate points where we cross a threhold
+    # Locate points where we cross a threhold
     t = np.zeros((2, len(data) + 2), dtype=bool)
     t[0, 1:-1] = high
     t[1, 1:-1] = low
     t = np.diff(t)
 
-    #Find  the indiices of the highest and lowest extrema
+    # Find  the indiices of the highest and lowest extrema
     high_i = np.arange(len(data) + 1, dtype=int)[t[0, :]]
     low_i = np.arange(len(data) + 1, dtype=int)[t[1, :]]
     if low_i.size > 2:
@@ -78,7 +78,7 @@ def _up_down(data):
         high_i = np.reshape(high_i, (2, -1)).mean(axis=1)
     else:
         high_i = np.array(high_i.mean())
-    #Build a sorted list of extrema positions + the start and end of the data
+    # Build a sorted list of extrema positions + the start and end of the data
     indices = np.unique(np.append(low_i, np.append(high_i, np.array([0, len(data) - 1]))))
     indices = np.ceil(indices).astype(int)
     indices.sort()
@@ -91,12 +91,12 @@ def _up_down(data):
         if data.x[iy] > data.x[ix]:
             rising[ix:iy] = True
 
-    #Clone the data and select rows that are either rising or falling in the two clones.
+    # Clone the data and select rows that are either rising or falling in the two clones.
     up = data.clone
     up.data = up.data[rising]
     down = data.clone
     down.data = down.data[~rising]
-    #Done.
+    # Done.
     return up, down
 
 
@@ -275,8 +275,12 @@ def hysteresis_correct(data, **kargs):
     Mr_err = [None, None]
 
     m_sat = [Ms - 2 * Ms_err, -Ms + 2 * Ms_err]
+    single_side = False
 
     for i, (d, sat) in enumerate(zip([up, down], m_sat)):
+        if len(d) < 2:
+            single_side = True
+            continue
         hc = d.threshold(0.0, all_vals=True, rising=i == 0, falling=i != 0)  # Get the Hc value
         Hc[i] = mean(hc)
         if hc.size > 1:
@@ -290,7 +294,7 @@ def hysteresis_correct(data, **kargs):
         if mr.size > 1:
             Mr_err[i] = sem(mr)
 
-    if correct_H:
+    if correct_H and not single_side:
         Hc_mean = mean(Hc)
         for d in [data, up, down]:
             d.x = d.x - Hc_mean
@@ -298,8 +302,16 @@ def hysteresis_correct(data, **kargs):
     else:
         Hc_mean = 0.0
 
-    data["Hc"] = (Hc[1] - Hc_mean, Hc[0] - Hc_mean)
-    data["Hsat"] = (Hsat[1] - Hc_mean, Hsat[0] - Hc_mean)
+    if not single_side:
+        data["Hc"] = (Hc[1] - Hc_mean, Hc[0] - Hc_mean)
+        data["Hc_mean"] = np.abs(np.array(Hc)).mean()
+        data["Hsat"] = (Hsat[1] - Hc_mean, Hsat[0] - Hc_mean)
+        data["Hsat_mean"] = np.abs(np.array(Hsat)).mean()
+    else:
+        data["Hc"] = [x for x in Hc if x is not None]
+        data["Hc_mean"] = abs(data["Hc"][0])
+        data["Hsat"] = [x for x in Hsat if x is not None]
+        data["Hsat_mean"] = abs(data["Hsat"][0])
     data["Remenance"] = Mr
 
     bh = (-data.x) * data.y

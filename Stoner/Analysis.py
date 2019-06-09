@@ -85,6 +85,7 @@ def _threshold(threshold, data, rising=True, falling=False):
     # First we find all points where we cross zero in the correct direction
     current = data
     previous = _np_.roll(current, 1)
+    current = _np_.atleast_1d(current)
     index = _np_.arange(len(current))
     sdat = _np_.column_stack((index, current, previous))
     if rising and not falling:
