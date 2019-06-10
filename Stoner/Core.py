@@ -64,40 +64,65 @@ class DataFile(metadataObject):
     """:py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers.
 
     Attributes:
-        column_headers (list): of strings of the column names of the data.
-        data (2D numpy masked array): The attribute that stores the nuermical data for each DataFile. This is a :py:class:`DataArray` instance - which
+        column_headers (list): 
+            list of strings of the column names of the data.
+        data (2D numpy masked array): 
+            The attribute that stores the nuermical data for each DataFile. This is a :py:class:`DataArray` instance - which
             is itself a subclass of :py:class:`numpy.ma.MaskedArray`.
-        title (string): The title of the measurement.
-        filename (string): The current filename of the data if loaded from or
-                           already saved to disc. This is the default filename used by the :py:meth:`Stoner.Core.DataFile.load`
-                           and :py:meth:`Stoner.Core.DataFile.save`.
-        header (string): A readonly property that returns a pretty formatted string giving the header of tabular representation.
-        mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask.
-        mime_type (list of str): The possible mime-types of data files represented by each matching filename pattern in :py:attr:`Datafile.pattern`.
-        patterns (list): A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (*.txt and *.dat")
-        priority (int): Used to indicathe order in which subclasses of :py:class:`DataFile` are tried when loading data. A higher number means a lower
-                            priority (!)
-        setas (:py:class:`_stas`): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.
-        shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape.
-        records (numpy record array): Returns the data in the form of a list of yuples where each tuple maps to the columsn names.
-        clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.
-        dict_records (array of dictionaries): View the data as an array or dictionaries where each dictionary represnets one
-            row with keys dervied from column headers.
-        dims (int): When data columns are set as x,y,z etc. returns the number of dimensions implied in the data set
-        dtype (numpoy dtype): Returns the datatype stored in the :py:attr:`DataFile.data` attribute.
-        T (:py:class:`DataArray`): Transposed version of the data.
-        subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by
-                           their py:attr:`Stoner.Core.DataFile.priority`. Each entry in the list consists of the
-                           string name of the subclass and the class object.
-        xcol (int): If a column has been designated as containing *x* values, this will return the index of that column
-        xerr (int): Similarly to :py:attr:`DataFile.xcol` but for the x-error value column.
-        ycol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the y value columns.
-        yerr (list of int): Similarly to :py:attr:`DataFile.xcol` but for the y error value columns.
-        zcol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the z value columns.
-        zerr (list of int): Similarly to :py:attr:`DataFile.xcol` but for the z error value columns.
-        ucol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the u (x-axis direction cosine) columns.
-        vcol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the v (y-axis direction cosine) columns.
-        wcol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the w (z-axis direction cosine) columns.
+        title (string): 
+            The title of the measurement.
+        filename (string): 
+            The current filename of the data if loaded from or already saved to disc. This is the default filename used by 
+            the :py:meth:`Stoner.Core.DataFile.load` and :py:meth:`Stoner.Core.DataFile.save`.
+        header (string): 
+            A readonly property that returns a pretty formatted string giving the header of tabular representation.
+        mask (array of booleans): 
+            Returns the current mask applied to the numerical data equivalent to self.data.mask.
+        mime_type (list of str): 
+            The possible mime-types of data files represented by each matching filename pattern in :py:attr:`Datafile.pattern`.
+        patterns (list): 
+            A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (*.txt and *.dat")
+        priority (int): 
+            Used to indicathe order in which subclasses of :py:class:`DataFile` are tried when loading data. A higher number means a lower
+            priority (!)
+        setas (:py:class:`_stas`): 
+            Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.
+        shape (tuple of integers): 
+            Returns the shape of the data (rows,columns) - equivalent to self.data.shape.
+        records (numpy record array): 
+            Returns the data in the form of a list of yuples where each tuple maps to the columsn names.
+        clone (DataFile): 
+            Creates a deep copy of the :py:class`DataFile` object.
+        dict_records (array of dictionaries): 
+            View the data as an array or dictionaries where each dictionary represnets one row with keys dervied from column headers.
+        dims (int): 
+            When data columns are set as x,y,z etc. returns the number of dimensions implied in the data set
+        dtype (numpoy dtype): 
+            Returns the datatype stored in the :py:attr:`DataFile.data` attribute.
+        T (:py:class:`DataArray`): 
+            Transposed version of the data.
+        subclasses (list): 
+            Returns a list of all the subclasses of DataFile currently in memory, sorted by
+            their py:attr:`Stoner.Core.DataFile.priority`. Each entry in the list consists of the
+            string name of the subclass and the class object.
+        xcol (int): 
+            If a column has been designated as containing *x* values, this will return the index of that column
+        xerr (int): 
+            Similarly to :py:attr:`DataFile.xcol` but for the x-error value column.
+        ycol (list of int): 
+            Similarly to :py:attr:`DataFile.xcol` but for the y value columns.
+        yerr (list of int): 
+            Similarly to :py:attr:`DataFile.xcol` but for the y error value columns.
+        zcol (list of int): 
+            Similarly to :py:attr:`DataFile.xcol` but for the z value columns.
+        zerr (list of int): 
+            Similarly to :py:attr:`DataFile.xcol` but for the z error value columns.
+        ucol (list of int): 
+            Similarly to :py:attr:`DataFile.xcol` but for the u (x-axis direction cosine) columns.
+        vcol (list of int): 
+            Similarly to :py:attr:`DataFile.xcol` but for the v (y-axis direction cosine) columns.
+        wcol (list of int): 
+            Similarly to :py:attr:`DataFile.xcol` but for the w (z-axis direction cosine) columns.
     """
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -122,7 +147,7 @@ class DataFile(metadataObject):
     # ============================================================================================================================
 
     def __new__(cls, *args, **kargs):
-        """Do some init stuff before the mixins kick in."""
+        """Prepare the basic DataFile instance before the mixins add their bits."""
         self = metadataObject.__new__(cls)
         object.__setattr__(self, "debug", kargs.pop("debug", False))
         self._masks = [False]
@@ -172,10 +197,10 @@ class DataFile(metadataObject):
             DataFile objects is an instance of a sub - class of DataFile
 
         Args:
-            args (positional arguments): Variable number of arguments that match one of the
-                definitions above
-            kargs (keyword Arguments): All keyword arguments that match public attributes are
-                used to set those public attributes.
+            args (positional arguments): 
+                Variable number of arguments that match one of the definitions above
+            kargs (keyword Arguments): 
+                All keyword arguments that match public attributes are used to set those public attributes.
         """
         # init instance attributes
         super(DataFile, self).__init__(*args, **kargs)  # initialise self.metadata)
@@ -302,8 +327,18 @@ class DataFile(metadataObject):
 
     @property
     def _repr_html_(self):
+        """Generate an html representation of the DataFile.        
+
+        Raises:
+            AttributeError:
+                If short representation options are selcted, raise an AttributeError.
+
+        Returns:
+            str: 
+                Produce an HTML table from the Data object.
+        """
         if get_option("short_repr") or get_option("short_data_repr"):
-            raise AttributeError("Rich html output su[[ressed")
+            raise AttributeError("Rich html output suppressed")
         else:
             return self._repr_html_private
 
@@ -512,22 +547,23 @@ class DataFile(metadataObject):
 
         Args:
             other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
+                The object to be added to the DataFile
 
         Note:
-            * If other is a dictionary then the keys of the dictionary are passed to
-            :py:meth:`find_col` to see if they match a column, in which case the
-            corresponding value will be used for theat column in the new row.
-            Columns which do not have a matching key will be set to NaN. If other has keys
-            that are not found as columns in self, additional columns are added.
-            * If other is a list, then the add method is called recursively for each element
-            of the list.
-            * Returns: A Datafile object with the rows of @a other appended
-            to the rows of the current object.
-            * If other is a 1D numopy array with the same number of
-            elements as their are columns in @a self.data then the numpy
-            array is treated as a new row of data If @a ither is a 2D numpy
-            array then it is appended if it has the same number of
-            columns and @a self.data.
+            -   if other is a dictionary then the keys of the dictionary are passed to
+                :py:meth:`find_col` to see if they match a column, in which case the
+                corresponding value will be used for theat column in the new row.
+                Columns which do not have a matching key will be set to NaN. If other has keys
+                that are not found as columns in self, additional columns are added.
+            -   If other is a list, then the add method is called recursively for each element
+                of the list.
+            -   Returns: A Datafile object with the rows of @a other appended
+                to the rows of the current object.
+            -   If other is a 1D numopy array with the same number of
+                elements as their are columns in @a self.data then the numpy
+                array is treated as a new row of data If @a ither is a 2D numpy
+                array then it is appended if it has the same number of
+                columns and @a self.data.
         """
         newdata = self.clone
         return self.__add_core__(other, newdata)
@@ -537,22 +573,23 @@ class DataFile(metadataObject):
 
         Args:
             other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
+                The object to be added to the DataFile
 
         Note:
-            * If other is a dictionary then the keys of the dictionary are passed to
-            :py:meth:`find_col` to see if they match a column, in which case the
-            corresponding value will be used for theat column in the new row.
-            Columns which do not have a matching key will be set to NaN. If other has keys
-            that are not found as columns in self, additional columns are added.
-            * If other is a list, then the add method is called recursively for each element
-            of the list.
-            * Returns: A Datafile object with the rows of @a other appended
-            to the rows of the current object.
-            * If other is a 1D numopy array with the same number of
-            elements as their are columns in @a self.data then the numpy
-            array is treated as a new row of data If @a ither is a 2D numpy
-            array then it is appended if it has the same number of
-            columns and @a self.data.
+            -   if other is a dictionary then the keys of the dictionary are passed to
+                :py:meth:`find_col` to see if they match a column, in which case the
+                corresponding value will be used for theat column in the new row.
+                Columns which do not have a matching key will be set to NaN. If other has keys
+                that are not found as columns in self, additional columns are added.
+            -   If other is a list, then the add method is called recursively for each element
+                of the list.
+            -   Returns: A Datafile object with the rows of @a other appended
+                to the rows of the current object.
+            -   If other is a 1D numopy array with the same number of
+                elements as their are columns in @a self.data then the numpy
+                array is treated as a new row of data If @a ither is a 2D numpy
+                array then it is appended if it has the same number of
+                columns and @a self.data.
         """
         newdata = self
         return self.__add_core__(other, newdata)
@@ -561,11 +598,14 @@ class DataFile(metadataObject):
         """Implements the core work of adding other to self and modifying newdata.
 
         Args:
-            other (DataFile,array,list): The data to be added
-            newdata(DataFile): The instance to be modified
+            other (DataFile,array,list): 
+                The data to be added
+            newdata(DataFile): 
+                The instance to be modified
 
         Returns:
-            newdata: A modified newdata
+            newdata: 
+                A modified newdata
         """
         if isinstance(other, _np_.ndarray):
             if len(self) == 0:  # pylint: disable=len-as-condition
@@ -619,11 +659,12 @@ class DataFile(metadataObject):
         """Implements the & operator to concatenate columns of data in a :py:class:`DataFile` object.
 
         Args:
-            other  (numpy array or :py:class:`DataFile`): Data to be added to this DataFile instance
+            other  (numpy array or :py:class:`DataFile`): 
+                Data to be added to this DataFile instance
 
         Returns:
-            newdata: A :py:class:`DataFile` object with the columns of other con
-        catenated as new columns at the end of the self object.
+            ():py:class:`DataFile`):
+                new Data object with the columns of other concatenated as new columns at the end of the self object.
 
         Note:
             Whether other is a numopy array of :py:class:`DataFile`, it must
@@ -642,11 +683,12 @@ class DataFile(metadataObject):
         """Implements the &= operator to concatenate columns of data in a :py:class:`DataFile` object.
 
         Args:
-            other  (numpy array or :py:class:`DataFile`): Data to be added to this DataFile instance
+            other  (numpy array or :py:class:`DataFile`): 
+                Data to be added to this DataFile instance
 
         Returns:
-            self: A :py:class:`DataFile` object with the columns of other con
-        catenated as new columns at the end of the self object.
+            ():py:class:`DataFile`):
+                new Data object with the columns of other concatenated as new columns at the end of the self object.
 
         Note:
             Whether other is a numopy array of :py:class:`DataFile`, it must
@@ -664,12 +706,14 @@ class DataFile(metadataObject):
         """Implements the core of the & operator, returning data in newdata
 
         Args:
-            other (array,DataFile): Data whose columns are to be added
-            newdata (DataFile): instance of DataFile to be modified
+            other (array,DataFile): 
+                Data whose columns are to be added
+            newdata (DataFile): 
+                instance of DataFile to be modified
 
         Returns:
-            newdata: The modified DataFile (may be self or a clone of self depending
-            on the operator's inplaceness)
+            ():py:class:`DataFile`):
+                new Data object with the columns of other concatenated as new columns at the end of the self object.
         """
         if len(newdata.data.shape) < 2:
             newdata.data = _np_.atleast_2d(newdata.data)
@@ -735,10 +779,12 @@ class DataFile(metadataObject):
         """Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__read_iterable` function.
 
         Args:
-            other (string or iterable object): Used to source the DataFile object
+            other (string or iterable object): 
+                Used to source the DataFile object
 
         Returns:
-            DataFile: A new :py:class:`DataFile` object
+            (DataFile): 
+                A new :py:class:`DataFile` object
 
         TODO:
             Make code work better with streams
@@ -758,10 +804,12 @@ class DataFile(metadataObject):
         """Overload the % operator to mean column deletion.
 
         Args:
-            Other (column index): column(s) to delete.
+            Other (column index): 
+                column(s) to delete.
 
         Return:
-            self: A copy of self with a column deleted.
+            (self): 
+                A copy of self with a column deleted.
         """
         newdata = self.clone
         return self.__mod_core__(other, newdata)
@@ -770,10 +818,12 @@ class DataFile(metadataObject):
         """Overload the % operator to mean in-place column deletion.
 
         Args:
-            Other (column index): column(s) to delete.
+            Other (column index): 
+                column(s) to delete.
 
         Return:
-            self: A copy of self with a column deleted.
+            (self): 
+                A copy of self with a column deleted.
         """
         newdata = self
         return self.__mod_core__(other, newdata)
@@ -791,10 +841,12 @@ class DataFile(metadataObject):
         """Implements what to do when subtraction operator is used.
 
         Args:
-            other (int,list of integers): Delete row(s) from data.
+            other (int,list of integers): 
+                Delete row(s) from data.
 
         Returns:
-            newdata: A :py:data:`DataFile` with rows removed.
+            (DataFile): 
+                A :py:data:`DataFile` with rows removed.
         """
         newdata = self.clone
         return self.__sub_core__(other, newdata)
@@ -803,10 +855,12 @@ class DataFile(metadataObject):
         """Implements what to do when subtraction operator is used.
 
         Args:
-            other (int,list of integers): Delete row(s) from data.
+            other (int,list of integers): 
+                Delete row(s) from data.
 
         Returns:
-            self: The :py:data:`DataFile` with rows removed.
+            (self): 
+                The :py:data:`DataFile` with rows removed.
         """
         newdata = self
         return self.__sub_core__(other, newdata)
@@ -846,8 +900,21 @@ class DataFile(metadataObject):
 
     def __call__(self, *args, **kargs):
         """Clone the DataFile, but allowing additional arguments to modify the new clone.
+        
 
-        Creates a new clone of self and then passes all the arguments to the clones' __init__ method.
+        Args:
+            *args (tuple):
+                Positional arguments to pass through to the new clone.
+            **kargs (dict): 
+                Keyword arguments to pass through to the new clone.
+
+        Raises:
+            TypeError: If a keyword argument doesn't match an attribute.
+
+        Returns:
+            new_d (DataFile): 
+                Modified clone of the current object.
+
         """
         new_d = self.clone
         i = len(args) if len(args) < 2 else 2
@@ -873,10 +940,12 @@ class DataFile(metadataObject):
         """Operator function for membertship tests - used to check metadata contents.
 
         Args:
-            item(string): name of metadata key
+            item(string): 
+                name of metadata key
 
         Returns:
-            bool: True if item in self.metadata
+            (bool): 
+                True if item in self.metadata
         """
         return item in self.metadata
 
@@ -896,7 +965,8 @@ class DataFile(metadataObject):
         """Implements row or metadata deletion.
 
         Args:
-            item (ingteger or string):  row index or name of metadata to delete
+            item (ingteger or string):  
+                row index or name of metadata to delete
         """
         if isinstance(item, string_types):
             del self.metadata[item]
@@ -919,6 +989,19 @@ class DataFile(metadataObject):
         return sorted(set(attr))
 
     def __eq__(self, other):
+        """
+        Equality operator.
+
+        Args:
+            other (DataFile): 
+                The object to test for equality against.
+
+        Returns:
+            bool: 
+                True if data, column headers and metadata are equal.
+
+        """
+
         if not isinstance(other, DataFile):  # Start checking we're all DataFile's
             return False
         if self.data.shape != other.data.shape or not _np_.all(self.data == other.data):  # Check we have the same data
@@ -942,10 +1025,12 @@ class DataFile(metadataObject):
         """Called for :py:class:`DataFile`.x to handle some special pseudo attributes and otherwise to act as a shortcut for :py:meth:`column`.
 
         Args:
-            name (string): The name of the attribute to be returned.
+            name (string): 
+                The name of the attribute to be returned.
 
         Returns:
-            Various: the DataFile object in various forms
+            Various: 
+                the DataFile object in various forms
 
         Supported attributes:
             - records - return the DataFile data as a numpy structured
@@ -989,7 +1074,8 @@ class DataFile(metadataObject):
         """Called for DataFile[x] to return either a row or iterm of metadata.
 
         Args:
-            name (string or slice or int): The name, slice or number of the part of the
+            name (string or slice or int): 
+                The name, slice or number of the part of the
             :py:class:`DataFile` to be returned.
 
         Returns:
