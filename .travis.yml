@@ -42,7 +42,7 @@ install:
   # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
   - conda install --yes stoner
   # Force upgraded scikit-image
-  - conda install --yes -c conda-forge scikit-image=0.14.2
+  # - conda install --yes scikit-image
   # Hyperspy is now an optional dependency
   - conda install --yes -c conda-forge hyperspy
   # Now we unistall the stable stoner - use force to stop downgrading packages!
