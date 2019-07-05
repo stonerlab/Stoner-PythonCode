@@ -1995,6 +1995,55 @@ class AnalysisMixin(object):
         else:
             return spline
 
+    def std(self, column=None, sigma=None, bounds=None):
+        """Find standard deviation value of a data column.
+
+        Args:
+            column (index): 
+                Column to look for the maximum in
+
+        Keyword Arguments:
+            sigma (column index or array): 
+                The uncertainity noted for each value in the mean
+            bounds (callable): 
+                A callable function that takes a single argument list of
+                numbers representing one row, and returns True for all rows to search in.
+
+        Returns:
+            (float): 
+                The standard deviation of the data.
+
+        Note:
+            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+            assignments are used.
+
+        .. todo::
+            Fix the row index when the bounds function is used - see note of :py:meth:`AnalysisMixin.max`
+        """
+        _ = self._col_args(scalar=True, ycol=column, yerr=sigma)
+
+        if bounds is not None:
+            self._push_mask()
+            self._set_mask(bounds, True, _.ycol)
+
+        if isiterable(sigma) and len(sigma) == len(self) and all_type(sigma, float):
+            sigma = _np_.array(sigma)
+            _["has_yerr"] = True
+        elif _.has_yerr:
+            sigma = self.data[:, _.yerr]
+
+        if not _.has_yerr:
+            result = self.data[:, _.ycol].mean()
+        else:
+            ydata = self.data[:, _.ycol]
+            w = 1 / (sigma ** 2 + 1e-8)
+            norm = w.sum(axis=0)
+            error = _np_.sqrt((sigma ** 2).sum(axis=0)) / len(sigma)
+            result = (ydata * w).std(axis=0) / norm, error
+        if bounds is not None:
+            self._pop_mask()
+        return result
+
     def stitch(self, other, xcol=None, ycol=None, overlap=None, min_overlap=0.0, mode="All", func=None, p0=None):
         r"""Apply a scaling to this data set to make it stich to another dataset.
 
