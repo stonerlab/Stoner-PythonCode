@@ -1938,18 +1938,18 @@ class DataFile(metadataObject):
                         break
             return self.del_column(dups, duplicates=False)
         else:
-            if col is None or (isinstance(col,bool) and not col):  # Without defining col we just compress by the mask
+            if col is None or (isinstance(col, bool) and not col):  # Without defining col we just compress by the mask
                 self.data = _ma_.mask_cols(self.data)
                 t = DataArray(self.column_headers)
                 t.mask = self.mask[0]
                 self.column_headers = list(_ma_.compressed(t))
                 self.data = _ma_.compress_cols(self.data)
-            elif isinstance(col,bool) and col:  # Without defining col we just compress by the mask
-                ch=[self.column_headers[ix] for ix,v in enumerate(self.setas.set) if v]
-                setas=[self.setas[ix] for ix,v in enumerate(self.setas.set) if v]
-                self.data=self.data[:,self.setas.set]
-                self.setas=setas
-                self.column_headers=ch
+            elif isinstance(col, bool) and col:  # Without defining col we just compress by the mask
+                ch = [self.column_headers[ix] for ix, v in enumerate(self.setas.set) if v]
+                setas = [self.setas[ix] for ix, v in enumerate(self.setas.set) if v]
+                self.data = self.data[:, self.setas.set]
+                self.setas = setas
+                self.column_headers = ch
             elif isiterable(col) and all_type(col, bool):  # If col is an iterable of booleans then we index by that
                 col = ~_np_.array(col)
                 new_setas = _np_.array(self.setas)[col]
