@@ -14,7 +14,7 @@ from collections import Mapping
 import numpy as np
 
 import Stoner.Core as Core
-from Stoner.compat import python_v3, str2bytes, string_types
+from Stoner.compat import python_v3, str2bytes, string_types, hyperspy_ok
 
 
 class CSVFile(Core.DataFile):
@@ -258,7 +258,7 @@ try:  # Optional tdms support
 except ImportError:
     TDMSFile = Core.DataFile
 
-try:
+if hyperspy_ok:
     import hyperspy.api as hs
 
     class HyperSpyFile(Core.DataFile):
@@ -309,7 +309,6 @@ try:
                 if not isinstance(signal, hs.signals.Signal2D):
                     raise Core.StonerLoadError("Not a 2D signal object - aborting!")
             except Exception as e:  # Pretty generic error catcher
-                print("8" * 120, e, "5" * 120)
                 raise Core.StonerLoadError("Not readable by HyperSpy error was {}".format(e))
             self.data = signal.data
             self._unpack_meta("", signal.metadata.as_dictionary())
@@ -318,5 +317,5 @@ try:
             return self
 
 
-except ImportError:
+else:
     HyperSpyFile = Core.DataFile

@@ -19,6 +19,7 @@ from Stoner.compat import python_v3, int_types, string_types, commonpath, _patte
 from Stoner.tools import operator, isiterable, isproperty, all_type, get_option
 from Stoner.core.base import regexpDict
 from Stoner.core.base import metadataObject
+from Stoner.core.exceptions import StonerUnrecognisedFormat
 from .utils import pathjoin
 
 from .each import item as each_item
@@ -791,12 +792,18 @@ class baseFolder(MutableSequence):
     def __next__(self):
         """Python 3.x style iterator function."""
         for n in self.__names__():
-            yield self.__getter__(n, instantiate=True)
+            member = self.__getter__(n, instantiate=True)
+            if member is None:
+                continue
+            yield member
 
     def next(self):
         """Python 2.7 style iterator function."""
         for n in self.__names__():
-            yield self.__getter__(n, instantiate=True)
+            member = self.__getter__(n, instantiate=True)
+            if member is None:
+                continue
+            yield member
 
     def __rmatmul__(self, other):
         """Implement callable@DataFolder as a generic iterate a function over DataFolder members.

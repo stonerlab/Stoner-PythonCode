@@ -19,6 +19,7 @@ from Stoner.tools import isiterable
 
 from Stoner.core.base import metadataObject
 from Stoner.Core import DataFile
+from Stoner.core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder
 from .utils import scan_dir, discard_earlier, filter_files
 
@@ -228,7 +229,10 @@ class DiskBasedFolder(object):
             pass
         # Find a filename and load
         fname = name if path.exists(name) else path.join(self.directory, name)
-        tmp = self.type(self.loader(fname, **self.extra_args))
+        try:
+            tmp = self.type(self.loader(fname, **self.extra_args))
+        except StonerUnrecognisedFormat as err:
+            return None
         if not isinstance(getattr(tmp, "filename", None), string_types):
             tmp.filename = path.basename(fname)
         # Process file hooks

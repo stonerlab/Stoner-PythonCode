@@ -41,7 +41,7 @@ from .compat import (
 )
 from .tools import all_type, operator, isiterable, islike_list, get_option
 
-from .core.exceptions import StonerLoadError, StonerSetasError
+from .core.exceptions import StonerLoadError, StonerSetasError, StonerUnrecognisedFormat
 from .core import _setas, regexpDict, typeHintedDict, metadataObject
 from .core.array import DataArray
 from .core.utils import copy_into, itersubclasses, tab_delimited
@@ -2276,7 +2276,7 @@ class DataFile(metadataObject):
                     print("{} Failed with a uncicode decode error for {}\n{}".format(cls, filename, format_exc()))
                     continue
             else:
-                raise IOError(
+                raise StonerUnrecognisedFormat(
                     "Ran out of subclasses to try and load {} as. Recognised filetype are:{}".format(
                         filename, list(self.subclasses.keys())
                     )

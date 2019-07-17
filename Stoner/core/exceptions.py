@@ -18,6 +18,16 @@ class StonerLoadError(Exception):
     pass
 
 
+class StonerUnrecognisedFormat(IOError):
+
+    """An exception thrown by the file loading routines in the Stoner Package.
+
+    This special exception is thrown when none of the subclasses was able to load the specified file.
+    """
+
+    pass
+
+
 class StonerSetasError(AttributeError):
 
     """An exception tjrown when we try to access a column in data without setas being set."""
