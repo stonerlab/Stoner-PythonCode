@@ -37,13 +37,14 @@ class Utils_test(unittest.TestCase):
 
     def test_hysteresis(self):
         """Test the hysteresis analysis code."""
-        x=SU.hysteresis_correct(path.join(pth,"./sample-data/QD-SQUID-VSM.dat"),setas="3.xy",saturated_fraction=0.25)
-        self.assertTrue("Hc" in x and "Area" in x and
-                       "Hsat" in x and "BH_Max" in x and
-                       "BH_Max_H" in x,"Hystersis loop analysis keys not present.")
-
-        self.assertTrue(is_2tuple(x["Hc"]) and x["Hc"][0]+578<1.0,"Failed to find correct Hc in a SQUID loop")
-        self.assertTrue(isinstance(x["Area"],float) and 0.0136<x["Area"]<0.0137,"Incorrect calculation of area under loop")
+        for meth in ["linear_intercept","susceptibility","delta_M"]:
+            x=SU.hysteresis_correct(path.join(pth,"./sample-data/QD-SQUID-VSM.dat"),setas="3.xy",h_sat_method=meth,saturated_fraction=0.25)
+            self.assertTrue("Hc" in x and "Area" in x and
+                           "Hsat" in x and "BH_Max" in x and
+                           "BH_Max_H" in x,"Hystersis loop analysis keys not present.")
+    
+            self.assertTrue(is_2tuple(x["Hc"]) and x["Hc"][0]+578<1.0,"Failed to find correct Hc in a SQUID loop")
+            self.assertTrue(isinstance(x["Area"],float) and 0.0136<x["Area"]<0.0137,"Incorrect calculation of area under loop")
         self.x=x
 
 if __name__=="__main__": # Run some tests manually to allow debugging

@@ -4,6 +4,7 @@
 
 __all__ = [
     "TexFormatter",
+    "TexEngFormatter",
     "DefaultPlotStyle",
     "GBPlotStyle",
     "JTBPlotStyle",

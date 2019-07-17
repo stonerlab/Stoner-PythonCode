@@ -15,6 +15,7 @@ from . import Data
 import numpy as np
 from numpy import max, sqrt, diag, argmax, mean, array  # pylint: disable=redefined-builtin
 from scipy.stats import sem
+from scipy.optimize import fsolve
 
 
 def _step(x, m, c, h):
@@ -203,6 +204,14 @@ def hysteresis_correct(data, **kargs):
         saturated_fraction (float):
             The fraction of the horizontal (field) range where the moment can be assumed to be
             fully saturated. If an integer is given it will use that many data points at the end of the loop.
+        h_sat_method (str):
+            The method used to determine thwe saturation field. Options are -
+            -   "linear_intercept" (default): Fit a straight line to the central region of each branch of the loop and look at the
+                intercept with the relevant saturation moment.
+            -   "delta_M": Look for a field where the moment has changed by *h_sat_fraction* times the error in M_s.
+            -   "susceptibility" - Calcualte H_sat from where the susceptibility changes by 1% of the average susceptibility
+        h_sat_fraction (float):
+            The central fraction of the saturation moment that is used for calculating the saturation field. Defaults to 0.5
         xcol (column index):
             Column with the x data in it
         ycol (column_index): 
@@ -221,6 +230,21 @@ def hysteresis_correct(data, **kargs):
         cls = Data
     data = cls(data)
 
+    # Get other keyword arguments
+    correct_background = kargs.pop("correct_background", True)
+    correct_H = kargs.pop("correct_H", True)
+    saturation_fraction = kargs.pop("saturated_fraction", 0.2)
+
+    h_sat_method = kargs.pop("h_sat_method", "linear_intercept")
+    h_sat_fraction = kargs.pop("h_sat_fraction", 0.5 if h_sat_method == "linear_intercept" else 2.0)
+
+    for k in kargs:
+        if hasattr(data, k):
+            try:
+                setattr(data, k, kargs[k])
+            except AttributeError:
+                if data.debug:
+                    print("Error setting attribute from keyword {}={}".format(k, kargs[k]))
     if "setas" in kargs:  # Allow us to override the setas variable
         data.setas = kargs.pop("setas")
 
@@ -228,13 +252,8 @@ def hysteresis_correct(data, **kargs):
     ycol = kargs.pop("ycol", data.setas.ycol)
     # Get xcol and ycols from kargs if specified
     _ = data._col_args(xcol=xcol, ycol=ycol)
-    data.setas(x=_.xcol, y=_.ycol)
+    data.setas(x=_.xcol, y=_.ycol, reset=False)
     # Split into two sets of data:
-
-    # Get other keyword arguments
-    correct_background = kargs.pop("correct_background", True)
-    correct_H = kargs.pop("correct_H", True)
-    saturation_fraction = kargs.pop("saturated_fraction", 0.2)
 
     up, down = _up_down(data)
 
@@ -274,7 +293,7 @@ def hysteresis_correct(data, **kargs):
     Mr = [None, None]
     Mr_err = [None, None]
 
-    m_sat = [Ms - 2 * Ms_err, -Ms + 2 * Ms_err]
+    m_sat = [Ms - h_sat_fraction * Ms_err, -Ms + h_sat_fraction * Ms_err]
     single_side = False
 
     for i, (d, sat) in enumerate(zip([up, down], m_sat)):
@@ -285,10 +304,51 @@ def hysteresis_correct(data, **kargs):
         Hc[i] = mean(hc)
         if hc.size > 1:
             Hc_err[i] = sem(hc)
-        hs = d.threshold(sat, all_vals=True, rising=i == 0, falling=i != 0)  # Get the H_sat value
-        Hsat[1 - i] = mean(hs)  # Get the H_sat value
-        if hs.size > 1:
-            Hsat_err[1 - i] = sem(hs)
+
+        if h_sat_method == "linear_intercept":
+            from Stoner.Fit import Linear
+
+            # Fit a striaght line to the central fraction of the data
+            if i == 1:
+                bounds = lambda x, r: np.abs(r.y) < np.abs(Ms) * h_sat_fraction
+            else:
+                bounds = lambda x, r: np.abs(r.y) < np.abs(Ms) * h_sat_fraction
+            popt, pcov = d.lmfit(Linear, bounds=bounds)
+            perr = np.sqrt(np.diag(pcov))
+            popt = popt[:2]
+            pferr = perr / popt
+            # Pick the positive or negative Ms depending on the up or down loop
+            Ms_i = Ms if i == 0 else -Ms
+            # Find the intercept
+            Hsat[1 - i] = fsolve(lambda x: Linear().func(x, *popt) - Ms_i, 0)[0]
+            # Uncertainity is the sum of error in slope * found intercept and error in Ms times slope
+            Hsat_err[1 - i] = np.sqrt((Hsat[1 - i] * pferr[1]) ** 2 + (popt[1] * Ms_err) ** 2)
+        elif h_sat_method == "susceptibility":
+            xi = d.SG_Filter(order=1)[0, :-1]
+            m, h = d.SG_Filter()
+            tmp = np.column_stack((h, m, xi))[4:-4]
+            tmp = Data(tmp, setas="x.y")
+            threshold = tmp.mean(bounds=lambda r: not 7 < r.i < len(tmp) - 7) * h_sat_fraction
+            hs = tmp.threshold(threshold, all_vals=True, rising=i != 0, falling=i == 0)  # Get the H_sat value
+            Hsat[1 - i] = mean(hs)  # Get the H_sat value
+            if hs.size > 1:
+                Hsat_err[1 - i] = sem(hs)
+            else:
+                Hsat_err[1 - i] = np.NaN
+        elif h_sat_method == "delta_M":  # threshold on m_sat
+            m, h = d.SG_Filter()
+            tmp = np.column_stack((h, m))[4:-4]
+            tmp = Data(tmp, setas="xy")
+            threshold = m_sat[i]
+            hs = tmp.threshold(threshold, all_vals=True, rising=True, falling=True).view(
+                np.ndarray
+            )  # Get the H_sat value
+            if hs.size > 1:
+                hs = hs[np.argmin(np.abs(hs))]
+            Hsat[1 - i] = hs  # Get the H_sat value
+            Hsat_err[1 - i] = np.NaN
+        else:
+            raise ValueError("Unrecognized method for calculating H_saturation ! {}".format(h_sat_method))
         mr = d.threshold(0.0, col=_.xcol, xcol=_.ycol, all_vals=True, rising=True, falling=True)
         Mr[i] = mean(mr)
         if mr.size > 1:
@@ -306,12 +366,16 @@ def hysteresis_correct(data, **kargs):
         data["Hc"] = (Hc[1] - Hc_mean, Hc[0] - Hc_mean)
         data["Hc_mean"] = np.abs(np.array(Hc)).mean()
         data["Hsat"] = (Hsat[1] - Hc_mean, Hsat[0] - Hc_mean)
+        data["Hsat Error"] = (Hsat_err[1], Hsat_err[0])
         data["Hsat_mean"] = np.abs(np.array(Hsat)).mean()
+        data["Hsat_mean Error"] = np.sqrt(np.array(Hsat_err) ** 2)[0] / 2.0
     else:
         data["Hc"] = [x for x in Hc if x is not None]
         data["Hc_mean"] = abs(data["Hc"][0])
         data["Hsat"] = [x for x in Hsat if x is not None]
+        data["Hsat Error"] = [x for x in Hsat_err if x is not None]
         data["Hsat_mean"] = abs(data["Hsat"][0])
+        data["Hsat_mean Error"] = abs(data["Hsat Error"][0])
     data["Remenance"] = Mr
 
     bh = (-data.x) * data.y

@@ -1900,10 +1900,12 @@ class DataFile(metadataObject):
         """Deletes a column from the current :py:class:`DataFile` object.
 
         Args:
-            col (int, string, iterable of booleans, list or re): is the column index as defined for :py:meth:`DataFile.find_col` to the column to be deleted
+            col (int, string, iterable of booleans, list or re): 
+                is the column index as defined for :py:meth:`DataFile.find_col` to the column to be deleted
 
         Keyword Arguments:
-            duplicates (bool): (default False) look for duplicated columns
+            duplicates (bool): 
+                (default False) look for duplicated columns
 
         Returns:
             self: The :py:class:`DataFile` object with the column deleted.
@@ -1911,7 +1913,8 @@ class DataFile(metadataObject):
         Note:
             - If duplicates is True and col is None then all duplicate columns are removed,
             - if col is not None and duplicates is True then all duplicates of the specified column are removed.
-            - If duplicates is False then *col* must not be None otherwise a RuntimeError is raised.
+            - If duplicates is False and *col* is either None or False then all masked coplumns are deleeted. If 
+                *col* is True, then all columns that are not set i the :py:attr:`setas` attrobute are delted.
             - If col is a list (duplicates should not be None) then the all the matching columns are found.
             - If col is an iterable of booleans, then all columns whose elements are False are deleted.
             - If col is None and duplicates is None, then all columns with at least one elelemtn masked
@@ -1935,19 +1938,25 @@ class DataFile(metadataObject):
                         break
             return self.del_column(dups, duplicates=False)
         else:
-            if col is None:  # Without defining col we just compress by the mask
+            if col is None or (isinstance(col, bool) and not col):  # Without defining col we just compress by the mask
                 self.data = _ma_.mask_cols(self.data)
                 t = DataArray(self.column_headers)
                 t.mask = self.mask[0]
                 self.column_headers = list(_ma_.compressed(t))
                 self.data = _ma_.compress_cols(self.data)
+            elif isinstance(col, bool) and col:  # Without defining col we just compress by the mask
+                ch = [self.column_headers[ix] for ix, v in enumerate(self.setas.set) if v]
+                setas = [self.setas[ix] for ix, v in enumerate(self.setas.set) if v]
+                self.data = self.data[:, self.setas.set]
+                self.setas = setas
+                self.column_headers = ch
             elif isiterable(col) and all_type(col, bool):  # If col is an iterable of booleans then we index by that
                 col = ~_np_.array(col)
                 new_setas = _np_.array(self.setas)[col]
                 new_column_headers = _np_.array(self.column_headers)[col]
                 self.data = self.data[:, col]
-                self.column_headers = new_column_headers
                 self.setas = new_setas
+                self.column_headers = new_column_headers
             else:  # Otherwise find individual columns
                 c = self.find_col(col)
                 ch = self.column_headers

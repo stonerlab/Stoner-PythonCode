@@ -23,6 +23,20 @@ class setas(MutableMapping):
     Note:
         Iterating over setas will return the column assignments rather than the standard mapping behaviour of iterating over the keys. Otherwise
         the interface is essentially as a Mapping class.
+        
+    Calling an existing setas instance and the constructor share the same signatgure:
+
+    setas("xyzuvw")
+    setas(["x"],["y"],["z"],["u"],["v"],["w"])
+    setas(x="column_1",y=3,column4="z")
+
+    Keyword Arguments:
+        _self (bool): 
+            If True, make the call return a copy of the setas object, if False, return _object attribute, if None, 
+            return None
+        reset (bool):
+            If False then preserve the existing set columns and simply add the new ones. Otherwise, clear all column
+            assignments before setting new ones (default).
     """
 
     def __init__(self, row=False, bless=None):
@@ -264,7 +278,12 @@ class setas(MutableMapping):
         setas(x="column_1",y=3,column4="z")
 
         Keyword Arguments:
-            _self (bool): If True, make the call return a copy of the setas object, if False, return _object attribute, if None, return None
+            _self (bool): 
+                If True, make the call return a copy of the setas object, if False, return _object attribute, if None, 
+                return None
+            reset (bool):
+                If False then preserve the existing set columns and simply add the new ones. Otherwise, clear all column
+                assignments before setting new ones (default).
         """
         return_self = kargs.pop("_self", None)
         if not (args or kargs):  # New - bare call to setas will return the current value.
