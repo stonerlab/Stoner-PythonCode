@@ -44,7 +44,7 @@ install:
   # Force upgraded scikit-image
   # - conda install --yes scikit-image
   # Hyperspy is now an optional dependency
-  - conda install --yes -c conda-forge hyperspy
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then sleep 1; else conda install --yes -c conda-forge hyperspy; fi
   # Now we unistall the stable stoner - use force to stop downgrading packages!
   - conda remove --yes --force stoner
   - pip install opencv_python
