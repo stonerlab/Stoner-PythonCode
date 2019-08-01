@@ -7,6 +7,7 @@ read in data files. Supports loading from the Brucker D8
 import numpy as np
 import wx
 from Stoner import Data
+from Stoner.compat import string_types
 
 from wx.lib.masked import NumCtrl
 
@@ -14,9 +15,9 @@ from plugins.data_loader_framework import Template
 from plugins.utils import ShowErrorDialog, ShowWarningDialog, ShowInfoDialog
 
 class Plugin(Template):
-    
+
     """Plugin class from GenX."""
-    
+
     def __init__(self, parent):
         """Housekeeping"""
         Template.__init__(self, parent)
@@ -87,7 +88,7 @@ class Plugin(Template):
 
 
 class SettingsDialog(wx.Dialog):
-    
+
     """Plugin Settings dialog class."""
 
     def __init__(self, parent, col_values):
@@ -151,7 +152,7 @@ class SettingsDialog(wx.Dialog):
         values = {}
         for key in self.misc_controls:
             val = self.misc_controls[key].GetValue()
-            if (type(val) == type(u'') or type(val) == type('')):
+            if isinstance(val,string_types):
                 if val.lower() == 'none':
                     val = None
             values[key] = val

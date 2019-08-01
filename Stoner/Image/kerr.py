@@ -276,7 +276,7 @@ class KerrArray(ImageArray):
                 im = self.crop(box=text_areas[key], copy=True)
                 metadata[key] = self._tesseract_image(im, key)
             metadata["ocr_scalebar_length_pixels"] = sb_length
-            if type(metadata["ocr_scalebar_length_microns"]) == float:
+            if isinstance(metadata["ocr_scalebar_length_microns"], float):
                 metadata["ocr_microns_per_pixel"] = metadata["ocr_scalebar_length_microns"] / sb_length
                 metadata["ocr_pixels_per_micron"] = 1 / metadata["ocr_microns_per_pixel"]
                 metadata["ocr_field_of_view_microns"] = np.array(IM_SIZE) * metadata["ocr_microns_per_pixel"]

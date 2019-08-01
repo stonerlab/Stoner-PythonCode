@@ -23,7 +23,7 @@ class setas(MutableMapping):
     Note:
         Iterating over setas will return the column assignments rather than the standard mapping behaviour of iterating over the keys. Otherwise
         the interface is essentially as a Mapping class.
-        
+
     Calling an existing setas instance and the constructor share the same signatgure:
 
     setas("xyzuvw")
@@ -31,8 +31,8 @@ class setas(MutableMapping):
     setas(x="column_1",y=3,column4="z")
 
     Keyword Arguments:
-        _self (bool): 
-            If True, make the call return a copy of the setas object, if False, return _object attribute, if None, 
+        _self (bool):
+            If True, make the call return a copy of the setas object, if False, return _object attribute, if None,
             return None
         reset (bool):
             If False then preserve the existing set columns and simply add the new ones. Otherwise, clear all column
@@ -278,8 +278,8 @@ class setas(MutableMapping):
         setas(x="column_1",y=3,column4="z")
 
         Keyword Arguments:
-            _self (bool): 
-                If True, make the call return a copy of the setas object, if False, return _object attribute, if None, 
+            _self (bool):
+                If True, make the call return a copy of the setas object, if False, return _object attribute, if None,
                 return None
             reset (bool):
                 If False then preserve the existing set columns and simply add the new ones. Otherwise, clear all column
