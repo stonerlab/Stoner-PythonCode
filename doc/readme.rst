@@ -4,9 +4,8 @@
 .. image:: https://coveralls.io/repos/github/stonerlab/Stoner-PythonCode/badge.svg?branch=master
     :target: https://coveralls.io/github/stonerlab/Stoner-PythonCode?branch=master
 
-.. image:: https://landscape.io/github/gb119/Stoner-PythonCode/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/gb119/Stoner-PythonCode/master
-   :alt: Code Health
+.. image:: https://api.codacy.com/project/badge/Grade/372f2f9227134fab9c6c2f2ba83962ba
+    :target: https://www.codacy.com/app/stonerlab/Stoner-PythonCode?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=stonerlab/Stoner-PythonCode&amp;utm_campaign=Badge_Grade
 
 .. image:: https://badge.fury.io/py/Stoner.svg
    :target: https://badge.fury.io/py/Stoner
