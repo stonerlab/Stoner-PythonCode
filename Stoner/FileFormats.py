@@ -44,6 +44,7 @@ from Stoner.formats.instruments import LSTemperatureFile, QDFile, RigakuFile, SP
 from Stoner.formats.facilities import BNLFile, MDAASCIIFile, OpenGDAFile, RasorFile, SNSFile
 from Stoner.formats.generic import CSVFile, KermitPNGFile, TDMSFile, HyperSpyFile
 from Stoner.formats.rigs import BigBlueFile, BirgeIVFile, MokeFile, FmokeFile
+from .core.exceptions import assertion
 import re
 import numpy as _np_
 import csv
@@ -136,8 +137,9 @@ class OVFFile(_SC_.DataFile):
                 uvwdata = _np_.fromfile(
                     bindata, dtype=dt, count=1 + self["xnodes"] * self["ynodes"] * self["znodes"] * self["valuedim"]
                 )
-                assert uvwdata[0] == 1234567.0, "Binary 4 format check value incorrect ! Actual Value was {}".format(
-                    uvwdata[0]
+                assertion(
+                    uvwdata[0] == 1234567.0,
+                    "Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0]),
                 )
             uvwdata = uvwdata[1:]
             uvwdata = _np_.reshape(uvwdata, (-1, self["valuedim"]))
@@ -151,9 +153,10 @@ class OVFFile(_SC_.DataFile):
                 uvwdata = _np_.fromfile(
                     bindata, dtype=dt, count=1 + self["xnodes"] * self["ynodes"] * self["znodes"] * self["valuedim"]
                 )
-                assert (
-                    uvwdata[0] == 123456789012345.0
-                ), "Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0])
+                assertion(
+                    (uvwdata[0] == 123456789012345.0),
+                    "Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0]),
+                )
             uvwdata = _np_.reshape(uvwdata, (-1, self["valuedim"]))
         else:
             raise _SC_.StonerLoadError("Unknow OVF Format {}".format(fmt))
@@ -198,9 +201,10 @@ class OVFFile(_SC_.DataFile):
                     else:
                         raise _SC_.StonerLoadError("Failed to understand metadata")
             fmt = re.match(r".*Data\s+(.*)", line).group(1).strip()
-            assert (
-                self["meshtype"] == "rectangular"
-            ), "Sorry only OVF files with rectnagular meshes are currently supported."
+            assertion(
+                (self["meshtype"] == "rectangular"),
+                "Sorry only OVF files with rectnagular meshes are currently supported.",
+            )
             if self["version"] == 1:
                 if self["meshtype"] == "rectangular":
                     self["valuedim"] = 3

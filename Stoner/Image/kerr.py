@@ -11,6 +11,7 @@ __all__ = ["KerrArray", "KerrStack", "MaskStack"]
 from Stoner import Data
 from Stoner.Core import typeHintedDict
 from Stoner.Image import ImageArray, ImageStack
+from Stoner.core.exceptions import assertion, StonerAssertionError
 import numpy as np
 import os
 import subprocess, tempfile
@@ -225,7 +226,7 @@ class KerrArray(ImageArray):
         im = exposure.rescale_intensity(im)  # make sure they're black and white
         im = np.diff(im[0])  # 1d numpy array, differences
         lim = [np.where(im > 0.9)[0][0], np.where(im < -0.9)[0][0]]  # first occurance of both cases
-        assert len(lim) == 2, "Couldn't find scalebar"
+        assertion(len(lim) == 2, "Couldn't find scalebar")
         return lim[1] - lim[0]
 
     def ocr_metadata(self, field_only=False):
@@ -260,7 +261,7 @@ class KerrArray(ImageArray):
             }
             try:
                 sb_length = self._get_scalebar()
-            except AssertionError:
+            except (StonerAssertionError, AssertionError):
                 sb_length = None
             if sb_length is not None:
                 text_areas.update(
@@ -390,9 +391,9 @@ class KerrStackMixin(object):
             (self):
             cropped image
         """
-        assert (
-            self[0].shape == AN_IM_SIZE or self[0].shape == IM_SIZE
-        ), "Need a full sized Kerr image to crop"  # check it's a normal image
+        assertion(
+            (self[0].shape == AN_IM_SIZE or self[0].shape == IM_SIZE), "Need a full sized Kerr image to crop"
+        )  # check it's a normal image
         crop = (0, IM_SIZE[1], 0, IM_SIZE[0])
         self.crop_stack(box=crop)
 

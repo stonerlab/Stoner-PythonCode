@@ -16,6 +16,7 @@ import numpy as np
 
 import Stoner.Core as Core
 from Stoner.compat import python_v3, str2bytes, bytes2str
+from Stoner.core.exceptions import StonerAssertionError
 
 
 class LSTemperatureFile(Core.DataFile):
@@ -221,7 +222,6 @@ class QDFile(Core.DataFile):
             if python_v3:
                 column_headers = f.readline().strip().split(",")
                 if "," not in f.readline():
-                    assert False
                     raise Core.StonerLoadError("No data in file!")
             else:
                 column_headers = f.next().strip().split(",")
@@ -656,7 +656,7 @@ class VSMFile(Core.DataFile):
                         ]
                     elif i > 3:
                         break
-        except (ValueError, AssertionError, TypeError) as e:
+        except (StonerAssertionError, ValueError, AssertionError, TypeError) as e:
             raise Core.StonerLoadError("Not a VSM File" + str(e.args))
         self.data = np.genfromtxt(
             self.filename,

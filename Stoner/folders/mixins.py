@@ -22,6 +22,7 @@ from Stoner.Core import DataFile
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder
 from .utils import scan_dir, discard_earlier, filter_files
+from Stoner.core.exceptions import assertion
 
 regexp_type = (_pattern_type,)
 
@@ -222,7 +223,7 @@ class DiskBasedFolder(object):
         Returns:
             (metadataObject): The metadataObject
         """
-        assert name is not None, "Cannot get an anonympus entry!"
+        assertion(name is not None, "Cannot get an anonympus entry!")
         try:  # Try the parent methods first
             return super(DiskBasedFolder, self).__getter__(name, instantiate=instantiate)
         except (AttributeError, IndexError, KeyError):

@@ -33,3 +33,16 @@ class StonerSetasError(AttributeError):
     """An exception tjrown when we try to access a column in data without setas being set."""
 
     pass
+
+
+class StonerAssertionError(RuntimeError):
+
+    """An exception raised when the library thinks an assertion has failed."""
+
+    pass
+
+
+def assertion(condition, message="Library Assertion Error set"):
+    """A utility functiuon to be used when assert might have been."""
+    if not condition:
+        raise StonerAssertionError(message)

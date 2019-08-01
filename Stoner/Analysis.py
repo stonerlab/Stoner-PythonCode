@@ -14,6 +14,7 @@ from scipy.signal import savgol_filter
 
 from .compat import python_v3, string_types, int_types, index_types, LooseVersion, get_func_params
 from .tools import isNone, isiterable, all_type, istuple
+from .core.exceptions import assertion
 
 try:  # Allow lmfit to be optional
     import lmfit
@@ -1581,7 +1582,9 @@ class AnalysisMixin(object):
         peaks = kargs.pop("peaks", True)
         troughs = kargs.pop("troughs", False)
         poly = kargs.pop("poly", 2)
-        assert poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or trough"
+        assertion(
+            poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or trough"
+        )
 
         sort = kargs.pop("sort", False)
         modify = kargs.pop("modify", False)
@@ -2144,20 +2147,22 @@ class AnalysisMixin(object):
             C0 = _np_.mean(yp) - _np_.mean(y)
             B0 = (_np_.max(yp) - _np_.min(yp)) / (_np_.max(y) - _np_.min(y))
             p = _np_.array([0, A0, B0, C0])
-            assert isinstance(mode, string_types), "mode keyword should be a string if func is not defined"
+            assertion(isinstance(mode, string_types), "mode keyword should be a string if func is not defined")
             mode = mode.lower()
-            assert mode in opts, "mode keyword should be one of {}".format(opts.keys)
+            assertion(mode in opts, "mode keyword should be one of {}".format(opts.keys))
             func = opts[mode]
             p0 = p[defaults[mode]]
         else:
-            assert callable(func), "Keyword func should be callable if given"
+            assertion(callable(func), "Keyword func should be callable if given")
             (args, __, keywords, defaults) = getfullargspec(func)  # pylint: disable=W1505
-            assert isiterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given"
-            assert len(p0) == len(args) - 2, "Keyword p0 should be the same length as the optional arguments to func"
+            assertion(isiterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given")
+            assertion(
+                len(p0) == len(args) - 2, "Keyword p0 should be the same length as the optional arguments to func"
+            )
         # This is a bit of a hack, we turn (x,y) points into a 1D array of x and then y data
         set1 = _np_.append(x, y)
         set2 = _np_.append(xp, yp)
-        assert len(set1) == len(set2), "The number of points in the overlap are different in the two data sets"
+        assertion(len(set1) == len(set2), "The number of points in the overlap are different in the two data sets")
 
         def transform(set1, *p):
             """Wrapper function to fit for transform."""
