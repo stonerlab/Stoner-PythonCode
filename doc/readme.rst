@@ -41,7 +41,7 @@ Getting this Code
     :alt: Introduction and Installation Guide to Stoner Pythin Package
     :width: 320
 
-The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies 
+The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies
 on blist, filemagic, npTDMS, imreg_dft and numba.
 
 Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining 
@@ -203,6 +203,6 @@ No further relases will be made to 0.7.x.
 0.8 is also tested on Python 3.6
 
 .. _online documentation: http://stoner-pythoncode.readthedocs.io/en/latest/
-.. _github repository: http://www.github.com/gb119/Stoner-PythonCode/
+.. _github repository: http://www.github.com/stonerlab/Stoner-PythonCode/
 .. _Dr Gavin Burnell: http://www.stoner.leeds.ac.uk/people/gb
 .. _User_Guide: http://stoner-pythoncode.readthedocs.io/en/latest/UserGuide/ugindex.html
