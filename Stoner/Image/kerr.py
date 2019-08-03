@@ -12,9 +12,11 @@ from Stoner import Data
 from Stoner.Core import typeHintedDict
 from Stoner.Image import ImageArray, ImageStack
 from Stoner.core.exceptions import assertion, StonerAssertionError
+from Stoner.compat import which
 import numpy as np
 import os
-import subprocess, tempfile
+import subprocess
+import tempfile
 from skimage import exposure, io, transform
 
 try:
@@ -30,6 +32,43 @@ GRAY_RANGE = (0, 65535)  # 2^16
 IM_SIZE = (512, 672)  # Standard Kerr image size
 AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped
 pattern_file = os.path.join(os.path.dirname(__file__), "kerr_patterns.txt")
+
+
+def _parse_text(text, key=None):
+    """Attempt to parse text which has been recognised from an image
+    if key is given specific hints may be applied
+    """
+    # strip any internal white space
+    text = [t.strip() for t in text.split()]
+    text = "".join(text)
+
+    # replace letters that look like numbers
+    errors = [
+        ("s", "5"),
+        ("S", "5"),
+        ("O", "0"),
+        ("f", "/"),
+        ("::", "x"),
+        ("Z", "2"),
+        ("l", "1"),
+        ("\xe2\x80\x997", "7"),
+        ("?", "7"),
+        ("I", "1"),
+        ("].", "1"),
+        ("'", ""),
+    ]
+    for item in errors:
+        text = text.replace(item[0], item[1])
+
+    # apply any key specific corrections
+    if key in ["ocr_field", "ocr_scalebar_length_microns"]:
+        try:
+            text = float(text)
+        except ValueError:
+            pass  # leave it as string
+    # print '{} after processsing: \'{}\''.format(key,data)
+
+    return text
 
 
 class KerrArray(ImageArray):
@@ -136,42 +175,6 @@ class KerrArray(ImageArray):
         self.metadata = typeHintedDict(newmet)
         return self.metadata
 
-    def _parse_text(self, text, key=None):
-        """Attempt to parse text which has been recognised from an image
-        if key is given specific hints may be applied
-        """
-        # strip any internal white space
-        text = [t.strip() for t in text.split()]
-        text = "".join(text)
-
-        # replace letters that look like numbers
-        errors = [
-            ("s", "5"),
-            ("S", "5"),
-            ("O", "0"),
-            ("f", "/"),
-            ("::", "x"),
-            ("Z", "2"),
-            ("l", "1"),
-            ("\xe2\x80\x997", "7"),
-            ("?", "7"),
-            ("I", "1"),
-            ("].", "1"),
-            ("'", ""),
-        ]
-        for item in errors:
-            text = text.replace(item[0], item[1])
-
-        # apply any key specific corrections
-        if key in ["ocr_field", "ocr_scalebar_length_microns"]:
-            try:
-                text = float(text)
-            except Exception:
-                pass  # leave it as string
-        # print '{} after processsing: \'{}\''.format(key,data)
-
-        return text
-
     def _tesseract_image(self, im, key):
         """ocr image with tesseract tool.
         im is the cropped image containing just a bit of text
@@ -197,9 +200,10 @@ class KerrArray(ImageArray):
 
         # call tesseract
         if self.tesseractable:
+            tesseract = which("tesseract")
             with open(stdoutfile, "w") as stdout:
                 subprocess.call(
-                    ["tesseract", imagefile, textfile[:-4]], stdout=stdout, stderr=subprocess.STDOUT
+                    [tesseract, imagefile, textfile[:-4]], stdout=stdout, stderr=subprocess.STDOUT
                 )  # adds '.txt' extension itself
             os.unlink(stdoutfile)
         with open(textfile, "r") as tf:
@@ -213,7 +217,7 @@ class KerrArray(ImageArray):
         # parse the reading
         if len(data) == 0:
             print("No data read for {}".format(key))
-        data = self._parse_text(data, key=key)
+        data = _parse_text(data, key=key)
         return data
 
     def _get_scalebar(self):
@@ -322,8 +326,7 @@ class KerrStackMixin(object):
             'Field', 'Intensity', 2 column array
         """
         hyst = np.column_stack((self.fields, np.zeros(len(self))))
-        for i in range(len(self)):
-            im = self[i]
+        for i, im in enumerate(self):
             if isinstance(mask, np.ndarray) and len(mask.shape) == 2:
                 hyst[i, 1] = np.average(im[np.invert(mask.astype(bool))])
             elif isinstance(mask, np.ndarray) and len(mask.shape) == 3:

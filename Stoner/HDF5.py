@@ -18,8 +18,15 @@ from . import Data, DataFolder
 from .Image.core import ImageFile
 import os.path as path
 import os
-from copy import copy, deepcopy
-import re
+
+
+def _raise_error(f, message="Not a valid hdf5 file."):
+    """Try to clsoe the filehandle f and raise a StonerLoadError."""
+    try:
+        f.file.close()
+        raise StonerLoadError(message)
+    except Exception:
+        raise StonerLoadError(message)
 
 
 class HDF5File(DataFile):
@@ -61,14 +68,6 @@ class HDF5File(DataFile):
         super(HDF5File, self).__init__(*args, **kargs)
         if grp is not None:
             self._load(grp, **kargs)
-
-    def _raise_error(self, f, message="Not a valid hdf5 file."):
-        """Try to clsoe the filehandle f and raise a StonerLoadError."""
-        try:
-            f.file.close()
-        except Exception:
-            pass
-        raise StonerLoadError(message)
 
     def _open_filename(self, filename):
         """Examine a file to see if it is an HDF5 file and open it if so.
@@ -112,9 +111,9 @@ class HDF5File(DataFile):
                 if grp.strip() != "":
                     f = f[grp]
         except IOError:
-            self._raise_error(f, message="Failed to open {} as a n hdf5 file".format(filename))
+            _raise_error(f, message="Failed to open {} as a n hdf5 file".format(filename))
         except KeyError:
-            self._raise_error(f, message="Could not find group {} in file {}".format(group, filename))
+            _raise_error(f, message="Could not find group {} in file {}".format(group, filename))
         return f
 
     def _load(self, filename=None, **kargs):
@@ -136,13 +135,11 @@ class HDF5File(DataFile):
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
             f = filename
         else:
-            self._raise_error(
-                f, message="Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename)
-            )
+            _raise_error(f, message="Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
         if (
             "type" not in f.attrs or bytes2str(f.attrs["type"]) != "HDF5File"
         ):  # Ensure that if we have a type attribute it tells us we're the right type !
-            self._raise_error(f, message="HDF5 group doesn't hold an HD5File")
+            _raise_error(f, message="HDF5 group doesn't hold an HD5File")
         data = f["data"]
         if _np_.product(_np_.array(data.shape)) > 0:
             self.data = data[...]
@@ -163,8 +160,8 @@ class HDF5File(DataFile):
             raise StonerLoadError("Couldn't work out where my column headers were !")
         for i in sorted(metadata.attrs):
             v = metadata.attrs[i]
-            t = typehints.get(i, "Void")
-            if isinstance(v, string_types) and t != "Void":  # We have typehints and this looks like it got exported
+            t = typehints.get(i, "Detect")
+            if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
                 self.metadata["{}{{{}}}".format(i, t).strip()] = "{}".format(v).strip()
             else:
                 self[i] = metadata.attrs[i]
@@ -179,7 +176,7 @@ class HDF5File(DataFile):
             f.file.close()
         return self
 
-    def save(self, h5file=None):
+    def save(self, h5file=None, **kargs):
         """Writes the current object into  an hdf5 file or group within a file in afashion that is compatible with being loaded in again.
 
         Args:
@@ -530,11 +527,12 @@ class HDF5FolderMixin(object):
 
 
 class HDF5Folder(HDF5FolderMixin, DataFolder):
+
+    """Just enforces the loader attriobute to be an HDF5File!"""
+
     def __init__(self, *args, **kargs):
         self.loader = HDF5File
         super(HDF5Folder, self).__init__(*args, **kargs)
-
-    pass
 
 
 class SLS_STXMFile(DataFile):
@@ -547,7 +545,7 @@ class SLS_STXMFile(DataFile):
     patterns = ["*.hdf"]
     mime_type = ["application/x-hdf"]
 
-    def _load(self, filename=None, **kargs):
+    def _load(self, filename, *args, **kargs):
         """Loads data from a hdf5 file
 
         Args:

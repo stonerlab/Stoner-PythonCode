@@ -10,6 +10,7 @@ import copy
 import numpy as np
 from numpy import isnan
 from numpy import NaN
+import asteval
 
 from ..compat import python_v3, string_types, int_types, _pattern_type
 from ..tools import isiterable, isComparable
@@ -20,6 +21,31 @@ try:
     from blist import sorteddict
 except (StonerAssertionError, ImportError):  # Fail if blist not present or Python 3
     sorteddict = OrderedDict
+
+_asteval_interp = None
+
+
+def literal_eval(string):
+    """Use the asteval module to interpret arbitary strings slightly safely.
+
+    Args:
+        string (str):
+            String epxression to be evaluated.
+
+    Returns:
+        (object):
+            Evaluation result.
+
+    On the first call this will create a new asteval.Interpreter() instance and
+    preload some key modules into the symbol table.
+    """
+    global _asteval_interp  # Ugly!
+    if _asteval_interp is None:
+        _asteval_interp = asteval.Interpreter(usersyms={"np": np, "re": re, "NaN": NaN, "None": None})
+    try:
+        return _asteval_interp(string, show_errors=False)
+    except (SyntaxError, ValueError, NameError, IndexError, TypeError):
+        raise ValueError("Cannot interpret {} as valid Python".format(string))
 
 
 class _evaluatable(object):
@@ -63,7 +89,7 @@ class regexpDict(sorteddict):
             if isinstance(name, string_types):
                 try:
                     nm = re.compile(name)
-                except Exception:
+                except re.error:
                     pass
             elif isinstance(name, int_types):  # We can do this because we're an OrderedDict!
                 try:
@@ -247,7 +273,9 @@ class typeHintedDict(regexpDict):
             Understands booleans, strings, integers, floats and np
             arrays(as arrays), and dictionaries (as clusters).
         """
-        typ = "String"
+        typ = "Invalid Type"
+        if value is None:
+            return "Void"
         for t in self.__types:
             if isinstance(value, self.__types[t]):
                 if t == "Cluster" or t == "AnonCluster":
@@ -287,18 +315,18 @@ class typeHintedDict(regexpDict):
             the associated python class is called with value as its argument.
         """
         ret = None
+        if t == "Invalid Type":  # Short circuit here
+            return repr(value)
         for (regexp, valuetype) in self.__tests:
             m = regexp.search(t)
             if m is not None:
                 if isinstance(valuetype, _evaluatable):
                     try:
-                        array = np.array
-                        nan = np.nan
                         if isinstance(value, string_types):  # we've got a string already don't need repr
-                            ret = eval(value, globals(), locals())
+                            ret = literal_eval(value)
                         else:
-                            ret = eval(repr(value), globals(), locals())  # pylint: disable=eval-used
-                    except NameError:
+                            ret = literal_eval(repr(value))  # pylint: disable=eval-used
+                    except ValueError:  # Oops just keep string format
                         ret = str(value)
                     except SyntaxError:
                         ret = ""
@@ -333,7 +361,7 @@ class typeHintedDict(regexpDict):
                 i = "[{".index(value[0])
                 array = np.array
                 nan = np.nan
-                ret = eval(tests[i], globals(), locals())  # pylint: disable=eval-used
+                ret = literal_eval(tests[i])  # pylint: disable=eval-used
             except (SyntaxError, ValueError):
                 if value.lower() in ["true", "yes", "on", "false", "no", "off"]:
                     ret = value.lower() in ["true", "yes", "on"]  # Boolean

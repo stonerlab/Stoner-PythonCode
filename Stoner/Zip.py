@@ -223,7 +223,7 @@ class ZippedFile(DataFile):
             try:
                 zipfile.close()
             except Exception:
-                pass
+                raise IOError("Error saving zipfile\n{}".format(error))
             raise IOError("Error saving zipfile\n{}".format(error))
         return self
 

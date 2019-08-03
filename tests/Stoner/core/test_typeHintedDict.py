@@ -9,11 +9,11 @@ Created on Sat Dec  8 15:20:15 2018
 import unittest
 import sys
 import  os.path as path
+from Stoner.core.base import typeHintedDict
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
-sys.path.insert(0,pth)
-from Stoner.core.base import typeHintedDict
+#sys.path.insert(0,pth)
 
 class typeHintedDictTest(unittest.TestCase):
     """Test typeHintedDict class"""
@@ -26,7 +26,7 @@ class typeHintedDictTest(unittest.TestCase):
         self.assertTrue(len(d)==1)
         self.assertTrue(d['el3']==3)
         d["munge"]=None
-        self.assertTrue(d.types["munge"]=="String","Setting type for None value failed.")
+        self.assertTrue(d.types["munge"]=="Void","Setting type for None value failed.")
         d["munge"]=1
         self.assertTrue(d["munge{String}"]=="1","Munging return type in getitem failed.")
         self.assertEqual(repr(d),

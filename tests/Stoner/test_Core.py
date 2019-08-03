@@ -356,7 +356,8 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         metitems = [True,1,0.2,{"a":1, "b":"abc"},(1,2),np.arange(3),[1,2,3], "abc", #all types accepted
                     r"\\abc\cde", 1e-20, #extra tests
                     [1,(1,2),"abc"], #list with different types
-                    [[[1]]] #nested list
+                    [[[1]]], #nested list
+                    None, #None value
                     ]
         metnames = ["t"+str(i) for i in range(len(metitems))]
         for k,v in zip(metnames,metitems):
@@ -367,16 +368,12 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         t2.save(path.join(local, "mixedmetatest2.txt"))
         t2l = Data(path.join(local, "mixedmetatest2.txt"))
         for orig, load in [(t,tl), (t2, t2l)]:
+            for k in ['Loaded as', 'TDI Format']:
+                orig[k]=load[k]
             self.assertTrue(np.allclose(orig.data, load.data))
             self.assertTrue(orig.column_headers==load.column_headers)
-            self.assertTrue(all([i in load.metadata.keys() for i in orig.metadata.keys()]))
-            for k in orig.metadata.keys():
-                if isinstance(orig[k], np.ndarray):
-                    self.assertTrue(np.allclose(load[k],orig[k]))
-                elif isinstance(orig[k], float) and np.isnan(orig[k]):
-                    self.assertTrue(np.isnan(load[k]))
-                else:
-                    self.assertTrue(load[k] == orig[k], "Not equal for metadata: {}".format(load[k]))
+            self.res=load.metadata^orig.metadata
+            self.assertTrue(load.metadata==orig.metadata,"Metadata not the same on round tripping to disc")
         os.remove(path.join(local, "mixedmetatest.txt")) #clear up
         os.remove(path.join(local, "mixedmetatest2.txt"))
 
@@ -388,4 +385,5 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     #test.test_filter()
 #    test.test_deltions()
     #test.test_dir()
-    unittest.main()
+    test.test_metadata_save()
+    #unittest.main()
