@@ -153,7 +153,7 @@ class ZippedFile(DataFile):
             try:
                 exc = format_exc()
                 other.close()
-            except Exception:
+            except (AttributeError, NameError, ValueError, TypeError, zf.BadZipFile, zf.LargeZipFile):
                 pass
             raise StonerLoadError("{} threw an error when opening\n{}".format(self.filename, exc))
         # Ok we can try reading now

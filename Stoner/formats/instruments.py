@@ -16,7 +16,7 @@ import numpy as np
 
 import Stoner.Core as Core
 from Stoner.compat import python_v3, str2bytes, bytes2str
-from Stoner.core.exceptions import StonerAssertionError
+from Stoner.core.exceptions import StonerAssertionError, assertion
 
 
 class LSTemperatureFile(Core.DataFile):
@@ -645,7 +645,7 @@ class VSMFile(Core.DataFile):
                         if check is None:
                             raise Core.StonerLoadError("Not a VSM file ?")
                     elif i == 1:
-                        assert line.strip() == ""
+                        assertion(line.strip() == "")
                     elif i == 2:
                         header_string = line.strip()
                     elif i == header_line:

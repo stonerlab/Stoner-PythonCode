@@ -307,7 +307,7 @@ class setas(MutableMapping):
                     for v_item in self.find_col(v, force_list=True):
                         try:
                             self._setas[v_item] = k
-                        except:
+                        except (IndexError, KeyError):
                             pass
                 elif (
                     isinstance(k, index_types) and isinstance(v, string_types) and len(v) == 1 and v in "xyzuvwdef"

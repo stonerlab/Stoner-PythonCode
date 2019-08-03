@@ -615,7 +615,7 @@ class baseFolder(MutableSequence):
             for ix in sorted(name, reverse=True):
                 del self[ix]
         else:
-            raise KeyError("Can't use {} as a key to delete from baseFolder. ({})".format(name, self.__names__()))
+            raise KeyError("Can't use {} as a key to delete in baseFolder. ({})".format(name, repr(self.__names__())))
 
     def __contains__(self, name):
         """Check whether name is in a list of groups or in the list of names"""

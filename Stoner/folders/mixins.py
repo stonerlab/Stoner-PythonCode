@@ -487,7 +487,7 @@ class DataMethodsMixin(object):
                         test = array([test])
                     else:
                         test = array(test)
-                except Exception:
+                except (IndexError, KeyError, TypeError, ValueError):
                     continue
                 else:
                     ok_data.append(m)
