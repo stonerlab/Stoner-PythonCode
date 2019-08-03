@@ -15,21 +15,6 @@ from scipy.signal import savgol_filter
 from .compat import python_v3, string_types, int_types, index_types, LooseVersion, get_func_params
 from .tools import isNone, isiterable, all_type, istuple
 from .core.exceptions import assertion
-
-try:  # Allow lmfit to be optional
-    import lmfit
-
-    if LooseVersion(lmfit.__version__) < LooseVersion("0.9.0"):
-        from lmfit.model import Model
-    else:
-        from lmfit.model import Model
-    from lmfit import Parameters
-
-    _lmfit = True
-except ImportError:
-    Model = None
-    Parameters = None
-    _lmfit = False
 from copy import deepcopy as copy
 
 # from matplotlib.pylab import * #Surely not?

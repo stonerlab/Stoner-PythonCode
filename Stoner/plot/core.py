@@ -9,7 +9,7 @@ Classes:
 from __future__ import division
 
 __all__ = ["PlotMixin", "hsl2rgb"]
-from Stoner.compat import python_v3, string_types, index_types, int_types
+from Stoner.compat import python_v3, string_types, index_types, int_types, getargspec
 from Stoner.tools import (
     _attribute_store,
     isNone,
@@ -28,6 +28,9 @@ from scipy.interpolate import griddata
 import os
 from collections import Mapping, OrderedDict
 from functools import wraps
+from matplotlib import pyplot as plt
+from matplotlib import figure as mplfig
+from matplotlib import cm
 
 import platform
 import copy
@@ -39,10 +42,6 @@ if os.name == "posix" and platform.system() == "Darwin":
 
     matplotlib.use("MacOSX")
 
-from matplotlib import pyplot as plt
-from matplotlib import figure as mplfig
-from matplotlib import cm
-
 try:  # Check we've got 3D plotting
     from mpl_toolkits.mplot3d import Axes3D
     from mpl_toolkits.axes_grid1 import host_subplot, inset_locator
@@ -51,13 +50,6 @@ try:  # Check we've got 3D plotting
     _3D = True
 except ImportError:
     _3D = False
-
-if python_v3:
-    from inspect import getfullargspec
-
-    getargspec = lambda x: getfullargspec(x)[0:4]
-else:
-    from inspect import getargspec
 
 
 class PlotMixin(object):

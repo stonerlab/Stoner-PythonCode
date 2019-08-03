@@ -2,7 +2,7 @@
 from __future__ import print_function
 from Stoner import Data
 from numpy.random import normal
-from numpy import linspace, meshgrid, column_stack, row_stack
+from numpy import linspace, meshgrid, column_stack
 import matplotlib.cm as cmap
 import matplotlib.pyplot as plt
 

@@ -2,7 +2,7 @@
 from Stoner import Data
 from Stoner.Fit import PowerLaw
 from Stoner.analysis.fitting import odr_Model
-from numpy import linspace, exp, random
+from numpy import linspace, random
 
 # Make some data
 x = linspace(0, 10.0, 101)

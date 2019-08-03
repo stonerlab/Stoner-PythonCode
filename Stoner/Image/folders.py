@@ -2,11 +2,9 @@
 """Implements a baseFolder type structure for working with collections of images."""
 __all__ = ["_generator", "ImageFolderMixin", "ImageFolder"]
 from .core import ImageArray
-from Stoner import Data
 from Stoner.Folders import DiskBasedFolder, baseFolder
 from Stoner.compat import string_types
-from Stoner.tools import isiterable, islike_list
-from Stoner.Image import ImageFile, ImageArray
+from Stoner.Image import ImageFile
 
 from skimage.viewer import CollectionViewer
 import numpy as np

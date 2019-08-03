@@ -58,7 +58,7 @@ __all__ = [
     "wlfit",
 ]
 import Stoner.Core as _SC_
-from .compat import python_v3, string_types, get_func_params
+from .compat import python_v3, string_types
 from . import Data
 from functools import wraps
 import numpy as _np_
@@ -1743,13 +1743,13 @@ def rsj_noiseless(I, Ic_p, Ic_n, Rn, V_offset):
         Ic_n (foat): Critical current on negative branch
         Rn (float): Normal state resistance
         V_offset(float): Offset volage in measurement
-        
+
     Returns:
         (array) Calculated volatages
-        
+
     Notes:
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
-            
+
             $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
     """
 
@@ -1769,13 +1769,13 @@ class RSJ_Noiseless(Model):
         Ic_n (foat): Critical current on negative branch
         Rn (float): Normal state resistance
         V_offset(float): Offset volage in measurement
-        
+
     Returns:
         (array) Calculated volatages
-        
+
     Notes:
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
-            
+
             $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
     """
 

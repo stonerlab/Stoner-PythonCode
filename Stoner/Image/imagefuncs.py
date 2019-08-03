@@ -45,7 +45,6 @@ __all__ = [
     "denoise",
 ]
 from Stoner.compat import string_types
-import copy
 import warnings
 import numpy as np, matplotlib.pyplot as plt, os
 from Stoner.tools import istuple, isiterable

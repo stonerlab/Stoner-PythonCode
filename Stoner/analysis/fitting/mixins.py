@@ -14,7 +14,6 @@ import numpy.ma as ma
 import scipy as _sp_
 from scipy.odr import Model as odrModel
 from scipy.optimize import curve_fit, differential_evolution
-from scipy.optimize import approx_fprime
 
 from Stoner.compat import python_v3, string_types, index_types, LooseVersion, get_func_params
 from Stoner.tools import isNone, isiterable, islike_list, _attribute_store
@@ -26,8 +25,6 @@ try:  # Allow lmfit to be optional
         from lmfit.model import Model
     else:
         from lmfit.model import Model
-    from lmfit import Parameters
-
     _lmfit = True
 except ImportError:
     Model = None
@@ -207,7 +204,6 @@ class _curve_fit_result(object):
             ier (int):
                 Numerical error message.
         """
-        """"""
         self.popt = popt
         self.pcov = pcov
         self.perr = _np_.sqrt(_np_.diag(pcov))

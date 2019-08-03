@@ -4,13 +4,12 @@ Created on Fri Dec  1 17:37:39 2017
 
 @author: phygbu
 """
-from numpy import where, append, row_stack, atleast_2d
+from numpy import where, append, atleast_2d
 from scipy.constants import mu_0
 from scipy.stats import gmean
 from os.path import join
-import os
 
-from Stoner import Data, __home__, set_option
+from Stoner import Data, __home__
 from Stoner.Fit import FMR_Power, Inverse_Kittel, Linear
 from Stoner.plot.formats import DefaultPlotStyle, TexEngFormatter
 from Stoner.Folders import PlotFolder

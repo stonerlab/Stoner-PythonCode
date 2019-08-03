@@ -14,7 +14,7 @@ from collections import Mapping
 import numpy as np
 
 import Stoner.Core as Core
-from Stoner.compat import python_v3, str2bytes, string_types, hyperspy_ok
+from Stoner.compat import python_v3, str2bytes, hyperspy_ok
 
 
 class CSVFile(Core.DataFile):

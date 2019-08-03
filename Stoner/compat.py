@@ -32,6 +32,7 @@ __all__ = [
     "str2bytes",
     "bytes2str",
     "get_filedialog",
+    "getargspec",
     "string_types",
     "int_types",
     "index_types",
@@ -219,6 +220,11 @@ elif __vi__[0] == 3:
     from os.path import commonpath
     from inspect import signature
     from os import makedirs
+    from inspect import getfullargspec
+
+    def getargspec(*args, **kargs):
+        """Wrapper for getargspec for Python V3."""
+        return getfullargspec(*args, **kargs)[:4]
 
     def get_func_params(func):
         sig = signature(func)

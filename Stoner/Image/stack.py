@@ -2,7 +2,6 @@
 """Provide variants of :class:`Stoner.Image.ImageFolder` that store images efficiently in 3D numpy arrays."""
 __all__ = ["ImageStackMixin", "ImageStack2", "ImageStack"]
 import numpy as np
-import copy
 import numbers
 import warnings
 
@@ -11,7 +10,7 @@ from Stoner.compat import string_types, int_types
 from Stoner.tools import all_type
 from .core import ImageArray, dtype_range, ImageFile
 from .folders import ImageFolder, ImageFolderMixin
-from Stoner.Core import regexpDict, metadataObject, typeHintedDict
+from Stoner.Core import regexpDict, typeHintedDict
 from Stoner.Folders import DiskBasedFolder, baseFolder
 from Stoner.Image.util import convert
 
