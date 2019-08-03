@@ -105,11 +105,11 @@ def split_up_down(data, col=None, folder=None):
     """Splits the DataFile data into several files where the column *col* is either rising or falling
 
     Args:
-        data (:py:class:`Stoner.Core.DataFile`): 
+        data (:py:class:`Stoner.Core.DataFile`):
             object containign the data to be sorted
-        col (index): 
+        col (index):
             is something that :py:meth:`Stoner.Core.DataFile.find_col` can use
-        folder (:py:class:`Stoner.Folders.DataFolder` or None): 
+        folder (:py:class:`Stoner.Folders.DataFolder` or None):
             if this is an instance of :py:class:`Stoner.Folders.DataFolder` then add
             rising and falling files to groups of this DataFolder, otherwise create a new one
 
@@ -195,10 +195,10 @@ def hysteresis_correct(data, **kargs):
             should be set to give the H and M axes as x and y.
 
     Keyword Arguments:
-        correct_background (bool): 
+        correct_background (bool):
             Correct for a diamagnetic or paramagnetic background to the hystersis loop
             also recentres the loop about zero moment (default True).
-        correct_H (bool): 
+        correct_H (bool):
             Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric
             this will remove any offset in filed due to trapped flux (default True)
         saturated_fraction (float):
@@ -214,9 +214,9 @@ def hysteresis_correct(data, **kargs):
             The central fraction of the saturation moment that is used for calculating the saturation field. Defaults to 0.5
         xcol (column index):
             Column with the x data in it
-        ycol (column_index): 
+        ycol (column_index):
             Column with the y data in it
-        setas (string or iterable): 
+        setas (string or iterable):
             Column assignments.
 
     Returns:

@@ -9,7 +9,7 @@ Classes:
 from __future__ import division
 
 __all__ = ["PlotMixin", "hsl2rgb"]
-from Stoner.compat import python_v3, string_types, index_types, int_types, getargspec
+from Stoner.compat import string_types, index_types, int_types, getargspec
 from Stoner.tools import (
     _attribute_store,
     isNone,

@@ -98,7 +98,7 @@ def diamagBackgroundRem(data, N):
     lowFit = np.polyfit(
         data[minHarg - N : minHarg + N, 1], data[minHarg - N : minHarg + N, 2], 1
     )
-    """  Average grad   """
+    #Average grad
     fitGrad = (highFit[0] + lowFit[0]) / 2
     # Delete linear grad from all data
     data[:, 2] = data[:, 2] - (fitGrad * data[:, 1])
@@ -169,7 +169,7 @@ def editData(Data, operations):
     return Data
 
 
-"""Set up a directory and determine files to be processed"""
+# Set up a directory and determine files to be processed
 directoryName = raw_input("Enter path to directory in which files are stored:   ")
 os.chdir(directoryName)
 filenames = os.listdir(directoryName)
@@ -186,11 +186,10 @@ if "EditedFiles" not in filenames:
     os.mkdir("EditedFiles")
 
 timeout = 0
-"""Main program loop, cycle through selected files"""
+#Main program loop, cycle through selected files
 while True:
     path = filenames[fCounter]
     fCounter += 1
-    fCounter % (len(filenames) - 1)  # Move counter onto next file
     fr = open(path, "r")
     data = fr.readlines()  # Get the file into an array
     fr.close()
