@@ -1,6 +1,6 @@
 """Example of using scale to overlap data"""
 from Stoner import Data
-from numpy import linspace, sin, exp, pi, dstack
+from numpy import linspace, sin, exp, pi
 from numpy.random import normal
 import matplotlib as mpl
 from tabulate import tabulate

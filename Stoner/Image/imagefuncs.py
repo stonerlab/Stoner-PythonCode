@@ -253,7 +253,7 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50, box=None, do_shi
     imed = imed > imed.threshold_otsu()
     imed = imed.corner_fast(threshold=threshold)
 
-    shift, _, phase = feature.register_translation(refed, imed, upsample_factor=upsample_factor)
+    shift = feature.register_translation(refed, imed, upsample_factor=upsample_factor)[0]
     if do_shift:
         im = im.translate(translation=(-shift[1], -shift[0]))  # x,y
     im.metadata["correct_drift"] = (-shift[1], -shift[0])

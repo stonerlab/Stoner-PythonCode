@@ -42,6 +42,7 @@ __all__ = [
     "cmp",
     "hyperspy_ok",
     "which",
+    "commonpath",
 ]
 
 try:

@@ -272,7 +272,7 @@ class DefaultPlotStyle(MutableMapping):
 
     def __len__(self):
         i = len([x for x in dir(self) if self._allowed_attr(x)])
-        i += len(plt.rcParams)
+        i += len(list(plt.rcParams.keys()))
         return i
 
     def __setattr__(self, name, value):

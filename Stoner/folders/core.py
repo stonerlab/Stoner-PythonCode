@@ -19,7 +19,6 @@ from Stoner.compat import python_v3, int_types, string_types, commonpath, _patte
 from Stoner.tools import operator, isiterable, isproperty, all_type, get_option
 from Stoner.core.base import regexpDict
 from Stoner.core.base import metadataObject
-from Stoner.core.exceptions import StonerUnrecognisedFormat
 from .utils import pathjoin
 
 from .each import item as each_item
@@ -531,7 +530,7 @@ class baseFolder(MutableSequence):
                 raise IndexError("{} is out of range.".format(name))
         elif isinstance(name, slice):  # Possibly ought to return another Folder?
             other = self.__clone__(attrs_only=True)
-            for ix, iname in enumerate(islice(self.__names__(), name.start, name.stop, name.step)):
+            for iname in islice(self.__names__(), name.start, name.stop, name.step):
                 item = self.__getter__(iname)
                 if hasattr(item, "filename"):
                     item.filename = iname

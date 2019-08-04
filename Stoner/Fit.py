@@ -110,8 +110,6 @@ except ImportError:
 
     float64 = _dummy()
 
-from matplotlib.pyplot import plot
-
 
 def _get_model_(model):
     """Utility meothd to manage creating an lmfit.Model.

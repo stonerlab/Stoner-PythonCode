@@ -101,10 +101,10 @@ class odr_Model(odrModel):
             )
         if not isinstance(p0, lmfit.Parameters):  # This can happen if we are creating an odr_Model in advance.
             tmp_model = _attribute_store(meta)
-            p0, single_fit = _prep_lmfit_p0(tmp_model, None, None, p0, kargs)
+            p0 = _prep_lmfit_p0(tmp_model, None, None, p0, kargs)[0]
         p_new = list()
         meta["params"] = copy(p0)
-        for k, p in p0.items():
+        for p in p0.values():
             p_new.append(p.value)
         p0 = p_new
         kargs["estimate"] = p0
@@ -149,7 +149,6 @@ class MimizerAdaptor(object):
             RuntimeError:
                 Fails if a *params* Parameter does not supply a fitted value.
         """
-        """"""
 
         self.func = model.func
         hints = kargs.pop("params")
@@ -332,7 +331,7 @@ def _get_model_parnames(model):
             "Unrecognised type for model! - should be lmfit.Model, scipy.odr.Model or callable, not {}",
             format(type(model)),
         )
-    arguments, carargs, jeywords, defaults = getfullargspec(model)[0:4]  # pylint: disable=W1505
+    arguments, carargs, jeywords = getfullargspec(model)[0:3]  # pylint: disable=W1505
     return list(arguments[1:])
 
 
@@ -895,7 +894,7 @@ class FittingMixin(object):
         # Store our current mask, calculate new column's mask and turn off mask
 
         param_names = getattr(model, "param_names", None)
-        for i, p in enumerate(param_names):
+        for i in range(len(param_names)):
             row.extend([fit_result.beta[i], fit_result.sd_beta[i]])
         row.append(fit_result.redchi)
         retval = {

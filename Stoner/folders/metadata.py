@@ -113,8 +113,6 @@ class proxy(MutableMapping):
         ret.mask = mask
         return ret
 
-        return _np_.array([d[value] for d in self._folder])
-
     def __setitem__(self, key, value):
         for d in self._folder:
             d[key] = value
