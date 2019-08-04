@@ -11,9 +11,7 @@ __all__ = ["test_is_zip", "ZippedFile", "ZipFolderMixin", "ZipFolder"]
 import zipfile as zf
 import os.path as path
 from traceback import format_exc
-from copy import copy
 import fnmatch
-import re
 
 from .compat import string_types, bytes2str, str2bytes, get_filedialog, _pattern_type
 from .Core import DataFile, StonerLoadError
@@ -149,7 +147,7 @@ class ZippedFile(DataFile):
                 raise StonerLoadError("{} does  not appear to be a real zip file".format(self.filename))
         except StonerLoadError as e:
             raise e
-        except Exception as e:
+        except Exception:
             try:
                 exc = format_exc()
                 other.close()

@@ -463,7 +463,7 @@ class PlotMixin(object):
                 if self.__figure is not plt.gcf():
                     plt.close(plt.gcf())
 
-        (args, vargs, kwargs, defs) = getargspec(function)
+        (args, vargs, kwargs) = getargspec(function)[:3]
         # Manually overide the list of arguments that the plotting function takes if it takes keyword dictionary
         if isinstance(otherkargs, (list, tuple)) and kwargs is not None:
             args.extend(otherkargs)
@@ -858,7 +858,7 @@ class PlotMixin(object):
         }
         kargs, nonkargs, _ = self._fix_kargs(None, defaults, **kargs)
         plotter = nonkargs["plotter"]
-        self.__figure, ax = self._fix_fig(nonkargs["figure"])
+        self.__figure = self._fix_fig(nonkargs["figure"])[0]
         if "cmap" in kargs:
             cmap = cm.get_cmap(kargs["cmap"])
         elif "cmap" in nonkargs:
@@ -1682,7 +1682,7 @@ class PlotMixin(object):
         As well as passing through to the plyplot routine of the same name, this
         function maintains a list of the current sub-plot axes via the subplots attribute.
         """
-        _, ax = self.template.new_figure(self.__figure.number)
+        self.template.new_figure(self.__figure.number)
         sp = plt.subplot(*args, **kargs)
         if len(args) == 1:
             rows = args[0] // 100
@@ -1698,13 +1698,12 @@ class PlotMixin(object):
         return sp
 
     def subplot2grid(self, *args, **kargs):
-
         """Pass through to :py:func:`matplotlib.pyplot.subplot2grid`."""
 
         if self.__figure is None:
             self.figure()
 
-        figure, ax = self.template.new_figure(self.__figure.number)
+        figure = self.template.new_figure(self.__figure.number)[0]
 
         plt.figure(figure.number)
         ret = plt.subplot2grid(*args, **kargs)

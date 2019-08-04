@@ -271,10 +271,9 @@ class DefaultPlotStyle(MutableMapping):
             yield f
 
     def __len__(self):
-        i = -1
-        for i, x in enumerate(self):
-            pass
-        return i + 1
+        i = len([x for x in dir(self) if self._allowed_attr(x)])
+        i += len(plt.rcParams)
+        return i
 
     def __setattr__(self, name, value):
         """Ensure stylesheet can't be overwritten and provide magic for template attributes."""
@@ -645,7 +644,7 @@ class SketchPlot(DefaultPlotStyle):
         for l in ax.get_yticklabels():
             l.set_rotation(normal(scale=2))
 
-        plt.draw
+        plt.draw()
 
 
 if SEABORN:  # extra classes if we have seaborn available

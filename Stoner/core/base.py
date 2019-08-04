@@ -41,7 +41,7 @@ def literal_eval(string):
     """
     global _asteval_interp  # Ugly!
     if _asteval_interp is None:
-        _asteval_interp = asteval.Interpreter(usersyms={"np": np, "re": re, "NaN": NaN, "None": None})
+        _asteval_interp = asteval.Interpreter(usersyms={"np": np, "re": re, "NaN": NaN, "nan": NaN, "None": None})
     try:
         return _asteval_interp(string, show_errors=False)
     except (SyntaxError, ValueError, NameError, IndexError, TypeError):
@@ -359,8 +359,6 @@ class typeHintedDict(regexpDict):
             tests = ["list(" + value + ")", "dict(" + value + ")"]
             try:
                 i = "[{".index(value[0])
-                array = np.array
-                nan = np.nan
                 ret = literal_eval(tests[i])  # pylint: disable=eval-used
             except (SyntaxError, ValueError):
                 if value.lower() in ["true", "yes", "on", "false", "no", "off"]:

@@ -8,7 +8,6 @@ __all__ = ["DiskBasedFolder", "DataMethodsMixin", "PlotMethodsMixin"]
 import os
 import os.path as path
 import string
-import unicodedata
 from functools import partial
 from numpy import mean, std, array, append, any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
@@ -18,7 +17,6 @@ from Stoner.compat import string_types, get_filedialog, _pattern_type, makedirs
 from Stoner.tools import isiterable
 
 from Stoner.core.base import metadataObject
-from Stoner.Core import DataFile
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder
 from .utils import scan_dir, discard_earlier, filter_files
@@ -232,7 +230,7 @@ class DiskBasedFolder(object):
         fname = name if path.exists(name) else path.join(self.directory, name)
         try:
             tmp = self.type(self.loader(fname, **self.extra_args))
-        except StonerUnrecognisedFormat as err:
+        except StonerUnrecognisedFormat:
             return None
         if not isinstance(getattr(tmp, "filename", None), string_types):
             tmp.filename = path.basename(fname)
@@ -289,8 +287,8 @@ class DiskBasedFolder(object):
         With multiprocess enabled this will parallel load the contents of the folder into memory.
         """
         p, imap = self._get_pool()
-        for ix, (f, name) in enumerate(
-            imap(partial(_loader, loader=self.loader, typ=self._type, directory=self.directory), self.not_loaded)
+        for (f, name) in imap(
+            partial(_loader, loader=self.loader, typ=self._type, directory=self.directory), self.not_loaded
         ):
             self.__setter__(
                 name, self.on_load_process(f)

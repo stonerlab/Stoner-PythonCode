@@ -9,7 +9,7 @@ import copy
 import numpy as _np_
 
 from ..compat import string_types, int_types, index_types, _pattern_type
-from ..tools import _attribute_store, isiterable, typedList, islike_list, istuple
+from ..tools import _attribute_store, isiterable, typedList, islike_list
 
 from collections import MutableMapping, Mapping
 

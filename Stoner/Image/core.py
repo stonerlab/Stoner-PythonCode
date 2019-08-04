@@ -579,7 +579,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         ret = None
         try:
             ret = getattr(super(ImageArray, self), name)
-        except AttributeError as e:
+        except AttributeError:
             # first check kermit funcs
             if name.startswith("_") or name in ["debug"]:
                 if name == "_hardmask":
@@ -663,6 +663,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         if getattr(self, "debug", False):
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 2)
+            print(curframe.calframe)
         if isinstance(index, ImageFile) and index.image.dtype == bool:
             index = index.image
         if isinstance(index, string_types):
@@ -1279,7 +1280,7 @@ class ImageFile(metadataObject):
         """Intelliegent negate function that handles unsigned integers."""
         ret = self.clone
         if self._image.dtype.kind == "u":
-            l, h = dtype_range[self._image.dtype]
+            h = dtype_range[self._image.dtype][1]
             ret.image = h - self.image
         else:
             ret.image = -self.image
