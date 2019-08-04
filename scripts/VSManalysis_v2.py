@@ -98,7 +98,7 @@ def diamagBackgroundRem(data, N):
     lowFit = np.polyfit(
         data[minHarg - N : minHarg + N, 1], data[minHarg - N : minHarg + N, 2], 1
     )
-    #Average grad
+    # Average grad
     fitGrad = (highFit[0] + lowFit[0]) / 2
     # Delete linear grad from all data
     data[:, 2] = data[:, 2] - (fitGrad * data[:, 1])
@@ -186,7 +186,7 @@ if "EditedFiles" not in filenames:
     os.mkdir("EditedFiles")
 
 timeout = 0
-#Main program loop, cycle through selected files
+# Main program loop, cycle through selected files
 while True:
     path = filenames[fCounter]
     fCounter += 1
