@@ -331,7 +331,7 @@ def _get_model_parnames(model):
             "Unrecognised type for model! - should be lmfit.Model, scipy.odr.Model or callable, not {}",
             format(type(model)),
         )
-    arguments, carargs, jeywords = getfullargspec(model)[0:3]  # pylint: disable=W1505
+    arguments = getfullargspec(model)[0]  # pylint: disable=W1505
     return list(arguments[1:])
 
 

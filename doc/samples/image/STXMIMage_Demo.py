@@ -1,5 +1,5 @@
 """Demonstrate STXM Image Processing - G.Burnell Nov. 2017"""
-from Stoner.Image import ImageFile, ImageFolder
+from Stoner.Image import ImageFolder
 from Stoner.HDF5 import STXMImage
 from os.path import join, dirname
 import numpy as np
