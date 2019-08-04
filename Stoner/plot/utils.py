@@ -39,7 +39,8 @@ import warnings
 
 import numpy as np
 import matplotlib.pyplot as plt
-from Stoner.compat import LooseVersion, mpl_version
+from Stoner.compat import mpl_version
+from distutils.version import LooseVersion
 
 __all__ = ["errorfill"]
 

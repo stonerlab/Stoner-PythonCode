@@ -603,7 +603,7 @@ class baseFolder(MutableSequence):
             elif name in self.objects:
                 self.__deleter__(self.__lookup__(name))
             else:
-                raise KeyError("Can't use {} as a key to delete from baseFolder. ({})".format(name, self.__names__()))
+                raise KeyError("Can't use {} as a key to delete in baseFolder. ({})".format(name, self.__names__()))
         elif isinstance(name, int_types):
             if -len(self) < name <= len(self):
                 self.__deleter__(self.__lookup__(name))

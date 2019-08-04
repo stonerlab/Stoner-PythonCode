@@ -10,12 +10,13 @@ from inspect import isclass
 from collections import Mapping, OrderedDict
 import numpy as _np_
 import numpy.ma as ma
+from distutils.version import LooseVersion
 
 import scipy as _sp_
 from scipy.odr import Model as odrModel
 from scipy.optimize import curve_fit, differential_evolution
 
-from Stoner.compat import python_v3, string_types, index_types, LooseVersion, get_func_params
+from Stoner.compat import python_v3, string_types, index_types, get_func_params
 from Stoner.tools import isNone, isiterable, islike_list, _attribute_store
 
 try:  # Allow lmfit to be optional

@@ -12,7 +12,7 @@ from scipy.interpolate import interp1d, UnivariateSpline
 from scipy.optimize import curve_fit, newton
 from scipy.signal import savgol_filter
 
-from .compat import python_v3, string_types, int_types, index_types, LooseVersion, get_func_params
+from .compat import python_v3, string_types, int_types, index_types, get_func_params
 from .tools import isNone, isiterable, all_type, istuple
 from .core.exceptions import assertion
 from copy import deepcopy as copy

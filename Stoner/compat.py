@@ -10,7 +10,6 @@ Created on Tue Jan 14 19:53:11 2014
 from __future__ import print_function, absolute_import, division, unicode_literals
 from sys import version_info as __vi__
 from matplotlib import __version__ as mpl_version
-from distutils.version import LooseVersion
 from os import walk
 from os.path import join, commonprefix, sep
 import fnmatch
@@ -36,7 +35,6 @@ __all__ = [
     "string_types",
     "int_types",
     "index_types",
-    "LooseVersion",
     "classproperty",
     "mpl_version",
     "_lmfit",
