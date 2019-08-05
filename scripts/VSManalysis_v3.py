@@ -32,13 +32,13 @@ class VSMAnalysis(Data):
 
     def correct_drift(self, threshold=0.95):
         """Corrects for drift in the signal.
-        
+
         Masks out data that isn't above threshold*maximum field and fits a straight line to
         Moment(Time) and then subtracts this from the data.
-        
+
         Args:
             threshold (float): fraction of the maximum field to look at to work out drift in time.
-        
+
         Returns:
             the current object with a new corrected moment.
         """
@@ -60,14 +60,14 @@ class VSMAnalysis(Data):
 
     def remove_diamagnetism_and_offset(self, threshold=0.85):
         """Removes a diamagnetic component from the data.
-        
+
         Fits straight lines to the upper and lower parts of the curve (within
         threshold of the extreme fields) and uses this to remove diamangeteic omponents
         and recentre the loop
-        
+
         Args:
             threshold (float): Fraction of maximum/minimum  field to assume is saturated
-        
+
         ReturnsL
             a copy of self with the corrections applied
         """

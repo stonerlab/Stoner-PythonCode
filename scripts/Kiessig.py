@@ -1,7 +1,7 @@
 """A very quick and dirty Kiessig Fringe Analysis code
- 
+
 Gavin Burnell 28/12/2010
- 
+
 TODO: Implement an error bar on the uncertainity by understanding the significance of the covariance terms
 """
 from Stoner import Data

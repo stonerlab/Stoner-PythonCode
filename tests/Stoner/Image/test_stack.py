@@ -129,7 +129,7 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(np.allclose(ist3[0],ist2[0]))
         ist3.insert(1, np.arange(18).reshape(3,6))
         self.assertTrue(ist3[1].shape==(3,6), 'inserting an image of different size to stack')
-    
+
     def test_clone(self):
         ist2 = ImageStack(np.arange(60).reshape(4,3,5))
         ist3 = ist2.clone
@@ -139,7 +139,7 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(np.allclose(ist3[0],ist2[0])) #Check values are the same
         ist3.insert(1, np.arange(18).reshape(3,6)) #Insert a larger image
         self.assertTrue(ist3[1].shape==(3,6), 'inserting an image of different size to stack')
-    
+
     def test_mask(self):
         im = ImageFile(np.arange(12).reshape(3,4))
         im.mask = np.zeros(im.shape, dtype=bool)
@@ -150,7 +150,7 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(ist2[1].mask[1,1]==True, 'inserting an image with a mask into an ImageStack has failed')
         ist2[3].mask = np.ones(im.shape, dtype=bool)
         self.assertTrue(np.all(ist2[3].mask), 'setting mask on an image stack item not working')
-        
+
 if __name__=="__main__":
     #test=ImageStack2Test()
     #test.setUp()

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Code adapted from skimage module   
+"""Code adapted from skimage module
 """
 from __future__ import division
 
@@ -75,7 +75,7 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
         conversion errors.
     normalise : bool
         When converting from int types to float normalise the resulting array
-        by the maximum allowed value of the int type. 
+        by the maximum allowed value of the int type.
 
     References
     ----------

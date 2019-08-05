@@ -2,7 +2,7 @@
 """
 Script for compressing png images using PIL optimize.
 
-Given the folder it will compress all files in all the subfolders. This 
+Given the folder it will compress all files in all the subfolders. This
 compression is lossless. The images will not lose any definition and loaded
 images will be exactly the same.
 
@@ -33,8 +33,8 @@ def get_size(start_path="."):
 
 
 def pngsave(im, filename):
-    """save a PNG with PIL preserving metadata. 
-    
+    """save a PNG with PIL preserving metadata.
+
     Thanks to blog http://blog.client9.com/2007/08/28/python-pil-and-png-metadata-take-2.html
     for code
     """

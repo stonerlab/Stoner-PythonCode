@@ -42,7 +42,7 @@ class Utils_test(unittest.TestCase):
             self.assertTrue("Hc" in x and "Area" in x and
                            "Hsat" in x and "BH_Max" in x and
                            "BH_Max_H" in x,"Hystersis loop analysis keys not present.")
-    
+
             self.assertTrue(is_2tuple(x["Hc"]) and x["Hc"][0]+578<1.0,"Failed to find correct Hc in a SQUID loop")
             self.assertTrue(isinstance(x["Area"],float) and 0.0136<x["Area"]<0.0137,"Incorrect calculation of area under loop")
         self.x=x

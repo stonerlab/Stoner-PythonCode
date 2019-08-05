@@ -43,7 +43,7 @@ class FileFormats_test(unittest.TestCase):
             #return None # skip this completely at this time
         else:
             skip_files=[]
-            
+
         tmpdir=tempfile.mkdtemp()
         print("Exporting to {}".format(tmpdir))
         print("Data files {}".format(self.datadir))
