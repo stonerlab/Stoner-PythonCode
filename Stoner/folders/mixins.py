@@ -12,17 +12,41 @@ from functools import partial
 from numpy import mean, std, array, append, any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
 from matplotlib.pyplot import figure, Figure, subplot, tight_layout
+from copy import deepcopy
 
 from Stoner.compat import string_types, get_filedialog, _pattern_type, makedirs
 from Stoner.tools import isiterable
 
 from Stoner.core.base import metadataObject
 from Stoner.core.exceptions import StonerUnrecognisedFormat
-from .core import baseFolder
+from .core import baseFolder, __add_core__ as _base__add_core__, __sub_core__ as _base__sub_core__
 from .utils import scan_dir, discard_earlier, filter_files
 from Stoner.core.exceptions import assertion
 
 regexp_type = (_pattern_type,)
+
+
+def __add_core__(result, other):
+    """Additional logic for the add operator."""
+    if isinstance(other, string_types):
+        othername = path.join(result.directory, other)
+        if path.exists(othername) and othername not in result:
+            result.append(othername)
+        else:
+            raise RuntimeError("{} either does not exist of is already in the folder.".format(othername))
+    else:
+        return _base__add_core__(result, other)
+    return result
+
+
+def __sub_core__(result, other):
+    """Additional logic to check for match to basenames,"""
+    if isinstance(other, string_types):
+        if other in list(result.basenames) and path.join(result.directory, other) in list(result.ls):
+            other = path.join(result.directory, other)
+            result.__deleter__(other)
+            return result
+    return _base__sub_core__(result, other)
 
 
 def _loader(name, loader=None, typ=None, directory=None):
@@ -177,27 +201,6 @@ class DiskBasedFolder(object):
         grp.save(path.join(pth, grp.filename))
         return grp.filename
 
-    def __add_core__(self, result, other):
-        """Additional logic for the add operator."""
-        if isinstance(other, string_types):
-            othername = path.join(self.directory, other)
-            if path.exists(othername) and othername not in result:
-                result.append(othername)
-            else:
-                raise RuntimeError("{} either does not exist of is already in the folder.".format(othername))
-        else:
-            return super(DiskBasedFolder, self).__add_core__(result, other)
-        return result
-
-    def __sub_core__(self, result, other):
-        """Additional logic to check for match to basenames,"""
-        if isinstance(other, string_types):
-            if other in list(result.basenames) and path.join(result.directory, other) in list(result.ls):
-                other = path.join(result.directory, other)
-                result.__deleter__(other)
-                return result
-        return super(DiskBasedFolder, self).__sub_core__(result, other)
-
     def __lookup__(self, name):
         """Addional logic for the looking up names."""
         if isinstance(name, string_types):
@@ -240,6 +243,30 @@ class DiskBasedFolder(object):
         # Store the result
         self.__setter__(name, tmp)
         return tmp
+
+    def __add__(self, other):
+        """Implement the addition operator for baseFolder and metadataObjects."""
+        result = deepcopy(self)
+        result = __add_core__(result, other)
+        return result
+
+    def __iadd__(self, other):
+        """Implement the addition operator for baseFolder and metadataObjects."""
+        result = self
+        result = __add_core__(result, other)
+        return result
+
+    def __sub__(self, other):
+        """Implement the addition operator for baseFolder and metadataObjects."""
+        result = deepcopy(self)
+        result = __sub_core__(result, other)
+        return result
+
+    def __isub__(self, other):
+        """Implement the addition operator for baseFolder and metadataObjects."""
+        result = self
+        result = __sub_core__(result, other)
+        return result
 
     @property
     def basenames(self):

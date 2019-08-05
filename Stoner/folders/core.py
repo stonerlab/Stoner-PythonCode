@@ -27,6 +27,120 @@ from .metadata import proxy as combined_metadata_proxy
 regexp_type = (_pattern_type,)
 
 
+def __add_core__(result, other):
+    """Implements the core logic of the addition operator.
+
+    Note:
+        We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+    """
+    if isinstance(other, baseFolder):
+        if issubclass(other.type, result.type):
+            result.extend([f for f in other.files])
+            for grp in other.groups:
+                if grp in result.groups:
+                    result.groups[grp] += other.groups[grp]  # recursively merge groups
+                else:
+                    result.groups[grp] = copy(other.groups[grp])
+        else:
+            raise RuntimeError(
+                "Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type, result.type)
+            )
+    elif isinstance(other, result.type):
+        result.append(other)
+    else:
+        result = NotImplemented
+    return result
+
+
+def __div_core__(result, other):
+    """Implements the divide operator as a grouping function."""
+    if isinstance(other, string_types + (list, tuple)):
+        result.group(other)
+        return result
+    elif isinstance(other, int_types):  # Simple decimate
+        for i in range(other):
+            result.add_group("Group {}".format(i))
+        for ix in range(len(result)):
+            d = result.__getter__(ix, instantiate=None)
+            group = ix % other
+            result.groups["Group {}".format(group)].__setter__(result.__lookup__(ix), d)
+        result.__clear__()
+        return result
+
+
+def __sub_core__(result, other):
+    """Implemenets the core logic of the subtraction operator.
+
+    Note:
+        We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+
+    """
+    calls = [
+        (int_types, __sub_core_int__),
+        (string_types, __sub_core_string__),
+        (metadataObject, __sub_core_data__),
+        (baseFolder, __sub_core_folder__),
+        (Iterable, __sub_core_iterable__),
+    ]
+    for typ, func in calls:
+        if isinstance(other, typ):
+            result = func(result, other)
+            break
+    else:
+        result = NotImplemented
+
+    return result
+
+
+def __sub_core_int__(result, other):
+    """Remove indexed file."""
+    delname = result.__names__()[other]
+    result.__deleter__(delname)
+    return result
+
+
+def __sub_core_string__(result, other):
+    """"Removed named file."""
+    if other in result.__names__():
+        result.__deleter__(other)
+    else:
+        raise RuntimeError("{} is not in the folder.".format(other))
+    return result
+
+
+def __sub_core_data__(result, other):
+    """Remove a data object."""
+    othername = getattr(other, "filename", getattr(other, "title", None))
+    if othername in result.__names__():
+        result.__deleter__(othername)
+    else:
+        raise RuntimeError("{} is not in the folder.".format(othername))
+    return result
+
+
+def __sub_core_folder__(result, other):
+    """Remove a folder."""
+    if issubclass(other.type, result.type):
+        for othername in other.ls:
+            if othername in result:
+                result.__deleter__(othername)
+        for othergroup in other.groups:
+            if othergroup in result.groups:
+                result.groups[othergroup].__sub_core__(result.groups[othergroup], other.groups[othergroup])
+    else:
+        raise RuntimeError(
+            "Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type, result.type)
+        )
+    return result
+
+
+def __sub_core_iterable__(self, result, other):
+    """Iterate to remove iterables."""
+    for c in sorted(other):
+        result.__sub_core__(result, c)
+    return result
+
+
 class baseFolder(MutableSequence):
 
     """A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.
@@ -624,127 +738,19 @@ class baseFolder(MutableSequence):
         """Allow len(:py:class:`baseFolder`) works as expected."""
         return len(self.__names__())
 
-    def __add_core__(self, result, other):
-        """Implements the core logic of the addition operator.
-
-        Note:
-            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
-        """
-        if isinstance(other, baseFolder):
-            if issubclass(other.type, self.type):
-                result.extend([f for f in other.files])
-                for grp in other.groups:
-                    if grp in self.groups:
-                        result.groups[grp] += other.groups[grp]  # recursively merge groups
-                    else:
-                        result.groups[grp] = copy(other.groups[grp])
-            else:
-                raise RuntimeError(
-                    "Incompatible types ({} must be a subclass of {}) in the two folders.".format(
-                        other.type, result.type
-                    )
-                )
-        elif isinstance(other, result.type):
-            result.append(other)
-        else:
-            result = NotImplemented
-        return result
-
-    def __div_core__(self, result, other):
-        """Implements the divide operator as a grouping function."""
-        if isinstance(other, string_types + (list, tuple)):
-            result.group(other)
-            return result
-        elif isinstance(other, int_types):  # Simple decimate
-            for i in range(other):
-                result.add_group("Group {}".format(i))
-            for ix in range(len(self)):
-                d = self.__getter__(ix, instantiate=None)
-                group = ix % other
-                result.groups["Group {}".format(group)].__setter__(self.__lookup__(ix), d)
-            result.__clear__()
-            return result
-
-    def __sub_core_int__(self, result, other):
-        """Remove indexed file."""
-        delname = result.__names__()[other]
-        result.__deleter__(delname)
-        return result
-
-    def __sub_core_string__(self, result, other):
-        """"Removed named file."""
-        if other in result.__names__():
-            result.__deleter__(other)
-        else:
-            raise RuntimeError("{} is not in the folder.".format(other))
-        return result
-
-    def __sub_core_data__(self, result, other):
-        """Remove a data object."""
-        othername = getattr(other, "filename", getattr(other, "title", None))
-        if othername in result.__names__():
-            result.__deleter__(othername)
-        else:
-            raise RuntimeError("{} is not in the folder.".format(othername))
-        return result
-
-    def __sub_core_folder__(self, result, other):
-        """Remove a folder."""
-        if issubclass(other.type, self.type):
-            for othername in other.ls:
-                if othername in result:
-                    result.__deleter__(othername)
-            for othergroup in other.groups:
-                if othergroup in result.groups:
-                    result.groups[othergroup].__sub_core__(result.groups[othergroup], other.groups[othergroup])
-        else:
-            raise RuntimeError(
-                "Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type, result.type)
-            )
-        return result
-
-    def __sub_core_iterable__(self, result, other):
-        """Iterate to remove iterables."""
-        for c in sorted(other):
-            result.__sub_core__(result, c)
-        return result
-
-    def __sub_core__(self, result, other):
-        """Implemenets the core logic of the subtraction operator.
-
-        Note:
-            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
-
-        """
-        calls = [
-            (int_types, self.__sub_core_int__),
-            (string_types, self.__sub_core_string__),
-            (metadataObject, self.__sub_core_data__),
-            (baseFolder, self.__sub_core_folder__),
-            (Iterable, self.__sub_core_iterable__),
-        ]
-        for typ, func in calls:
-            if isinstance(other, typ):
-                result = func(result, other)
-                break
-        else:
-            result = NotImplemented
-
-        return result
-
     ###########################################################################
     ###################### Standard Special Methods ###########################
 
     def __add__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result = deepcopy(self)
-        result = self.__add_core__(result, other)
+        result = __add_core__(result, other)
         return result
 
     def __iadd__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result = self
-        result = self.__add_core__(result, other)
+        result = __add_core__(result, other)
         return result
 
     if python_v3:
@@ -752,24 +758,24 @@ class baseFolder(MutableSequence):
         def __truediv__(self, other):
             """The divide operator is a grouping function for a :py:class:`baseFolder`."""
             result = deepcopy(self)
-            return self.__div_core__(result, other)
+            return __div_core__(result, other)
 
         def __itruediv__(self, other):
             """The divide operator is a grouping function for a :py:class:`baseFolder`."""
             result = self
-            return self.__div_core__(result, other)
+            return __div_core__(result, other)
 
     else:
 
         def __div__(self, other):
             """The divide operator is a grouping function for a :py:class:`baseFolder`."""
             result = deepcopy(self)
-            return self.__div_core__(result, other)
+            return __div_core__(result, other)
 
         def __idiv__(self, other):
             """The divide operator is a grouping function for a :py:class:`baseFolder`."""
             result = self
-            return self.__div_core__(result, other)
+            return __div_core__(result, other)
 
     def __invert__(self):
         """For a :py:class:`naseFolder`, inverting means either flattening or unflattening the folder.
@@ -817,13 +823,13 @@ class baseFolder(MutableSequence):
     def __sub__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result = deepcopy(self)
-        result = self.__sub_core__(result, other)
+        result = __sub_core__(result, other)
         return result
 
     def __isub__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result = self
-        result = self.__sub_core__(result, other)
+        result = __sub_core__(result, other)
         return result
 
     def __getattr__(self, item):

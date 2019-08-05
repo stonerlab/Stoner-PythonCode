@@ -309,7 +309,7 @@ class HGXFile(DataFile):
             if isinstance(grp[x], type(grp)):
                 self.scan_group(grp[x], new_pth)
             elif isinstance(grp[x], h5py.Dataset):
-                y = grp[x].value
+                y = grp[x][...]
                 self[new_pth] = y
         return None
 
@@ -322,15 +322,15 @@ class HGXFile(DataFile):
             dataset = root[ix]
             if isinstance(dataset, h5py.Dataset):
                 continue
-            x = dataset["x"].value
-            y = dataset["y"].value
-            e = dataset["error"].value
+            x = dataset["x"][...]
+            y = dataset["y"][...]
+            e = dataset["error"][...]
             self &= x
             self &= y
             self &= e
-            self.column_headers[-3] = bytes2str(dataset["x_command"].value)
-            self.column_headers[-2] = bytes2str(dataset["y_command"].value)
-            self.column_headers[-1] = bytes2str(dataset["error_command"].value)
+            self.column_headers[-3] = bytes2str(dataset["x_command"][()])
+            self.column_headers[-2] = bytes2str(dataset["y_command"][()])
+            self.column_headers[-1] = bytes2str(dataset["error_command"][()])
             self.column_headers = [str(ix) for ix in self.column_headers]
 
 
@@ -571,7 +571,7 @@ class SLS_STXMFile(DataFile):
         items = [x for x in f.items()]
         if len(items) == 1 and items[0][0] == "entry1":
             group1 = [x for x in f["entry1"]]
-            if "definition" in group1 and bytes2str(f["entry1"]["definition"].value[0]) == "NXstxm":  # Good HDF5
+            if "definition" in group1 and bytes2str(f["entry1"]["definition"][0]) == "NXstxm":  # Good HDF5
                 pass
             else:
                 raise StonerLoadError("HDF5 file lacks single top level group called entry1")
@@ -617,7 +617,7 @@ class SLS_STXMFile(DataFile):
                 if len(thing.shape) > 1:
                     continue
                 if _np_.product(thing.shape) == 1:
-                    self.metadata[name] = thing.value[0]
+                    self.metadata[name] = thing[0]
                 else:
                     self.metadata[name] = thing[...]
         for attr in group.attrs:

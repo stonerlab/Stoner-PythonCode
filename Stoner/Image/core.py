@@ -1404,7 +1404,7 @@ class ImageFile(metadataObject):
         data.close()
         return ret
 
-    def save(self, *args, **kwargs):
+    def save(self, filename=None, **kargs):
         """Saves the image into the file 'filename'.
 
         Metadata will be preserved in .png and .tif format.
@@ -1424,7 +1424,7 @@ class ImageFile(metadataObject):
             or a list of them. If not included will guess from filename.
         """
         # catch before metadataObject tries to take over.
-        self.image.save(*args, **kwargs)
+        self.image.save(filename, **kargs)
 
 
 class DrawProxy(object):

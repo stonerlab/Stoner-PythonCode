@@ -661,10 +661,10 @@ class metadataObject(MutableMapping):
         for v in self.metadata.values():
             yield v
 
-    def save(self, path):
+    def save(self, filename=None, **kargs):
         """Stub method for a save function."""
         raise NotImplementedError("Save is not implemented in the base class.")
 
-    def _load(self, filename):
+    def _load(self, filename, *args, **kargs):
         """Stub method for a load function."""
         raise NotImplementedError("Save is not implemented in the base class.")
