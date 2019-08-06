@@ -7,3 +7,4 @@ Pillow
 scikit-image>=0.13.0
 scipy
 multiprocess
+asteval

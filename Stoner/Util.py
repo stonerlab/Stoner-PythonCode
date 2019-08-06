@@ -6,14 +6,13 @@ Created on Tue Oct 08 20:14:34 2013
 @author: phygbu
 """
 __all__ = ["split_up_down", "ordinal", "hysteresis_correct"]
-from .compat import int_types
 from .tools import format_error
 import Stoner.Core as _SC_  # pylint: disable=import-error
 from .Folders import DataFolder as _SF_
 from .Fit import linear
 from . import Data
 import numpy as np
-from numpy import max, sqrt, diag, argmax, mean, array  # pylint: disable=redefined-builtin
+from numpy import max, argmax, mean  # pylint: disable=redefined-builtin
 from scipy.stats import sem
 from scipy.optimize import fsolve
 
@@ -296,7 +295,7 @@ def hysteresis_correct(data, **kargs):
     m_sat = [Ms - h_sat_fraction * Ms_err, -Ms + h_sat_fraction * Ms_err]
     single_side = False
 
-    for i, (d, sat) in enumerate(zip([up, down], m_sat)):
+    for i, d in enumerate([up, down]):
         if len(d) < 2:
             single_side = True
             continue

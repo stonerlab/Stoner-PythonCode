@@ -162,7 +162,7 @@ class ZippedFile(DataFile):
             self.filename = str(filename)
         return self
 
-    def save(self, filename=None, compression=zf.ZIP_DEFLATED):
+    def save(self, filename=None, **kargs):
         """Overrides the save method to allow ZippedFile to be written out to disc (as a mininmalist output)
 
         Args:
@@ -175,7 +175,7 @@ class ZippedFile(DataFile):
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
             filename = self.__file_dialog("w")
-
+        compression = kargs.pop("compression", zf.ZIP_DEFLATED)
         try:
             if isinstance(filename, string_types):  # We;ve got a string filename
                 if test_is_zip(filename):  # We can find an existing zip file somewhere in the filename
@@ -301,7 +301,7 @@ class ZipFolderMixin(object):
             flatten = self.flat
 
         if self.File is None and directory is None:
-            self.File = zf.ZipExtFile(self._dialog(), "r")
+            self.File = zf.ZipFile(self._dialog(), "r")
             close_me = True
         elif isinstance(directory, zf.ZipFile):
             if directory.fp:
@@ -398,7 +398,6 @@ class ZipFolderMixin(object):
         except (AttributeError, IndexError, KeyError, OSError, IOError) as err:
             if self.debug:
                 print(err)
-            pass
 
         if instantiate:
             try:
