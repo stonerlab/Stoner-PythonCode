@@ -49,7 +49,7 @@ import warnings
 import numpy as np, matplotlib.pyplot as plt, os
 from Stoner.tools import istuple, isiterable
 from scipy.interpolate import griddata
-from skimage import exposure, feature, filters, measure, transform, util
+from skimage import feature, measure, transform
 from matplotlib.colors import Normalize
 import matplotlib.cm as cm
 

@@ -622,7 +622,6 @@ class PlotMethodsMixin(object):
         """Pass through for :py:func:`matplotlib.pyplot.figure` but alos takes a note of the arguments for later."""
         self._fig_args = args
 
-        kargs["figsize"]
         self._fig_kargs = getattr(self, "fig_defaults", {})
         self._fig_kargs.update(kargs)
         self.__figure = figure(*self._fig_args, **self._fig_kargs)

@@ -5,7 +5,6 @@ import numpy as np
 import numbers
 import warnings
 
-from skimage.viewer import CollectionViewer
 from Stoner.compat import string_types, int_types
 from Stoner.tools import all_type
 from .core import ImageArray, dtype_range, ImageFile
@@ -91,7 +90,7 @@ class ImageStackMixin(object):
         ):  # Initialise with 3D numpy array, first coordinate is number of images
             super(ImageStackMixin, self).__init__(*args[1:], **kargs)
             self.imarray = other
-            self.imarray.shape
+            _ = self.imarray.shape
             self._sizes = np.ones((other.shape[0], 2), dtype=int) * other.shape[1:]
             self._names = ["Untitled-{}".format(d) for d in range(other.shape[0])]
             for n in self._names:
@@ -458,7 +457,7 @@ class StackAnalysisMixin(object):
 
 class ImageStack(StackAnalysisMixin, ImageStackMixin, ImageFolderMixin, DiskBasedFolder, baseFolder):
 
-    """An akternative implementation of an image stack based on baseFolder."""
+    """An alternative implementation of an image stack based on baseFolder."""
 
     pass
 

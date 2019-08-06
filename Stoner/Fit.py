@@ -212,7 +212,7 @@ def make_model(model_func):
                     if param not in self.param_names:
                         raise RuntimeError("Unrecognised parameter in hinter function: {}".format(param))
                     if not isinstance(limits[param], Mapping):
-                        raise RuntimeError("{Arameter hint for {} was not a mapping".format(param))
+                        raise RuntimeError("Parameter hint for {} was not a mapping".format(param))
                 return limits
 
             cls._limits = _limits_proxy

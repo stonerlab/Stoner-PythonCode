@@ -2139,7 +2139,7 @@ class AnalysisMixin(object):
             p0 = p[defaults[mode]]
         else:
             assertion(callable(func), "Keyword func should be callable if given")
-            (args, __, keywords, defaults) = getfullargspec(func)  # pylint: disable=W1505
+            args = getfullargspec(func)[0]  # pylint: disable=W1505
             assertion(isiterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given")
             assertion(
                 len(p0) == len(args) - 2, "Keyword p0 should be the same length as the optional arguments to func"

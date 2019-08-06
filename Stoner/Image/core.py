@@ -287,9 +287,9 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         """
         super(ImageArray, self).__init__(*args, **kwargs)
 
-    @classmethod
-    def _load(cls, filename, **kargs):
+    def _load(self, filename, **kargs):
         """Load an image from a file and return as a ImageArray."""
+        cls = self.__class__
         fmt = kargs.pop("fmt", os.path.splitext(filename)[1][1:])
         handlers = {"npy": cls._load_npy, "png": cls._load_png, "tiff": cls._load_tiff, "tif": cls._load_tiff}
         if fmt not in handlers:
@@ -663,7 +663,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         if getattr(self, "debug", False):
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 2)
-            print(curframe.calframe)
+            print(curframe, calframe)
         if isinstance(index, ImageFile) and index.image.dtype == bool:
             index = index.image
         if isinstance(index, string_types):

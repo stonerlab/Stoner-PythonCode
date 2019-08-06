@@ -116,7 +116,7 @@ class HDF5File(DataFile):
             _raise_error(f, message="Could not find group {} in file {}".format(group, filename))
         return f
 
-    def _load(self, filename=None, **kargs):
+    def _load(self, filename, **kargs):
         """Loads data from a hdf5 file
 
         Args:

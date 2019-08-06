@@ -81,7 +81,7 @@ class odr_Model(odrModel):
         elif callable(model):
             self.model = None
             meta["name"] = model.__name__
-            arguments, carargs, jeywords, defaults = getfullargspec(model)[0:4]  # pylint: disable=W1505
+            arguments = getfullargspec(model)[0]  # pylint: disable=W1505
             meta["param_names"] = list(arguments[1:])
             meta["param_hints"] = {x: {"value": 1.0} for x in arguments[1:]}
             # print(arguments,carargs,jeywords,defaults)

@@ -9,10 +9,8 @@ import wx
 from Stoner import Data
 from Stoner.compat import string_types
 
-from wx.lib.masked import NumCtrl
-
 from plugins.data_loader_framework import Template
-from plugins.utils import ShowErrorDialog, ShowWarningDialog, ShowInfoDialog
+from plugins.utils import ShowWarningDialog
 
 
 class Plugin(Template):

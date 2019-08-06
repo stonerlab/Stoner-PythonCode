@@ -1,7 +1,7 @@
 """Demo of new Stoner.Analysis.AnalyseFile.lmfit
 """
 from __future__ import print_function
-from Stoner import __home__, Data
+from Stoner import __home__
 from os.path import join
 from Stoner.Fit import cfg_data_from_ini, cfg_model_from_ini
 

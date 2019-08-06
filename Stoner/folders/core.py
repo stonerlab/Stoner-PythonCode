@@ -664,7 +664,7 @@ class baseFolder(MutableSequence):
                 if all_type(name, (int_types, slice)):  # Looks like we're accessing data arrays
                     test = (len(item),) + item[0].data[name].shape
                     output = _np_.array([]).view(item[0].data.__class__)
-                    for ix, data in enumerate(item):
+                    for data in item:
                         output = _np_.append(output, data[name])
                     output = output.reshape(test)
                     return output

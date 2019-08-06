@@ -749,7 +749,7 @@ class setas(MutableMapping):
         If multiple columns are assigned to the same type, then the column names are
         returned as a list. If column headers are duplicated"""
         ret = dict()
-        for i, (k, ch) in enumerate(zip(self._setas, self._unique_headers)):
+        for (k, ch) in zip(self._setas, self._unique_headers):
             if k != ".":
                 if k in ret:
                     ret[k].append(ch)

@@ -8,7 +8,6 @@ from collections import OrderedDict, MutableMapping, Mapping
 import re
 import copy
 import numpy as np
-from numpy import isnan
 from numpy import NaN
 import asteval
 
