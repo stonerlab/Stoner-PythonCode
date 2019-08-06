@@ -143,7 +143,7 @@ class PlotMixin(object):
     def fig(self, value):
         """Set the current figure."""
         if isinstance(value, plt.Figure):
-            self.__figure, ax = self.template.new_figure(value.number)
+            self.__figure = self.template.new_figure(value.number)[0]
         elif isinstance(value, int):
             value = plt.Figure(value)
             self.fig = value
@@ -349,7 +349,6 @@ class PlotMixin(object):
             """
         try:
             from mayavi import mlab  # might not work !
-            from tvtk.api import tvtk
         except ImportError:
             return None
         if "scalars" in kargs:
@@ -463,7 +462,7 @@ class PlotMixin(object):
                 if self.__figure is not plt.gcf():
                     plt.close(plt.gcf())
 
-        (args, vargs, kwargs) = getargspec(function)[:3]
+        (args, _, kwargs) = getargspec(function)[:3]
         # Manually overide the list of arguments that the plotting function takes if it takes keyword dictionary
         if isinstance(otherkargs, (list, tuple)) and kwargs is not None:
             args.extend(otherkargs)
@@ -739,11 +738,11 @@ class PlotMixin(object):
             The current \b Stoner.plot.PlotMixin instance
         """
         if figure is None:
-            figure, ax = self.template.new_figure(None, projection=projection, **kargs)
+            figure = self.template.new_figure(None, projection=projection, **kargs)[0]
         elif isinstance(figure, int):
-            figure, ax = self.template.new_figure(figure, projection=projection, **kargs)
+            figure = self.template.new_figure(figure, projection=projection, **kargs)[0]
         elif isinstance(figure, mplfig.Figure):
-            figure, ax = self.template.new_figure(figure.number, projection=projection, **kargs)
+            figure = self.template.new_figure(figure.number, projection=projection, **kargs)[0]
         self.__figure = figure
         return self
 

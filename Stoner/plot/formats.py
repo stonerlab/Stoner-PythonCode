@@ -544,7 +544,7 @@ class GBPlotStyle(DefaultPlotStyle):
         ax.yaxis.set_ticks_position("left")
         ax.spines["left"].set_position("zero")
         ax.spines["bottom"].set_position("zero")
-        plt.draw
+        plt.draw()
 
 
 class JTBPlotStyle(DefaultPlotStyle):

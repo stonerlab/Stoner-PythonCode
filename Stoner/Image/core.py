@@ -32,7 +32,6 @@ from Stoner.compat import (
     python_v3,
     string_types,
     get_filedialog,
-    bytes,
     int_types,
 )  # Some things to help with Python2 and Python3 compatibility
 import inspect
@@ -179,7 +178,8 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 # Filename- load datafile
                 if not os.path.exists(arg):
                     raise ValueError("File path does not exist {}".format(arg))
-                ret = cls._load(arg, **array_args)
+                ret = ret = np.empty((0, 0), dtype=float).view(cls)
+                ret = ret._load(arg, **array_args)
             elif isinstance(arg, ImageFile):
                 # extract the image
                 ret = arg.image
@@ -216,6 +216,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         if getattr(self, "debug", False):
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 2)
+            print(curframe, calframe)
         _extra_attributes = getattr(obj, "_optinfo", deepcopy(ImageArray._extra_attributes_default))
         setattr(self, "_optinfo", copy(_extra_attributes))
         for k, v in _extra_attributes.items():
@@ -287,7 +288,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         """
         super(ImageArray, self).__init__(*args, **kwargs)
 
-    def _load(self, filename, **kargs):
+    def _load(self, filename, *args, **kargs):
         """Load an image from a file and return as a ImageArray."""
         cls = self.__class__
         fmt = kargs.pop("fmt", os.path.splitext(filename)[1][1:])
