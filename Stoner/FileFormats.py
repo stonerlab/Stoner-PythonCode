@@ -365,5 +365,5 @@ class PinkLibFile(_SC_.DataFile):
         self.data = data[:, 0:-2]  # Deal with an errant tab at the end of each line
         self.column_headers = column_headers
         if _np_.all([h in column_headers for h in ("T (C)", "R (Ohm)")]):
-            self.setas(x="T (C)", y="R (Ohm)")
+            self.setas(x="T (C)", y="R (Ohm)")  # pylint: disable=not-callable
         return self

@@ -73,7 +73,7 @@ if __name__ == "__main__":
     d.labels = None
 
     # Deine x and y columns and normalise to a big number
-    d.setas(x="Field", y="FMR")
+    d.setas(x="Field", y="FMR")  # pylint: disable=not-callable
     d.normalise(base=(-1e6, 1e6))
     fldr = d.split(field_sign, "Frequency")
 
@@ -108,7 +108,9 @@ if __name__ == "__main__":
         subfldr.plot(figsize=(8, 8), extra=extra)
 
         # Work with the overall results
-        result.setas(y="H_res", e="H_res.stderr", x="Freq")
+        result.setas(
+            y="H_res", e="H_res.stderr", x="Freq"
+        )  # pylint: disable=not-callable
         result.y = result.y / mu_0  # Convert to A/m
         result.e = result.e / mu_0
 

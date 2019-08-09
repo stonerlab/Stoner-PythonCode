@@ -1320,7 +1320,7 @@ class ImageFile(metadataObject):
         shape = kargs.pop("shape", "unique")
 
         _ = data._col_args(**kargs)
-        data.setas(x=_.xcol, y=_.ycol, z=_.zcol)
+        data.setas(x=_.xcol, y=_.ycol, z=_.zcol)  # pylint: disable=not-callable
         if isinstance(shape, string_types) and shape == "unique":
             shape = (len(np.unique(data.x)), len(np.unique(data.y)))
         elif istuple(shape, int_types, int_types):

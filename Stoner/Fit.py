@@ -321,7 +321,7 @@ def cfg_data_from_ini(inifile, filename=None, **kargs):
         if cols[c] is None:
             del cols[c]
 
-    data.setas(**cols)
+    data.setas(**cols)  # pylint: disable=not-callable
     return data
 
 

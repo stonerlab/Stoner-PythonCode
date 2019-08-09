@@ -679,7 +679,7 @@ class DataFile(metadataObject):
         self._data._setas(value)
 
     @classproperty
-    def subclasses(cls):
+    def subclasses(cls):  # pylint: disable=no-self-argument
         """Return a list of all in memory subclasses of this DataFile."""
         if cls._subclasses is None or cls._subclasses[0] != len(DataFile.__subclasses__()):
             subclasses = {x: (x.priority, x.__name__) for x in itersubclasses(DataFile)}
@@ -1852,7 +1852,7 @@ class DataFile(metadataObject):
 
         This method is useful when chaining methods together to change the setas assignments on the fly.
         """
-        self.setas(*args, **kargs)
+        self.setas(*args, **kargs)  # pylint: disable=not-callable
         return self
 
     def closest(self, value, xcol=None):

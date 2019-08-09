@@ -672,7 +672,7 @@ class VSMFile(Core.DataFile):
         cols = self.data.shape[1]
         self.data = np.reshape(self.data.compressed(), (-1, cols))
         self.column_headers = column_headers
-        self.setas(x="H_vsm (T)", y="m (emu)")
+        self.setas(x="H_vsm (T)", y="m (emu)")  # pylint: disable=not-callable
 
     def _load(self, filename=None, *args, **kargs):
         """VSM file loader routine.
