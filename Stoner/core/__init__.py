@@ -7,7 +7,7 @@ __all__ = [
     "typeHintedDict",
     "regexpDict",
     "_setas",
-    "string_to_type" "DataArray",
+    "DataArray",
     "array",
     "base",
     "setas",

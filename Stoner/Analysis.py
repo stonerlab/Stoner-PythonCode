@@ -279,6 +279,53 @@ def _poly_outlier(row, window, metric=3.0, ycol=None, xcol=None, order=1, yerr=N
     return (pval - row[ycol]) ** 2 > metric * perr
 
 
+def __threshold(threshold, data, rising=True, falling=False):
+    """Internal function that implements the threshold method - also used in peak-finder
+
+    Args:
+        threshold (float):
+            Threshold valuye in data to look for
+        rising (bool):
+            Find points where data is rising up past threshold
+        falling (bool):
+            Find points where data is falling below the threshold
+
+    Returns:
+        (array):
+            Fractional indices where the data has crossed the threshold assuming a
+            straight line interpolation between two points.
+    """
+    # First we find all points where we cross zero in the correct direction
+    current = data
+    mask = ma.getmaskarray(data)
+    previous = _np_.roll(current, 1)
+    index = _np_.arange(len(current))
+    sdat = _np_.column_stack((index, current, previous))
+    if rising and not falling:
+        expr = lambda x: (x[1] >= threshold) & (x[2] < threshold)
+    elif rising and falling:
+        expr = lambda x: ((x[1] >= threshold) & (x[2] < threshold)) | ((x[1] <= threshold) & (x[2] > threshold))
+    elif not rising and falling:
+        expr = lambda x: (x[1] <= threshold) & (x[2] > threshold)
+    else:
+        expr = lambda x: False
+
+    current = ma.masked_array(current)
+    current.mask = mask
+    # Now we refine the estimate of zero crossing with a cubic interpolation
+    # and use Newton's root finding method to locate the zero in the interpolated data
+
+    intr = interp1d(index, data - threshold, kind="cubic")
+    roots = []
+    for ix, x in enumerate(sdat):
+        if expr(x) and ix > 0 and ix < len(data) - 1:  # There's a root somewhere here !
+            try:
+                roots.append(newton(intr, ix))
+            except ValueError:  # fell off the end here
+                pass
+    return _np_.array(roots)
+
+
 class AnalysisMixin(object):
 
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods."""
@@ -401,52 +448,6 @@ class AnalysisMixin(object):
         else:
             raise RuntimeError("Bad column index: {}".format(col))
         return data, name
-
-    def __threshold(self, threshold, data, rising=True, falling=False):
-        """Internal function that implements the threshold method - also used in peak-finder
-
-        Args:
-            threshold (float):
-                Threshold valuye in data to look for
-            rising (bool):
-                Find points where data is rising up past threshold
-            falling (bool):
-                Find points where data is falling below the threshold
-
-        Returns:
-            (array):
-                Fractional indices where the data has crossed the threshold assuming a
-                straight line interpolation between two points.
-        """
-        # First we find all points where we cross zero in the correct direction
-        current = data
-        mask = ma.getmaskarray(data)
-        previous = _np_.roll(current, 1)
-        index = _np_.arange(len(current))
-        sdat = _np_.column_stack((index, current, previous))
-        if rising and not falling:
-            expr = lambda x: (x[1] >= threshold) & (x[2] < threshold)
-        elif rising and falling:
-            expr = lambda x: ((x[1] >= threshold) & (x[2] < threshold)) | ((x[1] <= threshold) & (x[2] > threshold))
-        elif not rising and falling:
-            expr = lambda x: (x[1] <= threshold) & (x[2] > threshold)
-        else:
-            expr = lambda x: False
-
-        current = ma.masked_array(current)
-        current.mask = mask
-        # Now we refine the estimate of zero crossing with a cubic interpolation
-        # and use Newton's root finding method to locate the zero in the interpolated data
-
-        intr = interp1d(index, data - threshold, kind="cubic")
-        roots = []
-        for ix, x in enumerate(sdat):
-            if expr(x) and ix > 0 and ix < len(data) - 1:  # There's a root somewhere here !
-                try:
-                    roots.append(newton(intr, ix))
-                except ValueError:  # fell off the end here
-                    pass
-        return _np_.array(roots)
 
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones"""

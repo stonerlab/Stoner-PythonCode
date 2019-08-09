@@ -254,14 +254,17 @@ class ZipFolderMixin(object):
 
     @property
     def full_key(self):
+        """Generate a full canonical path through the zip archive to this file."""
         return path.relpath(self.path, self.File.filename).replace(path.sep, "/")
 
     @property
     def key(self):
+        """Return the immediate filename of the stored file."""
         return path.basename(self.directory)
 
     @key.setter
     def key(self, value):
+        """Set the immediate filename that will be used when the file is saved."""
         self.path = pathjoin(self.directory, value)
 
     def _dialog(self, message="Select Folder", new_directory=True, mode="r"):

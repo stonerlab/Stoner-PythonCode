@@ -52,6 +52,27 @@ except ImportError:
     _3D = False
 
 
+def __mpl3DQuiver(X, Y, Z, U, V, W, **kargs):
+    """Helper function to plot vector fields using mpltoolkit.quiver.
+
+    Args:
+        X (array): X data co-ordinates
+        Y (array): Y data co-ordinates
+        Z (array): Z data co-ordinates
+        U (array): U data vector field component
+        V (array): V data vector field component
+        W (array): W data vector field component
+
+    Return:
+        matpltolib.pyplot.figure with a quiver plot."""
+    if not _3D:
+        raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
+    ax = kargs.pop("ax", plt.gca(projection="3d"))
+    vector_field = ax.quiver(X, Y, Z, U, V, W, **kargs)
+
+    return vector_field
+
+
 class PlotMixin(object):
 
     """A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.
@@ -128,10 +149,12 @@ class PlotMixin(object):
 
     @property
     def cmap(self):
+        """Get the current cmap."""
         return plt.get_cmap()
 
     @cmap.setter
     def cmap(self, cmap):
+        """Set the plot cmap."""
         return plt.set_cmap(cmap)
 
     @property
@@ -284,26 +307,6 @@ class PlotMixin(object):
         self.fig.colorbar(surf, shrink=0.5, aspect=5, extend="both")
 
         return surf
-
-    def __mpl3DQuiver(self, X, Y, Z, U, V, W, **kargs):
-        """Helper function to plot vector fields using mpltoolkit.quiver.
-
-        Args:
-            X (array): X data co-ordinates
-            Y (array): Y data co-ordinates
-            Z (array): Z data co-ordinates
-            U (array): U data vector field component
-            V (array): V data vector field component
-            W (array): W data vector field component
-
-        Return:
-            matpltolib.pyplot.figure with a quiver plot."""
-        if not _3D:
-            raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
-        ax = kargs.pop("ax", plt.gca(projection="3d"))
-        vector_field = ax.quiver(X, Y, Z, U, V, W, **kargs)
-
-        return vector_field
 
     def _vector_color(self, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None, wcol=None, **kargs):
         """Map a vector direction in the data to a value for use with a colormnap."""
@@ -1518,7 +1521,7 @@ class PlotMixin(object):
             ]
         else:
             defaults = {
-                "plotter": self.__mpl3DQuiver,
+                "plotter": __mpl3DQuiver,
                 "show_plot": True,
                 "figure": self.__figure,
                 "title": os.path.basename(self.filename),
@@ -1534,7 +1537,7 @@ class PlotMixin(object):
                     if isinstance(label, list):
                         label = ",".join(label)
                     defaults[k] = label
-            if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] == self.__mpl3DQuiver):
+            if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] == __mpl3DQuiver):
                 otherkargs = ["color", "cmap", "linewidth", "ax", "length", "pivot", "arrow_length_ratio"]
             else:
                 otherkargs = ["color", "linewidth"]

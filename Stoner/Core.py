@@ -300,6 +300,8 @@ class DataFile(metadataObject):
     _conv_string = _np_.vectorize(str)
     _conv_float = _np_.vectorize(float)
 
+    _subclasses = None
+
     # ============================================================================================================================
     ############################                       Object Construction                        ###############################
     # ============================================================================================================================
@@ -677,13 +679,17 @@ class DataFile(metadataObject):
         self._data._setas(value)
 
     @classproperty
-    def subclasses(self):
+    def subclasses(cls):
         """Return a list of all in memory subclasses of this DataFile."""
-        subclasses = {x: (x.priority, x.__name__) for x in itersubclasses(DataFile)}
-        ret = OrderedDict()
-        ret["DataFile"] = DataFile
-        for cls, _ in sorted(list(subclasses.items()), key=lambda c: c[1]):
-            ret[cls.__name__] = cls
+        if cls._subclasses is None or cls._subclasses[0] != len(DataFile.__subclasses__()):
+            subclasses = {x: (x.priority, x.__name__) for x in itersubclasses(DataFile)}
+            ret = OrderedDict()
+            ret["DataFile"] = DataFile
+            for klass, _ in sorted(list(subclasses.items()), key=lambda c: c[1]):
+                ret[klass.__name__] = klass
+            cls._subclasses = (len(DataFile.__subclasses__()), ret)
+        else:
+            ret = cls._subclasses[1]
         return ret
 
     @property
@@ -1052,7 +1058,9 @@ class DataFile(metadataObject):
         try:
             return super(DataFile, self).__getattr__(name)
         except AttributeError:
-            pass
+            ret = self.__dict__.get(name, self.__class__.__dict__.get(name, None))
+            if ret is not None:
+                return ret
         if name in setas_cols:
             ret = self._getattr_col(name)
             if ret is not None:

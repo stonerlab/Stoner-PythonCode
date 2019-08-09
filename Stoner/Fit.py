@@ -949,10 +949,10 @@ def wlfit(B, s0, DS, B1, B2):
         B2 = B1 * 1.00001  # prevent dividing by zero
 
     # performs calculation for all parts
-    for tt in range(len(B)):
-        if B[tt] != 0:  # prevent dividing by zero
-            WLpt1 = digamma(0.5 + B2 / _np_.abs(B[tt]))
-            WLpt2 = digamma(0.5 + B1 / _np_.abs(B[tt]))
+    for tt, Bi in enumerate(B):
+        if Bi != 0:  # prevent dividing by zero
+            WLpt1 = digamma(0.5 + B2 / _np_.abs(Bi))
+            WLpt2 = digamma(0.5 + B1 / _np_.abs(Bi))
         else:
             WLpt1 = (digamma(0.5 + B2 / _np_.abs(B[tt - 1])) + digamma(0.5 + B2 / _np_.abs(B[tt + 1]))) / 2
             WLpt2 = (digamma(0.5 + B1 / _np_.abs(B[tt - 1])) + digamma(0.5 + B1 / _np_.abs(B[tt + 1]))) / 2
@@ -998,6 +998,7 @@ class WLfit(Model):
         super(WLfit, self).__init__(wlfit, *args, **kwargs)
 
     def guess(self, data, B=None, **kwargs):
+        """Guess parameters for weak localisation fit."""
         s0, DS, B1, B2 = 1.0, 1.0, 1.0, 1.0
         if B is not None:
             zpos = _np_.argmin(_np_.abs(B))
@@ -1169,8 +1170,7 @@ def fluchsSondheimer(t, l, p, sigma_0):
     kernel = lambda x, k: (x - x ** 3) * _np_.exp(-k * x) / (1 - _np_.exp(-k * x))
 
     result = _np_.zeros(k.shape)
-    for i in range(len(k)):
-        v = k[i]
+    for i, v in enumerate(k):
         ret1 = 1 - (3 * (1 - p) / (8 * v)) + (3 * (1 - p) / (2 * v))
         ret2 = quad(kernel, 0, 1, (v,))[0]
         result[i] = ret1 * ret2

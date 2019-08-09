@@ -115,10 +115,12 @@ class odr_Model(odrModel):
 
     @property
     def p0(self):
+        """Convert an estimate attribute as p0."""
         return getattr(self, "estimate", None)
 
     @property
     def param_names(self):
+        """Convert the meta parameter key param_names to an attribute."""
         return self.meta["param_names"]
 
 

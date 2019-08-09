@@ -327,6 +327,7 @@ class baseFolder(MutableSequence):
 
     @property
     def is_empty(self):
+        """Return True if the folder is empty."""
         return not len(self) and not len(self.groups)
 
     @property
@@ -349,12 +350,14 @@ class baseFolder(MutableSequence):
 
     @property
     def loader(self):
+        """Return a callable that will load the files on demand."""
         if self._loader is None:
             self._loader = self.type
         return self._loader
 
     @loader.setter
     def loader(self, value):
+        """Set the loader class ensuring that it is a metadataObject."""
         if issubclass(value, metadataObject):
             self._loader = value
 
@@ -423,10 +426,12 @@ class baseFolder(MutableSequence):
 
     @property
     def root(self):
+        """Return the real folder root."""
         return self._root
 
     @root.setter
     def root(self, value):
+        """Set the folder root."""
         self._root = value
 
     @property

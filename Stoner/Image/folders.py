@@ -21,17 +21,43 @@ class _generator(object):
     """A helper class to iterator over ImageFolder yet remember it's own length."""
 
     def __init__(self, fldr):
+        """Initialise the generator object.
+
+        Args:
+            fldr (ImageFolder): The folder that we iterate over.
+        Returns:
+            None.
+        """
         self.fldr = fldr
         self.len = len(fldr)
 
     def __len__(self):
+        """Get the length of the iterator
+
+        Returns:
+            int: Length of the generator object.
+
+        """
         return self.len
 
     def __iter__(self):
+        """Return an iterator object.
+
+        Returns:
+            __generator class: This is its own generator object.
+        """
         self.ix = 0
         return self
 
     def __next__(self):
+        """Iterator accessor.
+
+        Raises:
+            StopIteration: Done iterating through the folder.
+
+        Returns:
+            ret (2D array): Image data.
+        """
         if self.ix < len(self):
             ret = self[self.ix]
             self.ix += 1
@@ -40,12 +66,21 @@ class _generator(object):
             raise StopIteration("Finished iterating Folder.")
 
     def __getitem__(self, index):
+        """Item accessor method
+
+        Args:
+            index (int): Image to return.
+
+        Returns:
+            ret (2D array): Image array data.
+        """
         ret = self.fldr[index]
         if hasattr(ret, "image"):
             ret = ret.image
         return ret
 
     def next(self):
+        """Iterate to next value."""
         return self.__next__()
 
 
