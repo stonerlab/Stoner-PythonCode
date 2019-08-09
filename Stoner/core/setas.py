@@ -687,8 +687,7 @@ class setas(MutableMapping):
                 v = self[c]
                 self.unset(c)
                 return (c, v)
-        else:
-            raise KeyError("No columns set in setas!")
+        raise KeyError("No columns set in setas!")
 
     def setdefault(self, name, default=None):
         """Implement a setdefault method."""

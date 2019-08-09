@@ -1024,7 +1024,17 @@ class baseFolder(MutableSequence):
                 else:
                     p = multiprocessing.Pool(int(multiprocessing.cpu_count() / 2))
                 imap = p.imap
-            except:  # Fallback to non-multiprocessing if necessary
+            except (
+                ArithmeticError,
+                AttributeError,
+                LookupError,
+                RuntimeError,
+                NameError,
+                OSError,
+                TypeError,
+                ValueError,
+            ):
+                # Fallback to non-multiprocessing if necessary
                 p = None
                 if python_v3:
                     imap = map

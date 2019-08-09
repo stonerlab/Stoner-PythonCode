@@ -1050,7 +1050,16 @@ class FittingMixin(object):
                 yy = ydata
             try:  # Skip the guess if it fails
                 p0 = p0(yy, xdat)
-            except:
+            except (
+                ArithmeticError,
+                AttributeError,
+                LookupError,
+                RuntimeError,
+                NameError,
+                OSError,
+                TypeError,
+                ValueError,
+            ):
                 p0 = None
 
         p0 = _curve_fit_p0_list(p0, func)

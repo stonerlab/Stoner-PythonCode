@@ -370,7 +370,6 @@ class HDF5FolderMixin(object):
         except (AttributeError, IndexError, KeyError, OSError, IOError) as err:
             if self.debug:
                 print(err)
-            pass
         names = list(os.path.split(name))
         if names[0] == "/":  # Prune leading ./
             names = names[1:]
