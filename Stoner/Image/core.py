@@ -60,6 +60,43 @@ dtype_range = {
 }
 
 
+def __add_core__(result, other):
+    """Actually do result=result-other."""
+    if isinstance(other, result.__class__) and result.shape == other.shape:
+        result.image += other.image
+    elif isinstance(other, np.ndarray) and other.shape == result.shape:
+        result.image += other
+    elif isinstance(other, (int, float)):
+        result.image += other
+    else:
+        return NotImplemented
+    return result
+
+
+def __div_core__(result, other):
+    """Actually do result=result/other."""
+    # Cheat and pass through to ImageArray
+
+    if isinstance(other, ImageFile):
+        other = other.image
+
+    result.image = result.image / other
+    return result
+
+
+def __sub_core__(result, other):
+    """Actually do result=result-other."""
+    if isinstance(other, result.__class__) and result.shape == other.shape:
+        result.image -= other.image
+    elif isinstance(other, np.ndarray) and other.shape == result.shape:
+        result.image -= other
+    elif isinstance(other, (int, float)):
+        result.image -= other
+    else:
+        return NotImplemented
+    return result
+
+
 class ImageArray(np.ma.MaskedArray, metadataObject):
 
     """:py:class:`Stoner.Image.core.ImageArray` is a numpy array like class with a metadata parameter and pass through to skimage methods.
@@ -1194,25 +1231,13 @@ class ImageFile(metadataObject):
     def __add__(self, other):
         """Implement the subtract operator"""
         result = self.clone
-        result = self.__add_core__(result, other)
+        result = __add_core__(result, other)
         return result
 
     def __iadd__(self, other):
         """Implement the inplace subtract operator"""
         result = self
-        result = self.__add_core__(result, other)
-        return result
-
-    def __add_core__(self, result, other):
-        """Actually do result=result-other."""
-        if isinstance(other, result.__class__) and result.shape == other.shape:
-            result.image += other.image
-        elif isinstance(other, np.ndarray) and other.shape == result.shape:
-            result.image += other
-        elif isinstance(other, (int, float)):
-            result.image += other
-        else:
-            return NotImplemented
+        result = __add_core__(result, other)
         return result
 
     if python_v3:
@@ -1220,13 +1245,13 @@ class ImageFile(metadataObject):
         def __truediv__(self, other):
             """Implement the divide operator"""
             result = self.clone
-            result = self.__div_core__(result, other)
+            result = __div_core__(result, other)
             return result
 
         def __itruediv__(self, other):
             """Implement the inplace divide operator"""
             result = self
-            result = self.__div_core__(result, other)
+            result = __div_core__(result, other)
             return result
 
     else:
@@ -1234,47 +1259,25 @@ class ImageFile(metadataObject):
         def __div__(self, other):
             """Implement the divide operator"""
             result = self.clone
-            result = self.__div_core__(result, other)
+            result = __div_core__(result, other)
             return result
 
         def __idiv__(self, other):
             """Implement the inplace divide operator"""
             result = self
-            result = self.__div_core__(result, other)
+            result = __div_core__(result, other)
             return result
-
-    def __div_core__(self, result, other):
-        """Actually do result=result/other."""
-        # Cheat and pass through to ImageArray
-
-        if isinstance(other, ImageFile):
-            other = other.image
-
-        result.image = result.image / other
-        return result
 
     def __sub__(self, other):
         """Implement the subtract operator"""
         result = self.clone
-        result = self.__sub_core__(result, other)
+        result = __sub_core__(result, other)
         return result
 
     def __isub__(self, other):
         """Implement the inplace subtract operator"""
         result = self
-        result = self.__sub_core__(result, other)
-        return result
-
-    def __sub_core__(self, result, other):
-        """Actually do result=result-other."""
-        if isinstance(other, result.__class__) and result.shape == other.shape:
-            result.image -= other.image
-        elif isinstance(other, np.ndarray) and other.shape == result.shape:
-            result.image -= other
-        elif isinstance(other, (int, float)):
-            result.image -= other
-        else:
-            return NotImplemented
+        result = __sub_core__(result, other)
         return result
 
     def __neg__(self):
@@ -1346,6 +1349,7 @@ class ImageFile(metadataObject):
 
         @wraps(workingfunc)
         def gen_func(*args, **kargs):
+            """This will wrap a called method."""
 
             box = kargs.pop("_box", None)
             if len(args) > 0:
@@ -1541,23 +1545,28 @@ class DrawProxy(object):
 class MaskProxy(object):
     @property
     def _IA(self):
+        """Get the underliying image data."""
         return self._IF.image
 
     @property
     def _mask(self):
+        """Get the mask for the underlying image."""
         self._IA.mask = np.ma.getmaskarray(self._IA)
         return self._IA.mask
 
     @property
     def data(self):
+        """Get the underlying data as an array - compatibility accessor"""
         return self[:]
 
     @property
     def image(self):
+        """Get the underlying data as an array - compatibility accessor"""
         return self[:]
 
     @property
     def draw(self):
+        """Access the draw proxy opbject."""
         return DrawProxy(self._mask)
 
     def __init__(self, *args, **kargs):
@@ -1595,13 +1604,16 @@ class MaskProxy(object):
         _proxy_call.__name__ = func.__name__
         return fix_signature(_proxy_call, func)
 
-    def __rep__(self):
+    def __repr__(self):
+        """Make a textual representation of the image."""
         return repr(self._mask)
 
     def __str__(self):
+        """Make a textual representation of the image."""
         return repr(self._mask)
 
     def __neg__(self):
+        """Invert the mask."""
         return -self._mask
 
     def _repr_png_(self):

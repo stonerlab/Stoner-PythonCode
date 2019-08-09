@@ -17,7 +17,7 @@ from copy import deepcopy
 from Stoner.compat import string_types, get_filedialog, _pattern_type, makedirs
 from Stoner.tools import isiterable
 
-from Stoner.core.base import metadataObject
+from Stoner.core.base import metadataObject, string_to_type
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder, __add_core__ as _base__add_core__, __sub_core__ as _base__sub_core__
 from .utils import scan_dir, discard_earlier, filter_files
@@ -398,7 +398,7 @@ class DiskBasedFolder(object):
             if isinstance(p, _pattern_type) and (p.search(tmp.filename) is not None):
                 m = p.search(tmp.filename)
                 for k in m.groupdict():
-                    tmp.metadata[k] = tmp.metadata.string_to_type(m.group(k))
+                    tmp.metadata[k] = string_to_type(m.group(k))
         if self.read_means:  # Add mean and standard deviations to the metadata
             if len(tmp) == 0:
                 pass

@@ -12,6 +12,7 @@ import numpy as np
 import Stoner.Core as Core
 from .generic import CSVFile
 from Stoner.compat import bytes2str
+from Stoner.core.base import string_to_type
 
 
 class BigBlueFile(CSVFile):
@@ -85,19 +86,19 @@ class BirgeIVFile(Core.DataFile):
                     ix2 = val.index("STDEV")
                     key2 = val[ix2 : ix2 + 4 + len(key)]
                     val2 = val[ix2 + 4 + len(key) :]
-                    self.metadata[key2] = self.metadata.string_to_type(val2.strip())
+                    self.metadata[key2] = string_to_type(val2.strip())
                     val = val[:ix2]
-                self.metadata[key] = self.metadata.string_to_type(val.strip())
+                self.metadata[key] = string_to_type(val.strip())
             for ix, line in enumerate(data):  # Scan the ough lines to get metadata
                 if ":" in line:
                     parts = line.split(":")
-                    self.metadata[parts[0].strip()] = self.metadata.string_to_type(parts[1].strip())
+                    self.metadata[parts[0].strip()] = string_to_type(parts[1].strip())
                 elif "," in line:
                     for part in line.split(","):
                         parts = part.split(" ")
-                        self.metadata[parts[0].strip()] = self.metadata.string_to_type(parts[1].strip())
+                        self.metadata[parts[0].strip()] = string_to_type(parts[1].strip())
                 elif line.startswith("H "):
-                    self.metadata["H"] = self.metadata.string_to_type(line.split(" ")[1].strip())
+                    self.metadata["H"] = string_to_type(line.split(" ")[1].strip())
                 else:
                     headers = [x.strip() for x in line.split(" ")]
                     break

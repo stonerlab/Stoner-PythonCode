@@ -18,6 +18,7 @@ AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped
 
 
 def _load_ImageArray(f, **kargs):
+    """Utility method to create and image array."""
     kargs.pop("Img_num", None)  # REemove img_num if it exists
     return ImageArray(f, **kargs)
 
@@ -304,17 +305,20 @@ class ImageStackMixin(object):
 
     @imarray.setter
     def imarray(self, value):
+        """"Set the 3D stack of images - as [image,x,y]"""
         value = np.ma.MaskedArray(np.atleast_3d(value))
         self._stack = np.transpose(value, (1, 2, 0))
 
     @property
     def max_size(self):
+        """Get the biggest image dimensions in the stack."""
         if np.prod(self._sizes.shape) == 0:
             return (0, 0)
         return (self._sizes[:, 0].max(), self._sizes[:, 1].max())
 
     @property
     def shape(self):
+        """Return the stack shape - after re-ordering the indices."""
         x, y, z = self._stack.shape
         return (z, x, y)
 

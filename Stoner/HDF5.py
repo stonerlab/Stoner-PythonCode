@@ -29,6 +29,54 @@ def _raise_error(f, message="Not a valid hdf5 file."):
         raise StonerLoadError(message)
 
 
+def _open_filename(filename):
+    """Examine a file to see if it is an HDF5 file and open it if so.
+
+    Args:
+        filename (str): Name of the file to open
+
+    Returns:
+        (f5py.Group): Valid h5py.Group containg data/
+
+    Raises:
+        StonerLoadError if not a valid file.
+    """
+    parts = filename.split(os.pathsep)
+    filename = parts.pop(0)
+    group = ""
+    while len(parts) > 0:
+        if not path.exists(path.join(filename, parts[0])):
+            group = "/".join(parts)
+        else:
+            path.join(filename, parts.pop(0))
+
+    with open(filename, "rb") as sniff:  # Some code to manaully look for the HDF5 format magic numbers
+        sniff.seek(0, 2)
+        size = sniff.tell()
+        sniff.seek(0)
+        blk = sniff.read(8)
+        if not blk == b"\x89HDF\r\n\x1a\n":
+            c = 0
+            while sniff.tell() < size and len(blk) == 8:
+                sniff.seek(512 * 2 ** c)
+                c += 1
+                blk = sniff.read(8)
+                if blk == b"\x89HDF\r\n\x1a\n":
+                    break
+            else:
+                raise StonerLoadError("Couldn't find the HD5 format singature block")
+    try:
+        f = h5py.File(filename, "r+")
+        for grp in group.split("/"):
+            if grp.strip() != "":
+                f = f[grp]
+    except IOError:
+        _raise_error(f, message="Failed to open {} as a n hdf5 file".format(filename))
+    except KeyError:
+        _raise_error(f, message="Could not find group {} in file {}".format(group, filename))
+    return f
+
+
 class HDF5File(DataFile):
 
     """A sub class of DataFile that sores itself in a HDF5File or group.
@@ -69,53 +117,6 @@ class HDF5File(DataFile):
         if grp is not None:
             self._load(grp, **kargs)
 
-    def _open_filename(self, filename):
-        """Examine a file to see if it is an HDF5 file and open it if so.
-
-        Args:
-            filename (str): Name of the file to open
-
-        Returns:
-            (f5py.Group): Valid h5py.Group containg data/
-
-        Raises:
-            StonerLoadError if not a valid file.
-        """
-        parts = filename.split(os.pathsep)
-        filename = parts.pop(0)
-        group = ""
-        while len(parts) > 0:
-            if not path.exists(path.join(filename, parts[0])):
-                group = "/".join(parts)
-            else:
-                path.join(filename, parts.pop(0))
-
-        with open(filename, "rb") as sniff:  # Some code to manaully look for the HDF5 format magic numbers
-            sniff.seek(0, 2)
-            size = sniff.tell()
-            sniff.seek(0)
-            blk = sniff.read(8)
-            if not blk == b"\x89HDF\r\n\x1a\n":
-                c = 0
-                while sniff.tell() < size and len(blk) == 8:
-                    sniff.seek(512 * 2 ** c)
-                    c += 1
-                    blk = sniff.read(8)
-                    if blk == b"\x89HDF\r\n\x1a\n":
-                        break
-                else:
-                    raise StonerLoadError("Couldn't find the HD5 format singature block")
-        try:
-            f = h5py.File(filename, "r+")
-            for grp in group.split("/"):
-                if grp.strip() != "":
-                    f = f[grp]
-        except IOError:
-            _raise_error(f, message="Failed to open {} as a n hdf5 file".format(filename))
-        except KeyError:
-            _raise_error(f, message="Could not find group {} in file {}".format(group, filename))
-        return f
-
     def _load(self, filename, **kargs):
         """Loads data from a hdf5 file
 
@@ -131,7 +132,7 @@ class HDF5File(DataFile):
         else:
             self.filename = filename
         if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
-            f = self._open_filename(filename)
+            f = _open_filename(filename)
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
             f = filename
         else:

@@ -17,6 +17,7 @@ import numpy as np
 import Stoner.Core as Core
 from Stoner.compat import python_v3, str2bytes, bytes2str
 from Stoner.core.exceptions import StonerAssertionError, assertion
+from Stoner.core.base import string_to_type
 
 
 class LSTemperatureFile(Core.DataFile):
@@ -72,7 +73,7 @@ class LSTemperatureFile(Core.DataFile):
                 raise Core.StonerLoadError("Header did not contain recognised keys.")
             for (k, v) in zip(keys, vals):
                 v = v.split()[0]
-                self.metadata[k] = self.metadata.string_to_type(v)
+                self.metadata[k] = string_to_type(v)
             headers = bytes2str(next(data)).strip().split()
             column_headers = headers[1:]
             dat = np.genfromtxt(data)
@@ -213,7 +214,7 @@ class QDFile(Core.DataFile):
                     key = parts[0] + "," + parts[1]
                     key = key.title()
                     value = " ".join(parts[2:])
-                self.metadata[key] = self.metadata.string_to_type(value)
+                self.metadata[key] = string_to_type(value)
             else:
                 raise Core.StonerLoadError("No data in file!")
             if "Byapp" not in self:
@@ -760,7 +761,7 @@ class XRDFile(Core.DataFile):
                             key = parts[0].strip()
                             data = parts[1].strip()
                             # Keynames in main metadata are section:key - use theCore.DataFile magic to do type determination
-                            self[section + ":" + key] = self.metadata.string_to_type(data)
+                            self[section + ":" + key] = string_to_type(data)
             column_headers = ["Angle", "Counts"]  # Assume the columns were Angles and Counts
 
         self.data = np.reshape(self.data, (-1, 2))

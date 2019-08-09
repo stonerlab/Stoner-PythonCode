@@ -45,6 +45,7 @@ from Stoner.formats.facilities import BNLFile, MDAASCIIFile, OpenGDAFile, RasorF
 from Stoner.formats.generic import CSVFile, KermitPNGFile, TDMSFile, HyperSpyFile
 from Stoner.formats.rigs import BigBlueFile, BirgeIVFile, MokeFile, FmokeFile
 from .core.exceptions import assertion
+from .core.base import string_to_type
 import re
 import numpy as _np_
 import csv
@@ -197,7 +198,7 @@ class OVFFile(_SC_.DataFile):
                     if res is not None:
                         key = res.group(1)
                         val = res.group(2)
-                        self[key] = self.metadata.string_to_type(val)
+                        self[key] = string_to_type(val)
                     else:
                         raise _SC_.StonerLoadError("Failed to understand metadata")
             fmt = re.match(r".*Data\s+(.*)", line).group(1).strip()
@@ -257,7 +258,7 @@ class EasyPlotFile(_SC_.DataFile):
                     dataend = i
                 if line.startswith('"') and ":" in line:
                     parts = [x.strip() for x in line.strip('"').split(":")]
-                    self[parts[0]] = self.metadata.string_to_type(":".join(parts[1:]))
+                    self[parts[0]] = string_to_type(":".join(parts[1:]))
                 elif line.startswith("/"):  # command
                     parts = [x.strip('"') for x in next(csv.reader([line], delimiter=" ")) if x != ""]
                     cmd = parts[0].strip("/")

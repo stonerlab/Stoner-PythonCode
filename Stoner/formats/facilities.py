@@ -13,6 +13,7 @@ import numpy as np
 
 import Stoner.Core as Core
 from Stoner.compat import python_v3, str2bytes
+from Stoner.core.base import string_to_type
 
 
 class BNLFile(Core.DataFile):
@@ -157,7 +158,7 @@ class MDAASCIIFile(Core.DataFile):
                 line.strip()
                 if "=" in line:
                     parts = line[2:].split("=")
-                    self[parts[0].strip()] = self.metadata.string_to_type("".join(parts[1:]).strip())
+                    self[parts[0].strip()] = string_to_type("".join(parts[1:]).strip())
                 elif line.startswith("#  Extra PV:"):
                     # Onto the next metadata bit
                     break
@@ -174,7 +175,7 @@ class MDAASCIIFile(Core.DataFile):
                         key = bits[1]
                     if len(bits) > 3:
                         key = key + " ({})".format(bits[3])
-                    self[key] = self.metadata.string_to_type(bits[2])
+                    self[key] = string_to_type(bits[2])
                 else:
                     break  # End of Extra PV stuff
             else:
@@ -187,7 +188,7 @@ class MDAASCIIFile(Core.DataFile):
                     break  # Start of column headers now
                 elif "=" in line:
                     parts = line[2:].split("=")
-                    self[parts[0].strip()] = self.metadata.string_to_type("".join(parts[1:]).strip())
+                    self[parts[0].strip()] = string_to_type("".join(parts[1:]).strip())
             else:
                 raise Core.StonerLoadError("Overran end of scan header before column descriptions")
             colpat = re.compile(r"#\s+\d+\s+\[([^\]]*)\](.*)")
@@ -260,7 +261,7 @@ class OpenGDAFile(Core.DataFile):
                     continue
                 key = parts[0]
                 value = parts[1].strip()
-                self.metadata[key] = self.metadata.string_to_type(value)
+                self.metadata[key] = string_to_type(value)
             if python_v3:
                 column_headers = f.readline().strip().split("\t")
             else:

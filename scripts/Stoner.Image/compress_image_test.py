@@ -11,13 +11,13 @@ from PIL import Image
 import os
 import numpy as np
 
-os.chdir('C:\Users\phyrct\KermitData')
-i=Image.open('test.png')
-i.save('test_PILcompress.png',optimize=True)
+os.chdir(r"C:\Users\phyrct\KermitData")
+i = Image.open("test.png")
+i.save("test_PILcompress.png", optimize=True)
 
-j=Image.open('test_PILcompress.png')
+j = Image.open("test_PILcompress.png")
 
-p=np.asarray(i)
-q=np.asarray(j)
+p = np.asarray(i)
+q = np.asarray(j)
 
-print np.allclose(p,q)
+print(np.allclose(p, q))

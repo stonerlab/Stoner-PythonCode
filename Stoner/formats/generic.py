@@ -15,6 +15,7 @@ import numpy as np
 
 import Stoner.Core as Core
 from Stoner.compat import python_v3, str2bytes, hyperspy_ok
+from Stoner.core.base import string_to_type
 
 
 class CSVFile(Core.DataFile):
@@ -235,7 +236,7 @@ try:  # Optional tdms support
                     elif grp == "/'TDI Format 1.5'":
                         metadata = f.object("TDI Format 1.5")
                         for k, v in metadata.properties.items():
-                            self.metadata[k] = self.metadata.string_to_type(str(v))
+                            self.metadata[k] = string_to_type(str(v))
                     else:
                         if f.objects[grp].has_data:
                             chnl = grp.split("/")[-1]

@@ -3,7 +3,7 @@
 """
 Base classes for the Stoner package
 """
-__all__ = ["_evaluatable", "regexpDict", "typeHintedDict", "metadataObject"]
+__all__ = ["_evaluatable", "regexpDict", "string_to_type", "typeHintedDict", "metadataObject"]
 from collections import OrderedDict, MutableMapping, Mapping
 import re
 import copy
@@ -45,6 +45,43 @@ def literal_eval(string):
         return _asteval_interp(string, show_errors=False)
     except (SyntaxError, ValueError, NameError, IndexError, TypeError):
         raise ValueError("Cannot interpret {} as valid Python".format(string))
+
+
+def string_to_type(value):
+    """Given a string value try to work out if there is a better python type dor the value.
+
+    First of all the first character is checked to see if it is a [ or { which would
+    suggest this is a list of dictionary. If the value looks like a common boolean
+    value (i.e. Yes, No, True, Fale, On, Off) then it is assumed to be a boolean value.
+    Fianlly it interpretation as an int, float or string is tried.
+
+    Args:
+        value (string): string representation of he value
+    Returns:
+        A python object of the natural type for value
+    """
+    ret = None
+    if not isinstance(value, string_types):
+        raise TypeError("Value must be a string not a {}".format(type(value)))
+    value = value.strip()
+    if value:
+        tests = ["list(" + value + ")", "dict(" + value + ")"]
+        try:
+            i = "[{".index(value[0])
+            ret = literal_eval(tests[i])  # pylint: disable=eval-used
+        except (SyntaxError, ValueError):
+            if value.lower() in ["true", "yes", "on", "false", "no", "off"]:
+                ret = value.lower() in ["true", "yes", "on"]  # Boolean
+            else:
+                for trial in [int, float, str]:
+                    try:
+                        ret = trial(value)
+                        break
+                    except ValueError:
+                        continue
+                else:
+                    ret = None
+    return ret
 
 
 class _evaluatable(object):
@@ -335,42 +372,6 @@ class typeHintedDict(regexpDict):
                     break
         else:
             ret = str(value)
-        return ret
-
-    def string_to_type(self, value):
-        """Given a string value try to work out if there is a better python type dor the value.
-
-        First of all the first character is checked to see if it is a [ or { which would
-        suggest this is a list of dictionary. If the value looks like a common boolean
-        value (i.e. Yes, No, True, Fale, On, Off) then it is assumed to be a boolean value.
-        Fianlly it interpretation as an int, float or string is tried.
-
-        Args:
-            value (string): string representation of he value
-        Returns:
-            A python object of the natural type for value
-        """
-        ret = None
-        if not isinstance(value, string_types):
-            raise TypeError("Value must be a string not a {}".format(type(value)))
-        value = value.strip()
-        if value:
-            tests = ["list(" + value + ")", "dict(" + value + ")"]
-            try:
-                i = "[{".index(value[0])
-                ret = literal_eval(tests[i])  # pylint: disable=eval-used
-            except (SyntaxError, ValueError):
-                if value.lower() in ["true", "yes", "on", "false", "no", "off"]:
-                    ret = value.lower() in ["true", "yes", "on"]  # Boolean
-                else:
-                    for trial in [int, float, str]:
-                        try:
-                            ret = trial(value)
-                            break
-                        except ValueError:
-                            continue
-                    else:
-                        ret = None
         return ret
 
     def __deepcopy__(self, memo):

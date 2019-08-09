@@ -78,6 +78,7 @@ if __vi__[0] == 2:
     bytes2str = str
 
     def bytes(arg, *args, **kargs):
+        """Dummy function that does the same as str()."""
         return str(arg)
 
     def get_filedialog(what="file", **opts):
@@ -226,6 +227,7 @@ elif __vi__[0] == 3:
         return getfullargspec(*args, **kargs)[:4]
 
     def get_func_params(func):
+        """Get the parameters for a function."""
         sig = signature(func)
         ret = {}
         for i, k in enumerate(sig.parameters):
