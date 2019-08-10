@@ -2168,7 +2168,7 @@ class DataFile(metadataObject):
         """
         return self.data._setas.find_col(col, force_list)
 
-    def get(self, item, default=None):  # pylint: disalbe=arguments-differ
+    def get(self, item, default=None):  # pylint:  disable=arguments-differ
         """A wrapper around __get_item__ that handles missing keys by returning None.
 
         This is useful for the :py:class:`Stoner.Folder.DataFolder` class.

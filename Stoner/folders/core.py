@@ -1121,7 +1121,7 @@ class baseFolder(MutableSequence):
                     del base.groups[nk]
         return self
 
-    def count(self, name):  # pylint: disalbe=arguments-differ
+    def count(self, name):  # pylint:  disable=arguments-differ
         """Provide a count method like a sequence.
 
         Args:
@@ -1329,7 +1329,7 @@ class baseFolder(MutableSequence):
                 self.groups[g].group(next_keys)
         return self
 
-    def index(self, name, start=None, end=None):  # pylint: disalbe=arguments-differ
+    def index(self, name, start=None, end=None):  # pylint:  disable=arguments-differ
         """Provide an index method like a sequence.
 
         Args:
@@ -1370,7 +1370,7 @@ class baseFolder(MutableSequence):
                     return i + start
             raise ValueError("No match for any name of a metadataObject in this baseFolder.")
 
-    def insert(self, ix, value):  # pylint: disalbe=arguments-differ
+    def insert(self, ix, value):  # pylint:  disable=arguments-differ
         """Implements the insert method with the option to append as well."""
         name = self.make_name(value)
         names = self.__names__()

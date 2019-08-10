@@ -632,7 +632,7 @@ class setas(MutableMapping):
         """
         self.unset()
 
-    def get(self, name, default=None):  # pylint: disalbe=arguments-differ
+    def get(self, name, default=None):  # pylint:  disable=arguments-differ
         """Implement a get method."""
         try:
             return self[name]
@@ -657,7 +657,7 @@ class setas(MutableMapping):
         for k, v in zip(self._unique_headers, self.setas):
             yield k, v
 
-    def pop(self, name, default=None):  # pylint: disalbe=arguments-differ
+    def pop(self, name, default=None):  # pylint:  disable=arguments-differ
         """Implement a get method."""
         try:
             ret = self[name]
@@ -677,7 +677,7 @@ class setas(MutableMapping):
                 return (c, v)
         raise KeyError("No columns set in setas!")
 
-    def setdefault(self, name, default=None):  # pylint: disalbe=arguments-differ
+    def setdefault(self, name, default=None):  # pylint:  disable=arguments-differ
         """Implement a setdefault method."""
         try:
             return self[name]
