@@ -7,6 +7,7 @@ from inspect import ismethod
 import numpy as _np_
 from functools import wraps, partial
 from traceback import format_exc
+from .utils import get_pool
 
 
 def _worker(d, **kwargs):
@@ -209,7 +210,7 @@ class item(object):
         _return = kargs.pop("_return", None)
         _byname = kargs.pop("_byname", False)
         self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
-        p, imap = self._folder._get_pool()
+        p, imap = get_pool()
         for ix, (f, ret) in enumerate(
             imap(partial(_worker, func=func, args=args, kargs=kargs, byname=_byname), self._folder)
         ):

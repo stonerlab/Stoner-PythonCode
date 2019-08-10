@@ -237,6 +237,7 @@ def make_model(model_func):
 
             @wraps(func)
             def guess_proxy(self, *args, **kargs):
+                """A magic proxy call around a function to guess initial prameters."""
                 guesses = func(*args, **kargs)
                 pars = {x: y for x, y in zip(self.param_names, guesses)}
                 pars = self.make_params(**pars)

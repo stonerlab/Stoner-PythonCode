@@ -9,7 +9,7 @@ import os
 import os.path as path
 import string
 from functools import partial
-from numpy import mean, std, array, append, any, floor, sqrt, ceil
+from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
 from matplotlib.pyplot import figure, Figure, subplot, tight_layout
 from copy import deepcopy
@@ -20,7 +20,7 @@ from Stoner.tools import isiterable
 from Stoner.core.base import metadataObject, string_to_type
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder, __add_core__ as _base__add_core__, __sub_core__ as _base__sub_core__
-from .utils import scan_dir, discard_earlier, filter_files
+from .utils import scan_dir, discard_earlier, filter_files, get_pool, removeDisallowedFilenameChars
 from Stoner.core.exceptions import assertion
 
 regexp_type = (_pattern_type,)
@@ -128,6 +128,7 @@ class DiskBasedFolder(object):
 
     @baseFolder.key.getter
     def key(self):
+        """Override the parent class *key* to use the *directory* attribute."""
         k = getattr(super(DiskBasedFolder, self), "key", None)
         if k is None:
             self.key = self.directory
@@ -163,18 +164,6 @@ class DiskBasedFolder(object):
             ret = self.directory
         return ret
 
-    def _removeDisallowedFilenameChars(self, filename):
-        """Utility method to clean characters in filenames
-
-        Args:
-            filename (string): filename to cleanse
-
-        Returns:
-            A filename with non ASCII characters stripped out
-        """
-        validFilenameChars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-        return "".join([c for c in filename if c in validFilenameChars])
-
     def _save(self, grp, trail, root=None):
         """Save a group of files to disc by calling the save() method on each file.
 
@@ -189,8 +178,8 @@ class DiskBasedFolder(object):
         Returns:
             Saved Path
         """
-        trail = [self._removeDisallowedFilenameChars(t) for t in trail]
-        grp.filename = self._removeDisallowedFilenameChars(grp.filename)
+        trail = [removeDisallowedFilenameChars(t) for t in trail]
+        grp.filename = removeDisallowedFilenameChars(grp.filename)
         if root is None:
             root = self.directory
 
@@ -275,11 +264,13 @@ class DiskBasedFolder(object):
             yield path.basename(x)
 
     @property
-    def directory(self):  # Just alias directory to root now
+    def directory(self):
+        """Just alias directory to root now."""
         return self.root
 
     @directory.setter
     def directory(self, value):
+        """Just alias directory to root now."""
         self.root = value
 
     @property
@@ -313,7 +304,7 @@ class DiskBasedFolder(object):
 
         With multiprocess enabled this will parallel load the contents of the folder into memory.
         """
-        p, imap = self._get_pool()
+        p, imap = get_pool()
         for (f, name) in imap(
             partial(_loader, loader=self.loader, typ=self._type, directory=self.directory), self.not_loaded
         ):
@@ -574,7 +565,7 @@ class DataMethodsMixin(object):
                     cols = f._col_args(scalar=False)
                     xcol = cols["xcol"]
                 xdata = f.column(xcol)
-                if any(xdata != xbase) and not common_x:
+                if np_any(xdata != xbase) and not common_x:
                     xtitle = group[0].column_headers[xcol]
                     results.add_column(xbase, header=xtitle, setas="x")
                     xbase = xdata

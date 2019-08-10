@@ -7,9 +7,7 @@ __all__ = ["baseFolder"]
 from itertools import islice
 from copy import copy, deepcopy
 from collections import Iterable, MutableSequence
-import itertools
-from multiprocessing.pool import ThreadPool
-import multiprocess as multiprocessing
+
 import numpy as _np_
 import os.path as path
 import fnmatch
@@ -989,65 +987,6 @@ class baseFolder(MutableSequence):
     def __init_from_other(self, other):
         other.__clone__(other=self)
 
-    #        for k in dir(other):
-    #            if k.startswith("_"): # Short circuit before we even get the value
-    #                continue
-    #            v=getattr(other,k)
-    #            if ismethod(v)  or isgenerator(v):
-    #                continue
-    #            if isproperty(self,k) and not hasattr(v,"__set__"):
-    #                continue
-    #            if k in ["groups","_groups","objects","_objects","key"]:
-    #                continue
-    #            try:
-    #                setattr(result, k, deepcopy(v))
-    #            except Exception:
-    #                setattr(result, k, copy(v))
-    #
-    #        result.key=other.key
-    #
-    #        for g in other.groups:
-    #            self.groups[g]=cls(other.groups[g])
-    #        for n in other.__names__():
-    #            self.__setter__(n,other.__getter__(n,instantiate=None))
-
-    def _get_pool(self):
-        """Utility method to get a Pool and map implementation depending on options.
-
-        Returns:
-            Pool(),map: Pool object if possible and map implementation.
-        """
-        if get_option("multiprocessing"):
-            try:
-                if get_option("threading"):
-                    p = ThreadPool(processes=int(multiprocessing.cpu_count() - 1))
-                else:
-                    p = multiprocessing.Pool(int(multiprocessing.cpu_count() / 2))
-                imap = p.imap
-            except (
-                ArithmeticError,
-                AttributeError,
-                LookupError,
-                RuntimeError,
-                NameError,
-                OSError,
-                TypeError,
-                ValueError,
-            ):
-                # Fallback to non-multiprocessing if necessary
-                p = None
-                if python_v3:
-                    imap = map
-                else:
-                    imap = itertools.imap
-        else:
-            p = None
-            if python_v3:
-                imap = map
-            else:
-                imap = itertools.imap
-        return p, imap
-
     def _update_from_object_attrs(self, obj):
         """Updates an object from object_attrs store."""
         if hasattr(self, "_object_attrs") and isinstance(self._object_attrs, dict):
@@ -1060,15 +999,6 @@ class baseFolder(MutableSequence):
             if hasattr(obj, k):
                 setattr(obj, k, self.kargs[k])
         return obj
-
-    def _pruner_(self, grp, breadcrumb, prunelist=None):
-        """Removes any empty groups fromthe objectFolder tree."""
-        if len(grp) == 0 and len(grp.groups) == 0:
-            prunelist.append(breadcrumb)
-            ret = True
-        else:
-            ret = False
-        return ret
 
     def __walk_groups(self, walker, **kargs):
         """"Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
@@ -1191,7 +1121,7 @@ class baseFolder(MutableSequence):
                     del base.groups[nk]
         return self
 
-    def count(self, name):
+    def count(self, name):  # pylint: disalbe=arguments-differ
         """Provide a count method like a sequence.
 
         Args:
@@ -1399,7 +1329,7 @@ class baseFolder(MutableSequence):
                 self.groups[g].group(next_keys)
         return self
 
-    def index(self, name, start=None, end=None):
+    def index(self, name, start=None, end=None):  # pylint: disalbe=arguments-differ
         """Provide an index method like a sequence.
 
         Args:
@@ -1440,7 +1370,7 @@ class baseFolder(MutableSequence):
                     return i + start
             raise ValueError("No match for any name of a metadataObject in this baseFolder.")
 
-    def insert(self, ix, value):
+    def insert(self, ix, value):  # pylint: disalbe=arguments-differ
         """Implements the insert method with the option to append as well."""
         name = self.make_name(value)
         names = self.__names__()

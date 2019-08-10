@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 """Utility functions to support :py:mod:`Stoner.Core`."""
 
-__all__ = ["copy_into", "itersubclasses", "tab_delimited"]
+__all__ = ["copy_into", "itersubclasses", "tab_delimited", "decode_string"]
 
 import copy
 import csv
+import re
 
 
 def copy_into(source, dest):
@@ -80,3 +81,16 @@ def itersubclasses(cls, _seen=None):
             yield sub
             for sub in itersubclasses(sub, _seen):
                 yield sub
+
+
+def decode_string(value):
+    """Expands a string of column assignments, replacing numbers with repeated characters."""
+    pattern = re.compile(r"(([0-9]+)(x|y|z|d|e|f|u|v|w|\.|\-))")
+    while True:
+        res = pattern.search(value)
+        if res is None:
+            break
+        (total, count, code) = res.groups()
+        count = int(count)
+        value = value.replace(total, code * count, 1)
+    return value

@@ -1610,17 +1610,17 @@ class DataFile(metadataObject):
         if isinstance(value, (int_types, float)):
             ix = _np_.less_equal(_np_.abs(self.data[:, x] - value), accuracy)
         elif isinstance(value, tuple) and len(value) == 2:
-            (l, u) = (min(value), max(value))
-            l -= accuracy
+            (low, u) = (min(value), max(value))
+            low -= accuracy
             u += accuracy
             v = self.data[:, x]
-            l = _np_.ones_like(v) * l
+            low = _np_.ones_like(v) * low
             u = _np_.ones_like(v) * u
-            ix = _np_.logical_and(v > l, v <= u)
+            ix = _np_.logical_and(v > low, v <= u)
         elif isinstance(value, (list, _np_.ndarray)):
             ix = _np_.zeros(len(self), dtype=bool)
             for v in value:
-                ix = _np_.logical_or(ix, self.__search_index(xcol, v), accuracy)
+                ix = _np_.logical_or(ix, self.__search_index(xcol, v, accuracy))
         elif callable(value):
             ix = _np_.array([value(r[x], r) for r in self], dtype=bool)
         else:
@@ -2168,7 +2168,7 @@ class DataFile(metadataObject):
         """
         return self.data._setas.find_col(col, force_list)
 
-    def get(self, item, default=None):
+    def get(self, item, default=None):  # pylint: disalbe=arguments-differ
         """A wrapper around __get_item__ that handles missing keys by returning None.
 
         This is useful for the :py:class:`Stoner.Folder.DataFolder` class.

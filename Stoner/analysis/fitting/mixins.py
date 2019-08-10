@@ -1030,7 +1030,16 @@ class FittingMixin(object):
                     pguess = func.guess
                 else:
                     pguess = None
-            except:
+            except (
+                ArithmeticError,
+                AttributeError,
+                LookupError,
+                RuntimeError,
+                NameError,
+                OSError,
+                TypeError,
+                ValueError,
+            ):
                 pguess = None
             p0 = kargs.pop("p0", pguess)
         elif callable(func):

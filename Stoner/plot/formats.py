@@ -31,6 +31,16 @@ except ImportError:
 import numpy as _np_
 
 
+def _round(value, offset=2):
+    """Provate method to round numbers for the TexFormatters to avoid crazy numbers of decimal places"""
+    for i in range(5):
+        vt = _np_.round(value, i)
+        if _np_.abs(value - vt) < 10 ** (-i - offset):
+            value = vt
+            break
+    return value
+
+
 def _add_dots(key):
     """replace __ with . in key."""
     return key.replace("__", ".").replace("..", "__")
@@ -54,27 +64,23 @@ class TexFormatter(Formatter):
         elif value != 0.0:
             power = _np_.floor(_np_.log10(_np_.abs(value)))
             if _np_.abs(power) < 4:
-                ret = "${}$".format(self._round(value))
+                ret = "${}$".format(_round(value))
             else:
-                v = self._round(value / (10 ** power))
+                v = _round(value / (10 ** power))
                 ret = "${}\\times 10^{{{:.0f}}}$".format(v, power)
         else:
             ret = "$0.0$"
         return ret
 
     def format_data(self, value):
+        """Returns the full string representation of the value with the position unspecified."""
         return self.__call__(value)
 
     def format_data_short(self, value):
-        return "{:g}".format(value)
+        """Return a short string version of the tick value.
 
-    def _round(self, value):
-        for i in range(5):
-            vt = _np_.round(value, i)
-            if _np_.abs(value - vt) < 10 ** (-i - 2):
-                value = vt
-                break
-        return value
+        Defaults to the position-independent long value."""
+        return "{:g}".format(value)
 
 
 class TexEngFormatter(EngFormatter):
@@ -113,27 +119,23 @@ class TexEngFormatter(EngFormatter):
             pre = _np_.ceil(power / 3.0) * 3
             power = power % 3
             if pre == 0:
-                ret = "${}\\,\\mathrm{{{}}}$".format(self._round(value), self.unit)
+                ret = "${}\\,\\mathrm{{{}}}$".format(_round(value, 4), self.unit)
             else:
-                v = self._round(value / (10 ** pre))
+                v = _round(value / (10 ** pre), 4)
                 ret = "${}\\mathrm{{{} {}}}$".format(v, self.prefix[int(pre)], self.unit)
         else:
             ret = "$0.0$"
         return ret
 
     def format_data(self, value):
+        """Returns the full string representation of the value with the position unspecified."""
         return self.__call__(value)
 
     def format_data_short(self, value):
-        return "{:g}".format(value)
+        """Return a short string version of the tick value.
 
-    def _round(self, value):
-        for i in range(5):
-            vt = _np_.round(value, i)
-            if _np_.abs(value - vt) < 10 ** (-i - 4):
-                value = vt
-                break
-        return value
+        Defaults to the position-independent long value."""
+        return "{:g}".format(value)
 
 
 class DefaultPlotStyle(MutableMapping):
@@ -228,6 +230,7 @@ class DefaultPlotStyle(MutableMapping):
                 self.update({_add_dots(k): v})
 
     def __delitem__(self, name):
+        """Clear any setting that overides the default for *name*."""
         if hasattr(self, name):
             default = getattr(self.__class__(), name)
             setattr(self, name, default)
@@ -254,6 +257,7 @@ class DefaultPlotStyle(MutableMapping):
             return super(DefaultPlotStyle, self).__getattribute__(name)
 
     def __getitem__(self, name):
+        """Try to match *name* to a style setting."""
         try:
             return self.__getattr__(name)
         except AttributeError:
@@ -264,6 +268,7 @@ class DefaultPlotStyle(MutableMapping):
             raise KeyError("{} is not recognised as part of the template".format(name))
 
     def __iter__(self):
+        """Iterate over stylesjeet settings."""
         attrs = [x for x in dir(self) if self._allowed_attr(x)]
         attrs += list(plt.rcParams.keys())
         attrs.sort()
@@ -271,6 +276,7 @@ class DefaultPlotStyle(MutableMapping):
             yield f
 
     def __len__(self):
+        """Implement a length of stylesheet."""
         i = len([x for x in dir(self) if self._allowed_attr(x)])
         i += len(list(plt.rcParams.keys()))
         return i
@@ -285,6 +291,7 @@ class DefaultPlotStyle(MutableMapping):
             super(DefaultPlotStyle, self).__setattr__(name, value)
 
     def __setitem__(self, name, value):
+        """Set a stylesheet setting by *name*."""
         if hasattr(self, name):
             setattr(self, name, value)
         else:

@@ -4,14 +4,27 @@ Created on Fri Nov 30 17:02:06 2018
 
 @author: phygbu
 """
-__all__ = ["pathsplit", "pathjoin", "scan_dir", "discard_earlier", "filter_files"]
+__all__ = [
+    "pathsplit",
+    "pathjoin",
+    "scan_dir",
+    "discard_earlier",
+    "filter_files",
+    "get_pool",
+    "removeDisallowedFilenameChars",
+]
 import os.path as path
 import os
 import re
+import string
 from collections import OrderedDict
-from Stoner.compat import string_types, _pattern_type
+from Stoner.compat import string_types, _pattern_type, python_v3
+from Stoner.tools import get_option
 import fnmatch
 from numpy import array
+import itertools
+from multiprocessing.pool import ThreadPool
+import multiprocess as multiprocessing
 
 
 def pathsplit(pth):
@@ -94,3 +107,45 @@ def filter_files(files, patterns, keep=True):
         index = array([not keep ^ (i in dels) for i in range(len(files))], dtype=bool)
         files = (array(files)[index]).tolist()
     return files
+
+
+def get_pool():
+    """Utility method to get a Pool and map implementation depending on options.
+
+    Returns:
+        Pool(),map: Pool object if possible and map implementation.
+    """
+    if get_option("multiprocessing"):
+        try:
+            if get_option("threading"):
+                p = ThreadPool(processes=int(multiprocessing.cpu_count() - 1))
+            else:
+                p = multiprocessing.Pool(int(multiprocessing.cpu_count() / 2))
+            imap = p.imap
+        except (ArithmeticError, AttributeError, LookupError, RuntimeError, NameError, OSError, TypeError, ValueError):
+            # Fallback to non-multiprocessing if necessary
+            p = None
+            if python_v3:
+                imap = map
+            else:
+                imap = itertools.imap
+    else:
+        p = None
+        if python_v3:
+            imap = map
+        else:
+            imap = itertools.imap
+    return p, imap
+
+
+def removeDisallowedFilenameChars(filename):
+    """Utility method to clean characters in filenames
+
+    Args:
+        filename (string): filename to cleanse
+
+    Returns:
+        A filename with non ASCII characters stripped out
+    """
+    validFilenameChars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    return "".join([c for c in filename if c in validFilenameChars])

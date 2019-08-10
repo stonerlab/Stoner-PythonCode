@@ -10,6 +10,7 @@ import numpy as _np_
 
 from ..compat import string_types, int_types, index_types, _pattern_type
 from ..tools import _attribute_store, isiterable, typedList, islike_list
+from .utils import decode_string
 
 from collections import MutableMapping, Mapping
 
@@ -117,18 +118,6 @@ class setas(MutableMapping):
             },
         }  # xyzuvw
 
-    def _decode_string(self, value):
-        """Expands a string of column assignments, replacing numbers with repeated characters."""
-        pattern = re.compile("(([0-9]+)(x|y|z|d|e|f|u|v|w|\.|\-))")
-        while True:
-            res = pattern.search(value)
-            if res is None:
-                break
-            (total, count, code) = res.groups()
-            count = int(count)
-            value = value.replace(total, code * count, 1)
-        return value
-
     def _prepare_call(self, args, kargs):
         """Extract a value to be used to evaluate the setas attribute during a call."""
         reset = kargs.pop("reset", True)
@@ -140,7 +129,7 @@ class setas(MutableMapping):
             if isinstance(value, string_types):  # expand the number-code combos in value
                 if reset:
                     self.setas = []
-                value = self._decode_string(value)
+                value = decode_string(value)
             elif isinstance(value, setas):
                 if value is not self:
                     value = value.setas
@@ -358,7 +347,7 @@ class setas(MutableMapping):
         """Checks to see if this is the same object, or has the same headers and the same setas values."""
         ret = False
         if isinstance(other, string_types):  # Expand strings and convert to list
-            other = [c for c in self._decode_string(other)]
+            other = [c for c in decode_string(other)]
         if not isinstance(other, setas):  # Ok, need to check whether items match
             if isiterable(other) and len(other) <= self._size:
                 for m in self.setas[len(other) :]:  # Check that if other is short we don't have assignments there
@@ -367,8 +356,7 @@ class setas(MutableMapping):
                 for o, m in zip(other, self.setas):
                     if o != m:  # Look for mis-matched assignments
                         return False
-                else:
-                    return True
+                return True
             else:  # If other is longer then we can't matchj
                 return False
         elif id(self) == id(other):
@@ -644,7 +632,7 @@ class setas(MutableMapping):
         """
         self.unset()
 
-    def get(self, name, default=None):
+    def get(self, name, default=None):  # pylint: disalbe=arguments-differ
         """Implement a get method."""
         try:
             return self[name]
@@ -669,7 +657,7 @@ class setas(MutableMapping):
         for k, v in zip(self._unique_headers, self.setas):
             yield k, v
 
-    def pop(self, name, default=None):
+    def pop(self, name, default=None):  # pylint: disalbe=arguments-differ
         """Implement a get method."""
         try:
             ret = self[name]
@@ -689,7 +677,7 @@ class setas(MutableMapping):
                 return (c, v)
         raise KeyError("No columns set in setas!")
 
-    def setdefault(self, name, default=None):
+    def setdefault(self, name, default=None):  # pylint: disalbe=arguments-differ
         """Implement a setdefault method."""
         try:
             return self[name]
@@ -717,12 +705,17 @@ class setas(MutableMapping):
         else:
             self -= what
 
-    def update(self, other):
+    def update(self, other=(), **kwds):
         """Replace any assignments in self with assignments from other."""
         if isinstance(other, setas):
             other = other.to_dict()
-        elif not isinstance(other, dict):
-            raise TypeError("setas.update requires a dictionary not a {}".format(type(other)))
+        elif isinstance(other, tuple) and len(other) == 0:
+            other = kwds
+        else:
+            try:
+                other = dict(other)
+            except (ValueError, TypeError):
+                raise TypeError("setas.update requires a dictionary not a {}".format(type(other)))
         vals = list(other.values())
         keys = list(other.keys())
         for k in "xyzuvwdef":

@@ -264,6 +264,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         super(ImageArray, self).__array_finalize__(obj)
 
     def __array_prepare__(self, arr, context=None):
+        """Support the numpy machinery for subclassing ndarray."""
         return super(ImageArray, self).__array_prepare__(arr, context)
 
     def __array_wrap__(self, out_arr, context=None):
@@ -346,6 +347,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     @classmethod
     def _load_png(cls, filename, **kargs):
+        """Create a new ImageArray from a png file."""
         with Image.open(filename, "r") as img:
             image = np.asarray(img).view(cls)
             # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
@@ -369,6 +371,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     @classmethod
     def _load_tiff(cls, filename, **kargs):
+        """Create a new ImageArray from a tiff file."""
         metadict = typeHintedDict({})
         with Image.open(filename, "r") as img:
             image = np.asarray(img)
@@ -475,6 +478,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     @property
     def centre(self):
+        """Return the coordinates of the centre of the image."""
         return tuple(np.array(self.shape) / 2.0)
 
     @property
@@ -649,6 +653,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
         @wraps(workingfunc)
         def gen_func(*args, **kwargs):
+            """Wrapped magic proxy function call."""
             transpose = getattr(workingfunc, "transpose", False)
             if transpose:
                 change = self.clone.T
@@ -1543,6 +1548,9 @@ class DrawProxy(object):
 
 
 class MaskProxy(object):
+
+    """Provides a wrapper to support manipulating the image mask easily."""
+
     @property
     def _IA(self):
         """Get the underliying image data."""

@@ -63,6 +63,7 @@ if __vi__[0] == 2:
     from os import getcwd, path, mkdir
 
     def get_func_params(func):
+        """Get Function parameter names from signature."""
         ret = []
         for arg in getargspec(func)[0][1:]:
             ret.append(arg)
@@ -197,12 +198,12 @@ if __vi__[0] == 2:
             files = [cmd]
 
         seen = set()
-        for dir in path:
-            normdir = os.path.normcase(dir)
+        for _dir in path:
+            normdir = os.path.normcase(_dir)
             if not normdir in seen:
                 seen.add(normdir)
                 for thefile in files:
-                    name = os.path.join(dir, thefile)
+                    name = os.path.join(_dir, thefile)
                     if _access_check(name, mode):
                         return name
         return None
