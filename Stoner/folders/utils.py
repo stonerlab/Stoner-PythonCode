@@ -40,8 +40,9 @@ def pathsplit(pth):
 
 def pathjoin(*args):
     """Join a path like path.join, but then replace the path separator with a standard /."""
-    tmp = path.join(*args)
-    return tmp.replace(path.sep, "/")
+    if len(args):
+        tmp = path.join(*args)
+        return tmp.replace(path.sep, "/")
 
 
 def scan_dir(root):

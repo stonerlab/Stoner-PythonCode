@@ -81,7 +81,7 @@ class LSTemperatureFile(Core.DataFile):
         self.column_headers = column_headers
         return self
 
-    def save(self, filename=None):
+    def save(self, filename=None, **kargs):
         """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
 
         Args:

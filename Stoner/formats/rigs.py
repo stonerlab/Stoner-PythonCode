@@ -28,7 +28,7 @@ class BigBlueFile(CSVFile):
     # the file load/save dialog boxes.
     patterns = ["*.dat", "*.iv", "*.rvt"]  # Recognised filename patterns
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, filename, *args, **kargs):
         """Just call the parent class but with the right parameters set
 
         Args:
@@ -57,7 +57,7 @@ class BirgeIVFile(Core.DataFile):
 
     patterns = ["*.dat"]
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, filename, *args, **kargs):
         """File loader for PinkLib.
 
         Args:
@@ -124,7 +124,7 @@ class MokeFile(Core.DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.dat", "*.txt"]
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, filename, *args, **kargs):
         """Leeds  MOKE file loader routine.
 
         Args:
@@ -169,7 +169,7 @@ class FmokeFile(Core.DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.dat"]  # Recognised filename patterns
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, filename, *args, **kargs):
         """Sheffield Focussed MOKE file loader routine.
 
         Args:

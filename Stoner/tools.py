@@ -679,18 +679,18 @@ class typedList(MutableSequence):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         self._store[name] = value
 
-    def extend(self, other):
+    def extend(self, other):  # pylint:  disable=arguments-differ
         """Extending a list also requires some type checking."""
         if not isiterable(other) or not all_type(other, self._type):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         else:
             self._store.extend(other)
 
-    def index(self, search, start=0):
+    def index(self, search, start=0):  # pylint:  disable=arguments-differ
         """Index works like a list."""
         return self._store[start:].index(search)
 
-    def insert(self, index, obj):
+    def insert(self, index, obj):  # pylint:  disable=arguments-differ
         """Inserting an element also requires some type checking."""
         if not isinstance(obj, self._type):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))

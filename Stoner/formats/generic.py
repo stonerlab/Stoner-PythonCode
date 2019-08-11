@@ -31,7 +31,7 @@ class CSVFile(Core.DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.csv", "*.txt"]  # Recognised filename patterns
 
-    def _load(self, filename=None, header_line=0, data_line=1, data_delim=",", header_delim=",", **kargs):
+    def _load(self, filename, *args, **kargs):
         """Generic deliminated file loader routine.
 
         Args:
@@ -48,6 +48,10 @@ class CSVFile(Core.DataFile):
         Returns:
             A copy of the current object after loading the data.
         """
+        header_line = kargs.pop("header_line", 0)
+        data_line = kargs.pop("data_line", 1)
+        data_delim = kargs.pop("data_delim", ",")
+        header_delim = kargs.pop("header_delim", ",")
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -162,7 +166,7 @@ class KermitPNGFile(Core.DataFile):
 
         return self
 
-    def save(self, filename, **kargs):
+    def save(self, filename=None, **kargs):
         """Overrides the save method to allow KermitPNGFiles to be written out to disc
 
         Args:

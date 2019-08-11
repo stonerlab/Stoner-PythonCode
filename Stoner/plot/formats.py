@@ -693,7 +693,7 @@ if SEABORN:  # extra classes if we have seaborn available
             """Provide palette getter."""
             return self._palette
 
-        @context.setter
+        @palette.setter
         def palette(self, name):
             """Force palette to take allowed values."""
             try:

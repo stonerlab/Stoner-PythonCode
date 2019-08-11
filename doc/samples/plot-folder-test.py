@@ -108,7 +108,7 @@ if __name__ == "__main__":
         subfldr.plot(figsize=(8, 8), extra=extra)
 
         # Work with the overall results
-        result.setas(
+        result.setas(  # pylint: disable=not-callable
             y="H_res", e="H_res.stderr", x="Freq"
         )  # pylint: disable=not-callable
         result.y = result.y / mu_0  # Convert to A/m

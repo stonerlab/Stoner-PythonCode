@@ -177,27 +177,27 @@ class HDF5File(DataFile):
             f.file.close()
         return self
 
-    def save(self, h5file=None, **kargs):
+    def save(self, filename=None, **kargs):
         """Writes the current object into  an hdf5 file or group within a file in afashion that is compatible with being loaded in again.
 
         Args:
-            h5file (string or h5py.Group): Either a string, of h5py.File or h5py.Group object into which
+            filename (string or h5py.Group): Either a string, of h5py.File or h5py.Group object into which
                 to save the file. If this is a string, the corresponding file is opened for
                 writing, written to and save again.
 
         Returns
             A copy of the object
         """
-        if h5file is None:
-            h5file = self.filename
-        if h5file is None or (isinstance(h5file, bool) and not h5file):  # now go and ask for one
-            h5file = self.__file_dialog("w")
-            self.filename = h5file
-        if isinstance(h5file, string_types):
-            mode = "r+" if os.path.exists(h5file) else "w"
-            f = h5py.File(h5file, mode)
-        elif isinstance(h5file, h5py.File) or isinstance(h5file, h5py.Group):
-            f = h5file
+        if filename is None:
+            filename = self.filename
+        if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
+            filename = self.__file_dialog("w")
+            self.filename = filename
+        if isinstance(filename, string_types):
+            mode = "r+" if os.path.exists(filename) else "w"
+            f = h5py.File(filename, mode)
+        elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
+            f = filename
         try:
             f.require_dataset(
                 "data",
@@ -220,7 +220,7 @@ class HDF5File(DataFile):
             f.attrs["filename"] = self.filename
             f.attrs["type"] = "HDF5File"
         except Exception as e:
-            if isinstance(h5file, str):
+            if isinstance(filename, str):
                 f.file.close()
             raise e
         if isinstance(f, h5py.File):
@@ -228,8 +228,8 @@ class HDF5File(DataFile):
         elif isinstance(f, h5py.Group):
             self.filename = f.file.filename
         else:
-            self.filename = h5file
-        if isinstance(h5file, string_types):
+            self.filename = filename
+        if isinstance(filename, string_types):
             f.file.close()
 
         return self

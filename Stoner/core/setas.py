@@ -705,7 +705,7 @@ class setas(MutableMapping):
         else:
             self -= what
 
-    def update(self, other=(), **kwds):
+    def update(self, other=(), **kwds):  # pylint:  disable=arguments-differ
         """Replace any assignments in self with assignments from other."""
         if isinstance(other, setas):
             other = other.to_dict()

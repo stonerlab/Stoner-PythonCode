@@ -4,7 +4,7 @@ from Stoner.plot.formats import DefaultPlotStyle
 from cycler import cycler
 
 p = Data("sample.txt", setas="xy", template=DefaultPlotStyle())
-p.template(
+p.template(  # pylint: disable=not-callable
     axes__prop_cycle=cycler("color", ["r", "g", "b"])
 )  # pylint: disable=not-callable
 p.plot()
