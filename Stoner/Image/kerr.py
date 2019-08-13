@@ -20,7 +20,7 @@ import tempfile
 from skimage import exposure, io, transform
 
 try:
-    import pytesseract
+    import pytesseract  # pylint: disable=unused-import
 
     _tesseractable = True
 except ImportError:

@@ -7,7 +7,6 @@ __all__ = ["DiskBasedFolder", "DataMethodsMixin", "PlotMethodsMixin"]
 
 import os
 import os.path as path
-import string
 from functools import partial
 from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
