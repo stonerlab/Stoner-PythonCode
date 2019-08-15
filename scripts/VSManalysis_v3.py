@@ -93,7 +93,7 @@ class VSMAnalysis(Data):
 
     def find_Hc(self):
         """Uses thresholding and interpolation to find fields for zero crossing moments."""
-        h_m = int(self.peaks("H_vsm", 15)[0])
+        h_m = int(self.peaks(ycol="H_vsm", wiodth=15)[0])
         mask = self.mask
         self.mask = numpy.zeros(self.shape)
         self.mask[1:h_m, :] = True

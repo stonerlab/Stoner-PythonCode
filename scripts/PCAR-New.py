@@ -117,9 +117,8 @@ class working(Data):
         ) and self.config.getboolean("Options", "remove_offset"):
             print("Doing offset correction")
             peaks = self.peaks(
-                self.gcol,
-                len(self) / 20,
-                0,
+                ycol=self.gcol,
+                width=len(self) / 20,
                 xcol=self.vcol,
                 poly=4,
                 peaks=True,

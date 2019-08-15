@@ -79,7 +79,7 @@ class CSVFile(Core.DataFile):
         linecache.clearcache()
         return self
 
-    def save(self, filename, **kargs):
+    def save(self, filename=None, **kargs):
         """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
 
         Args:

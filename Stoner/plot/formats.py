@@ -76,7 +76,7 @@ class TexFormatter(Formatter):
         """Returns the full string representation of the value with the position unspecified."""
         return self.__call__(value)
 
-    def format_data_short(self, value):
+    def format_data_short(self, value):  # pylint: disable=r0201
         """Return a short string version of the tick value.
 
         Defaults to the position-independent long value."""
@@ -131,7 +131,7 @@ class TexEngFormatter(EngFormatter):
         """Returns the full string representation of the value with the position unspecified."""
         return self.__call__(value)
 
-    def format_data_short(self, value):
+    def format_data_short(self, value):  # pylint: disable=r0201
         """Return a short string version of the tick value.
 
         Defaults to the position-independent long value."""
@@ -351,7 +351,7 @@ class DefaultPlotStyle(MutableMapping):
         return sheets
 
     @stylesheet.setter
-    def stylesheet(self, value):
+    def stylesheet(self, value):  # pylint: disable=r0201
         """Just stop the stylesheet from being set."""
         raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
 

@@ -40,8 +40,8 @@ def pathsplit(pth):
 
 def pathjoin(*args):
     """Join a path like path.join, but then replace the path separator with a standard /."""
-    if len(args):
-        tmp = path.join(*args)
+    if len(args) > 1:
+        tmp = path.join(args[0], *args[1:])
         return tmp.replace(path.sep, "/")
 
 

@@ -148,12 +148,12 @@ class PlotMixin(object):
         return ret
 
     @property
-    def cmap(self):
+    def cmap(self):  # pylint: disable=r0201
         """Get the current cmap."""
         return plt.get_cmap()
 
     @cmap.setter
-    def cmap(self, cmap):
+    def cmap(self, cmap):  # pylint: disable=r0201
         """Set the plot cmap."""
         return plt.set_cmap(cmap)
 

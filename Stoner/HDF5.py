@@ -117,7 +117,7 @@ class HDF5File(DataFile):
         if grp is not None:
             self._load(grp, **kargs)
 
-    def _load(self, filename, **kargs):
+    def _load(self, filename, *args, **kargs):
         """Loads data from a hdf5 file
 
         Args:
@@ -247,7 +247,7 @@ class HGXFile(DataFile):
     pattern = ["*.hgx"]
     mime_type = ["application/x-hdf"]
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, filename, *args, **kargs):
         """GenX HDF file loader routine.
 
         Args:

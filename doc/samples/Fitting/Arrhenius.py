@@ -1,13 +1,13 @@
 """Example of Arrhenius Fit."""
 from Stoner import Data
 import Stoner.Fit as SF
-from numpy import linspace, ceil, log10, abs
+from numpy import linspace, ceil, log10, np_abs
 from numpy.random import normal
 
 # Make some data
 T = linspace(200, 350, 101)
 R = SF.arrhenius(T + normal(size=len(T), scale=3.0, loc=0.0), 1e6, 0.5)
-E = 10 ** ceil(log10(abs(R - SF.arrhenius(T, 1e6, 0.5))))
+E = 10 ** ceil(log10(np_abs(R - SF.arrhenius(T, 1e6, 0.5))))
 d = Data(T, R, E, setas="xye", column_headers=["T", "Rate"])
 
 # Curve_fit on its own
