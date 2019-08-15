@@ -43,9 +43,9 @@ Getting this Code
 The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies
 on blist, filemagic, npTDMS, imreg_dft and numba.
 
-Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining 
-dependencies are collected together in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner package is, 
-therefore, to install the most recent Anaconda Python distribution (Python 3.7, 3.6, 3.5 or 2.7 should work) and then to install 
+Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining
+dependencies are collected together in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner package is,
+therefore, to install the most recent Anaconda Python distribution (Python 3.7, 3.6, 3.5 or 2.7 should work) and then to install
 the Stoner package via:
 
 .. code-block:: sh
@@ -60,9 +60,9 @@ If you are not using Anaconda python, then pip should also work:
 
 This will install the Stoner package and any missing dependencies into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
-and some sample data files can be obtained from the github repository: https://github.com/gb119/Stoner-PythonCode
+and some sample data files can be obtained from the github repository: https://github.com/stonerlab/Stoner-PythonCode
 
-The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 3.6 and 3.7  but test with 
+The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 3.6 and 3.7  but test with
 2.7 as well. *NB* Python 3.7 is only supported in version 0.9x onwards and is known to not work with version 0.8.x.
 
 Overview
