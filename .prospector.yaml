@@ -21,7 +21,6 @@ doc-warnings: true
 ignore-paths:
   - .git
   - coverage
-  - doc
 
 ignore-patterns:
   - ^.*doc\/conf\.py
@@ -31,20 +30,20 @@ pep8:
   enable:
     - W601
   options:
-    max-line-length: 160
-    single-line-if-stmt: n
+    max-line-length: 120
+    single-line-if-stmt: false
 
 pylint:
   run: true
   disable:
     - E0402
-    - W021
-    - protected-access
+    - W0212
+
   options:
     max-args: 10
     max-locals: 20
     max-line-length: 160
-    max-module-lines: 3000
+    max-module-lines: 2000
     ignore-long-lines: ^\s*((# )?<?https?://\S+>?)|(""".*)$
 
 pep257:

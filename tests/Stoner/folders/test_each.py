@@ -44,10 +44,10 @@ class folders_each_test(unittest.TestCase):
         shaper=lambda f:f.shape
         fldr6.sort()
         res=fldr6.each(shaper)
-        self.assertEqual(res,[(6048, 88), (3025, 41), (1409, 57), (411, 72)],"__call__ on each fauiled.")
+        self.assertEqual(res,[(6049, 88), (3026, 41), (1410, 57), (412, 72)],"__call__ on each fauiled.")
         fldr6.each.del_column(0)
         res=fldr6.each(shaper)
-        self.assertEqual(res,[(6048, 87), (3025, 40), (1409, 56), (411, 71)],"Proxy method call via each failed")
+        self.assertEqual(res,[(6049, 87), (3026, 40), (1410, 56), (412, 71)],"Proxy method call via each failed")
         paths=['QD-MH.dat', 'QD-PPMS.dat', 'QD-PPMS2.dat','QD-SQUID-VSM.dat']
         filenames=[path.relpath(x,start=fldr6.directory) for x in fldr6.each.filename.tolist()]
         self.assertEqual(filenames,paths,"Reading attributes from each failed.")
