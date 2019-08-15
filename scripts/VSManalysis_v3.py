@@ -106,7 +106,7 @@ class VSMAnalysis(Data):
 
     def find_Br(self):
         """Uses thresholding and interpolation to find moments for zero crossing fields."""
-        h_m = int(self.peaks("H_vsm", 15)[0])
+        h_m = int(self.peaks(ycol="H_vsm", width=15)[0])
         mask = self.mask
         self.mask = numpy.zeros(self.shape)
         self.mask[1:h_m, :] = True

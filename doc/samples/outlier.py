@@ -1,6 +1,6 @@
 """Detect outlying points from a lione."""
 from Stoner import Data
-from Stoner.Analysis import _poly_outlier
+from Stoner.analysis.utils import poly_outlier
 import numpy as np
 
 x = np.linspace(0, 100, 201)
@@ -16,12 +16,12 @@ e.outlier_detection(window=5, action="delete")
 e.plot(fmt="r-", label="Default Outliers removed")
 f = d.clone
 f.outlier_detection(
-    window=21, order=3, certainty=2, width=3, action="delete", func=_poly_outlier
+    window=21, order=3, certainty=2, width=3, action="delete", func=poly_outlier
 )
 f.plot(fmt="g-", label="Poly Outliers removed")
 g = d.clone
 g = g.outlier_detection(
-    window=21, order=3, certainty=3, width=3, action="delete", func=_poly_outlier
+    window=21, order=3, certainty=3, width=3, action="delete", func=poly_outlier
 )
 g.plot(color="purple", label="Masked outliers")
 g = d.clone

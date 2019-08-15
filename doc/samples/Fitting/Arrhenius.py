@@ -1,7 +1,7 @@
 """Example of Arrhenius Fit."""
 from Stoner import Data
 import Stoner.Fit as SF
-from numpy import linspace, ceil, log10, np_abs
+from numpy import linspace, ceil, log10, abs as np_abs
 from numpy.random import normal
 
 # Make some data

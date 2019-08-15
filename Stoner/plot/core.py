@@ -879,7 +879,7 @@ class PlotMixin(object):
         self._fix_titles(0, "none", **nonkargs)
         return fig
 
-    def inset(self, parent=None, loc=None, width=0.35, height=0.30, **kargs):
+    def inset(self, parent=None, loc=None, width=0.35, height=0.30, **kargs):  # pylint: disable=r0201
         """Add a new set of axes as an inset to the current plot.
 
         Keyword Arguments:
