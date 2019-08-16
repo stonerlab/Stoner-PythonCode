@@ -57,7 +57,7 @@ class folders_each_test(unittest.TestCase):
         fldr5.each(hysteresis_correct,setas="3.xy",saturated_fraction=0.25)
         self.assertTrue("Hc" in fldr5[0],"Call on DataFolder.each() failed to apply function to folder")
         meths=[x for x in dir(fldr6.each) if not x.startswith("_")]
-        self.assertEqual(len(meths),126 if python_v3 else 129,"Dir of folders.each failed ({}).".format(len(meths)))
+        self.assertEqual(len(meths),127 if python_v3 else 129,"Dir of folders.each failed ({}).".format(len(meths)))
 
     def test_attr_access(self):
         self.fldr=SF.PlotFolder(path.join(self.datadir,"NLIV"),pattern="*.txt",setas="yx")

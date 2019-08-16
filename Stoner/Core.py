@@ -58,6 +58,22 @@ try:
 except ImportError:
     filemagic = None
 
+try:
+    import pandas as pd
+
+    @pd.api.extensions.register_dataframe_accessor("metadata")
+    class PandasMetadata(typeHintedDict):
+
+        """Add a typehintedDict to PandasDataFrames."""
+
+        def __init__(self, pandas_obj):
+            super(PandasMetadata, self).__init__()
+            self._obj = pandas_obj
+
+
+except ImportError:
+    pd = None
+
 
 def __add_core__(other, newdata):
     """Implements the core work of adding other to self and modifying newdata.
@@ -440,6 +456,29 @@ class DataFile(metadataObject):
             self.metadata = copy.deepcopy(arg.metadata)
             self.column_headers = ["X", "Y", "Image Intensity"]
             self.setas = "xyz"
+        elif pd is not None and isinstance(arg, pd.DataFrame):
+            self.data = arg.values
+            ch = []
+            for ix, col in enumerate(arg):
+                if isinstance(col, string_types):
+                    ch.append(col)
+                elif isiterable(ch):
+                    for ch_i in col:
+                        if isinstance(ch_i, string_types):
+                            ch.append(ch_i)
+                            break
+                    else:
+                        ch.append("Column {}".format(ix))
+                else:
+                    ch.append("Column {}:{}", format(ix, ch))
+            self.column_headers = ch
+            self.metadata.update(arg.metadata)
+            if isinstance(arg.columns, pd.MultiIndex) and len(arg.columns.levels) > 1:
+                for label in arg.columns.get_level_values(1):
+                    if label not in list("xyzdefuvw."):
+                        break
+                else:
+                    self.setas = list(arg.columns.get_level_values(1))
         elif isiterable(arg) and all_type(arg, string_types):
             self.column_headers = list(arg)
         elif isiterable(arg) and all_type(arg, _np_.ndarray):
@@ -2816,6 +2855,16 @@ class DataFile(metadataObject):
         """
         self.data.swap_column(*swp, **kargs)
         return self
+
+    def to_pandas(self):
+        if pd is None:
+            raise NotImplementedError("Pandas not available")
+        idx = pd.MultiIndex.from_frame(
+            pd.DataFrame(zip(*[self.column_headers, self.setas]), columns=["Header", "Setas"])
+        )
+        df = pd.DataFrame(self.data, columns=idx)
+        df.metadata.update(self.metadata)
+        return df
 
     def unique(self, col, return_index=False, return_inverse=False):
         """Return the unique values from the specified column - pass through for numpy.unique.
