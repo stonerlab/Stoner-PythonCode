@@ -271,6 +271,12 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         e=~self.d
         self.assertTrue(e.setas[0]=="y","failed to invert setas columns")
         f.setas="xyz"
+        f=self.d2.clone
+        f+={"Res":0.3,"Temp":1.2,"New_Column":25}
+        f1,f2=f.shape
+        self.assertEqual(f1,self.d2.shape[0]+1,"Failed to add a row by providing a dictionary")
+        self.assertEqual(f2,self.d2.shape[1]+1,"Failed to add an extra columns by adding a dictionary with a new key")
+        self.assertTrue(np.isnan(f[-1,2]) and np.isnan(f[0,-1]),"Unset values when adding a dictionary not NaN")
 
     def test_properties(self):
         self.little=Data()

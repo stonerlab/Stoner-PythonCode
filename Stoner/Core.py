@@ -44,7 +44,15 @@ from .tools import all_type, operator, isiterable, islike_list, get_option
 from .core.exceptions import StonerLoadError, StonerSetasError, StonerUnrecognisedFormat
 from .core import _setas, regexpDict, typeHintedDict, metadataObject
 from .core.array import DataArray
-from .core.utils import copy_into, itersubclasses, tab_delimited
+from .core.utils import (
+    copy_into,
+    itersubclasses,
+    tab_delimited,
+    add_core as __add_core__,
+    and_core as __and_core__,
+    sub_core as __sub_core__,
+    mod_core as __mod_core__,
+)
 
 try:
     from tabulate import tabulate
@@ -73,164 +81,6 @@ try:
 
 except ImportError:
     pd = None
-
-
-def __add_core__(other, newdata):
-    """Implements the core work of adding other to self and modifying newdata.
-
-    Args:
-        other (DataFile,array,list):
-            The data to be added
-        newdata(DataFile):
-            The instance to be modified
-
-    Returns:
-        newdata:
-            A modified newdata
-    """
-    if isinstance(other, _np_.ndarray):
-        if len(newdata) == 0:  # pylint: disable=len-as-condition
-            ch = getattr(other, "column_headers", [])
-            setas = getattr(other, "setas", "")
-            t = _np_.atleast_2d(other)
-            c = t.shape[1]
-            if len(newdata.column_headers) < c:
-                newdata.column_headers.extend(["Column_{}".format(x) for x in range(c - len(newdata.column_headers))])
-            newdata.data = t
-            newdata.setas = setas
-            newdata.column_headers = ch
-            ret = newdata
-        elif len(_np_.shape(other)) == 1:
-            # 1D array, so assume a single row of data
-            if _np_.shape(other)[0] == _np_.shape(newdata.data)[1]:
-                newdata.data = _np_.append(newdata.data, _np_.atleast_2d(other), 0)
-                ret = newdata
-            else:
-                ret = NotImplemented
-        elif len(_np_.shape(other)) == 2 and _np_.shape(other)[1] == _np_.shape(newdata.data)[1]:
-            # DataFile + array with correct number of columns
-            newdata.data = _np_.append(newdata.data, other, 0)
-            ret = newdata
-        else:
-            ret = NotImplemented
-    elif isinstance(other, DataFile):  # Appending another DataFile
-        new_data = _np_.ones((other.shape[0], newdata.shape[1])) * _np_.nan
-        for i in range(newdata.shape[1]):
-            column = newdata.column_headers[i]
-            try:
-                new_data[:, i] = other.column(column)
-            except KeyError:
-                pass
-        newdata.metadata.update(other.metadata)
-        newdata.data = _np_.append(newdata.data, new_data, axis=0)
-        ret = newdata
-    elif isinstance(other, list):
-        for o in other:
-            newdata = newdata + o
-        ret = newdata
-    else:
-        ret = NotImplemented
-    ret._data._setas.shape = ret.shape
-    for attr in newdata.__dict__:
-        if attr not in ("setas", "metadata", "data", "column_headers", "mask") and not attr.startswith("_"):
-            ret.__dict__[attr] = newdata.__dict__[attr]
-    return ret
-
-
-def __and_core__(other, newdata):
-    """Implements the core of the & operator, returning data in newdata
-
-    Args:
-        other (array,DataFile):
-            Data whose columns are to be added
-        newdata (DataFile):
-            instance of DataFile to be modified
-
-    Returns:
-        ():py:class:`DataFile`):
-            new Data object with the columns of other concatenated as new columns at the end of the self object.
-    """
-    if len(newdata.data.shape) < 2:
-        newdata.data = _np_.atleast_2d(newdata.data)
-
-    # Get other to be a numpy masked array of data
-    # Get other_headers to be a suitable length list of strings
-    if isinstance(other, DataFile):
-        newdata.metadata.update(other.metadata)
-        other_headers = other.column_headers
-        other = copy.copy(other.data)
-    elif isinstance(other, DataArray):
-        other = copy.copy(other)
-        if len(other.shape) < 2:  # 1D array, make it 2D column
-            other = _np_.atleast_2d(other)
-            other = other.T
-        other_headers = ["Column {}".format(i + newdata.shape[1]) for i in range(other.shape[1])]
-    elif isinstance(other, _np_.ndarray):
-        other = DataArray(copy.copy(other))
-        if len(other.shape) < 2:  # 1D array, make it 2D column
-            other = _np_.atleast_2d(other)
-            other = other.T
-        other_headers = ["Column {}".format(i + newdata.shape[1]) for i in range(other.shape[1])]
-    else:
-        return NotImplemented
-
-    newdata_headers = newdata.column_headers + other_headers
-    setas = newdata.setas.clone
-
-    # Workout whether to extend rows on one side or the other
-    if _np_.product(newdata.data.shape) == 0:  # Special case no data yet
-        newdata.data = other
-    elif newdata.data.shape[0] == other.shape[0]:
-        newdata.data = _np_.append(newdata.data, other, 1)
-    elif newdata.data.shape[0] < other.shape[0]:  # Need to extend self.data
-        extra_rows = other.shape[0] - newdata.data.shape[0]
-        newdata.data = _np_.append(newdata.data, _np_.zeros((extra_rows, newdata.data.shape[1])), 0)
-        new_mask = newdata.mask
-        new_mask[-extra_rows:, :] = True
-        newdata.data = _np_.append(newdata.data, other, 1)
-        other_mask = _ma_.getmaskarray(other)
-        new_mask = _np_.append(new_mask, other_mask, 1)
-        newdata.mask = new_mask
-    elif other.shape[0] < newdata.data.shape[0]:
-        # too few rows we can extend with zeros
-        extra_rows = newdata.data.shape[0] - other.shape[0]
-        other = _np_.append(other, _np_.zeros((extra_rows, other.shape[1])), 0)
-        other_mask = _ma_.getmaskarray(other)
-        other_mask[-extra_rows:, :] = True
-        new_mask = newdata.mask
-        new_mask = _np_.append(new_mask, other_mask, 1)
-        newdata.data = _np_.append(newdata.data, other, 1)
-        newdata.mask = new_mask
-
-    setas.column_headers = newdata_headers
-    newdata._data._setas = setas
-    newdata._data._setas.shape = newdata.shape
-    for attr in newdata.__dict__:
-        if attr not in ("setas", "metadata", "data", "column_headers", "mask") and not attr.startswith("_"):
-            newdata.__dict__[attr] = newdata.__dict__[attr]
-    return newdata
-
-
-def __mod_core__(other, newdata):
-    """Implements the column deletion method."""
-    if isinstance(other, index_types):
-        newdata.del_column(other)
-    else:
-        newdata = NotImplemented
-    newdata._data._setas.shape = newdata.shape
-    return newdata
-
-
-def __sub_core__(other, newdata):
-    """Actually do the subtraction."""
-    if isinstance(other, (slice, int_types)) or callable(other):
-        newdata.del_rows(other)
-    elif isinstance(other, list) and (all_type(other, int_types) or all_type(other, bool)):
-        newdata.del_rows(other)
-    else:
-        newdata = NotImplemented
-    newdata._data._setas.shape = newdata.shape
-    return newdata
 
 
 class DataFile(metadataObject):
@@ -2857,11 +2707,24 @@ class DataFile(metadataObject):
         return self
 
     def to_pandas(self):
+        """Create a pandas DataFrame from a :py:class:`Stoner.Data` object.
+
+        Notes:
+            In addition to transferring the numerical data, the DataFrame's columns are set to
+            a multi-level index of the :py:attr:`Stoner.Data.column_headers` and :py:attr:`Stoner.Data.setas`
+            calues. A pandas DataFrame extension attribute, *metadata* is registered and is used to store
+            the metada from the :py:class:1Stoner.Data` object. This pandas extension attribute is in fact a trivial
+            subclass of the :py:class:`Stoner.core.typeHintedDict`.
+
+            The inverse operation can be carried out simply by passing a DataFrame into the copnstructor of the
+            :py:class:`Stoner.Data` object.
+
+        Raises:
+            **NotImplementedError** if pandas didn't import correctly.
+        """
         if pd is None:
             raise NotImplementedError("Pandas not available")
-        idx = pd.MultiIndex.from_frame(
-            pd.DataFrame(zip(*[self.column_headers, self.setas]), columns=["Header", "Setas"])
-        )
+        idx = pd.MultiIndex.from_tuples(zip(*[self.column_headers, self.setas]), names=("Headers", "Setas"))
         df = pd.DataFrame(self.data, columns=idx)
         df.metadata.update(self.metadata)
         return df
