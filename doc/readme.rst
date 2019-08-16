@@ -76,27 +76,20 @@ format with more dimensions of data, we suggest you look elsewhere.
 Data and Friends
 ----------------
 
-**Stoner.Core.DataFile** is the base class for representing individual experimental data sets.
-It provides basic methods to examine and manipulate data, manage metadata and load and save data files.
-It has a large number of sub classes - most of these are in Stoner.FileFormats and are used to handle the loading of specific
+**Stoner.Data** is the core class for representing individual experimental data sets.
+It is actually composed of several mixin classes that provide different functionality, with methods
+to examine and manipulate data, manage metadata, load and save data files, plot results and carry out various analysis tasks.
+It has a large number of sub classes - most of these are in Stoner.formats and are used to handle the loading of specific
 file formats.
-
-There are also two mxin classes designed to work with DataFile to enable additional functionality for writing analysis programs.
-
-*   **Stoner.Analysis.AnalysisMixin** provides additional methods for curve-fitting, differentiating, smoothing and carrying out
-    basic calculations on data.
-
-* **Stoner.plot.PlotMixin** provides additional routines for plotting data on 2D or 3D plots.
-
-For rapid development of small scripts, we would recommend the **Stoner.Data** class which is a superclass of the above,
-and provides a 'kitchen-sink' one stop shop for most of the package's functionality.
 
 DataFolder
 ----------
 
 **Stoner.Folders.DataFolder** is a class for assisting with the work of processing lots of files in a common directory
 structure. It provides methods to list. filter and group data according to filename patterns or metadata and then to execute
-a function on each file or group of files.
+a function on each file or group of files. A key feature of DataFolder is its ability to work with the collated metadata from
+the individual files that are held in the DataFolder. In combination with its ability to walk through a complete heirarchy of groups of
+**Data** objects, the handling of the common metadata provides powerful tools for quickly writing data reduction scripts.
 
 The **Stoner.HDF5** module provides some experimental classes to manipulate *DataFile* and *DataFolder* objects within HDF5
 format files. These are not a way to handle arbitary HDF5 files - the format is much to complex and flexible to make that

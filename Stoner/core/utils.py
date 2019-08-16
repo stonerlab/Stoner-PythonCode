@@ -6,7 +6,7 @@ __all__ = [
     "add_core",
     "and_core",
     "sub_core",
-    "mod_cpore",
+    "mod_core",
     "copy_into",
     "itersubclasses",
     "tab_delimited",

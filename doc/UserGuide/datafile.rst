@@ -157,11 +157,13 @@ Single Argument Constructor
 A single argument passed to :py:meth:`DataFile.__init__` is interpreted as follows:
 
 -   A string is assumed to be a filename, and therefore a DataFile is created by loading a file.
--   A 2 numpy array is taken as the numeric data for the new DataFile
+-   A 2D numpy array is taken as the numeric data for the new DataFile
 -   A list or other iterable of strings is assumed to represent the column headers
 -   A list or other iterable of numpy arrays is assumed to represent a sequence of columns
 -   A dictionary with string keys and numpy array values of equal length is taken as a set of columns whose
     header labels are the keys of the dictionaries.
+-   A *pandas.DataFrame* is used to provide data, column headers and if it has a suitable multi-level column index,
+    the :py:attr:`Stoner.Data.setas` attribute.
 -   Otherwise a dictionary is treated as the metadata for the new DataFile instance.
 
 Two Argument Constructor
@@ -188,11 +190,14 @@ Examples
 .. code::
 
     # Load a file from disc, set the setas attribute and column headers
-    d=DataFile("filename.txt",setas="xy", column_headers=["X-Data","Y-Data"])
+    d=Data("filename.txt",setas="xy", column_headers=["X-Data","Y-Data"])
     # Create a DataFile from a dictionary:
-    d=DataFile({"Temperature":temp_array,"Resistance":res_data})
+    d=Data({"Temperature":temp_array,"Resistance":res_data})
     # The same, but set metadata too
-    d=DataFile({"Temperature":temp_array,"Resistance":res_data},{"User":"Fred","Sample":"X234_a","Field":2.4})
+    d=Data({"Temperature":temp_array,"Resistance":res_data},{"User":"Fred","Sample":"X234_a","Field":2.4})
+    # From a pandas DataFrame
+    df=pd.DataFrame(...)
+    d=Data(df)
 
 
 Examining and Basic Manipulations of Data
@@ -1049,3 +1054,15 @@ filename used for a load or save operation.
 
 The third is similar but convert the file to ``cvs`` format while the fourth also
 specifies that the eliminator is a tab character.
+
+Exporting Data to pandas
+------------------------
+
+The :py:meth:`Stoner.Data.to_pandas` method can be used to convert a :py:class:`Stoner.Data` object to
+a *pandas.DataFrame*. The numerical data will be transferred directly, with the DataFrame columns being set up
+as a two level index of column headers and column assignments. The Stoner library registers an additional
+*metadata* extension attribute for DataFrames that provides thin sub-class wrapper around the same regular expression
+based and type hinting dictionary that is used to store metadata in :py:attr:`Stoner.Data.metadata`.
+
+The pandas.DataFrame produced by the :py:meth:`Stoner.Data.to_pandas` method is reversibly convertable back to an identical
+:py:class:`Stoner.Data` object by passing the DataFrame into the constructor of the :py:class:`Stoner.Data` object.
