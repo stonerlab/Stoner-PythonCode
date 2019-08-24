@@ -76,20 +76,24 @@ def add_core(other, newdata):
         ret = newdata
     elif isinstance(other, Mapping):
         # First check keys all in newdata
-        order = dict()
-        for k in other:
-            try:
-                order[k] = newdata.find_col(k)
-            except KeyError:
-                newdata.add_column(np.ones(len(newdata)) * np.NaN, header=k)
-                order[k] = newdata.shape[1] - 1
-        row = np.ones(newdata.shape[1]) * np.NaN
-        for k in order:
-            row[order[k]] = other[k]
-        newdata.data = np.append(newdata.data, np.atleast_2d(row), axis=0)
+        if len(newdata) == 0:
+            newdata.data = np.atleast_2d(list(other.values()))
+            newdata.column_headers = list(other.keys())
+        else:
+            order = dict()
+            for k in other:
+                try:
+                    order[k] = newdata.find_col(k)
+                except (KeyError, re.error):
+                    newdata.add_column(np.ones(len(newdata)) * np.NaN, header=k)
+                    order[k] = newdata.shape[1] - 1
+            row = np.ones(newdata.shape[1]) * np.NaN
+            for k in order:
+                row[order[k]] = other[k]
+            newdata.data = np.append(newdata.data, np.atleast_2d(row), axis=0)
         ret = newdata
     else:
-        ret = NotImplemented
+        return NotImplemented
     ret._data._setas.shape = ret.shape
     for attr in newdata.__dict__:
         if attr not in ("setas", "metadata", "data", "column_headers", "mask") and not attr.startswith("_"):

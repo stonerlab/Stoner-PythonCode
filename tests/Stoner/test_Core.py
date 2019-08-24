@@ -277,6 +277,16 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         self.assertEqual(f1,self.d2.shape[0]+1,"Failed to add a row by providing a dictionary")
         self.assertEqual(f2,self.d2.shape[1]+1,"Failed to add an extra columns by adding a dictionary with a new key")
         self.assertTrue(np.isnan(f[-1,2]) and np.isnan(f[0,-1]),"Unset values when adding a dictionary not NaN")
+        d=Data()
+        d+=np.ones(5)
+        d+=np.zeros(5)
+        self.assertTrue(np.all(d//1==np.array([1,0])),"Adding 1D arrays should add new rows")
+        try:
+            d+=True
+        except TypeError:
+            pass
+        else:
+            self.assertTrue(False,"Failed to raise TypeError on adding unsupported type")
 
     def test_properties(self):
         self.little=Data()

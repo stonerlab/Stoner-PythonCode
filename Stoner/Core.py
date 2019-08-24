@@ -1699,12 +1699,17 @@ class DataFile(metadataObject):
         if not replace:
             colums = copy.copy(self.column_headers)
             old_setas = self.setas.clone
-            self.data = DataArray(
-                _np_.append(
-                    self.data[:, :index], _np_.append(_np_.zeros_like(_np__data), self.data[:, index:], axis=1), axis=1
-                ),
-                setas=self.setas.clone,
-            )
+            if index == self.data.shape[1]:  # appending column
+                self.data = DataArray(_np_.append(self.data, _np__data, axis=1), setas=self.setas.clone)
+            else:
+                self.data = DataArray(
+                    _np_.append(
+                        self.data[:, :index],
+                        _np_.append(_np_.zeros_like(_np__data), self.data[:, index:], axis=1),
+                        axis=1,
+                    ),
+                    setas=self.setas.clone,
+                )
             for ix in range(0, index):
                 self.column_headers[ix] = colums[ix]
                 self.setas[ix] = old_setas[ix]

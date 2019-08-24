@@ -223,6 +223,18 @@ class _curve_fit_result(object):
         return self.func.__name__
 
     @property
+    def dict(self):
+        """Optimal parameters and errors as a Dictionary."""
+        ret = {}
+        for p, v, e, p0 in zip(self.params, self.popt, self.perr):
+            ret[p] = v
+            ret["d_{}", format(p)] = e
+        ret["chi-square"] = self.chisqr
+        ret["red. chi-sqr"] = self.redchi
+        ret["nfev"] = self.nfev
+        return ret
+
+    @property
     def full(self):
         """The same as :py:attr:`_curve_fit_result.row`"""
         return self, self.row
@@ -717,7 +729,22 @@ class FittingMixin(object):
                 ycol=columns.ycol,
             )
 
-            retval = {"fit": (row[::2], fit.covar), "report": fit, "row": row, "full": (fit, row), "data": self}
+            res_dict = {}
+            for ix, p in enumerate(fit.params):
+                res_dict[p] = fit.params[p].value
+                res_dict["d_{}".format(p)] = fit.params[p].stderr
+            res_dict["chi-square"] = fit.chisqr
+            res_dict["red. chi-sqr"] = fit.redchi
+            res_dict["nfeev"] = fit.nfev
+
+            retval = {
+                "fit": (row[::2], fit.covar),
+                "report": fit,
+                "row": row,
+                "full": (fit, row),
+                "data": self,
+                "dict": res_dict,
+            }
             if output not in retval:
                 raise RuntimeError("Failed to recognise output format:{}".format(output))
             else:
@@ -896,15 +923,21 @@ class FittingMixin(object):
         # Store our current mask, calculate new column's mask and turn off mask
 
         param_names = getattr(model, "param_names", None)
-        for i in range(len(param_names)):
+        ret_dict = {}
+        for i, p in enumerate(param_names):
             row.extend([fit_result.beta[i], fit_result.sd_beta[i]])
+            ret_dict[p], ret_dict["d_{}".format(p)] = fit_result.beta[i], fit_result.sd_beta[i]
         row.append(fit_result.redchi)
+        ret_dict["chi-square"] = fit_result.chisqr
+        ret_dict["red. chi-sqr"] = fit_result.redchi
+
         retval = {
             "fit": (row[::2], fit_result.cov_beta),
             "report": fit_result,
             "row": row,
             "full": (fit_result, row),
             "data": self,
+            "dict": ret_dict,
         }
         if output not in retval:
             raise RuntimeError("Failed to recognise output format:{}".format(output))
@@ -1221,8 +1254,22 @@ class FittingMixin(object):
         row = self._record_curve_fit_result(
             model, fit, _.xcol, header, result, replace, residuals=residuals, prefix=prefix, ycol=_.ycol
         )
+        ret_dict = {}
+        for i, p in enumerate(model.param_names):
+            ret_dict[p], ret_dict["d_{}".format(p)] = row[2 * i], row[2 * i + 1]
+        ret_dict["chi-square"] = polish.chisqr
+        ret_dict["red. chi-sqr"] = polish.redchi
+        ret_dict["nfev"] = fit.nfev
+        fit.dict = ret_dict
 
-        retval = {"fit": (row[::2], fit.covar), "report": fit, "row": row, "full": (fit, row), "data": self}
+        retval = {
+            "fit": (row[::2], fit.covar),
+            "report": fit,
+            "row": row,
+            "full": (fit, row),
+            "data": self,
+            "dict": fit.dict,
+        }
         if output not in retval:
             raise RuntimeError("Failed to recognise output format:{}".format(output))
         else:
