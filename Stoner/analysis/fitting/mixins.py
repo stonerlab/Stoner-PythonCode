@@ -226,7 +226,7 @@ class _curve_fit_result(object):
     def dict(self):
         """Optimal parameters and errors as a Dictionary."""
         ret = {}
-        for p, v, e, p0 in zip(self.params, self.popt, self.perr):
+        for p, v, e in zip(self.params, self.popt, self.perr):
             ret[p] = v
             ret["d_{}", format(p)] = e
         ret["chi-square"] = self.chisqr
@@ -730,7 +730,7 @@ class FittingMixin(object):
             )
 
             res_dict = {}
-            for ix, p in enumerate(fit.params):
+            for p in fit.params:
                 res_dict[p] = fit.params[p].value
                 res_dict["d_{}".format(p)] = fit.params[p].stderr
             res_dict["chi-square"] = fit.chisqr
@@ -930,6 +930,8 @@ class FittingMixin(object):
         row.append(fit_result.redchi)
         ret_dict["chi-square"] = fit_result.chisqr
         ret_dict["red. chi-sqr"] = fit_result.redchi
+
+        row = _np_.array(row)
 
         retval = {
             "fit": (row[::2], fit_result.cov_beta),
