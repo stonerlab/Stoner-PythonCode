@@ -11,11 +11,8 @@ Created on Wed Feb  7 16:53:40 2018
 """
 
 
-from Stoner import Data, DataFolder
-from Stoner.Util import format_error
 from Stoner.Fit import linear
-
-from numpy import isnan, pi, tan, ones_like, where, nan, abs
+import numpy as np
 
 filename = "../sample-data/6221-Lockin-DAQ Temperature Control !0001.txt"
 
