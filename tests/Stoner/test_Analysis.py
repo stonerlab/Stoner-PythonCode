@@ -84,10 +84,38 @@ class Analysis_test(unittest.TestCase):
         self.app.setas="xy"
         self.assertAlmostEqual(self.app.integrate(),-64.1722191259037,msg="Integrate after aplies failed.")
 
+    def test_scale(self):
+        x=np.linspace(-5,5,101)
+        y=np.sin(x)
+        orig=Data(x+np.random.normal(size=101,scale=0.025),y+np.random.normal(size=101,scale=0.01))
+        orig.setas="xy"
 
+        XTests=[[(0,0,0.5),(0,2,-0.1)],
+                 [(0,0,0.5)],
+                 [(0,2,-0.2)]]
+        YTests=[[(1,1,0.5),(1,2,-0.1)],
+                 [(1,1,0.5)],
+                 [(1,2,-0.2)]]
+        for xmode,xdata,xtests in zip(["linear","scale","offset"],[x*2+0.2,x*2,x+0.2],XTests):
+            for ymode,ydata,ytests in zip(["linear","scale","offset"],[y*2+0.2,y*2,y+0.2],YTests):
+                to_scale=Data(xdata+np.random.normal(size=101,scale=0.025),ydata+np.random.normal(size=101,scale=0.01))
+                to_scale.setas="xy"
+                to_scale.scale(orig,xmode=xmode,ymode=ymode)
+                transform=to_scale["Transform"]
+                t_err=to_scale["Transform Err"]
+                for i,j,v in xtests+ytests:
+                    self.assertLessEqual(np.abs(transform[i,j]-v),5*t_err[i,j],"Failed to get correct trandorm factor for {}:{} ({} vs {}".format(xmode,ymode,transform[i,j],v))
+
+        to_scale=Data(x*5+0.1+np.random.normal(size=101,scale=0.025),y*0.5+0.1+0.5*x+np.random.normal(size=101,scale=0.01))
+        to_scale.setas="xy"
+        to_scale.scale(orig,xmode="affine")
+        a_tranform=np.array([[0.2,0.,-0.02],[-0.2, 2.,-0.17]])
+        t_delta=np.abs(to_scale["Transform"]-a_tranform)
+        t_in_range=t_delta<to_scale["Transform Err"]*5
+        self.assertTrue(np.all(t_in_range),"Failed to produce correct affine scaling {} vs {}".format(to_scale["Transform"],a_tranform))
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Analysis_test("test_functions")
     test.setUp()
     unittest.main()
-    #test.test_apply()
+    #test.test_scale()

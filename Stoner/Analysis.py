@@ -1504,7 +1504,7 @@ class AnalysisMixin(object):
             mid = len(xdat) / 2
             try:  # may go wrong if three points are co-linear
                 m0 = GetAffineTransform(xy1[[0, mid, -1], :], xy2[[0, mid, -1], :])
-            except Exception:  # So use an idnetify transformation instead
+            except (RuntimeError, _np_.linalg.LinAlgError):  # So use an idnetify transformation instead
                 m0 = _np_.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
         elif isinstance(use_estimate, _np_.ndarray) and use_estimate.shape == (
             2,
