@@ -81,10 +81,45 @@ class FuncsTest(unittest.TestCase):
 #        print(self.a1.metadata)
 #        print(all([k in self.a.metadata.keys() for k in self.a1.metadata.keys()]))
 
+    def test_imagefuncs(self):
+        self.a2.subtract_image(self.a2.image,offset=0)
+        self.assertTrue(np.all(self.a2.image<=0.0001),"Failed to subtract image from itself")
+        x=np.linspace(-3*np.pi,3*np.pi,101)
+        X,Y=np.meshgrid(x,x)
+        i=ImageFile(np.sin(X)*np.cos(Y))
+        i2=i.clone
+        j=i.fft()
+        self.assertTrue(np.all(np.unique(np.argmax(j,axis=1))==np.array([47,53])),"FFT of image test failed")
+        j.imshow()
+        self.assertTrue(len(plt.get_fignums())==1,"Imshow didn't open one window")
+        plt.close("all")
+        self.a2.imshow(title=None,figure=None)
+        self.a2.imshow(title="Hello",figure=1)
+        self.assertTrue(len(plt.get_fignums())==1,"Imshow with arguments didn't open one window")
+        plt.close("all")
+        i=i2
+        k=i+0.2*X-0.1*Y+0.2
+        k.level_image(mode="norm")
+        j=k-i
+        self.assertLess(np.max(j),0.01,"Level Image failed")
+        i2=i.clone
+        i2.quantize([-0.5,0,0.5])
+        self.assertTrue(np.all(np.unique(i2.data)==np.array([-0.5,0,0.5])),"Quantise levels failed")
+        i2=i.clone
+        i2.quantize([-0.5,0,0.5],levels=[-0.25,0.25])
+        self.assertTrue(np.all(np.unique(i2.data)==np.array([-0.5,0,0.5])),"Quantise levels failed")
+        i2=i.clone
+        i2.rotate(np.pi/4)
+        i2.fft()
+        self.assertTrue(np.all(np.unique(np.argmax(i2,axis=1))==array([46, 47, 49, 50, 51, 53])),"FFT of image test failed")
+
+
+
+
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=FuncsTest("test_funcs")
     test.setUp()
     #test.test_imagefile_ops()
-    #test.test_funcs()
-    unittest.main()
+    test.test_imagefuncs()
+    #unittest.main()
 

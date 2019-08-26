@@ -260,14 +260,14 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50, box=None, do_shi
     return im
 
 
-def subtract_image(im, background, contrast=16, clip=True):
+def subtract_image(im, background, contrast=16, clip=True, offset=0.5):
     """subtract a background image from the ImageArray
 
     Multiply the contrast by the contrast parameter.
     If clip is on then clip the intensity after for the maximum allowed data range.
     """
-    im = im.convert_float()
-    im = contrast * (im - background) + 0.5
+    im = im.asfloat(normalise=False, clip_negative=False)
+    im = contrast * (im - background) + offset
     if clip:
         im = im.clip_intensity()
     return im
@@ -586,15 +586,18 @@ def quantize(im, output, levels=None):
 
     The number of levels should be one less than the number of output levels given.
     """
+    lmin, lmax = im.min(), im.max()  # Dudge to ensure that the bottom and top elements are included.
+    delta = (lmax - lmin) / 100
+
     if levels is None:
-        levels = np.linspace(im.min(), im.max(), len(output) + 1)
+        levels = np.linspace(lmin - delta, lmax + delta, len(output) + 1)
     elif len(levels) == len(output) + 1:
         pass
     elif len(levels) == len(output) - 1:
         lvl = np.zeros(len(output) + 1)
         lvl[1:-1] = levels
-        lvl[0] = im.min()
-        lvl[-1] = im.max()
+        lvl[0] = im.min() - delta
+        lvl[-1] = im.max() + delta
         levels = lvl
     else:
         raise RuntimeError("{} output levels and {} input levels".format(len(output), len(levels)))
@@ -606,29 +609,64 @@ def quantize(im, output, levels=None):
     return ret
 
 
-def rotate(im, angle, mode="constant", cval=None):
-    """Rotates the image.
+def rotate(im, angle, resize=False, center=None, order=1, mode="constant", cval=0, clip=True, preserve_range=False):
+    """Rotate image by a certain angle around its center (pass through to the skimage.transform.warps.rotate function)
 
-    Areas lost by move are cropped, and areas gained are made black (0)
+    Parameters:
 
-    Args:
-        rotation: float
-            clockwise rotation angle in radians (rotated about top right corner)
+        angle  (float):
+            Rotation angle in **radians** in clockwise direction.
 
-    Keyword Argum,ents:
-        mode (str): How to handle points outside the original image. See :py:func:`skimage.transform.warp`. Defaults to "constant"
-        cval (float): The value to fill with if *mode* is constant. If not speficied or None, defaults to the mean pixcel value.
+    Keyword Parameters:
+
+        resize (bool):
+            Determine whether the shape of the output image will be automatically
+            calculated, so the complete rotated image exactly fits. Default is
+            False.
+        center (iterable of length 2):
+            The rotation center. If ``center=None``, the image is rotated around
+            its center, i.e. ``center=(cols / 2 - 0.5, rows / 2 - 0.5)``.  Please
+            note that this parameter is (cols, rows), contrary to normal skimage
+            ordering.
+        order (int):
+            The order of the spline interpolation, default is 1. The order has to
+            be in the range 0-5. See `skimage.transform.warp` for detail.
+        mode ({'constant', 'edge', 'symmetric', 'reflect', 'wrap'}):
+            Points outside the boundaries of the input are filled according
+            to the given mode.  Modes match the behaviour of `numpy.pad`.
+        cval  (float):
+            Used in conjunction with mode 'constant', the value outside
+            the image boundaries.
+        clip (bool):
+            Whether to clip the output to the range of values of the input image.
+            This is enabled by default, since higher order interpolation may
+            produce values outside the given input range.
+        preserve_range (bool):
+            Whether to keep the original range of values. Otherwise, the input
+            image is converted according to the conventions of `Stpomer.Image.ImageArray.as_float`.
 
     Returns:
-        im: ImageArray
-            rotated image
+        (ImageFile/ImageArray):
+            Rotated image
+
     """
-    rot = transform.SimilarityTransform(rotation=angle)
-    if cval is None:
-        cval = im.mean()
-    im.warp(rot, mode=mode, cval=cval)
-    im.metadata["transform:rotation"] = angle
-    return im
+    ang = np.rad2deg(-angle)
+    data = transform.rotate(
+        im,
+        ang,
+        resize=resize,
+        center=center,
+        order=order,
+        mode=mode,
+        cval=cval,
+        clip=clip,
+        preserve_range=preserve_range,
+    )
+    print(type(im), type(data))
+    ret = data.view(type(im))
+    ret.metadata = im.metadata
+    ret.metadata["transform:rotation"] = angle
+    return ret
 
 
 def translate(im, translation, add_metadata=False, order=3, mode="wrap", cval=None):

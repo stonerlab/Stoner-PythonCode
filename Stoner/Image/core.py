@@ -830,6 +830,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         else:
             dl = list(limits)
         np.clip(self, dl[0], dl[1], out=self)
+        return self
 
     def asint(self, dtype=np.uint16):
         """convert the image to unsigned integer format.
@@ -1005,12 +1006,12 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     def convert_float(self, clip_neg=True):
         """Deproicated compatability. :py:meth:`ImageArray.asfloat` preferred"""
         warnings.warn("The convert_float method was replaced by asfloat and will raise and error in future versions.")
-        self.asfloat(normalise=False, clip_negative=clip_neg)
+        return self.asfloat(normalise=False, clip_negative=clip_neg)
 
     def convert_int(self):
         """Depricated compatability meothd. :py:meth:`ImageArray.asint` preferred"""
         warnings.warn("The convert_int method was replaced by asint and will raise and error in future versions.")
-        self.asint()
+        return self.asint()
 
 
 class ImageFile(metadataObject):
