@@ -111,7 +111,7 @@ class FuncsTest(unittest.TestCase):
         i2=i.clone
         i2.rotate(np.pi/4)
         i2.fft()
-        self.assertTrue(np.all(np.unique(np.argmax(i2,axis=1))==array([46, 47, 49, 50, 51, 53])),"FFT of image test failed")
+        self.assertTrue(np.all(np.unique(np.argmax(i2,axis=1))==np.array([46, 47, 49, 50, 51, 53])),"FFT of image test failed")
 
 
 
