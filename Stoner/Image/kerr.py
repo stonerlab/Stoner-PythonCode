@@ -10,7 +10,7 @@ __all__ = ["KerrArray", "KerrStack", "MaskStack"]
 
 from Stoner import Data
 from Stoner.Core import typeHintedDict
-from Stoner.Image import ImageArray, ImageStack
+from Stoner.Image import ImageArray, ImageStack, ImageFile
 from Stoner.core.exceptions import assertion, StonerAssertionError
 from Stoner.compat import which
 import numpy as np
@@ -145,7 +145,9 @@ class KerrArray(ImageArray):
         (ImageArray):
             cropped image
         """
-        if self.shape != AN_IM_SIZE:
+        if self.shape == IM_SIZE:
+            return self
+        elif self.shape != AN_IM_SIZE:
             raise ValueError(
                 "Need a full sized Kerr image to crop. Current size is {}".format(self.shape)
             )  # check it's a normal image
@@ -233,6 +235,14 @@ class KerrArray(ImageArray):
         assertion(len(lim) == 2, "Couldn't find scalebar")
         return lim[1] - lim[0]
 
+    def float_and_croptext(self):
+        """convert image to float and crop_text
+        Just to group typical functions together
+        """
+        ret = self.asfloat()
+        ret = ret.crop_text()
+        return ret
+
     def ocr_metadata(self, field_only=False):
         """Use image recognition to try to pull the metadata numbers off the image
         Requirements: This function uses tesseract to recognise the image, therefore
@@ -289,6 +299,111 @@ class KerrArray(ImageArray):
         if "ocr_field" in self.metadata.keys() and not isinstance(self.metadata["ocr_field"], (int, float)):
             self.metadata["ocr_field"] = np.nan  # didn't read the field properly
         return self.metadata
+
+    def defect_mask(self, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=False):
+        """Tries to create a boolean array which is a mask for typical defects found in Image images.
+
+        Best for unprocessed raw images. (for subtract images
+        see defect_mask_subtract_image)
+        Looks for big bright things by thresholding and small and dark defects using
+        skimage's corner_fast algorithm
+
+        Parameters
+        ----------
+        thresh float
+            brighter stuff than this gets removed (after image levelling)
+        corner_thresh float
+            see corner_fast skimage
+        radius:
+            radius of pixels around corners that are added to mask
+
+        return_extra dict
+            this returns a dictionary with some of the intermediate steps of the
+            calculation
+
+        Returns
+        -------
+        totmask ndarray of bool
+            mask
+        info (optional) dict
+            dictionary of intermediate calculation steps
+        """
+        im = self.asfloat()
+        im = im.level_image(poly_vert=3, poly_horiz=3)
+        th = im.threshold_minmax(0, thresh)
+        # corner fast good at finding the small black dots
+        cor = im.corner_fast(threshold=corner_thresh)
+        blobs = cor.blob_doh(min_sigma=1, max_sigma=20, num_sigma=3, threshold=0.01)
+        q = np.zeros_like(im)
+        for y, x, _ in blobs:
+            q[
+                int(np.round(y - radius)) : int(np.round(y + radius)),
+                int(np.round(x - radius)) : int(np.round(x + radius)),
+            ] = 1.0
+        totmask = np.logical_or(q, th)
+        if return_extra:
+            info = {
+                "flattened_image": im,
+                "corner_fast": cor,
+                "corner_points": blobs,
+                "corner_mask": q,
+                "thresh_mask": th,
+            }
+            return totmask, info
+        return totmask
+
+    def defect_mask_subtract_image(self, threshmin=0.25, threshmax=0.9, denoise_weight=0.1, return_extra=False):
+        """Create a mask array for a typical subtract Image image
+        Uses a denoise algorithm followed by simple thresholding.
+
+        Returns
+        -------
+        totmask: ndarray of bool
+            the created mask
+        info (optional) dict:
+            the intermediate denoised image
+        """
+
+        p = self.denoise_tv_chambolle(weight=denoise_weight)
+        submask = p.threshold_minmax(threshmin, threshmax)
+        if return_extra:
+            info = {"denoised_image": p}
+            return submask, info
+        return submask
+
+    def float_and_croptext(self):
+        """convert image to float and crop_text
+        Just to group typical functions together
+        """
+        k = self.asfloat()
+        k = k.crop_text()
+        return k
+
+
+class KerrImageFile(ImageFile):
+
+    """Subclass of ImageFile that keeps the data as a KerrArray so that extra functions are available."""
+
+    @property
+    def image(self):
+        """Access the image data."""
+        return self._image.view(KerrArray)
+
+    @image.setter
+    def image(self, v):
+        """Ensure stored image is always an ImageArray."""
+        filename = self.filename
+        # ensure setting image goes into the same memory block if from stack
+        if (
+            hasattr(self, "_fromstack")
+            and self._fromstack
+            and self._image.shape == v.shape
+            and self._image.dtype == v.dtype
+        ):
+            self._image[:] = v
+        else:
+            self._image = KerrArray(v)
+        self.filename = filename
 
 
 class KerrStackMixin(object):

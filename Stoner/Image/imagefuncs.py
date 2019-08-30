@@ -609,6 +609,34 @@ def quantize(im, output, levels=None):
     return ret
 
 
+def remove_outliers(im, percentiles=(0.01, 0.99), replace=None):
+    """Find values of the data that are beyond a percentile of the overall distribution and replace them.
+
+    Keyword Parameters:
+        percentile (2 tuple):
+            Fraction percentiles to consider to be outliers (default is (0.01,0.99) for 1% limits)
+        replace (2 tuple or None):
+            Values to set outliers to. If None, then the pixel values at the percentile limits are used.
+
+    Returns:
+        (ndarray):
+            Tje modified array.
+
+    Use this method if you have an image with a small number of pixels with extreme values that are
+    out of range.
+    """
+    from scipy.interpolate import interp1d
+
+    cdf, bins = im.cumulative_distribution(nbins=min(1000, im.count()))
+    cdf = interp1d(cdf, bins, kind="linear")
+    limits = [cdf(x) for x in percentiles]
+    if replace is None:
+        replace = limits
+    im[im < limits[0]] = replace[0]
+    im[im > limits[1]] = replace[1]
+    return im
+
+
 def rotate(im, angle, resize=False, center=None, order=1, mode="constant", cval=0, clip=True, preserve_range=False):
     """Rotate image by a certain angle around its center (pass through to the skimage.transform.warps.rotate function)
 
@@ -727,10 +755,10 @@ def translate_limits(im, translation):
     return (xmin, xmax, ymin, ymax)
 
 
-def plot_histogram(im):
+def plot_histogram(im, bins=256):
     """plot the histogram and cumulative distribution for the image"""
-    hist, bins = im.histogram()
-    cum, bins = im.cumulative_distribution()
+    hist, bins = np.histogram(im, bins)
+    cum, bins = im.cumulative_distribution(nbins=bins)
     cum = cum * np.max(hist) / np.max(cum)
     plt.figure()
     plt.plot(bins, hist, "k-")
@@ -746,84 +774,11 @@ def threshold_minmax(im, threshmin=0.1, threshmax=0.9):
     return np.logical_and(im > threshmin, im < threshmax)
 
 
-def defect_mask(im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=False):
-    """Tries to create a boolean array which is a mask for typical defects found in Image images.
-
-    Best for unprocessed raw images. (for subtract images
-    see defect_mask_subtract_image)
-    Looks for big bright things by thresholding and small and dark defects using
-    skimage's corner_fast algorithm
-
-    Parameters
-    ----------
-    thresh float
-        brighter stuff than this gets removed (after image levelling)
-    corner_thresh float
-        see corner_fast skimage
-    radius:
-        radius of pixels around corners that are added to mask
-
-    return_extra dict
-        this returns a dictionary with some of the intermediate steps of the
-        calculation
-
-    Returns
-    -------
-    totmask ndarray of bool
-        mask
-    info (optional) dict
-        dictionary of intermediate calculation steps
-    """
-    im = im.convert_float()
-    im = im.level_image(poly_vert=3, poly_horiz=3)
-    th = im.threshold_minmax(0, thresh)
-    # corner fast good at finding the small black dots
-    cor = im.corner_fast(threshold=corner_thresh)
-    blobs = cor.blob_doh(min_sigma=1, max_sigma=20, num_sigma=3, threshold=0.01)
-    q = np.zeros_like(im)
-    for y, x, _ in blobs:
-        q[y - radius : y + radius, x - radius : x + radius] = 1.0
-    totmask = np.logical_or(q, th)
-    if return_extra:
-        info = {"flattened_image": im, "corner_fast": cor, "corner_points": blobs, "corner_mask": q, "thresh_mask": th}
-        return totmask, info
-    return totmask
-
-
-def defect_mask_subtract_image(im, threshmin=0.25, threshmax=0.9, denoise_weight=0.1, return_extra=False):
-    """Create a mask array for a typical subtract Image image
-    Uses a denoise algorithm followed by simple thresholding.
-
-    Returns
-    -------
-    totmask: ndarray of bool
-        the created mask
-    info (optional) dict:
-        the intermediate denoised image
-    """
-
-    p = im.denoise_tv_chambolle(weight=denoise_weight)
-    submask = p.threshold_minmax(threshmin, threshmax)
-    if return_extra:
-        info = {"denoised_image": p}
-        return submask, info
-    return submask
-
-
-def do_nothing(im):
-    """exactly what it says on the tin"""
-    return im
-
-
-def float_and_croptext(im):
-    """convert image to float and crop_text
-    Just to group typical functions together
-    """
-    k = im.convert_float()
-    k = k.crop_text()
-    return k
-
-
 def denoise(im, weight=0.1):
     """just a rename of the skimage restore function"""
     return im.denoise_tv_chambolle(weight=weight)
+
+
+def do_nothing(self):
+    """Nulop function for testing."""
+    return self

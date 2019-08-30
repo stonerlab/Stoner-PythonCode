@@ -531,6 +531,8 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 regexpDict()
             )  # Cache is a regular expression dictionary - keys matched directly and then by regular expression
 
+            short_names = []
+
             # Get the Stoner.Image.imagefuncs mopdule first
             from Stoner.Image import imagefuncs
 
@@ -540,6 +542,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     if callable(func) and func.__module__ == imagefuncs.__name__:
                         name = "{}__{}".format(func.__module__, d).replace(".", "__")
                         func_proxy[name] = func
+                        short_names.append((d, func))
 
             # Get the Stoner.Image.util mopdule next
             from Stoner.Image import util as SIutil
@@ -550,6 +553,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     if callable(func) and func.__module__ == SIutil.__name__:
                         name = "{}__{}".format(func.__module__, d).replace(".", "__")
                         func_proxy[name] = func
+                        short_names.append((d, func))
 
             # Add scipy.ndimage functions
             import scipy.ndimage as ndi
@@ -563,6 +567,8 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                             func.transpose = True
                             name = "{}__{}".format(func.__module__, d).replace(".", "__")
                             func_proxy[name] = func
+                            short_names.append((d, func))
+
             # Add the scikit images modules
             _ski_modules = [
                 color,
@@ -587,6 +593,10 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                         if callable(func):
                             name = "{}__{}".format(func.__module__, d).replace(".", "__")
                             func_proxy[name] = func
+                            short_names.append((d, func))
+
+            for n, f in reversed(short_names):
+                func_proxy[n] = f
             self._func_proxy = func_proxy  # Store the cache
         return self._func_proxy
 
@@ -596,9 +606,8 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     def __dir__(self):
         """Implement code for dir()"""
         proxy = set(list(self._funcs.keys()))
-        parent = set(dir(super(ImageArray, self)))
-        mine = set(dir(ImageArray))
-        return sorted(list(proxy | parent | mine))
+        parent = set(super(ImageArray, self).__dir__())
+        return sorted(list(proxy | parent))
 
     def __getattr__(self, name):
         """Magic attribute access method.
@@ -626,6 +635,9 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             if name.startswith("_") or name in ["debug"]:
                 if name == "_hardmask":
                     ret = False
+            elif name in self._funcs:
+                ret = self._funcs[name]
+                ret = self._func_generator(ret)
             elif ".*__{}$".format(name) in self._funcs:
                 ret = self._funcs[".*__{}$".format(name)]
                 ret = self._func_generator(ret)
@@ -806,7 +818,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             ret = self
         else:
             ret = convert(self, dtype=np.float64, normalise=normalise)  # preserve metadata
-            ret = ImageArray(ret)
+            ret = ret.view(self.__class__)
             c = self.clone  # copy formatting and apply to new array
             for k, v in c._optinfo.items():
                 setattr(ret, k, v)
@@ -840,6 +852,9 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         if self.dtype.kind == "f" and (np.max(self) > 1 or np.min(self) < -1):
             self = self.normalise()
         ret = convert(self, dtype)
+        ret = ret.view(self.__class__)
+        for k, v in self._optinfo.items():
+            setattr(ret, k, v)
         return ret
 
     def save(self, filename=None, **kargs):
@@ -1210,6 +1225,12 @@ class ImageFile(metadataObject):
         else:
             self.image.__setitem__(n, v)
 
+    def __dir__(self):
+        """Merge both the ImageFile and ImageArray dirs."""
+        this = set(super(ImageFile, self).__dir__())
+        image = set(dir(self.image))
+        return list(this | image)
+
     def __delitem__(self, n):
         """A Pass through to ImageArray."""
         try:
@@ -1229,7 +1250,7 @@ class ImageFile(metadataObject):
 
     def __setattr__(self, n, v):
         """Handles setting attributes."""
-        if not hasattr(self, n) and n not in ImageFile._protected_attrs:
+        if not hasattr(self, n) and n not in getattr(self.image.__class__, "_protected_attrs", []):
             setattr(self._image, n, v)
         else:
             super(ImageFile, self).__setattr__(n, v)
@@ -1306,6 +1327,16 @@ class ImageFile(metadataObject):
             return NotImplemented
         ret = self.clone
         ret.image = (self.image - other.image) / (self.image + other.image)
+        return ret
+
+    def __eq__(self, other):
+        """Impleent and equality test."""
+        if id(self) == id(other):
+            ret = True  # short circuit for identity
+        elif not isinstance(other, ImageFile):
+            ret = False  # Shortcircuit for non equivalent types
+        else:
+            ret = self.metadata == other.metadata and np.all(self.image == other.image)
         return ret
 
     #####################################################################################################################################
