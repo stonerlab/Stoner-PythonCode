@@ -78,7 +78,7 @@ if __vi__[0] == 2:
     str2bytes = str
     bytes2str = str
 
-    def bytes(arg, *args, **kargs):
+    def bytes(arg, *args, **kargs):  # pylint: disable=redefined-builtin
         """Dummy function that does the same as str()."""
         return str(arg)
 

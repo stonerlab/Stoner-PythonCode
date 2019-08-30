@@ -371,14 +371,6 @@ class KerrArray(ImageArray):
             return submask, info
         return submask
 
-    def float_and_croptext(self):
-        """convert image to float and crop_text
-        Just to group typical functions together
-        """
-        k = self.asfloat()
-        k = k.crop_text()
-        return k
-
 
 class KerrImageFile(ImageFile):
 

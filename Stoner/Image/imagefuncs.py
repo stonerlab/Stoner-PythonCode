@@ -34,14 +34,12 @@ __all__ = [
     "normalise",
     "profile_line",
     "quantize",
-    "rotate",
+    "remove_outliers" "rotate",
     "translate",
     "translate_limits",
     "plot_histogram",
     "threshold_minmax",
-    "defect_mask",
     "do_nothing",
-    "float_and_croptext",
     "denoise",
 ]
 from Stoner.compat import string_types

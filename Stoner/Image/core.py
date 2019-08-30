@@ -1202,13 +1202,6 @@ class ImageFile(metadataObject):
     #####################################################################################################################################
     ############################# Special methods #######################################################################################
 
-    def __dir__(self):
-        """Implement code for dir()"""
-        proxy = set(dir(self.image))
-        parent = set(dir(super(ImageFile, self)))
-        mine = set(dir(ImageFile))
-        return sorted(list(proxy | parent | mine))
-
     def __getitem__(self, n):
         """A pass through to ImageArray."""
         try:
