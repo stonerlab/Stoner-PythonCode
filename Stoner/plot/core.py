@@ -604,9 +604,9 @@ class PlotMixin(object):
                 self.figure()
             ax = self.fig.gca()
             func = ax.__getattribute__("set_{}".format(name))
-        if name.startswith("fig_") and "set_{}".format(name[4:]) in dir(plt.Figure):
+        elif name.startswith("fig_") and "set_{}".format(name[4:]) in dir(plt.Figure):
             name = name[4:]
-        if "set_{}".format(name) in dir(plt.Figure) and self.fig:
+        elif "set_{}".format(name) in dir(plt.Figure) and self.fig:
             tfig = plt.gcf()
             tax = tfig.gca()  # protect the current axes and figure
 
@@ -615,7 +615,7 @@ class PlotMixin(object):
             fig = self.fig
             func = fig.__getattribute__("set_{}".format(name))
 
-        if o_name in dir(self) or func is None:
+        if o_name in dir(type(self)) or func is None:
             try:
                 return super(PlotMixin, self).__setattr__(o_name, value)
             except AttributeError:
