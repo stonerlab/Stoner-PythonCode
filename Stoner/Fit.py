@@ -698,7 +698,7 @@ def simmons(V, A, phi, d):
 
     Args:
         V (array): Bias voltage
-        A (float): Area of barrier in m^2
+        A (float): Area of barrier in micron^2
         phi (float): barrier height in eV
         d (float): barrier width in angstroms
 
@@ -715,7 +715,7 @@ def simmons(V, A, phi, d):
             :outname: simmons
     """
     I = (
-        6.2e6
+        6.2e2
         * A
         / d ** 2
         * (
