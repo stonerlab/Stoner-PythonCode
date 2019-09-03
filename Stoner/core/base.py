@@ -229,7 +229,6 @@ class typeHintedDict(regexpDict):
 
     allowed_keys = string_types
     # Force metadata keys to be strings
-    _typehints = sorteddict()
 
     __regexGetType = re.compile(r"([^\{]*)\{([^\}]*)\}")
     # Match the contents of the inner most{}
@@ -284,6 +283,7 @@ class typeHintedDict(regexpDict):
         type hint from the value of the dict element.
         """
         super(typeHintedDict, self).__init__(*args, **kargs)
+        self._typehints = sorteddict()
         for key in list(self.keys()):  # Chekc through all the keys and see if they contain
             # type hints. If they do, move them to the
             # _typehint dict
