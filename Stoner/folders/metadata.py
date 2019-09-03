@@ -153,7 +153,7 @@ class proxy(MutableMapping):
             d[key] = func(i, d)
         return self
 
-    def slice(self, *args, values_only=False, output=None, mask_missing=False):  # pylint: disable=arguments-differ
+    def slice(self, *args, **kwargs):  # pylint: disable=arguments-differ
         """Return a list of the metadata dictionaries for each item/file in the top level group
 
         Keyword Arguments:
@@ -185,6 +185,11 @@ class proxy(MutableMapping):
             recursive options (build a dictionary of metadata values). And probably
             options to extract other parts of objects (first row or whatever).
         """
+        values_only = kwargs.pop("values_only", False)
+        output = kwargs.pope("output", None)
+        mask_missing = kwargs.pope("mask_missing", False)
+        if kwargs:
+            raise SyntaxError("Unused keyword arguments : {}".format(kwargs))
         if output is None:  # Sort out a definitive value of output
             output = "dict" if not values_only else "smart"
         if isinstance(output, string_types):
