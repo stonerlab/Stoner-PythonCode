@@ -4,9 +4,9 @@
 """
 __all__ = ["proxy"]
 from Stoner.compat import string_types
-from Stoner.tools import islike_list
+from Stoner.tools import islike_list, isiterable, all_type
 from Stoner.Core import DataFile
-import numpy as _np_
+import numpy as np
 from collections import MutableMapping
 from Stoner.core import typeHintedDict
 
@@ -56,7 +56,7 @@ class proxy(MutableMapping):
         output = typeHintedDict()
         for key in self.common_keys:
             val = self._folder[0][key]
-            if _np_.all(self[key] == val):
+            if np.all(self[key] == val):
                 output[key] = val
         return output
 
@@ -82,9 +82,9 @@ class proxy(MutableMapping):
     def __delitem__(self, item):
         """Attempt to delte item from all members of the folder."""
         ok = False
-        for d in self._folder:
+        for entry in self._folder:
             try:
-                del d.metadata[item]
+                del entry.metadata[item]
                 ok = True
             except KeyError:
                 pass
@@ -93,24 +93,9 @@ class proxy(MutableMapping):
 
     def __getitem__(self, value):
         """Return an array formed by getting a single key from each object in the Folder."""
-        if value not in self:
-            raise KeyError("{} is not a key of any object in the Folder.".format(value))
-        if value in self.common_keys:
-            return _np_.array([d[value] for d in self._folder])
-        tmp = []
-        mask = []
-        typ = type(None)
-        for d in self._folder:
-            try:
-                tmp.append(d[value])
-                mask.append(False)
-                typ = type(d[value])
-            except KeyError:
-                tmp.append(None)
-                mask.append(True)
-        ret = _np_.zeros(len(tmp), dtype=typ)
-        ret = _np_.where(mask, ret, _np_.array(tmp)).astype(typ).view(_np_.ma.MaskedArray)
-        ret.mask = mask
+        ret = self.slice(value, mask_missing=True, output="array")
+        if ret.size == 0:
+            raise KeyError("{} did not match any keys in any file".format(value))
         return ret
 
     def __setitem__(self, key, value):
@@ -168,14 +153,14 @@ class proxy(MutableMapping):
             d[key] = func(i, d)
         return self
 
-    def slice(self, key=None, values_only=False, output=None):  # pylint: disable=arguments-differ
+    def slice(self, *args, values_only=False, output=None, mask_missing=False):  # pylint: disable=arguments-differ
         """Return a list of the metadata dictionaries for each item/file in the top level group
 
         Keyword Arguments:
-            key(string or list of strings):
+            *args (string or list of strings):
                 if given then only return the item(s) requested from the metadata
             values_only(bool):
-                if given amd *output* not set only return tuples of the dictionary values. Mostly useful
+                if given and *output* not set only return tuples of the dictionary values. Mostly useful
                 when given a single key string
             output (str or type):
                 Controls the output format from slice_metadata. Possible values are
@@ -183,8 +168,12 @@ class proxy(MutableMapping):
                 - "dict" or dict - return a list of dictionary subsets of the metadata from each image
                 - "list" or list - return a list of values of each item pf the metadata
                 - "array" or np.array - return a single array - like list above, but returns as a numpy array. This can create a 2D array from multiple keys
-                - "Data" or Stoner.Data - returns the metadata in a Stoner.Data object where the column headers are the metadata keys.
+                - "data" or Stoner.Data - returns the metadata in a Stoner.Data object where the column headers are the metadata keys.
+                - "frame" - returns the metadata as a Pandas DataFrame object
                 - "smart" - switch between *dict* and *list* depending whether there is one or more keys.
+            mask_missing (bool):
+                If true, then metadata entries missing in members of the folder are returned as masked values (or None), If
+                False, then an exception is raised if any entries are missing.
 
         Returns:
             ret(list of dict, tuple of values or :py:class:`Stoner.Data`):
@@ -198,68 +187,73 @@ class proxy(MutableMapping):
         """
         if output is None:  # Sort out a definitive value of output
             output = "dict" if not values_only else "smart"
+        if isinstance(output, string_types):
+            output = output.lower()
         if output not in [
             "dict",
             "list",
             "array",
-            "Data",
+            "data",
+            "frame",
             "smart",
             dict,
             list,
-            _np_.ndarray,
+            np.ndarray,
             DataFile,
         ]:  # Check for good output value
             raise SyntaxError("output of slice metadata must be either dict, list, or array not {}".format(output))
-        metadata = [
-            k.metadata for k in self._folder
-        ]  # this can take some time if it's loading in the contents of the folder
-        if isinstance(key, string_types):  # Single key given
-            key = metadata[0].__lookup__(key, multiple=True)
-            key = [key] if not islike_list(key) else key
-        # Expand all keys in case of multiple metadata matches
-        newkey = []
-        for k in key:
-            newkey.extend(metadata[0].__lookup__(k, multiple=True))
-        key = newkey
-        if len(
-            set(key) - set(self.common_keys)
-        ):  # Is the key in the common keys? # TODO: implement __getitem__'s masked array logic?
-            raise KeyError("{} are missing from some items in the Folder.".format(set(key) - set(self.common_keys)))
+        keys = []
+        for k in args:
+            if isinstance(k, string_types):
+                keys.append(k)
+            elif isiterable(k) and all_type(k, string_types):
+                keys.extend(k)
+            else:
+                raise KeyError("{} cannot be used as a key name or set of key names".format(type(k)))
+        if not mask_missing:
+            for k in keys:
+                if k not in self.common_keys:
+                    raise KeyError("{} is not a key in all members of the folder".format(k))
         results = []
-        for i, met in enumerate(metadata):  # Assemble a list of dictionaries of values
-            results.append({k: v for k, v in metadata[i].items() if k in key})
-        if output in ["list", "array", "Data", list, _np_.ndarray, DataFile] or (
-            output == "smart" and len(results[0]) == 1
-        ):  # Reformat output
-            cols = []
-            for k in key:  # Expand the columns of data we're going to need if some values are not scalar
-                if islike_list(metadata[0][k]):
-                    for i, _ in enumerate(metadata[0][k]):
-                        cols.append("{}_{}".format(k, i))
-                else:
-                    cols.append(k)
+        for d in self._folder:
+            results.append({k: d[k] for k in keys if k in d})
 
-            for i, met in enumerate(results):  # For each object in the Folder
-                results[i] = []
-                for k in key:  # and for each key in out list
-                    v = met[k]
-                    if islike_list(
-                        v
-                    ):  # extend or append depending if the value is scalar. # TODO: This will blowup for values with more than 1 D!
-                        results[i].extend(v)
-                    else:
-                        results[i].append(v)
-                if output in ["aaray", "Data", _np_.ndarray, DataFile]:  # Convert each row to an array
-                    results[i] = _np_.array(results[i])
-            if len(cols) == 1:  # single key
-                results = [m[0] for m in results]
-            if output in ["array", _np_.ndarray]:
-                results = _np_.array(results)
-            if output in ["Data", DataFile]:  # Build oour Data object
-                from Stoner import Data
+        for r in results:  # Expand the results where a result contains a list
+            for k in keys:
+                if k in r and islike_list(r[k]) and len(r[k]) > 0:
+                    v = r[k]
+                    del r[k]
+                    r.update({"{}[{}]".format(k, i): vi for i, vi in enumerate(v)})
 
-                tmp = Data()
-                tmp.data = _np_.array(results)
-                tmp.column_headers = cols
-                results = tmp
-        return results
+        if output == "smart":
+            if np.all([len(r) == 1 and list(r.keys())[0] == list(results[0].keys())[0] for r in results]):
+                output = "list"
+            else:
+                output = "dict"
+        if output in ["list", list]:
+            keys = set()
+            for r in results:
+                keys |= set(r.keys())
+            keys = list(keys)
+            if len(keys) == 1:
+                ret = [r.get(keys[0], None) for r in results]
+            else:
+                ret = []
+                for r in results:
+                    ret.append(tuple(r.get(k, None) for k in keys))
+        elif output == "dict":
+            ret = results
+        else:
+            from pandas import DataFrame
+            from Stoner import Data
+
+            frame = DataFrame(results)
+            mask = frame.isna()
+            if output == "frame":
+                ret = frame
+            else:
+                ret = Data(frame)
+                ret.mask = mask
+                if output in ["array", np.ndarray]:
+                    ret = ret.data
+        return ret

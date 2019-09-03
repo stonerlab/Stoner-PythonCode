@@ -85,12 +85,20 @@ def add_core(other, newdata):
                 try:
                     order[k] = newdata.find_col(k)
                 except (KeyError, re.error):
+                    mask = newdata.mask
                     newdata.add_column(np.ones(len(newdata)) * np.NaN, header=k)
+                    newdata.mask[:, :-1] = mask
+                    newdata.mask[:, -1] = np.ones(len(newdata), dtype=bool)
                     order[k] = newdata.shape[1] - 1
             row = np.ones(newdata.shape[1]) * np.NaN
+            mask = np.ones_like(row, dtype=bool)
             for k in order:
                 row[order[k]] = other[k]
-            newdata.data = np.append(newdata.data, np.atleast_2d(row), axis=0)
+                mask[order[k]] = False
+            old_mask = newdata.mask
+            newdata.data = np.ma.append(newdata.data, np.atleast_2d(row), axis=0)
+            newdata.mask[:-1, :] = old_mask
+            newdata.mask[-1] = mask
         ret = newdata
     else:
         return NotImplemented

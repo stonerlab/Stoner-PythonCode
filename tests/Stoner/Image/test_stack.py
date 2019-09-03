@@ -36,7 +36,7 @@ class ImageStack2Test(unittest.TestCase):
         self.istack2.align(i,method="imreg_dft")
         data=self.istack2.slice_metadata(["tvec","angle","scale"],output="Data")
         self.assertTrue(data.shape==(91,4),"Slice metadata went a bit funny")
-        self.assertTrue(sorted(data.column_headers)==['angle','scale','tvec_0', 'tvec_1'],"slice metadata column headers wrong at {}".format(data.column_headers))
+        self.assertTrue(sorted(data.column_headers)==['angle','scale','tvec[0]', 'tvec[1]'],"slice metadata column headers wrong at {}".format(data.column_headers))
         self.m2=self.istack2.mean()
         self.assertTrue(np.abs(self.m1.mean()-self.m2.mean())/self.m1.mean()<1E-2,"Problem calculating means of stacks.")
         s1=self.istack2[:,45:55,45:55]
