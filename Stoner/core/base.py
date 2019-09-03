@@ -282,8 +282,8 @@ class typeHintedDict(regexpDict):
         embedded string type from the keyname) or determines the likely
         type hint from the value of the dict element.
         """
-        super(typeHintedDict, self).__init__(*args, **kargs)
         self._typehints = sorteddict()
+        super(typeHintedDict, self).__init__(*args, **kargs)
         for key in list(self.keys()):  # Chekc through all the keys and see if they contain
             # type hints. If they do, move them to the
             # _typehint dict
