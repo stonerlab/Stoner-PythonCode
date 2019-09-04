@@ -124,7 +124,7 @@ def __sub_core_folder__(result, other):
                 result.__deleter__(othername)
         for othergroup in other.groups:
             if othergroup in result.groups:
-                result.groups[othergroup].__sub_core__(result.groups[othergroup], other.groups[othergroup])
+                result.groups[othergroup] -= other.groups[othergroup]
     else:
         raise RuntimeError(
             "Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type, result.type)
@@ -795,7 +795,7 @@ class baseFolder(MutableSequence):
 
     def __iter__(self):
         """Iterate over objects."""
-        return self.next()
+        return self.__next__() if python_v3 else self.next()
 
     def __next__(self):
         """Python 3.x style iterator function."""

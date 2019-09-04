@@ -93,6 +93,21 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(fldr),fl,"Failed += oeprator with string on DataFolder")
         fldr/="Loaded as"
         self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
+        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
+        fldr2=SF.DataFolder(path.join(self.datadir,"NLIV"),pattern="*.txt")
+        fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
+        fldr3=fldr+fldr2
+        self.assertEqual(fldr3.shape,(45, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed")
+        fldr4=fldr3-fldr2
+        fldr4.prune()
+        self.assertEqual(fldr4.shape,fldr.shape,"Failed to subtract one DataFolder from another :{}".format(fldr4.shape))
+        del fldr2["one"]
+        self.assertEqual(fldr2.shape,(0, {'zero': (7, {})}),"Delitem with group failed")
+        fldr2.key=path.basename(fldr2.key)
+        self.assertEqual(repr(fldr2),"DataFolder(NLIV) with pattern ('*.txt',) has 0 files and 1 groups\n\tDataFolder(zero) with pattern ['*.txt'] has 7 files and 0 groups","Representation methods failed")
+
+
+
 
     def test_Properties(self):
         fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
