@@ -151,7 +151,7 @@ class SetasTest(unittest.TestCase):
         d=self.d2.clone
         d.setas="xyz"
         self.assertTrue(d["Column 2",5]==d[5,"Column 2"],"Indexing with mixed integer and string failed.")
-        self.assertEqual(d.metadata.type(["User","Timestamp"]),['String', 'String'],"Metadata.type with slice failed")
+        self.assertEqual(d.metadata.type(["User","Timestamp"]),['String', 'Timestamp'],"Metadata.type with slice failed")
         d.data["Column 2",:]=np.zeros(len(d)) #TODO make this work with d["Column 2",:] as well
         self.assertTrue(d.z.max()==0.0 and d.z.min()==0.0,"Failed to set Dataarray using string indexing")
         self.assertTrue(d.setas.x==0 and d.setas.y==[1] and d.setas.z==[2])
