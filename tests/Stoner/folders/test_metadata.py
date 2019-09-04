@@ -38,6 +38,7 @@ class folders_metadata_test(unittest.TestCase):
     def test_metadata(self):
         os.chdir(self.datadir)
         fldr6=SF.DataFolder(".",pattern="QD*.dat",pruned=True)
+        fldr6.sort()
         self.assertEqual(repr(fldr6.metadata),"The DataFolder . has 9 common keys of metadata in 4 Data objects",
                          "Representation method of metadata wrong.")
         self.assertEqual(len(fldr6.metadata),9,"Length of common metadata not right.")
