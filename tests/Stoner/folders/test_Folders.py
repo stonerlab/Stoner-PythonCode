@@ -16,13 +16,14 @@ import numpy as np
 import re
 import fnmatch
 from numpy import ceil
+from copy import copy
 from Stoner.compat import *
 import Stoner.Folders as SF
 
 from Stoner import Data,set_option
 import Stoner.HDF5, Stoner.Zip
 from Stoner.Util import hysteresis_correct
-
+from Stoner.core.base import regexpDict
 import matplotlib.pyplot as plt
 
 import tempfile
@@ -105,14 +106,46 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(fldr2.shape,(0, {'zero': (7, {})}),"Delitem with group failed")
         fldr2.key=path.basename(fldr2.key)
         self.assertEqual(repr(fldr2),"DataFolder(NLIV) with pattern ('*.txt',) has 0 files and 1 groups\n\tDataFolder(zero) with pattern ['*.txt'] has 7 files and 0 groups","Representation methods failed")
+        self.fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
+        names=list(self.fldr.ls)[::2]
+        self.fldr-=names
+        self.assertEqual(len(self.fldr),22,"Failed to delete from a sequence")
+        try:
+            self.fldr-0.34
+        except TypeError:
+            pass
+        else:
+            self.assertTrue(False,"Failed to throw a TypeError when subtracting a float")
+        try:
+            self.fldr-Data()
+        except RuntimeError:
+            pass
+        else:
+            self.assertTrue(False,"Failed to throw a RuntimeError when subtracting a non-member")
+        try:
+            self.fldr-"Wiggle"
+        except RuntimeError:
+            pass
+        else:
+            self.assertTrue(False,"Failed to throw a RuntimeError when subtracting a non-member")
+
+
 
 
 
 
     def test_Properties(self):
         fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
+        self.assertEqual(fldr.mindepth,0,"Minimum depth of flat group n ot equal to zero.")
         fldr/="Loaded as"
+        grps=list(fldr.lsgrp)
+        self.assertEqual(len(grps),25,"Length of lsgrp not as expected: {} not 25".format(len(grps)))
+        fldr.debug=True
+        self.fldr=fldr
+        self.assertTrue(fldr["XRDFile"][0].debug,"Setting debug on folder failed!")
+        fldr.debug=False
         fldr["QDFile"].group("Byapp")
+        self.assertEqual(fldr.trunkdepth,1,"Trunkdepth failed")
         self.assertEqual(fldr.mindepth,1,"mindepth attribute of folder failed.")
         self.assertEqual(fldr.depth,2,"depth attribute failed.")
         fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
@@ -121,6 +154,13 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(list(fldr.loaded)),1,"loaded attribute failed {}".format(len(list(fldr.loaded))))
         self.assertEqual(len(list(fldr.not_empty)),len(fldr)-skip,"not_empty attribute failed.")
         fldr-="Untitled"
+        self.assertFalse(fldr.is_empty,"fldr.is_empty failed")
+        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
+        objects=copy(fldr.objects)
+        fldr.objects=dict(objects)
+        self.assertTrue(isinstance(fldr.objects,regexpDict),"Folder objects not reset to regexp dictionary")
+        fldr.objects=objects
+        self.assertTrue(isinstance(fldr.objects,regexpDict),"Setting Folder objects mangled type")
 
     def test_methods(self):
         sliced=np.array(['DataFile', 'MDAASCIIFile', 'BNLFile', 'DataFile', 'DataFile',
@@ -226,5 +266,5 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
     unittest.main()
-    #test.test_saving()
+    #test.test_Properties()
 

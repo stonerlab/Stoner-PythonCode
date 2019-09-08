@@ -132,10 +132,10 @@ def __sub_core_folder__(result, other):
     return result
 
 
-def __sub_core_iterable__(self, result, other):
+def __sub_core_iterable__(result, other):
     """Iterate to remove iterables."""
     for c in sorted(other):
-        result.__sub_core__(result, c)
+        __sub_core__(result, c)
     return result
 
 
@@ -271,8 +271,11 @@ class baseFolder(MutableSequence):
     def debug(self, value):
         """Recursively set the debug value"""
         self._debug = value
-        for g in self.groups:
-            self.groups[g].debug = value
+        self._object_attrs["debug"] = value
+        for name, member in self.loaded:
+            member.debug = value
+        for grp in self.groups:
+            self.groups[grp].debug = value
 
     @property
     def depth(self):
@@ -989,15 +992,15 @@ class baseFolder(MutableSequence):
 
     def _update_from_object_attrs(self, obj):
         """Updates an object from object_attrs store."""
+        for k in self.kargs:  # Set from keyword arguments
+            if hasattr(obj, k):
+                setattr(obj, k, self.kargs[k])
         if hasattr(self, "_object_attrs") and isinstance(self._object_attrs, dict):
             for k in self._object_attrs:
                 try:
                     setattr(obj, k, self._object_attrs[k])
                 except AttributeError:
                     raise AttributeError("Can't set attribute {} to {}".format(k, self._object_attrs[k]))
-        for k in self.kargs:  # Set from keyword arguments
-            if hasattr(obj, k):
-                setattr(obj, k, self.kargs[k])
         return obj
 
     def __walk_groups(self, walker, **kargs):
