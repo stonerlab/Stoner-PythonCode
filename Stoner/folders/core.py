@@ -7,6 +7,7 @@ __all__ = ["baseFolder"]
 from itertools import islice
 from copy import copy, deepcopy
 from collections import Iterable, MutableSequence
+from inspect import isclass
 
 import numpy as _np_
 import os.path as path
@@ -32,7 +33,7 @@ def __add_core__(result, other):
         We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
     """
     if isinstance(other, baseFolder):
-        if issubclass(other.type, result.type):
+        if isclass(other.type) and issubclass(other.type, result.type):
             result.extend([f for f in other.files])
             for grp in other.groups:
                 if grp in result.groups:
@@ -118,7 +119,7 @@ def __sub_core_data__(result, other):
 
 def __sub_core_folder__(result, other):
     """Remove a folder."""
-    if issubclass(other.type, result.type):
+    if isclass(other.type) and issubclass(other.type, result.type):
         for othername in other.ls:
             if othername in result:
                 result.__deleter__(othername)
@@ -272,7 +273,7 @@ class baseFolder(MutableSequence):
         """Recursively set the debug value"""
         self._debug = value
         self._object_attrs["debug"] = value
-        for name, member in self.loaded:
+        for _, member in self.loaded:
             member.debug = value
         for grp in self.groups:
             self.groups[grp].debug = value
@@ -359,7 +360,7 @@ class baseFolder(MutableSequence):
     @loader.setter
     def loader(self, value):
         """Set the loader class ensuring that it is a metadataObject."""
-        if issubclass(value, metadataObject):
+        if isclass(value) and issubclass(value, metadataObject):
             self._loader = value
 
     @property
@@ -450,7 +451,7 @@ class baseFolder(MutableSequence):
     @type.setter
     def type(self, value):
         """Ensures that type is a subclass of metadataObject."""
-        if issubclass(value, metadataObject):
+        if isclass(value) and issubclass(value, metadataObject):
             self._type = value
         elif isinstance(value, metadataObject):
             self._type = value.__class__
@@ -634,7 +635,7 @@ class baseFolder(MutableSequence):
                 of not loading the objects in the folder into memory if a :py:class:`DiskBasedFolder` is
                 used.
         """
-        if name in self.groups:
+        if name in self.groups and not isinstance(name, int_types):
             return self.groups[name]
         if isinstance(name, string_types + regexp_type):
             if name in self.objects:
@@ -925,12 +926,11 @@ class baseFolder(MutableSequence):
     def __reversed__(self):
         """Create an iterator function that runs backwards through the stored objects."""
 
-        def reverse_iterator(self):
-            """Reverse iterator function."""
-            for n in reversed(self.__names__()):
-                yield self.__getter__(n, instantiate=True)
-
-        return reverse_iterator
+        for n in reversed(self.__names__()):
+            member = self.__getter__(n, instantiate=True)
+            if member is None:
+                continue
+            yield member
 
     def __delattr__(self, name):
         """Handles removing an attribute from the folder, including proxied attributes."""

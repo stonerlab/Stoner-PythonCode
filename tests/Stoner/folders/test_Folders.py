@@ -24,6 +24,7 @@ from Stoner import Data,set_option
 import Stoner.HDF5, Stoner.Zip
 from Stoner.Util import hysteresis_correct
 from Stoner.core.base import regexpDict
+from Stoner.folders.core import baseFolder
 import matplotlib.pyplot as plt
 
 import tempfile
@@ -94,7 +95,63 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(fldr),fl,"Failed += oeprator with string on DataFolder")
         fldr/="Loaded as"
         self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
+        self.assertTrue(isinstance(fldr["QDFile","Byapp"],Data),"Indexing group and then common metadata failed")
         fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
+        fldr2=SF.DataFolder(path.join(self.datadir,"NLIV"),pattern="*.txt")
+        fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
+        fldr3=fldr+fldr2
+        self.assertEqual(fldr3.shape,(45, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed")
+        fldr4=fldr3-fldr2
+        fldr4.prune()
+        self.assertEqual(fldr4.shape,fldr.shape,"Failed to subtract one DataFolder from another :{}".format(fldr4.shape))
+        del fldr2["one"]
+        self.assertEqual(fldr2.shape,(0, {'zero': (7, {})}),"Delitem with group failed")
+        fldr2.key=path.basename(fldr2.key)
+        self.assertEqual(repr(fldr2),"DataFolder(NLIV) with pattern ('*.txt',) has 0 files and 1 groups\n\tDataFolder(zero) with pattern ['*.txt'] has 7 files and 0 groups","Representation methods failed")
+        self.fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
+        names=list(self.fldr.ls)[::2]
+        self.fldr-=names
+        self.assertEqual(len(self.fldr),22,"Failed to delete from a sequence")
+        try:
+            self.fldr-0.34
+        except TypeError:
+            pass
+        else:
+            self.assertTrue(False,"Failed to throw a TypeError when subtracting a float")
+        try:
+            self.fldr-Data()
+        except RuntimeError:
+            pass
+        else:
+            self.assertTrue(False,"Failed to throw a RuntimeError when subtracting a non-member")
+        try:
+            self.fldr-"Wiggle"
+        except RuntimeError:
+            pass
+        else:
+            self.assertTrue(False,"Failed to throw a RuntimeError when subtracting a non-member")
+
+    def test_Base_Operators(self):
+        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
+        for d in fldr:
+            _=d["Loaded as"]
+        fldr=baseFolder(fldr)
+        fl=len(fldr)
+        d=Data(np.ones((100,5)))
+        fldr+=d
+        self.assertEqual(fl+1,len(fldr),"Failed += operator on DataFolder")
+        fldr2=fldr+fldr
+        self.assertEqual((fl+1)*2,len(fldr2),"Failed + operator with DataFolder on DataFolder")
+        fldr-="Untitled"
+        self.assertEqual(len(fldr),fl,"Failed to remove Untitled-0 from DataFolder by name.")
+        fldr-="New-XRay-Data.dql"
+        self.assertEqual(fl-1,len(fldr),"Failed to remove NEw Xray data by name.")
+        fldr/="Loaded as"
+        self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
+        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
+        for d in fldr:
+            _=d["Loaded as"]
+        fldr=baseFolder(fldr)
         fldr2=SF.DataFolder(path.join(self.datadir,"NLIV"),pattern="*.txt")
         fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
         fldr3=fldr+fldr2
@@ -133,7 +190,6 @@ class Folders_test(unittest.TestCase):
 
 
 
-
     def test_Properties(self):
         fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
         self.assertEqual(fldr.mindepth,0,"Minimum depth of flat group n ot equal to zero.")
@@ -162,6 +218,8 @@ class Folders_test(unittest.TestCase):
         self.assertTrue(isinstance(fldr.objects,regexpDict),"Folder objects not reset to regexp dictionary")
         fldr.objects=objects
         self.assertTrue(isinstance(fldr.objects,regexpDict),"Setting Folder objects mangled type")
+        fldr.type=Data()
+        self.assertTrue(issubclass(fldr.type,Data),"Settin type by instance of class failed")
 
     def test_methods(self):
         sliced=np.array(['DataFile', 'MDAASCIIFile', 'BNLFile', 'DataFile', 'DataFile',
@@ -173,6 +231,11 @@ class Folders_test(unittest.TestCase):
         test_sliced=fldr.slice_metadata("Loaded as")
         self.assertEqual(len(sliced),len(test_sliced),"Test slice not equal length - sample-data changed? {}".format(test_sliced))
         self.assertTrue(np.all(test_sliced==sliced),"Slicing metadata failed to work.")
+        fldr.insert(5,Data())
+        self.assertEqual(list(fldr.ls)[5],"Untitled","Insert failed")
+        self.fldr=fldr
+        _=fldr[-1]
+        self.assertEqual(list(reversed(fldr))[0].filename,fldr[-1].filename)
 
     def test_clone(self):
          fldr=SF.DataFolder(self.datadir, pattern='*.txt')
@@ -267,5 +330,5 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
     unittest.main()
-    #test.test_Properties()
+    #test.test_methods()
 
