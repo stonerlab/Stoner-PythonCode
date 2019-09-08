@@ -139,7 +139,8 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(fldr.mindepth,0,"Minimum depth of flat group n ot equal to zero.")
         fldr/="Loaded as"
         grps=list(fldr.lsgrp)
-        self.assertEqual(len(grps),25,"Length of lsgrp not as expected: {} not 25".format(len(grps)))
+        skip=0 if hyperspy_ok else 1
+        self.assertEqual(len(grps),25-skip,"Length of lsgrp not as expected: {} not 25".format(len(grps)))
         fldr.debug=True
         self.fldr=fldr
         self.assertTrue(fldr["XRDFile"][0].debug,"Setting debug on folder failed!")
@@ -265,6 +266,6 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-    unittest.main()
+   unittest.main()
     #test.test_Properties()
 
