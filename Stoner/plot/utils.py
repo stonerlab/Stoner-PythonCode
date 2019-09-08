@@ -157,14 +157,3 @@ def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
         kwargs["alpha"] = alpha * h
         ax.fill_betweenx(x, y1, y2, **kwargs)
     ax.add_patch(plt.Rectangle((0, 0), 0, 0, **kwargs))
-
-
-if __name__ == "__main__":
-    x = np.linspace(0, 2 * np.pi)
-    y_sin = np.sin(x)
-    y_cos = np.cos(x)
-
-    errorfill(x, y_sin, 0.2)
-    errorfill(x, y_cos, 0.2)
-
-    plt.show()

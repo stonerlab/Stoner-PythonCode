@@ -474,8 +474,10 @@ class DataArray(_ma_.MaskedArray):
                     del ret[c]
                 continue
             elif c in ret and isinstance(ret[c], list):
-                if isinstance(cols[c], _np_.ndarray) and cols[c].size == len(self):
+                if isinstance(cols[c], float) or (isinstance(cols[c], _np_.ndarray) and cols[c].size == len(self)):
                     continue
+            elif isinstance(cols[c], float):
+                continue
             cols[c] = self.setas.find_col(cols[c])
         ret.update(cols)
         if scalar:

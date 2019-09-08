@@ -1,10 +1,12 @@
 """Simple use of lmfit to fit data."""
 from Stoner import Data
+from Stoner.plot.utils import errorfill
 from numpy import linspace, exp, random
 
 # Make some data
 x = linspace(0, 10.0, 101)
 y = 2 + 4 * exp(-x / 1.7) + random.normal(scale=0.2, size=101)
+x += +random.normal(scale=0.1, size=101)
 
 d = Data(x, y, column_headers=["Time", "Signal"], setas="xy")
 
@@ -26,9 +28,13 @@ d.setas = "x..y"
 d.plot(fmt="g+")
 d.title = ""
 
+# Plot up the data
 ax = d.subplot2grid((3, 1), (0, 0), rowspan=2)
-d.setas = "xyy"
-d.plot(fmt=["ro", "b-"])
+d.setas = "xy"
+d.plot(fmt="ro")
+
+d.setas = "x.y"
+d.plot(plotter=errorfill, xerr=0.1, yerr=0.2, color="blue")
 d.xticklabels = [[]]
 d.xlabel = ""
 

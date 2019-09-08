@@ -71,6 +71,13 @@ class Plottest(unittest.TestCase):
         length=len(dict(plt.rcParams))+len(attrs)
         self.assertEqual(len(template),length,"templa length wrong.")
 
+    def test_plot_magic(self):
+        self.d.figure()
+        dpi=self.d.fig_dpi
+        self.d.fig_dpi=dpi*2
+        self.assertEqual(self.d.fig.dpi,dpi*2,"Failed to get/set attributes on current figure")
+        plt.close("all")
+
 
 
 
@@ -79,4 +86,5 @@ class Plottest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Plottest("test_set_no_figs")
     test.setUp()
-    unittest.main()
+    test.test_plot_magic()
+    #unittest.main()

@@ -592,24 +592,21 @@ class PlotMixin(object):
             Only "fig" is supported in this class - everything else drops through to the parent class
             value (any): The value of the attribute to set.
         """
+        tfig = plt.gcf()
+        tax = tfig.gca()  # protect the current axes and figure
         func = None
         o_name = name
         if name.startswith("ax_") and "set_{}".format(name[3:]) in dir(plt.Axes):
             name = name[3:]
         if "set_{}".format(name) in dir(plt.Axes) and self.fig:
-            tfig = plt.gcf()
-            tax = tfig.gca()  # protect the current axes and figure
-
             if self.fig is None:  # oops we need a figure first!
                 self.figure()
             ax = self.fig.gca()
             func = ax.__getattribute__("set_{}".format(name))
         elif name.startswith("fig_") and "set_{}".format(name[4:]) in dir(plt.Figure):
-            name = name[4:]
+            name = "set_{}".format(name[4:])
+            func = getattr(self.fig, name)
         elif "set_{}".format(name) in dir(plt.Figure) and self.fig:
-            tfig = plt.gcf()
-            tax = tfig.gca()  # protect the current axes and figure
-
             if self.fig is None:  # oops we need a figure first!
                 self.figure()
             fig = self.fig
@@ -1287,6 +1284,8 @@ class PlotMixin(object):
                         kargs[err][i] = _np_.zeros(len(self))
             elif isiterable(kargs[err]) and len(kargs[err]) == len(self):
                 kargs[err] = _np_.array(kargs[err])
+            elif isinstance(kargs[err], float):
+                kargs[err] = _np_.ones(len(self)) * kargs[err]
             else:
                 kargs[err] = _np_.zeros(len(self))
 
