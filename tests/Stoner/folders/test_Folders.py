@@ -146,6 +146,7 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(fldr),fl,"Failed to remove Untitled-0 from DataFolder by name.")
         fldr-="New-XRay-Data.dql"
         self.assertEqual(fl-1,len(fldr),"Failed to remove NEw Xray data by name.")
+        del fldr["1449 37.0 kx.emd"]
         fldr/="Loaded as"
         self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
         fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
