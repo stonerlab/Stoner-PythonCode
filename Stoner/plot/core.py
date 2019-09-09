@@ -592,8 +592,12 @@ class PlotMixin(object):
             Only "fig" is supported in this class - everything else drops through to the parent class
             value (any): The value of the attribute to set.
         """
-        tfig = plt.gcf()
-        tax = tfig.gca()  # protect the current axes and figure
+        if plt.get_fignums():
+            tfig = plt.gcf()
+            tax = tfig.gca()  # protect the current axes and figure
+        else:
+            tfig = None
+            tax = None
         func = None
         o_name = name
         if name.startswith("ax_") and "set_{}".format(name[3:]) in dir(plt.Axes):
@@ -627,8 +631,9 @@ class PlotMixin(object):
             func(**value)
         else:
             func(*value)
-        plt.figure(tfig.number)
-        plt.sca(tax)
+        if tfig is not None:
+            plt.figure(tfig.number)
+            plt.sca(tax)
 
     def add_column(self, column_data, header=None, index=None, **kargs):
         """Appends a column of data or inserts a column to a datafile instance.
