@@ -34,7 +34,8 @@ d.setas = "xy"
 d.plot(fmt="ro")
 
 d.setas = "x.y"
-d.plot(plotter=errorfill, xerr=0.1, yerr=0.2, color="blue")
+d.plot(plotter=errorfill, yerr=0.2, color="orange")
+d.plot(plotter=errorfill, xerr=0.1, color="orange", label=None)
 d.xticklabels = [[]]
 d.xlabel = ""
 

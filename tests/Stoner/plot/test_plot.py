@@ -77,6 +77,24 @@ class Plottest(unittest.TestCase):
         self.d.fig_dpi=dpi*2
         self.assertEqual(self.d.fig.dpi,dpi*2,"Failed to get/set attributes on current figure")
         plt.close("all")
+        plt.figure()
+        fn=plt.get_fignums()[0]
+        self.d.fig=fn
+        self.d.plot()
+        self.assertEqual(len(plt.get_fignums()),1,"Setting Data.fig by integer failed.")
+        plt.close("all")
+        self.d.plot(plotter=plt.semilogy)
+        self.assertEqual(self.d.ax_lines[0].get_c(),"k","Auto formatting of plot failed")
+        self.d.plot(figure=False)
+        self.d.plot(figure=1)
+        self.assertEqual(len(plt.get_fignums()),2,"Plotting setting figure failed")
+        self.assertEqual(len(self.d.ax_lines),2,"Plotting setting figure failed")
+        self.d.figure(2)
+        self.d.plot()
+        self.d.plot(figure=True)
+        self.assertEqual(len(plt.get_fignums()),2,"Plotting setting figure failed")
+        self.assertEqual(len(self.d.ax_lines),3,"Plotting setting figure failed")
+        plt.close("all")
 
 
 

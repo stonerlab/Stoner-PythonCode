@@ -168,7 +168,7 @@ class PlotMixin(object):
         if isinstance(value, plt.Figure):
             self.__figure = self.template.new_figure(value.number)[0]
         elif isinstance(value, int):
-            value = plt.Figure(value)
+            value = plt.figure(value)
             self.fig = value
         elif value is None:
             self.__figure = None
@@ -421,10 +421,10 @@ class PlotMixin(object):
 
     def _fix_fig(self, figure, **kargs):
         """Sorts out the matplotlib figure handling."""
-        if isinstance(figure, int):
-            figure, ax = self.template.new_figure(figure, **kargs)
-        elif isinstance(figure, bool) and not figure:
+        if isinstance(figure, bool) and not figure:
             figure, ax = self.template.new_figure(None, **kargs)
+        elif not isinstance(figure, bool) and isinstance(figure, int):
+            figure, ax = self.template.new_figure(figure, **kargs)
         elif isinstance(figure, mplfig.Figure):
             figure, ax = self.template.new_figure(figure.number, **kargs)
         elif isinstance(self.__figure, mplfig.Figure):
@@ -432,6 +432,7 @@ class PlotMixin(object):
             ax = self.__figure.gca(**kargs)
         else:
             figure, ax = self.template.new_figure(None, **kargs)
+        self.__figure = figure
         return figure, ax
 
     def _fix_kargs(self, function=None, defaults=None, otherkargs=None, **kargs):
