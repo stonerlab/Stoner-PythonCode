@@ -76,6 +76,9 @@ class Plottest(unittest.TestCase):
         dpi=self.d.fig_dpi
         self.d.fig_dpi=dpi*2
         self.assertEqual(self.d.fig.dpi,dpi*2,"Failed to get/set attributes on current figure")
+        vis=self.d.fig_visible
+        self.d.fig_visible=not vis
+        self.assertFalse(self.d.fig_visible,"Setting/Getting figure.visible failed")
         plt.close("all")
         plt.figure()
         fn=plt.get_fignums()[0]
@@ -95,6 +98,16 @@ class Plottest(unittest.TestCase):
         self.assertEqual(len(plt.get_fignums()),2,"Plotting setting figure failed")
         self.assertEqual(len(self.d.ax_lines),3,"Plotting setting figure failed")
         plt.close("all")
+        d=Data()
+
+    def test_extra_plots(self):
+        x=np.random.uniform(-np.pi,np.pi,size=5001)
+        y=np.random.uniform(-np.pi,np.pi,size=5001)
+        z=(np.cos(4*np.sqrt(x**2+y**2))*np.exp(-np.sqrt(x**2+y**2)/3.0))**2
+        self.d2=Data(x,y,z,column_headers=["X","Y","Z"],setas="xyz")
+        self.d2.contour_xyz(projection="2d")#
+        self.assertEqual(len(plt.get_fignums()),1,"Setting Data.fig by integer failed.")
+        plt.close("all")
 
 
 
@@ -104,5 +117,5 @@ class Plottest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Plottest("test_set_no_figs")
     test.setUp()
-    test.test_plot_magic()
+    test.test_extra_plots()
     #unittest.main()

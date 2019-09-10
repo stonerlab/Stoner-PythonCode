@@ -447,11 +447,10 @@ class PlotMixin(object):
         fig_kargs = ["num", "figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass", "clear", "ax"]
 
         pass_fig_kargs = {}
-        for k in fig_kargs:
-            if k in kargs:
-                pass_fig_kargs[k] = kargs[k]
-                if k not in otherkargs and k not in defaults:
-                    del kargs[k]
+        for k in set(fig_kargs) & set(kargs.keys()):
+            pass_fig_kargs[k] = kargs[k]
+            if k not in otherkargs and k not in defaults:
+                del kargs[k]
 
         # Defaults now a dictionary of default arugments overlaid with keyword argument values
         # Now inspect the plotting function to see what it takes.
@@ -514,6 +513,13 @@ class PlotMixin(object):
         except AttributeError:
             pass
 
+        if plt.get_fignums():  # Store the current figure and axes
+            tfig = plt.gcf()
+            tax = tfig.gca()  # protect the current axes and figure
+        else:
+            tfig = None
+            tax = None
+
         # First look for a function in the pyplot package
         for prefix, (obj, key) in mapping.items():
             name = o_name[len(prefix) :] if o_name.startswith(prefix) else o_name
@@ -527,19 +533,11 @@ class PlotMixin(object):
         if name.startswith("ax_") and "get_{}".format(name[3:]) in dir(plt.Axes):
             name = name[3:]
         if "get_{}".format(name) in dir(plt.Axes) and self.__figure:
-            tfig = plt.gcf()
-            tax = tfig.gca()  # protect the current axes and figure
-            if self.fig is None:  # oops we need a figure first!
-                self.figure()
             ax = self.fig.gca()
             func = ax.__getattribute__("get_{}".format(name))
         if name.startswith("fig_") and "get_{}".format(name[4:]) in dir(plt.Figure):
             name = name[4:]
         if "get_{}".format(name) in dir(plt.Figure) and self.__figure:
-            tfig = plt.gcf()
-            tax = tfig.gca()  # protect the current axes and figure
-            if self.fig is None:  # oops we need a figure first!
-                self.figure()
             fig = self.fig
             func = fig.__getattribute__("get_{}".format(name))
 
@@ -548,8 +546,9 @@ class PlotMixin(object):
 
         # If we're still here then we're calling a proxy from that figure or axes
         ret = func()
-        plt.figure(tfig.number)
-        plt.sca(tax)
+        if tfig is not None:  # Restore the current figures
+            plt.figure(tfig.number)
+            plt.sca(tax)
         return ret
 
     def _pyplot_proxy(self, name, what):
@@ -770,11 +769,7 @@ class PlotMixin(object):
                 X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data
         """
         if isAnyNone(xcol, ycol, zcol):
-            if "_startx" in kargs:
-                startx = kargs["_startx"]
-                del kargs["_startx"]
-            else:
-                startx = 0
+            startx = kargs.pop("startx", 0)
             cols = self.setas._get_cols(startx=startx)
             if xcol is None:
                 xcol = cols["xcol"]
@@ -1410,7 +1405,9 @@ class PlotMixin(object):
             ]
         else:
             otherkargs = ["vmin", "vmax", "shade", "color", "linewidth"]
-        kargs, nonkargs, _ = self._fix_kargs(None, defaults, otherkargs=otherkargs, projection=projection, **kargs)
+        kargs, nonkargs, _ = self._fix_kargs(
+            kargs.get("plotter", None), defaults, otherkargs=otherkargs, projection=projection, **kargs
+        )
         plotter = nonkargs["plotter"]
         self.__figure, ax = self._fix_fig(nonkargs["figure"], projection=projection)
         if isinstance(plotter, string_types):
