@@ -20,6 +20,8 @@ pth=path.realpath(path.join(pth,"../../../"))
 sys.path.insert(0,pth)
 from Stoner import Data,__home__,Options
 from Stoner.Core import typeHintedDict
+from Stoner.plot.core import hsl2rgb
+from Stoner.Image import ImageFile
 
 from Stoner.plot.formats import DefaultPlotStyle
 
@@ -108,6 +110,44 @@ class Plottest(unittest.TestCase):
         self.d2.contour_xyz(projection="2d")#
         self.assertEqual(len(plt.get_fignums()),1,"Setting Data.fig by integer failed.")
         plt.close("all")
+        X,Y,Z = self.d2.griddata(xlim=(-np.pi,np.pi), ylim=(-np.pi,np.pi))
+        plt.imshow(Z)
+        self.assertEqual(len(plt.get_fignums()),1,"Setting Data.fig by integer failed.")
+        plt.imshow(Z)
+        plt.close("all")
+        x,y=np.meshgrid(np.linspace(-np.pi,np.pi,10),np.linspace(-np.pi,np.pi,10))
+        z=np.zeros_like(x)
+        w=np.cos(np.sqrt(x**2+y**2))
+        q=np.arctan2(x,y)
+        u=np.abs(w)*np.cos(q)
+        v=np.abs(w)*np.sin(q)
+        self.d3=Data(x.ravel(),y.ravel(),z.ravel(),u.ravel(),v.ravel(),w.ravel(),setas="xyzuvw")
+        self.d3.plot()
+        self.assertEqual(len(plt.get_fignums()),1,"Setting Data.fig by integer failed.")
+        plt.close("all")
+        # i=ImageFile(path.join(__home__,"..","sample-data","Kermit.png"))
+        # self.d3=Data(i)
+        # self.d3.data=i.data
+        # self.d3.plot_matrix()
+
+
+
+    def test_misc_funcs(self):
+        self.assertTrue(np.all(hsl2rgb(0.5,0.5,0.5)==np.array([[ 63, 191, 191]])))
+        self.d.load(self.d.filename,Q=True)
+        self.d.plot()
+        self.d.x2()
+        self.d.setas=".yx"
+        self.d.plot()
+        self.d.tight_layout()
+        self.assertEqual(len(self.d.fig_axes),2,"Creating a second X axis failed")
+        plt.close("all")
+        for i in range(4):
+            self.d.subplot(2,2,i+1)
+            self.d.plot()
+        self.assertEqual(len(self.d.fig_axes),4,"Creating subplots failed")
+        self.d.close()
+
 
 
 
@@ -115,7 +155,7 @@ class Plottest(unittest.TestCase):
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    test=Plottest("test_set_no_figs")
+    test=Plottest("test_extra_plots")
     test.setUp()
     test.test_extra_plots()
     #unittest.main()

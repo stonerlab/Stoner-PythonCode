@@ -786,7 +786,7 @@ class PlotMixin(object):
             xlim = (xlim[0], xlim[1], (xlim[1] - xlim[0]) / shape[0])
             xlim = slice(*xlim)
         elif isinstance(xlim, tuple) and len(xlim) == 3:
-            xlim[2] = len(range(*xlim))
+            xlim = (xlim[0], xlim[1], (xlim[1] - xlim[0]) / xlim[2])
             xlim = slice(*xlim)
         else:
             raise RuntimeError("X limit specification not good.")
@@ -796,7 +796,7 @@ class PlotMixin(object):
             ylim = (ylim[0], ylim[1], (ylim[1] - ylim[0]) / shape[1])
             ylim = slice(*ylim)
         elif isinstance(ylim, tuple) and len(ylim) == 3:
-            ylim[2] = len(range(*ylim))
+            ylim = (ylim[0], ylim[1], (ylim[1] - ylim[0]) / ylim[2])
             ylim = slice(*ylim)
         else:
             raise RuntimeError("Y limit specification not good.")
@@ -1009,7 +1009,7 @@ class PlotMixin(object):
             ):  # We have a rectang, but we need to adjust the row origin
                 rectang[0] = yvals + 1
             yvals = self[yvals]  # change the yvals into a numpy array
-        elif isinstance(yvals, (list, tuple)):  # We're given the yvals as a list already
+        elif isinstance(yvals, (list, tuple, _np_.ndarray)):  # We're given the yvals as a list already
             yvals = _np_.array(yvals)
         elif yvals is None:  # No yvals, so we'l try column headings
             if isinstance(xvals, index_types):  # Do we have an xcolumn header to take away ?
@@ -1032,7 +1032,7 @@ class PlotMixin(object):
             elif isinstance(rectang, tuple):  # Do we need to adjust the rectan column origin ?
                 rectang[1] = xvals + 1
             xvals = self.column(xvals)
-        elif isinstance(xvals, (list, tuple)):  # Xvals as a data item
+        elif isinstance(xvals, (list, tuple, _np_.ndarray)):  # Xvals as a data item
             xvals = _np_.array(xvals)
         elif isinstance(xvals, _np_.ndarray):
             pass
@@ -1523,12 +1523,14 @@ class PlotMixin(object):
             ]
         else:
             defaults = {
-                "plotter": __mpl3DQuiver,
+                "plotter": globals()["__mpl3DQuiver"],
                 "show_plot": True,
                 "figure": self.__figure,
                 "title": os.path.basename(self.filename),
                 "save_filename": None,
                 "cmap": cm.jet,
+                "scale": 1.0,
+                "units": "xy",
                 "color": hsl2rgb((1 + self.q / _np_.pi) / 2, self.r / _np_.max(self.r), (1 + self.w) / 2) / 255.0,
             }
             projection = kargs.pop("projection", "3d")

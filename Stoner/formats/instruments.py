@@ -768,6 +768,8 @@ class XRDFile(Core.DataFile):
         self.setas = "xy"
         self.four_bounce = self["HardwareConfiguration:Monochromator"] == 1
         self.column_headers = column_headers
+        if kargs.pop("Q", False):
+            self.to_Q()
         return self
 
     def to_Q(self, l=1.540593):
@@ -775,4 +777,6 @@ class XRDFile(Core.DataFile):
 
         returns a copy of itself.
         """
-        self.add_column((4 * np.pi / l) * np.sin(np.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA$)")
+        self.add_column(
+            (4 * np.pi / l) * np.sin(np.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA^{-1}$)"
+        )
