@@ -456,14 +456,14 @@ class PlotMixin(object):
         # Now inspect the plotting function to see what it takes.
         if function is None:
             function = defaults["plotter"]
-            if isinstance(function, string_types):
-                if "projection" in kargs:
-                    projection = kargs["projection"]
-                else:
-                    projection = "rectilinear"
-                function = plt.gca(projection=projection).__getattribute__(function)
-                if self.__figure is not plt.gcf():
-                    plt.close(plt.gcf())
+        if isinstance(function, string_types):
+            if "projection" in kargs:
+                projection = kargs["projection"]
+            else:
+                projection = "rectilinear"
+            function = plt.gca(projection=projection).__getattribute__(function)
+            if self.__figure is not plt.gcf():
+                plt.close(plt.gcf())
 
         (args, _, kwargs) = getargspec(function)[:3]
         # Manually overide the list of arguments that the plotting function takes if it takes keyword dictionary

@@ -13,9 +13,9 @@ def plane(coord, a, b, c):
 
 
 coeefs = [1, -0.5, -1]
-col = linspace(-10, 10, 6)
+col = linspace(-10, 10, 8)
 X, Y = meshgrid(col, col)
-Z = plane((X, Y), *coeefs) + normal(size=X.shape, scale=7.0)
+Z = plane((X, Y), *coeefs) + normal(size=X.shape, scale=2.0)
 d = Data(
     column_stack((X.ravel(), Y.ravel(), Z.ravel())),
     filename="Fitting a Plane",
