@@ -41,6 +41,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Stoner.compat import mpl_version
 from distutils.version import LooseVersion
+from time import sleep
 
 __all__ = ["errorfill"]
 
@@ -157,3 +158,71 @@ def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
         kwargs["alpha"] = alpha * h
         ax.fill_betweenx(x, y1, y2, **kwargs)
     ax.add_patch(plt.Rectangle((0, 0), 0, 0, **kwargs))
+
+def joy_division(x, y, z, **kargs):
+    """Produce a classic black and white water fall plot.
+
+    Parameters:
+        x,y,z (1D arrays):
+            x y and z co-ordinates. data should be arranged so that z(x,y=constant)
+
+    Keyword Parameters:
+        ax (matplotlib.Axes):
+            Axes to use (defaults to current axes)
+        y_shift (float):
+            Shift in data for successive y values. Defaults to z-span / number of values in y
+        bg_colour (matplotlib colour):
+            Colour to use for background of the plot (default is "k" for black)
+        colour (matplotlib colour):
+            Colour of the lines on the plot (default 'white')
+        axes_colour (matplotlib colour):
+            Coulour of the frame, ticks, labels on the plot (default, same as *colour*)
+        lw (float):
+            Width of lines to use on the plot (default 2)
+        legend_fmt (str):
+            String to use to format the elgend text. Should include one place holder {}. Default "{}"
+
+    Returns:
+        None
+
+    Constructurs a mono-chromatic waterfall plot in the style of the Joy Division album cover of Pulsar signals.
+
+    """
+    ax = kargs.pop("ax",plt.gca())
+    y_shift=kargs.pop("y_shift",(z.max()-z.min())/np.unique(y).size)
+    bg_colour=kargs.pop("bg_color","k")
+    color=kargs.pop("color",kargs.pop("colour","w"))
+    axes_colour=kargs.pop("axes_color",color)
+    lw=kargs.pop("lw",2)
+    leged_fmt=kargs.pop("legend_fmt","{}")
+
+    ax.figure.set_facecolor(bg_colour)
+    ax.set_facecolor(bg_colour)
+
+    yvals=np.unique(y)
+    yvals=np.sort(yvals)
+
+    data=np.column_stack((x,z,y))
+
+    for ix,yval in enumerate(yvals):
+        offset=y_shift*(len(yvals)-ix-1)
+        this_data=data[y==yval,:]
+
+        ax.plot(this_data[:,0],this_data[:,1]+offset, color, lw=lw, zorder=(ix+1)*2,label="{}".format(yval))
+        ax.fill_between(this_data[:,0], this_data[:,1]+offset, offset, facecolor=bg_colour, lw=0, zorder=(ix+1)*2-1)
+
+    ax.tick_params(color=axes_colour, labelcolor=axes_colour)
+    for spine in ax.spines.values():
+        spine.set_edgecolor(axes_colour)
+    ax.set_title(ax.get_title(),color=axes_colour)
+    ax.set_xlabel(ax.get_xlabel(),color=axes_colour)
+    ax.set_ylabel(ax.get_ylabel(),color=axes_colour)
+
+    #plt.legend(ncol=int(np.floor(np.sqrt(yvals.size))),fontsize="x-small")
+    # plt.draw()
+
+    # for t in ax.get_legend().get_texts():
+    #     t.set_color(axes_colour)
+    # plt.draw()
+
+

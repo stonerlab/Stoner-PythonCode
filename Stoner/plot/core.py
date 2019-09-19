@@ -1367,7 +1367,16 @@ class PlotMixin(object):
         if not _3D:
             raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
         c = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, scalar=True, **kargs)
-        xdata, ydata, zdata = self.griddata(c.xcol, c.ycol, c.zcol, shape=shape, xlim=xlim, ylim=ylim)
+        if kargs.pop("griddata",True):
+            xdata, ydata, zdata = self.griddata(c.xcol, c.ycol, c.zcol, shape=shape, xlim=xlim, ylim=ylim)
+            cstride = int(max(1, zdata.shape[0] / 50))
+            rstride = int(max(1, zdata.shape[1] / 50))
+        else:
+            xdata=self.column(c.xcol)
+            ydata=self.column(c.ycol)
+            zdata=self.column(c.zcol)
+            cstride = 1
+            rstride = 1
 
         if "template" in kargs:  # Catch template in kargs
             self.template = kargs.pop("template")
@@ -1379,8 +1388,8 @@ class PlotMixin(object):
             "title": os.path.basename(self.filename),
             "save_filename": None,
             "cmap": cm.jet,
-            "rstride": int(max(1, zdata.shape[0] / 50)),
-            "cstride": int(max(1, zdata.shape[1] / 50)),
+            "rstride": cstride,
+            "cstride": rstride,
         }
         coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}
         for k in coltypes:

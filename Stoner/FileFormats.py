@@ -67,7 +67,7 @@ class GenXFile(_SC_.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority = 64
+    priority = 16
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
     patterns = ["*.dat"]  # Recognised filename patterns
@@ -80,6 +80,8 @@ class GenXFile(_SC_.DataFile):
             self.filename = filename
         pattern = re.compile(r'# Dataset "([^\"]*)" exported from GenX on (.*)$')
         pattern2 = re.compile(r"#\sFile\sexported\sfrom\sGenX\'s\sReflectivity\splugin")
+        i=0
+        ix=0
         with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as datafile:
             line = datafile.readline()
             match = pattern.match(line)
@@ -87,23 +89,34 @@ class GenXFile(_SC_.DataFile):
             if match is not None:
                 dataset = match.groups()[0]
                 date = match.groups()[1]
-                line = datafile.readline()
-                line = datafile.readline()
-                line = line[1:]
                 self["date"] = date
+                i=2
             elif match2 is not None:
                 line = datafile.readline()
                 self["date"] = line.split(":")[1].strip()
-                datafile.readline()
-                line = datafile.readline()
-                line = line[1:]
-                dataset = "asymmetry"
+                dataset = datafile.readline()[1:].strip()
+                i=3
             else:
                 raise _SC_.StonerLoadError("Not a GenXFile")
+            for ix,line in enumerate(datafile):
+                line=line.strip()
+                if line in ["# Headers:","# Column lables:"]:
+                    line=next(datafile)[1:].strip()
+                    break
+            else:
+                raise _SC_.StonerLoadError("Cannot find headers")
+        skip=ix+i+2
         column_headers = [f.strip() for f in line.strip().split("\t")]
-        self.data = _np_.genfromtxt(self.filename, skip_header=4)
+        self.data = _np_.real(_np_.genfromtxt(self.filename, skip_header=skip,dtype=complex))
         self["dataset"] = dataset
-        self.setas = "xye"
+        if "sld" in dataset.lower():
+            self["type"]="SLD"
+        elif "asymmetry" in dataset.lower():
+            self["type"]="Asymmetry"
+        elif "dd" in dataset.lower():
+            self["type"]="Down"
+        elif "uu" in dataset.lower():
+            self["type"]="Up"
         self.column_headers = column_headers
         return self
 

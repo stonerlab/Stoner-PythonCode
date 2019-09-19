@@ -268,7 +268,7 @@ class DataFile(metadataObject):
     def _init_single(self, *args, **kargs):
         """Handles constructor with 1 arguement - called from __init__."""
         arg = args[0]
-        if isinstance(arg, string_types) or (isinstance(arg, bool) and not arg):
+        if isinstance(arg, string_types) or (isinstance(arg, bool) and not arg) or isinstance(arg,io.IOBase):
             # Filename- load datafile
             self.load(filename=arg, **kargs)
         elif isinstance(arg, _np_.ndarray):
@@ -2143,9 +2143,10 @@ class DataFile(metadataObject):
         """
         if filename is None or (isinstance(filename, bool) and not filename):
             filename = self.__file_dialog("r")
+        elif isinstance(filename,io.IOBase): # Opened file
+            self.filename=filename.name
         else:
             self.filename = filename
-
         if not path.exists(self.filename):
             raise IOError("Cannot find {} to load".format(self.filename))
         if filemagic is not None:
