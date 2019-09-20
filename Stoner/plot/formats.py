@@ -516,7 +516,7 @@ class DefaultPlotStyle(MutableMapping):
             if "zlabel" in kargs and self.show_zlabel and settings["zlabel"]:
                 plot.fig.axes[0].set_zlabel(kargs["zlabel"], size=self.template_axes__labelsize)
             if "title" in kargs and self.show_title and settings["title"]:
-                plt.title=kargs["title"]
+                plt.title(kargs["title"])
             if self.showlegend:
                 plt.legend()
         except AttributeError:

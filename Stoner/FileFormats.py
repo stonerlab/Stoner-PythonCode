@@ -80,8 +80,8 @@ class GenXFile(_SC_.DataFile):
             self.filename = filename
         pattern = re.compile(r'# Dataset "([^\"]*)" exported from GenX on (.*)$')
         pattern2 = re.compile(r"#\sFile\sexported\sfrom\sGenX\'s\sReflectivity\splugin")
-        i=0
-        ix=0
+        i = 0
+        ix = 0
         with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as datafile:
             line = datafile.readline()
             match = pattern.match(line)
@@ -90,33 +90,33 @@ class GenXFile(_SC_.DataFile):
                 dataset = match.groups()[0]
                 date = match.groups()[1]
                 self["date"] = date
-                i=2
+                i = 2
             elif match2 is not None:
                 line = datafile.readline()
                 self["date"] = line.split(":")[1].strip()
                 dataset = datafile.readline()[1:].strip()
-                i=3
+                i = 3
             else:
                 raise _SC_.StonerLoadError("Not a GenXFile")
-            for ix,line in enumerate(datafile):
-                line=line.strip()
-                if line in ["# Headers:","# Column lables:"]:
-                    line=next(datafile)[1:].strip()
+            for ix, line in enumerate(datafile):
+                line = line.strip()
+                if line in ["# Headers:", "# Column lables:"]:
+                    line = next(datafile)[1:].strip()
                     break
             else:
                 raise _SC_.StonerLoadError("Cannot find headers")
-        skip=ix+i+2
+        skip = ix + i + 2
         column_headers = [f.strip() for f in line.strip().split("\t")]
-        self.data = _np_.real(_np_.genfromtxt(self.filename, skip_header=skip,dtype=complex))
+        self.data = _np_.real(_np_.genfromtxt(self.filename, skip_header=skip, dtype=complex))
         self["dataset"] = dataset
         if "sld" in dataset.lower():
-            self["type"]="SLD"
+            self["type"] = "SLD"
         elif "asymmetry" in dataset.lower():
-            self["type"]="Asymmetry"
+            self["type"] = "Asymmetry"
         elif "dd" in dataset.lower():
-            self["type"]="Down"
+            self["type"] = "Down"
         elif "uu" in dataset.lower():
-            self["type"]="Up"
+            self["type"] = "Up"
         self.column_headers = column_headers
         return self
 

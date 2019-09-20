@@ -267,13 +267,13 @@ class RigakuFile(Core.DataFile):
         from ast import literal_eval
 
         pos = 0
-        reopen=False
+        reopen = False
         if filename is None or not filename:
             self.get_filename("rb")
-        elif isinstance(filename,io.IOBase):
+        elif isinstance(filename, io.IOBase):
             self.filename = filename.name
-            pos=filename.tell()
-            reopen=True
+            pos = filename.tell()
+            reopen = True
         else:
             self.filename = filename
         sh = re.compile(r"^\*([^\s]+)\s+(.*)$")  # Regexp to grab the keys
@@ -284,9 +284,9 @@ class RigakuFile(Core.DataFile):
             f.seek(pos)
             for i, line in enumerate(f):
                 line = bytes2str(line).strip()
-                if pos==0 and (i == 0 and line != "*RAS_DATA_START"):
+                if pos == 0 and (i == 0 and line != "*RAS_DATA_START"):
                     raise StonerLoadError("Not a Rigaku file!")
-                if pos!=0 or line == "*RAS_HEADER_START":
+                if pos != 0 or line == "*RAS_HEADER_START":
                     break
             i2 = None
             for i2, line in enumerate(f):
@@ -311,37 +311,39 @@ class RigakuFile(Core.DataFile):
                 except Exception:
                     newvalue = literal_eval(value)
                 if newvalue == "-":
-                    newvalue = np.nan # trap for missing float value
+                    newvalue = np.nan  # trap for missing float value
                 if m:
                     key = m.groups()[0]
                     idx = int(m.groups()[1])
                     if key in self.metadata and not (isinstance(self[key], (np.ndarray, list))):
                         if isinstance(self[key], str):
                             self[key] = list([self[key]])
-                            if idx>1:
-                                self[key].extend([""]*idx-1)
+                            if idx > 1:
+                                self[key].extend([""] * idx - 1)
                         else:
                             self[key] = np.array(self[key])
-                            if idx>1:
-                                self[key]=np.append(self[key],np.ones(idx-1)*np.nan)
+                            if idx > 1:
+                                self[key] = np.append(self[key], np.ones(idx - 1) * np.nan)
                     if key not in self.metadata:
                         if isinstance(newvalue, str):
-                            listval=[""]*(idx+1)
-                            listval[idx]=newvalue
+                            listval = [""] * (idx + 1)
+                            listval[idx] = newvalue
                             self[key] = listval
                         else:
-                            arrayval=np.ones(idx+1)*np.nan
-                            arrayval=arrayval.astype(type(newvalue))
-                            arrayval[idx]=newvalue
+                            arrayval = np.ones(idx + 1) * np.nan
+                            arrayval = arrayval.astype(type(newvalue))
+                            arrayval[idx] = newvalue
                             self[key] = arrayval
                     else:
                         if isinstance(self[key][0], str) and isinstance(self[key], list):
-                            if len(self[key])<idx+1:
-                                self[key].extend([""]*(idx+1-len(self[key])))
-                            self[key][idx]=newvalue
+                            if len(self[key]) < idx + 1:
+                                self[key].extend([""] * (idx + 1 - len(self[key])))
+                            self[key][idx] = newvalue
                         else:
-                            if idx+1>self[key].size:
-                                self[key]=np.append(self[key],(np.ones(idx+1-self[key].size)*np.nan).astype(self[key].dtype))
+                            if idx + 1 > self[key].size:
+                                self[key] = np.append(
+                                    self[key], (np.ones(idx + 1 - self[key].size) * np.nan).astype(self[key].dtype)
+                                )
                             try:
                                 self[key][idx] = newvalue
                             except ValueError:
@@ -349,15 +351,15 @@ class RigakuFile(Core.DataFile):
                 else:
                     self.metadata[key] = newvalue
 
-            pos=f.tell()
-            max_rows=0
-            for max_rows,line in enumerate(f):
+            pos = f.tell()
+            max_rows = 0
+            for max_rows, line in enumerate(f):
                 line = bytes2str(line).strip()
                 if "RAS_INT_END" in line:
                     break
-            endpos=f.tell()
+            endpos = f.tell()
             f.seek(pos)
-            if max_rows>0:
+            if max_rows > 0:
                 self.data = np.genfromtxt(
                     f, dtype="float", delimiter=" ", invalid_raise=False, comments="*", max_rows=max_rows
                 )
@@ -370,7 +372,7 @@ class RigakuFile(Core.DataFile):
                 self.column_headers = column_headers
         if reopen:
             filename.seek(endpos)
-            self["_endpos"]=endpos
+            self["_endpos"] = endpos
         return self
 
     def to_Q(self, l=1.540593):

@@ -1367,14 +1367,14 @@ class PlotMixin(object):
         if not _3D:
             raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
         c = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, scalar=True, **kargs)
-        if kargs.pop("griddata",True):
+        if kargs.pop("griddata", True):
             xdata, ydata, zdata = self.griddata(c.xcol, c.ycol, c.zcol, shape=shape, xlim=xlim, ylim=ylim)
             cstride = int(max(1, zdata.shape[0] / 50))
             rstride = int(max(1, zdata.shape[1] / 50))
         else:
-            xdata=self.column(c.xcol)
-            ydata=self.column(c.ycol)
-            zdata=self.column(c.zcol)
+            xdata = self.column(c.xcol)
+            ydata = self.column(c.ycol)
+            zdata = self.column(c.zcol)
             cstride = 1
             rstride = 1
 

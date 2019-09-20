@@ -159,6 +159,7 @@ def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
         ax.fill_betweenx(x, y1, y2, **kwargs)
     ax.add_patch(plt.Rectangle((0, 0), 0, 0, **kwargs))
 
+
 def joy_division(x, y, z, **kargs):
     """Produce a classic black and white water fall plot.
 
@@ -188,41 +189,41 @@ def joy_division(x, y, z, **kargs):
     Constructurs a mono-chromatic waterfall plot in the style of the Joy Division album cover of Pulsar signals.
 
     """
-    ax = kargs.pop("ax",plt.gca())
-    y_shift=kargs.pop("y_shift",(z.max()-z.min())/np.unique(y).size)
-    bg_colour=kargs.pop("bg_color","k")
-    color=kargs.pop("color",kargs.pop("colour","w"))
-    axes_colour=kargs.pop("axes_color",color)
-    lw=kargs.pop("lw",2)
-    leged_fmt=kargs.pop("legend_fmt","{}")
+    ax = kargs.pop("ax", plt.gca())
+    y_shift = kargs.pop("y_shift", (z.max() - z.min()) / np.unique(y).size)
+    bg_colour = kargs.pop("bg_color", "k")
+    color = kargs.pop("color", kargs.pop("colour", "w"))
+    axes_colour = kargs.pop("axes_color", color)
+    lw = kargs.pop("lw", 2)
+    leged_fmt = kargs.pop("legend_fmt", "{}")
 
     ax.figure.set_facecolor(bg_colour)
     ax.set_facecolor(bg_colour)
 
-    yvals=np.unique(y)
-    yvals=np.sort(yvals)
+    yvals = np.unique(y)
+    yvals = np.sort(yvals)
 
-    data=np.column_stack((x,z,y))
+    data = np.column_stack((x, z, y))
 
-    for ix,yval in enumerate(yvals):
-        offset=y_shift*(len(yvals)-ix-1)
-        this_data=data[y==yval,:]
+    for ix, yval in enumerate(yvals):
+        offset = y_shift * (len(yvals) - ix - 1)
+        this_data = data[y == yval, :]
 
-        ax.plot(this_data[:,0],this_data[:,1]+offset, color, lw=lw, zorder=(ix+1)*2,label="{}".format(yval))
-        ax.fill_between(this_data[:,0], this_data[:,1]+offset, offset, facecolor=bg_colour, lw=0, zorder=(ix+1)*2-1)
+        ax.plot(this_data[:, 0], this_data[:, 1] + offset, color, lw=lw, zorder=(ix + 1) * 2, label="{}".format(yval))
+        ax.fill_between(
+            this_data[:, 0], this_data[:, 1] + offset, offset, facecolor=bg_colour, lw=0, zorder=(ix + 1) * 2 - 1
+        )
 
     ax.tick_params(color=axes_colour, labelcolor=axes_colour)
     for spine in ax.spines.values():
         spine.set_edgecolor(axes_colour)
-    ax.set_title(ax.get_title(),color=axes_colour)
-    ax.set_xlabel(ax.get_xlabel(),color=axes_colour)
-    ax.set_ylabel(ax.get_ylabel(),color=axes_colour)
+    ax.set_title(ax.get_title(), color=axes_colour)
+    ax.set_xlabel(ax.get_xlabel(), color=axes_colour)
+    ax.set_ylabel(ax.get_ylabel(), color=axes_colour)
 
-    #plt.legend(ncol=int(np.floor(np.sqrt(yvals.size))),fontsize="x-small")
+    # plt.legend(ncol=int(np.floor(np.sqrt(yvals.size))),fontsize="x-small")
     # plt.draw()
 
     # for t in ax.get_legend().get_texts():
     #     t.set_color(axes_colour)
     # plt.draw()
-
-
