@@ -268,9 +268,10 @@ class RigakuFile(Core.DataFile):
 
         pos = 0
         reopen = False
+        filetype = io.IOBase if python_v3 else file
         if filename is None or not filename:
             self.get_filename("rb")
-        elif isinstance(filename, io.IOBase):
+        elif isinstance(filename, filetype):
             self.filename = filename.name
             pos = filename.tell()
             reopen = True
@@ -288,8 +289,7 @@ class RigakuFile(Core.DataFile):
                     raise StonerLoadError("Not a Rigaku file!")
                 if pos != 0 or line == "*RAS_HEADER_START":
                     break
-            i2 = None
-            for i2, line in enumerate(f):
+            for line in f:
                 line = bytes2str(line).strip()
                 m = sh.match(line)
                 if m:

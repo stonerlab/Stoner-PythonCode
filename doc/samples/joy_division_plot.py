@@ -38,12 +38,17 @@ fldr.load_files(
     "L2_2 5mm length limiting slit Offspec RSM 0p05 2t step_0SecsAnneal.ras"
 )
 # The last file is impy to get rid of it.
-del fldr[-1]
 # \Make the third column of data be the 2 theta angle
-for d in fldr:
+dels = []
+for ix, d in enumerate(fldr):
+    if len(d) == 0:
+        dels.append(ix)
+        continue
     d.setas = "xzy"
     d.y *= d["axis.position"][0]
 
+for ix in sorted(dels, reverse=True):
+    del fldr[ix]
 # stack all the files together
 for d in fldr[1:]:
     fldr[0] += d

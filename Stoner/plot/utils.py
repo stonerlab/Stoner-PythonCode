@@ -41,7 +41,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Stoner.compat import mpl_version
 from distutils.version import LooseVersion
-from time import sleep
 
 __all__ = ["errorfill"]
 
@@ -195,7 +194,7 @@ def joy_division(x, y, z, **kargs):
     color = kargs.pop("color", kargs.pop("colour", "w"))
     axes_colour = kargs.pop("axes_color", color)
     lw = kargs.pop("lw", 2)
-    leged_fmt = kargs.pop("legend_fmt", "{}")
+    legend_fmt = kargs.pop("legend_fmt", "{}")
 
     ax.figure.set_facecolor(bg_colour)
     ax.set_facecolor(bg_colour)
@@ -209,7 +208,9 @@ def joy_division(x, y, z, **kargs):
         offset = y_shift * (len(yvals) - ix - 1)
         this_data = data[y == yval, :]
 
-        ax.plot(this_data[:, 0], this_data[:, 1] + offset, color, lw=lw, zorder=(ix + 1) * 2, label="{}".format(yval))
+        ax.plot(
+            this_data[:, 0], this_data[:, 1] + offset, color, lw=lw, zorder=(ix + 1) * 2, label=legend_fmt.format(yval)
+        )
         ax.fill_between(
             this_data[:, 0], this_data[:, 1] + offset, offset, facecolor=bg_colour, lw=0, zorder=(ix + 1) * 2 - 1
         )
