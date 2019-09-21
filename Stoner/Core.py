@@ -450,7 +450,7 @@ class DataFile(metadataObject):
     @property
     def dict_records(self):
         """Return the data as a dictionary of single columns with column headers for the keys."""
-        return _np_.array([dict(zip(self.column_headers, r)) for r in self.rows()])
+        return _np_.array([OrderedDict(zip(self.column_headers, r)) for r in self.rows()])
 
     @property
     def dims(self):
