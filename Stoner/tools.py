@@ -686,9 +686,11 @@ class typedList(MutableSequence):
         else:
             self._store.extend(other)
 
-    def index(self, search, start=0):  # pylint:  disable=arguments-differ
-        """Index works like a list."""
-        return self._store[start:].index(search)
+    def index(self, search, start=0, end=None):  # pylint:  disable=arguments-differ
+        """Index works like a list except we support Python 3 optional parameters everywhere."""
+        if end is None:
+            end = len(self._store)
+        return self._store[start:end].index(search) + start
 
     def insert(self, index, obj):  # pylint:  disable=arguments-differ
         """Inserting an element also requires some type checking."""

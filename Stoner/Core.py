@@ -273,8 +273,12 @@ class DataFile(metadataObject):
             self.load(filename=arg, **kargs)
         elif isinstance(arg, _np_.ndarray):
             # numpy.array - set data
-            self.data = DataArray(_np_.atleast_2d(arg), setas=self.data._setas)
-            self.column_headers = ["Column_{}".format(x) for x in range(_np_.shape(args[0])[1])]
+            if _np_.issubdtype(arg.dtype, _np_.number):
+                self.data = DataArray(_np_.atleast_2d(arg), setas=self.data._setas)
+                self.column_headers = ["Column_{}".format(x) for x in range(_np_.shape(args[0])[1])]
+            elif isinstance(arg[0], dict):
+                for row in arg:
+                    self += row
         elif isinstance(arg, dict):  # Dictionary - use as data or metadata
             if (
                 all_type(arg.keys(), string_types)
@@ -589,7 +593,7 @@ class DataFile(metadataObject):
     @T.setter
     def T(self, value):
         """Write directly to the transposed data."""
-        self.data.T = value
+        self.data = value.T
 
     # ============================================================================================================================
     #####################################                   Operator Functions                         ##########################
@@ -1350,12 +1354,15 @@ class DataFile(metadataObject):
 
     def __read_iterable(self, reader):
         """Internal method to read a string representation of py:class:`DataFile` in line by line."""
+        if isiterable(reader):
+            reader = iter(reader)
         if "next" in dir(reader):  # Python v2 iterator
             readline = reader.next
         elif "readline" in dir(reader):  # Filelike iterator
             readline = reader.readline
         elif "__next__" in dir(reader):  # Python v3 iterator
             readline = reader.__next__
+
         else:
             raise AttributeError("No method to read a line in {}".format(reader))
         row = readline().split("\t")
@@ -1448,7 +1455,10 @@ class DataFile(metadataObject):
         r, c = self.shape
         interesting, col_assignments, cols = self._interesting_cols(cols)
         c = min(c, cols)
-        c_w = max([len(self.column_headers[x]) for x in interesting if x > -1])
+        if len(interesting) > 0:
+            c_w = max([len(self.column_headers[x]) for x in interesting if x > -1])
+        else:
+            c_w = 0
         wrapper = TextWrapper(subsequent_indent="\t", width=max(20, max(20, (80 - c_w * c))))
         if r > rows:
             shorten = [True, False]

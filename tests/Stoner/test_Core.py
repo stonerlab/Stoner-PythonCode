@@ -85,6 +85,10 @@ index                             0 (x)     1 (y)
         df=d.to_pandas()
         e=Data(df)
         self.assertEqual(d,e,"Roundtripping through Pandas DataFrame failed.")
+        d=self.d.clone
+        e=Data(d.dict_records)
+        e.metadata=d.metadata
+        self.assertEqual(d,e,"Copy from dict records failed.")
 
     def test_column(self):
         for i,c in enumerate(self.d.column_headers):
@@ -134,6 +138,16 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
         self.dd.mask[50,1]=True
         self.dd.del_column()
         self.assertEqual(self.dd.shape,(90,2),"Deletion of masked rows failed.")
+        self.d5=Data(np.ones((10,10)))
+        self.d5.column_headers=["A"]*5+["B"]*5
+        self.d5.del_column("A",duplicates=True)
+        self.assertEqual(self.d5.shape,(10,6),"Failed to delete columns with duplicates True and col specified.")
+        self.d5=Data(np.ones((10,10)))
+        self.d5.column_headers=list("ABCDEFGHIJ")
+        self.d5.setas="..x..y"
+        self.d5.del_column(True)
+        self.assertEqual(self.d5.column_headers,["C","F"],"Failed to delete columns with col=True")
+
 
     def test_indexing(self):
         #Check all the indexing possibilities
@@ -174,13 +188,23 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
 
     def test_attributes(self):
         """Test various atribute accesses,"""
+        header='==============  ======  ======\nTDI Format 1.5  X-Data  Y-Data\n    index       0 (x)   1 (y)\n==============  ======  ======'
         self.assertEqual(self.d.shape,(100,2),"shape attribute not correct.")
+        self.assertEqual(self.d.dims,2,"dims attribute not correct.")
+        self.assertEqual(self.d.header,header,"Shorter header not as expected")
         self.assertTrue(all(self.d.T==self.d.data.T),"Transpose attribute not right")
         self.assertTrue(all(self.d.x==self.d.column(0)),"x attribute quick access not right.")
         self.assertTrue(all(self.d.y==self.d.column(1)),"y attribute not right.")
         self.assertTrue(all(self.d.q==np.arctan2(self.d.data[:,0],self.d.data[:,1])),"Calculated theta attribute not right.")
         self.assertTrue(all(sqrt(self.d[:,0]**2+self.d[:,1]**2)==self.d.r),"Calculated r attribute not right.")
         self.assertTrue(self.d2.records._[5]["Column 2"]==self.d2.data[5,2],"Records and as array attributes problem")
+        d=Data(np.ones((10,2)),["A","A"])
+        self.assertEqual(d.records.dtype,np.dtype([('A_1', '<f8'), ('A', '<f8')]),".records with identical column headers handling failed")
+        e=self.d.clone
+        e.data=np.array([1,1,1])
+        e.T=self.d.T
+        e.column_headers=self.d.column_headers
+        self.assertEqual(e,self.d,"Writingto transposed data failed")
 
     def test_iterators(self):
         for i,c in enumerate(self.d.columns()):
@@ -287,6 +311,15 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
             pass
         else:
             self.assertTrue(False,"Failed to raise TypeError on adding unsupported type")
+        with open(self.d.filename,"r") as data:
+            lines=data.readlines()
+        e=Data()<<lines
+        e.setas=self.d.setas
+        e["Loaded as"]=self.d["Loaded as"]
+        self.e=e
+        self.assertEqual(e,self.d,"Failed to read and create from << operator")
+        d=Data(np.array([[1,2,3,4]]),setas="xdyz")
+        self.assertEqual((~d).setas,["y","e","z","x"],"Inverting multi-axis array failed")
 
     def test_properties(self):
         self.little=Data()
@@ -403,7 +436,9 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     #test.test_properties()
     #test.test_methods()
     #test.test_filter()
-#    test.test_deltions()
+    #test.test_constructor()
+    #test.test_deltions()
     #test.test_dir()
     #test.test_metadata_save()
-    unittest.main()
+    test.test_operators()
+    # unittest.main()
