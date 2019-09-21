@@ -67,16 +67,15 @@ class CSVFile(Core.DataFile):
             column_headers = [x.strip() for x in header_string.split(header_delim)]
         else:
             column_headers = ["Column" + str(x) for x in range(np.shape(self.data)[1])]
-            data_line = linecache.getline(self.filename, data_line)
-            try:
-                data_line.index(data_delim)
-            except ValueError:
+            data_test = linecache.getline(self.filename, data_line + 1)
+            if data_delim not in data_test:
                 linecache.clearcache()
                 raise Core.StonerLoadError("No delimiters in data lines")
 
         self.data = np.genfromtxt(self.filename, dtype="float", delimiter=data_delim, skip_header=data_line)
         self.column_headers = column_headers
         linecache.clearcache()
+        self.kargs = kargs
         return self
 
     def save(self, filename=None, **kargs):

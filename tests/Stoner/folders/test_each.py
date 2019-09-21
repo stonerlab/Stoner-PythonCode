@@ -66,5 +66,5 @@ class folders_each_test(unittest.TestCase):
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=folders_each_test("test_each")
-    #unittest.main()
-    test.test_attr_access()
+    unittest.main()
+    #test.test_attr_access()

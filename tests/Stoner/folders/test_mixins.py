@@ -57,5 +57,5 @@ class folders_mixins_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=folders_mixins_test("test_plotting")
     test.setUp()
-    test.test_plotting()
-    #unittest.main()
+    #test.test_plotting()
+    unittest.main()

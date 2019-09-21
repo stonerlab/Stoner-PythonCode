@@ -100,7 +100,7 @@ class Folders_test(unittest.TestCase):
         fldr2=SF.DataFolder(path.join(self.datadir,"NLIV"),pattern="*.txt")
         fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
         fldr3=fldr+fldr2
-        self.assertEqual(fldr3.shape,(45, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed")
+        self.assertEqual(fldr3.shape,(47, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed")
         fldr4=fldr3-fldr2
         fldr4.prune()
         self.assertEqual(fldr4.shape,fldr.shape,"Failed to subtract one DataFolder from another :{}".format(fldr4.shape))
@@ -111,7 +111,7 @@ class Folders_test(unittest.TestCase):
         self.fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
         names=list(self.fldr.ls)[::2]
         self.fldr-=names
-        self.assertEqual(len(self.fldr),22,"Failed to delete from a sequence")
+        self.assertEqual(len(self.fldr),23,"Failed to delete from a sequence")
         try:
             self.fldr-0.34
         except TypeError:
@@ -156,7 +156,7 @@ class Folders_test(unittest.TestCase):
         fldr2=SF.DataFolder(path.join(self.datadir,"NLIV"),pattern="*.txt")
         fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
         fldr3=fldr+fldr2
-        self.assertEqual(fldr3.shape,(45, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed")
+        self.assertEqual(fldr3.shape,(47, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed")
         fldr4=fldr3-fldr2
         fldr4.prune()
         self.assertEqual(fldr4.shape,fldr.shape,"Failed to subtract one DataFolder from another :{}".format(fldr4.shape))
@@ -167,7 +167,7 @@ class Folders_test(unittest.TestCase):
         self.fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
         names=list(self.fldr.ls)[::2]
         self.fldr-=names
-        self.assertEqual(len(self.fldr),22,"Failed to delete from a sequence")
+        self.assertEqual(len(self.fldr),23,"Failed to delete from a sequence")
         try:
             self.fldr-0.34
         except TypeError:
@@ -197,7 +197,7 @@ class Folders_test(unittest.TestCase):
         fldr/="Loaded as"
         grps=list(fldr.lsgrp)
         skip=0 if hyperspy_ok else 1
-        self.assertEqual(len(grps),25-skip,"Length of lsgrp not as expected: {} not 25".format(len(grps)))
+        self.assertEqual(len(grps),26-skip,"Length of lsgrp not as expected: {} not 25".format(len(grps)))
         fldr.debug=True
         self.fldr=fldr
         self.assertTrue(fldr["XRDFile"][0].debug,"Setting debug on folder failed!")
