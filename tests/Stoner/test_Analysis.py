@@ -82,7 +82,7 @@ class Analysis_test(unittest.TestCase):
         self.app.apply(calc,replace=False,header="Sin",_extra={"omega":0.1},k=1.0)
         self.app.apply(lambda r:r.__class__([r[1],r[0]]),replace=True,header=["Index","Sin"])
         self.app.setas="xy"
-        self.assertAlmostEqual(self.app.integrate(),-64.1722191259037,msg="Integrate after aplies failed.")
+        self.assertAlmostEqual(self.app.integrate(output="result"),18.87616564214,msg="Integrate after aplies failed.")
 
     def test_scale(self):
         x=np.linspace(-5,5,101)
@@ -114,8 +114,33 @@ class Analysis_test(unittest.TestCase):
         t_in_range=t_delta<to_scale["Transform Err"]*5
         self.assertTrue(np.all(t_in_range),"Failed to produce correct affine scaling {} vs {}".format(to_scale["Transform"],a_tranform))
 
+    def test_clip(self):
+        x=np.linspace(0,np.pi*10,1001)
+        y=np.sin(x)
+        z=np.cos(x)
+        d=Data(x,y,z,setas="xyz")
+        d.clip((-0.1,0.2),"Column 2")
+        self.assertTrue((d.z.min()>=-0.1) and (d.z.max()<=0.2),"Clip with a column specified failed.")
+        d=Data(x,y,z,setas="xyz")
+        d.clip((-0.5,0.7))
+        self.assertTrue((d.y.min()>=-0.5) and (d.y.max()<=0.7),"Clip with no column specified failed.")
+
+    def test_integrate(self):
+        d=Data(path.join(self.datadir,"SLD_200919.dat"))
+        d.setas="x..y"
+        d.integrate(result=True,header="Total_M")
+        result=d["Total_M"]
+        self.assertAlmostEqual(result,4.19687459365,7,"Integrate returned the wrong result!")
+        d.setas[-1]="y"
+        d.plot(multiple="y2")
+        self.assertEqual(len(d.axes),2,"Failed to produce plot with double y-axis")
+        d.close("all")
+        d.setas="x..y"
+        fx=d.interpolate(None)
+        self.assertEqual(fx(np.linspace(1,1500,101)).shape,(101,7),"Failed to get the interpolated shape right")
+
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Analysis_test("test_functions")
     test.setUp()
     unittest.main()
-    #test.test_scale()
+    #test.test_integrate()

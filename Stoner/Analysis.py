@@ -686,7 +686,17 @@ class AnalysisMixin(object):
             results = results[0]
         return results
 
-    def integrate(self, xcol=None, ycol=None, result=None, result_name=None, bounds=lambda x, y: True, **kargs):
+    def integrate(
+        self,
+        xcol=None,
+        ycol=None,
+        result=None,
+        header=None,
+        result_name=None,
+        output="data",
+        bounds=lambda x, y: True,
+        **kargs
+    ):
         """Inegrate a column of data, optionally returning the cumulative integral.
 
         Args:
@@ -699,8 +709,12 @@ class AnalysisMixin(object):
             result (index or None):
                 Either a column index (or header) to overwrite with the cumulative data,
                 or True to add a new column or None to not store the cumulative result.
-            result_name (string):
-                The new column header for the results column (if specified)
+            result_name (str):
+                The metadata name for the final result
+            header (str):
+                The name of the header for the results column.
+            output (Str):
+                What to return - 'data' (default) - this object, 'result': final result
             bounds (callable):
                 A function that evaluates for each row to determine if the data should be integrated over.
             **kargs:
@@ -715,33 +729,37 @@ class AnalysisMixin(object):
             to offer a variety of methods including simpson's rule and interpolation of data. If xcol or ycol are not specified then
             the current values from the :py:attr:`Stoner.Core.DataFile.setas` attribute are used.
         """
-        if xcol is None or ycol is None:
-            cols = self.setas._get_cols()
-            if xcol is None:
-                xcol = cols["xcol"]
-            if ycol is None:
-                ycol = cols["ycol"]
-        working = self.search(xcol, bounds)
+        _ = self._col_args(xcol=xcol, ycol=ycol)
+
+        working = self.search(_.xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
-        xdat = working[:, self.find_col(xcol)]
-        ydat = working[:, self.find_col(ycol)]
+        xdat = working[:, self.find_col(_.xcol)]
+        ydat = working[:, self.find_col(_.ycol)]
+        ydat = _np_.atleast_2d(ydat).T
+
         final = []
         for i in range(ydat.shape[1]):
             yd = ydat[:, i]
-            resultdata = cumtrapz(xdat, yd, **kargs)
+            resultdata = cumtrapz(yd, xdat, **kargs)
             resultdata = _np_.append(_np_.array([0]), resultdata)
             if result is not None:
+                header = header if header is not None else "Intergral of {}".format(self.column_headers[_.ycol])
                 if isinstance(result, bool) and result:
-                    self.add_column(resultdata, header=result_name, replace=False)
+                    self.add_column(resultdata, header=header, replace=False)
                 else:
                     result_name = self.column_headers[self.find_col(result)]
-                    self.add_column(resultdata, header=result_name, index=result, replace=(i == 0))
+                    self.add_column(resultdata, header=header, index=result, replace=(i == 0))
             final.append(resultdata[-1])
         if len(final) == 1:
             final = final[0]
         else:
             final = _np_.array(final)
-        return final
+        result_name = result_name if result_name is not None else header
+        self[result_name] = final
+        if output.lower() == "result":
+            return final
+        else:
+            return self
 
     def interpolate(self, newX, kind="linear", xcol=None, replace=False):
         """Interpolate a dataset to get a new set of values for a given set of x data.
