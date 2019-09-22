@@ -246,7 +246,11 @@ class DataFile(metadataObject):
         self.data._setas._get_cols()
         if handler is not None:
             handler(*args, **kargs)
-        kargs = getattr(self, "kargs", kargs)
+        try:
+            kargs = self._kargs
+            delattr(self, "_kargs")
+        except AttributeError:
+            pass
         self.metadata["Stoner.class"] = self.__class__.__name__
         if kargs:  # set public attributes from keywords
             to_go = []
@@ -2136,13 +2140,16 @@ class DataFile(metadataObject):
 
         Keyword Arguments:
             auto_load (bool): If True (default) then the load routine tries all the subclasses of :py:class:`DataFile` in turn to load the file
-            filetype (:py:class:`DataFile`): If not none then tries using filetype as the loader
+            filetype (:py:class:`DataFile`, str): If not none then tries using filetype as the loader.
 
         Returns:
             DataFile: A copy of the loaded :py:data:`DataFile` instance
 
         Note:
             Possible subclasses to try and load from are identified at run time using the speciall :py:attr:`DataFile.subclasses` attribute.
+
+            If *filetupe* is a string, then it is first tried as an exact match to a subclass name, otherwise it is used as a partial match
+            and the first class in priority order is that matches is used.
 
             Some subclasses can be found in the :py:mod:`Stoner.FileFormats` module.
 
@@ -2152,9 +2159,21 @@ class DataFile(metadataObject):
 
             If not class can load a file successfully then a RunttimeError exception is raised.
         """
-        filename = kargs.pop("filename", None)
+        filename = args[0] if len(args) > 0 else None
+        filename = kargs.pop("filename", filename)
         filetype = kargs.pop("filetype", None)
         auto_load = kargs.pop("auto_load", filetype is None)
+
+        if isinstance(filetype, string_types):  # We can specify filetype as part of name
+            try:
+                filetype = DataFile.subclasses[filetype]
+            except KeyError:
+                for k, cls in DataFile.subclasses.items():
+                    if filetype in k:
+                        filetype = cls
+                        break
+                else:
+                    raise ValueError("Unrecognised class name for file type: {}".format(filetype))
 
         if filename is None or (isinstance(filename, bool) and not filename):
             filename = self.__file_dialog("r")
@@ -2186,9 +2205,12 @@ class DataFile(metadataObject):
                     if self.debug and filemagic is not None:
                         print("Trying: {} =mimetype {}".format(cls.__name__, test.mime_type))
 
-                    kargs.pop("auto_load", None)
                     test._load(self.filename, auto_load=False, *args, **kargs)
-                    kargs = getattr(test, "kargs", kargs)
+                    try:
+                        kargs = test._kargs
+                        delattr(test, "_kargs")
+                    except AttributeError:
+                        pass
 
                     if self.debug:
                         print("Passed Load")
@@ -2218,7 +2240,7 @@ class DataFile(metadataObject):
             if filetype is None:
                 test = cls()
                 test._load(self.filename, *args, **kargs)
-                kargs = getattr(test, "kargs", kargs)
+                kargs = getattr(test, "_kargs", kargs)
                 self["Loaded as"] = cls.__name__
                 self.data = test.data
                 self.metadata.update(test.metadata)
@@ -2226,7 +2248,7 @@ class DataFile(metadataObject):
             elif issubclass(filetype, DataFile):
                 test = filetype()
                 test._load(self.filename, *args, **kargs)
-                kargs = getattr(test, "kargs", kargs)
+                kargs = getattr(test, "_kargs", kargs)
                 self["Loaded as"] = filetype.__name__
                 self.data = test.data
                 self.metadata.update(test.metadata)
@@ -2235,7 +2257,7 @@ class DataFile(metadataObject):
             elif isinstance(filetype, DataFile):
                 test = filetype.clone
                 test._load(self.filename, *args, **kargs)
-                kargs = getattr(test, "kargs", kargs)
+                kargs = getattr(test, "_kargs", kargs)
                 self["Loaded as"] = filetype.__name__
                 self.data = test.data
                 self.metadata.update(test.metadata)
@@ -2247,7 +2269,7 @@ class DataFile(metadataObject):
         for k, i in kargs.items():
             if not callable(getattr(self, k, lambda x: False)):
                 setattr(self, k, i)
-        self.kargs = kargs
+        self._kargs = kargs
         return self
 
     def rename(self, old_col, new_col):

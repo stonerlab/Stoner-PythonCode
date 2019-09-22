@@ -16,6 +16,7 @@ import fnmatch
 from numpy import ceil
 from Stoner.compat import *
 import Stoner.Folders as SF
+from Stoner.plot.formats import GBPlotStyle
 
 from Stoner import Data,set_option
 import Stoner.HDF5, Stoner.Zip
@@ -38,7 +39,6 @@ class folders_each_test(unittest.TestCase):
     def test_each(self):
         os.chdir(self.datadir)
         fldr6=SF.DataFolder(".",pattern="QD*.dat",pruned=True)
-        print("X")
         fldr4=SF.DataFolder(self.datadir,pattern="QD-SQUID-VSM.dat")
         fldr5=fldr4.clone
         shaper=lambda f:f.shape
@@ -59,8 +59,8 @@ class folders_each_test(unittest.TestCase):
         meths=[x for x in dir(fldr6.each) if not x.startswith("_")]
         self.assertEqual(len(meths),127 if python_v3 else 130,"Dir of folders.each failed ({}).".format(len(meths)))
 
-    def test_attr_access(self):
-        self.fldr=SF.PlotFolder(path.join(self.datadir,"NLIV"),pattern="*.txt",setas="yx")
+    # def test_attr_access(self):
+    #     self.fldr=SF.PlotFolder(path.join(self.datadir,"NLIV"),pattern="*.txt",setas="yx")
 
 
 

@@ -9,6 +9,7 @@ import io
 import linecache
 import PIL
 import re
+from copy import copy
 from collections import Mapping
 
 import numpy as np
@@ -31,6 +32,8 @@ class CSVFile(Core.DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.csv", "*.txt"]  # Recognised filename patterns
 
+    _defaults = {"header_line": 0, "data_line": 1, "header_delim": ",", "data_delim": ","}
+
     def _load(self, filename, *args, **kargs):
         """Generic deliminated file loader routine.
 
@@ -48,10 +51,14 @@ class CSVFile(Core.DataFile):
         Returns:
             A copy of the current object after loading the data.
         """
-        header_line = kargs.pop("header_line", 0)
-        data_line = kargs.pop("data_line", 1)
-        data_delim = kargs.pop("data_delim", ",")
-        header_delim = kargs.pop("header_delim", ",")
+        defaults = copy(self._defaults)
+        defaults.update(kargs)
+        keep = set(kargs.keys()) - (set(self._defaults.keys()) | set(["auto_load", "filetype"]))
+        kargs = {k: kargs[k] for k in keep}
+        header_line = defaults["header_line"]
+        data_line = defaults["data_line"]
+        data_delim = defaults["data_delim"]
+        header_delim = defaults["header_delim"]
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -68,14 +75,20 @@ class CSVFile(Core.DataFile):
         else:
             column_headers = ["Column" + str(x) for x in range(np.shape(self.data)[1])]
             data_test = linecache.getline(self.filename, data_line + 1)
-            if data_delim not in data_test:
+            if data_delim is None:
+                for data_delim in ["\t", ",", ";", " "]:
+                    if data_delim in data_test:
+                        break
+                else:
+                    raise Core.StonerLoadError("No delimiters in data lines")
+            elif data_delim not in data_test:
                 linecache.clearcache()
                 raise Core.StonerLoadError("No delimiters in data lines")
 
         self.data = np.genfromtxt(self.filename, dtype="float", delimiter=data_delim, skip_header=data_line)
         self.column_headers = column_headers
         linecache.clearcache()
-        self.kargs = kargs
+        self._kargs = kargs
         return self
 
     def save(self, filename=None, **kargs):
@@ -104,6 +117,18 @@ class CSVFile(Core.DataFile):
                 i += 1
         self.filename = filename
         return self
+
+
+class JustNumbersFile(CSVFile):
+
+    """A reader format for things which are just a block of numbers with no headers or metadata."""
+
+    priority = 256  # Rather generic file format so make it a low priority
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns = ["*.csv", "*.txt"]  # Recognised filename patterns
+
+    _defaults = {"header_line": None, "data_line": 0, "header_delim": None, "data_delim": None}
 
 
 class KermitPNGFile(Core.DataFile):

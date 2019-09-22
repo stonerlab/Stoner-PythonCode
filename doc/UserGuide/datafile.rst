@@ -43,12 +43,14 @@ Base Classes and Generic Formats
 
     :py:class:`DataFile`
         Tagged Data Interchange Format 1.5 -- the default format produced by the LabVIEW measurement rigs in the CM Physics group in Leeds
-    :py:class:`Stoner.FileFormats.CSVFile`
+    :py:class:`Stoner.formats.generic.CSVFile`
         Reads a generic comma separated value file. The :py:meth:`Stoner.FileFormats.CSVFile.load`
         routine takes four additional parameters to the constructor and load methods. In
         addition to the two extra arguments used for the *BigBlue& variant, a
         further two parameters specify the deliminators for the data and header rows. :py:class:`Stoner.FileFormats.CSVFile`
         also offers a **save** method to allow data to be saved in a simple deliminated text way (see Section :ref:`save` for details).
+    :py:class:`Stoner.formats.generic.JustNumbersFile`
+        This is a subclass of CSVFile dedicated for reading a text file that consists purely of rows of numbers with no header or metadata.
     :py:class:`Stoner.FileFormats.SPCFile`
         Loads a Raman scan file (.spc format) produced by the Rensihaw and Horiba
         Raman spectrometers. This may also work for other instruments that produce spc files,
@@ -124,6 +126,16 @@ worked is stored in the metadata of the loaded file.
    throw and error if it gets bad data. Whilst one might wish this was always true it relies on
    whoever writes the load method to make sure of this ! If you want to stop the automatic guessing
    from happening use the ``auto_load=False`` keyword in the *load()* method.
+
+You can also specify a *filetype* parameter to the :py:meth:`DataFile.load` method or directly to the
+:py:class:`Stoner.Data` constructor as illustrated below to load a simple text file of un labelled numbers::
+
+    from Stoner import Data
+    d=Data("numbers.txt",filetype="JustNumbers",column_headers=["z","I","dI"],setas="xye")
+
+If *filetype* is a string, it can match either the complete name of the subclass to use to load the file, or
+part of it.
+
 
 Loading Data from a string or iterable object
 ---------------------------------------------

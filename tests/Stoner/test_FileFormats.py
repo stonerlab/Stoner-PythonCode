@@ -81,10 +81,11 @@ class FileFormats_test(unittest.TestCase):
 
     def test_csvfile(self):
 
-        self.csv=Data(path.join(self.datadir,"working","CSVFile_test.dat"),filetype=Data.subclasses["CSVFile"],header_line=None,data_line=1,data_delim="\t")
-        self.assertEqual(self.csv.shape,(166,3),"Failed to load CSVFile from text")
+        self.csv=Data(path.join(self.datadir,"working","CSVFile_test.dat"),filetype="JustNumbers",column_headers=["Q","I","dI"],setas="xye")
+        self.assertEqual(self.csv.shape,(167,3),"Failed to load CSVFile from text")
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=FileFormats_test("test_loaders")
     test.setUp()
-    test.test_csvfile()
+    unittest.main()
+    #test.test_csvfile()
