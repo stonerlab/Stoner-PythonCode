@@ -32,6 +32,8 @@ install:
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda config --append channels phygbu
+  - conda config --append channels conda-forge
+  - conda config --set channel_priority strict
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
@@ -46,7 +48,7 @@ install:
   # - conda install --yes scikit-image
   # Hyperspy is now an optional dependency for 3.6 onwards
   - if [[ "$TRAVIS_PYTHON_VERSION" == "3.7" ]] || [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]] ; then
-        conda install --yes -c conda-forge hyperspy;
+        conda install hyperspy;
     fi
   # Now we unistall the stable stoner - use force to stop downgrading packages!
   - conda remove --yes --force stoner
