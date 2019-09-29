@@ -754,7 +754,7 @@ class AnalysisMixin(object):
             final = final[0]
         else:
             final = _np_.array(final)
-        result_name = result_name if result_name is not None else header
+        result_name = result_name if result_name is not None else header if header is not None else "Area"
         self[result_name] = final
         if output.lower() == "result":
             return final

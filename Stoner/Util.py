@@ -382,5 +382,5 @@ def hysteresis_correct(data, **kargs):
     data["BH_Max"] = max(bh)
     data["BH_Max_H"] = data.x[i]
 
-    data["Area"] = data.integrate()
+    data["Area"] = data.integrate(output="result")
     return cls(data)
