@@ -1519,7 +1519,7 @@ class AnalysisMixin(object):
         # We're going to use three points to get an estimate for the affine transform to apply
 
         if isinstance(use_estimate, bool) and use_estimate:
-            mid = len(xdat) / 2
+            mid = int(len(xdat) / 2)
             try:  # may go wrong if three points are co-linear
                 m0 = GetAffineTransform(xy1[[0, mid, -1], :], xy2[[0, mid, -1], :])
             except (RuntimeError, _np_.linalg.LinAlgError):  # So use an idnetify transformation instead
