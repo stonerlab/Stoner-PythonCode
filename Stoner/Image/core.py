@@ -959,10 +959,15 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             else:  # default to float32
                 im = Image.fromarray(self.astype(np.float32), mode="F")
         else:
-            try:
-                im = Image.fromarray(self)
-            except TypeError:
-                im = Image.fromarray(self.astype("float32"))
+            if (
+                self.dtype.kind == "b"
+            ):  # boolean we're not going to lose data by saving as unsigned int	            im = Image.fromarray(self)
+                im = Image.fromarray(self, mode="L")
+            else:  # try to convert everything else to float32 which can has maximum preservation of info
+                try:
+                    im = Image.fromarray(self)
+                except TypeError:
+                    im = Image.fromarray(self.astype("float32"))
         ifd = ImageFileDirectory_v2()
         ifd[270] = json.dumps(self.metadata.export_all())
         ext = os.path.splitext(filename)[1]

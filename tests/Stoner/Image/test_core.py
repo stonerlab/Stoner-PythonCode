@@ -221,6 +221,8 @@ class ImageArrayTest(unittest.TestCase):
             self.assertTrue(n['b']==im['b'])
             self.assertTrue('ImageArray.dtype' in n.metadata.keys()) #check the dtype metdata got added
             self.assertTrue(im.dtype==n.dtype) #check the datatype
+            self.im=im
+            self.n=n
             self.assertTrue(np.allclose(im, n))  #check the data
 
 
@@ -311,13 +313,13 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test.setUp()
     #test.test_load_save_all()
 #    test.test_save()
-#    test.test_savetiff()
+    test.test_savetiff()
 #
     test2=ImageFileTest("test_constructors")
     test2.setUp()
     #test2.test_constructors()
 
-    unittest.main()
+    #unittest.main()
 
 
 
