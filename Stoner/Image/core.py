@@ -959,7 +959,10 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             else:  # default to float32
                 im = Image.fromarray(self.astype(np.float32), mode="F")
         else:
-            im = Image.fromarray(self)
+            try:
+                im = Image.fromarray(self)
+            except TypeError:
+                im = Image.fromarray(self.astype("float32"))
         ifd = ImageFileDirectory_v2()
         ifd[270] = json.dumps(self.metadata.export_all())
         ext = os.path.splitext(filename)[1]

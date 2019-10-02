@@ -309,13 +309,15 @@ class ImageFileTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=ImageArrayTest("test_filename")
     test.setUp()
-    test.test_load_save_all()
+    #test.test_load_save_all()
 #    test.test_save()
 #    test.test_savetiff()
 #
     test2=ImageFileTest("test_constructors")
     test2.setUp()
     #test2.test_constructors()
+
+    unittest.main()
 
 
 
