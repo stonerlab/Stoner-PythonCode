@@ -942,11 +942,9 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         The type name is added as a string to the metadata before saving.
 
         Keyword Args:
-            forcetype(bool): if forcetype then preserve data type as best as
+            forcetype(bool): (depricated) if forcetype then preserve data type as best as
                 possible on save.
-                Otherwise integer data will be converted to np.float32 type
-                for saving. (bool will remain as int since there's no danger of
-                loss of information)
+                Otherwise we let the underlying pillow library choose the best data type.
         """
         from PIL.TiffImagePlugin import ImageFileDirectory_v2
         import json
@@ -961,10 +959,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             else:  # default to float32
                 im = Image.fromarray(self.astype(np.float32), mode="F")
         else:
-            if self.dtype.kind == "b":  # boolean we're not going to lose data by saving as unsigned int
-                im = Image.fromarray(self, mode="L")
-            else:  # try to convert everything else to float32 which can has maximum preservation of info
-                im = Image.fromarray(self.astype(np.float32), mode="F")
+            im = Image.fromarray(self)
         ifd = ImageFileDirectory_v2()
         ifd[270] = json.dumps(self.metadata.export_all())
         ext = os.path.splitext(filename)[1]

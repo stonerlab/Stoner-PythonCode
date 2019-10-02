@@ -15,7 +15,7 @@ import re
 import tempfile
 from Stoner.compat import *
 
-from Stoner import Data
+from Stoner import Data,__home__
 from Stoner.compat import hyperspy_ok
 from Stoner.Core  import DataFile
 import Stoner.HDF5 as SH
@@ -24,8 +24,9 @@ import Stoner.Zip as SZ
 import warnings
 from traceback import format_exc
 
-pth=path.dirname(__file__)
-pth=path.realpath(path.join(pth,"../../"))
+pth=path.join(__home__,"..")
+datadir=path.join(pth,"sample-data")
+
 sys.path.insert(0,pth)
 
 class FileFormats_test(unittest.TestCase):

@@ -7,12 +7,14 @@ Created on Fri May 27 17:09:04 2016
 
 from Stoner.Image import ImageArray, KerrArray, ImageFile
 from Stoner.Core import typeHintedDict
-from Stoner import Data
+from Stoner import Data,__home__
 import numpy as np
 import unittest
 import sys
 from os import path
+import tempfile
 import os
+import shutil
 
 import warnings
 
@@ -62,6 +64,33 @@ class ImageArrayTest(unittest.TestCase):
         #check full path is in loaded from metadata
         self.assertTrue(os.path.normpath(anim.metadata['Loaded from']) == os.path.normpath(fpath), 'Full path not in metadata: {}'.format(anim["Loaded from"]))
         os.chdir(cwd)
+
+    def test_load_save_all(self):
+        tmpdir=tempfile.mkdtemp()
+        pth=path.join(__home__,"..")
+        datadir=path.join(pth,"sample-data")
+        image=ImageFile(path.join(datadir,"kermit.png"))
+        ims={}
+        fmts=["uint8","uint16","uint32","float32"]
+        for fmt in fmts:
+            ims[fmt]=image.clone.convert(fmt)
+            ims[fmt].save_tiff(path.join(tmpdir,"kermit-{}.tiff".format(fmt)))
+            ims[fmt].save_npy(path.join(tmpdir,"kermit-{}.npy".format(fmt)))
+            del ims[fmt]["Loaded from"]
+        for fmt in fmts:
+            iml=ImageFile(path.join(tmpdir,"kermit-{}.tiff".format(fmt)))
+            del iml["Loaded from"]
+            self.i=ims[fmt]
+            self.i2=iml
+            self.assertEqual(ims[fmt],iml,"Round tripping tiff with format {} failed".format(fmt))
+            iml=ImageFile(path.join(tmpdir,"kermit-{}.npy".format(fmt)))
+            del iml["Loaded from"]
+            self.assertTrue(np.all(ims[fmt].data==iml.data),"Round tripping npy with format {} failed".format(fmt))
+        shutil.rmtree(tmpdir)
+
+
+
+        i8=image.convert("uint8")
 
     def test_load_from_ImageFile(self):
         #uses the ImageFile.im attribute to set up ImageArray. Memory overlaps
@@ -280,6 +309,7 @@ class ImageFileTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=ImageArrayTest("test_filename")
     test.setUp()
+    test.test_load_save_all()
 #    test.test_save()
 #    test.test_savetiff()
 #
@@ -287,5 +317,5 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test2.setUp()
     #test2.test_constructors()
 
-    unittest.main()
+
 
