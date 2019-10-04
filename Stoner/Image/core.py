@@ -457,9 +457,9 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         for i, item in enumerate(box):  # replace None with max extent
             if isinstance(item, float):
                 if i < 2:
-                    box[i] = round(self.shape[1] * item)
+                    box[i] = int(round(self.shape[1] * item))
                 else:
-                    box[i] = round(self.shape[0] * item)
+                    box[i] = int(round(self.shape[0] * item))
             elif isinstance(item, int_types):
                 pass
             elif item is None:
