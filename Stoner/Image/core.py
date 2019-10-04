@@ -955,7 +955,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             if self.dtype == np.uint8 or self.dtype.kind == "b":  # uint8 or boolean
                 im = Image.fromarray(self, mode="L")
             elif self.dtype.kind in ["i", "u"]:
-                im = Image.fromarray(self, mode="I")
+                im = Image.fromarray(self.astype("int32"), mode="I")
             else:  # default to float32
                 im = Image.fromarray(self.astype(np.float32), mode="F")
         else:

@@ -75,6 +75,7 @@ class ImageArrayTest(unittest.TestCase):
         for fmt in fmts:
             ims[fmt]=image.clone.convert(fmt)
             ims[fmt].save_tiff(path.join(tmpdir,"kermit-{}.tiff".format(fmt)))
+            ims[fmt].save_tiff(path.join(tmpdir,"kermit-forcetype{}.tiff".format(fmt)),forcetype=True)
             ims[fmt].save_npy(path.join(tmpdir,"kermit-{}.npy".format(fmt)))
             del ims[fmt]["Loaded from"]
         for fmt in fmts:
@@ -228,6 +229,7 @@ class ImageArrayTest(unittest.TestCase):
 
 
 
+
     def test_max_box(self):
         s=self.imarr.shape
         self.assertTrue(self.imarr.max_box==(0,s[1],0,s[0]))
@@ -306,6 +308,22 @@ class ImageFileTest(unittest.TestCase):
         self.assertTrue(np.allclose(ifi.image, np.linspace(0,1,12).reshape(3,4)))
         ifi.crop(0,3,0,None)
         self.assertTrue(ifi.shape==(3,3)) #check crop is forced to overwrite ifi despite shape change
+        datadir=path.join(__home__,"..","sample-data")
+        image=ImageFile(path.join(datadir,"kermit.png"))
+        i2=image.clone.box(5,_=True)
+        self.assertEqual(i2.shape,(469, 349),"Failed to trim box by integer")
+        i2=image.clone.box(0.25,_=True)
+        self.assertEqual(i2.shape,(269, 269),"Failed to trim box by float")
+        i2=image.clone.box([0.1,0.2,0.05,0.1],_=True)
+        self.assertEqual(i2.shape,(24, 36),"Failed to trim box by sequence of floats")
+        self.assertAlmostEqual(image.aspect,0.7494780793,places=6,msg="Aspect ratio failed" )
+        self.assertEqual(image.centre,(239.5, 179.5),"Failed to read image.centre")
+        i2=image.CW
+        self.assertEqual(i2.shape,(359,479),"Failed to rotate clockwise")
+        i3=i2.CCW
+        self.assertEqual(i3.shape,(479,359),"Failed to rotate counter-clockwise")
+
+
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
@@ -313,13 +331,13 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test.setUp()
     #test.test_load_save_all()
 #    test.test_save()
-    test.test_savetiff()
+    #test.test_savetiff()
 #
     test2=ImageFileTest("test_constructors")
     test2.setUp()
     #test2.test_constructors()
 
-    #unittest.main()
+    unittest.main()
 
 
 
