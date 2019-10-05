@@ -17,6 +17,7 @@ import tempfile
 import os
 import shutil
 from Stoner.compat import python_v3
+import matplotlib.pyplot as plt
 
 import warnings
 
@@ -343,6 +344,8 @@ class ImageFileTest(unittest.TestCase):
         counts={(2,7):803,(3,5):846}
         expected=counts.get(version_info[0:2],871)
         self.assertEqual(len(attrs),expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs)))
+        self.assertTrue(image._repr_png_private_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation")
+
 
     def test_mask(self):
         i=np.ones((200,200),dtype="uint8")*np.linspace(1,200,200).astype("uint8")
@@ -362,6 +365,32 @@ class ImageFileTest(unittest.TestCase):
         i.mask=False
         i.mask.draw.annulus(100,50,25,35)
         self.assertAlmostEqual(i.mean(), 51.0,msg="Mean after annular pass mask failed")
+        i.mask[:,:]=False
+        self.assertFalse(np.any(i.mask),"Setting Mask by index failed")
+        i.mask=-i.mask
+        self.assertTrue(np.all(i.mask),"Setting Mask by index failed")
+        i.mask=~i.mask
+        self.assertFalse(np.any(i.mask),"Setting Mask by index failed")
+        i.mask.draw.circle(100,100,20)
+        st=repr(i.mask)
+        self.assertEqual(st.count("X"),i.mask.sum(),"String representation of mask failed")
+        self.assertTrue(np.all(i.mask.image==i.mask._mask),"Failed to access mak data by image attr")
+        i.mask=False
+        i2=i.clone
+        i.mask.draw.rectangle(100,100,100,50,angle=np.pi/2)
+        i2.mask.draw.rectangle(100,100,50,100)
+        self.i2=i2
+        self.assertTrue(np.all(i.mask.image==i2.mask.image),"Drawing rectange with angle failed")
+        self.assertTrue(i.mask._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do mask png representation")
+
+
+
+
+    def test_draw(self):
+        i=ImageFile(np.zeros((200,200)))
+        attrs=[x for x in dir(i.draw) if not x.startswith("_")]
+        self.assertEqual(len(attrs),20,"Directory of DrawProxy failed")
+
 
 
 

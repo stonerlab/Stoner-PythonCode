@@ -1459,7 +1459,7 @@ class DrawProxy(object):
 
     def __dir__(self):
         """Pass through to the dir of skimage.draw."""
-        own = set([x for x in self.__class__.__dict__.keys() if not x.startswith("_")])
+        own = set(self.__class__.__dict__.keys())
         d = set(dir(draw))
         return list(own | d)
 
@@ -1524,8 +1524,8 @@ class DrawProxy(object):
         co_ords = np.array([[x1, y1], [x2, y1], [x2, y2], [x1, y2]])
         if angle != 0:
             centre = np.array([r, c])
-            c, s, m = np.cos, np.sin, np.matmul
-            r = np.array([[c(angle), -s(angle)], [s(angle), c(angle)]])
+            cos, sin, m = np.cos, np.sin, np.matmul
+            r = np.array([[cos(angle), -sin(angle)], [sin(angle), cos(angle)]])
             co_ords = np.array([centre + m(r, xy - centre) for xy in co_ords])
         rr, cc = draw.polygon(co_ords[:, 0], co_ords[:, 1], shape=shape)
         self.img[rr, cc] = value
@@ -1616,15 +1616,25 @@ class MaskProxy(object):
 
     def __repr__(self):
         """Make a textual representation of the image."""
-        return repr(self._mask)
+        output = ""
+        f = np.array(["."] * self._mask.shape[1])
+        t = np.array(["X"] * self._mask.shape[1])
+        for ix in self._mask:
+            row = np.where(ix, t, f)
+            output += "".join(row) + "\n"
+        return output
 
     def __str__(self):
         """Make a textual representation of the image."""
         return repr(self._mask)
 
+    def __invert__(self):
+        """Invert the mask."""
+        return np.logical_not(self._mask)
+
     def __neg__(self):
         """Invert the mask."""
-        return -self._mask
+        return np.logical_not(self._mask)
 
     def _repr_png_(self):
         """Provide a display function for iPython/Jupyter."""
