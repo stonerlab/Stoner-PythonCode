@@ -606,7 +606,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     def __dir__(self):
         """Implement code for dir()"""
         proxy = set(list(self._funcs.keys()))
-        parent = set(super(ImageArray, self).__dir__())
+        parent = set(dir(super(ImageArray, self)))
         return sorted(list(proxy | parent))
 
     def __getattr__(self, name):
@@ -1223,7 +1223,7 @@ class ImageFile(metadataObject):
 
     def __dir__(self):
         """Merge both the ImageFile and ImageArray dirs."""
-        this = set(super(ImageFile, self).__dir__())
+        this = set(dir(super(ImageFile, self)))
         image = set(dir(self.image))
         return list(this | image)
 

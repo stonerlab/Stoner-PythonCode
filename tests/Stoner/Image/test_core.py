@@ -15,6 +15,7 @@ from os import path
 import tempfile
 import os
 import shutil
+from Stoner.compat import python_v3
 
 import warnings
 
@@ -269,6 +270,12 @@ class ImageArrayTest(unittest.TestCase):
         im3 = im1.exposure__rescale_intensity() #test call with module name
         self.assertTrue(np.allclose(im3, im0), 'skimage call with module name failed')
 
+    def test_attrs(self):
+        attrs=[x for x in dir(self.imarr) if not x.startswith("_")]
+        expected=871 if python_v3 else 803
+        self.assertEqual(len(attrs),expected,"Length of ImageArray dir failed. {}".format(len(attrs)))
+
+
 class ImageFileTest(unittest.TestCase):
     def setUp(self):
         self.a = np.linspace(0,5,12).reshape(3,4)
@@ -322,6 +329,18 @@ class ImageFileTest(unittest.TestCase):
         self.assertEqual(i2.shape,(359,479),"Failed to rotate clockwise")
         i3=i2.CCW
         self.assertEqual(i3.shape,(479,359),"Failed to rotate counter-clockwise")
+        i2=image.clone
+        self.assertAlmostEqual((i2-127).mean(), 39086.4687283,places=2,msg="Subtract integer failed.")
+        try:
+            i2-"Gobble"
+        except TypeError:
+            pass
+        else:
+            self.AssertTrue(False,"Subtraction of string didn't raise not implemented")
+        attrs=[x for x in dir(image) if not x.startswith("_")]
+        expected = 871 if python_v3 else 803
+        self.assertEqual(len(attrs),expected,"Length of ImageFile dir failed. {}".format(len(attrs)))
+
 
 
 
