@@ -344,6 +344,25 @@ class ImageFileTest(unittest.TestCase):
         expected=counts.get(version_info[0:2],871)
         self.assertEqual(len(attrs),expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs)))
 
+    def test_mask(self):
+        i=np.ones((200,200),dtype="uint8")*np.linspace(1,200,200).astype("uint8")
+        i=ImageFile(i)
+        self.i=i
+        i.mask.draw.rectangle(100,50,100,100)
+        self.assertAlmostEqual(i.mean(), 117.1666666666666,msg="Mean after masked rectangle failed")
+        i.mask.invert()
+        self.assertAlmostEqual(i.mean(), 50.5,msg="Mean after inverted masked rectangle failed")
+        i.mask.clear()
+        self.assertAlmostEqual(i.mean(), 100.5,msg="Mean after clearing mask failed")
+        i.mask.draw.square(100,50,100)
+        self.assertAlmostEqual(i.mean(), 117.1666666666666,msg="Mean after masked rectangle faile")
+        i.mask.clear()
+        i.mask.draw.annulus(100,50,35,25)
+        self.assertAlmostEqual(i.mean(), 102.96850393700,msg="Mean after annular block mask failed")
+        i.mask=False
+        i.mask.draw.annulus(100,50,25,35)
+        self.assertAlmostEqual(i.mean(), 51.0,msg="Mean after annular pass mask failed")
+
 
 
 
@@ -358,8 +377,8 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test2=ImageFileTest("test_constructors")
     test2.setUp()
     #test2.test_constructors()
-
-    unittest.main()
+    test2.test_mask()
+    #unittest.main()
 
 
 

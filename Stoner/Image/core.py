@@ -43,6 +43,8 @@ else:
     from cStringIO import StringIO as StreamIO
 
 
+IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
+
 dtype_range = {
     np.bool_: (False, True),
     np.bool8: (False, True),
@@ -893,7 +895,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):
             # now go and ask for one
-            filename = self.__file_dialog("w")
+            filename = get_filedialog(what="file", filetypes=IMAGE_FILES)
 
         def_fmt = os.path.splitext(filename)[1][1:]  # Get a default format from the filename
         if def_fmt not in self.fmts:  # Default to png if nothing else
@@ -977,36 +979,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             ext = ".tiff"
         tiffname = os.path.splitext(filename)[0] + ext
         im.save(tiffname, tiffinfo=ifd)
-
-    def __file_dialog(self, mode):
-        """Creates a file dialog box for loading or saving ~b ImageFile objects.
-
-        Args:
-            mode(string): The mode of the file operation  'r' or 'w'
-
-        Returns:
-            A filename to be used for the file operation.
-        """
-        patterns = ("png", "*.png")
-
-        if self.filename is not None:
-            filename = os.path.basename(self.filename)
-            dirname = os.path.dirname(self.filename)
-        else:
-            filename = ""
-            dirname = ""
-        if "r" in mode:
-            mode = "file"
-        elif "w" in mode:
-            mode = "save"
-        else:
-            mode = "directory"
-        dlg = get_filedialog(what=mode, initialdir=dirname, initialfile=filename, filetypes=patterns)
-        if len(dlg) != 0:
-            self.filename = dlg
-            return self.filename
-        else:
-            return None
 
     ############################################################################################################
     ############## Depricated Methods ##########################################################################
@@ -1487,7 +1459,9 @@ class DrawProxy(object):
 
     def __dir__(self):
         """Pass through to the dir of skimage.draw."""
-        return draw.__dir__()
+        own = set([x for x in self.__class__.__dict__.keys() if not x.startswith("_")])
+        d = set(dir(draw))
+        return list(own | d)
 
     def annulus(self, r, c, radius1, radius2, shape=None, value=1.0):
         """Use a combination of two circles to draw and annulus.
@@ -1516,13 +1490,13 @@ class DrawProxy(object):
         else:
             buf = np.zeros(shape)
             fill = 1.0
-            bg = 2.0
+            bg = 0.0
         radius1, radius2 = min(radius1, radius2), max(radius1, radius2)
         rr, cc = draw.circle(r, c, radius2, shape=shape)
         buf[rr, cc] = fill
         rr, cc = draw.circle(r, c, radius1, shape=shape)
         buf[rr, cc] = bg
-        self.img = np.where(buf == 1, value, self.img)
+        self.img[:, :] = (self.img * buf + value * (1.0 - buf)).astype(self.img.dtype)
         return self.img
 
     def rectangle(self, r, c, w, h, angle=0.0, shape=None, value=1.0):
