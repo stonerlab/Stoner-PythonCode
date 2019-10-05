@@ -17,7 +17,7 @@ import tempfile
 import os
 import shutil
 from Stoner.compat import python_v3
-import matplotlib.pyplot as plt
+from PIL import Image
 
 import warnings
 
@@ -75,11 +75,15 @@ class ImageArrayTest(unittest.TestCase):
         image=ImageFile(path.join(datadir,"kermit.png"))
         ims={}
         fmts=["uint8","uint16","uint32","float32"]
+        modes={"uint8":"L","uint32":"RGBX","float32":"F"}
         for fmt in fmts:
             ims[fmt]=image.clone.convert(fmt)
             ims[fmt].save_tiff(path.join(tmpdir,"kermit-{}.tiff".format(fmt)))
             ims[fmt].save_tiff(path.join(tmpdir,"kermit-forcetype{}.tiff".format(fmt)),forcetype=True)
             ims[fmt].save_npy(path.join(tmpdir,"kermit-{}.npy".format(fmt)))
+            if fmt!="uint16":
+                im=Image.fromarray((ims[fmt].view(np.ndarray)),modes[fmt])
+                im.save(path.join(tmpdir,"kermit-nometadata-{}.tiff".format(fmt)))
             del ims[fmt]["Loaded from"]
         for fmt in fmts:
             iml=ImageFile(path.join(tmpdir,"kermit-{}.tiff".format(fmt)))
@@ -90,19 +94,18 @@ class ImageArrayTest(unittest.TestCase):
             iml=ImageFile(path.join(tmpdir,"kermit-{}.npy".format(fmt)))
             del iml["Loaded from"]
             self.assertTrue(np.all(ims[fmt].data==iml.data),"Round tripping npy with format {} failed".format(fmt))
+            if fmt!="uint16":
+                im=ImageFile(path.join(tmpdir,"kermit-nometadata-{}.tiff".format(fmt)))
+                self.assertTrue(np.all(im.data==ims[fmt].data),"Loading from tif without metadata failed for {}".format(fmt))
         shutil.rmtree(tmpdir)
-
-
-
         i8=image.convert("uint8")
 
     def test_load_from_ImageFile(self):
         #uses the ImageFile.im attribute to set up ImageArray. Memory overlaps
-        pass
-#        imfi = ImageFile(self.arr)
-#        imarr = ImageArray(imfi)
-#        self.assertTrue(np.array_equal(imarr, imfi.image), 'Initialising from ImageFile failed')
-#        self.assertTrue(shares_memory(imarr, imfi.image))
+        imfi = ImageFile(self.arr)
+        imarr = ImageArray(imfi)
+        self.assertTrue(np.array_equal(imarr, imfi.image), 'Initialising from ImageFile failed')
+        self.assertTrue(shares_memory(imarr, imfi.image))
 
     def test_load_from_list(self):
         t=ImageArray([[1,3],[3,2],[4,3]])
@@ -272,6 +275,7 @@ class ImageArrayTest(unittest.TestCase):
         im3 = im1.exposure__rescale_intensity() #test call with module name
         self.assertTrue(np.allclose(im3, im0), 'skimage call with module name failed')
 
+
     def test_attrs(self):
         attrs=[x for x in dir(self.imarr) if not x.startswith("_")]
         counts={(2,7):803,(3,5):846}
@@ -344,7 +348,7 @@ class ImageFileTest(unittest.TestCase):
         counts={(2,7):803,(3,5):846}
         expected=counts.get(version_info[0:2],871)
         self.assertEqual(len(attrs),expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs)))
-        self.assertTrue(image._repr_png_private_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation")
+        self.assertTrue(image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation")
 
 
     def test_mask(self):
@@ -382,14 +386,55 @@ class ImageFileTest(unittest.TestCase):
         self.i2=i2
         self.assertTrue(np.all(i.mask.image==i2.mask.image),"Drawing rectange with angle failed")
         self.assertTrue(i.mask._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do mask png representation")
-
-
+        i=ImageFile(np.zeros((100,100)))
+        i2=i.clone
+        i2.draw.circle(50,50,25)
+        i.mask=i2
+        self.assertEqual(i.mask.sum(),i2.sum(),"Setting mask from ImageFile Failed")
+        i2.mask=i.mask
+        self.assertTrue(np.all(i.mask.image==i2.mask.image),"Failed to set mask by mask proxy")
+        i=ImageFile(np.ones((100,100)))
+        i.mask.draw.square(50,50,10)
+        i.mask.rotate(angle=np.pi/4)
+        i.mask.invert()
+        i2=ImageFile(np.zeros((100,100)))
+        i2.draw.square(50,50,10,angle=np.pi/4)
+        self.assertAlmostEqual(i.sum(),i2.sum(),delta=1.5,msg="Check on rotated mask failed !")
 
 
     def test_draw(self):
         i=ImageFile(np.zeros((200,200)))
         attrs=[x for x in dir(i.draw) if not x.startswith("_")]
-        self.assertEqual(len(attrs),20,"Directory of DrawProxy failed")
+        counts={(2,7):19,(3,5):19}
+        expected=counts.get(version_info[0:2],20)
+        self.assertEqual(len(attrs),expected,"Directory of DrawProxy failed")
+
+    def test_operators(self):
+        i=ImageFile(np.zeros((10,10)))
+        i=i+1
+        i+=4
+        i+=i.clone
+        i+=i.clone.data
+        self.assertEqual(i.sum(),2000,"Addition operators failed")
+        i/=4
+        self.assertEqual(i.sum(),500,"Division operators failed")
+        i=i/5
+        self.assertEqual(i.sum(),100,"Division operators failed")
+        i2=i.clone
+        i-=0.75
+        i2-=0.25
+        i3=i2//i
+        self.assertEqual(i3.sum(),50,"Division operators failed")
+        i=ImageFile(np.zeros((10,5)))
+        i=~i
+        self.assertEqual(i.shape,(5,10),"Invert to rotate failed")
+        i.image=i.image.astype("uint8")
+        i=-i
+        self.assertEqual(i.sum(),50*255,"Negate operators failed")
+
+
+
+
 
 
 
@@ -399,6 +444,7 @@ class ImageFileTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=ImageArrayTest("test_filename")
     test.setUp()
+    #test.test_load_from_ImageFile()
     #test.test_load_save_all()
 #    test.test_save()
     #test.test_savetiff()

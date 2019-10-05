@@ -377,6 +377,10 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         metadict = typeHintedDict({})
         with Image.open(filename, "r") as img:
             image = np.asarray(img)
+            if image.ndim == 3:
+                if image.shape[2] < 4:  # Need to add a dummy alpha channel
+                    image = np.append(np.zeros_like(image[:, :, 0]), axis=2)
+                image = image.view(dtype=np.uint32).reshape(image.shape[:-1])
             tags = img.tag_v2
             if 270 in tags:
                 from json import loads
@@ -1279,8 +1283,13 @@ class ImageFile(metadataObject):
         """Intelliegent negate function that handles unsigned integers."""
         ret = self.clone
         if self._image.dtype.kind == "u":
-            h = dtype_range[self._image.dtype][1]
-            ret.image = h - self.image
+            for k in dtype_range:  # Have to manually look for dtype :-()
+                if k == self._image.dtype:
+                    break
+            else:
+                raise TypeError("Unrecognised unsigned type {}, cannot negate sensibly !".format(self._image.dtype))
+            high_val = dtype_range[k][1]
+            ret.image = high_val - self.image
         else:
             ret.image = -self.image
         return ret
@@ -1605,10 +1614,11 @@ class MaskProxy(object):
 
         @wraps(func)
         def _proxy_call(*args, **kargs):
-            r = func(self._mask.astype(int), *args, **kargs)
-            if isinstance(r, np.ndarray) and r.shape == self._IA.shape:
-                self._IA.mask = r
-            return r
+            retval = func(self._mask.astype(float) * 1000, *args, **kargs)
+            if isinstance(retval, np.ndarray) and retval.shape == self._IA.shape:
+                retval = (retval + retval.min()) / (retval.max() - retval.min())
+                self._IA.mask = retval > 0.5
+            return retval
 
         _proxy_call.__doc__ = func.__doc__
         _proxy_call.__name__ = func.__name__

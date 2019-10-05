@@ -44,6 +44,7 @@ __all__ = [
     "denoise",
 ]
 from Stoner.compat import string_types
+from Stoner.core.base import metadataObject
 import warnings
 import numpy as np, matplotlib.pyplot as plt, os
 from Stoner.tools import istuple, isiterable
@@ -691,8 +692,9 @@ def rotate(im, angle, resize=False, center=None, order=1, mode="constant", cval=
     )
     print(type(im), type(data))
     ret = data.view(type(im))
-    ret.metadata = im.metadata
-    ret.metadata["transform:rotation"] = angle
+    if isinstance(ret, metadataObject) and isinstance(im.metadataObject):
+        ret.metadata = im.metadata
+        ret.metadata["transform:rotation"] = angle
     return ret
 
 
