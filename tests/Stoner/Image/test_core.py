@@ -11,6 +11,7 @@ from Stoner import Data,__home__
 import numpy as np
 import unittest
 import sys
+from sys import version_info
 from os import path
 import tempfile
 import os
@@ -272,7 +273,8 @@ class ImageArrayTest(unittest.TestCase):
 
     def test_attrs(self):
         attrs=[x for x in dir(self.imarr) if not x.startswith("_")]
-        expected=871 if python_v3 else 803
+        counts={(2,7):803,(3,5):846}
+        expected=counts.get(version_info[0:2],871)
         self.assertEqual(len(attrs),expected,"Length of ImageArray dir failed. {}".format(len(attrs)))
 
 
@@ -338,8 +340,9 @@ class ImageFileTest(unittest.TestCase):
         else:
             self.AssertTrue(False,"Subtraction of string didn't raise not implemented")
         attrs=[x for x in dir(image) if not x.startswith("_")]
-        expected = 871 if python_v3 else 803
-        self.assertEqual(len(attrs),expected,"Length of ImageFile dir failed. {}".format(len(attrs)))
+        counts={(2,7):803,(3,5):846}
+        expected=counts.get(version_info[0:2],871)
+        self.assertEqual(len(attrs),expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs)))
 
 
 
