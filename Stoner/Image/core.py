@@ -1077,10 +1077,7 @@ class ImageFile(metadataObject):
 
     @property
     def _repr_png_(self):
-        if get_option("short_repr") or get_option("short_img_repr"):
-            raise AttrbuteError("Suppressed graphical representation")
-        else:
-            return self._repr_png_private_
+        return self._repr_png_private_
 
     @property
     def clone(self):
