@@ -140,25 +140,18 @@ making beta packages available.
 Development Version
 -------------------
 
-The next development version will be on version 0.9. Features expected in 0.9 include:
-
-    *   Refactoring of the Core module into a more granual core package with submodules
-    *   Overhaul of the documentation and user guide
-    *   Dropping support for the older Stoner.Image.stack.ImageStack class
-    *   Droppping support for matplotlib<2.0
-    *   Support for Python 3.7
-
-Online documentation for all versions can be found on the ReadTheDocs pages `online documentation`_
+The current development version is hosted in the master branch of the repository and will become version 0.10. There is no definitive list of
+features at this time. Better integration with pandas and xarray are under consideration as is depricating some of the less optimal parts of the api.
 
 Build Status
 ~~~~~~~~~~~~
 
-Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls. We currently test against
-python 2.7 and 3.6 via Travis and internally test on Python 3.5 as well. Overall code quality
-is measured by landscape.io. The current status is shown at the top of this readme.
+Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls.
 
-Version 0.9 onwards, we test with Python 3.7, 3.6, 3.5 and 2.7. All versions are probably not compatible with Python 3.8, this will
-feature in version 0.10 (probably)
+Version 0.9 is tested with Python 2.7, 3.5, 3.6,
+
+The development version - which will be 0.10 will be tested with Python 3.6 and Python 3.7 only until Python 3.8 becomes stable.
+
 
 Citing the Stoner Package
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -169,7 +162,18 @@ encourage any users to cite this package via that doi.
 Stable Versions
 ---------------
 
-Version 0.8 is the current stable release. The main new features are
+Version 0.9 is the current stable version. This is the last version to support Python 2 and 3<3.6. Features of this release are:
+
+    *   Refactoring of the package into a more granual core, plot, formats, folders packages with submodules
+    *   Overhaul of the documentation and user guide
+    *   Dropping support for the older Stoner.Image.stack.ImageStack class
+    *   Droppping support for matplotlib<2.0
+    *   Support for Python 3.7
+    *   Unit tests now > 80% coverage across the package.
+
+Online documentation for all versions can be found on the ReadTheDocs pages `online documentation`_
+
+Version 0.8 is the previous stable release. The main new features were:
 
     *   Reworking of the ImageArray, ImageFile and ImageFolder with many updates and new features.
     *   New mixin based ImageStack2 that can manipulate a large number of images in a 3D numpy array
@@ -178,7 +182,7 @@ Version 0.8 is the current stable release. The main new features are
     *   _setas objects implement a more complete MutableMapping interface and also support +/- operators.
     *   conda packages now being prepared as the preferred package format
 
-0.8.x will continue to have bug fix releases and back-ports of anything very useful until 0.9 is released.
+0.8.2 was the final release of the 0.8.0 branch
 
 The old stable version is 0.7.2. Features of 0.7.2 include
 
