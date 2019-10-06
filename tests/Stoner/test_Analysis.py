@@ -139,8 +139,19 @@ class Analysis_test(unittest.TestCase):
         fx=d.interpolate(None)
         self.assertEqual(fx(np.linspace(1,1500,101)).shape,(101,7),"Failed to get the interpolated shape right")
 
+    def test_sg_filter(self):
+        x=np.linspace(0,10*np.pi,1001)
+        y=np.sin(x)+np.random.normal(size=1001,scale=0.05)
+        d=Data(x,y,column_headers=["Time","Signal"],setas="xy")
+        d.SG_Filter(order=1,result=True)
+        d.setas="x.y"
+        d.y=d.y-np.cos(x)
+        self.assertAlmostEqual(d.y[5:-5].mean(), 0,places=2,msg="Failed to differentiate correctly")
+
+
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Analysis_test("test_functions")
     test.setUp()
+    #test.test_peaks()
     unittest.main()
     #test.test_integrate()

@@ -119,7 +119,11 @@ class AnalysisMixin(object):
                     )
             else:
                 header = [header] * (len(col) - 1)
-            for column, head in zip(r[:-1], header):
+            if r.shape[0] > len(header):
+                iterdata = r[: len(header)]
+            else:
+                iterdata = r
+            for column, head in zip(iterdata, header):
                 self.add_column(column.ravel(), header=head, index=result, replace=replace)
             return self
         else:
