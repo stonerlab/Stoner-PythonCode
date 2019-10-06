@@ -15,7 +15,7 @@ from collections import Mapping
 import numpy as np
 
 import Stoner.Core as Core
-from Stoner.compat import python_v3, str2bytes, hyperspy_ok
+from Stoner.compat import str2bytes, hyperspy_ok
 from Stoner.core.base import string_to_type
 
 
@@ -151,10 +151,7 @@ class KermitPNGFile(Core.DataFile):
         try:
             with io.open(filename, "rb") as test:
                 sig = test.read(8)
-            if python_v3:
-                sig = [x for x in sig]
-            else:
-                sig = [ord(b) for b in sig]
+            sig = [x for x in sig]
             if self.debug:
                 print(sig)
             if sig != [137, 80, 78, 71, 13, 10, 26, 10]:

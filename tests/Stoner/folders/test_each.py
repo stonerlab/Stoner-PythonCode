@@ -51,13 +51,12 @@ class folders_each_test(unittest.TestCase):
         paths=['QD-MH.dat', 'QD-PPMS.dat', 'QD-PPMS2.dat','QD-SQUID-VSM.dat']
         filenames=[path.relpath(x,start=fldr6.directory) for x in fldr6.each.filename.tolist()]
         self.assertEqual(filenames,paths,"Reading attributes from each failed.")
-        if python_v3:
-            eval('(hysteresis_correct@fldr4)(setas="3.xy",saturated_fraction=0.25)')
-            self.assertTrue("Hc" in fldr4[0],"Matrix multiplication of callable by DataFolder failed test.")
+        eval('(hysteresis_correct@fldr4)(setas="3.xy",saturated_fraction=0.25)')
+        self.assertTrue("Hc" in fldr4[0],"Matrix multiplication of callable by DataFolder failed test.")
         fldr5.each(hysteresis_correct,setas="3.xy",saturated_fraction=0.25)
         self.assertTrue("Hc" in fldr5[0],"Call on DataFolder.each() failed to apply function to folder")
         meths=[x for x in dir(fldr6.each) if not x.startswith("_")]
-        self.assertEqual(len(meths),127 if python_v3 else 130,"Dir of folders.each failed ({}).".format(len(meths)))
+        self.assertEqual(len(meths),127,"Dir of folders.each failed ({}).".format(len(meths)))
 
     # def test_attr_access(self):
     #     self.fldr=SF.PlotFolder(path.join(self.datadir,"NLIV"),pattern="*.txt",setas="yx")

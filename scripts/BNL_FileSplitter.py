@@ -8,10 +8,8 @@ from __future__ import print_function
 
 import os
 import Stoner
-from Stoner.compat import python_v3
 
-if python_v3:
-    raw_input = input
+raw_input = input
 import numpy as np
 
 # Get file open ###############

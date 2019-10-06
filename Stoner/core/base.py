@@ -11,12 +11,11 @@ import numpy as np
 from numpy import NaN
 import asteval
 
-from ..compat import python_v3, string_types, int_types, _pattern_type
+from ..compat import string_types, int_types, _pattern_type
 from ..tools import isiterable, isComparable
 from .exceptions import assertion, StonerAssertionError
 
 try:
-    assertion(not python_v3)  # blist doesn't seem entirely reliable in 3.5 :-(
     from blist import sorteddict
 except (StonerAssertionError, ImportError):  # Fail if blist not present or Python 3
     sorteddict = OrderedDict

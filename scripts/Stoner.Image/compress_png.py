@@ -12,10 +12,8 @@ CHANGE THE FOLDER NAME BEFORE RUNNING
 from PIL import Image
 import os
 from Stoner import DataFolder
-from Stoner.compat import python_v3
 
-if python_v3:
-    raw_input = input
+raw_input = input
 
 # CHANGE THE FOLDER NAME BEFORE RUNNING!  #####################################
 folder = r"C:\Users\phyrct\KermitData\test2"

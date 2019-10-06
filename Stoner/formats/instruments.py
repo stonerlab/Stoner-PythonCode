@@ -15,7 +15,7 @@ import struct
 import numpy as np
 
 import Stoner.Core as Core
-from Stoner.compat import python_v3, str2bytes, bytes2str
+from Stoner.compat import str2bytes, bytes2str
 from Stoner.core.exceptions import StonerAssertionError, assertion, StonerLoadError
 from Stoner.core.base import string_to_type
 
@@ -220,10 +220,7 @@ class QDFile(Core.DataFile):
             if "Byapp" not in self:
                 raise Core.StonerLoadError("Not a Quantum Design File !")
 
-            if python_v3:
-                column_headers = f.readline().strip().split(",")
-            else:
-                column_headers = f.next().strip().split(",")
+            column_headers = f.readline().strip().split(",")
             data = np.genfromtxt([str2bytes(l) for l in f], dtype="float", delimiter=",", invalid_raise=False)
             if data.shape[0] == 0:
                 raise Core.StonerLoadError("No data in file!")
@@ -268,7 +265,7 @@ class RigakuFile(Core.DataFile):
 
         pos = 0
         reopen = False
-        filetype = io.IOBase if python_v3 else file
+        filetype = io.IOBase
         if filename is None or not filename:
             self.get_filename("rb")
         elif isinstance(filename, filetype):
@@ -780,10 +777,7 @@ class XRDFile(Core.DataFile):
                         section = section + str(drive)
                         drive = drive + 1
                     elif section == "Data":  # Data section contains the business but has a redundant first line
-                        if python_v3:
-                            f.readline()
-                        else:
-                            f.next()
+                        f.readline()
                     for line in f:  # Now start reading lines in this section...
                         if (
                             line.strip() == ""

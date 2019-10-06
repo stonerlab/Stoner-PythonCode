@@ -16,7 +16,7 @@ import scipy as _sp_
 from scipy.odr import Model as odrModel
 from scipy.optimize import curve_fit, differential_evolution
 
-from Stoner.compat import python_v3, string_types, index_types, get_func_params
+from Stoner.compat import string_types, index_types, get_func_params
 from Stoner.tools import isNone, isiterable, islike_list, _attribute_store
 
 try:  # Allow lmfit to be optional
@@ -34,10 +34,7 @@ except ImportError:
 from copy import deepcopy as copy
 
 # from matplotlib.pylab import * #Surely not?
-if python_v3:
-    from inspect import getfullargspec
-else:
-    from inspect import getargspec as getfullargspec
+from inspect import getfullargspec
 
 
 class odr_Model(odrModel):

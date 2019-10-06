@@ -29,16 +29,7 @@ import numpy as _np_
 from numpy import NaN  # pylint: disable=unused-import
 import numpy.ma as _ma_
 
-from .compat import (
-    python_v3,
-    string_types,
-    int_types,
-    index_types,
-    get_filedialog,
-    classproperty,
-    str2bytes,
-    _pattern_type,
-)
+from .compat import string_types, int_types, index_types, get_filedialog, classproperty, str2bytes, _pattern_type
 from .tools import all_type, operator, isiterable, islike_list, get_option
 
 from .core.exceptions import StonerLoadError, StonerSetasError, StonerUnrecognisedFormat
@@ -719,10 +710,7 @@ class DataFile(metadataObject):
         """
         newdata = DataFile()
         if isinstance(other, string_types):
-            if python_v3:
-                lines = map(lambda x: x, other.splitlines())
-            else:
-                lines = itertools.imap(lambda x: x, other.splitlines())
+            lines = map(lambda x: x, other.splitlines())
             newdata.__read_iterable(lines)
         elif isiterable(other):
             newdata.__read_iterable(other)

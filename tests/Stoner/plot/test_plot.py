@@ -19,7 +19,6 @@ pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../../"))
 sys.path.insert(0,pth)
 from Stoner import Data,__home__,Options
-from Stoner.compat import python_v3
 from Stoner.Core import typeHintedDict
 from Stoner.plot.core import hsl2rgb
 from Stoner.Image import ImageFile
@@ -104,8 +103,6 @@ class Plottest(unittest.TestCase):
         d=Data()
 
     def test_extra_plots(self):
-        if not python_v3:
-            return
         x=np.random.uniform(-np.pi,np.pi,size=5001)
         y=np.random.uniform(-np.pi,np.pi,size=5001)
         z=(np.cos(4*np.sqrt(x**2+y**2))*np.exp(-np.sqrt(x**2+y**2)/3.0))**2

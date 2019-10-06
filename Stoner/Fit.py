@@ -58,7 +58,7 @@ __all__ = [
     "wlfit",
 ]
 import Stoner.Core as _SC_
-from .compat import python_v3, string_types
+from .compat import string_types
 from . import Data
 from functools import wraps
 import numpy as _np_
@@ -84,10 +84,8 @@ import scipy.constants.codata as consts
 import scipy.constants as cnst
 
 try:
-    if python_v3:
-        from configparser import ConfigParser as SafeConfigParser
-    else:
-        from ConfigParser import SafeConfigParser
+    from configparser import ConfigParser as SafeConfigParser
+
 except ImportError:
     SafeConfigParser = None
 

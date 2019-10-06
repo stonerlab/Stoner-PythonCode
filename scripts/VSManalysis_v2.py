@@ -17,7 +17,6 @@ v2 corrections: less automation saving time
 """
 from __future__ import print_function
 import Stoner
-from Stoner.compat import python_v3
 import numpy as np
 import matplotlib.pyplot as plot
 import string
@@ -25,8 +24,7 @@ import os
 
 
 plot.ion()  # put the plotting in interactive mode
-if python_v3:
-    raw_input = input
+raw_input = input
 print("Analysis program for VSM files\n\n\n")
 print("Please wait while program loads...\n")
 # VSMcalibration=0.86224   #m to X ratio, determined by reference Py sample

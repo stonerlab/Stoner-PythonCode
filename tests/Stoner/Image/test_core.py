@@ -16,7 +16,6 @@ from os import path
 import tempfile
 import os
 import shutil
-from Stoner.compat import python_v3
 from PIL import Image
 
 import warnings

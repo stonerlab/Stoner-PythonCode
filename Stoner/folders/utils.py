@@ -18,7 +18,7 @@ import os
 import re
 import string
 from collections import OrderedDict
-from Stoner.compat import string_types, _pattern_type, python_v3
+from Stoner.compat import string_types, _pattern_type
 from Stoner.tools import get_option
 import fnmatch
 from numpy import array
@@ -126,16 +126,10 @@ def get_pool():
         except (ArithmeticError, AttributeError, LookupError, RuntimeError, NameError, OSError, TypeError, ValueError):
             # Fallback to non-multiprocessing if necessary
             p = None
-            if python_v3:
-                imap = map
-            else:
-                imap = itertools.imap
+            imap = map
     else:
         p = None
-        if python_v3:
-            imap = map
-        else:
-            imap = itertools.imap
+        imap = map
     return p, imap
 
 

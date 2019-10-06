@@ -12,7 +12,7 @@ from scipy.interpolate import interp1d, UnivariateSpline
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
 
-from .compat import python_v3, string_types, int_types, index_types, get_func_params
+from .compat import string_types, int_types, index_types, get_func_params
 from .tools import isNone, isiterable, all_type, istuple
 from .core.exceptions import assertion
 from .analysis.utils import (
@@ -25,10 +25,7 @@ from .analysis.utils import (
 from copy import deepcopy as copy
 
 # from matplotlib.pylab import * #Surely not?
-if python_v3:
-    from inspect import getfullargspec
-else:
-    from inspect import getargspec as getfullargspec
+from inspect import getfullargspec
 
 
 class AnalysisMixin(object):

@@ -9,12 +9,8 @@ from __future__ import print_function
 import numpy as np
 from Stoner import Data
 from Stoner.Fit import cfg_data_from_ini, cfg_model_from_ini, quadratic
-from Stoner.compat import python_v3
 
-if python_v3:
-    import configparser as ConfigParser
-else:
-    import ConfigParser
+import configparser as ConfigParser
 
 
 class working(Data):
@@ -37,10 +33,7 @@ class working(Data):
 
         model, p0 = cfg_model_from_ini(inifile, data=self)
 
-        if python_v3:
-            config = ConfigParser.ConfigParser()
-        else:
-            config = ConfigParser.SafeConfigParser()
+        config = ConfigParser.ConfigParser()
         config.read(inifile)
         self.config = config
 

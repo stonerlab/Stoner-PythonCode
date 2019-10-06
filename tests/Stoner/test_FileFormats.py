@@ -39,11 +39,7 @@ class FileFormats_test(unittest.TestCase):
 
     def test_loaders(self):
         d=None
-        if python_v3:
-            skip_files=[] # HDF5 loader not working Python 3.5
-            #return None # skip this completely at this time
-        else:
-            skip_files=[]
+        skip_files=[] # HDF5 loader not working Python 3.5
 
         tmpdir=tempfile.mkdtemp()
         print("Exporting to {}".format(tmpdir))

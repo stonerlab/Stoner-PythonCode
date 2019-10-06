@@ -14,7 +14,7 @@ import os.path as path
 import fnmatch
 import re
 
-from Stoner.compat import python_v3, int_types, string_types, commonpath, _pattern_type, cmp
+from Stoner.compat import int_types, string_types, commonpath, _pattern_type, cmp
 from Stoner.tools import operator, isiterable, isproperty, all_type, get_option
 from Stoner.core.base import regexpDict
 from Stoner.core.base import metadataObject
@@ -190,10 +190,7 @@ class baseFolder(MutableSequence):
 
         We do this in __new__ so that the mixin classes can access baseFolders state storage before baseFolder does further __init__() work.
         """
-        if python_v3:
-            self = super(baseFolder, cls).__new__(cls)
-        else:
-            self = super(baseFolder, cls).__new__(cls, *args, **kargs)
+        self = super(baseFolder, cls).__new__(cls)
         self._debug = kargs.pop("debug", False)
         self._object_attrs = dict()
         self._last_name = 0
@@ -236,10 +233,7 @@ class baseFolder(MutableSequence):
                     self.__setattr__(k, value)
                     if self.debug:
                         print("Setting self.{} to {}".format(k, value))
-        if python_v3:
-            super(baseFolder, self).__init__()
-        else:
-            super(baseFolder, self).__init__(*args, **kargs)
+        super(baseFolder, self).__init__()
 
     ###########################################################################
     ################### Properties of baseFolder ##############################
@@ -760,29 +754,15 @@ class baseFolder(MutableSequence):
         result = __add_core__(result, other)
         return result
 
-    if python_v3:
+    def __truediv__(self, other):
+        """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+        result = deepcopy(self)
+        return __div_core__(result, other)
 
-        def __truediv__(self, other):
-            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
-            result = deepcopy(self)
-            return __div_core__(result, other)
-
-        def __itruediv__(self, other):
-            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
-            result = self
-            return __div_core__(result, other)
-
-    else:
-
-        def __div__(self, other):
-            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
-            result = deepcopy(self)
-            return __div_core__(result, other)
-
-        def __idiv__(self, other):
-            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
-            result = self
-            return __div_core__(result, other)
+    def __itruediv__(self, other):
+        """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+        result = self
+        return __div_core__(result, other)
 
     def __invert__(self):
         """For a :py:class:`naseFolder`, inverting means either flattening or unflattening the folder.
@@ -799,7 +779,7 @@ class baseFolder(MutableSequence):
 
     def __iter__(self):
         """Iterate over objects."""
-        return self.__next__() if python_v3 else self.next()
+        return self.__next__()
 
     def __next__(self):
         """Python 3.x style iterator function."""
@@ -1601,27 +1581,11 @@ class baseFolder(MutableSequence):
             new_order = [self.__getter__(name, instantiate=False) for name in fnames]
             new_names = fnames
         elif isinstance(key, _pattern_type):
-            if python_v3:
-                new_names = sorted(self.__names__(), key=lambda x: key.match(x).groups(), reverse=reverse)
-            else:
-                new_names = sorted(
-                    self.__names__(),
-                    cmp=lambda x, y: cmp(
-                        key.match(x).groups(), key.match(y).groups()  # NOQA pylint: disable=undefined-variable
-                    ),
-                    reverse=reverse,
-                )
+            new_names = sorted(self.__names__(), key=lambda x: key.match(x).groups(), reverse=reverse)
             new_order = [self.__getter__(x) for x in new_names]
         else:
             order = range(len(self))
-            if python_v3:
-                new_order = sorted(order, key=lambda x: key(self[x]), reverse=reverse)
-            else:
-                new_order = sorted(
-                    order,
-                    cmp=lambda x, y: cmp(key(self[x]), key(self[y])),  # NOQA pylint: disable=undefined-variable
-                    reverse=reverse,
-                )
+            new_order = sorted(order, key=lambda x: key(self[x]), reverse=reverse)
             new_order = [self.__names__()[i] for i in new_order]
             new_names = new_order
         self.__clear__()

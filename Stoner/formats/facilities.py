@@ -12,7 +12,7 @@ import re
 import numpy as np
 
 import Stoner.Core as Core
-from Stoner.compat import python_v3, str2bytes
+from Stoner.compat import str2bytes
 from Stoner.core.base import string_to_type
 
 
@@ -262,10 +262,7 @@ class OpenGDAFile(Core.DataFile):
                 key = parts[0]
                 value = parts[1].strip()
                 self.metadata[key] = string_to_type(value)
-            if python_v3:
-                column_headers = f.readline().strip().split("\t")
-            else:
-                column_headers = f.next().strip().split("\t")
+            column_headers = f.readline().strip().split("\t")
             self.data = np.genfromtxt([str2bytes(l) for l in f], dtype="float", invalid_raise=False)
         self.column_headers = column_headers
         return self
@@ -316,10 +313,7 @@ class SNSFile(Core.DataFile):
                     section = line.strip().strip("[]")
                     if section == "Data":  # The Data section has one line of colum headers and then data
                         header = next(data)[2:].split("\t")
-                        if not python_v3:
-                            column_headers = [h.strip().encode("ascii", errors="replace") for h in header]
-                        else:
-                            column_headers = [h.strip() for h in header]
+                        column_headers = [h.strip() for h in header]
                         self.data = np.genfromtxt(data)  # we end by reading the raw data
                     elif section == "Global Options":  # This section can go into metadata
                         for line in data:

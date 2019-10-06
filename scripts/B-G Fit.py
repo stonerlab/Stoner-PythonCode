@@ -7,14 +7,12 @@ Sample script for fitting BlochGrueneisen function to a data file
 from __future__ import print_function
 
 from Stoner.Core import Data, format_error
-from Stoner.compat import python_v3
 from Stoner.Fit import blochGrueneisen
 import numpy as np
 from matplotlib.pyplot import text
 import re
 
-if python_v3:
-    raw_input = input
+raw_input = input
 
 
 def bg_wrapper(T, tD, r0, A):

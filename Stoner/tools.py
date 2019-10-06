@@ -25,7 +25,7 @@ __all__ = [
     "set_option",
 ]
 from collections import Iterable, MutableSequence
-from .compat import string_types, bytes2str, python_v3
+from .compat import string_types, bytes2str
 import re
 import os
 import inspect
@@ -119,7 +119,7 @@ _options = {
     "short_folder_rrepr": True,
     "short_img_repr": True,
     "no_figs": True,
-    "multiprocessing": os.name != "nt" and python_v3,  # multiprocess doesn't run too well under Windows due to spawn()
+    "multiprocessing": os.name != "nt",  # multiprocess doesn't run too well under Windows due to spawn()
     "threading": False,
 }
 
@@ -606,6 +606,7 @@ class typedList(MutableSequence):
 
     def __init__(self, *args, **kargs):
         """Construct the typedList."""
+        self._store = []
         if (not args) or not (isinstance(args[0], type) or (isinstance(args[0], tuple) and all_type(args[0], type))):
             self._type = str  # Default list type is a string
         else:

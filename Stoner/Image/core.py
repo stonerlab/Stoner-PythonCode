@@ -29,7 +29,6 @@ from Stoner.Image.util import convert
 from Stoner import Data
 from Stoner.tools import istuple, fix_signature, islike_list, get_option
 from Stoner.compat import (
-    python_v3,
     string_types,
     get_filedialog,
     int_types,
@@ -37,10 +36,7 @@ from Stoner.compat import (
 import inspect
 from functools import wraps
 
-if python_v3:
-    from io import BytesIO as StreamIO
-else:
-    from cStringIO import StringIO as StreamIO
+from io import BytesIO as StreamIO
 
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
@@ -163,9 +159,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     fmts = ["png", "npy", "tiff", "tif"]
 
     # now initialise class
-
-    if not python_v3:  # Ugh what a horrible hack!
-        _mask = np.ma.MaskedArray([]).mask
 
     def __new__(cls, *args, **kargs):
         """Construct an ImageArray object.
@@ -1236,33 +1229,17 @@ class ImageFile(metadataObject):
         result = __add_core__(result, other)
         return result
 
-    if python_v3:
+    def __truediv__(self, other):
+        """Implement the divide operator"""
+        result = self.clone
+        result = __div_core__(result, other)
+        return result
 
-        def __truediv__(self, other):
-            """Implement the divide operator"""
-            result = self.clone
-            result = __div_core__(result, other)
-            return result
-
-        def __itruediv__(self, other):
-            """Implement the inplace divide operator"""
-            result = self
-            result = __div_core__(result, other)
-            return result
-
-    else:
-
-        def __div__(self, other):
-            """Implement the divide operator"""
-            result = self.clone
-            result = __div_core__(result, other)
-            return result
-
-        def __idiv__(self, other):
-            """Implement the inplace divide operator"""
-            result = self
-            result = __div_core__(result, other)
-            return result
+    def __itruediv__(self, other):
+        """Implement the inplace divide operator"""
+        result = self
+        result = __div_core__(result, other)
+        return result
 
     def __sub__(self, other):
         """Implement the subtract operator"""
