@@ -41,7 +41,6 @@ class Folders_test(unittest.TestCase):
         self.fldr3=SF.DataFolder(path.join(pth,"tests/Stoner/folder_data"),pattern="*.dat")
 
     def test_Folders(self):
-        self.setUp()
         fldr=self.fldr
         fl=len(fldr)
         datfiles=fnmatch.filter(os.listdir(self.datadir),"*.dat")
@@ -106,7 +105,7 @@ class Folders_test(unittest.TestCase):
          self.fldr=SF.DataFolder(self.datadir, pattern='*.txt')
          self.fldr.abc = 123 #add an attribute
          t = self.fldr.__clone__()
-         self.assertTrue(t.pattern==['*.txt'], 'pattern didnt copy over')
+         self.assertTrue(t.pattern==('*.txt',), 'pattern didnt copy over')
          self.assertTrue(hasattr(t, "abc") and t.abc==123, 'user attribute didnt copy over')
          self.assertTrue(isinstance(t['recursivefoldertest'],SF.DataFolder), 'groups didnt copy over')
 

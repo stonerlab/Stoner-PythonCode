@@ -194,6 +194,9 @@ class DiskBasedFolder(object):
         if isinstance(name, string_types):
             if list(self.basenames).count(name) == 1:
                 return self.__names__()[list(self.basenames).index(name)]
+            dirname, fname = path.split(name)
+            if dirname == self.directory and list(self.basenames).count(fname) == 1:
+                return self.__names__()[list(self.basenames).index(fname)]
 
         return super(DiskBasedFolder, self).__lookup__(name)
 
