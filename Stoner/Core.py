@@ -2656,15 +2656,21 @@ class DataFile(metadataObject):
         self.column_headers = ch
         return self
 
-    def split(self, *args):
+    def split(self, *args, final="files"):
         """Recursively splits the current :py:class:`DataFile` object into a :py:class:`Stoner.Forlders.DataFolder` objects where each one contains the rows from the original object which had the same value of a given column(s) or function.
 
         Args:
-            *args (column index or function): Each argument is used in turn to find key values for the files in the DataFolder
+            *args (column index or function):
+                Each argument is used in turn to find key values for the files in the DataFolder
+
+        Keyword Arguments:
+            final (str):
+                Controls whether the final argument plaes the files in the DataFolder (default: "files") or in groups ("groups")
 
         Returns:
-            Stoner.Folders.DataFolder: A :py:class:`Stoner.Folders.DataFolder` object containing the individual
-            :py:class:`AnalysisMixin` objects
+            Stoner.Folders.DataFolder:
+                A :py:class:`Stoner.Folders.DataFolder` object containing the individual
+                :py:class:`AnalysisMixin` objects
 
         Note:
             On each iteration the first argument is called. If it is a column type then rows which amtch each unique value are collated
@@ -2672,7 +2678,7 @@ class DataFile(metadataObject):
             as a single 1D array and the return result is used to group lines together. The return value should be hashable.
 
             Once this is done and the :py:class:`Stoner.Folders.DataFolder` exists, if there are remaining argument, then the method is
-            called recusivelyt for each file and the resulkting DataFolder added into the root DataFolder and the file is removed.
+            called recusivelyt for each file and the resulting DataFolder added into the root DataFolder and the file is removed.
 
             Thus, when all of the arguments are evaluated, the resulting DataFolder is a multi-level tree.
 
@@ -2716,7 +2722,14 @@ class DataFile(metadataObject):
                 out.add_group(k)
                 out.groups[k] = f.split(*args)
             else:
-                out += f
+                if final == "files":
+                    out += f
+                elif final == "groups":
+                    out.add_group(k)
+                    f.filename = self.filename
+                    out.groups[k] += f
+                else:
+                    raise ValueError("{} not recognised as a valid value for final".format(final))
         return out
 
     def swap_column(self, *swp, **kargs):
