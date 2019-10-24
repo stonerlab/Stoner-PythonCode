@@ -13,7 +13,7 @@ import asteval
 
 from ..compat import string_types, int_types, _pattern_type
 from ..tools import isiterable, isComparable
-from .exceptions import assertion, StonerAssertionError
+from .exceptions import StonerAssertionError
 
 try:
     from blist import sorteddict

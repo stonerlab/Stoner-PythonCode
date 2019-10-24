@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Oct 21 21:16:19 2019
+:py:class:`lmfit.Model` model classes and functions for various superconductivity related models.
 
-@author: phygbu
 """
+
+import numpy as np
+from scipy.special import jv
+from scipy.optimize import curve_fit
+from .generic import linear
+from scipy.constants import physical_constants
+from functools import partial
 
 __all = [
     "RSJ_Noiseless",
@@ -15,14 +21,6 @@ __all = [
     "strijkers",
     "ic_B_airy",
 ]
-
-import numpy as np
-from scipy.integrate import quad
-from scipy.special import digamma, jv
-from scipy.optimize import curve_fit
-from .generic import linear
-from scipy.constants import physical_constants
-from functools import partial
 
 Phi_0 = physical_constants["mag. flux quantum"][0]
 
@@ -355,7 +353,7 @@ class RSJ_Simple(Model):
         if x is None:
             x = np.linspace(1, len(data), len(data) + 1)
 
-        popt, pcov = curve_fit(linear, data, x, p0=[x.max() / data.max(), x.mean()])
+        popt, _ = curve_fit(linear, data, x, p0=[x.max() / data.max(), x.mean()])
         v_offset_guess = popt[0]
         rn_guess = 1.0 / popt[1]
         ic_guess = np.abs(data - linear(x, *popt)).max()

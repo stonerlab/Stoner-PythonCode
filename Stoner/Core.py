@@ -21,7 +21,6 @@ import copy
 import os.path as path
 import inspect as _inspect_
 from textwrap import TextWrapper
-import itertools
 from collections import OrderedDict
 from traceback import format_exc
 import csv

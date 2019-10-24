@@ -18,6 +18,7 @@ __all__ = [
 ]
 
 import numpy as np
+import scipy.constants as cnst
 
 try:
     from lmfit import Model
@@ -52,7 +53,7 @@ def langevin(H, M_s, m, T):
     x = mu_0 * H * m / (k * T)
     n = M_s / m
 
-    return m * n * (1.0 / _np_.tanh(x) - 1.0 / x)
+    return m * n * (1.0 / np.tanh(x) - 1.0 / x)
 
 
 def kittelEquation(H, g, M_s, H_k):
@@ -75,7 +76,7 @@ def kittelEquation(H, g, M_s, H_k):
             :outname: kittel
     """
     gamma = g * cnst.e / (2 * cnst.m_e)
-    return (consts.mu0 * gamma / (2 * _np_.pi)) * _np_.sqrt((H + H_k) * (H + H_k + M_s))
+    return (cnst.codata. *mu0 gamma / (2 * np.pi)) * np.sqrt((H + H_k) * (H + H_k + M_s))
 
 
 def inverse_kittel(f, g, M_s, H_k):
@@ -102,7 +103,7 @@ def inverse_kittel(f, g, M_s, H_k):
     return (
         -H_k
         - M_s / 2
-        + _np_.sqrt(M_s ** 2 * gamma ** 2 * cnst.mu_0 ** 2 + 16 * _np_.pi ** 2 * f ** 2) / (2 * gamma * cnst.mu_0)
+        + np.sqrt(M_s ** 2 * gamma ** 2 * cnst.mu_0 ** 2 + 16 * np.pi ** 2 * f ** 2) / (2 * gamma * cnst.mu_0)
     )
 
 
@@ -160,12 +161,12 @@ class Langevin(Model):
         from scipy.signal import savgol_filter
         from scipy.constants import k, mu_0, e, electron_mass, hbar
 
-        M_s = (_np_.max(data) - _np_.min(data)) / 2.0
+        M_s = (np.max(data) - np.min(data)) / 2.0
         if h is not None:
-            d = _np_.sort(_np_.row_stack((h, data)))
+            d = np.sort(np.row_stack((h, data)))
             dd = savgol_filter(d, 7, 1)
             yd = dd[1] / dd[0]
-            chi = _np_.interp(_np_.array([0]), d[0], yd)[0]
+            chi = np.interp(np.array([0]), d[0], yd)[0]
             mT = chi / M_s * (k / mu_0)
             # Assume T=150K for no good reason
             m = mT * 150
@@ -208,10 +209,10 @@ class KittelEquation(Model):
         g = 2
         H_k = 100
         gamma = g * cnst.e / (2 * cnst.m_e)
-        M_s = (4 * _np_.pi ** 2 * data ** 2 - gamma ** 2 * cnst.mu_0 ** 2 * (x ** 2 + 2 * x * H_k + H_k ** 2)) / (
+        M_s = (4 * np.pi ** 2 * data ** 2 - gamma ** 2 * cnst.mu_0 ** 2 * (x ** 2 + 2 * x * H_k + H_k ** 2)) / (
             gamma ** 2 * cnst.mu_0 ** 2 * (x + H_k)
         )
-        M_s = _np_.mean(M_s)
+        M_s = np.mean(M_s)
 
         pars = self.make_params(g=g, M_s=M_s, H_k=H_k)
         pars["M_s"].min = 0
@@ -249,10 +250,10 @@ class Inverse_Kittel(Model):
         g = 2
         H_k = 100
         gamma = g * cnst.e / (2 * cnst.m_e)
-        M_s = (4 * _np_.pi ** 2 * x ** 2 - gamma ** 2 * cnst.mu_0 ** 2 * (data ** 2 + 2 * data * H_k + H_k ** 2)) / (
+        M_s = (4 * np.pi ** 2 * x ** 2 - gamma ** 2 * cnst.mu_0 ** 2 * (data ** 2 + 2 * data * H_k + H_k ** 2)) / (
             gamma ** 2 * cnst.mu_0 ** 2 * (data + H_k)
         )
-        M_s = _np_.mean(M_s)
+        M_s = np.mean(M_s)
 
         pars = self.make_params(g=g, M_s=M_s, H_k=H_k)
         pars["M_s"].min = 0
@@ -286,23 +287,23 @@ class FMR_Power(Model):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
 
         if x is None:
-            x = _np_.linspace(1, len(data), len(data) + 1)
+            x = np.linspace(1, len(data), len(data) + 1)
 
-        x1 = x[_np_.argmax(data)]
-        x2 = x[_np_.argmin(data)]
+        x1 = x[np.argmax(data)]
+        x2 = x[np.argmin(data)]
         Delta_H = abs(x1 - x2)
         H_res = (x1 + x2) / 2.0
-        y1 = _np_.max(data)
-        y2 = _np_.min(data)
+        y1 = np.max(data)
+        y2 = np.min(data)
         dy = y1 - y2
-        K_2 = dy * (4 * _np_.pi * Delta_H ** 2) / (3 * _np_.sqrt(3))
+        K_2 = dy * (4 * np.pi * Delta_H ** 2) / (3 * np.sqrt(3))
         ay = (y1 + y2) / 2
-        K_1 = ay * _np_.pi / Delta_H
+        K_1 = ay * np.pi / Delta_H
 
         pars = self.make_params(Delta_H=Delta_H, H_res=H_res, K_1=K_1, K_2=K_2)
         pars["K_1"].min = 0
         pars["K_2"].min = 0
         pars["Delta_H"].min = 0
-        pars["H_res"].min = _np_.min(x)
-        pars["H_res"].max = _np_.max(x)
+        pars["H_res"].min = np.min(x)
+        pars["H_res"].max = np.max(x)
         return update_param_vals(pars, self.prefix, **kwargs)

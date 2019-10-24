@@ -11,11 +11,14 @@ from __future__ import print_function, absolute_import, division, unicode_litera
 from sys import version_info as __vi__
 from matplotlib import __version__ as mpl_version
 from os import walk
-from os.path import join, commonprefix, sep
+from os.path import join
 import fnmatch
 import numpy as np
-import os
-import sys
+from os.path import commonpath
+from inspect import signature
+from os import makedirs
+from inspect import getfullargspec
+from shutil import which
 
 try:
     from lmfit import Model  # pylint: disable=unused-import
@@ -51,7 +54,7 @@ try:
     if hsv[0] <= 1 and hsv[1] <= 3:
         raise ImportError("Hyperspy should be version 1.4 or above. Actual version is {}".format(hs.__version__))
     hyperspy_ok = True
-except ImportError as err:
+except ImportError:
     hyperspy_ok = False
 
 
@@ -61,11 +64,6 @@ else:
     from re import Pattern as _pattern_type
 
 cmp = None
-from builtins import bytes as _bytes
-from os.path import commonpath
-from inspect import signature
-from os import makedirs
-from inspect import getfullargspec
 
 
 def getargspec(*args, **kargs):
@@ -100,9 +98,6 @@ def bytes2str(b):
     return b
 
 
-bytes = _bytes
-
-
 def get_filedialog(what="file", **opts):
     """Wrapper around Tk file dialog to mange creating file dialogs in a cross platform way.
 
@@ -127,9 +122,6 @@ def get_filedialog(what="file", **opts):
         raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
     else:
         return funcs[what](**opts)
-
-
-from shutil import which
 
 
 int_types += (np.int, np.int0, np.int8, np.int16, np.int32, np.int64)

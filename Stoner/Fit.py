@@ -17,26 +17,24 @@ __all__ = [
     "FMR_Power",
     "FluchsSondheimer",
     "FowlerNordheim",
+    "Ic_B_Airy",
     "Inverse_Kittel",
     "KittelEquation",
     "Langevin",
     "Linear",
     "Lorentzian_diff",
-    "make_model",
     "ModArrhenius",
     "NDimArrhenius",
     "PowerLaw",
     "Quadratic",
+    "RSJ_Noiseless",
+    "RSJ_Simple",
     "Simmons",
     "StretchedExp",
     "Strijkers",
     "TersoffHammann",
     "VFTEquation",
     "WLfit",
-    "RSJ_Noiseless",
-    "RSJ_Simple",
-    "Ic_B_Airy",
-    "_strijkers_core",
     "arrhenius",
     "bdr",
     "blochGrueneisen",
@@ -45,24 +43,27 @@ __all__ = [
     "fluchsSondheimer",
     "fmr_power",
     "fowlerNordheim",
+    "ic_B_airy",
     "inverse_kittel",
     "kittelEquation",
     "langevin",
     "linear",
     "lorentzian_diff",
+    "make_model",
     "modArrhenius",
     "nDimArrhenius",
     "powerLaw",
     "quadratic",
+    "rsj_noiseless",
+    "rsj_simple",
     "simmons",
     "stretchedExp",
     "strijkers",
+    "tersoffHammann",
     "vftEquation",
     "wlfit",
-    "rsj_noiseless",
-    "rsj_simple",
-    "ic_B_airy",
 ]
+
 import Stoner.Core as _SC_
 from .compat import string_types
 from . import Data
@@ -70,7 +71,6 @@ from functools import wraps
 import numpy as _np_
 from collections import Mapping
 from io import IOBase
-from scipy.special import digamma
 
 try:
     from lmfit import Model
@@ -84,10 +84,6 @@ except ImportError:
     _PowerLaw = object
     _Quadratic = object
     update_param_vals = None
-
-from scipy.integrate import quad
-import scipy.constants.codata as consts
-import scipy.constants as cnst
 
 try:
     from configparser import ConfigParser as SafeConfigParser
