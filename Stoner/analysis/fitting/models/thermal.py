@@ -19,6 +19,7 @@ __all__ = [
 
 
 import numpy as np
+import scipy.constants as consts
 
 try:
     from lmfit import Model
