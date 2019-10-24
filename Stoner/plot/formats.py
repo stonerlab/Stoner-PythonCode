@@ -122,6 +122,12 @@ class TexEngFormatter(EngFormatter):
                 ret = "${}\\,\\mathrm{{{}}}$".format(_round(value, 4), self.unit)
             else:
                 v = _round(value / (10 ** pre), 4)
+                if _np_.abs(v)<0.1:
+                    v*=1000
+                    pre-=3
+                elif _np_.abs(v)>1000.0:
+                    v/=1000
+                    pre+=3.0
                 ret = "${}\\mathrm{{{} {}}}$".format(v, self.prefix[int(pre)], self.unit)
         else:
             ret = "$0.0$"
@@ -179,9 +185,9 @@ class DefaultPlotStyle(MutableMapping):
     show_zlabel = True
     show_title = True
     show_legend = True
-    xformatter = TexFormatter
-    yformatter = TexFormatter
-    zformatter = TexFormatter
+    xformatter = TexEngFormatter
+    yformatter = TexEngFormatter
+    zformatter = TexEngFormatter
     xlocater = AutoLocator
     ylocater = AutoLocator
     zlocater = AutoLocator

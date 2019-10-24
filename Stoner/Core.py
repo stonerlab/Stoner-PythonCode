@@ -222,7 +222,7 @@ class DataFile(metadataObject):
         super(DataFile, self).__init__(*args, **kargs)  # initialise self.metadata)
         self._public_attrs = {
             "data": _np_.ndarray,
-            "setas": (string_types, list),
+            "setas": (string_types, list, dict),
             "column_headers": list,
             "metadata": typeHintedDict,
             "debug": bool,

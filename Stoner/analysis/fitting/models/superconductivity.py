@@ -12,11 +12,12 @@ from .generic import linear
 from scipy.constants import physical_constants
 from functools import partial
 
-__all = [
+__all__ = [
     "RSJ_Noiseless",
     "RSJ_Simple",
     "Strijkers",
-    "Ic_B_Airy" "rsj_noiseless",
+    "Ic_B_Airy",
+    "rsj_noiseless",
     "rsj_simple",
     "strijkers",
     "ic_B_airy",
@@ -37,7 +38,7 @@ try:  # numba is an optional dependency
     from numba import jit, float64
 except ImportError:
 
-    def jit(func, *args):
+    def jit(func, *_):
         """Null decorator function."""
         return func
 
@@ -201,7 +202,7 @@ def rsj_simple(I, Ic, Rn, V_offset):
 
     normal = Rn * np.sign(I) * np.real(np.sqrt(I ** 2 - Ic ** 2))
     ic_branch = np.zeros_like(I)
-    return np.where(np.abs(I) < Ic, ic_branch, normal)
+    return np.where(np.abs(I) < Ic, ic_branch, normal)+V_offset
 
 
 def ic_B_airy(B, Ic0, B_offset, A):
@@ -223,10 +224,12 @@ def ic_B_airy(B, Ic0, B_offset, A):
 
     Notes:
         Represents the critical current as:
-            $$I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)){\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|$$
+            $$I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right))
+            {\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|$$
         where $J_1$ is a first order Bessel function.
 
-        For small ($<1^{-5}$)values of the Bessel function argument, this will return Ic0 to ensure correct evaluation for 0 flux.
+        For small ($<1^{-5}$)values of the Bessel function argument, this will return Ic0 to
+        ensure correct evaluation for 0 flux.
     """
 
     arg = (B - B_offset) * A * np.pi / Phi_0
@@ -266,7 +269,7 @@ class Strijkers(Model):
         """Configure Initial fitting function."""
         super(Strijkers, self).__init__(strijkers, *args, **kwargs)
 
-    def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
+    def guess(self, data, **kwargs):  # pylint: disable=unused-argument
         """Guess starting values for a good Nb contact to a ferromagnet at 4.2K"""
         pars = self.make_params(omega=0.36, delta=1.50, P=0.42, Z=0.15)
         return update_param_vals(pars, self.prefix, **kwargs)
@@ -297,11 +300,10 @@ class RSJ_Noiseless(Model):
         """Configure Initial fitting function."""
         super(RSJ_Noiseless, self).__init__(rsj_noiseless, *args, **kwargs)
 
-    def guess(self, data, x=None, **kwargs):
+    def guess(self, data, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
 
-        if x is None:
-            x = np.linspace(1, len(data), len(data) + 1)
+        x = kwargs.get("x",np.linspace(1, len(data), len(data) + 1))
 
         v_offset_guess = np.mean(data)
         v = np.abs(data - v_offset_guess)
@@ -347,16 +349,23 @@ class RSJ_Simple(Model):
         """Configure Initial fitting function."""
         super(RSJ_Simple, self).__init__(rsj_simple, *args, **kwargs)
 
-    def guess(self, data, x=None, **kwargs):
+    def guess(self, data, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
 
-        if x is None:
-            x = np.linspace(1, len(data), len(data) + 1)
+        x = kwargs.get("x",np.linspace(1, len(data), len(data) + 1))
 
-        popt, _ = curve_fit(linear, data, x, p0=[x.max() / data.max(), x.mean()])
-        v_offset_guess = popt[0]
-        rn_guess = 1.0 / popt[1]
-        ic_guess = np.abs(data - linear(x, *popt)).max()
+        v_offset_guess = np.mean(data)
+        v = np.abs(data - v_offset_guess)
+        x = np.abs(x)
+
+        v_low = np.max(v) * 0.05
+        v_high = np.max(v) * 0.90
+
+        ic_index = v < v_low
+        rn_index = v > v_high
+        ic_guess = np.max(x[ic_index])  # Guess Ic from a 2% of max V threhsold creiteria
+
+        rn_guess = np.mean(v[rn_index] / x[rn_index])
 
         pars = self.make_params(Ic=ic_guess, Rn=rn_guess, V_offset=v_offset_guess)
         pars["Ic"].min = 0
@@ -383,7 +392,8 @@ class Ic_B_Airy(Model):
 
     Notes:
         Represents the critical current as:
-            $$I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)){\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|$$
+            $$I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right))
+            {\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|$$
         where $J_1$ is a first order Bessel function.
     """
 
@@ -393,11 +403,10 @@ class Ic_B_Airy(Model):
         """Configure Initial fitting function."""
         super(Ic_B_Airy, self).__init__(ic_B_airy, *args, **kwargs)
 
-    def guess(self, data, x=None, **kwargs):
+    def guess(self, data,**kwargs):
         """Guess parameters as max(data), x[argmax(data)] and from FWHM of peak"""
 
-        if x is None:
-            x = np.linspace(-len(data) / 2, len(data) / 2, len(data))
+        x = kwargs.get("x",np.linspace(-len(data) / 2, len(data) / 2, len(data)))
 
         Ic0_guess = data.max()
         B_offset_guess = x[data.argmax()]
