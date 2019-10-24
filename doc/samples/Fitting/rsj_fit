@@ -7,6 +7,9 @@ Fit IV data to various RSJ models
 from Stoner import Data
 from Stoner.Fit import RSJ_Noiseless, RSJ_Simple
 
+import os
+os.chdir(os.path.dirname(__file__))
+
 data = Data("data/IV.txt",setas={"x":"Current","y":"Voltage"})
 
 # Fit data with both versions of the RSJ model

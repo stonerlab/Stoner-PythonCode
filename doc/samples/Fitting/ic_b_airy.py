@@ -7,6 +7,9 @@ Fit Ic(B) to Airy function.
 from Stoner import Data
 from Stoner.Fit import  Ic_B_Airy
 
+import os
+os.chdir(os.path.dirname(__file__))
+
 data = Data("data/Ic_B.txt",setas={"x":"Magnet Output","y":"Ic"})
 
 data.lmfit(Ic_B_Airy,result=True,header="Fit")
