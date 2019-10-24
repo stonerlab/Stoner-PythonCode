@@ -76,7 +76,7 @@ def kittelEquation(H, g, M_s, H_k):
             :outname: kittel
     """
     gamma = g * cnst.e / (2 * cnst.m_e)
-    return (cnst.codata. *mu0 gamma / (2 * np.pi)) * np.sqrt((H + H_k) * (H + H_k + M_s))
+    return (cnst.mu_0 * gamma / (2 * np.pi)) * np.sqrt((H + H_k) * (H + H_k + M_s))
 
 
 def inverse_kittel(f, g, M_s, H_k):
