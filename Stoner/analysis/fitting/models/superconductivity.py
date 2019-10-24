@@ -202,7 +202,7 @@ def rsj_simple(I, Ic, Rn, V_offset):
 
     normal = Rn * np.sign(I) * np.real(np.sqrt(I ** 2 - Ic ** 2))
     ic_branch = np.zeros_like(I)
-    return np.where(np.abs(I) < Ic, ic_branch, normal)+V_offset
+    return np.where(np.abs(I) < Ic, ic_branch, normal) + V_offset
 
 
 def ic_B_airy(B, Ic0, B_offset, A):
@@ -303,7 +303,7 @@ class RSJ_Noiseless(Model):
     def guess(self, data, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
 
-        x = kwargs.get("x",np.linspace(1, len(data), len(data) + 1))
+        x = kwargs.get("x", np.linspace(1, len(data), len(data) + 1))
 
         v_offset_guess = np.mean(data)
         v = np.abs(data - v_offset_guess)
@@ -352,7 +352,7 @@ class RSJ_Simple(Model):
     def guess(self, data, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
 
-        x = kwargs.get("x",np.linspace(1, len(data), len(data) + 1))
+        x = kwargs.get("x", np.linspace(1, len(data), len(data) + 1))
 
         v_offset_guess = np.mean(data)
         v = np.abs(data - v_offset_guess)
@@ -403,10 +403,10 @@ class Ic_B_Airy(Model):
         """Configure Initial fitting function."""
         super(Ic_B_Airy, self).__init__(ic_B_airy, *args, **kwargs)
 
-    def guess(self, data,**kwargs):
+    def guess(self, data, **kwargs):
         """Guess parameters as max(data), x[argmax(data)] and from FWHM of peak"""
 
-        x = kwargs.get("x",np.linspace(-len(data) / 2, len(data) / 2, len(data)))
+        x = kwargs.get("x", np.linspace(-len(data) / 2, len(data) / 2, len(data)))
 
         Ic0_guess = data.max()
         B_offset_guess = x[data.argmax()]

@@ -92,6 +92,7 @@ class TexEngFormatter(EngFormatter):
     """
 
     prefix = {
+        0: "",
         3: "k",
         6: "M",
         9: "G",
@@ -122,12 +123,13 @@ class TexEngFormatter(EngFormatter):
                 ret = "${}\\,\\mathrm{{{}}}$".format(_round(value, 4), self.unit)
             else:
                 v = _round(value / (10 ** pre), 4)
-                if _np_.abs(v)<0.1:
-                    v*=1000
-                    pre-=3
-                elif _np_.abs(v)>1000.0:
-                    v/=1000
-                    pre+=3.0
+                if _np_.abs(v) < 0.1:
+                    v *= 1000
+                    pre -= 3
+                elif _np_.abs(v) > 1000.0:
+                    v /= 1000
+                    pre += 3.0
+
                 ret = "${}\\mathrm{{{} {}}}$".format(v, self.prefix[int(pre)], self.unit)
         else:
             ret = "$0.0$"

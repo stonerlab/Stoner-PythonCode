@@ -285,6 +285,7 @@ def format_val(value, **kargs):
     prefix = kargs.pop("prefix", "")
     latex = kargs.pop("latex", False)
     fmt = kargs.pop("fmt", "latex" if latex else "text")
+    places = kargs.pop("places", False)
     escape = kargs.pop("escape", False)
     escape_func = {"latex": tex_escape, "html": html_escape}.get(mode, lambda x: x)
 
@@ -334,6 +335,8 @@ def format_val(value, **kargs):
         val_fmt_str = r"{}{{}}".format(prefix)
         suffix_fmt = units
     fmt_str = val_fmt_str + suffix_val + suffix_fmt
+    if places:
+        value = round(value, places)
     return fmt_str.format(value)
 
 
