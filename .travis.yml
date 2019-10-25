@@ -17,7 +17,7 @@ env:
 jobs:
     excelude:
       - python: 3.6
-      - env: NUMBA = "0"
+      - env: NUMBA = 0
 # command to install dependencies
 
 services:

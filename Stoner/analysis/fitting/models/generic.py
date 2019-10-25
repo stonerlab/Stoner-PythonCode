@@ -112,6 +112,7 @@ def lorentzian_diff(x, A, sigma, mu):
             :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`
 
     Example:
+
     .. plot:: samples/Fitting/lorentzian.py
         :include-source:
         :outname: lorentzian_diff_func
@@ -225,6 +226,7 @@ class Lorentzian_diff(Model):
             :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`
 
     Example:
+
     .. plot:: samples/Fitting/lorentzian.py
         :include-source:
         :outname: lorentzian_diff_class
