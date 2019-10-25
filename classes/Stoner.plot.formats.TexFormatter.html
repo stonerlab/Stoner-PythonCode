@@ -1,22 +1,22 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>TexFormatter &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="DefaultPlotStyle" href="Stoner.plot.formats.DefaultPlotStyle.html" />
+    <link rel="next" title="TexEngFormatter" href="Stoner.plot.formats.TexEngFormatter.html" />
     <link rel="prev" title="PlotMixin" href="Stoner.plot.PlotMixin.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -31,7 +31,7 @@
           <a href="Stoner.plot.PlotMixin.html" title="Previous document">PlotMixin</a>
         </li>
         <li>
-          <a href="Stoner.plot.formats.DefaultPlotStyle.html" title="Next document">DefaultPlotStyle</a>
+          <a href="Stoner.plot.formats.TexEngFormatter.html" title="Next document">TexEngFormatter</a>
           &rarr;
         </li>
     </ul>
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -55,46 +55,45 @@
 <h1>TexFormatter<a class="headerlink" href="#texformatter" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.plot.formats.TexFormatter">
-<em class="property">class </em><code class="descclassname">Stoner.plot.formats.</code><code class="descname">TexFormatter</code><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/api/ticker_api.html#matplotlib.ticker.Formatter" title="(in Matplotlib v3.0.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.ticker.Formatter</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.plot.formats.</code><code class="sig-name descname">TexFormatter</code><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/api/ticker_api.html#matplotlib.ticker.Formatter" title="(in Matplotlib v3.1.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.ticker.Formatter</span></code></a></p>
 <p>An axis tick label formatter that emits Tex formula mode code.</p>
 <p>Formating is set so that large numbers are registered as times 10^{power}
 rather than using E notation.</p>
 <p class="rubric">Methods Summary</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.formats.TexFormatter.__call__" title="Stoner.plot.formats.TexFormatter.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(value[,&nbsp;pos])</td>
-<td>Return the value ina  suitable texable format</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.TexFormatter.__call__" title="Stoner.plot.formats.TexFormatter.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(value[, pos])</p></td>
+<td><p>Return the value ina  suitable texable format</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.formats.TexFormatter.format_data" title="Stoner.plot.formats.TexFormatter.format_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_data</span></code></a>(value)</td>
-<td>Returns the full string representation of the value with the position unspecified.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.formats.TexFormatter.format_data" title="Stoner.plot.formats.TexFormatter.format_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_data</span></code></a>(value)</p></td>
+<td><p>Returns the full string representation of the value with the position unspecified.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.formats.TexFormatter.format_data_short" title="Stoner.plot.formats.TexFormatter.format_data_short"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_data_short</span></code></a>(value)</td>
-<td>Return a short string version of the tick value.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.TexFormatter.format_data_short" title="Stoner.plot.formats.TexFormatter.format_data_short"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_data_short</span></code></a>(value)</p></td>
+<td><p>Return a short string version of the tick value.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="Stoner.plot.formats.TexFormatter.__call__">
-<code class="descname">__call__</code><span class="sig-paren">(</span><em>value</em>, <em>pos=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter.__call__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">pos=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the value ina  suitable texable format</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.plot.formats.TexFormatter.format_data">
-<code class="descname">format_data</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter.format_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter.format_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the full string representation of the value with the
-position unspecified.</p>
+<code class="sig-name descname">format_data</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter.format_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter.format_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the full string representation of the value with the position unspecified.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.plot.formats.TexFormatter.format_data_short">
-<code class="descname">format_data_short</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter.format_data_short"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter.format_data_short" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">format_data_short</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter.format_data_short"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter.format_data_short" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a short string version of the tick value.</p>
 <p>Defaults to the position-independent long value.</p>
 </dd></dl>
@@ -116,24 +115,21 @@ position unspecified.</p>
   <p class="topless"><a href="Stoner.plot.PlotMixin.html"
                         title="previous chapter">PlotMixin</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.plot.formats.DefaultPlotStyle.html"
-                        title="next chapter">DefaultPlotStyle</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.plot.formats.TexFormatter.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <p class="topless"><a href="Stoner.plot.formats.TexEngFormatter.html"
+                        title="next chapter">TexEngFormatter</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.plot.formats.TexFormatter.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -147,7 +143,7 @@ position unspecified.</p>
           <a href="Stoner.plot.PlotMixin.html" title="Previous document">PlotMixin</a>
         </li>
         <li>
-          <a href="Stoner.plot.formats.DefaultPlotStyle.html" title="Next document">DefaultPlotStyle</a>
+          <a href="Stoner.plot.formats.TexEngFormatter.html" title="Next document">TexEngFormatter</a>
           &rarr;
         </li>
     </ul>
@@ -156,14 +152,14 @@ position unspecified.</p>
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

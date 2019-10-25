@@ -34,6 +34,7 @@ AnalysisMixin
       ~AnalysisMixin.smooth
       ~AnalysisMixin.span
       ~AnalysisMixin.spline
+      ~AnalysisMixin.std
       ~AnalysisMixin.stitch
       ~AnalysisMixin.subtract
       ~AnalysisMixin.threshold
@@ -64,6 +65,7 @@ AnalysisMixin
    .. automethod:: smooth
    .. automethod:: span
    .. automethod:: spline
+   .. automethod:: std
    .. automethod:: stitch
    .. automethod:: subtract
    .. automethod:: threshold

@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Data.spline &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.split" href="Stoner.Data.split.html" />
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -58,35 +58,30 @@
 <h1>Data.spline<a class="headerlink" href="#data-spline" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Data.spline">
-<code class="descclassname">Data.</code><code class="descname">spline</code><span class="sig-paren">(</span><em>xcol=None</em>, <em>ycol=None</em>, <em>sigma=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.spline" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">spline</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">sigma=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.spline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct a spline through x and y data and replace, add new data or return spline function.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>xcol</strong> (<em>column index</em>) – Column with x data or if None, use setas attribute.</li>
-<li><strong>ycol</strong> (<em>column index</em>) – Column with y data or if None, use the setas attribute</li>
-<li><strong>sigma</strong> (<em>column index</em><em>, or </em><em>array of data</em>) – Column with weights, or if None use the 1/yerr column.</li>
-<li><strong>replace</strong> (<em>Boolean</em><em> or </em><em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If True then the y-column data is repalced, if a column index then the
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xcol</strong> (<em>column index</em>) – Column with x data or if None, use setas attribute.</p></li>
+<li><p><strong>ycol</strong> (<em>column index</em>) – Column with y data or if None, use the setas attribute</p></li>
+<li><p><strong>sigma</strong> (<em>column index</em><em>, or </em><em>array of data</em>) – Column with weights, or if None use the 1/yerr column.</p></li>
+<li><p><strong>replace</strong> (<em>Boolean</em><em> or </em><em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – If True then the y-column data is repalced, if a column index then the
 new data is added after the specified index, if False then the new y-data is returned and if None, then
-spline object is returned.</li>
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – If <em>replace</em> is True or a column index then use this string as the new column header.</li>
-<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The order of spline to use (1-5)</li>
-<li><strong>smoothing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – The smoothing factor to use when fitting the spline. A value of zero will create an
-interpolating spline.</li>
-<li><strong>bbox</strong> (<em>tuple of length 2</em>) – Bounding box for the spline - defaults to range of x values</li>
-<li><strong>ext</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – How to extrapolate, default is “extrapolate”, but can also be “raise”,”zeros” or “const”.</li>
+spline object is returned.</p></li>
+<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – If <em>replace</em> is True or a column index then use this string as the new column header.</p></li>
+<li><p><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The order of spline to use (1-5)</p></li>
+<li><p><strong>smoothing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The smoothing factor to use when fitting the spline. A value of zero will create an
+interpolating spline.</p></li>
+<li><p><strong>bbox</strong> (<em>tuple of length 2</em>) – Bounding box for the spline - defaults to range of x values</p></li>
+<li><p><strong>ext</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – How to extrapolate, default is “extrapolate”, but can also be “raise”,”zeros” or “const”.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Depending on the value of <em>replace</em>, returns a copy of the AnalysisMixin, a 1D numpy array of data or an
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>(various)</em> –     Depending on the value of <em>replace</em>, returns a copy of the AnalysisMixin, a 1D numpy array of data or an
 scipy.interpolate.UniverateSpline object.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the extrapolate
 function.</p>
 </dd></dl>
@@ -108,22 +103,19 @@ function.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Data.split.html"
                         title="next chapter">Data.split</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Data.spline.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Data.spline.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -146,7 +138,7 @@ function.</p>
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -154,9 +146,9 @@ function.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

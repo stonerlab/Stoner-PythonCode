@@ -47,6 +47,7 @@ Stoner.FileFormats.MDAASCIIFile
       ~Stoner.FileFormats.MDAASCIIFile.sort
       ~Stoner.FileFormats.MDAASCIIFile.split
       ~Stoner.FileFormats.MDAASCIIFile.swap_column
+      ~Stoner.FileFormats.MDAASCIIFile.to_pandas
       ~Stoner.FileFormats.MDAASCIIFile.unique
       ~Stoner.FileFormats.MDAASCIIFile.update
       ~Stoner.FileFormats.MDAASCIIFile.values

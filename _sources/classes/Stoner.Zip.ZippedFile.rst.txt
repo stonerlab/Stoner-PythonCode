@@ -5,3 +5,27 @@ ZippedFile
 
 .. autoclass:: ZippedFile
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~ZippedFile.mime_type
+      ~ZippedFile.patterns
+      ~ZippedFile.priority
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ZippedFile.save
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: mime_type
+   .. autoattribute:: patterns
+   .. autoattribute:: priority
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: save

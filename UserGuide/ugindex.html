@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>The Stoner Python Package User Guide &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Installation of Stoner Package" href="install.html" />
@@ -65,15 +65,15 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="datafile.html">Loading and Examining Data</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="datafile.html#loading-a-data-file">Loading a data file</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="datafile.html#the-various-flavours-of-the-datafile-class">The Various Flavours of the <code class="docutils literal notranslate"><span class="pre">DataFile</span></code> Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#the-various-flavours-of-the-datafile-class">The Various Flavours of the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> Class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#loading-data-from-a-string-or-iterable-object">Loading Data from a string or iterable object</a></li>
-<li class="toctree-l3"><a class="reference internal" href="datafile.html#constructing-datafile-s-from-scratch">Constructing <code class="docutils literal notranslate"><span class="pre">DataFile</span></code> s from Scratch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#constructing-datafile-s-from-scratch">Constructing <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> s from Scratch</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="datafile.html#examining-and-basic-manipulations-of-data">Examining and Basic Manipulations of Data</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#data-structure">Data Structure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#marking-columns-as-dimensions-the-magic-setas-attribute">Marking Columns as Dimensions: the magic <em>setas</em> attribute</a></li>
-<li class="toctree-l3"><a class="reference internal" href="datafile.html#printing-the-complete-datafile">Printing the Complete <code class="docutils literal notranslate"><span class="pre">DataFile</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#printing-the-complete-datafile">Printing the Complete <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#working-with-columns-of-data">Working with columns of data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#working-with-complete-rows-of-data">Working with complete rows of data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#special-magic-when-working-with-subsets-of-data">Special Magic When Working with Subsets of Data</a></li>
@@ -88,6 +88,7 @@
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#deleting-columns-of-data">Deleting Columns of Data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#sorting-data">Sorting Data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="datafile.html#saving-data">Saving Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#exporting-data-to-pandas">Exporting Data to pandas</a></li>
 </ul>
 </li>
 </ul>
@@ -123,6 +124,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_fitting.html#simple-function-fitting">Simple function fitting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curve_fitting.html#fitting-with-limits">Fitting with limits</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curve_fitting.html#orthogonal-distance-regression">Orthogonal distance regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_fitting.html#differential-evolution-algorithm">Differential Evolution Algorithm</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="curve_fitting.html#included-fitting-models">Included Fitting Models</a><ul>
@@ -184,19 +186,19 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="image.html">Working with images</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="image.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image.html#imagefile"><code class="docutils literal notranslate"><span class="pre">ImageFile</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="image.html#imagefile"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFile</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="image.html#loading-an-image">Loading an Image</a></li>
 <li class="toctree-l3"><a class="reference internal" href="image.html#examining-and-manipulating-the-imagearray">Examining and manipulating the ImageArray</a></li>
 <li class="toctree-l3"><a class="reference internal" href="image.html#imagefile-representation">ImageFile Representation</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="image.html#imagearray-a-numpy-array-like-class"><code class="docutils literal notranslate"><span class="pre">ImageArray</span></code>: A numpy array like class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image.html#working-with-lots-of-images-imagefolder-and-imagestack2">Working with Lots of Images: <code class="docutils literal notranslate"><span class="pre">ImageFolder</span></code> and <code class="docutils literal notranslate"><span class="pre">ImageStack2</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="image.html#imagearray-a-numpy-array-like-class"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageArray</span></code>: A numpy array like class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image.html#working-with-lots-of-images-imagefolder-and-imagestack2">Working with Lots of Images: <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFolder</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageStack2</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cookbook.html#the-util-module">The Util module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="cookbook.html#the-data-class">The <code class="docutils literal notranslate"><span class="pre">Data</span></code> Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cookbook.html#the-data-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code> Class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cookbook.html#splitting-data-into-rising-and-falling-values">Splitting Data into rising and falling values</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cookbook.html#analysis-of-hysteresis-loops">Analysis of Hysteresis Loops</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cookbook.html#formatting-error-values">Formatting Error Values</a></li>
@@ -241,22 +243,19 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="install.html"
                         title="next chapter">Installation of Stoner Package</a></p>
-<div class="sourcelink">
-  <a href="../_sources/UserGuide/ugindex.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/ugindex.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -281,9 +280,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

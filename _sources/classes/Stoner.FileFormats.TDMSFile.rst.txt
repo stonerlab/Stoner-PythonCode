@@ -47,6 +47,7 @@ Stoner.FileFormats.TDMSFile
       ~Stoner.FileFormats.TDMSFile.sort
       ~Stoner.FileFormats.TDMSFile.split
       ~Stoner.FileFormats.TDMSFile.swap_column
+      ~Stoner.FileFormats.TDMSFile.to_pandas
       ~Stoner.FileFormats.TDMSFile.unique
       ~Stoner.FileFormats.TDMSFile.update
       ~Stoner.FileFormats.TDMSFile.values

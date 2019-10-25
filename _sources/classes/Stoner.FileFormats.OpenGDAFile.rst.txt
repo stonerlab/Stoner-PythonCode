@@ -47,6 +47,7 @@ Stoner.FileFormats.OpenGDAFile
       ~Stoner.FileFormats.OpenGDAFile.sort
       ~Stoner.FileFormats.OpenGDAFile.split
       ~Stoner.FileFormats.OpenGDAFile.swap_column
+      ~Stoner.FileFormats.OpenGDAFile.to_pandas
       ~Stoner.FileFormats.OpenGDAFile.unique
       ~Stoner.FileFormats.OpenGDAFile.update
       ~Stoner.FileFormats.OpenGDAFile.values

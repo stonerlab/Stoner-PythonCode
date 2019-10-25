@@ -5,3 +5,23 @@ GBPlotStyle
 
 .. autoclass:: GBPlotStyle
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~GBPlotStyle.stylename
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~GBPlotStyle.customise_axes
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: stylename
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: customise_axes

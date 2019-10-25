@@ -1,6 +1,0 @@
-bdr
-===
-
-.. currentmodule:: Stoner.Fit
-
-.. autofunction:: bdr

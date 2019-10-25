@@ -1,4 +1,4 @@
-"""Test Weak-localisation fitting."""
+"""Test langevin fitting."""
 from Stoner import Data
 import Stoner.Fit as SF
 from numpy import linspace, ones_like
@@ -30,8 +30,15 @@ d.lmfit(fit, p0=p0, result=True, header="lmfit")
 d.setas = "xyeyy"
 d.plot(fmt=["r.", "b-", "g-"])
 
-d.annotate_fit(func, x=0.1, y=0.5, fontdict={"size": "x-small", "color": "blue"}, mode="eng")
 d.annotate_fit(
-    SF.Langevin, x=0.1, y=0.25, fontdict={"size": "x-small", "color": "green"}, prefix="Langevin", mode="eng"
+    func, x=0.1, y=0.5, fontdict={"size": "x-small", "color": "blue"}, mode="eng"
+)
+d.annotate_fit(
+    SF.Langevin,
+    x=0.1,
+    y=0.25,
+    fontdict={"size": "x-small", "color": "green"},
+    prefix="Langevin",
+    mode="eng",
 )
 d.title = "langevin Fit"

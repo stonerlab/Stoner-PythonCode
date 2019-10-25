@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Data.quiver_plot &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.rename" href="Stoner.Data.rename.html" />
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -58,41 +58,36 @@
 <h1>Data.quiver_plot<a class="headerlink" href="#data-quiver-plot" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Data.quiver_plot">
-<code class="descclassname">Data.</code><code class="descname">quiver_plot</code><span class="sig-paren">(</span><em>xcol=None</em>, <em>ycol=None</em>, <em>ucol=None</em>, <em>vcol=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.quiver_plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">quiver_plot</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">ucol=None</em>, <em class="sig-param">vcol=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.quiver_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a 2D Quiver plot from the data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>xcol</strong> (<em>index</em>) – Xcolumn index or label</li>
-<li><strong>ycol</strong> (<em>index</em>) – Y column index or label</li>
-<li><strong>zcol</strong> (<em>index</em>) – Z column index or label</li>
-<li><strong>ucol</strong> (<em>index</em>) – U column index or label</li>
-<li><strong>vcol</strong> (<em>index</em>) – V column index or label</li>
-<li><strong>wcol</strong> (<em>index</em>) – W column index or label</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xcol</strong> (<em>index</em>) – Xcolumn index or label</p></li>
+<li><p><strong>ycol</strong> (<em>index</em>) – Y column index or label</p></li>
+<li><p><strong>zcol</strong> (<em>index</em>) – Z column index or label</p></li>
+<li><p><strong>ucol</strong> (<em>index</em>) – U column index or label</p></li>
+<li><p><strong>vcol</strong> (<em>index</em>) – V column index or label</p></li>
+<li><p><strong>wcol</strong> (<em>index</em>) – W column index or label</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – </li>
-<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</li>
-<li><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</li>
-<li><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.contour</li>
-<li><strong>headlength</strong><strong>,</strong><strong>headwidth</strong><strong>,</strong><strong>headaxislength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Controls the size of the quiver heads</li>
-<li><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</li>
-<li><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – If set to a string, save the plot with this filename</li>
-<li><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.0.3)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</li>
-<li><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</li>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – </p></li>
+<li><p><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</p></li>
+<li><p><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</p></li>
+<li><p><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.contour</p></li>
+<li><p><strong>headlength</strong><strong>,</strong><strong>headwidth</strong><strong>,</strong><strong>headaxislength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Controls the size of the quiver heads</p></li>
+<li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</p></li>
+<li><p><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – If set to a string, save the plot with this filename</p></li>
+<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.1.1)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
+<li><p><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matplotlib figure instance.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A matplotlib figure instance.</p>
+</dd>
+</dl>
 <p>Keyword arguments are all passed through to <code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.plt.quiver()</span></code>.</p>
 </dd></dl>
 
@@ -113,22 +108,19 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Data.rename.html"
                         title="next chapter">Data.rename</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Data.quiver_plot.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Data.quiver_plot.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -151,7 +143,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -159,9 +151,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

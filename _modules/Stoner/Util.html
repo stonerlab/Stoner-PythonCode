@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Stoner.Util &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -53,18 +53,47 @@
 <span class="sd">@author: phygbu</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;split_up_down&quot;</span><span class="p">,</span> <span class="s2">&quot;ordinal&quot;</span><span class="p">,</span> <span class="s2">&quot;hysteresis_correct&quot;</span><span class="p">]</span>
-<span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="n">int_types</span>
 <span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="n">format_error</span>
 <span class="kn">import</span> <span class="nn">Stoner.Core</span> <span class="k">as</span> <span class="nn">_SC_</span>  <span class="c1"># pylint: disable=import-error</span>
 <span class="kn">from</span> <span class="nn">.Folders</span> <span class="k">import</span> <span class="n">DataFolder</span> <span class="k">as</span> <span class="n">_SF_</span>
 <span class="kn">from</span> <span class="nn">.Fit</span> <span class="k">import</span> <span class="n">linear</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="nb">max</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">diag</span><span class="p">,</span> <span class="n">argmax</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">array</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="nb">max</span><span class="p">,</span> <span class="n">argmax</span><span class="p">,</span> <span class="n">mean</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">sem</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">fsolve</span>
+
+
+<span class="k">def</span> <span class="nf">_step</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simple sloping step function for fitting to the extrema of a hysteresis loop.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (array-like): Field (x) data of loop.</span>
+<span class="sd">        m (float): susceptibility(slopee) of loop.</span>
+<span class="sd">        c (float): vertical offset of loop.</span>
+<span class="sd">        h (float): Saturatted moement (height) of loop.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        y (Tarray-like): Calculated moment of loop.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">mid</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">*</span> <span class="n">h</span>
+    <span class="k">return</span> <span class="n">y</span>
 
 
 <span class="k">def</span> <span class="nf">_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Split data d into rising and falling sections and then add and sort the two sets.</span>
+
+<span class="sd">    This routine searches for the local maxima and minima in the x-axis data by identifying points</span>
+<span class="sd">    where the x-data is more than 95% of the total span from the mid-point. It thenuses this to identify</span>
+<span class="sd">    ranges of rows where the x value passes from one extreme to the other and splits the data file up on</span>
+<span class="sd">    that basis. This assumes that the x-data is reasonably well behaved in the the increments between</span>
+<span class="sd">    successive x-values are larger than the noise in x. This will work best if the x value is derived from a set value</span>
+<span class="sd">    rather than the read-back value.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data (Data): DataFile like object with x and y columns set</span>
@@ -72,29 +101,66 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        (Data, Data): Tuple of two DataFile like instances for the rising and falling data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">split_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="c1"># Calculate x span and mid-point for working out limits to search for maxima.</span>
+    <span class="n">lx</span><span class="p">,</span> <span class="n">hx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">xcol</span><span class="p">)</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">lx</span> <span class="o">+</span> <span class="n">hx</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">span</span> <span class="o">=</span> <span class="n">hx</span> <span class="o">-</span> <span class="n">lx</span>
+    <span class="n">high</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">mid</span> <span class="o">+</span> <span class="mf">0.45</span> <span class="o">*</span> <span class="n">span</span>
+    <span class="n">low</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">mid</span> <span class="o">-</span> <span class="mf">0.45</span> <span class="o">*</span> <span class="n">span</span>
 
-    <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">grp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">&quot;rising&quot;</span><span class="p">,</span> <span class="s2">&quot;falling&quot;</span><span class="p">]):</span>
-        <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">grp</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">f</span><span class="p">[</span><span class="n">grp</span><span class="p">][</span><span class="mi">1</span><span class="p">:]:</span>
-            <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span>
-        <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="s2">&quot;xcol&quot;</span><span class="p">))</span>
-        <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;rising&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>  <span class="c1"># hack due to bug in sort wiping the setas info</span>
-    <span class="k">return</span> <span class="n">ret</span>
+    <span class="c1"># Locate points where we cross a threhold</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">high</span>
+    <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">low</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+    <span class="c1"># Find  the indiices of the highest and lowest extrema</span>
+    <span class="n">high_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)[</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]]</span>
+    <span class="n">low_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)[</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]]</span>
+    <span class="k">if</span> <span class="n">low_i</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">low_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">low_i</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">low_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">low_i</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">high_i</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">high_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">high_i</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">high_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">high_i</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+    <span class="c1"># Build a sorted list of extrema positions + the start and end of the data</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">low_i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">high_i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]))))</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">indices</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>  <span class="c1"># Remove possible over-range element</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Build a boolean array to index the data for rows that where x is increasing</span>
+    <span class="n">rising</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">iy</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indices</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">indices</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">iy</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">ix</span><span class="p">]:</span>
+            <span class="n">rising</span><span class="p">[</span><span class="n">ix</span><span class="p">:</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Clone the data and select rows that are either rising or falling in the two clones.</span>
+    <span class="n">up</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">clone</span>
+    <span class="n">up</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">up</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">rising</span><span class="p">]</span>
+    <span class="n">down</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">clone</span>
+    <span class="n">down</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">down</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">rising</span><span class="p">]</span>
+    <span class="c1"># Done.</span>
+    <span class="k">return</span> <span class="n">up</span><span class="p">,</span> <span class="n">down</span>
 
 
 <div class="viewcode-block" id="split_up_down"><a class="viewcode-back" href="../../classes/Stoner.Util.split_up_down.html#Stoner.Util.split_up_down">[docs]</a><span class="k">def</span> <span class="nf">split_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Splits the DataFile data into several files where the column *col* is either rising or falling</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        data (:py:class:`Stoner.Core.DataFile`): object containign the data to be sorted</span>
-<span class="sd">        col (index): is something that :py:meth:`Stoner.Core.DataFile.find_col` can use</span>
-<span class="sd">        folder (:py:class:`Stoner.Folders.DataFolder` or None): if this is an instance of :py:class:`Stoner.Folders.DataFolder` then add</span>
+<span class="sd">        data (:py:class:`Stoner.Core.DataFile`):</span>
+<span class="sd">            object containign the data to be sorted</span>
+<span class="sd">        col (index):</span>
+<span class="sd">            is something that :py:meth:`Stoner.Core.DataFile.find_col` can use</span>
+<span class="sd">        folder (:py:class:`Stoner.Folders.DataFolder` or None):</span>
+<span class="sd">            if this is an instance of :py:class:`Stoner.Folders.DataFolder` then add</span>
 <span class="sd">            rising and falling files to groups of this DataFolder, otherwise create a new one</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling</span>
+<span class="sd">        (:py:class:`Sonter.Folder.DataFolder`): with two groups, rising and falling</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -148,10 +214,11 @@
     <span class="sd">&quot;&quot;&quot;Format an integer into an ordinal string.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        value (int): Number to be written as an ordinal string</span>
+<span class="sd">        value (int):</span>
+<span class="sd">            Number to be written as an ordinal string</span>
 
 <span class="sd">    Return:</span>
-<span class="sd">        Ordinal String such as &#39;1st&#39;,&#39;2nd&#39; etc.</span>
+<span class="sd">        (str): Ordinal String such as &#39;1st&#39;,&#39;2nd&#39; etc.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span>
@@ -169,23 +236,39 @@
     <span class="sd">&quot;&quot;&quot;Peform corrections to a hysteresis loop.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        data (DataFile): The data containing the hysteresis loop. The :py:attr:`DataFile.setas` attribute</span>
+<span class="sd">        data (Data):</span>
+<span class="sd">            The data containing the hysteresis loop. The :py:attr:`DataFile.setas` attribute</span>
 <span class="sd">            should be set to give the H and M axes as x and y.</span>
 
 <span class="sd">    Keyword Arguments:</span>
-<span class="sd">        correct_background (bool): Correct for a diamagnetic or paramagnetic background to the hystersis loop</span>
+<span class="sd">        correct_background (bool):</span>
+<span class="sd">            Correct for a diamagnetic or paramagnetic background to the hystersis loop</span>
 <span class="sd">            also recentres the loop about zero moment (default True).</span>
-<span class="sd">        correct_H (bool): Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric</span>
+<span class="sd">        correct_H (bool):</span>
+<span class="sd">            Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric</span>
 <span class="sd">            this will remove any offset in filed due to trapped flux (default True)</span>
-<span class="sd">        saturated_fraction (float): The fraction of the horizontal (field) range where the moment can be assumed to be</span>
+<span class="sd">        saturated_fraction (float):</span>
+<span class="sd">            The fraction of the horizontal (field) range where the moment can be assumed to be</span>
 <span class="sd">            fully saturated. If an integer is given it will use that many data points at the end of the loop.</span>
-<span class="sd">        xcol (column index): Column with the x data in it</span>
-<span class="sd">        ycol (column_index): Column with the y data in it</span>
-<span class="sd">        setas (string or iterable): Column assignments.</span>
+<span class="sd">        h_sat_method (str):</span>
+<span class="sd">            The method used to determine thwe saturation field. Options are -</span>
+<span class="sd">            -   &quot;linear_intercept&quot; (default): Fit a straight line to the central region of each branch of the loop and look at the</span>
+<span class="sd">                intercept with the relevant saturation moment.</span>
+<span class="sd">            -   &quot;delta_M&quot;: Look for a field where the moment has changed by *h_sat_fraction* times the error in M_s.</span>
+<span class="sd">            -   &quot;susceptibility&quot; - Calcualte H_sat from where the susceptibility changes by 1% of the average susceptibility</span>
+<span class="sd">        h_sat_fraction (float):</span>
+<span class="sd">            The central fraction of the saturation moment that is used for calculating the saturation field. Defaults to 0.5</span>
+<span class="sd">        xcol (column index):</span>
+<span class="sd">            Column with the x data in it</span>
+<span class="sd">        ycol (column_index):</span>
+<span class="sd">            Column with the y data in it</span>
+<span class="sd">        setas (string or iterable):</span>
+<span class="sd">            Column assignments.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The original loop with the x and y columns replaced with corrected data and extra metadata added to give the</span>
-<span class="sd">        background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.</span>
+<span class="sd">        (:py:class:`Stoner.Data`):</span>
+<span class="sd">            The original loop with the x and y columns replaced with corrected data and extra metadata added to give the</span>
+<span class="sd">            background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_SC_</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="vm">__class__</span>
@@ -193,100 +276,131 @@
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">Data</span>
     <span class="n">data</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="s2">&quot;setas&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>  <span class="c1"># Allow us to override the setas variable</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;setas&quot;</span><span class="p">)</span>
-
-    <span class="n">xcol</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;xcol&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
-    <span class="n">ycol</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ycol&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">])</span>
-    <span class="c1"># Get xcol and ycols from kargs if specified</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">)</span>
-    <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">)</span>
-    <span class="c1"># Split into two sets of data:</span>
-
     <span class="c1"># Get other keyword arguments</span>
     <span class="n">correct_background</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;correct_background&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">correct_H</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;correct_H&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">saturation_fraction</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;saturated_fraction&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
 
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">up</span><span class="p">,</span> <span class="n">down</span> <span class="o">=</span> <span class="n">_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">h_sat_method</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;h_sat_method&quot;</span><span class="p">,</span> <span class="s2">&quot;linear_intercept&quot;</span><span class="p">)</span>
+    <span class="n">h_sat_fraction</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;h_sat_fraction&quot;</span><span class="p">,</span> <span class="mf">0.5</span> <span class="k">if</span> <span class="n">h_sat_method</span> <span class="o">==</span> <span class="s2">&quot;linear_intercept&quot;</span> <span class="k">else</span> <span class="mf">2.0</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">saturation_fraction</span><span class="p">,</span> <span class="n">int_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">saturation_fraction</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">saturation_fraction</span> <span class="o">=</span> <span class="n">saturation_fraction</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">up</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.001</span>  <span class="c1"># add 0.1% to ensure we get the point</span>
-        <span class="n">mx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">saturation_fraction</span><span class="p">)</span>
-        <span class="n">mix</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">saturation_fraction</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error setting attribute from keyword </span><span class="si">{}</span><span class="s2">=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="s2">&quot;setas&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>  <span class="c1"># Allow us to override the setas variable</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;setas&quot;</span><span class="p">)</span>
 
-        <span class="n">up</span><span class="o">.</span><span class="n">_push_mask</span><span class="p">(</span><span class="n">up</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">mix</span><span class="p">)</span>
-        <span class="n">pts</span> <span class="o">=</span> <span class="n">up</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-        <span class="n">up</span><span class="o">.</span><span class="n">_pop_mask</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">pts</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Not enough points in the negative saturation state.(mix=</span><span class="si">{}</span><span class="s2">,pts=</span><span class="si">{}</span><span class="s2">,x=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">mix</span><span class="p">,</span> <span class="n">pts</span><span class="p">,</span> <span class="n">up</span><span class="o">.</span><span class="n">x</span>
-        <span class="p">)</span>
+    <span class="n">xcol</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;xcol&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">xcol</span><span class="p">)</span>
+    <span class="n">ycol</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ycol&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">ycol</span><span class="p">)</span>
+    <span class="c1"># Get xcol and ycols from kargs if specified</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># Split into two sets of data:</span>
 
-        <span class="n">down</span><span class="o">.</span><span class="n">_push_mask</span><span class="p">(</span><span class="n">down</span><span class="o">.</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">mx</span><span class="p">)</span>
-        <span class="n">pts</span> <span class="o">=</span> <span class="n">down</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-        <span class="n">down</span><span class="o">.</span><span class="n">_pop_mask</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">pts</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Not enough points in the positive saturation state(mx=</span><span class="si">{}</span><span class="s2">,pts=</span><span class="si">{}</span><span class="s2">,x=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">mx</span><span class="p">,</span> <span class="n">pts</span><span class="p">,</span> <span class="n">down</span><span class="o">.</span><span class="n">x</span>
-        <span class="p">)</span>
+    <span class="n">up</span><span class="p">,</span> <span class="n">down</span> <span class="o">=</span> <span class="n">_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-        <span class="c1"># Find upper branch saturated moment slope and offset</span>
-        <span class="n">p1</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">,</span> <span class="n">absolute_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">mix</span><span class="p">)</span>
-        <span class="n">perr1</span> <span class="o">=</span> <span class="n">diag</span><span class="p">(</span><span class="n">pcov</span><span class="p">)</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">span</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">low</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="n">span</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">saturation_fraction</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">high</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="n">span</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">saturation_fraction</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
-        <span class="c1"># Find lower branch saturated moment and offset</span>
-        <span class="n">p2</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">,</span> <span class="n">absolute_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">mx</span><span class="p">)</span>
-        <span class="n">perr2</span> <span class="o">=</span> <span class="n">diag</span><span class="p">(</span><span class="n">pcov</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="n">data</span><span class="o">.</span><span class="n">y</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">break</span>
+    <span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">_step</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="ow">not</span> <span class="n">low</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">high</span><span class="p">)</span>
 
-    <span class="c1"># Find mean slope and offset</span>
-    <span class="n">pm</span> <span class="o">=</span> <span class="p">(</span><span class="n">p1</span> <span class="o">+</span> <span class="n">p2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
-    <span class="n">perr</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">perr1</span> <span class="o">+</span> <span class="n">perr2</span><span class="p">)</span>
-    <span class="n">Ms</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
-    <span class="n">Ms</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Ms</span> <span class="o">-</span> <span class="n">mean</span><span class="p">(</span><span class="n">Ms</span><span class="p">))</span>
+    <span class="n">perr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">pcov</span><span class="p">))</span>
+
+    <span class="n">Ms</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">Ms_err</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
     <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Ms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ms</span>  <span class="c1"># mean(Ms)</span>
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Ms Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span>
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Offset Moment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Offset Moment Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span>
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Background susceptibility&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pm</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Background Susceptibility Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span>
-
-    <span class="n">p1</span> <span class="o">=</span> <span class="n">p1</span> <span class="o">-</span> <span class="n">pm</span>
-    <span class="n">p2</span> <span class="o">=</span> <span class="n">p2</span> <span class="o">-</span> <span class="n">pm</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Ms Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ms_err</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Offset Moment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Offset Moment Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Background susceptibility&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Background Susceptibility Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">correct_background</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">data</span><span class="p">,</span> <span class="n">up</span><span class="p">,</span> <span class="n">down</span><span class="p">]:</span>
-            <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">linear</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">pm</span><span class="p">)</span>
+        <span class="n">fixes</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">,</span> <span class="n">up</span><span class="p">,</span> <span class="n">down</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">up</span><span class="p">,</span> <span class="n">down</span><span class="p">]:</span>  <span class="c1"># need to do these anyway to find Hc and Hsat</span>
-            <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">linear</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">pm</span><span class="p">)</span>
+        <span class="n">fixes</span> <span class="o">=</span> <span class="p">[</span><span class="n">up</span><span class="p">,</span> <span class="n">down</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">m</span> <span class="o">*</span> <span class="n">mid</span>
+
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">fixes</span><span class="p">:</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">linear</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+
     <span class="n">Hc</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
     <span class="n">Hc_err</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
     <span class="n">Hsat</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
     <span class="n">Hsat_err</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-    <span class="n">m_sat</span> <span class="o">=</span> <span class="p">[</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">perr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">perr</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
     <span class="n">Mr</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
     <span class="n">Mr_err</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">sat</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="n">up</span><span class="p">,</span> <span class="n">down</span><span class="p">],</span> <span class="n">m_sat</span><span class="p">)):</span>
-        <span class="n">hc</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Get the Hc value</span>
+    <span class="n">m_sat</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ms</span> <span class="o">-</span> <span class="n">h_sat_fraction</span> <span class="o">*</span> <span class="n">Ms_err</span><span class="p">,</span> <span class="o">-</span><span class="n">Ms</span> <span class="o">+</span> <span class="n">h_sat_fraction</span> <span class="o">*</span> <span class="n">Ms_err</span><span class="p">]</span>
+    <span class="n">single_side</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">up</span><span class="p">,</span> <span class="n">down</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">single_side</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">continue</span>
+        <span class="n">hc</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># Get the Hc value</span>
         <span class="n">Hc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">hc</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">hc</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">Hc_err</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">hc</span><span class="p">)</span>
-        <span class="n">hs</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">sat</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Get the Hc value</span>
-        <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>  <span class="c1"># Get the H_sat value</span>
-        <span class="k">if</span> <span class="n">hs</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">h_sat_method</span> <span class="o">==</span> <span class="s2">&quot;linear_intercept&quot;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="k">import</span> <span class="n">Linear</span>
+
+            <span class="c1"># Fit a striaght line to the central fraction of the data</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">bounds</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Ms</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_sat_fraction</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bounds</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Ms</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_sat_fraction</span>
+            <span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">Linear</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
+            <span class="n">perr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">pcov</span><span class="p">))</span>
+            <span class="n">popt</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">pferr</span> <span class="o">=</span> <span class="n">perr</span> <span class="o">/</span> <span class="n">popt</span>
+            <span class="c1"># Pick the positive or negative Ms depending on the up or down loop</span>
+            <span class="n">Ms_i</span> <span class="o">=</span> <span class="n">Ms</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="n">Ms</span>
+            <span class="c1"># Find the intercept</span>
+            <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsolve</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Linear</span><span class="p">()</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">popt</span><span class="p">)</span> <span class="o">-</span> <span class="n">Ms_i</span><span class="p">,</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Uncertainity is the sum of error in slope * found intercept and error in Ms times slope</span>
+            <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">pferr</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ms_err</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">h_sat_method</span> <span class="o">==</span> <span class="s2">&quot;susceptibility&quot;</span><span class="p">:</span>
+            <span class="n">xi</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">m</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">()</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">xi</span><span class="p">))[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x.y&quot;</span><span class="p">)</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="ow">not</span> <span class="mi">7</span> <span class="o">&lt;</span> <span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">-</span> <span class="mi">7</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_sat_fraction</span>
+            <span class="n">hs</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># Get the H_sat value</span>
+            <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>  <span class="c1"># Get the H_sat value</span>
+            <span class="k">if</span> <span class="n">hs</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+        <span class="k">elif</span> <span class="n">h_sat_method</span> <span class="o">==</span> <span class="s2">&quot;delta_M&quot;</span><span class="p">:</span>  <span class="c1"># threshold on m_sat</span>
+            <span class="n">m</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">()</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">))[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">m_sat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">hs</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+            <span class="p">)</span>  <span class="c1"># Get the H_sat value</span>
+            <span class="k">if</span> <span class="n">hs</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">hs</span> <span class="o">=</span> <span class="n">hs</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">hs</span><span class="p">))]</span>
+            <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">hs</span>  <span class="c1"># Get the H_sat value</span>
+            <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unrecognized method for calculating H_saturation ! </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h_sat_method</span><span class="p">))</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">Mr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">mr</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mr</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">Mr_err</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">mr</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">correct_H</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">correct_H</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">single_side</span><span class="p">:</span>
         <span class="n">Hc_mean</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">Hc</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">data</span><span class="p">,</span> <span class="n">up</span><span class="p">,</span> <span class="n">down</span><span class="p">]:</span>
             <span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">Hc_mean</span>
@@ -294,8 +408,20 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">Hc_mean</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Hc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">,</span> <span class="n">Hc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hsat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">,</span> <span class="n">Hsat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">single_side</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Hc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">,</span> <span class="n">Hc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hc_mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Hc</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hsat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">,</span> <span class="n">Hsat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hsat Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hsat_mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Hsat</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hsat_mean Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Hsat_err</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">Hc</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hc_mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hc&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hsat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">Hsat</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hsat Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">Hsat_err</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hsat_mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hsat&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hsat_mean Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hsat Error&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Remenance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Mr</span>
 
     <span class="n">bh</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span>
@@ -303,7 +429,7 @@
     <span class="n">data</span><span class="p">[</span><span class="s2">&quot;BH_Max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bh</span><span class="p">)</span>
     <span class="n">data</span><span class="p">[</span><span class="s2">&quot;BH_Max_H&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Area&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">integrate</span><span class="p">()</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Area&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">integrate</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s2">&quot;result&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 </pre></div>
 
@@ -315,17 +441,12 @@
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+<form class="search" action="../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -348,9 +469,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

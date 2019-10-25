@@ -47,6 +47,7 @@ Stoner.FileFormats.SNSFile
       ~Stoner.FileFormats.SNSFile.sort
       ~Stoner.FileFormats.SNSFile.split
       ~Stoner.FileFormats.SNSFile.swap_column
+      ~Stoner.FileFormats.SNSFile.to_pandas
       ~Stoner.FileFormats.SNSFile.unique
       ~Stoner.FileFormats.SNSFile.update
       ~Stoner.FileFormats.SNSFile.values

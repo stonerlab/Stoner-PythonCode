@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Analysing Data Files &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Working with Lots of Files" href="datafolder.html" />
@@ -113,7 +113,15 @@ second channel of uncertainities. The uncertainity calculation is then propagate
 <span class="n">y</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span>
 <span class="n">e2</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="n">y2</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;$X$&quot;</span><span class="p">,</span> <span class="s2">&quot;$Y_+$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\delta Y_+$&quot;</span><span class="p">,</span> <span class="s2">&quot;$Y_-$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\delta Y_-$&quot;</span><span class="p">],</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyeye&quot;</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">y</span><span class="p">,</span>
+    <span class="n">e</span><span class="p">,</span>
+    <span class="n">y2</span><span class="p">,</span>
+    <span class="n">e2</span><span class="p">,</span>
+    <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;$X$&quot;</span><span class="p">,</span> <span class="s2">&quot;$Y_+$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\delta Y_+$&quot;</span><span class="p">,</span> <span class="s2">&quot;$Y_-$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\delta Y_-$&quot;</span><span class="p">],</span>
+    <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyeye&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">a</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
 <span class="n">b</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
@@ -128,7 +136,7 @@ second channel of uncertainities. The uncertainity calculation is then propagate
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/channel_math.png">png</a>, <a class="reference external" href="../samples/channel_math.hires.png">hires.png</a>, <a class="reference external" href="../samples/channel_math.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-default">
 <img alt="../_images/channel_math.png" src="../_images/channel_math.png" />
 </div>
 </div>
@@ -239,7 +247,9 @@ points averaged into each bin.. If <em>clone</em> is True or not provided, <a cl
 <span class="n">g</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
 <span class="n">h</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">binned</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;0.05 Linear&quot;</span><span class="p">,</span> <span class="s2">&quot;0.25 Linear&quot;</span><span class="p">,</span> <span class="s2">&quot;0.05 Log&quot;</span><span class="p">,</span> <span class="s2">&quot;50 log&quot;</span><span class="p">])):</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">binned</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+    <span class="nb">zip</span><span class="p">([</span><span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;0.05 Linear&quot;</span><span class="p">,</span> <span class="s2">&quot;0.25 Linear&quot;</span><span class="p">,</span> <span class="s2">&quot;0.05 Log&quot;</span><span class="p">,</span> <span class="s2">&quot;50 log&quot;</span><span class="p">])</span>
+<span class="p">):</span>
     <span class="n">binned</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">411</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
     <span class="n">binned</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">fig</span>
@@ -252,7 +262,7 @@ points averaged into each bin.. If <em>clone</em> is True or not provided, <a cl
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/bins.png">png</a>, <a class="reference external" href="../samples/bins.hires.png">hires.png</a>, <a class="reference external" href="../samples/bins.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-default">
 <img alt="../_images/bins.png" src="../_images/bins.png" />
 </div>
 </div>
@@ -262,7 +272,7 @@ points averaged into each bin.. If <em>clone</em> is True or not provided, <a cl
 underlying trends. The Stoner package offers a  number of approaches to filtering data.</p>
 <blockquote>
 <div><ul>
-<li><p class="first">Smoothing by convoluting with a window</p>
+<li><p>Smoothing by convoluting with a window</p>
 <blockquote>
 <div><p>This is a powerful method of smoothing data by constructing an appropriate length and shape of ‘window function’ that
 is then convulted with the data so that every point becomes some form of weighted average of surrounding points as
@@ -272,21 +282,21 @@ defined by the window function. This is handled by the <a class="reference inter
 </pre></div>
 </div>
 <p>In both these examples, the data to be smoothed is determined from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.
-The first argument is passed to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
+The first argument is passed to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.3.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
 can either be an integer to sepcify the number of rows in the window, or a float to specify the size of the window in
 terms of the x data. In the latter case, the data is first reinterpolated to an evenly space set in terms of the x-column
 and then smoothed and then reinterpolated back to the original x data co-ordinates.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This will fail for hysteretic data. In this case it would be better to use an integer size argument and to ensure
+<p class="admonition-title">Warning</p>
+<p>This will fail for hysteretic data. In this case it would be better to use an integer size argument and to ensure
 the data is evenly spaced to start with.</p>
 </div>
-<p>The <em>result</em> and <em>replace</em> arguments are passed through to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.add_column()</span></code> unless <em>replace</em>
+<p>The <em>result</em> and <em>replace</em> arguments are passed through to <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.add_column()</span></code></a> unless <em>replace</em>
 is <strong>False</strong> in which case, the smoothed data is passed back as the return value and the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>
 is left unmodified.</p>
 </div></blockquote>
 </li>
-<li><p class="first">Savitzky-Golay filtering</p>
+<li><p>Savitzky-Golay filtering</p>
 <blockquote>
 <div><p>This is a common filtering technique, particularly for spectroscopic data as it is good at keeping major peak locations
 and widths. In essence it is equivalent to least-squares fitting a low order polynomial to a window of the data and using
@@ -294,7 +304,7 @@ the co-effienicents of the fitting polynomail to determine the smoothed (or diff
 <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.SG_Filter" title="Stoner.Analysis.AnalysisMixin.SG_Filter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.SG_Filter()</span></code></a> method.</p>
 </div></blockquote>
 </li>
-<li><p class="first">Spline</p>
+<li><p>Spline</p>
 <blockquote>
 <div><p>An alternative approach is to use a smoothing spline to fit the data locally. Depending on the spline smoothing setting
 this will create a function that is continuous in both value and derivative that approaches the data. Unlike Savotzky-
@@ -302,7 +312,7 @@ Golay fitlering it cannot be used to calculate a derivative easily, but it can h
 implemented as the <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.spline" title="Stoner.Analysis.AnalysisMixin.spline"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.spline()</span></code></a> method.</p>
 </div></blockquote>
 </li>
-<li><p class="first">Rebinning</p>
+<li><p>Rebinning</p>
 <blockquote>
 <div><p>As ullustrated above, rebinning the data is a common way fof reducing noise by combining several data points. This is simple
 and effective, but does reduce the length of the data !</p>
@@ -344,7 +354,7 @@ and effective, but does reduce the length of the data !</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/smooth.png">png</a>, <a class="reference external" href="../samples/smooth.hires.png">hires.png</a>, <a class="reference external" href="../samples/smooth.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-default">
 <img alt="../_images/smooth.png" src="../_images/smooth.png" />
 </div>
 </div>
@@ -379,14 +389,16 @@ a <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.h
 <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">]</span>
 <span class="n">txt</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">lead</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$x&#39;\rightarrow x+A$&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$y&#39;=\rightarrow By+C$&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">s2</span><span class="p">[</span><span class="s2">&quot;Stitching Coefficients&quot;</span><span class="p">],</span> <span class="n">s2</span><span class="p">[</span><span class="s2">&quot;Stitching Coeffient Errors&quot;</span><span class="p">]):</span>
+<span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+    <span class="n">labels</span><span class="p">,</span> <span class="n">s2</span><span class="p">[</span><span class="s2">&quot;Stitching Coefficients&quot;</span><span class="p">],</span> <span class="n">s2</span><span class="p">[</span><span class="s2">&quot;Stitching Coeffient Errors&quot;</span><span class="p">]</span>
+<span class="p">):</span>
     <span class="n">txt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_error</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">l</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="n">lead</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">txt</span><span class="p">),</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/stitch.png">png</a>, <a class="reference external" href="../samples/stitch.hires.png">hires.png</a>, <a class="reference external" href="../samples/stitch.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-default">
 <img alt="../_images/stitch.png" src="../_images/stitch.png" />
 </div>
 <p>The stitch method can be fine tuned by specifying the possible scaling and shifting operations, overlap
@@ -466,7 +478,9 @@ as one moves further from the end of the data.</p>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span>
-    <span class="n">column_stack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">]),</span>
+    <span class="n">column_stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="p">),</span>
     <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">,</span>
     <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">],</span>
 <span class="p">)</span>
@@ -480,14 +494,16 @@ as one moves further from the end of the data.</p>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;k.&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Extrapolation Demo&quot;</span>
 
-<span class="n">errorfill</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span> <span class="n">y2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">y2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Quadratic Extrapolation&quot;</span><span class="p">)</span>
+<span class="n">errorfill</span><span class="p">(</span>
+    <span class="n">extra_x</span><span class="p">,</span> <span class="n">y2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">y2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Quadratic Extrapolation&quot;</span>
+<span class="p">)</span>
 <span class="n">errorfill</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span> <span class="n">y3</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">y3</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cubic Extrapolation&quot;</span><span class="p">)</span>
 <span class="n">errorfill</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span> <span class="n">y1</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">y1</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Linear Extrapolation&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/extrapolate-demo.png">png</a>, <a class="reference external" href="../samples/extrapolate-demo.hires.png">hires.png</a>, <a class="reference external" href="../samples/extrapolate-demo.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-default">
 <img alt="../_images/extrapolate-demo.png" src="../_images/extrapolate-demo.png" />
 </div>
 <p>Extrapolation is of course most succesful if one has a physical model that should describe the data.
@@ -543,7 +559,7 @@ less equal significance. By default, only peaks are returned in order of x posit
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/peaks.png">png</a>, <a class="reference external" href="../samples/peaks.hires.png">hires.png</a>, <a class="reference external" href="../samples/peaks.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-default">
 <img alt="../_images/peaks.png" src="../_images/peaks.png" />
 </div>
 </div>
@@ -559,7 +575,7 @@ less equal significance. By default, only peaks are returned in order of x posit
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
-  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <h3><a href="../index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Analysing Data Files</a><ul>
 <li><a class="reference internal" href="#normalising-and-basic-maths-operations">Normalising and Basic Maths Operations</a></li>
@@ -588,22 +604,19 @@ less equal significance. By default, only peaks are returned in order of x posit
   <h4>Next topic</h4>
   <p class="topless"><a href="datafolder.html"
                         title="next chapter">Working with Lots of Files</a></p>
-<div class="sourcelink">
-  <a href="../_sources/UserGuide/analysisfile.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/analysisfile.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -631,9 +644,9 @@ less equal significance. By default, only peaks are returned in order of x posit
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

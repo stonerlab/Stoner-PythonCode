@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Working with Lots of Files &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Working with Images" href="image.html" />
@@ -128,8 +128,8 @@ would be runs produced by the i10 beamline at Diamond), but in the second case t
 number (which comes after ‘’i10-‘’ would be captured and presented as the <em>run</em> parameter in
 the metadata when the file was read.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Note that the files are not modified - the extra metadata is only added as the file is read by the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFlder</span></code>.</p>
+<p class="admonition-title">Warning</p>
+<p>Note that the files are not modified - the extra metadata is only added as the file is read by the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFlder</span></code>.</p>
 </div>
 <p>The loading process will also add the metadata key ‘’Loaded From’’ to the file which will give you a
 note of the filename used to read the data. If the attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFolder.read_means</span></code> is set to <strong>True</strong>
@@ -172,8 +172,8 @@ metadata as each file is loaded. The <em>read_means</em> boolean parameter can e
 attributes on the individual <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> instances as they are loaded from disc. This,
 for example, can allow one to set the default <code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Data.setas</span></code> attribute for each file.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">A particularly useful parameter to set in the DataFolder constructor is the <em>setas</em> parameter - this will ensure that the Lpy:attr:<cite>Stoner.Data.setas</cite>
+<p class="admonition-title">Note</p>
+<p>A particularly useful parameter to set in the DataFolder constructor is the <em>setas</em> parameter - this will ensure that the Lpy:attr:<cite>Stoner.Data.setas</cite>
 attribute is set to identify columns of data as x, y etc. as the data files are loaded into the folder - thus allowing subsequent calls to
 <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> methods to run without needing to explictly set the columns each time.</p>
 </div>
@@ -208,8 +208,8 @@ flatten and unflatten a <a class="reference internal" href="../classes/Stoner.Fo
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The unary invert operator ~ will always create a new <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> before doing the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFolder.flatten()</span></code> or
+<p class="admonition-title">Note</p>
+<p>The unary invert operator ~ will always create a new <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> before doing the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFolder.flatten()</span></code> or
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFolder.unflatten()</span></code> - so that the original <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> is left unchanged. In contrast the
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFolder.flatten()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFolder.unflatten()</span></code> methods will change the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> as well as return a
 copy of the changed <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a>.</p>
@@ -226,8 +226,8 @@ objects to an existing <a class="reference internal" href="../classes/Stoner.Fol
 <p>This will firstly combine all the files and then recursively merge the groups. If each <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> instance has the same
 groups, then they are merged with the addition operator.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Strictly, the last example is adding an instance of the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFolder.type</span></code> to the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> - type checking
+<p class="admonition-title">Note</p>
+<p>Strictly, the last example is adding an instance of the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFolder.type</span></code> to the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> - type checking
 is carried out to ensure that this is so.</p>
 </div>
 </div>
@@ -241,8 +241,8 @@ via the <code class="xref py py-attr docutils literal notranslate"><span class="
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Both the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFolder.ls</span></code> and the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFolder.lsgrp</span></code> are generators, so they only return enties as they
+<p class="admonition-title">Note</p>
+<p>Both the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFolder.ls</span></code> and the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFolder.lsgrp</span></code> are generators, so they only return enties as they
 are iterated over. This is (roughly) in line with the Python 3 way of doing things - if you actually want the whole list
 then you should wrap them in a <em>list()</em>.</p>
 </div>
@@ -256,7 +256,8 @@ or the filename if they haven’t been loaded into memory yet.:</p>
 </div>
 <p>The various subfolder are stored in a dictionary in the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFolder.groups</span></code> attribute.</p>
 <blockquote>
-<div>f.groups</div></blockquote>
+<div><p>f.groups</p>
+</div></blockquote>
 <p>Both the files and groups in a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> can be accessed either by integer index or by name. If a string name is used
 and doesn’t exactly match, then it is interpreted as a regular expression and that is matched instead. This only applies for retrieving
 tiems - for setting items an exact name or integer index is required.</p>
@@ -390,19 +391,19 @@ is missing.:</p>
 of )oif <em>values_only</em> is True, just a list, but the <em>output</em> parameter can change this. The options for <em>output</em> are:</p>
 <blockquote>
 <div><ul>
-<li><p class="first">“dict” or dict (the default if <em>values_only</em> is False)</p>
+<li><p>“dict” or dict (the default if <em>values_only</em> is False)</p>
 <p>return a list of dictionary subsets of the metadata</p>
 </li>
-<li><p class="first">“list” or list (the default if <em>values_only</em> is True)</p>
+<li><p>“list” or list (the default if <em>values_only</em> is True)</p>
 <p>return a list of values of each item pf the metadata. If only item of metadata is requested, then just rturns a list.</p>
 </li>
-<li><p class="first">“array” or np.array</p>
+<li><p>“array” or np.array</p>
 <p>return a single array - like list above, but returns as a numpy array. This can create a 2D array from multiple keys</p>
 </li>
-<li><p class="first">“Data” or Stoner.Data</p>
+<li><p>“Data” or Stoner.Data</p>
 <p>returns the metadata in a Stoner.Data object where the column headers are the metadata keys.</p>
 </li>
-<li><p class="first">“smart”</p>
+<li><p>“smart”</p>
 <p>switch between dict and list depending whether there is one or more keys.</p>
 </li>
 </ul>
@@ -483,9 +484,9 @@ based on metadata values.:</p>
 as the asis of the selection and also the operation to be performed. The value of the keyword argument is the value use to check. The oepration is
 seperated from the column name by a double underscore.</p>
 <p>In the first example, only those files with a metadata value “temperature_T1” which is 4.2 will be selected, here there is no operator specified,
-so for a single scalar value it is assumed to be ‘’__eq’’ for equals. For a tuple it would be ‘’__between’’ and for a longer list ‘’__in’‘.
-In the second example, the ‘’__gt’’ (greater than) operator is used and in the third it is ‘’__between’‘, but in addition, this is inverted with
-‘__not’‘. The fourth option illustrates a test with memtadata whose values are strings. In addition, the use of the two keyword arguments is the
+so for a single scalar value it is assumed to be ‘’__eq’’ for equals. For a tuple it would be ‘’__between’’ and for a longer list ‘’__in’’.
+In the second example, the ‘’__gt’’ (greater than) operator is used and in the third it is ‘’__between’’, but in addition, this is inverted with
+‘__not’’. The fourth option illustrates a test with memtadata whose values are strings. In addition, the use of the two keyword arguments is the
 logical OR of testing for either. The equiavblant process for a logical AND is shown in the sixth example with successive selects (the ‘’__icontains’’
 operator is a case insenesitive match). The final example uses a dictionary passed as a non-keyword argument to show how to select memtadata keys
 that are not valid Python identifiers.</p>
@@ -521,9 +522,9 @@ via the <code class="xref py py-attr docutils literal notranslate"><span class="
 </pre></div>
 </div>
 <p>would return a list of the files measured at 4.2K and 1T.</p>
-<dl class="docutils">
-<dt>If you try indexing a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> with a string it first checks to see if there is a matching group</dt>
-<dd>with a key of the same string then <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> will return the</dd>
+<dl class="simple">
+<dt>If you try indexing a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> with a string it first checks to see if there is a matching group</dt><dd><p>with a key of the same string then <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> will return the</p>
+</dd>
 </dl>
 <p>corresponding group. This allows a more compact navigation through an extended group structure.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">([</span><span class="s1">&#39;project&#39;</span><span class="p">,</span><span class="s1">&#39;sample&#39;</span><span class="p">,</span><span class="s1">&#39;device&#39;</span><span class="p">])</span> <span class="c1"># group will take a list</span>
@@ -538,7 +539,7 @@ the <code class="xref py py-meth docutils literal notranslate"><span class="pre"
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">add_group</span><span class="p">(</span><span class="s2">&quot;key_value&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>which will create the new group with a key of ‘’key_value’‘.</p>
+<p>which will create the new group with a key of ‘’key_value’’.</p>
 </div>
 </div>
 <div class="section" id="reducing-data">
@@ -613,14 +614,14 @@ each and so. This presupposes that the files started of sorted by some suitable 
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
-  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <h3><a href="../index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Working with Lots of Files</a><ul>
 <li><a class="reference internal" href="#basic-operations">Basic Operations</a><ul>
 <li><a class="reference internal" href="#building-a-virtual-folder-of-data">Building a (virtual) Folder of Data</a></li>
 <li><a class="reference internal" href="#more-options-on-reading-the-files-on-disk">More Options on Reading the Files on Disk</a><ul>
 <li><a class="reference internal" href="#dealing-with-revision-numbers">Dealing With Revision Numbers</a></li>
-<li><a class="reference internal" href="#more-goodies-for-datafolder-s">More Goodies for <code class="docutils literal notranslate"><span class="pre">DataFolder</span></code> s</a></li>
+<li><a class="reference internal" href="#more-goodies-for-datafolder-s">More Goodies for <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code> s</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#other-options">Other Options</a></li>
@@ -648,22 +649,19 @@ each and so. This presupposes that the files started of sorted by some suitable 
   <h4>Next topic</h4>
   <p class="topless"><a href="image.html"
                         title="next chapter">Working with Images</a></p>
-<div class="sourcelink">
-  <a href="../_sources/UserGuide/datafolder.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/datafolder.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -691,9 +689,9 @@ each and so. This presupposes that the files started of sorted by some suitable 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

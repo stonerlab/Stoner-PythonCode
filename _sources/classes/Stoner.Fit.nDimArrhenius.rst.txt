@@ -1,6 +1,0 @@
-nDimArrhenius
-=============
-
-.. currentmodule:: Stoner.Fit
-
-.. autofunction:: nDimArrhenius

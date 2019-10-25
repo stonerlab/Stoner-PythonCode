@@ -5,3 +5,17 @@ typedList
 
 .. autoclass:: typedList
    :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~typedList.extend
+      ~typedList.index
+      ~typedList.insert
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: extend
+   .. automethod:: index
+   .. automethod:: insert

@@ -47,6 +47,7 @@ Stoner.FileFormats.OVFFile
       ~Stoner.FileFormats.OVFFile.sort
       ~Stoner.FileFormats.OVFFile.split
       ~Stoner.FileFormats.OVFFile.swap_column
+      ~Stoner.FileFormats.OVFFile.to_pandas
       ~Stoner.FileFormats.OVFFile.unique
       ~Stoner.FileFormats.OVFFile.update
       ~Stoner.FileFormats.OVFFile.values

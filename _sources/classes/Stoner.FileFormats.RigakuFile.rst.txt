@@ -48,6 +48,7 @@ Stoner.FileFormats.RigakuFile
       ~Stoner.FileFormats.RigakuFile.split
       ~Stoner.FileFormats.RigakuFile.swap_column
       ~Stoner.FileFormats.RigakuFile.to_Q
+      ~Stoner.FileFormats.RigakuFile.to_pandas
       ~Stoner.FileFormats.RigakuFile.unique
       ~Stoner.FileFormats.RigakuFile.update
       ~Stoner.FileFormats.RigakuFile.values

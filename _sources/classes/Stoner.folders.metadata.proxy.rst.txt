@@ -5,3 +5,35 @@ proxy
 
 .. autoclass:: proxy
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~proxy.all
+      ~proxy.common_keys
+      ~proxy.common_metadata
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~proxy.all_items
+      ~proxy.all_keys
+      ~proxy.all_values
+      ~proxy.apply
+      ~proxy.slice
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: all
+   .. autoattribute:: common_keys
+   .. autoattribute:: common_metadata
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: all_items
+   .. automethod:: all_keys
+   .. automethod:: all_values
+   .. automethod:: apply
+   .. automethod:: slice

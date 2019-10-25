@@ -47,6 +47,7 @@ Stoner.FileFormats.RasorFile
       ~Stoner.FileFormats.RasorFile.sort
       ~Stoner.FileFormats.RasorFile.split
       ~Stoner.FileFormats.RasorFile.swap_column
+      ~Stoner.FileFormats.RasorFile.to_pandas
       ~Stoner.FileFormats.RasorFile.unique
       ~Stoner.FileFormats.RasorFile.update
       ~Stoner.FileFormats.RasorFile.values

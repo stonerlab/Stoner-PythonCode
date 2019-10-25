@@ -47,6 +47,7 @@ Stoner.FileFormats.FmokeFile
       ~Stoner.FileFormats.FmokeFile.sort
       ~Stoner.FileFormats.FmokeFile.split
       ~Stoner.FileFormats.FmokeFile.swap_column
+      ~Stoner.FileFormats.FmokeFile.to_pandas
       ~Stoner.FileFormats.FmokeFile.unique
       ~Stoner.FileFormats.FmokeFile.update
       ~Stoner.FileFormats.FmokeFile.values

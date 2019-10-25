@@ -47,6 +47,7 @@ Stoner.FileFormats.MokeFile
       ~Stoner.FileFormats.MokeFile.sort
       ~Stoner.FileFormats.MokeFile.split
       ~Stoner.FileFormats.MokeFile.swap_column
+      ~Stoner.FileFormats.MokeFile.to_pandas
       ~Stoner.FileFormats.MokeFile.unique
       ~Stoner.FileFormats.MokeFile.update
       ~Stoner.FileFormats.MokeFile.values

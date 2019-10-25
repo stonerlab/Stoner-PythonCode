@@ -5,3 +5,29 @@ HGXFile
 
 .. autoclass:: HGXFile
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~HGXFile.mime_type
+      ~HGXFile.pattern
+      ~HGXFile.priority
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~HGXFile.main_data
+      ~HGXFile.scan_group
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: mime_type
+   .. autoattribute:: pattern
+   .. autoattribute:: priority
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: main_data
+   .. automethod:: scan_group

@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>baseFolder &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="DiskBasedFolder" href="Stoner.folders.mixins.DiskBasedFolder.html" />
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -55,42 +55,66 @@
 <h1>baseFolder<a class="headerlink" href="#basefolder" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.folders.core.baseFolder">
-<em class="property">class </em><code class="descclassname">Stoner.folders.core.</code><code class="descname">baseFolder</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableSequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableSequence</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.folders.core.</code><code class="sig-name descname">baseFolder</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableSequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableSequence</span></code></a></p>
 <p>A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.</p>
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.groups">
-<code class="descname">groups</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.groups" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>regexpDict</em> – A dictionary of similar baseFolder instances</p>
+<code class="sig-name descname">groups</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary of similar baseFolder instances</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="Stoner.core.base.regexpDict.html#Stoner.core.base.regexpDict" title="Stoner.core.base.regexpDict">regexpDict</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.objects">
-<code class="descname">objects</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.objects" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>regexptDict</em> – A dictionary of metadataObjects</p>
+<code class="sig-name descname">objects</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary of metadataObjects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>regexptDict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder._index">
-<code class="descname">_index</code><a class="headerlink" href="#Stoner.folders.core.baseFolder._index" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> – An index of the keys associated with objects</p>
+<code class="sig-name descname">_index</code><a class="headerlink" href="#Stoner.folders.core.baseFolder._index" title="Permalink to this definition">¶</a></dt>
+<dd><p>An index of the keys associated with objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder._defaults">
-<code class="descname">_defaults</code><a class="headerlink" href="#Stoner.folders.core.baseFolder._defaults" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – A dictionary of default balues for the constructor of the class when combined with mixin classes</p>
+<code class="sig-name descname">_defaults</code><a class="headerlink" href="#Stoner.folders.core.baseFolder._defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary of default balues for the constructor of the class when combined with mixin classes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder._no_defaults">
-<code class="descname">_no_defaults</code><a class="headerlink" href="#Stoner.folders.core.baseFolder._no_defaults" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> – A list of default parameters to veto when setting the constructor.</p>
+<code class="sig-name descname">_no_defaults</code><a class="headerlink" href="#Stoner.folders.core.baseFolder._no_defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of default parameters to veto when setting the constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="docutils">
-<dt>Properties:</dt>
-<dd>depth (int): The maximum number of levels of nested groups in the folder
+<dl class="simple">
+<dt>Properties:</dt><dd><p>depth (int): The maximum number of levels of nested groups in the folder
 files (list of str or metadataObject): the indivdual objects or their names if they are not loaded
 instance (metadataObject): an empty instance of the data type stored in the folder
 loaded (generator of (str name, metadataObject value): iterate over only the loaded into memory items of the folder
@@ -99,7 +123,8 @@ lsgrp (list of str): the names of all the groups in the folder
 mindepth (int): the minimum level of nesting groups in the folder.
 not_empty (iterator of metadaaObject): iterates over all members of the folder that have non-zero length
 shape (tuple): a data structure that indicates the structure of the objectFolder - tuple of number of files and dictionary of the shape of each group.
-type (subclass of metadtaObject): the class of objects sotred in this folder</dd>
+type (subclass of metadtaObject): the class of objects sotred in this folder</p>
+</dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>A baseFolder is a multable sequence object that should store a mapping of instances of some sort of data object (typically a
@@ -107,419 +132,412 @@ type (subclass of metadtaObject): the class of objects sotred in this folder</dd
 other requirement is that it stores a mapping to objects of its own type to allow an in-memory tree object to be constructed.</p>
 <p>Additional functionality is built in by providing mixin classes that override the accessors for the data object store. Minimally this should include</p>
 <ul class="simple">
-<li>__lookup__ take a keyname and return a canonical accessor key</li>
-<li>__names__ returns the ordered list of mapping keys to the object store</li>
-<li>__getter__ returns a single instance of the data object referenced by a canonical key</li>
-<li>__setter__ add or overwrite an instance of the object store by canonical key</li>
-<li>__inserter__ insert an instance into a specific place in the Folder</li>
-<li>__deleter__ remove an instance of a data object by canonical key</li>
-<li>__clear__ remove all instance</li>
-<li>__clone__ create a new copy of the mixin’s state kinformation</li>
+<li><p>__lookup__ take a keyname and return a canonical accessor key</p></li>
+<li><p>__names__ returns the ordered list of mapping keys to the object store</p></li>
+<li><p>__getter__ returns a single instance of the data object referenced by a canonical key</p></li>
+<li><p>__setter__ add or overwrite an instance of the object store by canonical key</p></li>
+<li><p>__inserter__ insert an instance into a specific place in the Folder</p></li>
+<li><p>__deleter__ remove an instance of a data object by canonical key</p></li>
+<li><p>__clear__ remove all instance</p></li>
+<li><p>__clone__ create a new copy of the mixin’s state kinformation</p></li>
 </ul>
 <p class="rubric">Attributes Summary</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.clone" title="Stoner.folders.core.baseFolder.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></a></td>
-<td>Clone just does a deepcopy as a property for compatibility with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a>.</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.clone" title="Stoner.folders.core.baseFolder.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></a></p></td>
+<td><p>Clone just does a deepcopy as a property for compatibility with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.debug" title="Stoner.folders.core.baseFolder.debug"><code class="xref py py-obj docutils literal notranslate"><span class="pre">debug</span></code></a></td>
-<td>Just read the local debug value.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.debug" title="Stoner.folders.core.baseFolder.debug"><code class="xref py py-obj docutils literal notranslate"><span class="pre">debug</span></code></a></p></td>
+<td><p>Just read the local debug value.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.defaults" title="Stoner.folders.core.baseFolder.defaults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">defaults</span></code></a></td>
-<td>Build a single list of all of our defaults by iterating over the __mro__, caching the result.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.defaults" title="Stoner.folders.core.baseFolder.defaults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">defaults</span></code></a></p></td>
+<td><p>Build a single list of all of our defaults by iterating over the __mro__, caching the result.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.depth" title="Stoner.folders.core.baseFolder.depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">depth</span></code></a></td>
-<td>Gives the maximum number of levels of group below the current objectFolder.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.depth" title="Stoner.folders.core.baseFolder.depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">depth</span></code></a></p></td>
+<td><p>Gives the maximum number of levels of group below the current objectFolder.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.each" title="Stoner.folders.core.baseFolder.each"><code class="xref py py-obj docutils literal notranslate"><span class="pre">each</span></code></a></td>
-<td>Return a <a class="reference internal" href="Stoner.folders.each.item.html#Stoner.folders.each.item" title="Stoner.folders.each.item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.each.item</span></code></a> proxy object for calling attributes of the member type of the folder.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.each" title="Stoner.folders.core.baseFolder.each"><code class="xref py py-obj docutils literal notranslate"><span class="pre">each</span></code></a></p></td>
+<td><p>Return a <a class="reference internal" href="Stoner.folders.each.item.html#Stoner.folders.each.item" title="Stoner.folders.each.item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.each.item</span></code></a> proxy object for calling attributes of the member type of the folder.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.files" title="Stoner.folders.core.baseFolder.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></td>
-<td>Return an iterator of potentially unloaded named objects.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.files" title="Stoner.folders.core.baseFolder.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
+<td><p>Return an iterator of potentially unloaded named objects.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.groups" title="Stoner.folders.core.baseFolder.groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">groups</span></code></a></td>
-<td>Subfolders are held in an ordered dictionary of groups.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.groups" title="Stoner.folders.core.baseFolder.groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">groups</span></code></a></p></td>
+<td><p>Subfolders are held in an ordered dictionary of groups.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.instance" title="Stoner.folders.core.baseFolder.instance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">instance</span></code></a></td>
-<td>A default instance of the type of object in the folder.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.instance" title="Stoner.folders.core.baseFolder.instance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">instance</span></code></a></p></td>
+<td><p>A default instance of the type of object in the folder.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.is_empty" title="Stoner.folders.core.baseFolder.is_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_empty</span></code></a></td>
-<td></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.is_empty" title="Stoner.folders.core.baseFolder.is_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_empty</span></code></a></p></td>
+<td><p>Return True if the folder is empty.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.key" title="Stoner.folders.core.baseFolder.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code></a></td>
-<td>Allow overriding for getting and setting the key in mixins.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.key" title="Stoner.folders.core.baseFolder.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code></a></p></td>
+<td><p>Allow overriding for getting and setting the key in mixins.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.loaded" title="Stoner.folders.core.baseFolder.loaded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loaded</span></code></a></td>
-<td>An iterator that indicates wether the contents of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.objectFolder</span></code> has been loaded into memory.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.loaded" title="Stoner.folders.core.baseFolder.loaded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loaded</span></code></a></p></td>
+<td><p>An iterator that indicates wether the contents of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.objectFolder</span></code> has been loaded into memory.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.loader" title="Stoner.folders.core.baseFolder.loader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loader</span></code></a></td>
-<td></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.loader" title="Stoner.folders.core.baseFolder.loader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loader</span></code></a></p></td>
+<td><p>Return a callable that will load the files on demand.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.ls" title="Stoner.folders.core.baseFolder.ls"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ls</span></code></a></td>
-<td>List just the names of the objects in the folder.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.ls" title="Stoner.folders.core.baseFolder.ls"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ls</span></code></a></p></td>
+<td><p>List just the names of the objects in the folder.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.lsgrp" title="Stoner.folders.core.baseFolder.lsgrp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lsgrp</span></code></a></td>
-<td>Returns a list of the groups as a generator.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.lsgrp" title="Stoner.folders.core.baseFolder.lsgrp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lsgrp</span></code></a></p></td>
+<td><p>Returns a list of the groups as a generator.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.metadata" title="Stoner.folders.core.baseFolder.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></a></td>
-<td>Returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.metadata.combined_metadata_pryx</span></code> object for operations on combined metadata.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.metadata" title="Stoner.folders.core.baseFolder.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></a></p></td>
+<td><p>Returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.metadata.combined_metadata_pryx</span></code> object for operations on combined metadata.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.mindepth" title="Stoner.folders.core.baseFolder.mindepth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mindepth</span></code></a></td>
-<td>Gives the minimum number of levels of group below the current objectFolder.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.mindepth" title="Stoner.folders.core.baseFolder.mindepth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mindepth</span></code></a></p></td>
+<td><p>Gives the minimum number of levels of group below the current objectFolder.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.not_empty" title="Stoner.folders.core.baseFolder.not_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">not_empty</span></code></a></td>
-<td>An iterator for objectFolder that checks whether the loaded metadataObject objects have any data.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.not_empty" title="Stoner.folders.core.baseFolder.not_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">not_empty</span></code></a></p></td>
+<td><p>An iterator for objectFolder that checks whether the loaded metadataObject objects have any data.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.objects" title="Stoner.folders.core.baseFolder.objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">objects</span></code></a></td>
-<td>The objects in the folder are stored in a <code class="xref py py-class docutils literal notranslate"><span class="pre">regexpDict</span></code>.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.objects" title="Stoner.folders.core.baseFolder.objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">objects</span></code></a></p></td>
+<td><p>The objects in the folder are stored in a <code class="xref py py-class docutils literal notranslate"><span class="pre">regexpDict</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.root" title="Stoner.folders.core.baseFolder.root"><code class="xref py py-obj docutils literal notranslate"><span class="pre">root</span></code></a></td>
-<td></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.root" title="Stoner.folders.core.baseFolder.root"><code class="xref py py-obj docutils literal notranslate"><span class="pre">root</span></code></a></p></td>
+<td><p>Return the real folder root.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.shape" title="Stoner.folders.core.baseFolder.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
-<td>Return a data structure that is characteristic of the objectFolder’s shape.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.shape" title="Stoner.folders.core.baseFolder.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>Return a data structure that is characteristic of the objectFolder’s shape.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.trunkdepth" title="Stoner.folders.core.baseFolder.trunkdepth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trunkdepth</span></code></a></td>
-<td>The number of levels of group before a group with files is found.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.trunkdepth" title="Stoner.folders.core.baseFolder.trunkdepth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trunkdepth</span></code></a></p></td>
+<td><p>The number of levels of group before a group with files is found.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.type" title="Stoner.folders.core.baseFolder.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></td>
-<td>Defines the (sub)class of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> instances.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.type" title="Stoner.folders.core.baseFolder.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></td>
+<td><p>Defines the (sub)class of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> instances.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Summary</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.add_group" title="Stoner.folders.core.baseFolder.add_group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_group</span></code></a>(key)</td>
-<td>Add a new group to the current baseFolder with the given key.</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.add_group" title="Stoner.folders.core.baseFolder.add_group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_group</span></code></a>(key)</p></td>
+<td><p>Add a new group to the current baseFolder with the given key.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.all" title="Stoner.folders.core.baseFolder.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a>()</td>
-<td>Iterates over all the files in the Folder and all it’s sub Folders recursively.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.all" title="Stoner.folders.core.baseFolder.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a>()</p></td>
+<td><p>Iterates over all the files in the Folder and all it’s sub Folders recursively.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.append" title="Stoner.folders.core.baseFolder.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>(value)</td>
-<td>Append an item to the folder object</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.append" title="Stoner.folders.core.baseFolder.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>(value)</p></td>
+<td><p>Append an item to the folder object</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.clear" title="Stoner.folders.core.baseFolder.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</td>
-<td>Clear the subgroups.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.clear" title="Stoner.folders.core.baseFolder.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
+<td><p>Clear the subgroups.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.compress" title="Stoner.folders.core.baseFolder.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>([base,&nbsp;key])</td>
-<td>Compresses all empty groups from the root up until the first non-empty group is located.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.compress" title="Stoner.folders.core.baseFolder.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>([base, key])</p></td>
+<td><p>Compresses all empty groups from the root up until the first non-empty group is located.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.count" title="Stoner.folders.core.baseFolder.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>(name)</td>
-<td>Provide a count method like a sequence.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.count" title="Stoner.folders.core.baseFolder.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>(name)</p></td>
+<td><p>Provide a count method like a sequence.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.extend" title="Stoner.folders.core.baseFolder.extend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend</span></code></a>(values)</td>
-<td>S.extend(iterable) – extend sequence by appending elements from the iterable</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.extend" title="Stoner.folders.core.baseFolder.extend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend</span></code></a>(values)</p></td>
+<td><p>S.extend(iterable) – extend sequence by appending elements from the iterable</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.fetch" title="Stoner.folders.core.baseFolder.fetch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fetch</span></code></a>()</td>
-<td>Preload the contents of the baseFolder.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.fetch" title="Stoner.folders.core.baseFolder.fetch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fetch</span></code></a>()</p></td>
+<td><p>Preload the contents of the baseFolder.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.file" title="Stoner.folders.core.baseFolder.file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file</span></code></a>(name,&nbsp;value[,&nbsp;create,&nbsp;pathsplit])</td>
-<td>Recursively add groups in order to put the named value into a virtual tree of <a class="reference internal" href="#Stoner.folders.core.baseFolder" title="Stoner.folders.core.baseFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code></a>.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.file" title="Stoner.folders.core.baseFolder.file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file</span></code></a>(name, value[, create, pathsplit])</p></td>
+<td><p>Recursively add groups in order to put the named value into a virtual tree of <a class="reference internal" href="#Stoner.folders.core.baseFolder" title="Stoner.folders.core.baseFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.filter" title="Stoner.folders.core.baseFolder.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>([filter,&nbsp;invert,&nbsp;copy])</td>
-<td>Filter the current set of files by some criterion</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.filter" title="Stoner.folders.core.baseFolder.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>([filter, invert, copy])</p></td>
+<td><p>Filter the current set of files by some criterion</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.filterout" title="Stoner.folders.core.baseFolder.filterout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filterout</span></code></a>(filter[,&nbsp;copy])</td>
-<td>Synonym for self.filter(filter,invert=True)</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.filterout" title="Stoner.folders.core.baseFolder.filterout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filterout</span></code></a>(filter[, copy])</p></td>
+<td><p>Synonym for self.filter(filter,invert=True)</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.flatten" title="Stoner.folders.core.baseFolder.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a>([depth])</td>
-<td>Compresses all the groups and sub-groups iunto a single flat file list.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.flatten" title="Stoner.folders.core.baseFolder.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a>([depth])</p></td>
+<td><p>Compresses all the groups and sub-groups iunto a single flat file list.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.get" title="Stoner.folders.core.baseFolder.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(name[,&nbsp;default])</td>
-<td>Return either a sub-group or named object from this folder.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.get" title="Stoner.folders.core.baseFolder.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(name[, default])</p></td>
+<td><p>Return either a sub-group or named object from this folder.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.group" title="Stoner.folders.core.baseFolder.group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">group</span></code></a>(key)</td>
-<td>Take the files and sort them into a series of separate objectFolder objects according to the value of the key</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.group" title="Stoner.folders.core.baseFolder.group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">group</span></code></a>(key)</p></td>
+<td><p>Take the files and sort them into a series of separate objectFolder objects according to the value of the key</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.index" title="Stoner.folders.core.baseFolder.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>(name[,&nbsp;start,&nbsp;end])</td>
-<td>Provide an index method like a sequence.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.index" title="Stoner.folders.core.baseFolder.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>(name[, start, end])</p></td>
+<td><p>Provide an index method like a sequence.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.insert" title="Stoner.folders.core.baseFolder.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a>(ix,&nbsp;value)</td>
-<td>Implements the insert method with the option to append as well.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.insert" title="Stoner.folders.core.baseFolder.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a>(ix, value)</p></td>
+<td><p>Implements the insert method with the option to append as well.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.items" title="Stoner.folders.core.baseFolder.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</td>
-<td>Return the key,value pairs for the subbroups of this folder.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.items" title="Stoner.folders.core.baseFolder.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</p></td>
+<td><p>Return the key,value pairs for the subbroups of this folder.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.keys" title="Stoner.folders.core.baseFolder.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</td>
-<td>Return the keys used to access the sub-=groups of this folder.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.keys" title="Stoner.folders.core.baseFolder.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</p></td>
+<td><p>Return the keys used to access the sub-=groups of this folder.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.make_name" title="Stoner.folders.core.baseFolder.make_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_name</span></code></a>([value])</td>
-<td>Construct a name from the value object if possible.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.make_name" title="Stoner.folders.core.baseFolder.make_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_name</span></code></a>([value])</p></td>
+<td><p>Construct a name from the value object if possible.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.next" title="Stoner.folders.core.baseFolder.next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code></a>()</td>
-<td>Python 2.7 style iterator function.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.next" title="Stoner.folders.core.baseFolder.next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code></a>()</p></td>
+<td><p>Python 2.7 style iterator function.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.pop" title="Stoner.folders.core.baseFolder.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>([name,&nbsp;default])</td>
-<td>Return and remove either a subgroup or named object from this folder.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.pop" title="Stoner.folders.core.baseFolder.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>([name, default])</p></td>
+<td><p>Return and remove either a subgroup or named object from this folder.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.popitem" title="Stoner.folders.core.baseFolder.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</td>
-<td>Return the most recent subgroup from this folder.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.popitem" title="Stoner.folders.core.baseFolder.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
+<td><p>Return the most recent subgroup from this folder.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.prune" title="Stoner.folders.core.baseFolder.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>()</td>
-<td>Remove any empty groups from the objectFolder (and subgroups).</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.prune" title="Stoner.folders.core.baseFolder.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>()</p></td>
+<td><p>Remove any empty groups from the objectFolder (and subgroups).</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.remove" title="Stoner.folders.core.baseFolder.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</td>
-<td>S.remove(value) – remove first occurrence of value.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.remove" title="Stoner.folders.core.baseFolder.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</p></td>
+<td><p>S.remove(value) – remove first occurrence of value.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.reverse" title="Stoner.folders.core.baseFolder.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code></a>()</td>
-<td>S.reverse() – reverse <em>IN PLACE</em></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.reverse" title="Stoner.folders.core.baseFolder.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code></a>()</p></td>
+<td><p>S.reverse() – reverse <em>IN PLACE</em></p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.select" title="Stoner.folders.core.baseFolder.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args,&nbsp;**kargs)</td>
-<td>A generator that can be used to select particular data files from the objectFolder</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.select" title="Stoner.folders.core.baseFolder.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args, **kargs)</p></td>
+<td><p>A generator that can be used to select particular data files from the objectFolder</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.setdefault" title="Stoner.folders.core.baseFolder.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[,&nbsp;d])</td>
-<td>Return or set a subgroup or named object.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.setdefault" title="Stoner.folders.core.baseFolder.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[, d])</p></td>
+<td><p>Return or set a subgroup or named object.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.slice_metadata" title="Stoner.folders.core.baseFolder.slice_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_metadata</span></code></a>(key[,&nbsp;output])</td>
-<td>Return an array of the metadata values for each item/file in the top level group</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.slice_metadata" title="Stoner.folders.core.baseFolder.slice_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_metadata</span></code></a>(key[, output])</p></td>
+<td><p>Return an array of the metadata values for each item/file in the top level group</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.sort" title="Stoner.folders.core.baseFolder.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>([key,&nbsp;reverse])</td>
-<td>Sort the files by some key</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.sort" title="Stoner.folders.core.baseFolder.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>([key, reverse])</p></td>
+<td><p>Sort the files by some key</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.unflatten" title="Stoner.folders.core.baseFolder.unflatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unflatten</span></code></a>()</td>
-<td>Takes a file list an unflattens them according to the file paths.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.unflatten" title="Stoner.folders.core.baseFolder.unflatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unflatten</span></code></a>()</p></td>
+<td><p>Takes a file list an unflattens them according to the file paths.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.update" title="Stoner.folders.core.baseFolder.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(other)</td>
-<td>Update this folder with a dictionary or another folder.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.update" title="Stoner.folders.core.baseFolder.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(other)</p></td>
+<td><p>Update this folder with a dictionary or another folder.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.values" title="Stoner.folders.core.baseFolder.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</td>
-<td>Return the sub-groups of this folder.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.values" title="Stoner.folders.core.baseFolder.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</p></td>
+<td><p>Return the sub-groups of this folder.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.walk_groups" title="Stoner.folders.core.baseFolder.walk_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk_groups</span></code></a>(walker,&nbsp;**kargs)</td>
-<td>Walks through a heirarchy of groups and calls walker for each file.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.walk_groups" title="Stoner.folders.core.baseFolder.walk_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk_groups</span></code></a>(walker, **kargs)</p></td>
+<td><p>Walks through a heirarchy of groups and calls walker for each file.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.folders.core.baseFolder.zip_groups" title="Stoner.folders.core.baseFolder.zip_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zip_groups</span></code></a>(groups)</td>
-<td>Return a list of tuples of metadataObjects drawn from the specified groups</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.core.baseFolder.zip_groups" title="Stoner.folders.core.baseFolder.zip_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zip_groups</span></code></a>(groups)</p></td>
+<td><p>Return a list of tuples of metadataObjects drawn from the specified groups</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.clone">
-<code class="descname">clone</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.clone" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clone</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.clone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clone just does a deepcopy as a property for compatibility with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.debug">
-<code class="descname">debug</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.debug" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">debug</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.debug" title="Permalink to this definition">¶</a></dt>
 <dd><p>Just read the local debug value.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.defaults">
-<code class="descname">defaults</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.defaults" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">defaults</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.defaults" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a single list of all of our defaults by iterating over the __mro__, caching the result.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.depth">
-<code class="descname">depth</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.depth" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">depth</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.depth" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives the maximum number of levels of group below the current objectFolder.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.each">
-<code class="descname">each</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.each" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">each</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.each" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a <a class="reference internal" href="Stoner.folders.each.item.html#Stoner.folders.each.item" title="Stoner.folders.each.item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.each.item</span></code></a> proxy object for calling attributes of the member type of the folder.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.files">
-<code class="descname">files</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.files" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">files</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an iterator of potentially unloaded named objects.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<code class="descname">groups</code></dt>
+<code class="sig-name descname">groups</code></dt>
 <dd><p>Subfolders are held in an ordered dictionary of groups.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.instance">
-<code class="descname">instance</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.instance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">instance</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.instance" title="Permalink to this definition">¶</a></dt>
 <dd><p>A default instance of the type of object in the folder.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.is_empty">
-<code class="descname">is_empty</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.is_empty" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">is_empty</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.is_empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the folder is empty.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.key">
-<code class="descname">key</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.key" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">key</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allow overriding for getting and setting the key in mixins.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.loaded">
-<code class="descname">loaded</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.loaded" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">loaded</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.loaded" title="Permalink to this definition">¶</a></dt>
 <dd><p>An iterator that indicates wether the contents of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.objectFolder</span></code> has been loaded into memory.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.loader">
-<code class="descname">loader</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.loader" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">loader</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a callable that will load the files on demand.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.ls">
-<code class="descname">ls</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.ls" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ls</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.ls" title="Permalink to this definition">¶</a></dt>
 <dd><p>List just the names of the objects in the folder.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.lsgrp">
-<code class="descname">lsgrp</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.lsgrp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">lsgrp</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.lsgrp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of the groups as a generator.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.metadata">
-<code class="descname">metadata</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.metadata" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">metadata</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.metadata.combined_metadata_pryx</span></code> object for operations on combined metadata.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.mindepth">
-<code class="descname">mindepth</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.mindepth" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mindepth</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.mindepth" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives the minimum number of levels of group below the current objectFolder.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.not_empty">
-<code class="descname">not_empty</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.not_empty" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">not_empty</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.not_empty" title="Permalink to this definition">¶</a></dt>
 <dd><p>An iterator for objectFolder that checks whether the loaded metadataObject objects have any data.</p>
 <p>Returns the next non-empty DatFile member of the objectFolder.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">not_empty will also silently skip over any cases where loading the metadataObject object will raise
+<p class="admonition-title">Note</p>
+<p>not_empty will also silently skip over any cases where loading the metadataObject object will raise
 and exception.</p>
 </div>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<code class="descname">objects</code></dt>
+<code class="sig-name descname">objects</code></dt>
 <dd><p>The objects in the folder are stored in a <code class="xref py py-class docutils literal notranslate"><span class="pre">regexpDict</span></code>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.root">
-<code class="descname">root</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.root" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">root</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the real folder root.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.shape">
-<code class="descname">shape</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.shape" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">shape</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a data structure that is characteristic of the objectFolder’s shape.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.trunkdepth">
-<code class="descname">trunkdepth</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.trunkdepth" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">trunkdepth</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.trunkdepth" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of levels of group before a group with files is found.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.folders.core.baseFolder.type">
-<code class="descname">type</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.type" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">type</code><a class="headerlink" href="#Stoner.folders.core.baseFolder.type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the (sub)class of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> instances.</p>
 </dd></dl>
 
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.add_group">
-<code class="descname">add_group</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.add_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.add_group" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_group</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.add_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.add_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new group to the current baseFolder with the given key.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>string</em>) – A hashable value to be used as the dictionary key in the groups dictionary</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A copy of the objectFolder</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>string</em>) – A hashable value to be used as the dictionary key in the groups dictionary</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A copy of the objectFolder</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If key already exists in the groups dictionary then no action is taken.</p>
+<p class="admonition-title">Note</p>
+<p>If key already exists in the groups dictionary then no action is taken.</p>
 </div>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p class="last">Propagate any extra attributes into the groups.</p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Propagate any extra attributes into the groups.</p>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.all">
-<code class="descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.all" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterates over all the files in the Folder and all it’s sub Folders recursively.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body">(path/filename,file)</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Yields</dt>
+<dd class="field-odd"><p>(path/filename,file)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.append">
-<code class="descname">append</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.append" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.append" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append an item to the folder object</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.clear">
-<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.clear" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear the subgroups.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.compress">
-<code class="descname">compress</code><span class="sig-paren">(</span><em>base=None</em>, <em>key='.'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.compress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.compress" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compress</code><span class="sig-paren">(</span><em class="sig-param">base=None</em>, <em class="sig-param">key='.'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.compress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.compress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compresses all empty groups from the root up until the first non-empty group is located.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><strong>)</strong> (<a class="reference internal" href="Stoner.Image.ImageStack.html#Stoner.Image.ImageStack.depth" title="Stoner.Image.ImageStack.depth"><em>depth</em></a>) – Only flatten ub-groups that are within (<em>depth</em> of the deepest level.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A copy of the now flattened DatFolder</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><p><strong>)</strong> (<a class="reference internal" href="Stoner.Image.ImageStack.html#Stoner.Image.ImageStack.depth" title="Stoner.Image.ImageStack.depth"><em>depth</em></a>) – Only flatten ub-groups that are within (<em>depth</em> of the deepest level.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A copy of the now flattened DatFolder</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.count">
-<code class="descname">count</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.count" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">count</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide a count method like a sequence.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (str, regexp, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code>) – The thing to count matches for.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(int)</em> – The number of matching metadataObject instances.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (str, regexp, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code>) – The thing to count matches for.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>(int)</em> – The number of matching metadataObject instances.</p>
+</dd>
+</dl>
 <p>If <em>name</em> is a string, then matching is based on either exact matches of the name, or if it includes a * or ? then the basis of a globbing match.
 <em>name</em> may also be a regular expressiuon, in which case matches are made on the basis of  the match with the name of the metadataObject. Finally,
 if <em>name</em> is a metadataObject, then it matches for an equyality test.</p>
@@ -527,154 +545,133 @@ if <em>name</em> is a metadataObject, then it matches for an equyality test.</p>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.extend">
-<code class="descname">extend</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.folders.core.baseFolder.extend" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">values</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.folders.core.baseFolder.extend" title="Permalink to this definition">¶</a></dt>
 <dd><p>S.extend(iterable) – extend sequence by appending elements from the iterable</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.fetch">
-<code class="descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.fetch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.fetch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Preload the contents of the baseFolder.</p>
 <p>In the base  class this is a NOP becuase the objects are all in memory anyway.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.file">
-<code class="descname">file</code><span class="sig-paren">(</span><em>name</em>, <em>value</em>, <em>create=True</em>, <em>pathsplit=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">file</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value</em>, <em class="sig-param">create=True</em>, <em class="sig-param">pathsplit=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recursively add groups in order to put the named value into a virtual tree of <a class="reference internal" href="#Stoner.folders.core.baseFolder" title="Stoner.folders.core.baseFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>str</em>) – A name (which may be a nested path) of the object to file.</li>
-<li><strong>value</strong> (<em>metadataObject</em>) – The object to be filed - it should be an instance of <a class="reference internal" href="#Stoner.folders.core.baseFolder.type" title="Stoner.folders.core.baseFolder.type"><code class="xref py py-attr docutils literal notranslate"><span class="pre">baseFolder.type</span></code></a>.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – A name (which may be a nested path) of the object to file.</p></li>
+<li><p><strong>value</strong> (<em>metadataObject</em>) – The object to be filed - it should be an instance of <a class="reference internal" href="#Stoner.folders.core.baseFolder.type" title="Stoner.folders.core.baseFolder.type"><code class="xref py py-attr docutils literal notranslate"><span class="pre">baseFolder.type</span></code></a>.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>Keyword Aprameters:</dt>
-<dd>create(bool): Whether to create missing groups or to raise an error (default True to create groups).
-pathsplit(str or None): Character to use to split the name into path components. Defaults to using os.path.split()</dd>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(baseFolder)</em> – A reference to the group where the value was eventually filed</td>
-</tr>
-</tbody>
-</table>
+<dl class="simple">
+<dt>Keyword Aprameters:</dt><dd><p>create(bool): Whether to create missing groups or to raise an error (default True to create groups).
+pathsplit(str or None): Character to use to split the name into path components. Defaults to using os.path.split()</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>(baseFolder)</em> – A reference to the group where the value was eventually filed</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.filter">
-<code class="descname">filter</code><span class="sig-paren">(</span><em>filter=None</em>, <em>invert=False</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param">filter=None</em>, <em class="sig-param">invert=False</em>, <em class="sig-param">copy=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter the current set of files by some criterion</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filter</strong> (<em>string or callable</em>) – Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filter</strong> (<em>string or callable</em>) – Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a
 metadataObject and evaluates True or False</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>invert</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Invert the sense of the filter (done by doing an XOR whith the filter condition</li>
-<li><strong>copy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If set True then the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code> is copied before being filtered. Default is False - work in place.</li>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>invert</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Invert the sense of the filter (done by doing an XOR whith the filter condition</p></li>
+<li><p><strong>copy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If set True then the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code> is copied before being filtered. Default is False - work in place.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The current objectFolder object</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The current objectFolder object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.filterout">
-<code class="descname">filterout</code><span class="sig-paren">(</span><em>filter</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.filterout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.filterout" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">filterout</code><span class="sig-paren">(</span><em class="sig-param">filter</em>, <em class="sig-param">copy=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.filterout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.filterout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Synonym for self.filter(filter,invert=True)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filter</strong> (<em>string or callable</em>) – Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a
-metadataObject and evaluates True or False</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>copy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If set True then the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code> is copied before being filtered. Default is False - work in place.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current objectFolder object with the files in the file list filtered.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filter</strong> (<em>string or callable</em>) – Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a
+metadataObject and evaluates True or False</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><p><strong>copy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If set True then the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code> is copied before being filtered. Default is False - work in place.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The current objectFolder object with the files in the file list filtered.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.flatten">
-<code class="descname">flatten</code><span class="sig-paren">(</span><em>depth=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.flatten" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">flatten</code><span class="sig-paren">(</span><em class="sig-param">depth=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.flatten" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compresses all the groups and sub-groups iunto a single flat file list.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><strong>)</strong> (<a class="reference internal" href="Stoner.Image.ImageStack.html#Stoner.Image.ImageStack.depth" title="Stoner.Image.ImageStack.depth"><em>depth</em></a>) – Only flatten ub-=groups that are within (<em>depth</em> of the deepest level.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A copy of the now flattened DatFolder</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><p><strong>)</strong> (<a class="reference internal" href="Stoner.Image.ImageStack.html#Stoner.Image.ImageStack.depth" title="Stoner.Image.ImageStack.depth"><em>depth</em></a>) – Only flatten ub-=groups that are within (<em>depth</em> of the deepest level.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A copy of the now flattened DatFolder</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.get">
-<code class="descname">get</code><span class="sig-paren">(</span><em>name</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.get" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return either a sub-group or named object from this folder.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.group">
-<code class="descname">group</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.group" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">group</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take the files and sort them into a series of separate objectFolder objects according to the value of the key</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>string or callable or list</em>) – Either a simple string or callable function or a list. If a string then it is interpreted as an item of
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>string or callable or list</em>) – Either a simple string or callable function or a list. If a string then it is interpreted as an item of
 metadata in each file. If a callable function then takes a single argument x which should be an instance of a metadataObject and returns
-some vale. If key is a list then the grouping is done recursively for each element in key.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder objects with sub lists of files</td>
-</tr>
-</tbody>
-</table>
+some vale. If key is a list then the grouping is done recursively for each element in key.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder objects with sub lists of files</p>
+</dd>
+</dl>
 <p>If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group
 with key None. Metadata keys that are generated from the filename are supported.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.index">
-<code class="descname">index</code><span class="sig-paren">(</span><em>name</em>, <em>start=None</em>, <em>end=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.index" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">index</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">start=None</em>, <em class="sig-param">end=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide an index method like a sequence.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (str, regexp, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code>) – The thing to search for.</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>start</strong><strong>,</strong><strong>end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – limit the index search to a sub-range as per Python 3.5+ list.index</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(int)</em> – The index of the first matching metadataObject instances.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (str, regexp, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code>) – The thing to search for.</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><p><strong>start</strong><strong>,</strong><strong>end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – limit the index search to a sub-range as per Python 3.5+ list.index</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>(int)</em> – The index of the first matching metadataObject instances.</p>
+</dd>
+</dl>
 <p>If <em>name</em> is a string, then matching is based on either exact matches of the name, or if it includes a * or ? then the basis of a globbing match.
 <em>name</em> may also be a regular expressiuon, in which case matches are made on the basis of  the match with the name of the metadataObject. Finally,
 if <em>name</em> is a metadataObject, then it matches for an equyality test.</p>
@@ -682,128 +679,120 @@ if <em>name</em> is a metadataObject, then it matches for an equyality test.</p>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.insert">
-<code class="descname">insert</code><span class="sig-paren">(</span><em>ix</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.insert" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param">ix</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.insert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implements the insert method with the option to append as well.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.items">
-<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.items" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.items" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the key,value pairs for the subbroups of this folder.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.keys">
-<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.keys" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the keys used to access the sub-=groups of this folder.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.make_name">
-<code class="descname">make_name</code><span class="sig-paren">(</span><em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.make_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.make_name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">make_name</code><span class="sig-paren">(</span><em class="sig-param">value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.make_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.make_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct a name from the value object if possible.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.next">
-<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.next" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.next" title="Permalink to this definition">¶</a></dt>
 <dd><p>Python 2.7 style iterator function.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.pop">
-<code class="descname">pop</code><span class="sig-paren">(</span><em>name=-1</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.pop" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pop</code><span class="sig-paren">(</span><em class="sig-param">name=-1</em>, <em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.pop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return and remove either a subgroup or named object from this folder.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.popitem">
-<code class="descname">popitem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.popitem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.popitem" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">popitem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.popitem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.popitem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the most recent subgroup from this folder.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.prune">
-<code class="descname">prune</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.prune"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.prune" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">prune</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.prune"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.prune" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove any empty groups from the objectFolder (and subgroups).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A copy of thte pruned objectFolder.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A copy of thte pruned objectFolder.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.remove">
-<code class="descname">remove</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.folders.core.baseFolder.remove" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.folders.core.baseFolder.remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>S.remove(value) – remove first occurrence of value.
 Raise ValueError if the value is not present.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.reverse">
-<code class="descname">reverse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.folders.core.baseFolder.reverse" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reverse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.folders.core.baseFolder.reverse" title="Permalink to this definition">¶</a></dt>
 <dd><p>S.reverse() – reverse <em>IN PLACE</em></p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.select">
-<code class="descname">select</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.select" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.select" title="Permalink to this definition">¶</a></dt>
 <dd><p>A generator that can be used to select particular data files from the objectFolder</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>args</strong> (<em>various</em>) – A single positional argument if present is interpreted as follows:</li>
-<li><strong>* If a callable function is given, the entire metadataObject is presented to it.</strong> – If it evaluates True then that metadataObject is selected. This allows arbitary select operations</li>
-<li><strong>* If a dict is given, then it and the kargs dictionary are merged and used to select the metadataObjects</strong></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>various</em>) – A single positional argument if present is interpreted as follows:</p></li>
+<li><p><strong>* If a callable function is given, the entire metadataObject is presented to it.</strong> – If it evaluates True then that metadataObject is selected. This allows arbitary select operations</p></li>
+<li><p><strong>* If a dict is given, then it and the kargs dictionary are merged and used to select the metadataObjects</strong></p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>recurse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Also recursively slect through the sub groups</li>
-<li><strong>kargs</strong> (<em>varuous</em>) – <p>Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>recurse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Also recursively slect through the sub groups</p></li>
+<li><p><strong>kargs</strong> (<em>varuous</em>) – <p>Arbitary keyword arguments are interpreted as requestion matches against the corresponding
 metadata values. The keyword argument may have an additional <em>__operator*</em> appended to it which is interpreted
 as follows:</p>
 <ul>
-<li><em>eq</em> metadata value equals argument value (this is the default test for scalar argument)</li>
-<li><em>ne</em> metadata value doe not equal argument value</li>
-<li><em>gt</em> metadata value doe greater than argument value</li>
-<li><em>lt</em> metadata value doe less than argument value</li>
-<li><em>ge</em> metadata value doe greater than or equal to argument value</li>
-<li><em>le</em> metadata value doe less than or equal to argument value</li>
-<li><em>contains</em> metadata value contains argument value</li>
-<li><em>in</em> metadata value is in the argument value (this is the default test for non-tuple iterable arguments)</li>
-<li><em>startswith</em> metadata value startswith argument value</li>
-<li><em>endswith</em> metadata value endwith argument value</li>
-<li><em>icontains</em>,*iin*, <em>istartswith</em>,*iendswith* as above but case insensitive</li>
-<li><em>between</em> metadata value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)</li>
-<li><em>ibetween</em>,*ilbetween*,*iubetween* as above but include both,lower or upper values</li>
+<li><p><em>eq</em> metadata value equals argument value (this is the default test for scalar argument)</p></li>
+<li><p><em>ne</em> metadata value doe not equal argument value</p></li>
+<li><p><em>gt</em> metadata value doe greater than argument value</p></li>
+<li><p><em>lt</em> metadata value doe less than argument value</p></li>
+<li><p><em>ge</em> metadata value doe greater than or equal to argument value</p></li>
+<li><p><em>le</em> metadata value doe less than or equal to argument value</p></li>
+<li><p><em>contains</em> metadata value contains argument value</p></li>
+<li><p><em>in</em> metadata value is in the argument value (this is the default test for non-tuple iterable arguments)</p></li>
+<li><p><em>startswith</em> metadata value startswith argument value</p></li>
+<li><p><em>endswith</em> metadata value endwith argument value</p></li>
+<li><p><em>icontains</em>,*iin*, <em>istartswith</em>,*iendswith* as above but case insensitive</p></li>
+<li><p><em>between</em> metadata value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)</p></li>
+<li><p><em>ibetween</em>,*ilbetween*,*iubetween* as above but include both,lower or upper values</p></li>
 </ul>
-</li>
-<li><strong>syntax is inspired by the Django project for selecting</strong><strong>, </strong><strong>but is not quite as rich.</strong> (<em>The</em>) – </li>
+</p></li>
+<li><p><strong>syntax is inspired by the Django project for selecting</strong><strong>, </strong><strong>but is not quite as rich.</strong> (<em>The</em>) – </p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(baseFGolder)</em> – a new baseFolder instance that contains just the matching metadataObjects.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>(baseFGolder)</em> – a new baseFolder instance that contains just the matching metadataObjects.</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>If any of the tests is True, then the metadataObject will be selected, so the effect is a logical OR. To
 achieve a logical AND, you can chain two selects together:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">temp__le</span><span class="o">=</span><span class="mf">4.2</span><span class="p">,</span><span class="n">vti_temp__lt</span><span class="o">=</span><span class="mf">4.2</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">field_gt</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>will select metadata objects that have either temp or vti_temp metadata values below 4.2 AND field metadata values greater than 3.</p>
-<p class="last">If you need to select on a aparameter called <em>recurse</em>, pass a dictionary of {“recurse”:value} as the sole
+<p>If you need to select on a aparameter called <em>recurse</em>, pass a dictionary of {“recurse”:value} as the sole
 positional argument. If you need to select on a metadata value that ends in an operator word, then append
 <em>__eq</em> in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
 then pass them via the first positional dictionary value.</p>
@@ -812,150 +801,128 @@ then pass them via the first positional dictionary value.</p>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.setdefault">
-<code class="descname">setdefault</code><span class="sig-paren">(</span><em>k</em>, <em>d=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.setdefault"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.setdefault" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setdefault</code><span class="sig-paren">(</span><em class="sig-param">k</em>, <em class="sig-param">d=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.setdefault"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.setdefault" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or set a subgroup or named object.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.slice_metadata">
-<code class="descname">slice_metadata</code><span class="sig-paren">(</span><em>key</em>, <em>output='smart'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.slice_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.slice_metadata" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">slice_metadata</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">output='smart'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.slice_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.slice_metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an array of the metadata values for each item/file in the top level group</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str, regexp or list of str</em>) – the meta data key(s) to return</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>Keyword Parameters:</dt>
-<dd>output (str): Output format - values are
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str, regexp or list of str</em>) – the meta data key(s) to return</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Keyword Parameters:</dt><dd><p>output (str): Output format - values are
 -   dict: return an array of dictionaries
 -   list: return a list of lists
 -   array: return a numpy array
 -   Data: return a <a class="reference internal" href="Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> object
--   smart: (default) return either a list if only one key or a list of dictionaries</dd>
+-   smart: (default) return either a list if only one key or a list of dictionaries</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(array of metadata)</em> –<dl class="docutils">
-<dt>If single key is given and is an exact match then</dt>
-<dd>returns an array of the matching values. If the key results in a regular
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p><em>(array of metadata)</em> –</p>
+<dl class="simple">
+<dt>If single key is given and is an exact match then</dt><dd><p>returns an array of the matching values. If the key results in a regular
 expression match, then returns an array of dictionaries of all matching keys. If key is a
-list ir other iterable, then return a 2D array where each column corresponds to one of the keys.</dd>
+list ir other iterable, then return a 2D array where each column corresponds to one of the keys.</p>
+</dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition-todo admonition" id="index-1">
-<p class="first admonition-title">Todo</p>
-<p class="last">Add options to recurse through all groups? Put back RCT’s values only functionality?</p>
+</p>
+</dd>
+</dl>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>Add options to recurse through all groups? Put back RCT’s values only functionality?</p>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.sort">
-<code class="descname">sort</code><span class="sig-paren">(</span><em>key=None</em>, <em>reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.sort" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sort</code><span class="sig-paren">(</span><em class="sig-param">key=None</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.sort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sort the files by some key</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – Either a string or a callable function. If a string then this is interpreted as a
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Either a string or a callable function. If a string then this is interpreted as a
 metadata key, if callable then it is assumed that this is a a function of one paramater x
 that is a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> object and that returns a key value.
-If key is not specified (default), then a sort is performed on the filename</td>
-</tr>
-</tbody>
-</table>
+If key is not specified (default), then a sort is performed on the filename</p>
+</dd>
+</dl>
 <p>reverse (bool): Optionally sort in reverse order</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A copy of the current objectFolder object</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A copy of the current objectFolder object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.unflatten">
-<code class="descname">unflatten</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.unflatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.unflatten" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">unflatten</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.unflatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.unflatten" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes a file list an unflattens them according to the file paths.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A copy of the objectFolder</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A copy of the objectFolder</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.update">
-<code class="descname">update</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update this folder with a dictionary or another folder.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.values">
-<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the sub-groups of this folder.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.walk_groups">
-<code class="descname">walk_groups</code><span class="sig-paren">(</span><em>walker</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.walk_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.walk_groups" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">walk_groups</code><span class="sig-paren">(</span><em class="sig-param">walker</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.walk_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.walk_groups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Walks through a heirarchy of groups and calls walker for each file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>walker</strong> (<em>callable</em>) – a callable object that takes either a metadataObject instance or a objectFolder instance.</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
-<li><strong>group</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – (default False) determines whether the walker function will expect to be given the objectFolder
-representing the lowest level group or individual metadataObject objects from the lowest level group</li>
-<li><strong>replace_terminal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – if group is True and the walker function returns an instance of metadataObject then the return value is appended
-to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.</li>
-<li><strong>obly_terminal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal groups)</li>
-<li><strong>walker_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – a dictionary of static arguments for the walker function.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>walker</strong> (<em>callable</em>) – a callable object that takes either a metadataObject instance or a objectFolder instance.</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>group</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – (default False) determines whether the walker function will expect to be given the objectFolder
+representing the lowest level group or individual metadataObject objects from the lowest level group</p></li>
+<li><p><strong>replace_terminal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if group is True and the walker function returns an instance of metadataObject then the return value is appended
+to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.</p></li>
+<li><p><strong>obly_terminal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal groups)</p></li>
+<li><p><strong>walker_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – a dictionary of static arguments for the walker function.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
-<dl class="docutils">
-<dt>The walker function should have a prototype of the form:</dt>
-<dd>walker(f,list_of_group_names,**walker_args)
-where f is either a objectFolder or metadataObject.</dd>
+<dl class="simple">
+<dt>The walker function should have a prototype of the form:</dt><dd><p>walker(f,list_of_group_names,**walker_args)
+where f is either a objectFolder or metadataObject.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.folders.core.baseFolder.zip_groups">
-<code class="descname">zip_groups</code><span class="sig-paren">(</span><em>groups</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.zip_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.zip_groups" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">zip_groups</code><span class="sig-paren">(</span><em class="sig-param">groups</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/core.html#baseFolder.zip_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.core.baseFolder.zip_groups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of tuples of metadataObjects drawn from the specified groups</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>groups</strong> (<em>list of strings</em>) – A list of keys of groups in the Lpy:class:<cite>objectFolder</cite></td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>A list of tuples of groups of files</em> –     [(grp_1_file_1,grp_2_file_1….grp_n_files_1),(grp_1_file_2,grp_2_file_2….grp_n_file_2)….(grp_1_file_m,grp_2_file_m…grp_n_file_m)]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>groups</strong> (<em>list of strings</em>) – A list of keys of groups in the Lpy:class:<cite>objectFolder</cite></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>A list of tuples of groups of files</em> –     [(grp_1_file_1,grp_2_file_1….grp_n_files_1),(grp_1_file_2,grp_2_file_2….grp_n_file_2)….(grp_1_file_m,grp_2_file_m…grp_n_file_m)]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -977,22 +944,19 @@ where f is either a objectFolder or metadataObject.</dd>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.folders.mixins.DiskBasedFolder.html"
                         title="next chapter">DiskBasedFolder</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.folders.core.baseFolder.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.folders.core.baseFolder.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -1015,14 +979,14 @@ where f is either a objectFolder or metadataObject.</dd>
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

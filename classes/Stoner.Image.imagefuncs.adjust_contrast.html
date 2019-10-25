@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>adjust_contrast &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="align" href="Stoner.Image.imagefuncs.align.html" />
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -55,20 +55,20 @@
 <h1>adjust_contrast<a class="headerlink" href="#adjust-contrast" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="Stoner.Image.imagefuncs.adjust_contrast">
-<code class="descclassname">Stoner.Image.imagefuncs.</code><code class="descname">adjust_contrast</code><span class="sig-paren">(</span><em>im</em>, <em>lims=(0.1</em>, <em>0.9)</em>, <em>percent=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#adjust_contrast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.adjust_contrast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">adjust_contrast</code><span class="sig-paren">(</span><em class="sig-param">im</em>, <em class="sig-param">lims=(0.1</em>, <em class="sig-param">0.9)</em>, <em class="sig-param">percent=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#adjust_contrast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.adjust_contrast" title="Permalink to this definition">¶</a></dt>
 <dd><p>rescale the intensity of the image.</p>
 <p>Mostly a call through to skimage.exposure.rescale_intensity. The absolute limits of contrast are
 added to the metadata as ‘adjust_contrast’</p>
-<dl class="docutils">
-<dt>lims: 2-tuple</dt>
-<dd>limits of rescaling the intensity</dd>
-<dt>percent: bool</dt>
-<dd>if True then lims are the give the percentile of the image intensity
-histogram, otherwise lims are absolute</dd>
+<dl class="simple">
+<dt>lims: 2-tuple</dt><dd><p>limits of rescaling the intensity</p>
+</dd>
+<dt>percent: bool</dt><dd><p>if True then lims are the give the percentile of the image intensity
+histogram, otherwise lims are absolute</p>
+</dd>
 </dl>
-<dl class="docutils">
-<dt>image: ImageArray</dt>
-<dd>rescaled image</dd>
+<dl class="simple">
+<dt>image: ImageArray</dt><dd><p>rescaled image</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -89,22 +89,19 @@ histogram, otherwise lims are absolute</dd>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Image.imagefuncs.align.html"
                         title="next chapter">align</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Image.imagefuncs.adjust_contrast.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Image.imagefuncs.adjust_contrast.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -127,14 +124,14 @@ histogram, otherwise lims are absolute</dd>
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

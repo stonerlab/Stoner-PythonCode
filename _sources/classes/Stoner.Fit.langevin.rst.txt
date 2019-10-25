@@ -1,6 +1,0 @@
-langevin
-========
-
-.. currentmodule:: Stoner.Fit
-
-.. autofunction:: langevin

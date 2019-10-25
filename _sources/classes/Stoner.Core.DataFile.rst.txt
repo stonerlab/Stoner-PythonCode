@@ -5,3 +5,117 @@ DataFile
 
 .. autoclass:: DataFile
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~DataFile.T
+      ~DataFile.basename
+      ~DataFile.clone
+      ~DataFile.column_headers
+      ~DataFile.data
+      ~DataFile.dict_records
+      ~DataFile.dims
+      ~DataFile.dtype
+      ~DataFile.filename
+      ~DataFile.header
+      ~DataFile.mask
+      ~DataFile.mime_type
+      ~DataFile.patterns
+      ~DataFile.priority
+      ~DataFile.records
+      ~DataFile.setas
+      ~DataFile.shape
+      ~DataFile.subclasses
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~DataFile.__call__
+      ~DataFile.add_column
+      ~DataFile.adjust_setas
+      ~DataFile.closest
+      ~DataFile.column
+      ~DataFile.columns
+      ~DataFile.count
+      ~DataFile.del_column
+      ~DataFile.del_nan
+      ~DataFile.del_rows
+      ~DataFile.dir
+      ~DataFile.filter
+      ~DataFile.find_col
+      ~DataFile.get
+      ~DataFile.get_filename
+      ~DataFile.insert_rows
+      ~DataFile.keys
+      ~DataFile.load
+      ~DataFile.rename
+      ~DataFile.reorder_columns
+      ~DataFile.rolling_window
+      ~DataFile.rows
+      ~DataFile.save
+      ~DataFile.search
+      ~DataFile.section
+      ~DataFile.select
+      ~DataFile.sort
+      ~DataFile.split
+      ~DataFile.swap_column
+      ~DataFile.to_pandas
+      ~DataFile.unique
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: T
+   .. autoattribute:: basename
+   .. autoattribute:: clone
+   .. autoattribute:: column_headers
+   .. autoattribute:: data
+   .. autoattribute:: dict_records
+   .. autoattribute:: dims
+   .. autoattribute:: dtype
+   .. autoattribute:: filename
+   .. autoattribute:: header
+   .. autoattribute:: mask
+   .. autoattribute:: mime_type
+   .. autoattribute:: patterns
+   .. autoattribute:: priority
+   .. autoattribute:: records
+   .. autoattribute:: setas
+   .. autoattribute:: shape
+   .. autoattribute:: subclasses
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__
+   .. automethod:: add_column
+   .. automethod:: adjust_setas
+   .. automethod:: closest
+   .. automethod:: column
+   .. automethod:: columns
+   .. automethod:: count
+   .. automethod:: del_column
+   .. automethod:: del_nan
+   .. automethod:: del_rows
+   .. automethod:: dir
+   .. automethod:: filter
+   .. automethod:: find_col
+   .. automethod:: get
+   .. automethod:: get_filename
+   .. automethod:: insert_rows
+   .. automethod:: keys
+   .. automethod:: load
+   .. automethod:: rename
+   .. automethod:: reorder_columns
+   .. automethod:: rolling_window
+   .. automethod:: rows
+   .. automethod:: save
+   .. automethod:: search
+   .. automethod:: section
+   .. automethod:: select
+   .. automethod:: sort
+   .. automethod:: split
+   .. automethod:: swap_column
+   .. automethod:: to_pandas
+   .. automethod:: unique

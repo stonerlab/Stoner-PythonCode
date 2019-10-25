@@ -47,6 +47,7 @@ Stoner.FileFormats.VSMFile
       ~Stoner.FileFormats.VSMFile.sort
       ~Stoner.FileFormats.VSMFile.split
       ~Stoner.FileFormats.VSMFile.swap_column
+      ~Stoner.FileFormats.VSMFile.to_pandas
       ~Stoner.FileFormats.VSMFile.unique
       ~Stoner.FileFormats.VSMFile.update
       ~Stoner.FileFormats.VSMFile.values

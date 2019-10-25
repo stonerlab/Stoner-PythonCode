@@ -1,6 +1,0 @@
-defect_mask
-===========
-
-.. currentmodule:: Stoner.Image.imagefuncs
-
-.. autofunction:: defect_mask

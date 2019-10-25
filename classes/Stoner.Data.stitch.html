@@ -1,23 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Data.stitch &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.subplot" href="Stoner.Data.subplot.html" />
-    <link rel="prev" title="Data.split" href="Stoner.Data.split.html" />
+    <link rel="prev" title="Data.std" href="Stoner.Data.std.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -28,7 +28,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Data.split.html" title="Previous document">Data.split</a>
+          <a href="Stoner.Data.std.html" title="Previous document">Data.std</a>
         </li>
         <li>
           <a href="Stoner.Data.subplot.html" title="Next document">Data.subplot</a>
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -58,54 +58,49 @@
 <h1>Data.stitch<a class="headerlink" href="#data-stitch" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Data.stitch">
-<code class="descclassname">Data.</code><code class="descname">stitch</code><span class="sig-paren">(</span><em>other</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>overlap=None</em>, <em>min_overlap=0.0</em>, <em>mode='All'</em>, <em>func=None</em>, <em>p0=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.stitch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">stitch</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">overlap=None</em>, <em class="sig-param">min_overlap=0.0</em>, <em class="sig-param">mode='All'</em>, <em class="sig-param">func=None</em>, <em class="sig-param">p0=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.stitch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply a scaling to this data set to make it stich to another dataset.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>other</strong> (<em>DataFile</em>) – Another data set that is used as the base to stitch this one on to</li>
-<li><strong>xcol,ycol</strong> (<em>index or None</em>) – The x and y data columns. If left as None then the current setas attribute is used.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> (<em>DataFile</em>) – Another data set that is used as the base to stitch this one on to</p></li>
+<li><p><strong>xcol,ycol</strong> (<em>index or None</em>) – The x and y data columns. If left as None then the current setas attribute is used.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>overlap</strong> (<em>tuple of</em><em> (</em><em>lower</em><em>,</em><em>higher</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – The band of x values that are used in both data sets to match,
-if left as None, thenthe common overlap of the x data is used.</li>
-<li><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – If you know that overlap must be bigger than a certain amount, the bounds between the two
-data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.</li>
-<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</li>
-<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – a stitching function that transforms <span class="math notranslate nohighlight">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
-functions defined by <em>mode</em></li>
-<li><strong>p0</strong> (<em>iterable</em>) – if func is not None then p0 should be the starting values for the stitching function parameters</li>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>overlap</strong> (<em>tuple of</em><em> (</em><em>lower</em><em>,</em><em>higher</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The band of x values that are used in both data sets to match,
+if left as None, thenthe common overlap of the x data is used.</p></li>
+<li><p><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – If you know that overlap must be bigger than a certain amount, the bounds between the two
+data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</p></li>
+<li><p><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – a stitching function that transforms <span class="math notranslate nohighlight">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
+functions defined by <em>mode</em></p></li>
+<li><p><strong>p0</strong> (<em>iterable</em>) – if func is not None then p0 should be the starting values for the stitching function parameters</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> – A copy of the current <code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code> with the x and y data columns adjusted to stitch</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>(<a class="reference internal" href="Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a>) –     A copy of the current <code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code> with the x and y data columns adjusted to stitch</p>
+</dd>
+</dl>
 <p>To stitch the data together, the x and y data in the current data file is transforms so that
 <span class="math notranslate nohighlight">\(x'=x+A\)</span> and <span class="math notranslate nohighlight">\(y'=By+C\)</span> where <span class="math notranslate nohighlight">\(A,B,C\)</span> are constants and <span class="math notranslate nohighlight">\((x',y')\)</span> are close matches to the
 <span class="math notranslate nohighlight">\((x,y)\)</span> data in <em>other</em>. The algorithm assumes that the overlap region contains equal
 numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <em>mode</em> controls whether A,B, and C are fixed or adjustable</p>
 <blockquote>
 <div><ul class="simple">
-<li>“All” - all three parameters adjustable</li>
-<li>“Scale y, shift x” - C is fixed at 0.0</li>
-<li>“Scale and shift y” A is fixed at 0.0</li>
-<li>“Scale y” - only B is adjustable</li>
-<li>“Shift y” - Only c is adjsutable</li>
-<li>“Shift x” - Only A is adjustable</li>
-<li>“Shift both” - B is fixed at 1.0</li>
+<li><p>“All” - all three parameters adjustable</p></li>
+<li><p>“Scale y, shift x” - C is fixed at 0.0</p></li>
+<li><p>“Scale and shift y” A is fixed at 0.0</p></li>
+<li><p>“Scale y” - only B is adjustable</p></li>
+<li><p>“Shift y” - Only c is adjsutable</p></li>
+<li><p>“Shift x” - Only A is adjustable</p></li>
+<li><p>“Shift both” - B is fixed at 1.0</p></li>
 </ul>
 </div></blockquote>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">User Guide section <a class="reference internal" href="../UserGuide/analysisfile.html#stitch-guide"><span class="std std-ref">Stitching Datasets together</span></a></p>
+<p class="admonition-title">See also</p>
+<p>User Guide section <a class="reference internal" href="../UserGuide/analysisfile.html#stitch-guide"><span class="std std-ref">Stitching Datasets together</span></a></p>
 </div>
 </dd></dl>
 
@@ -121,27 +116,24 @@ numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <e
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Data.split.html"
-                        title="previous chapter">Data.split</a></p>
+  <p class="topless"><a href="Stoner.Data.std.html"
+                        title="previous chapter">Data.std</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Data.subplot.html"
                         title="next chapter">Data.subplot</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Data.stitch.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Data.stitch.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -152,7 +144,7 @@ numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <e
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Data.split.html" title="Previous document">Data.split</a>
+          <a href="Stoner.Data.std.html" title="Previous document">Data.std</a>
         </li>
         <li>
           <a href="Stoner.Data.subplot.html" title="Next document">Data.subplot</a>
@@ -164,7 +156,7 @@ numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <e
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -172,9 +164,9 @@ numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <e
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

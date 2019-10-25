@@ -47,6 +47,7 @@ Stoner.FileFormats.QDFile
       ~Stoner.FileFormats.QDFile.sort
       ~Stoner.FileFormats.QDFile.split
       ~Stoner.FileFormats.QDFile.swap_column
+      ~Stoner.FileFormats.QDFile.to_pandas
       ~Stoner.FileFormats.QDFile.unique
       ~Stoner.FileFormats.QDFile.update
       ~Stoner.FileFormats.QDFile.values

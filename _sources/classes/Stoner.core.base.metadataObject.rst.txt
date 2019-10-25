@@ -5,3 +5,29 @@ metadataObject
 
 .. autoclass:: metadataObject
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~metadataObject.metadata
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~metadataObject.items
+      ~metadataObject.keys
+      ~metadataObject.save
+      ~metadataObject.values
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: metadata
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: items
+   .. automethod:: keys
+   .. automethod:: save
+   .. automethod:: values

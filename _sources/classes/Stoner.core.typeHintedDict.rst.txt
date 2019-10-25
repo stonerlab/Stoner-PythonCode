@@ -24,7 +24,6 @@ typeHintedDict
       ~typeHintedDict.findtype
       ~typeHintedDict.import_all
       ~typeHintedDict.import_key
-      ~typeHintedDict.string_to_type
       ~typeHintedDict.type
 
    .. rubric:: Attributes Documentation
@@ -41,5 +40,4 @@ typeHintedDict
    .. automethod:: findtype
    .. automethod:: import_all
    .. automethod:: import_key
-   .. automethod:: string_to_type
    .. automethod:: type

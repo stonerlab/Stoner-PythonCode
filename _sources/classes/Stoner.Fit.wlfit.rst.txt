@@ -1,6 +1,0 @@
-wlfit
-=====
-
-.. currentmodule:: Stoner.Fit
-
-.. autofunction:: wlfit

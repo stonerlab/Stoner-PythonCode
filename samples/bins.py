@@ -14,7 +14,9 @@ f = d.bin(bins=0.25, mode="lin")
 g = d.bin(bins=0.05, mode="log")
 h = d.bin(bins=50, mode="log")
 
-for i, (binned, label) in enumerate(zip([e, f, g, h], ["0.05 Linear", "0.25 Linear", "0.05 Log", "50 log"])):
+for i, (binned, label) in enumerate(
+    zip([e, f, g, h], ["0.05 Linear", "0.25 Linear", "0.05 Log", "50 log"])
+):
     binned.subplot(411 + i)
     d.plot()
     binned.fig = d.fig

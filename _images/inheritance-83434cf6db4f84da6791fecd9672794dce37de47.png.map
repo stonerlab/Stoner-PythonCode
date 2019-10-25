@@ -1,9 +1,0 @@
-<map id="inheritance14c469e509" name="inheritance14c469e509">
-<area shape="rect" id="node12" title="All the operations on a read&#45;only sequence." alt="" coords="486,116,552,136"/>
-<area shape="rect" id="node5" href="classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="4,228,104,248"/>
-<area shape="rect" id="node7" href="classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack" target="_top" title="An akternative implementation of an image stack based on baseFolder." alt="" coords="266,284,342,304"/>
-<area shape="rect" id="node6" href="classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin" target="_top" title="Mixin to provide a folder object for images." alt="" coords="122,228,228,248"/>
-<area shape="rect" id="node8" title="Add some analysis capability to ImageStack. These functions may override" alt="" coords="247,228,360,248"/>
-<area shape="rect" id="node9" href="classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.stack.ImageStackMixin" target="_top" title="Implement an interface for a baseFolder to store images in a 3D numpy array for faster access." alt="" coords="379,228,482,248"/>
-<area shape="rect" id="node10" href="classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="501,228,572,248"/>
-</map>

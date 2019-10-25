@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Data.peaks &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.plot" href="Stoner.Data.plot.html" />
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -58,47 +58,42 @@
 <h1>Data.peaks<a class="headerlink" href="#data-peaks" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Data.peaks">
-<code class="descclassname">Data.</code><code class="descname">peaks</code><span class="sig-paren">(</span><em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.peaks" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">peaks</code><span class="sig-paren">(</span><em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.peaks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Locates peaks and/or troughs in a column of data by using SG-differentiation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ycol</strong> (<em>index</em>) – is the column name or index of the data in which to search for peaks</li>
-<li><strong>width</strong> (<em>int or float</em>) – is the expected minium halalf-width of a peak in terms of the number of data points (int) or distance in x (float).
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ycol</strong> (<em>index</em>) – the column name or index of the data in which to search for peaks</p></li>
+<li><p><strong>width</strong> (<em>int or float</em>) – the expected minium halalf-width of a peak in terms of the number of data points (int) or distance in x (float).
 This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
-to experimental noise, smaller means better eable to see sharp peaks</li>
-<li><strong>poly</strong> (<em>int</em>) – This is the order of polynomial to use when differentiating the data to locate a peak. Must &gt;=2, higher numbers
-will find sharper peaks more accurately but at the risk of finding more false positives.</li>
+to experimental noise, smaller means better eable to see sharp peaks</p></li>
+<li><p><strong>poly</strong> (<em>int</em>) – the order of polynomial to use when differentiating the data to locate a peak. Must &gt;=2, higher numbers
+will find sharper peaks more accurately but at the risk of finding more false positives.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>significance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
-of the data. Bigger means less sensistive, smaller means more likely to detect noise. Default is the maximum curvature/(2*width)</li>
-<li><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – name or index of data column that p[rovides the x-coordinate (default None)</li>
-<li><strong>peaks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – select whether to measure peaks in data (default True)</li>
-<li><strong>troughs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – select whether to measure troughs in data (default False)</li>
-<li><strong>sort</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Sor the results by significance of peak</li>
-<li><strong>modify</strong> (<em>book</em>) – If true, then the returned object is a copy of self with only the peaks/troughs left in the data.</li>
-<li><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If True (default) then all columns of the data at which peaks in the <em>ycol</em> column are found. <em>modify</em> true implies
-<em>full_data</em> is also true. If <em>full_data</em> is False, then only the x-column values of the peaks are returned.</li>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>significance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – used to decide whether a local maxmima is a significant peak. Essentially just the curvature
+of the data. Bigger means less sensistive, smaller means more likely to detect noise. Default is the maximum curvature/(2*width)</p></li>
+<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – name or index of data column that p[rovides the x-coordinate (default None)</p></li>
+<li><p><strong>peaks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – select whether to measure peaks in data (default True)</p></li>
+<li><p><strong>troughs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – select whether to measure troughs in data (default False)</p></li>
+<li><p><strong>sort</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Sor the results by significance of peak</p></li>
+<li><p><strong>modify</strong> (<em>book</em>) – If true, then the returned object is a copy of self with only the peaks/troughs left in the data.</p></li>
+<li><p><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True (default) then all columns of the data at which peaks in the <em>ycol</em> column are found. <em>modify</em> true implies
+<em>full_data</em> is also true. If <em>full_data</em> is False, then only the x-column values of the peaks are returned.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">If <em>modify</em> is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs. If <em>modify</em> is false (default),
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>(various)</em> –     If <em>modify</em> is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs. If <em>modify</em> is false (default),
 then the return value depends on <em>ycol</em> and <em>xcol</em>. If <em>ycol</em> is not None and <em>xcol</em> is None, then returns conplete rows of
 data corresponding to the found peaks/troughs. If <em>xcol</em> is not None, or <em>ycol</em> is None and <em>xcol</em> is None, then
 returns a 1D array of the x positions of the peaks/troughs.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#peak-finding"><span class="std std-ref">Peak Finding</span></a></p>
+<p class="admonition-title">See also</p>
+<p>User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#peak-finding"><span class="std std-ref">Peak Finding</span></a></p>
 </div>
 </dd></dl>
 
@@ -119,22 +114,19 @@ returns a 1D array of the x positions of the peaks/troughs.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Data.plot.html"
                         title="next chapter">Data.plot</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Data.peaks.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Data.peaks.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -157,7 +149,7 @@ returns a 1D array of the x positions of the peaks/troughs.</p>
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -165,9 +157,9 @@ returns a 1D array of the x positions of the peaks/troughs.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -47,6 +47,7 @@ Stoner.FileFormats.LSTemperatureFile
       ~Stoner.FileFormats.LSTemperatureFile.sort
       ~Stoner.FileFormats.LSTemperatureFile.split
       ~Stoner.FileFormats.LSTemperatureFile.swap_column
+      ~Stoner.FileFormats.LSTemperatureFile.to_pandas
       ~Stoner.FileFormats.LSTemperatureFile.unique
       ~Stoner.FileFormats.LSTemperatureFile.update
       ~Stoner.FileFormats.LSTemperatureFile.values

@@ -1,22 +1,22 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Data.threshold &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Data.unique" href="Stoner.Data.unique.html" />
+    <link rel="next" title="Data.to_pandas" href="Stoner.Data.to_pandas.html" />
     <link rel="prev" title="Data.swap_column" href="Stoner.Data.swap_column.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -31,7 +31,7 @@
           <a href="Stoner.Data.swap_column.html" title="Previous document">Data.swap_column</a>
         </li>
         <li>
-          <a href="Stoner.Data.unique.html" title="Next document">Data.unique</a>
+          <a href="Stoner.Data.to_pandas.html" title="Next document">Data.to_pandas</a>
           &rarr;
         </li>
     </ul>
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -58,42 +58,37 @@
 <h1>Data.threshold<a class="headerlink" href="#data-threshold" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Data.threshold">
-<code class="descclassname">Data.</code><code class="descname">threshold</code><span class="sig-paren">(</span><em>threshold</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.threshold" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">threshold</code><span class="sig-paren">(</span><em class="sig-param">threshold</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.threshold" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds partial indices where the data in column passes the threshold, rising or falling.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>threshold</strong> (<em>float</em>) – Value to look for in column col</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>col</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Column index to look for data in</li>
-<li><strong>rising</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – look for case where the data is increasing in value (defaukt True)</li>
-<li><strong>falling</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – look for case where data is fallinh in value (default False)</li>
-<li><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – rather than returning a fractional row index, return the
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>threshold</strong> (<em>float</em>) – Value to look for in column col</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>col</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Column index to look for data in</p></li>
+<li><p><strong>rising</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – look for case where the data is increasing in value (defaukt True)</p></li>
+<li><p><strong>falling</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – look for case where data is fallinh in value (default False)</p></li>
+<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – rather than returning a fractional row index, return the
 interpolated value in column xcol. If xcol is False, then return a complete row
-all_vals (bool): return all crossing points of the threshold or just the first. (default False)</li>
-<li><strong>transpose</strong> (<em>bbool</em>) – Swap the x and y columns around - this is most useful when the column assignments
-have been done via the setas attribute</li>
-<li><strong>all_vals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Return all values that match the criteria, or just the first in the file.</li>
+all_vals (bool): return all crossing points of the threshold or just the first. (default False)</p></li>
+<li><p><strong>transpose</strong> (<em>bbool</em>) – Swap the x and y columns around - this is most useful when the column assignments
+have been done via the setas attribute</p></li>
+<li><p><strong>all_vals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Return all values that match the criteria, or just the first in the file.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>float</em> – Either a sing;le fractional row index, or an in terpolated x value</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>(float)</em> –     Either a sing;le fractional row index, or an in terpolated x value</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If you don’t sepcify a col value or set it to None, then the assigned columns via the
+<p class="admonition-title">Note</p>
+<p>If you don’t sepcify a col value or set it to None, then the assigned columns via the
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code> attribute will be used.</p>
 </div>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">There has been an API change. Versions prior to 0.1.9 placed the column before the threshold in the positional
+<p class="admonition-title">Warning</p>
+<p>There has been an API change. Versions prior to 0.1.9 placed the column before the threshold in the positional
 argument list. In order to support the use of assigned columns, this has been swapped to the present order.</p>
 </div>
 </dd></dl>
@@ -113,24 +108,21 @@ argument list. In order to support the use of assigned columns, this has been sw
   <p class="topless"><a href="Stoner.Data.swap_column.html"
                         title="previous chapter">Data.swap_column</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Data.unique.html"
-                        title="next chapter">Data.unique</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Data.threshold.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <p class="topless"><a href="Stoner.Data.to_pandas.html"
+                        title="next chapter">Data.to_pandas</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Data.threshold.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -144,7 +136,7 @@ argument list. In order to support the use of assigned columns, this has been sw
           <a href="Stoner.Data.swap_column.html" title="Previous document">Data.swap_column</a>
         </li>
         <li>
-          <a href="Stoner.Data.unique.html" title="Next document">Data.unique</a>
+          <a href="Stoner.Data.to_pandas.html" title="Next document">Data.to_pandas</a>
           &rarr;
         </li>
     </ul>
@@ -153,7 +145,7 @@ argument list. In order to support the use of assigned columns, this has been sw
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -161,9 +153,9 @@ argument list. In order to support the use of assigned columns, this has been sw
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

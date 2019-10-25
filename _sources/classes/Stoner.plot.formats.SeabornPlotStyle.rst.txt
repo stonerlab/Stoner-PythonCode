@@ -5,3 +5,27 @@ SeabornPlotStyle
 
 .. autoclass:: SeabornPlotStyle
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~SeabornPlotStyle.context
+      ~SeabornPlotStyle.palette
+      ~SeabornPlotStyle.stylename
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~SeabornPlotStyle.apply
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: context
+   .. autoattribute:: palette
+   .. autoattribute:: stylename
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: apply

@@ -5,3 +5,31 @@ HDF5File
 
 .. autoclass:: HDF5File
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~HDF5File.compression
+      ~HDF5File.compression_opts
+      ~HDF5File.mime_type
+      ~HDF5File.patterns
+      ~HDF5File.priority
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~HDF5File.save
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: compression
+   .. autoattribute:: compression_opts
+   .. autoattribute:: mime_type
+   .. autoattribute:: patterns
+   .. autoattribute:: priority
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: save

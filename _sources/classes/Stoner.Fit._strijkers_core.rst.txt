@@ -1,6 +1,0 @@
-Fit._strijkers_core
-===================
-
-.. currentmodule:: Stoner
-
-.. autoattribute:: Fit._strijkers_core

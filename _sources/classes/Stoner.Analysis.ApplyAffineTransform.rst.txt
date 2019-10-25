@@ -1,6 +1,0 @@
-ApplyAffineTransform
-====================
-
-.. currentmodule:: Stoner.Analysis
-
-.. autofunction:: ApplyAffineTransform

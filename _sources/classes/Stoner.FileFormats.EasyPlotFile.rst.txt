@@ -47,6 +47,7 @@ Stoner.FileFormats.EasyPlotFile
       ~Stoner.FileFormats.EasyPlotFile.sort
       ~Stoner.FileFormats.EasyPlotFile.split
       ~Stoner.FileFormats.EasyPlotFile.swap_column
+      ~Stoner.FileFormats.EasyPlotFile.to_pandas
       ~Stoner.FileFormats.EasyPlotFile.unique
       ~Stoner.FileFormats.EasyPlotFile.update
       ~Stoner.FileFormats.EasyPlotFile.values

@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Stoner.folders.core &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -54,15 +54,14 @@
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">islice</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">MutableSequence</span>
-<span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">from</span> <span class="nn">multiprocessing.pool</span> <span class="k">import</span> <span class="n">ThreadPool</span>
-<span class="kn">import</span> <span class="nn">multiprocess</span> <span class="k">as</span> <span class="nn">multiprocessing</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="k">import</span> <span class="n">isclass</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
 <span class="kn">import</span> <span class="nn">fnmatch</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">python_v3</span><span class="p">,</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">commonpath</span><span class="p">,</span> <span class="n">_pattern_type</span><span class="p">,</span> <span class="nb">cmp</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">commonpath</span><span class="p">,</span> <span class="n">_pattern_type</span><span class="p">,</span> <span class="nb">cmp</span>
 <span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">operator</span><span class="p">,</span> <span class="n">isiterable</span><span class="p">,</span> <span class="n">isproperty</span><span class="p">,</span> <span class="n">all_type</span><span class="p">,</span> <span class="n">get_option</span>
 <span class="kn">from</span> <span class="nn">Stoner.core.base</span> <span class="k">import</span> <span class="n">regexpDict</span>
 <span class="kn">from</span> <span class="nn">Stoner.core.base</span> <span class="k">import</span> <span class="n">metadataObject</span>
@@ -72,6 +71,120 @@
 <span class="kn">from</span> <span class="nn">.metadata</span> <span class="k">import</span> <span class="n">proxy</span> <span class="k">as</span> <span class="n">combined_metadata_proxy</span>
 
 <span class="n">regexp_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">_pattern_type</span><span class="p">,)</span>
+
+
+<span class="k">def</span> <span class="nf">__add_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implements the core logic of the addition operator.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        We&#39;re in the base class here, so we don&#39;t call super() if we can&#39;t handle this, then we&#39;re stuffed!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">baseFolder</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">isclass</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">type</span><span class="p">):</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">files</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span>  <span class="c1"># recursively merge groups</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">grp</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Incompatible types (</span><span class="si">{}</span><span class="s2"> must be a subclass of </span><span class="si">{}</span><span class="s2">) in the two folders.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">type</span><span class="p">):</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">NotImplemented</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">__div_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implements the divide operator as a grouping function.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">string_types</span> <span class="o">+</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">int_types</span><span class="p">):</span>  <span class="c1"># Simple decimate</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">add_group</span><span class="p">(</span><span class="s2">&quot;Group </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)):</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="n">ix</span> <span class="o">%</span> <span class="n">other</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="s2">&quot;Group </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">group</span><span class="p">)]</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">ix</span><span class="p">),</span> <span class="n">d</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">__clear__</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implemenets the core logic of the subtraction operator.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        We&#39;re in the base class here, so we don&#39;t call super() if we can&#39;t handle this, then we&#39;re stuffed!</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">calls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">int_types</span><span class="p">,</span> <span class="n">__sub_core_int__</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">string_types</span><span class="p">,</span> <span class="n">__sub_core_string__</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">metadataObject</span><span class="p">,</span> <span class="n">__sub_core_data__</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span> <span class="n">__sub_core_folder__</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Iterable</span><span class="p">,</span> <span class="n">__sub_core_iterable__</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">typ</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">calls</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">NotImplemented</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">__sub_core_int__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Remove indexed file.&quot;&quot;&quot;</span>
+    <span class="n">delname</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">__names__</span><span class="p">()[</span><span class="n">other</span><span class="p">]</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="n">delname</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">__sub_core_string__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;&quot;Removed named file.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not in the folder.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">__sub_core_data__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Remove a data object.&quot;&quot;&quot;</span>
+    <span class="n">othername</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">othername</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="n">othername</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not in the folder.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">othername</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">__sub_core_folder__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Remove a folder.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">isclass</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">type</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">othername</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">ls</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">othername</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="n">othername</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">othergroup</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">othergroup</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">othergroup</span><span class="p">]</span> <span class="o">-=</span> <span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">othergroup</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;Incompatible types (</span><span class="si">{}</span><span class="s2"> must be a subclass of </span><span class="si">{}</span><span class="s2">) in the two folders.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">__sub_core_iterable__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Iterate to remove iterables.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
+        <span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
 
 
 <div class="viewcode-block" id="baseFolder"><a class="viewcode-back" href="../../../classes/Stoner.folders.core.baseFolder.html#Stoner.baseFolder">[docs]</a><span class="k">class</span> <span class="nc">baseFolder</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">):</span>
@@ -124,10 +237,7 @@
 
 <span class="sd">        We do this in __new__ so that the mixin classes can access baseFolders state storage before baseFolder does further __init__() work.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">python_v3</span><span class="p">:</span>
-            <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_name</span> <span class="o">=</span> <span class="mi">0</span>
@@ -170,10 +280,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Setting self.</span><span class="si">{}</span><span class="s2"> to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">python_v3</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
     <span class="c1">###########################################################################</span>
     <span class="c1">################### Properties of baseFolder ##############################</span>
@@ -206,8 +313,11 @@
     <span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Recursively set the debug value&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">[</span><span class="s2">&quot;debug&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">member</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaded</span><span class="p">:</span>
+            <span class="n">member</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -260,6 +370,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True if the folder is empty.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -282,13 +393,15 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">loader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a callable that will load the files on demand.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loader</span>
 
     <span class="nd">@loader</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">metadataObject</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the loader class ensuring that it is a metadataObject.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">isclass</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">metadataObject</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_loader</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
@@ -356,10 +469,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the real folder root.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root</span>
 
     <span class="nd">@root</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the folder root.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
@@ -377,7 +492,7 @@
     <span class="nd">@type</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Ensures that type is a subclass of metadataObject.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">metadataObject</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">isclass</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">metadataObject</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">metadataObject</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="vm">__class__</span>
@@ -561,7 +676,7 @@
 <span class="sd">                of not loading the objects in the folder into memory if a :py:class:`DiskBasedFolder` is</span>
 <span class="sd">                used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">int_types</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span> <span class="o">+</span> <span class="n">regexp_type</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">:</span>
@@ -577,7 +692,7 @@
                 <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is out of range.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>  <span class="c1"># Possibly ought to return another Folder?</span>
             <span class="n">other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__clone__</span><span class="p">(</span><span class="n">attrs_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">iname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">(),</span> <span class="n">name</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">step</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">iname</span> <span class="ow">in</span> <span class="n">islice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">(),</span> <span class="n">name</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">step</span><span class="p">):</span>
                 <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">iname</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s2">&quot;filename&quot;</span><span class="p">):</span>
                     <span class="n">item</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">iname</span>
@@ -597,7 +712,7 @@
                 <span class="k">if</span> <span class="n">all_type</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">int_types</span><span class="p">,</span> <span class="nb">slice</span><span class="p">)):</span>  <span class="c1"># Looks like we&#39;re accessing data arrays</span>
                     <span class="n">test</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">),)</span> <span class="o">+</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
                     <span class="n">output</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
                         <span class="n">output</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
                     <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
                     <span class="k">return</span> <span class="n">output</span>
@@ -649,7 +764,7 @@
             <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t use </span><span class="si">{}</span><span class="s2"> as a key to delete from baseFolder. (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()))</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t use </span><span class="si">{}</span><span class="s2"> as a key to delete in baseFolder. (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()))</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">int_types</span><span class="p">):</span>
             <span class="k">if</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">name</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
@@ -661,7 +776,7 @@
             <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                 <span class="k">del</span> <span class="bp">self</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t use </span><span class="si">{}</span><span class="s2"> as a key to delete from baseFolder. (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()))</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t use </span><span class="si">{}</span><span class="s2"> as a key to delete in baseFolder. (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">())))</span>
 
     <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check whether name is in a list of groups or in the list of names&quot;&quot;&quot;</span>
@@ -671,152 +786,30 @@
         <span class="sd">&quot;&quot;&quot;Allow len(:py:class:`baseFolder`) works as expected.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="nf">__add_core__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implements the core logic of the addition operator.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            We&#39;re in the base class here, so we don&#39;t call super() if we can&#39;t handle this, then we&#39;re stuffed!</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">baseFolder</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">):</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">files</span><span class="p">])</span>
-                <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">grp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
-                        <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span>  <span class="c1"># recursively merge groups</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">grp</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="s2">&quot;Incompatible types (</span><span class="si">{}</span><span class="s2"> must be a subclass of </span><span class="si">{}</span><span class="s2">) in the two folders.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">type</span>
-                    <span class="p">)</span>
-                <span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">type</span><span class="p">):</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">NotImplemented</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">__div_core__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implements the divide operator as a grouping function.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">string_types</span> <span class="o">+</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">result</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">int_types</span><span class="p">):</span>  <span class="c1"># Simple decimate</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">add_group</span><span class="p">(</span><span class="s2">&quot;Group </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
-                <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-                <span class="n">group</span> <span class="o">=</span> <span class="n">ix</span> <span class="o">%</span> <span class="n">other</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="s2">&quot;Group </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">group</span><span class="p">)]</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">ix</span><span class="p">),</span> <span class="n">d</span><span class="p">)</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">__clear__</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">__sub_core_int__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove indexed file.&quot;&quot;&quot;</span>
-        <span class="n">delname</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">__names__</span><span class="p">()[</span><span class="n">other</span><span class="p">]</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="n">delname</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">__sub_core_string__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;Removed named file.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not in the folder.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">__sub_core_data__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove a data object.&quot;&quot;&quot;</span>
-        <span class="n">othername</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">othername</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="n">othername</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not in the folder.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">othername</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">__sub_core_folder__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove a folder.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">othername</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">ls</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">othername</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-                    <span class="n">result</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="n">othername</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">othergroup</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">othergroup</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
-                    <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">othergroup</span><span class="p">]</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">othergroup</span><span class="p">],</span> <span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">othergroup</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;Incompatible types (</span><span class="si">{}</span><span class="s2"> must be a subclass of </span><span class="si">{}</span><span class="s2">) in the two folders.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">__sub_core_iterable__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Iterate to remove iterables.&quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">__sub_core__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implemenets the core logic of the subtraction operator.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            We&#39;re in the base class here, so we don&#39;t call super() if we can&#39;t handle this, then we&#39;re stuffed!</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">calls</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">int_types</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core_int__</span><span class="p">),</span>
-            <span class="p">(</span><span class="n">string_types</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core_string__</span><span class="p">),</span>
-            <span class="p">(</span><span class="n">metadataObject</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core_data__</span><span class="p">),</span>
-            <span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core_folder__</span><span class="p">),</span>
-            <span class="p">(</span><span class="n">Iterable</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core_iterable__</span><span class="p">),</span>
-        <span class="p">]</span>
-        <span class="k">for</span> <span class="n">typ</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">calls</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
-                <span class="k">break</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">NotImplemented</span>
-
-        <span class="k">return</span> <span class="n">result</span>
-
     <span class="c1">###########################################################################</span>
     <span class="c1">###################### Standard Special Methods ###########################</span>
 
     <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement the addition operator for baseFolder and metadataObjects.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__add_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">__add_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement the addition operator for baseFolder and metadataObjects.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__add_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">__add_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">if</span> <span class="n">python_v3</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The divide operator is a grouping function for a :py:class:`baseFolder`.&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">__div_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;The divide operator is a grouping function for a :py:class:`baseFolder`.&quot;&quot;&quot;</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__div_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">__itruediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;The divide operator is a grouping function for a :py:class:`baseFolder`.&quot;&quot;&quot;</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__div_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
-
-    <span class="k">else</span><span class="p">:</span>
-
-        <span class="k">def</span> <span class="nf">__div__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;The divide operator is a grouping function for a :py:class:`baseFolder`.&quot;&quot;&quot;</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__div_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">__idiv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;The divide operator is a grouping function for a :py:class:`baseFolder`.&quot;&quot;&quot;</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__div_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__itruediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The divide operator is a grouping function for a :py:class:`baseFolder`.&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">__div_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__invert__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;For a :py:class:`naseFolder`, inverting means either flattening or unflattening the folder.</span>
@@ -833,17 +826,23 @@
 
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterate over objects.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__next__</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Python 3.x style iterator function.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
-            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">member</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">member</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">yield</span> <span class="n">member</span>
 
 <div class="viewcode-block" id="baseFolder.next"><a class="viewcode-back" href="../../../classes/Stoner.folders.core.baseFolder.html#Stoner.baseFolder.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Python 2.7 style iterator function.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
-            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+            <span class="n">member</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">member</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">yield</span> <span class="n">member</span></div>
 
     <span class="k">def</span> <span class="nf">__rmatmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement callable@DataFolder as a generic iterate a function over DataFolder members.</span>
@@ -858,13 +857,13 @@
     <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement the addition operator for baseFolder and metadataObjects.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement the addition operator for baseFolder and metadataObjects.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
@@ -954,12 +953,11 @@
     <span class="k">def</span> <span class="nf">__reversed__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create an iterator function that runs backwards through the stored objects.&quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">reverse_iterator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;Reverse iterator function.&quot;&quot;&quot;</span>
-            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()):</span>
-                <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">reverse_iterator</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()):</span>
+            <span class="n">member</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">member</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">yield</span> <span class="n">member</span>
 
     <span class="k">def</span> <span class="nf">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Handles removing an attribute from the folder, including proxied attributes.&quot;&quot;&quot;</span>
@@ -1019,57 +1017,11 @@
     <span class="k">def</span> <span class="nf">__init_from_other</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="n">other</span><span class="o">.</span><span class="n">__clone__</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="c1">#        for k in dir(other):</span>
-    <span class="c1">#            if k.startswith(&quot;_&quot;): # Short circuit before we even get the value</span>
-    <span class="c1">#                continue</span>
-    <span class="c1">#            v=getattr(other,k)</span>
-    <span class="c1">#            if ismethod(v)  or isgenerator(v):</span>
-    <span class="c1">#                continue</span>
-    <span class="c1">#            if isproperty(self,k) and not hasattr(v,&quot;__set__&quot;):</span>
-    <span class="c1">#                continue</span>
-    <span class="c1">#            if k in [&quot;groups&quot;,&quot;_groups&quot;,&quot;objects&quot;,&quot;_objects&quot;,&quot;key&quot;]:</span>
-    <span class="c1">#                continue</span>
-    <span class="c1">#            try:</span>
-    <span class="c1">#                setattr(result, k, deepcopy(v))</span>
-    <span class="c1">#            except Exception:</span>
-    <span class="c1">#                setattr(result, k, copy(v))</span>
-    <span class="c1">#</span>
-    <span class="c1">#        result.key=other.key</span>
-    <span class="c1">#</span>
-    <span class="c1">#        for g in other.groups:</span>
-    <span class="c1">#            self.groups[g]=cls(other.groups[g])</span>
-    <span class="c1">#        for n in other.__names__():</span>
-    <span class="c1">#            self.__setter__(n,other.__getter__(n,instantiate=None))</span>
-
-    <span class="k">def</span> <span class="nf">_get_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Utility method to get a Pool and map implementation depending on options.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Pool(),map: Pool object if possible and map implementation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">get_option</span><span class="p">(</span><span class="s2">&quot;multiprocessing&quot;</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">get_option</span><span class="p">(</span><span class="s2">&quot;threading&quot;</span><span class="p">):</span>
-                    <span class="n">p</span> <span class="o">=</span> <span class="n">ThreadPool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">p</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
-                <span class="n">imap</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">imap</span>
-            <span class="k">except</span><span class="p">:</span>  <span class="c1"># Fallback to non-multiprocessing if necessary</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="k">if</span> <span class="n">python_v3</span><span class="p">:</span>
-                    <span class="n">imap</span> <span class="o">=</span> <span class="nb">map</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">imap</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">imap</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">if</span> <span class="n">python_v3</span><span class="p">:</span>
-                <span class="n">imap</span> <span class="o">=</span> <span class="nb">map</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">imap</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">imap</span>
-        <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">imap</span>
-
     <span class="k">def</span> <span class="nf">_update_from_object_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Updates an object from object_attrs store.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kargs</span><span class="p">:</span>  <span class="c1"># Set from keyword arguments</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_object_attrs&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -1077,15 +1029,6 @@
                 <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t set attribute </span><span class="si">{}</span><span class="s2"> to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">obj</span>
-
-    <span class="k">def</span> <span class="nf">_pruner_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grp</span><span class="p">,</span> <span class="n">breadcrumb</span><span class="p">,</span> <span class="n">prunelist</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes any empty groups fromthe objectFolder tree.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">grp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">grp</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">prunelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">breadcrumb</span><span class="p">)</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="nf">__walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">walker</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we&#39;ve already visited.</span>
@@ -1208,7 +1151,7 @@
                     <span class="k">del</span> <span class="n">base</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">nk</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="baseFolder.count"><a class="viewcode-back" href="../../../classes/Stoner.folders.core.baseFolder.html#Stoner.baseFolder.count">[docs]</a>    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.count"><a class="viewcode-back" href="../../../classes/Stoner.folders.core.baseFolder.html#Stoner.baseFolder.count">[docs]</a>    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>  <span class="c1"># pylint:  disable=arguments-differ</span>
         <span class="sd">&quot;&quot;&quot;Provide a count method like a sequence.</span>
 
 <span class="sd">        Args:</span>
@@ -1416,7 +1359,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">next_keys</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="baseFolder.index"><a class="viewcode-back" href="../../../classes/Stoner.folders.core.baseFolder.html#Stoner.baseFolder.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.index"><a class="viewcode-back" href="../../../classes/Stoner.folders.core.baseFolder.html#Stoner.baseFolder.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># pylint:  disable=arguments-differ</span>
         <span class="sd">&quot;&quot;&quot;Provide an index method like a sequence.</span>
 
 <span class="sd">        Args:</span>
@@ -1457,7 +1400,7 @@
                     <span class="k">return</span> <span class="n">i</span> <span class="o">+</span> <span class="n">start</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No match for any name of a metadataObject in this baseFolder.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="baseFolder.insert"><a class="viewcode-back" href="../../../classes/Stoner.folders.core.baseFolder.html#Stoner.baseFolder.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="baseFolder.insert"><a class="viewcode-back" href="../../../classes/Stoner.folders.core.baseFolder.html#Stoner.baseFolder.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>  <span class="c1"># pylint:  disable=arguments-differ</span>
         <span class="sd">&quot;&quot;&quot;Implements the insert method with the option to append as well.&quot;&quot;&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_name</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()</span>
@@ -1685,27 +1628,11 @@
             <span class="n">new_order</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">fnames</span><span class="p">]</span>
             <span class="n">new_names</span> <span class="o">=</span> <span class="n">fnames</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">_pattern_type</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">python_v3</span><span class="p">:</span>
-                <span class="n">new_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">new_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">(),</span>
-                    <span class="nb">cmp</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">cmp</span><span class="p">(</span>
-                        <span class="n">key</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">(),</span> <span class="n">key</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>  <span class="c1"># NOQA pylint: disable=undefined-variable</span>
-                    <span class="p">),</span>
-                    <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="n">new_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
             <span class="n">new_order</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">new_names</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">order</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">python_v3</span><span class="p">:</span>
-                <span class="n">new_order</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">key</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">x</span><span class="p">]),</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">new_order</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-                    <span class="n">order</span><span class="p">,</span>
-                    <span class="nb">cmp</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">cmp</span><span class="p">(</span><span class="n">key</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">x</span><span class="p">]),</span> <span class="n">key</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">y</span><span class="p">])),</span>  <span class="c1"># NOQA pylint: disable=undefined-variable</span>
-                    <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="n">new_order</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">key</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">x</span><span class="p">]),</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
             <span class="n">new_order</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">new_order</span><span class="p">]</span>
             <span class="n">new_names</span> <span class="o">=</span> <span class="n">new_order</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__clear__</span><span class="p">()</span>
@@ -1809,17 +1736,12 @@
             <p class="logo"><a href="../../../index.html">
               <img class="logo" src="../../../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+<form class="search" action="../../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -1842,9 +1764,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

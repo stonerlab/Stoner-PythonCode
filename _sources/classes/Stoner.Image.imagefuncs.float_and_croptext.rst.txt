@@ -1,6 +1,0 @@
-float_and_croptext
-==================
-
-.. currentmodule:: Stoner.Image.imagefuncs
-
-.. autofunction:: float_and_croptext

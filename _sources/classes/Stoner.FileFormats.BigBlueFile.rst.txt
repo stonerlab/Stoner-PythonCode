@@ -47,6 +47,7 @@ Stoner.FileFormats.BigBlueFile
       ~Stoner.FileFormats.BigBlueFile.sort
       ~Stoner.FileFormats.BigBlueFile.split
       ~Stoner.FileFormats.BigBlueFile.swap_column
+      ~Stoner.FileFormats.BigBlueFile.to_pandas
       ~Stoner.FileFormats.BigBlueFile.unique
       ~Stoner.FileFormats.BigBlueFile.update
       ~Stoner.FileFormats.BigBlueFile.values

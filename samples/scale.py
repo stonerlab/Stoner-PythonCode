@@ -1,6 +1,6 @@
 """Example of using scale to overlap data"""
 from Stoner import Data
-from numpy import linspace, sin, exp, pi, dstack
+from numpy import linspace, sin, exp, pi, column_stack
 from numpy.random import normal
 import matplotlib as mpl
 from tabulate import tabulate
@@ -15,11 +15,19 @@ y2 = 3 * exp(-x / (2 * pi)) * sin(x) - 1 + normal(size=len(x), scale=0.1)
 d = Data(x, y, column_headers=["Time", "Signal 1"], setas="xy")
 d2 = Data(x2, y2, column_headers=["Time", "Signal 2"], setas="xy")
 
-d.plot()
-d2.plot(figure=d.fig)
+d.plot(label="1$^\\mathrm{st}$ signal")
+d2.plot(figure=d.fig, label="2$^\\mathrm{nd}$ signal")
 d3 = d2.scale(d, header="Signal 2 scaled", xmode="affine")
-d3.plot(figure=d.fig)
+d3.plot(figure=d.fig, label="1$^\\mathrm{st}$ scaled signals")
 d3["test"] = linspace(1, 10, 10)
 txt = tabulate(d3["Transform"], floatfmt=".2f", tablefmt="grid")
-d3.text(20, 2, "Transform\n{}".format(txt), fontdict={"size": "x-small"})
-d3.title = "Scaling Example"
+d3.text(10, 4, "Transform\n{}".format(txt), fontdict={"size": "x-small"})
+
+np_data = column_stack((x2, y2))
+d4 = d.scale(np_data, header="Signal 2 scaled", xmode="affine", use_estimate=True)
+d4.plot(figure=d.fig, label="2$^\\mathrm{nd}$ scaled signal")
+d4.ylim = (-7, 9)
+txt = tabulate(d4["Transform"], floatfmt=".2f", tablefmt="grid")
+d4.text(10, -7, "Transform\n{}".format(txt), fontdict={"size": "x-small"})
+
+d4.title = "Scaling Example"

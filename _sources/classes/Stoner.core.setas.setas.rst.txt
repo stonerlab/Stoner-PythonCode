@@ -5,3 +5,69 @@ setas
 
 .. autoclass:: setas
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~setas.clone
+      ~setas.cols
+      ~setas.column_headers
+      ~setas.not_set
+      ~setas.set
+      ~setas.setas
+      ~setas.shape
+      ~setas.x
+      ~setas.y
+      ~setas.z
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~setas.__call__
+      ~setas.clear
+      ~setas.find_col
+      ~setas.get
+      ~setas.items
+      ~setas.keys
+      ~setas.pop
+      ~setas.popitem
+      ~setas.setdefault
+      ~setas.to_dict
+      ~setas.to_list
+      ~setas.to_string
+      ~setas.unset
+      ~setas.update
+      ~setas.values
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: clone
+   .. autoattribute:: cols
+   .. autoattribute:: column_headers
+   .. autoattribute:: not_set
+   .. autoattribute:: set
+   .. autoattribute:: setas
+   .. autoattribute:: shape
+   .. autoattribute:: x
+   .. autoattribute:: y
+   .. autoattribute:: z
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__
+   .. automethod:: clear
+   .. automethod:: find_col
+   .. automethod:: get
+   .. automethod:: items
+   .. automethod:: keys
+   .. automethod:: pop
+   .. automethod:: popitem
+   .. automethod:: setdefault
+   .. automethod:: to_dict
+   .. automethod:: to_list
+   .. automethod:: to_string
+   .. automethod:: unset
+   .. automethod:: update
+   .. automethod:: values

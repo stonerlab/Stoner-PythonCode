@@ -90,12 +90,14 @@ Stoner.Data
       ~Stoner.Data.span
       ~Stoner.Data.spline
       ~Stoner.Data.split
+      ~Stoner.Data.std
       ~Stoner.Data.stitch
       ~Stoner.Data.subplot
       ~Stoner.Data.subplot2grid
       ~Stoner.Data.subtract
       ~Stoner.Data.swap_column
       ~Stoner.Data.threshold
+      ~Stoner.Data.to_pandas
       ~Stoner.Data.unique
       ~Stoner.Data.update
       ~Stoner.Data.values

@@ -5,3 +5,25 @@ PRBPlotStyle
 
 .. autoclass:: PRBPlotStyle
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~PRBPlotStyle.show_title
+      ~PRBPlotStyle.stylename
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~PRBPlotStyle.customise_axes
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: show_title
+   .. autoattribute:: stylename
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: customise_axes

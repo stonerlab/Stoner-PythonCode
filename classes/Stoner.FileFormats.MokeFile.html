@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Stoner.FileFormats.MokeFile &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="MokeFile.__init__" href="Stoner.FileFormats.MokeFile.__init__.html" />
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -55,194 +55,197 @@
 <h1>Stoner.FileFormats.MokeFile<a class="headerlink" href="#stoner-fileformats-mokefile" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.FileFormats.MokeFile">
-<em class="property">class </em><code class="descclassname">Stoner.FileFormats.</code><code class="descname">MokeFile</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/FileFormats.html#MokeFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FileFormats.MokeFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class that extgends _SC_.DataFile to load files from the Leeds MOKE system.</p>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.FileFormats.</code><code class="sig-name descname">MokeFile</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/formats/rigs.html#MokeFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FileFormats.MokeFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that extgends Core.DataFile to load files from the Leeds MOKE system.</p>
 <p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.__init__.html#Stoner.FileFormats.MokeFile.__init__" title="Stoner.FileFormats.MokeFile.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args,&nbsp;**kargs)</td>
-<td>Constructor method for <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code>.</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.__init__.html#Stoner.FileFormats.MokeFile.__init__" title="Stoner.FileFormats.MokeFile.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kargs)</p></td>
+<td><p>Constructor method for <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.add_column.html#Stoner.FileFormats.MokeFile.add_column" title="Stoner.FileFormats.MokeFile.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;header,&nbsp;index,&nbsp;…])</td>
-<td>Appends a column of data or inserts a column to a datafile instance.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.add_column.html#Stoner.FileFormats.MokeFile.add_column" title="Stoner.FileFormats.MokeFile.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(column_data[, header, index, …])</p></td>
+<td><p>Appends a column of data or inserts a column to a datafile instance.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.adjust_setas.html#Stoner.FileFormats.MokeFile.adjust_setas" title="Stoner.FileFormats.MokeFile.adjust_setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjust_setas</span></code></a>(*args,&nbsp;**kargs)</td>
-<td>Adjust the setas of this object and return ourselves.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.adjust_setas.html#Stoner.FileFormats.MokeFile.adjust_setas" title="Stoner.FileFormats.MokeFile.adjust_setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjust_setas</span></code></a>(*args, **kargs)</p></td>
+<td><p>Adjust the setas of this object and return ourselves.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.clear.html#Stoner.FileFormats.MokeFile.clear" title="Stoner.FileFormats.MokeFile.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</td>
-<td></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.clear.html#Stoner.FileFormats.MokeFile.clear" title="Stoner.FileFormats.MokeFile.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.closest.html#Stoner.FileFormats.MokeFile.closest" title="Stoner.FileFormats.MokeFile.closest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">closest</span></code></a>(value[,&nbsp;xcol])</td>
-<td>Return the row in a data file which has an x-column value closest to the given value.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.closest.html#Stoner.FileFormats.MokeFile.closest" title="Stoner.FileFormats.MokeFile.closest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">closest</span></code></a>(value[, xcol])</p></td>
+<td><p>Return the row in a data file which has an x-column value closest to the given value.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.column.html#Stoner.FileFormats.MokeFile.column" title="Stoner.FileFormats.MokeFile.column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column</span></code></a>(col)</td>
-<td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.column.html#Stoner.FileFormats.MokeFile.column" title="Stoner.FileFormats.MokeFile.column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column</span></code></a>(col)</p></td>
+<td><p>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.columns.html#Stoner.FileFormats.MokeFile.columns" title="Stoner.FileFormats.MokeFile.columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columns</span></code></a>([not_masked])</td>
-<td>Generator method that will iterate over the columns of data int he datafile.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.columns.html#Stoner.FileFormats.MokeFile.columns" title="Stoner.FileFormats.MokeFile.columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columns</span></code></a>([not_masked])</p></td>
+<td><p>Generator method that will iterate over the columns of data int he datafile.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.count.html#Stoner.FileFormats.MokeFile.count" title="Stoner.FileFormats.MokeFile.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>([axis])</td>
-<td>Count the number of un-masked elements in the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code>.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.count.html#Stoner.FileFormats.MokeFile.count" title="Stoner.FileFormats.MokeFile.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>([axis])</p></td>
+<td><p>Count the number of un-masked elements in the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.del_column.html#Stoner.FileFormats.MokeFile.del_column" title="Stoner.FileFormats.MokeFile.del_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_column</span></code></a>([col,&nbsp;duplicates])</td>
-<td>Deletes a column from the current <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> object.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.del_column.html#Stoner.FileFormats.MokeFile.del_column" title="Stoner.FileFormats.MokeFile.del_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_column</span></code></a>([col, duplicates])</p></td>
+<td><p>Deletes a column from the current <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> object.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.del_nan.html#Stoner.FileFormats.MokeFile.del_nan" title="Stoner.FileFormats.MokeFile.del_nan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_nan</span></code></a>([col,&nbsp;clone])</td>
-<td>Remove rows that have nan in them.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.del_nan.html#Stoner.FileFormats.MokeFile.del_nan" title="Stoner.FileFormats.MokeFile.del_nan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_nan</span></code></a>([col, clone])</p></td>
+<td><p>Remove rows that have nan in them.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.del_rows.html#Stoner.FileFormats.MokeFile.del_rows" title="Stoner.FileFormats.MokeFile.del_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_rows</span></code></a>([col,&nbsp;val,&nbsp;invert])</td>
-<td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.del_rows.html#Stoner.FileFormats.MokeFile.del_rows" title="Stoner.FileFormats.MokeFile.del_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_rows</span></code></a>([col, val, invert])</p></td>
+<td><p>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.dir.html#Stoner.FileFormats.MokeFile.dir" title="Stoner.FileFormats.MokeFile.dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dir</span></code></a>([pattern])</td>
-<td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.dir.html#Stoner.FileFormats.MokeFile.dir" title="Stoner.FileFormats.MokeFile.dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dir</span></code></a>([pattern])</p></td>
+<td><p>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.filter.html#Stoner.FileFormats.MokeFile.filter" title="Stoner.FileFormats.MokeFile.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>([func,&nbsp;cols,&nbsp;reset])</td>
-<td>Sets the mask on rows of data by evaluating a function for each row.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.filter.html#Stoner.FileFormats.MokeFile.filter" title="Stoner.FileFormats.MokeFile.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>([func, cols, reset])</p></td>
+<td><p>Sets the mask on rows of data by evaluating a function for each row.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.find_col.html#Stoner.FileFormats.MokeFile.find_col" title="Stoner.FileFormats.MokeFile.find_col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
-<td>Indexes the column headers in order to locate a column of data.shape.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.find_col.html#Stoner.FileFormats.MokeFile.find_col" title="Stoner.FileFormats.MokeFile.find_col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_col</span></code></a>(col[, force_list])</p></td>
+<td><p>Indexes the column headers in order to locate a column of data.shape.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.get.html#Stoner.FileFormats.MokeFile.get" title="Stoner.FileFormats.MokeFile.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(item[,&nbsp;default])</td>
-<td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.get.html#Stoner.FileFormats.MokeFile.get" title="Stoner.FileFormats.MokeFile.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(item[, default])</p></td>
+<td><p>A wrapper around __get_item__ that handles missing keys by returning None.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.get_filename.html#Stoner.FileFormats.MokeFile.get_filename" title="Stoner.FileFormats.MokeFile.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a>(mode)</td>
-<td>Forces the user to choose a new filename using a system dialog box.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.get_filename.html#Stoner.FileFormats.MokeFile.get_filename" title="Stoner.FileFormats.MokeFile.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a>(mode)</p></td>
+<td><p>Forces the user to choose a new filename using a system dialog box.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.insert_rows.html#Stoner.FileFormats.MokeFile.insert_rows" title="Stoner.FileFormats.MokeFile.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(row,&nbsp;new_data)</td>
-<td>Insert new_data into the data array at position row.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.insert_rows.html#Stoner.FileFormats.MokeFile.insert_rows" title="Stoner.FileFormats.MokeFile.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(row, new_data)</p></td>
+<td><p>Insert new_data into the data array at position row.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.items.html#Stoner.FileFormats.MokeFile.items" title="Stoner.FileFormats.MokeFile.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</td>
-<td>Make sure we implement an items that doesn’t just iterate over self!</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.items.html#Stoner.FileFormats.MokeFile.items" title="Stoner.FileFormats.MokeFile.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</p></td>
+<td><p>Make sure we implement an items that doesn’t just iterate over self!</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.keys.html#Stoner.FileFormats.MokeFile.keys" title="Stoner.FileFormats.MokeFile.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</td>
-<td>An alias for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.dir(None)()</span></code> .</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.keys.html#Stoner.FileFormats.MokeFile.keys" title="Stoner.FileFormats.MokeFile.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</p></td>
+<td><p>An alias for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.dir(None)()</span></code> .</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.load.html#Stoner.FileFormats.MokeFile.load" title="Stoner.FileFormats.MokeFile.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
-<td>Loads the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> in from disc guessing a better subclass if necessary.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.load.html#Stoner.FileFormats.MokeFile.load" title="Stoner.FileFormats.MokeFile.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(*args, **kargs)</p></td>
+<td><p>Loads the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> in from disc guessing a better subclass if necessary.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.pop.html#Stoner.FileFormats.MokeFile.pop" title="Stoner.FileFormats.MokeFile.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>(k[,d])</td>
-<td>If key is not found, d is returned if given, otherwise KeyError is raised.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.pop.html#Stoner.FileFormats.MokeFile.pop" title="Stoner.FileFormats.MokeFile.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>(k[,d])</p></td>
+<td><p>If key is not found, d is returned if given, otherwise KeyError is raised.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.popitem.html#Stoner.FileFormats.MokeFile.popitem" title="Stoner.FileFormats.MokeFile.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</td>
-<td>as a 2-tuple; but raise KeyError if D is empty.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.popitem.html#Stoner.FileFormats.MokeFile.popitem" title="Stoner.FileFormats.MokeFile.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
+<td><p>as a 2-tuple; but raise KeyError if D is empty.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.rename.html#Stoner.FileFormats.MokeFile.rename" title="Stoner.FileFormats.MokeFile.rename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename</span></code></a>(old_col,&nbsp;new_col)</td>
-<td>Renames columns without changing the underlying data.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.rename.html#Stoner.FileFormats.MokeFile.rename" title="Stoner.FileFormats.MokeFile.rename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename</span></code></a>(old_col, new_col)</p></td>
+<td><p>Renames columns without changing the underlying data.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.reorder_columns.html#Stoner.FileFormats.MokeFile.reorder_columns" title="Stoner.FileFormats.MokeFile.reorder_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reorder_columns</span></code></a>(cols[,&nbsp;headers_too,&nbsp;setas_too])</td>
-<td>Construct a new data array from the original data by assembling the columns in the order given.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.reorder_columns.html#Stoner.FileFormats.MokeFile.reorder_columns" title="Stoner.FileFormats.MokeFile.reorder_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reorder_columns</span></code></a>(cols[, headers_too, setas_too])</p></td>
+<td><p>Construct a new data array from the original data by assembling the columns in the order given.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.rolling_window.html#Stoner.FileFormats.MokeFile.rolling_window" title="Stoner.FileFormats.MokeFile.rolling_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_window</span></code></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
-<td>Iterator that return a rolling window section of the data.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.rolling_window.html#Stoner.FileFormats.MokeFile.rolling_window" title="Stoner.FileFormats.MokeFile.rolling_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_window</span></code></a>([window, wrap, exclude_centre])</p></td>
+<td><p>Iterator that return a rolling window section of the data.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.rows.html#Stoner.FileFormats.MokeFile.rows" title="Stoner.FileFormats.MokeFile.rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rows</span></code></a>([not_masked,&nbsp;reset])</td>
-<td>Generator method that will iterate over rows of data</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.rows.html#Stoner.FileFormats.MokeFile.rows" title="Stoner.FileFormats.MokeFile.rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rows</span></code></a>([not_masked, reset])</p></td>
+<td><p>Generator method that will iterate over rows of data</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.save.html#Stoner.FileFormats.MokeFile.save" title="Stoner.FileFormats.MokeFile.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([filename])</td>
-<td>Saves a string representation of the current DataFile object into the file ‘filename’.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.save.html#Stoner.FileFormats.MokeFile.save" title="Stoner.FileFormats.MokeFile.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([filename])</p></td>
+<td><p>Saves a string representation of the current DataFile object into the file ‘filename’.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.search.html#Stoner.FileFormats.MokeFile.search" title="Stoner.FileFormats.MokeFile.search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
-<td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.search.html#Stoner.FileFormats.MokeFile.search" title="Stoner.FileFormats.MokeFile.search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a>(xcol, value[, columns, accuracy])</p></td>
+<td><p>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.section.html#Stoner.FileFormats.MokeFile.section" title="Stoner.FileFormats.MokeFile.section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section</span></code></a>(**kargs)</td>
-<td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.section.html#Stoner.FileFormats.MokeFile.section" title="Stoner.FileFormats.MokeFile.section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section</span></code></a>(**kargs)</p></td>
+<td><p>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.select.html#Stoner.FileFormats.MokeFile.select" title="Stoner.FileFormats.MokeFile.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args,&nbsp;**kargs)</td>
-<td>Produce a copy of the DataFile with only data rows that match a criteria.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.select.html#Stoner.FileFormats.MokeFile.select" title="Stoner.FileFormats.MokeFile.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args, **kargs)</p></td>
+<td><p>Produce a copy of the DataFile with only data rows that match a criteria.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.setdefault.html#Stoner.FileFormats.MokeFile.setdefault" title="Stoner.FileFormats.MokeFile.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[,d])</td>
-<td></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.setdefault.html#Stoner.FileFormats.MokeFile.setdefault" title="Stoner.FileFormats.MokeFile.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[,d])</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.sort.html#Stoner.FileFormats.MokeFile.sort" title="Stoner.FileFormats.MokeFile.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>(*order,&nbsp;**kargs)</td>
-<td>Sorts the data by column name.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.sort.html#Stoner.FileFormats.MokeFile.sort" title="Stoner.FileFormats.MokeFile.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>(*order, **kargs)</p></td>
+<td><p>Sorts the data by column name.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.split.html#Stoner.FileFormats.MokeFile.split" title="Stoner.FileFormats.MokeFile.split"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split</span></code></a>(*args)</td>
-<td>Recursively splits the current <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> object into a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Forlders.DataFolder</span></code> objects where each one contains the rows from the original object which had the same value of a given column(s) or function.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.split.html#Stoner.FileFormats.MokeFile.split" title="Stoner.FileFormats.MokeFile.split"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split</span></code></a>(*args[, final])</p></td>
+<td><p>Recursively splits the current <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> object into a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Forlders.DataFolder</span></code> objects where each one contains the rows from the original object which had the same value of a given column(s) or function.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.swap_column.html#Stoner.FileFormats.MokeFile.swap_column" title="Stoner.FileFormats.MokeFile.swap_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swap_column</span></code></a>(*swp,&nbsp;**kargs)</td>
-<td>Swaps pairs of columns in the data.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.swap_column.html#Stoner.FileFormats.MokeFile.swap_column" title="Stoner.FileFormats.MokeFile.swap_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swap_column</span></code></a>(*swp, **kargs)</p></td>
+<td><p>Swaps pairs of columns in the data.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.unique.html#Stoner.FileFormats.MokeFile.unique" title="Stoner.FileFormats.MokeFile.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
-<td>Return the unique values from the specified column - pass through for numpy.unique.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.to_pandas.html#Stoner.FileFormats.MokeFile.to_pandas" title="Stoner.FileFormats.MokeFile.to_pandas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_pandas</span></code></a>()</p></td>
+<td><p>Create a pandas DataFrame from a <a class="reference internal" href="Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> object.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.update.html#Stoner.FileFormats.MokeFile.update" title="Stoner.FileFormats.MokeFile.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>([E,&nbsp;]**F)</td>
-<td>If E present and has a .keys() method, does:     for k in E: D[k] = E[k] If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v In either case, this is followed by: for k, v in F.items(): D[k] = v</td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.unique.html#Stoner.FileFormats.MokeFile.unique" title="Stoner.FileFormats.MokeFile.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a>(col[, return_index, return_inverse])</p></td>
+<td><p>Return the unique values from the specified column - pass through for numpy.unique.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MokeFile.values.html#Stoner.FileFormats.MokeFile.values" title="Stoner.FileFormats.MokeFile.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</td>
-<td>Return the values of the metadata dictionary.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.update.html#Stoner.FileFormats.MokeFile.update" title="Stoner.FileFormats.MokeFile.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>([E, ]**F)</p></td>
+<td><p>If E present and has a .keys() method, does:     for k in E: D[k] = E[k] If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v In either case, this is followed by: for k, v in F.items(): D[k] = v</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.FileFormats.MokeFile.values.html#Stoner.FileFormats.MokeFile.values" title="Stoner.FileFormats.MokeFile.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</p></td>
+<td><p>Return the values of the metadata dictionary.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></td>
-<td>Gets the current data transposed.</td>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></p></td>
+<td><p>Gets the current data transposed.</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">basename</span></code></td>
-<td>Returns the basename of the current filename.</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">basename</span></code></p></td>
+<td><p>Returns the basename of the current filename.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></td>
-<td>Gets a deep copy of the current DataFile.</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></p></td>
+<td><p>Gets a deep copy of the current DataFile.</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">column_headers</span></code></td>
-<td>Pass through to the setas attribute.</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">column_headers</span></code></p></td>
+<td><p>Pass through to the setas attribute.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></td>
-<td>Property Accessors for the main numerical data.</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></p></td>
+<td><p>Property Accessors for the main numerical data.</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict_records</span></code></td>
-<td>Return the data as a dictionary of single columns with column headers for the keys.</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict_records</span></code></p></td>
+<td><p>Return the data as a dictionary of single columns with column headers for the keys.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">dims</span></code></td>
-<td>An alias for self.data.axes</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dims</span></code></p></td>
+<td><p>An alias for self.data.axes</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></td>
-<td>Return the _np_ dtype attribute of the data</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></p></td>
+<td><p>Return the _np_ dtype attribute of the data</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">filename</span></code></td>
-<td>Return DataFile filename, or make one up.</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">filename</span></code></p></td>
+<td><p>Return DataFile filename, or make one up.</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">header</span></code></td>
-<td>Make a pretty header string that looks like the tabular representation.</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">header</span></code></p></td>
+<td><p>Make a pretty header string that looks like the tabular representation.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></td>
-<td>Returns the mask of the data array.</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></p></td>
+<td><p>Returns the mask of the data array.</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></td>
-<td>Read the metadata dictionary.</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></p></td>
+<td><p>Read the metadata dictionary.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">mime_type</span></code></td>
-<td></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mime_type</span></code></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">patterns</span></code></td>
-<td></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">patterns</span></code></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">priority</span></code></td>
-<td></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">priority</span></code></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">priotity</span></code></td>
-<td></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">priotity</span></code></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">records</span></code></td>
-<td>Returns the data as a _np_ structured data array.</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">records</span></code></p></td>
+<td><p>Returns the data as a _np_ structured data array.</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></td>
-<td>Get the list of column assignments.</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></p></td>
+<td><p>Get the list of column assignments.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></td>
-<td>Pass through the numpy shape attribute of the data.</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></p></td>
+<td><p>Pass through the numpy shape attribute of the data.</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">subclasses</span></code></td>
-<td></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">subclasses</span></code></p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -265,22 +268,19 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.FileFormats.MokeFile.__init__.html"
                         title="next chapter">MokeFile.__init__</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.FileFormats.MokeFile.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.FileFormats.MokeFile.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -303,14 +303,14 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

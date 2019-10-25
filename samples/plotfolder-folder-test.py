@@ -4,13 +4,12 @@ Created on Fri Dec  1 17:37:39 2017
 
 @author: phygbu
 """
-from numpy import where, append, row_stack, atleast_2d
+from numpy import where, append, atleast_2d
 from scipy.constants import mu_0
 from scipy.stats import gmean
 from os.path import join
-import os
 
-from Stoner import Data, __home__, set_option
+from Stoner import Data, __home__
 from Stoner.Fit import FMR_Power, Inverse_Kittel, Linear
 from Stoner.plot.formats import DefaultPlotStyle, TexEngFormatter
 from Stoner.Folders import PlotFolder
@@ -23,14 +22,15 @@ template.xformatter = TexEngFormatter()
 template.xformatter.unit = "T"
 template.yformatter = TexEngFormatter
 
-# Custom function for split
+
 def field_sign(r):
+    """Custom function for split"""
     pos = r["Field"] >= 0
     return where(pos, 1, -1)
 
 
-# Function for customising each individual plot
 def extra(i, j, d):
+    """Function for customising each individual plot"""
     d.axvline(x=d["cut"], ls="--")
     d.title = r"$\nu={:.1f}\,$GHz".format(d.mean("Frequency") / 1e9)
     d.xlabel = r"Field $\mu_0H\,$"
@@ -43,7 +43,13 @@ def do_fit(f):
     """Function to fit just one set of data."""
     f.template = template
     f["cut"] = f.threshold(1.75e5, rising=False, falling=True)
-    res = f.lmfit(FMR_Power, result=True, header="Fit", bounds=lambda x, r: x < f["cut"], output="row")
+    res = f.lmfit(
+        FMR_Power,
+        result=True,
+        header="Fit",
+        bounds=lambda x, r: x < f["cut"],
+        output="row",
+    )
     ch = res.column_headers
     res = append(res, [f.mean("Frequency"), f["Field Sign"]])
     res = atleast_2d(res)
@@ -61,11 +67,13 @@ if __name__ == "__main__":
     # Load data
     d = Data(join(__home__, "..", "sample-data", "FMR-data.txt"))
     # Rename columns and reset plot labels
-    d.rename("multi[1]:y", "Field").rename("multi[0]:y", "Frequency").rename("Absorption::X", "FMR")
+    d.rename("multi[1]:y", "Field").rename("multi[0]:y", "Frequency").rename(
+        "Absorption::X", "FMR"
+    )
     d.labels = None
 
     # Deine x and y columns and normalise to a big number
-    d.setas(x="Field", y="FMR")
+    d.setas(x="Field", y="FMR")  # pylint: disable=not-callable
     d.normalise(base=(-1e6, 1e6))
     fldr = d.split(field_sign, "Frequency")
 
@@ -100,7 +108,9 @@ if __name__ == "__main__":
         subfldr.plot(figsize=(8, 8), extra=extra)
 
         # Work with the overall results
-        result.setas(y="H_res", e="H_res.stderr", x="Freq")
+        result.setas(  # pylint: disable=not-callable
+            y="H_res", e="H_res.stderr", x="Freq"
+        )  # pylint: disable=not-callable
         result.y = result.y / mu_0  # Convert to A/m
         result.e = result.e / mu_0
 
@@ -115,7 +125,9 @@ if __name__ == "__main__":
 
     # Doing the Kittel fit with an orthogonal distance regression as we have x errors not y errors
     p0 = [2, 200e3, 10e3]  # Some sensible guesses
-    result.lmfit(Inverse_Kittel, p0=p0, result=True, header="Kittel Fit", output="report")
+    result.lmfit(
+        Inverse_Kittel, p0=p0, result=True, header="Kittel Fit", output="report"
+    )
     result.setas[-1] = "y"
 
     result.template.yformatter = TexEngFormatter

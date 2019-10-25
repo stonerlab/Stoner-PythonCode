@@ -1,23 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>hsl2rgb &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="PlotFile" href="Stoner.plot.PlotFile.html" />
-    <link rel="prev" title="AnalysisMixin" href="Stoner.Analysis.AnalysisMixin.html" />
+    <link rel="prev" title="Ic_B_Airy" href="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -28,7 +28,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Analysis.AnalysisMixin.html" title="Previous document">AnalysisMixin</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html" title="Previous document">Ic_B_Airy</a>
         </li>
         <li>
           <a href="Stoner.plot.PlotFile.html" title="Next document">PlotFile</a>
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -55,24 +55,20 @@
 <h1>hsl2rgb<a class="headerlink" href="#hsl2rgb" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="Stoner.plot.hsl2rgb">
-<code class="descclassname">Stoner.plot.</code><code class="descname">hsl2rgb</code><span class="sig-paren">(</span><em>h</em>, <em>s</em>, <em>l</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#hsl2rgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.hsl2rgb" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Stoner.plot.</code><code class="sig-name descname">hsl2rgb</code><span class="sig-paren">(</span><em class="sig-param">h</em>, <em class="sig-param">s</em>, <em class="sig-param">l</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#hsl2rgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.hsl2rgb" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts from hsl colourspace to rgb colour space with numpy arrays for speed.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>h</strong> (<em>array</em>) – Hue value</li>
-<li><strong>s</strong> (<em>array</em>) – Saturation value</li>
-<li><strong>l</strong> (<em>array</em>) – Luminence value</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h</strong> (<em>array</em>) – Hue value</p></li>
+<li><p><strong>s</strong> (<em>array</em>) – Saturation value</p></li>
+<li><p><strong>l</strong> (<em>array</em>) – Luminence value</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">2D array (Mx3) of unsigned 8bit integers</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>2D array (Mx3) of unsigned 8bit integers</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -87,27 +83,24 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Analysis.AnalysisMixin.html"
-                        title="previous chapter">AnalysisMixin</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html"
+                        title="previous chapter">Ic_B_Airy</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.plot.PlotFile.html"
                         title="next chapter">PlotFile</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.plot.hsl2rgb.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.plot.hsl2rgb.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -118,7 +111,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Analysis.AnalysisMixin.html" title="Previous document">AnalysisMixin</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html" title="Previous document">Ic_B_Airy</a>
         </li>
         <li>
           <a href="Stoner.plot.PlotFile.html" title="Next document">PlotFile</a>
@@ -130,14 +123,14 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

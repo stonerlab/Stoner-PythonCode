@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Data.bin &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.clear" href="Stoner.Data.clear.html" />
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -58,45 +58,40 @@
 <h1>Data.bin<a class="headerlink" href="#data-bin" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Data.bin">
-<code class="descclassname">Data.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>xcol=None</em>, <em>ycol=None</em>, <em>bins=0.03</em>, <em>mode='log'</em>, <em>clone=True</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.bin" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">bin</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">bins=0.03</em>, <em class="sig-param">mode='log'</em>, <em class="sig-param">clone=True</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bin x-y data into new values of x with an error bar.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>xcol</strong> (<em>index</em>) – Index of column of data with X values</li>
-<li><strong>ycol</strong> (<em>index</em>) – Index of column of data with Y values</li>
-<li><strong>bins</strong> (<em>int, float or 1d array</em>) – Number of bins (if integer) or size of bins (if float), or bin edges (if array)</li>
-<li><strong>mode</strong> (<em>string</em>) – “log” or “lin” for logarithmic or linear binning</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xcol</strong> (<em>index</em>) – Index of column of data with X values</p></li>
+<li><p><strong>ycol</strong> (<em>index</em>) – Index of column of data with Y values</p></li>
+<li><p><strong>bins</strong> (<em>int, float or 1d array</em>) – Number of bins (if integer) or size of bins (if float), or bin edges (if array)</p></li>
+<li><p><strong>mode</strong> (<em>string</em>) – “log” or “lin” for logarithmic or linear binning</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><strong>yerr</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Column with y-error data if present.</li>
-<li><strong>bin_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Manually override the minimum bin value</li>
-<li><strong>bin_stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Manually override the maximum bin value</li>
-<li><strong>clone</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Return a clone of the current AnalysisMixin with binned data (True)
-or just the numbers (False).</li>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>yerr</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Column with y-error data if present.</p></li>
+<li><p><strong>bin_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Manually override the minimum bin value</p></li>
+<li><p><strong>bin_stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Manually override the maximum bin value</p></li>
+<li><p><strong>clone</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Return a clone of the current AnalysisMixin with binned data (True)
+or just the numbers (False).</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Either a clone of the current data set with the new binned data or
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>(<a class="reference internal" href="Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> or tuple of 4 array-like) –     Either a clone of the current data set with the new binned data or
 tuple of (bin centres, bin values, bin errors, number points/bin),
 depending on the <em>clone</em> parameter.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Algorithm inspired by MatLab code wbin,    Copyright (c) 2012:
+<p class="admonition-title">Note</p>
+<p>Algorithm inspired by MatLab code wbin,    Copyright (c) 2012:
 Michael Lindholm Nielsen</p>
 </div>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">User Guide section <a class="reference internal" href="../UserGuide/analysisfile.html#binning-guide"><span class="std std-ref">(Re)Binning Data</span></a></p>
+<p class="admonition-title">See also</p>
+<p>User Guide section <a class="reference internal" href="../UserGuide/analysisfile.html#binning-guide"><span class="std std-ref">(Re)Binning Data</span></a></p>
 </div>
 </dd></dl>
 
@@ -117,22 +112,19 @@ Michael Lindholm Nielsen</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Data.clear.html"
                         title="next chapter">Data.clear</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Data.bin.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Data.bin.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -155,7 +147,7 @@ Michael Lindholm Nielsen</p>
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li>
       <li>
         <a href="Stoner.Data.html">Stoner.Data</a>
@@ -163,9 +155,9 @@ Michael Lindholm Nielsen</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

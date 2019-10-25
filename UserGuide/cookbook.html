@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Cookbook &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Developer’s Guide" href="developer.html" />
@@ -103,13 +103,13 @@ also remove the effect of any eexhange bias that moves the coercive field. As we
 will add metadata items for:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Background susceptibility (from fitting striaght lines to the out part of the data)</li>
-<li>Saturation magnetisation and uncertainty (also from fitting lines to the out part of the data)</li>
-<li>Coervice Fields (H for zero M)</li>
-<li>Remenance (M for zero H)</li>
-<li>Saturation Fields (H where M deviates by the standard error from saturation)</li>
-<li>Maximum BH product (the point where -H * M is maximum)</li>
-<li>Loop Area (from integrating the area inside the hysteresis loop - only valide for complete loops)</li>
+<li><p>Background susceptibility (from fitting striaght lines to the out part of the data)</p></li>
+<li><p>Saturation magnetisation and uncertainty (also from fitting lines to the out part of the data)</p></li>
+<li><p>Coervice Fields (H for zero M)</p></li>
+<li><p>Remenance (M for zero H)</p></li>
+<li><p>Saturation Fields (H where M deviates by the standard error from saturation)</p></li>
+<li><p>Maximum BH product (the point where -H * M is maximum)</p></li>
+<li><p>Loop Area (from integrating the area inside the hysteresis loop - only valide for complete loops)</p></li>
 </ul>
 </div></blockquote>
 <p>Some of these parameters are determined by fitting a straight line to the outer portions of the data (i.e. at the
@@ -148,7 +148,7 @@ illustrates this by fitting a plane to a collection of points in 3D space.</p>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">meshgrid</span><span class="p">,</span> <span class="n">column_stack</span><span class="p">,</span> <span class="n">row_stack</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">meshgrid</span><span class="p">,</span> <span class="n">column_stack</span>
 <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="kn">as</span> <span class="nn">cmap</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
@@ -159,10 +159,14 @@ illustrates this by fitting a plane to a collection of points in 3D space.</p>
 
 
 <span class="n">coeefs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">col</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="n">col</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
 <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">meshgrid</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
-<span class="n">Z</span> <span class="o">=</span> <span class="n">plane</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="o">*</span><span class="n">coeefs</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">7.0</span><span class="p">)</span>
-<span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Z</span><span class="o">.</span><span class="n">ravel</span><span class="p">())),</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;Fitting a Plane&quot;</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span><span class="p">)</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">plane</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="o">*</span><span class="n">coeefs</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span>
+    <span class="n">column_stack</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Z</span><span class="o">.</span><span class="n">ravel</span><span class="p">())),</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;Fitting a Plane&quot;</span><span class="p">,</span>
+    <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">d</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">]</span>
 <span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
@@ -287,7 +291,7 @@ useful to map the data to a matrix.:</p>
 <p>The start of the script follows the previous section, however this time in the
 for loop the addition operator is used to add a single row to the temporary
 <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> <em>t</em>. In this case we are using the utility method
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.find_col()</span></code> to find the index of the column with the current
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.find_col()</span></code></a> to find the index of the column with the current
 data. After the <strong>for</strong> loop we set the column headers in <em>t</em> and then insert
 an additional column at the start with the gate voltage values.</p>
 <p>The matrix generated by this code is suitable for feeding directly into
@@ -344,11 +348,11 @@ to quickly examine the output data:</p>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
-  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <h3><a href="../index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Cookbook</a><ul>
 <li><a class="reference internal" href="#the-util-module">The Util module</a><ul>
-<li><a class="reference internal" href="#the-data-class">The <code class="docutils literal notranslate"><span class="pre">Data</span></code> Class</a></li>
+<li><a class="reference internal" href="#the-data-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code> Class</a></li>
 <li><a class="reference internal" href="#splitting-data-into-rising-and-falling-values">Splitting Data into rising and falling values</a></li>
 <li><a class="reference internal" href="#analysis-of-hysteresis-loops">Analysis of Hysteresis Loops</a></li>
 <li><a class="reference internal" href="#formatting-error-values">Formatting Error Values</a></li>
@@ -376,22 +380,19 @@ to quickly examine the output data:</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="developer.html"
                         title="next chapter">Developer’s Guide</a></p>
-<div class="sourcelink">
-  <a href="../_sources/UserGuide/cookbook.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/cookbook.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -419,9 +420,9 @@ to quickly examine the output data:</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>DataFolder &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="PlotFolder" href="Stoner.Folders.PlotFolder.html" />
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -55,18 +55,40 @@
 <h1>DataFolder<a class="headerlink" href="#datafolder" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Folders.DataFolder">
-<em class="property">class </em><code class="descclassname">Stoner.Folders.</code><code class="descname">DataFolder</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#DataFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.DataFolder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.Folders.</code><code class="sig-name descname">DataFolder</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#DataFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.DataFolder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin" title="Stoner.folders.mixins.DataMethodsMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.mixins.DataMethodsMixin</span></code></a>, <a class="reference internal" href="Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder" title="Stoner.folders.mixins.DiskBasedFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.mixins.DiskBasedFolder</span></code></a>, <a class="reference internal" href="Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" title="Stoner.folders.core.baseFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.core.baseFolder</span></code></a></p>
 <p>Provide an interface to manipulating lots of data files stored within a directory structure on disc.</p>
 <p>By default, the members of the DataFolder are isntances of <a class="reference internal" href="Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a>. The DataFolder emplys a lazy open strategy, so that
 files are only read in from disc when actually needed.</p>
-<img src="../_images/inheritance-e51ac0fece53bbbc63fa6f878661e1cc2b710da2.png" alt="Inheritance diagram of DataFolder" usemap="#inheritancebd3fb28729" class="inheritance"/>
-<map id="inheritancebd3fb28729" name="inheritancebd3fb28729">
-<area shape="rect" id="node1" href="#Stoner.Folders.DataFolder" target="_top" title="Provide an interface to manipulating lots of data files stored within a directory structure on disc." alt="" coords="245,256,376,274"/>
-<area shape="rect" id="node2" href="Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin" target="_top" title="A mixin class that provides a :py:class:`Stoner.folders.core.baseFolder` with methods for working with :py:class:`Stoner.Data` objects." alt="" coords="4,206,200,223"/>
-<area shape="rect" id="node3" href="Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="216,206,405,223"/>
-<area shape="rect" id="node4" href="Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="422,206,572,223"/>
-</map></dd></dl>
+digraph inheritancebd3fb28729 {
+fontsize=14;
+rankdir=TB;
+ratio=compress;
+size=&quot;6.0, 8.0&quot;;
+  &quot;Stoner.Folders.DataFolder&quot; [URL=&quot;#Stoner.Folders.DataFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Provide an interface to manipulating lots of data files stored within a directory structure on disc.&quot;];
+  &quot;Stoner.folders.mixins.DataMethodsMixin&quot; -&gt; &quot;Stoner.Folders.DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;Stoner.folders.mixins.DiskBasedFolder&quot; -&gt; &quot;Stoner.Folders.DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;Stoner.folders.core.baseFolder&quot; -&gt; &quot;Stoner.Folders.DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;Stoner.folders.core.baseFolder&quot; [URL=&quot;Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.&quot;];
+  &quot;collections.abc.MutableSequence&quot; -&gt; &quot;Stoner.folders.core.baseFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;Stoner.folders.mixins.DataMethodsMixin&quot; [URL=&quot;Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A mixin class that provides a :py:class:`Stoner.folders.core.baseFolder` with methods for working with :py:class:`Stoner.Data` objects.&quot;];
+  &quot;Stoner.folders.mixins.DiskBasedFolder&quot; [URL=&quot;Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin class that implmenets reading metadataObjects from disc.&quot;];
+  &quot;collections.abc.Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;collections.abc.Sized&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;collections.abc.Iterable&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;collections.abc.Container&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;collections.abc.Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;collections.abc.Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;collections.abc.MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;collections.abc.Sequence&quot; -&gt; &quot;collections.abc.MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;collections.abc.Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;collections.abc.Iterable&quot; -&gt; &quot;collections.abc.Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;collections.abc.Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
+  &quot;collections.abc.Reversible&quot; -&gt; &quot;collections.abc.Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;collections.abc.Collection&quot; -&gt; &quot;collections.abc.Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;collections.abc.Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
+}
+</dd></dl>
 
 </div>
 
@@ -85,22 +107,19 @@ files are only read in from disc when actually needed.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Folders.PlotFolder.html"
                         title="next chapter">PlotFolder</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Folders.DataFolder.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Folders.DataFolder.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -123,14 +142,14 @@ files are only read in from disc when actually needed.</p>
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

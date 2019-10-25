@@ -9,7 +9,15 @@ e = 0.01 * ones_like(x)
 y = 0.1 * sin(x) + normal(size=len(x), scale=0.01) + 0.1
 e2 = 0.01 * cos(x)
 y2 = 0.1 * ones_like(x)
-d = Data(x, y, e, y2, e2, column_headers=["$X$", "$Y_+$", r"$\delta Y_+$", "$Y_-$", r"$\delta Y_-$"], setas="xyeye")
+d = Data(
+    x,
+    y,
+    e,
+    y2,
+    e2,
+    column_headers=["$X$", "$Y_+$", r"$\delta Y_+$", "$Y_-$", r"$\delta Y_-$"],
+    setas="xyeye",
+)
 
 a = tuple(d.column_headers[1:3])
 b = tuple(d.column_headers[3:5])

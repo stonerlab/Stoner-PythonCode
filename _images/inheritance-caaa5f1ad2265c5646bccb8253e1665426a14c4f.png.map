@@ -1,7 +1,0 @@
-<map id="inheritancebd3fb28729" name="inheritancebd3fb28729">
-<area shape="rect" id="node1" href="classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" target="_top" title="Provide an interface to manipulating lots of data files stored within a directory structure on disc." alt="" coords="245,256,376,274"/>
-<area shape="rect" id="node2" href="classes/Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin" target="_top" title="A mixin class that provides a :py:class:`Stoner.folders.core.baseFolder` with methods for working with :py:class:`Stoner.Data` objects." alt="" coords="4,206,200,223"/>
-<area shape="rect" id="node3" href="classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="216,206,405,223"/>
-<area shape="rect" id="node4" href="classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="422,206,572,223"/>
-<area shape="rect" id="node10" title="All the operations on a read&#45;only sequence." alt="" coords="425,105,554,122"/>
-</map>

@@ -5,3 +5,25 @@ JTBPlotStyle
 
 .. autoclass:: JTBPlotStyle
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~JTBPlotStyle.show_title
+      ~JTBPlotStyle.stylename
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~JTBPlotStyle.customise_axes
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: show_title
+   .. autoattribute:: stylename
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: customise_axes

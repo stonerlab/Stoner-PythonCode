@@ -5,3 +5,25 @@ SketchPlot
 
 .. autoclass:: SketchPlot
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~SketchPlot.stylename
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~SketchPlot.customise
+      ~SketchPlot.customise_axes
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: stylename
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: customise
+   .. automethod:: customise_axes

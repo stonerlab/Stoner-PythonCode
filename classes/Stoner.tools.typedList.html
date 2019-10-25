@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>typedList &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="DataFolder" href="Stoner.Folders.DataFolder.html" />
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -55,9 +55,46 @@
 <h1>typedList<a class="headerlink" href="#typedlist" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.tools.typedList">
-<em class="property">class </em><code class="descclassname">Stoner.tools.</code><code class="descname">typedList</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools.html#typedList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableSequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableSequence</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.tools.</code><code class="sig-name descname">typedList</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools.html#typedList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableSequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableSequence</span></code></a></p>
 <p>Subclass list to make setitem enforce  strict typing of members of the list.</p>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.tools.typedList.extend" title="Stoner.tools.typedList.extend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend</span></code></a>(other)</p></td>
+<td><p>Extending a list also requires some type checking.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.tools.typedList.index" title="Stoner.tools.typedList.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>(search[, start, end])</p></td>
+<td><p>Index works like a list except we support Python 3 optional parameters everywhere.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.tools.typedList.insert" title="Stoner.tools.typedList.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a>(index, obj)</p></td>
+<td><p>Inserting an element also requires some type checking.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.tools.typedList.extend">
+<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools.html#typedList.extend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList.extend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extending a list also requires some type checking.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.tools.typedList.index">
+<code class="sig-name descname">index</code><span class="sig-paren">(</span><em class="sig-param">search</em>, <em class="sig-param">start=0</em>, <em class="sig-param">end=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools.html#typedList.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index works like a list except we support Python 3 optional parameters everywhere.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.tools.typedList.insert">
+<code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param">index</em>, <em class="sig-param">obj</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools.html#typedList.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserting an element also requires some type checking.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -77,22 +114,19 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Folders.DataFolder.html"
                         title="next chapter">DataFolder</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.tools.typedList.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.tools.typedList.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -115,14 +149,14 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

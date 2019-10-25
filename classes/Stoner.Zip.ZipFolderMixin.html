@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>ZipFolderMixin &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ZipFolder" href="Stoner.Zip.ZipFolder.html" />
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -55,78 +55,77 @@
 <h1>ZipFolderMixin<a class="headerlink" href="#zipfoldermixin" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Zip.ZipFolderMixin">
-<em class="property">class </em><code class="descclassname">Stoner.Zip.</code><code class="descname">ZipFolderMixin</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.Zip.</code><code class="sig-name descname">ZipFolderMixin</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A sub class of <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> that provides a method to load and save data from a single Zip file.</p>
 <p>See <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> for documentation on constructor.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">As this mixin class provides both read and write storage, it cannot be mixed in with another class that
+<p class="admonition-title">Note</p>
+<p>As this mixin class provides both read and write storage, it cannot be mixed in with another class that
 provides a __setter__ method without causing a problem.</p>
 </div>
 <p class="rubric">Attributes Summary</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Zip.ZipFolderMixin.full_key" title="Stoner.Zip.ZipFolderMixin.full_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">full_key</span></code></a></td>
-<td></td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Zip.ZipFolderMixin.full_key" title="Stoner.Zip.ZipFolderMixin.full_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">full_key</span></code></a></p></td>
+<td><p>Generate a full canonical path through the zip archive to this file.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Zip.ZipFolderMixin.key" title="Stoner.Zip.ZipFolderMixin.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code></a></td>
-<td></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Zip.ZipFolderMixin.key" title="Stoner.Zip.ZipFolderMixin.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code></a></p></td>
+<td><p>Return the immediate filename of the stored file.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Summary</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Zip.ZipFolderMixin.getlist" title="Stoner.Zip.ZipFolderMixin.getlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getlist</span></code></a>([recursive,&nbsp;directory,&nbsp;flatten])</td>
-<td>Reads the Zip File to construct a list of ZipFile objects</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Zip.ZipFolderMixin.getlist" title="Stoner.Zip.ZipFolderMixin.getlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getlist</span></code></a>([recursive, directory, flatten])</p></td>
+<td><p>Reads the Zip File to construct a list of ZipFile objects</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Zip.ZipFolderMixin.save" title="Stoner.Zip.ZipFolderMixin.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</td>
-<td>Saves a load of files to a single Zip file, creating members as it goes.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Zip.ZipFolderMixin.save" title="Stoner.Zip.ZipFolderMixin.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</p></td>
+<td><p>Saves a load of files to a single Zip file, creating members as it goes.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
 <dl class="attribute">
 <dt id="Stoner.Zip.ZipFolderMixin.full_key">
-<code class="descname">full_key</code><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.full_key" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">full_key</code><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.full_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a full canonical path through the zip archive to this file.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Zip.ZipFolderMixin.key">
-<code class="descname">key</code><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.key" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">key</code><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the immediate filename of the stored file.</p>
+</dd></dl>
 
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="Stoner.Zip.ZipFolderMixin.getlist">
-<code class="descname">getlist</code><span class="sig-paren">(</span><em>recursive=None</em>, <em>directory=None</em>, <em>flatten=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin.getlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.getlist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getlist</code><span class="sig-paren">(</span><em class="sig-param">recursive=None</em>, <em class="sig-param">directory=None</em>, <em class="sig-param">flatten=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin.getlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.getlist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the Zip File to construct a list of ZipFile objects</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.Zip.ZipFolderMixin.save">
-<code class="descname">save</code><span class="sig-paren">(</span><em>root=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.save" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">root=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves a load of files to a single Zip file, creating members as it goes.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – The name of the Zip file to save to if set to None, will prompt for a filename.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of group paths in the Zip file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><p><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – The name of the Zip file to save to if set to None, will prompt for a filename.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of group paths in the Zip file</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -148,22 +147,19 @@ provides a __setter__ method without causing a problem.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Zip.ZipFolder.html"
                         title="next chapter">ZipFolder</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.Zip.ZipFolderMixin.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Zip.ZipFolderMixin.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -186,14 +182,14 @@ provides a __setter__ method without causing a problem.</p>
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

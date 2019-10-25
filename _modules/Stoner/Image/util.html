@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Stoner.Image.util &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -46,7 +46,7 @@
             
   <h1>Source code for Stoner.Image.util</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Code adapted from skimage module   </span>
+<span class="sd">&quot;&quot;&quot;Code adapted from skimage module</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
 
@@ -92,6 +92,95 @@
 <span class="n">_supported_types</span> <span class="o">+=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">,)</span>
 
 
+<span class="k">def</span> <span class="nf">sign_loss</span><span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Warn over loss of sign information when converting image.&quot;&quot;&quot;</span>
+    <span class="n">warn</span><span class="p">(</span>
+        <span class="s2">&quot;Possible sign loss when converting negative image of type &quot;</span>
+        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> to positive image of type </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">prec_loss</span><span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Warn over precision loss when converting image.&quot;&quot;&quot;</span>
+    <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Possible precision loss when converting from &quot;</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_dtype</span><span class="p">(</span><span class="n">itemsize</span><span class="p">,</span> <span class="o">*</span><span class="n">dtypes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return first of `dtypes` with itemsize greater than `itemsize.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">dt</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">dtypes</span> <span class="k">if</span> <span class="n">itemsize</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">itemsize</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">dtypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+
+<span class="k">def</span> <span class="nf">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">bits</span><span class="p">,</span> <span class="n">itemsize</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return dtype of `kind` that can store a `bits` wide unsigned int.&quot;&quot;&quot;</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;u&quot;</span> <span class="k">else</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">y</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="n">itemsize</span><span class="p">,)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="k">if</span> <span class="n">c</span><span class="p">(</span><span class="n">bits</span><span class="p">,</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">kind</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_scale</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;cale unsigned/positive integers from n to m bits</span>
+
+<span class="sd">    Numbers can be represented exactly only if m is a multiple of n</span>
+<span class="sd">    Output array is of same kind as input.&quot;&quot;&quot;</span>
+    <span class="n">kind</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">m</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">m</span><span class="p">:</span>
+        <span class="n">mnew</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mnew</span> <span class="o">&gt;</span> <span class="n">m</span><span class="p">:</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;int</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">mnew</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;uint</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">mnew</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Downcasting </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2"> without scaling because max &quot;</span> <span class="s2">&quot;value </span><span class="si">%s</span><span class="s2"> fits in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="p">,</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+            <span class="n">dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="n">m</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="n">copy</span> <span class="k">else</span> <span class="n">a</span>
+    <span class="k">elif</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">m</span><span class="p">:</span>
+        <span class="c1"># downscale with precision loss</span>
+        <span class="n">prec_loss</span><span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">floor_divide</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">m</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">casting</span><span class="o">=</span><span class="s2">&quot;unsafe&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">b</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">//=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span>
+    <span class="k">elif</span> <span class="n">m</span> <span class="o">%</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># exact upscale to a multiple of n bits</span>
+        <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">b</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">b</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span><span class="p">),</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># upscale to a multiple of n bits,</span>
+        <span class="c1"># then downscale with precision loss</span>
+        <span class="n">prec_loss</span><span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="p">(</span><span class="n">m</span> <span class="o">//</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span>
+        <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">o</span><span class="p">))</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">o</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">b</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">b</span> <span class="o">//=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">o</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">b</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span><span class="p">),</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">o</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">//=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">o</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span>
+
+
 <div class="viewcode-block" id="convert"><a class="viewcode-back" href="../../../classes/Stoner.Image.util.convert.html#Stoner.Image.util.convert">[docs]</a><span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">force_copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">uniform</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert an image to the requested data-type.</span>
@@ -122,7 +211,7 @@
 <span class="sd">        conversion errors.</span>
 <span class="sd">    normalise : bool</span>
 <span class="sd">        When converting from int types to float normalise the resulting array</span>
-<span class="sd">        by the maximum allowed value of the int type. </span>
+<span class="sd">        by the maximum allowed value of the int type.</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -150,87 +239,6 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dtype_in</span> <span class="ow">in</span> <span class="n">_supported_types</span> <span class="ow">and</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">_supported_types</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;can not convert </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">sign_loss</span><span class="p">():</span>
-        <span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;Possible sign loss when converting negative image of type &quot;</span>
-            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> to positive image of type </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">prec_loss</span><span class="p">():</span>
-        <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Possible precision loss when converting from &quot;</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">_dtype</span><span class="p">(</span><span class="n">itemsize</span><span class="p">,</span> <span class="o">*</span><span class="n">dtypes</span><span class="p">):</span>
-        <span class="c1"># Return first of `dtypes` with itemsize greater than `itemsize</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">dt</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">dtypes</span> <span class="k">if</span> <span class="n">itemsize</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">itemsize</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">dtypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">ret</span>
-
-    <span class="k">def</span> <span class="nf">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">bits</span><span class="p">,</span> <span class="n">itemsize</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="c1"># Return dtype of `kind` that can store a `bits` wide unsigned int</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;u&quot;</span> <span class="k">else</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">y</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="n">itemsize</span><span class="p">,)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="k">if</span> <span class="n">c</span><span class="p">(</span><span class="n">bits</span><span class="p">,</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">8</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">kind</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">_scale</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="c1"># Scale unsigned/positive integers from n to m bits</span>
-        <span class="c1"># Numbers can be represented exactly only if m is a multiple of n</span>
-        <span class="c1"># Output array is of same kind as input.</span>
-        <span class="n">kind</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">m</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">m</span><span class="p">:</span>
-            <span class="n">mnew</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">mnew</span> <span class="o">&gt;</span> <span class="n">m</span><span class="p">:</span>
-                <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;int</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">mnew</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;uint</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">mnew</span>
-            <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Downcasting </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2"> without scaling because max &quot;</span> <span class="s2">&quot;value </span><span class="si">%s</span><span class="s2"> fits in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-                <span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
-                <span class="n">dtype</span><span class="p">,</span>
-                <span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
-                <span class="n">dtype</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="n">m</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="n">copy</span> <span class="k">else</span> <span class="n">a</span>
-        <span class="k">elif</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">m</span><span class="p">:</span>
-            <span class="c1"># downscale with precision loss</span>
-            <span class="n">prec_loss</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">floor_divide</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">m</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">casting</span><span class="o">=</span><span class="s2">&quot;unsafe&quot;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">b</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">a</span> <span class="o">//=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">a</span>
-        <span class="k">elif</span> <span class="n">m</span> <span class="o">%</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># exact upscale to a multiple of n bits</span>
-            <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">b</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">b</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span><span class="p">),</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="n">a</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">a</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># upscale to a multiple of n bits,</span>
-            <span class="c1"># then downscale with precision loss</span>
-            <span class="n">prec_loss</span><span class="p">()</span>
-            <span class="n">o</span> <span class="o">=</span> <span class="p">(</span><span class="n">m</span> <span class="o">//</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span>
-            <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">o</span><span class="p">))</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">o</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">b</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-                <span class="n">b</span> <span class="o">//=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">o</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">b</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">_dtype2</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span><span class="p">),</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="n">a</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">o</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-                <span class="n">a</span> <span class="o">//=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">o</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">a</span>
-
     <span class="n">kind</span> <span class="o">=</span> <span class="n">dtypeobj</span><span class="o">.</span><span class="n">kind</span>
     <span class="n">kind_in</span> <span class="o">=</span> <span class="n">dtypeobj_in</span><span class="o">.</span><span class="n">kind</span>
     <span class="n">itemsize</span> <span class="o">=</span> <span class="n">dtypeobj</span><span class="o">.</span><span class="n">itemsize</span>
@@ -239,8 +247,8 @@
     <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span>
         <span class="c1"># to binary image</span>
         <span class="k">if</span> <span class="n">kind_in</span> <span class="ow">in</span> <span class="s2">&quot;fi&quot;</span><span class="p">:</span>
-            <span class="n">sign_loss</span><span class="p">()</span>
-        <span class="n">prec_loss</span><span class="p">()</span>
+            <span class="n">sign_loss</span><span class="p">(</span><span class="n">dtype_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+        <span class="n">prec_loss</span><span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">image</span> <span class="o">&gt;</span> <span class="n">dtype_in</span><span class="p">(</span><span class="n">dtype_range</span><span class="p">[</span><span class="n">dtype_in</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">kind_in</span> <span class="o">==</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span>
@@ -263,11 +271,11 @@
         <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span>
             <span class="c1"># floating point -&gt; floating point</span>
             <span class="k">if</span> <span class="n">itemsize_in</span> <span class="o">&gt;</span> <span class="n">itemsize</span><span class="p">:</span>
-                <span class="n">prec_loss</span><span class="p">()</span>
+                <span class="n">prec_loss</span><span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
 
         <span class="c1"># floating point -&gt; integer</span>
-        <span class="n">prec_loss</span><span class="p">()</span>
+        <span class="n">prec_loss</span><span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
         <span class="c1"># use float type that can represent output integer type</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">_dtype</span><span class="p">(</span><span class="n">itemsize</span><span class="p">,</span> <span class="n">dtype_in</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">uniform</span><span class="p">:</span>
@@ -291,7 +299,7 @@
     <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span>
         <span class="c1"># integer -&gt; floating point</span>
         <span class="k">if</span> <span class="n">itemsize_in</span> <span class="o">&gt;=</span> <span class="n">itemsize</span><span class="p">:</span>
-            <span class="n">prec_loss</span><span class="p">()</span>
+            <span class="n">prec_loss</span><span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
         <span class="c1"># use float type that can exactly represent input integers</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">_dtype</span><span class="p">(</span><span class="n">itemsize_in</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">normalise</span><span class="p">:</span>  <span class="c1"># normalise floats by maximum value of int type</span>
@@ -309,26 +317,26 @@
     <span class="k">if</span> <span class="n">kind_in</span> <span class="o">==</span> <span class="s2">&quot;u&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;i&quot;</span><span class="p">:</span>
             <span class="c1"># unsigned integer -&gt; signed integer</span>
-            <span class="n">image</span> <span class="o">=</span> <span class="n">_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># unsigned integer -&gt; unsigned integer</span>
-            <span class="k">return</span> <span class="n">_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span><span class="p">,</span> <span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;u&quot;</span><span class="p">:</span>
         <span class="c1"># signed integer -&gt; unsigned integer</span>
-        <span class="n">sign_loss</span><span class="p">()</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span><span class="p">)</span>
+        <span class="n">sign_loss</span><span class="p">(</span><span class="n">dtype_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span><span class="p">,</span> <span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">casting</span><span class="o">=</span><span class="s2">&quot;unsafe&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="c1"># signed integer -&gt; signed integer</span>
     <span class="k">if</span> <span class="n">itemsize_in</span> <span class="o">&gt;</span> <span class="n">itemsize</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">_dtype2</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">itemsize</span> <span class="o">*</span> <span class="mi">8</span><span class="p">))</span>
     <span class="n">image</span> <span class="o">-=</span> <span class="n">imin_in</span>
-    <span class="n">image</span> <span class="o">=</span> <span class="n">_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span><span class="p">,</span> <span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">image</span> <span class="o">+=</span> <span class="n">imin</span>
     <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span></div>
 </pre></div>
@@ -341,17 +349,12 @@
             <p class="logo"><a href="../../../index.html">
               <img class="logo" src="../../../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+<form class="search" action="../../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -374,9 +377,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

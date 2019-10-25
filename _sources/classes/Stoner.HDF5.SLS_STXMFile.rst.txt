@@ -5,3 +5,31 @@ SLS_STXMFile
 
 .. autoclass:: SLS_STXMFile
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~SLS_STXMFile.compression
+      ~SLS_STXMFile.compression_opts
+      ~SLS_STXMFile.mime_type
+      ~SLS_STXMFile.patterns
+      ~SLS_STXMFile.priority
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~SLS_STXMFile.scan_meta
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: compression
+   .. autoattribute:: compression_opts
+   .. autoattribute:: mime_type
+   .. autoattribute:: patterns
+   .. autoattribute:: priority
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: scan_meta

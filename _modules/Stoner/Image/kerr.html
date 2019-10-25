@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Stoner.Image.kerr &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -57,14 +57,17 @@
 
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">typeHintedDict</span>
-<span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">ImageArray</span><span class="p">,</span> <span class="n">ImageStack</span>
+<span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">ImageArray</span><span class="p">,</span> <span class="n">ImageStack</span><span class="p">,</span> <span class="n">ImageFile</span>
+<span class="kn">from</span> <span class="nn">Stoner.core.exceptions</span> <span class="k">import</span> <span class="n">assertion</span><span class="p">,</span> <span class="n">StonerAssertionError</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">which</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">subprocess</span><span class="o">,</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">exposure</span><span class="p">,</span> <span class="n">io</span><span class="p">,</span> <span class="n">transform</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">pytesseract</span>
+    <span class="kn">import</span> <span class="nn">pytesseract</span>  <span class="c1"># pylint: disable=unused-import</span>
 
     <span class="n">_tesseractable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -76,6 +79,43 @@
 <span class="n">IM_SIZE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">672</span><span class="p">)</span>  <span class="c1"># Standard Kerr image size</span>
 <span class="n">AN_IM_SIZE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">554</span><span class="p">,</span> <span class="mi">672</span><span class="p">)</span>  <span class="c1"># Kerr image with annotation not cropped</span>
 <span class="n">pattern_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;kerr_patterns.txt&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Attempt to parse text which has been recognised from an image</span>
+<span class="sd">    if key is given specific hints may be applied</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># strip any internal white space</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="c1"># replace letters that look like numbers</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;::&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\xe2\x80\x99</span><span class="s2">7&quot;</span><span class="p">,</span> <span class="s2">&quot;7&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="s2">&quot;7&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;].&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># apply any key specific corrections</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ocr_field&quot;</span><span class="p">,</span> <span class="s2">&quot;ocr_scalebar_length_microns&quot;</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># leave it as string</span>
+    <span class="c1"># print &#39;{} after processsing: \&#39;{}\&#39;&#39;.format(key,data)</span>
+
+    <span class="k">return</span> <span class="n">text</span>
 
 
 <div class="viewcode-block" id="KerrArray"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.KerrArray">[docs]</a><span class="k">class</span> <span class="nc">KerrArray</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">):</span>
@@ -152,7 +192,9 @@
 <span class="sd">        (ImageArray):</span>
 <span class="sd">            cropped image</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">AN_IM_SIZE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">IM_SIZE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">AN_IM_SIZE</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Need a full sized Kerr image to crop. Current size is </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
             <span class="p">)</span>  <span class="c1"># check it&#39;s a normal image</span>
@@ -182,42 +224,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">typeHintedDict</span><span class="p">(</span><span class="n">newmet</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span></div>
 
-    <span class="k">def</span> <span class="nf">_parse_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Attempt to parse text which has been recognised from an image</span>
-<span class="sd">        if key is given specific hints may be applied</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># strip any internal white space</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-
-        <span class="c1"># replace letters that look like numbers</span>
-        <span class="n">errors</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;::&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;</span><span class="se">\xe2\x80\x99</span><span class="s2">7&quot;</span><span class="p">,</span> <span class="s2">&quot;7&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="s2">&quot;7&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;].&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-        <span class="p">]</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-
-        <span class="c1"># apply any key specific corrections</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ocr_field&quot;</span><span class="p">,</span> <span class="s2">&quot;ocr_scalebar_length_microns&quot;</span><span class="p">]:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">text</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="k">pass</span>  <span class="c1"># leave it as string</span>
-        <span class="c1"># print &#39;{} after processsing: \&#39;{}\&#39;&#39;.format(key,data)</span>
-
-        <span class="k">return</span> <span class="n">text</span>
-
     <span class="k">def</span> <span class="nf">_tesseract_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;ocr image with tesseract tool.</span>
 <span class="sd">        im is the cropped image containing just a bit of text</span>
@@ -243,9 +249,10 @@
 
         <span class="c1"># call tesseract</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tesseractable</span><span class="p">:</span>
+            <span class="n">tesseract</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="s2">&quot;tesseract&quot;</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">stdoutfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stdout</span><span class="p">:</span>
                 <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
-                    <span class="p">[</span><span class="s2">&quot;tesseract&quot;</span><span class="p">,</span> <span class="n">imagefile</span><span class="p">,</span> <span class="n">textfile</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span>
+                    <span class="p">[</span><span class="n">tesseract</span><span class="p">,</span> <span class="n">imagefile</span><span class="p">,</span> <span class="n">textfile</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span>
                 <span class="p">)</span>  <span class="c1"># adds &#39;.txt&#39; extension itself</span>
             <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">stdoutfile</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">textfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tf</span><span class="p">:</span>
@@ -259,7 +266,7 @@
         <span class="c1"># parse the reading</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No data read for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_text</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">_parse_text</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">_get_scalebar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -272,8 +279,16 @@
         <span class="n">im</span> <span class="o">=</span> <span class="n">exposure</span><span class="o">.</span><span class="n">rescale_intensity</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>  <span class="c1"># make sure they&#39;re black and white</span>
         <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">im</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># 1d numpy array, differences</span>
         <span class="n">lim</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">im</span> <span class="o">&gt;</span> <span class="mf">0.9</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">im</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">0.9</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>  <span class="c1"># first occurance of both cases</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lim</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Couldn&#39;t find scalebar&quot;</span>
+        <span class="n">assertion</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lim</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Couldn&#39;t find scalebar&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">lim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">lim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="KerrArray.float_and_croptext"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.KerrArray.float_and_croptext">[docs]</a>    <span class="k">def</span> <span class="nf">float_and_croptext</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;convert image to float and crop_text</span>
+<span class="sd">        Just to group typical functions together</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asfloat</span><span class="p">()</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">crop_text</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
 
 <div class="viewcode-block" id="KerrArray.ocr_metadata"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.KerrArray.ocr_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">ocr_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Use image recognition to try to pull the metadata numbers off the image</span>
@@ -307,7 +322,7 @@
             <span class="p">}</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">sb_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_scalebar</span><span class="p">()</span>
-            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+            <span class="k">except</span> <span class="p">(</span><span class="n">StonerAssertionError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">):</span>
                 <span class="n">sb_length</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">sb_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">text_areas</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -323,14 +338,111 @@
                 <span class="n">im</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">text_areas</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tesseract_image</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;ocr_scalebar_length_pixels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sb_length</span>
-            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;ocr_scalebar_length_microns&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;ocr_scalebar_length_microns&quot;</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
                 <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;ocr_microns_per_pixel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;ocr_scalebar_length_microns&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">sb_length</span>
                 <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;ocr_pixels_per_micron&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;ocr_microns_per_pixel&quot;</span><span class="p">]</span>
                 <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;ocr_field_of_view_microns&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">IM_SIZE</span><span class="p">)</span> <span class="o">*</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;ocr_microns_per_pixel&quot;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;ocr_field&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;ocr_field&quot;</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;ocr_field&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># didn&#39;t read the field properly</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span></div>
+
+<div class="viewcode-block" id="KerrArray.defect_mask"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.KerrArray.defect_mask">[docs]</a>    <span class="k">def</span> <span class="nf">defect_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">corner_thresh</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">return_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Tries to create a boolean array which is a mask for typical defects found in Image images.</span>
+
+<span class="sd">        Best for unprocessed raw images. (for subtract images</span>
+<span class="sd">        see defect_mask_subtract_image)</span>
+<span class="sd">        Looks for big bright things by thresholding and small and dark defects using</span>
+<span class="sd">        skimage&#39;s corner_fast algorithm</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        thresh float</span>
+<span class="sd">            brighter stuff than this gets removed (after image levelling)</span>
+<span class="sd">        corner_thresh float</span>
+<span class="sd">            see corner_fast skimage</span>
+<span class="sd">        radius:</span>
+<span class="sd">            radius of pixels around corners that are added to mask</span>
+
+<span class="sd">        return_extra dict</span>
+<span class="sd">            this returns a dictionary with some of the intermediate steps of the</span>
+<span class="sd">            calculation</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        totmask ndarray of bool</span>
+<span class="sd">            mask</span>
+<span class="sd">        info (optional) dict</span>
+<span class="sd">            dictionary of intermediate calculation steps</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">im</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asfloat</span><span class="p">()</span>
+        <span class="n">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">level_image</span><span class="p">(</span><span class="n">poly_vert</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">poly_horiz</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">th</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">threshold_minmax</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span>
+        <span class="c1"># corner fast good at finding the small black dots</span>
+        <span class="n">cor</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">corner_fast</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="n">corner_thresh</span><span class="p">)</span>
+        <span class="n">blobs</span> <span class="o">=</span> <span class="n">cor</span><span class="o">.</span><span class="n">blob_doh</span><span class="p">(</span><span class="n">min_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_sigma</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">num_sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">blobs</span><span class="p">:</span>
+            <span class="n">q</span><span class="p">[</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">radius</span><span class="p">))</span> <span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">radius</span><span class="p">)),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">radius</span><span class="p">))</span> <span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">radius</span><span class="p">)),</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">totmask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">th</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_extra</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;flattened_image&quot;</span><span class="p">:</span> <span class="n">im</span><span class="p">,</span>
+                <span class="s2">&quot;corner_fast&quot;</span><span class="p">:</span> <span class="n">cor</span><span class="p">,</span>
+                <span class="s2">&quot;corner_points&quot;</span><span class="p">:</span> <span class="n">blobs</span><span class="p">,</span>
+                <span class="s2">&quot;corner_mask&quot;</span><span class="p">:</span> <span class="n">q</span><span class="p">,</span>
+                <span class="s2">&quot;thresh_mask&quot;</span><span class="p">:</span> <span class="n">th</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="n">totmask</span><span class="p">,</span> <span class="n">info</span>
+        <span class="k">return</span> <span class="n">totmask</span></div>
+
+<div class="viewcode-block" id="KerrArray.defect_mask_subtract_image"><a class="viewcode-back" href="../../../classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.KerrArray.defect_mask_subtract_image">[docs]</a>    <span class="k">def</span> <span class="nf">defect_mask_subtract_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshmin</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">threshmax</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">denoise_weight</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">return_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a mask array for a typical subtract Image image</span>
+<span class="sd">        Uses a denoise algorithm followed by simple thresholding.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        totmask: ndarray of bool</span>
+<span class="sd">            the created mask</span>
+<span class="sd">        info (optional) dict:</span>
+<span class="sd">            the intermediate denoised image</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">denoise_tv_chambolle</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="n">denoise_weight</span><span class="p">)</span>
+        <span class="n">submask</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">threshold_minmax</span><span class="p">(</span><span class="n">threshmin</span><span class="p">,</span> <span class="n">threshmax</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_extra</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;denoised_image&quot;</span><span class="p">:</span> <span class="n">p</span><span class="p">}</span>
+            <span class="k">return</span> <span class="n">submask</span><span class="p">,</span> <span class="n">info</span>
+        <span class="k">return</span> <span class="n">submask</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">KerrImageFile</span><span class="p">(</span><span class="n">ImageFile</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Subclass of ImageFile that keeps the data as a KerrArray so that extra functions are available.&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Access the image data.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">KerrArray</span><span class="p">)</span>
+
+    <span class="nd">@image</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Ensure stored image is always an ImageArray.&quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+        <span class="c1"># ensure setting image goes into the same memory block if from stack</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_fromstack&quot;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fromstack</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_image</span> <span class="o">=</span> <span class="n">KerrArray</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
 
 
 <span class="k">class</span> <span class="nc">KerrStackMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -368,8 +480,7 @@
 <span class="sd">            &#39;Field&#39;, &#39;Intensity&#39;, 2 column array</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">hyst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))))</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
-            <span class="n">im</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">im</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">hyst</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">im</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">))])</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
@@ -437,9 +548,9 @@
 <span class="sd">            (self):</span>
 <span class="sd">            cropped image</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">AN_IM_SIZE</span> <span class="ow">or</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">IM_SIZE</span>
-        <span class="p">),</span> <span class="s2">&quot;Need a full sized Kerr image to crop&quot;</span>  <span class="c1"># check it&#39;s a normal image</span>
+        <span class="n">assertion</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">AN_IM_SIZE</span> <span class="ow">or</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">IM_SIZE</span><span class="p">),</span> <span class="s2">&quot;Need a full sized Kerr image to crop&quot;</span>
+        <span class="p">)</span>  <span class="c1"># check it&#39;s a normal image</span>
         <span class="n">crop</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">IM_SIZE</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">IM_SIZE</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">crop_stack</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">crop</span><span class="p">)</span>
 
@@ -604,17 +715,12 @@
             <p class="logo"><a href="../../../index.html">
               <img class="logo" src="../../../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+<form class="search" action="../../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -637,9 +743,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

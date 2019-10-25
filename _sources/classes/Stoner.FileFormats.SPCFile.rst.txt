@@ -47,6 +47,7 @@ Stoner.FileFormats.SPCFile
       ~Stoner.FileFormats.SPCFile.sort
       ~Stoner.FileFormats.SPCFile.split
       ~Stoner.FileFormats.SPCFile.swap_column
+      ~Stoner.FileFormats.SPCFile.to_pandas
       ~Stoner.FileFormats.SPCFile.unique
       ~Stoner.FileFormats.SPCFile.update
       ~Stoner.FileFormats.SPCFile.values

@@ -1,19 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>format_error &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="format_val" href="Stoner.tools.format_val.html" />
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -55,35 +55,31 @@
 <h1>format_error<a class="headerlink" href="#format-error" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="Stoner.tools.format_error">
-<code class="descclassname">Stoner.tools.</code><code class="descname">format_error</code><span class="sig-paren">(</span><em>value</em>, <em>error=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools.html#format_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.format_error" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Stoner.tools.</code><code class="sig-name descname">format_error</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">error=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools.html#format_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.format_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the printing out of the answer with the uncertaintly to 1sf and the value to no more sf’s than the uncertainty.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>value</strong> (<em>float</em>) – The value to be formated</li>
-<li><strong>error</strong> (<em>float</em>) – The uncertainty in the value</li>
-<li><strong>fmt</strong> (<em>str</em>) – Specify the output format, opyions are:
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>float</em>) – The value to be formated</p></li>
+<li><p><strong>error</strong> (<em>float</em>) – The uncertainty in the value</p></li>
+<li><p><strong>fmt</strong> (<em>str</em>) – Specify the output format, opyions are:
 *  “text” - plain text output
 * “latex” - latex output
-* “html” - html entities</li>
-<li><strong>escape</strong> (<em>bool</em>) – Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)</li>
-<li><strong>mode</strong> (<em>string</em>) – If “float” (default) the number is formatted as is, if “eng” the value and error is converted
+* “html” - html entities</p></li>
+<li><p><strong>escape</strong> (<em>bool</em>) – Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)</p></li>
+<li><p><strong>mode</strong> (<em>string</em>) – If “float” (default) the number is formatted as is, if “eng” the value and error is converted
 to the next samllest power of 1000 and the appropriate SI index appended. If mode is “sci” then a scientifc,
-i.e. mantissa and exponent format is used.</li>
-<li><strong>units</strong> (<em>string</em>) – A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
-prepended to the units string. In LaTeX mode, the units string is embedded in mathrm</li>
-<li><strong>prefix</strong> (<em>string</em>) – A prefix string that should be included before the value and error string. in LaTeX mode this is
-inside the math-mode markers, but not embedded in mathrm.</li>
+i.e. mantissa and exponent format is used.</p></li>
+<li><p><strong>units</strong> (<em>string</em>) – A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
+prepended to the units string. In LaTeX mode, the units string is embedded in mathrm</p></li>
+<li><p><strong>prefix</strong> (<em>string</em>) – A prefix string that should be included before the value and error string. in LaTeX mode this is
+inside the math-mode markers, but not embedded in mathrm.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -103,22 +99,19 @@ inside the math-mode markers, but not embedded in mathrm.</li>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.tools.format_val.html"
                         title="next chapter">format_val</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.tools.format_error.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.tools.format_error.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -141,14 +134,14 @@ inside the math-mode markers, but not embedded in mathrm.</li>
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

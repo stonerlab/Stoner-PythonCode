@@ -75,6 +75,8 @@ KerrArray
       ~KerrArray.crop_text
       ~KerrArray.cumprod
       ~KerrArray.cumsum
+      ~KerrArray.defect_mask
+      ~KerrArray.defect_mask_subtract_image
       ~KerrArray.diagonal
       ~KerrArray.dot
       ~KerrArray.dtype_limits
@@ -83,6 +85,7 @@ KerrArray
       ~KerrArray.fill
       ~KerrArray.filled
       ~KerrArray.flatten
+      ~KerrArray.float_and_croptext
       ~KerrArray.get
       ~KerrArray.get_fill_value
       ~KerrArray.get_imag
@@ -211,6 +214,8 @@ KerrArray
    .. automethod:: crop_text
    .. automethod:: cumprod
    .. automethod:: cumsum
+   .. automethod:: defect_mask
+   .. automethod:: defect_mask_subtract_image
    .. automethod:: diagonal
    .. automethod:: dot
    .. automethod:: dtype_limits
@@ -219,6 +224,7 @@ KerrArray
    .. automethod:: fill
    .. automethod:: filled
    .. automethod:: flatten
+   .. automethod:: float_and_croptext
    .. automethod:: get
    .. automethod:: get_fill_value
    .. automethod:: get_imag

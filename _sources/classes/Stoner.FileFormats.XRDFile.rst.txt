@@ -48,6 +48,7 @@ Stoner.FileFormats.XRDFile
       ~Stoner.FileFormats.XRDFile.split
       ~Stoner.FileFormats.XRDFile.swap_column
       ~Stoner.FileFormats.XRDFile.to_Q
+      ~Stoner.FileFormats.XRDFile.to_pandas
       ~Stoner.FileFormats.XRDFile.unique
       ~Stoner.FileFormats.XRDFile.update
       ~Stoner.FileFormats.XRDFile.values

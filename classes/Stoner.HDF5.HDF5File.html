@@ -1,23 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>HDF5File &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="HDF5Folder" href="Stoner.HDF5.HDF5Folder.html" />
-    <link rel="prev" title="WLfit" href="Stoner.Fit.WLfit.html" />
+    <link rel="prev" title="make_model" href="Stoner.Fit.make_model.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -28,7 +28,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.WLfit.html" title="Previous document">WLfit</a>
+          <a href="Stoner.Fit.make_model.html" title="Previous document">make_model</a>
         </li>
         <li>
           <a href="Stoner.HDF5.HDF5Folder.html" title="Next document">HDF5Folder</a>
@@ -40,7 +40,7 @@
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
@@ -55,21 +55,17 @@
 <h1>HDF5File<a class="headerlink" href="#hdf5file" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.HDF5.HDF5File">
-<em class="property">class </em><code class="descclassname">Stoner.HDF5.</code><code class="descname">HDF5File</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5File" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.HDF5.</code><code class="sig-name descname">HDF5File</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5File" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a></p>
 <p>A sub class of DataFile that sores itself in a HDF5File or group.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>args</strong> (<em>tuple</em>) – Supplied arguments, only recognises one though !</li>
-<li><strong>kargs</strong> (<em>dict</em>) – Dictionary of keyword arguments</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>tuple</em>) – Supplied arguments, only recognises one though !</p></li>
+<li><p><strong>kargs</strong> (<em>dict</em>) – Dictionary of keyword arguments</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>If the first non-keyword arguement is not an h5py File or Group then
 initialises with a blank parent constructor and then loads data, otherwise,
 calls parent constructor.</p>
@@ -81,6 +77,86 @@ full name + typehint of the stanard DataFile metadata dictionary
 group name or from the hdf5 filename.
 The root has an attribute <em>type</em> that must by ‘HDF5File’ otherwise the load routine
 will refuse to load it. This is to try to avoid loading rubbish from random hdf files.</p>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.HDF5.HDF5File.compression" title="Stoner.HDF5.HDF5File.compression"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compression</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.HDF5.HDF5File.compression_opts" title="Stoner.HDF5.HDF5File.compression_opts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compression_opts</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.HDF5.HDF5File.mime_type" title="Stoner.HDF5.HDF5File.mime_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mime_type</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.HDF5.HDF5File.patterns" title="Stoner.HDF5.HDF5File.patterns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">patterns</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.HDF5.HDF5File.priority" title="Stoner.HDF5.HDF5File.priority"><code class="xref py py-obj docutils literal notranslate"><span class="pre">priority</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.HDF5.HDF5File.save" title="Stoner.HDF5.HDF5File.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([filename])</p></td>
+<td><p>Writes the current object into  an hdf5 file or group within a file in afashion that is compatible with being loaded in again.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.HDF5.HDF5File.compression">
+<code class="sig-name descname">compression</code><em class="property"> = 'gzip'</em><a class="headerlink" href="#Stoner.HDF5.HDF5File.compression" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.HDF5.HDF5File.compression_opts">
+<code class="sig-name descname">compression_opts</code><em class="property"> = 6</em><a class="headerlink" href="#Stoner.HDF5.HDF5File.compression_opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.HDF5.HDF5File.mime_type">
+<code class="sig-name descname">mime_type</code><em class="property"> = ['application/x-hdf']</em><a class="headerlink" href="#Stoner.HDF5.HDF5File.mime_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.HDF5.HDF5File.patterns">
+<code class="sig-name descname">patterns</code><em class="property"> = ['*.hdf', '*.hf5']</em><a class="headerlink" href="#Stoner.HDF5.HDF5File.patterns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.HDF5.HDF5File.priority">
+<code class="sig-name descname">priority</code><em class="property"> = 16</em><a class="headerlink" href="#Stoner.HDF5.HDF5File.priority" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.HDF5.HDF5File.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5File.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5File.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the current object into  an hdf5 file or group within a file in afashion that is compatible with being loaded in again.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string or h5py.Group</em>) – Either a string, of h5py.File or h5py.Group object into which
+to save the file. If this is a string, the corresponding file is opened for
+writing, written to and save again.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>A copy of the object</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -95,27 +171,24 @@ will refuse to load it. This is to try to avoid loading rubbish from random hdf 
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.WLfit.html"
-                        title="previous chapter">WLfit</a></p>
+  <p class="topless"><a href="Stoner.Fit.make_model.html"
+                        title="previous chapter">make_model</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.HDF5.HDF5Folder.html"
                         title="next chapter">HDF5Folder</a></p>
-<div class="sourcelink">
-  <a href="../_sources/classes/Stoner.HDF5.HDF5File.rst.txt" rel="nofollow">
-    Show page source
-  </a>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.HDF5.HDF5File.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
@@ -126,7 +199,7 @@ will refuse to load it. This is to try to avoid loading rubbish from random hdf 
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.WLfit.html" title="Previous document">WLfit</a>
+          <a href="Stoner.Fit.make_model.html" title="Previous document">make_model</a>
         </li>
         <li>
           <a href="Stoner.HDF5.HDF5Folder.html" title="Next document">HDF5Folder</a>
@@ -138,14 +211,14 @@ will refuse to load it. This is to try to avoid loading rubbish from random hdf 
     <ul>
       <li><a href="../index.html">Stoner Package</a></li>
       <li>
-        <a href="../Stoner.html"><code class="docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 22, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      1.7.9
+      2.2.0
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 
