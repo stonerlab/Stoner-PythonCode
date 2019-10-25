@@ -75,14 +75,6 @@ Analysis Package
     :no-inheritance-diagram:
     :headings: -~
 
-.. automodapi:: Stoner.analysis.fitting.mixins
-    :no-inheritance-diagram:
-    :headings: -~
-
-.. automodapi:: Stoner.analysis.fitting.models
-    :no-inheritance-diagram:
-    :headings: -~
-
 .. automodapi:: Stoner.analysis.fitting.models.generic
     :no-inheritance-diagram:
     :headings: -~

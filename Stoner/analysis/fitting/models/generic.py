@@ -110,6 +110,11 @@ def lorentzian_diff(x, A, sigma, mu):
 
         Returns
             :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`
+
+    Example:
+    .. plot:: samples/Fitting/lorentzian.py
+        :include-source:
+        :outname: lorentzian_diff_func
         """
     return A * sigma * (2 * mu - 2 * x) / (np.pi * (sigma ** 2 + (-mu + x) ** 2) ** 2)
 
@@ -218,6 +223,11 @@ class Lorentzian_diff(Model):
 
         Returns
             :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`
+
+    Example:
+    .. plot:: samples/Fitting/lorentzian.py
+        :include-source:
+        :outname: lorentzian_diff_class
     """
     display_names = ["A", r"\sigma", r"\mu"]
 

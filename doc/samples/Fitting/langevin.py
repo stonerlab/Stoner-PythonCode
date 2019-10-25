@@ -1,4 +1,4 @@
-"""Test Weak-localisation fitting."""
+"""Test langevin fitting."""
 from Stoner import Data
 import Stoner.Fit as SF
 from numpy import linspace, ones_like

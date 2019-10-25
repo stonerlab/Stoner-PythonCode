@@ -9,6 +9,15 @@ sudo: true
 python:
   - "3.6"
   - "3.7"
+
+env:
+  - NUMBA=1
+  - NUMBA=0
+
+jobs:
+    excelude:
+      - python: 3.6
+      - env: NUMBA = "0"
 # command to install dependencies
 
 services:
@@ -44,6 +53,7 @@ install:
   - conda install hyperspy
   # Now we unistall the stable stoner - use force to stop downgrading packages!
   - conda remove --yes --force stoner
+  - if [[ "$NUMBA" == "0" ]]; then conda remove --yes --force numba; fi
   - pip install coveralls
   - pip install .
 
