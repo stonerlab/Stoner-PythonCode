@@ -71,6 +71,43 @@ Analysis Package
     :no-inheritance-diagram:
     :headings: -~
 
+.. automodapi:: Stoner.analysis.fitting
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.analysis.fitting.mixins
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.analysis.fitting.models
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.analysis.fitting.models.generic
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.analysis.fitting.models.thermal
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.analysis.fitting.models.tunnelling
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.analysis.fitting.models.e_transport
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.analysis.fitting.models.magnetism
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.analysis.fitting.models.superconductivity
+    :no-inheritance-diagram:
+    :headings: -~
+
+
 Plot Package and Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

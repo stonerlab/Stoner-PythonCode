@@ -168,6 +168,11 @@ def rsj_noiseless(I, Ic_p, Ic_n, Rn, V_offset):
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
 
             $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
+
+    Example:
+        .. plot:: samples/Fitting/rsj_fit.py
+            :include-source:
+            :outname: rsj_noiseless
     """
 
     normal_p = np.sign(I) * np.real(np.sqrt(I ** 2 - Ic_p ** 2)) * Rn
@@ -198,6 +203,11 @@ def rsj_simple(I, Ic, Rn, V_offset):
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
 
             $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
+
+    Example:
+        .. plot:: samples/Fitting/rsj_fit.py
+            :include-source:
+            :outname: rsj_simple
     """
 
     normal = Rn * np.sign(I) * np.real(np.sqrt(I ** 2 - Ic ** 2))
@@ -230,6 +240,12 @@ def ic_B_airy(B, Ic0, B_offset, A):
 
         For small ($<1^{-5}$)values of the Bessel function argument, this will return Ic0 to
         ensure correct evaluation for 0 flux.
+
+    Example:
+        .. plot:: samples/Fitting/ic_b_airy.py
+            :include-source:
+            :outname: ic_b_airy
+
     """
 
     arg = (B - B_offset) * A * np.pi / Phi_0
@@ -292,6 +308,12 @@ class RSJ_Noiseless(Model):
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
 
             $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
+
+    Example:
+        .. plot:: samples/Fitting/rsj_fit.py
+            :include-source:
+            :outname: rsj_noiseless_model
+
     """
 
     display_names = ["I_c^p", "I_c^n", "R_N", "V_{offset}"]
@@ -341,6 +363,12 @@ class RSJ_Simple(Model):
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
 
             $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
+
+    Example:
+        .. plot:: samples/Fitting/rsj_fit.py
+            :include-source:
+            :outname: rsj_simple_model
+
     """
 
     display_names = ["I_c", "R_N", "V_{offset}"]
@@ -395,6 +423,12 @@ class Ic_B_Airy(Model):
             $$I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right))
             {\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|$$
         where $J_1$ is a first order Bessel function.
+
+    Example:
+        .. plot:: samples/Fitting/ic_b_airy.py
+            :include-source:
+            :outname: ic_b_airy_model
+
     """
 
     display_names = ["I_{c0}", "B_{offset}"]

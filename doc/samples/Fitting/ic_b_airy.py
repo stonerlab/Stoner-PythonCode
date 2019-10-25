@@ -4,12 +4,12 @@
 Fit Ic(B) to Airy function.
 """
 
-from Stoner import Data
+from Stoner import Data, __home__
 from Stoner.Fit import Ic_B_Airy
 
 import os
 
-os.chdir(os.path.dirname(__file__))
+os.chdir(os.path.join(__home__, "..", "doc", "samples", "Fitting"))
 
 data = Data("data/Ic_B.txt", setas={"x": "Magnet Output", "y": "Ic"})
 
