@@ -116,7 +116,7 @@ def lorentzian_diff(x, A, sigma, mu):
     .. plot:: samples/Fitting/lorentzian.py
         :include-source:
         :outname: lorentzian_diff_func
-        """
+    """
     return A * sigma * (2 * mu - 2 * x) / (np.pi * (sigma ** 2 + (-mu + x) ** 2) ** 2)
 
 

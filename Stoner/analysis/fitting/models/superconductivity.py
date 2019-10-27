@@ -167,7 +167,7 @@ def rsj_noiseless(I, Ic_p, Ic_n, Rn, V_offset):
     Notes:
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
 
-            $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
+            :math:`V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}`
 
     Example:
         .. plot:: samples/Fitting/rsj_fit.py
@@ -202,7 +202,7 @@ def rsj_simple(I, Ic, Rn, V_offset):
     Notes:
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
 
-            $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
+            :math:`V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}`
 
     Example:
         .. plot:: samples/Fitting/rsj_fit.py
@@ -234,8 +234,8 @@ def ic_B_airy(B, Ic0, B_offset, A):
 
     Notes:
         Represents the critical current as:
-            $$I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}{\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|$$
-        where $J_1$ is a first order Bessel function.
+            :math:`I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}{\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|`
+        where :math:`J_1` is a first order Bessel function.
 
         For small ($<1^{-5}$)values of the Bessel function argument, this will return Ic0 to
         ensure correct evaluation for 0 flux.
@@ -306,7 +306,7 @@ class RSJ_Noiseless(Model):
     Notes:
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
 
-            $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
+            :math:`V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}`
 
     Example:
         .. plot:: samples/Fitting/rsj_fit.py
@@ -361,7 +361,7 @@ class RSJ_Simple(Model):
     Notes:
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
 
-            $V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}$
+            :math:`V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}`
 
     Example:
         .. plot:: samples/Fitting/rsj_fit.py
@@ -419,8 +419,8 @@ class Ic_B_Airy(Model):
 
     Notes:
         Represents the critical current as:
-            $$I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}{\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|$$
-        where $J_1$ is a first order Bessel function.
+            :math:`I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}{\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|`
+        where `J_1` is a first order Bessel function.
 
     Example:
         .. plot:: samples/Fitting/ic_b_airy.py
