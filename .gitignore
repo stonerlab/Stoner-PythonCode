@@ -3,6 +3,7 @@ __pycache__
 
 # sphinx
 _build
+doc/classes
 
 # C extensions
 *.so
@@ -37,3 +38,6 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+#Random
+Backup_of_*.cdr
