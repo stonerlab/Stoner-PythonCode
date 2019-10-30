@@ -5,10 +5,10 @@
 
 """
 
+# This module can be used with Stoner v.0.9.0 asa standalone module
+
 import numpy as np
 from scipy.special import jv
-from scipy.optimize import curve_fit
-from .generic import linear
 from scipy.constants import physical_constants
 from functools import partial
 
@@ -146,7 +146,7 @@ def strijkers(V, omega, delta, P, Z):
     Example:
         .. plot:: samples/lmfit_demo.py
             :include-source:
-            :outname: strijkers
+            :outname: strijkers_func
     """
     return _strijkers_core(V, omega, delta, P, Z)
 
@@ -170,9 +170,10 @@ def rsj_noiseless(I, Ic_p, Ic_n, Rn, V_offset):
             :math:`V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}`
 
     Example:
+
         .. plot:: samples/Fitting/rsj_fit.py
             :include-source:
-            :outname: rsj_noiseless
+            :outname: rsj_noiseless_func
     """
 
     normal_p = np.sign(I) * np.real(np.sqrt(I ** 2 - Ic_p ** 2)) * Rn
@@ -205,9 +206,10 @@ def rsj_simple(I, Ic, Rn, V_offset):
             :math:`V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}`
 
     Example:
+
         .. plot:: samples/Fitting/rsj_fit.py
             :include-source:
-            :outname: rsj_simple
+            :outname: rsj_simple_func
     """
 
     normal = Rn * np.sign(I) * np.real(np.sqrt(I ** 2 - Ic ** 2))
@@ -241,9 +243,10 @@ def ic_B_airy(B, Ic0, B_offset, A):
         ensure correct evaluation for 0 flux.
 
     Example:
+
         .. plot:: samples/Fitting/ic_b_airy.py
             :include-source:
-            :outname: ic_b_airy
+            :outname: ic_b_airy_func
 
     """
 
@@ -275,7 +278,7 @@ class Strijkers(Model):
     Example:
         .. plot:: samples/lmfit_demo.py
             :include-source:
-            :outname: strijkers-class
+            :outname: strijkers_class
     """
 
     display_names = [r"\omega", r"\Delta", "P", "Z"]
@@ -311,7 +314,7 @@ class RSJ_Noiseless(Model):
     Example:
         .. plot:: samples/Fitting/rsj_fit.py
             :include-source:
-            :outname: rsj_noiseless_model
+            :outname: rsj_noiseless_class
 
     """
 
@@ -366,7 +369,7 @@ class RSJ_Simple(Model):
     Example:
         .. plot:: samples/Fitting/rsj_fit.py
             :include-source:
-            :outname: rsj_simple_model
+            :outname: rsj_simple_class
 
     """
 
@@ -425,7 +428,7 @@ class Ic_B_Airy(Model):
     Example:
         .. plot:: samples/Fitting/ic_b_airy.py
             :include-source:
-            :outname: ic_b_airy_model
+            :outname: ic_b_airy_class
 
     """
 

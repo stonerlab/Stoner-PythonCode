@@ -1,6 +1,9 @@
 *.py[cod]
 __pycache__
 
+# sphinx
+_build
+
 # C extensions
 *.so
 
