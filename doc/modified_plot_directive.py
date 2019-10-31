@@ -148,25 +148,30 @@ The plot directive has the following configuration options:
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import re
-
 import six
 from six.moves import xrange
-
-import sys, os, shutil, io, re, textwrap
+import sys
+import os
+import shutil
+import io
+import re
+import textwrap
 from os.path import relpath
 import traceback
 import warnings
-
 import glob
+from docutils.parsers.rst import directives
+from docutils.parsers.rst.directives.images import Image
+import sphinx
+import jinja2  # Sphinx dependency.
+import matplotlib
+import matplotlib.cbook as cbook
+from matplotlib import _pylab_helpers
 
 if not six.PY3:
     import cStringIO
 
-from docutils.parsers.rst import directives
-from docutils.parsers.rst.directives.images import Image
 align = Image.align
-import sphinx
 
 sphinx_version = sphinx.__version__.split(".")
 # The split is necessary for sphinx beta versions where the string is
@@ -174,10 +179,6 @@ sphinx_version = sphinx.__version__.split(".")
 sphinx_version = tuple([int(re.split('[^0-9]', x)[0])
                         for x in sphinx_version[:2]])
 
-import jinja2  # Sphinx dependency.
-
-import matplotlib
-import matplotlib.cbook as cbook
 try:
     with warnings.catch_warnings(record=True):
         warnings.simplefilter("error", UserWarning)
@@ -187,15 +188,15 @@ except UserWarning:
     plt.switch_backend("Agg")
 else:
     import matplotlib.pyplot as plt
-from matplotlib import _pylab_helpers
 
 __version__ = 2
 
 outname_list = set()
 
-#------------------------------------------------------------------------------
-# Registration hook
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+#  Registration hook
+# ------------------------------------------------------------------------------
+
 
 def plot_directive(name, arguments, options, content, lineno,
                    content_offset, block_text, state, state_machine):
