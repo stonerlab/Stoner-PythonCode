@@ -75,7 +75,7 @@ Analysis Package
     :no-inheritance-diagram:
     :headings: -~
 
-    Fitting Models <analysis-fitting>
+    :doc: Fitting Models <analysis-fitting>
 
 Plot Package and Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
