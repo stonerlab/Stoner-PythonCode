@@ -75,7 +75,12 @@ Analysis Package
     :no-inheritance-diagram:
     :headings: -~
 
-    Fitting Models <analysis-fitting>
+Fitting Models
+^^^^^^^^^^^^^^
+.. toctree::
+   :maxdepth: 2
+
+   Fitting Models <analysis-fitting>
 
 Plot Package and Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

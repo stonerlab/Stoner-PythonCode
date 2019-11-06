@@ -13,9 +13,11 @@ __all__ = [
     "setas",
     "exceptions",
     "utils",
+    "Typing",
 ]
 
 from .base import regexpDict, typeHintedDict, metadataObject, string_to_type
 from .setas import setas as _setas
 from .array import DataArray
 from . import utils, exceptions, base, array
+from . import Typing
