@@ -397,7 +397,7 @@ class RSJ_Simple(Model):
         rn_guess = np.mean(v[rn_index] / x[rn_index])
 
         pars = self.make_params(Ic=ic_guess, Rn=rn_guess, V_offset=v_offset_guess)
-        pars["Ic"].min = 0
+        # pars["Ic"].min = 0
         return update_param_vals(pars, self.prefix, **kwargs)
 
 

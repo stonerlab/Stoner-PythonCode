@@ -1077,11 +1077,8 @@ class baseFolder(MutableSequence):
         self.groups.clear()
         self.__clear__()
 
-    def compress(self, base=None, key="."):
+    def compress(self, base=None, key=".", keep_terminal=False):
         """Compresses all empty groups from the root up until the first non-empty group is located.
-
-        Keyword Arguments:
-            depth )(int or None): Only flatten ub-groups that are within (*depth* of the deepest level.
 
         Returns:
             A copy of the now flattened DatFolder
@@ -1093,8 +1090,8 @@ class baseFolder(MutableSequence):
                 nk = path.join(key, g)
                 base.groups[nk] = self.groups[g]
                 del self.groups[g]
-                base.groups[nk].compress(base=base, key=nk)
-                if len(base.groups[nk].groups) == 0:
+                base.groups[nk].compress(base=base, key=nk, keep_terminal=keep_terminal)
+                if len(base.groups[nk].groups) == 0 and not keep_terminal:
                     for f in base.groups[nk].__names__():
                         obj = base.groups[nk].__getter__(f, instantiate=None)
                         nf = path.join(nk, f)
@@ -1414,7 +1411,7 @@ class baseFolder(MutableSequence):
         """Return the most recent subgroup from this folder."""
         return self.groups.popitem()
 
-    def prune(self):
+    def prune(self, name=None):
         """Remove any empty groups from the objectFolder (and subgroups).
 
         Returns:
@@ -1423,8 +1420,11 @@ class baseFolder(MutableSequence):
         keys = list(self.groups.keys())
         for grp in keys:
             g = self.groups[grp]
-            g.prune()
-            if not len(g) and not len(g.groups):
+            g.prune(name=name)
+            if name is not None:
+                if fnmatch.fnmatch(grp, name):
+                    del self.groups[grp]
+            elif not len(g) and not len(g.groups):
                 del self.groups[grp]
         return self
 

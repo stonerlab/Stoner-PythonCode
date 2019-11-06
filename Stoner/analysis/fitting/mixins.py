@@ -732,7 +732,7 @@ class FittingMixin(object):
                 res_dict["d_{}".format(p)] = fit.params[p].stderr
             res_dict["chi-square"] = fit.chisqr
             res_dict["red. chi-sqr"] = fit.redchi
-            res_dict["nfeev"] = fit.nfev
+            res_dict["nfev"] = fit.nfev
 
             retval = {
                 "fit": (row[::2], fit.covar),

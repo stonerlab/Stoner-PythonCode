@@ -8,6 +8,7 @@ import numpy as _np_
 from functools import wraps, partial
 from traceback import format_exc
 from .utils import get_pool
+from Stoner.tools import isiterable
 
 
 def _worker(d, **kwargs):
@@ -89,6 +90,10 @@ class item(object):
         Returns:
             Depends on the attribute
 
+        Notes:
+            If *name* is not present on the empty member instance, then the first member of the folder is checked as
+            well. This allows the attributes of a :py:class:`Stoner.Data` object that derive from the
+            Lpy:attr:`Stoner.Data.setas` attribute (such as *.x*, *.y* or *.e* etc) can be accessed.
         """
         try:
             return super(item, self).__getattr__(name)
@@ -112,6 +117,15 @@ class item(object):
                     raise AttributeError
         except AttributeError:  # Ok, pass back
             raise AttributeError("{} is not an Attribute of {} or {}".format(name, type(self), type(instance)))
+        except TypeError as err:  # Can be triggered if self.instance lacks the attribute
+            if len(self._folder) and hasattr(self._folder[0], name):
+                ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
+                mask, values = zip(*ret)
+                ret = _np_.ma.MaskedArray(values)
+                ret.mask = mask
+            else:
+                raise err
+
         return ret
 
     def __setattr__(self, name, value):
@@ -120,15 +134,30 @@ class item(object):
         Args:
             name(str): Attribute to set
             value (any): Value to set
+
+        Notes:
+            If *name* is not present on the empty member instance, then the first member of the folder is checked as
+            well. This allows the attributes of a :py:class:`Stoner.Data` object that derive from the
+            Lpy:attr:`Stoner.Data.setas` attribute (such as *.x*, *.y* or *.e* etc) can be accessed.
+
+            If *value* is iterable and the same length as the folder, then each element in the folder is loaded and
+            the corresponding element of *value* is assigned to the attribute of the member.
         """
         if name in self.__dict__ or name.startswith("_"):  # Handle setting our own attributes
             super(item, self).__setattr__(name, value)
-        elif name in dir(self._folder.instance):  # This is an instance attribute
-            self._folder._object_attrs[name] = value  # Add to attributes to be set on load
-            for d in self._folder.__names__():  # And set on all instantiated objects
-                if isinstance(self._folder.__getter__(d, instantiate=False), self._folder.type):
-                    d = self._folder.__gett__(d)
-                    setattr(d, name, value)
+        elif name in dir(self._folder.instance) or (
+            len(self._folder) and hasattr(self._folder[0], name)
+        ):  # This is an instance attribute
+            if isiterable(value) and len(value) == len(self._folder):
+                force_load = True
+            else:
+                force_load = False
+                self._folder._object_attrs[name] = value  # Add to attributes to be set on load
+                value = [value] * len(self._folder)
+            for d, v in zip(self._folder.__names__(), value):  # And set on all instantiated objects
+                if force_load or isinstance(self._folder.__getter__(d, instantiate=False), self._folder.type):
+                    d = self._folder.__getter__(d)
+                    setattr(d, name, v)
         else:
             raise AttributeError("Unknown attribute {}".format(name))
 
