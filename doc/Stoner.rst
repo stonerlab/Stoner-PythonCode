@@ -80,7 +80,7 @@ Fitting Models
 .. toctree::
    :maxdepth: 2
 
-   Fitting Models <analysis-fitting>
+r   Fitting Models <analysis-fitting>
 
 Plot Package and Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1189,9 +1189,22 @@ class ImageFile(metadataObject):
 
     def __dir__(self):
         """Merge both the ImageFile and ImageArray dirs."""
+        parent=set(dir(metadataObject()))
         this = set(dir(super(ImageFile, self)))
         image = set(dir(self.image))
-        return list(this | image)
+        return list(parent | this | image)
+
+    def __getstate__(self):
+        """This is need to implement multiprocessing."""
+        state={"metadata":self.metadata}
+        state.update(self.__dict__)
+        return state
+
+    def __setstate__(self,state):
+        """This is need to implement multiprocessing."""
+        metadata=state.pop("metadata",{})
+        self.__dict__.update(state)
+        self.metadata.update(metadata)
 
     def __delitem__(self, n):
         """A Pass through to ImageArray."""

@@ -9,6 +9,8 @@ from Stoner.Image import ImageFile,ImageFolder, ImageStack
 import numpy as np
 import unittest
 import os
+import Stoner
+Stoner.Options.multiprocessing=True
 
 testdir=os.path.join(os.path.dirname(__file__),"coretestdata","testims")
 
@@ -33,8 +35,8 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(self.istack2.shape==(91,100,100),"ImageStack2.shape wrong at {}".format(self.istack2.shape))
         i=ImageFile(np.zeros((100,100))).draw.circle(50,50,25)
         self.m1=self.istack2.mean()
-        self.istack2.align(i,method="imreg_dft")
-        data=self.istack2.slice_metadata(["tvec","angle","scale"],output="Data")
+        self.istack2.each.align(i,method="imreg_dft")
+        data=self.istack2.metadata.slice(["tvec","angle","scale"],output="Data")
         self.assertTrue(data.shape==(91,4),"Slice metadata went a bit funny")
         self.assertTrue(sorted(data.column_headers)==['angle','scale','tvec[0]', 'tvec[1]'],"slice metadata column headers wrong at {}".format(data.column_headers))
         self.m2=self.istack2.mean()
@@ -53,8 +55,8 @@ class ImageStack2Test(unittest.TestCase):
             sa.append(im.shape)
         sa=np.array(sa)
         self.assertTrue(np.all(sa==np.ones((91,2))*100),"Result from iterating over images failed.")
-        self.istack2.adjust_contrast()
-        self.assertEqual((np.array(self.istack2.min()).mean(),np.array(self.istack2.max()).mean()),(-1.0,1.0),"Adjust contrast failure")
+        self.istack2.each.adjust_contrast()
+        self.assertEqual((np.array(self.istack2.each.min()).mean(),np.array(self.istack2.each.max()).mean()),(-1.0,1.0),"Adjust contrast failure")
         self.im1=self.istack2[0]
         self.im1.normalise()
         self.im1.convert(np.int32)
@@ -110,7 +112,7 @@ class ImageStack2Test(unittest.TestCase):
 
     def test_methods(self):
         #check function generator machinery works
-        self.istack2.crop(0,30,0,50)
+        self.istack2.each.crop(0,30,0,50)
         self.assertTrue(self.istack2.shape==(91,50,30),"Unexpected size of imagestack2 got {} for 91x50x30".format(self.istack2.shape))
         ist2 = ImageStack(np.arange(60).reshape(4,3,5))
         self.assertTrue(issubclass(ist2.imarray.dtype.type, np.integer),"Unexpected dtype in image stack2 got {} not int32".format(ist2.imarray.dtype))
@@ -152,8 +154,8 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(np.all(ist2[3].mask), 'setting mask on an image stack item not working')
 
 if __name__=="__main__":
-    #test=ImageStack2Test()
-    #test.setUp()
+    test=ImageStack2Test()
+    test.setUp()
     #test.test_ImageStack2()
     #test.test_mask()
     unittest.main()

@@ -352,7 +352,7 @@ class ImageStackMixin(object):
             )
             clip_negative = kargs.pop("clip_neg")
         if clip or clip_negative:
-            self.clip_intensity(clip_negative=clip_negative)
+            self.each.clip_intensity(clip_negative=clip_negative)
 
     def dtype_limits(self, clip_negative=True):
         """Return intensity limits, i.e. (min, max) tuple, of imarray dtype.

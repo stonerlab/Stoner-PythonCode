@@ -18,6 +18,9 @@ import matplotlib.pyplot as plt
 
 import warnings
 
+import Stoner
+Stoner.Options.multiprocessing = True
+
 #data arrays for testing - some useful small images for tests
 
 testdir=os.path.join(os.path.dirname(__file__),"kerr_testdata")
@@ -89,7 +92,7 @@ class KerrArrayTest(unittest.TestCase):
     def test_kerrstack(self):
         print("X"*80+"\n"+"Test Kerrstack")
         ks=self.ks.clone
-        ks.normalise(scale=(0,1.0))
+        ks.each.normalise(scale=(0,1.0))
         self.assertTrue(np.min(ks.imarray)==0.0 and np.max(ks.imarray)==1.0, 'KerrStack subtract failed min,max: {},{}'.format(np.min(ks.imarray),np.max(ks.imarray)))
         d=ks.hysteresis()
         self.assertTrue(isinstance(d, Data), 'hysteresis didnt return Data')
@@ -98,6 +101,7 @@ class KerrArrayTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=KerrArrayTest()
     test.setUp()
+    #test.test_kerrstack()
     #test.test_kerr_ops()
     #test.test_tesseract_ocr()
     unittest.main()

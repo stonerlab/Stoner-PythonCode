@@ -19,7 +19,8 @@ def _worker(d, **kwargs):
         func = getattr(d, func, lambda x: x)
     args = kwargs.get("args", tuple())
     kargs = kwargs.get("kargs", dict)
-    d["setas"] = list(d.setas)
+    if hasattr(d,"setas"):
+        d["setas"] = list(d.setas)
     d["args"] = args
     d["kargs"] = kargs
     d["func"] = func.__name__
@@ -101,7 +102,7 @@ class item(object):
             pass
         try:
             instance = self._folder.instance
-            if ismethod(getattr(instance, name, None)):  # It's a method
+            if callable(getattr(instance, name, None)):  # It's a method
                 ret = self.__getattr_proxy(name)
             else:  # It's a static attribute
                 if name in self._folder._object_attrs:

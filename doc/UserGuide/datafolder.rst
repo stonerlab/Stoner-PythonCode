@@ -158,14 +158,83 @@ Manipulating the File List in a Folder
 
 The  :py:meth:`DataFolder.flatten` method will do the same as passing the *flat* keyword argument when creating the Lpy:class:`DataFolder` - although
 the search for folders on disk is recursive, the resulting :py:class:`DataFolder` contains a flat list of files. You can also use the
-:py:meth:`DataFolder.prune` method to remove groups (including nested groups) that have no data files in them. Finally the :py:meth:`DataFolder.compress`
-is useful when a :py:class:`DataFolder` contains a chain of sub-folers that have only one sub-folder in them - as can result when reading one specific
-directory from a deep directory tree. The :py:meth:`DataFolder.compress` method adjusts the virtual tree so that the rpot group is at the first level that
-contains more than just a single sub-folder.::
+:py:meth:`DataFolder.prune` method to remove groups (including nested groups) that have no data files in them. If you supply a *name* keyword to the
+:py:meth:`DataFolder.prune` method it will instead remove any sub-folder with a matching name (and all sub-folders within it):
 
-	f.prune()
-	f.flatten()
-	f.compress()
+::
+
+    Root---> (0 files)
+         |
+         |
+         |-> A--> (0 files)
+         |    |
+         |    |--> B--> (5 files)
+         |    |     |
+         |    |     |--> C--> (0 files)
+         |    |     |     |
+         |    |     |     |--> D (0files)
+         |    |     |
+         |    |     |--> E--> (0 files)
+         |    |
+         |    |--> F--> (0 files)
+         |
+         |-->G--> (2 files)
+
+**root.prune()** will have the effect of removing sub-folders *C*, *D*, *E*, and *F*
+
+::
+
+    Root---> (0 files)
+         |
+         |
+         |-> A--> (0 files)
+         |    |
+         |    |--> B--> (5 files)
+         |
+         |-->G--> (2 files)
+
+**root.prune(name="B")** will have the effect of removing sub-folders *C*, *D*, and *F*
+
+::
+
+    Root---> (0 files)
+         |
+         |
+         |-> A--> (0 files)
+         |    |
+         |    |--> F--> (0 files)
+         |
+         |-->G--> (2 files)
+
+The :py:meth:`DataFolder.compress` is useful when a :py:class:`DataFolder` contains a chain of sub-folers that have only one sub-folder in them - as can
+result when reading one specific directory from a deep directory tree. The :py:meth:`DataFolder.compress` method adjusts the virtual tree so that the
+root group is at the first level that contains more than just a single sub-folder.::
+
+::
+
+    Root---> (0 files)
+         |
+         |
+         |-> A--> (0 files)
+              |
+              |--> B--> (0 files)
+                    |
+                    |--> C--> (5 files)
+
+**root.compress** will reformat the :py:class:`DataFolder` to:
+
+::
+
+    Root/A/B/C---> (5 files)
+
+:py:meth:`DataFolder.compress` takes a keyword argument *keep_terminal* which will keep the final group if set to **True**. In the example above,
+**root.compress(keep_terminal=True)** gives:
+
+::
+
+    Root/A/B--> (0 files)
+            |
+            |-->C--> (5 files)
 
 You can also use the sorted filenames in a :py:class:`DataFolder` to reconstruct the directory structure as
 groups by using the :py:meth:`DataFolder.unflatten` method. Alternatively the *invert* operator ~ will
@@ -281,6 +350,12 @@ is the :py:class:`Stoner.Data` to be analysed, then the following syntax can be 
 
     f.each(my_analysis,arg1,arg2,karg=False)
 
+(or alternatively using the matrix multiplication operator @)::
+
+    (my_analysis@f)(arg1,arg2,karg=False)
+
+*(my_analysis@f)* creates the callable object that iterates *my_analysis* over f, the second set of parenthesis above jsut calls this iterating object.
+
 If the return value of the function is another instance of :py:class:`Stoner.Data` (or whatever is being stored as the items in the
 :py:class:`DataFolder`) then it will replace the items inside the :py:class:`DataFolder`. The call to :py:attr:`DataFolder.each` will also return a
 simple list of the return values. If the function retuns something else, then you can have it added to the metadata of each item in the
@@ -291,13 +366,6 @@ Thus, if your analysis function calcualtes some parameter that you want to call 
 
     f=DataFolder(",",pattern="*.txt")
     f.each(my_analysis,arg1,arg2,karg=False,_return="beta")
-
-Finally if you are using Python 3.5+, then you can do the same thing as calling :py:attr:`Datafolder.each` with the matrix multiplication oeprator @::
-
-    (my_analysis@f)(arg1,arg2,karg=False)
-
-*(my_analysis@f)* creates the callable object that iterates *my_analysis* over f, the second set of parenthesis above jsut calls this iterating object.
-
 
 :py:class:`DataFolder` is also indexable and has a length::
 

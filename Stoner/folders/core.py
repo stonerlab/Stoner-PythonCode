@@ -819,55 +819,55 @@ class baseFolder(MutableSequence):
         result = __sub_core__(result, other)
         return result
 
-    def __getattr__(self, item):
-        """Handles some special case attributes that provide alternative views of the objectFolder
+    # def __getattr__(self, item):
+    #     """Handles some special case attributes that provide alternative views of the objectFolder
 
-        Args:
-            item (string): The attribute name being requested
+    #     Args:
+    #         item (string): The attribute name being requested
 
-        Returns:
-            Depends on the attribute
+    #     Returns:
+    #         Depends on the attribute
 
-        """
-        try:
-            ret = super(baseFolder, self).__getattribute__(item)
-        except AttributeError:
-            if item.startswith("_"):
-                raise AttributeError("{} is not an Attribute of {}".format(item, self.__class__))
+    #     """
+    #     try:
+    #         ret = super(baseFolder, self).__getattribute__(item)
+    #     except AttributeError:
+    #         if item.startswith("_"):
+    #             raise AttributeError("{} is not an Attribute of {}".format(item, self.__class__))
 
-            try:
-                instance = super(baseFolder, self).__getattribute__("instance")
-                if callable(getattr(instance, item, None)):  # It's a method
-                    ret = self._getattr_proxy(
-                        item
-                    )  # make it a single underscore name that can be overwritten in mixin classes
-                else:  # It's a static attribute
-                    if item in self._object_attrs:
-                        ret = self._object_attrs[item]
-                    elif len(self) > 0:
-                        ret = getattr(instance, item, None)
-                    else:
-                        ret = None
-                    if ret is None:
-                        raise AttributeError
-            except AttributeError:  # Ok, pass back
-                raise AttributeError("{} is not an Attribute of {} or {}".format(item, type(self), type(instance)))
-        return ret
+    #         try:
+    #             instance = super(baseFolder, self).__getattribute__("instance")
+    #             if callable(getattr(instance, item, None)):  # It's a method
+    #                 ret = self._getattr_proxy(
+    #                     item
+    #                 )  # make it a single underscore name that can be overwritten in mixin classes
+    #             else:  # It's a static attribute
+    #                 if item in self._object_attrs:
+    #                     ret = self._object_attrs[item]
+    #                 elif len(self) > 0:
+    #                     ret = getattr(instance, item, None)
+    #                 else:
+    #                     ret = None
+    #                 if ret is None:
+    #                     raise AttributeError
+    #         except AttributeError:  # Ok, pass back
+    #             raise AttributeError("{} is not an Attribute of {} or {}".format(item, type(self), type(instance)))
+    #     return ret
 
-    def _getattr_proxy(self, item):
-        """Make a proxy call to access a method of the metadataObject like types.
+    # def _getattr_proxy(self, item):
+    #     """Make a proxy call to access a method of the metadataObject like types.
 
-        Args:
-            item (string): Name of method of metadataObject class to be called
+    #     Args:
+    #         item (string): Name of method of metadataObject class to be called
 
-        Returns:
-            Either a modifed copy of this objectFolder or a list of return values
-            from evaluating the method for each file in the Folder.
+    #     Returns:
+    #         Either a modifed copy of this objectFolder or a list of return values
+    #         from evaluating the method for each file in the Folder.
 
-        Notes:
-            This is now simply a proxy into getting the attribute on the baseFolder.each instead. This then makes use of multiprocess Pools to speed things up.
-        """
-        return getattr(self.each, item)
+    #     Notes:
+    #         This is now simply a proxy into getting the attribute on the baseFolder.each instead. This then makes use of multiprocess Pools to speed things up.
+    #     """
+    #     return getattr(self.each, item)
 
     def __deepcopy__(self, memo):
         """Provides support for copy.deepcopy to work."""
@@ -936,33 +936,33 @@ class baseFolder(MutableSequence):
         else:
             raise AttributeError("Unrecognised attribute {}".format(name))
 
-    def __setattr__(self, name, value):
-        """Pass through to set the sample attributes."""
-        if name.startswith("_") or name in [
-            "debug",
-            "groups",
-            "args",
-            "kargs",
-            "objects",
-            "key",
-            "multifile",
-        ]:  # pass ddirectly through for private attributes
-            super(baseFolder, self).__setattr__(name, value)
-        elif name in dir(self) and (
-            isproperty(self, name) or not callable(getattr(self, name, None))
-        ):  # If we recognise this our own attribute, then just set it
-            super(baseFolder, self).__setattr__(name, value)
-        elif (
-            hasattr(self, "_object_attrs")
-            and hasattr(self, "_type")
-            and name in dir(self._type)
-            and not callable(getattr(self._type, name))
-        ):
-            # If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
-            self._object_attrs[name] = value
-        else:
-            self._instance_attrs.add(name)
-            super(baseFolder, self).__setattr__(name, value)
+    # def __setattr__(self, name, value):
+    #     """Pass through to set the sample attributes."""
+    #     if name.startswith("_") or name in [
+    #         "debug",
+    #         "groups",
+    #         "args",
+    #         "kargs",
+    #         "objects",
+    #         "key",
+    #         "multifile",
+    #     ]:  # pass ddirectly through for private attributes
+    #         super(baseFolder, self).__setattr__(name, value)
+    #     elif name in dir(self) and (
+    #         isproperty(self, name) or not callable(getattr(self, name, None))
+    #     ):  # If we recognise this our own attribute, then just set it
+    #         super(baseFolder, self).__setattr__(name, value)
+    #     elif (
+    #         hasattr(self, "_object_attrs")
+    #         and hasattr(self, "_type")
+    #         and name in dir(self._type)
+    #         and not callable(getattr(self._type, name))
+    #     ):
+    #         # If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
+    #         self._object_attrs[name] = value
+    #     else:
+    #         self._instance_attrs.add(name)
+    #         super(baseFolder, self).__setattr__(name, value)
 
     ###########################################################################
     ###################### Private Methods ####################################

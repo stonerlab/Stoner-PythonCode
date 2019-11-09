@@ -344,8 +344,7 @@ class ImageFileTest(unittest.TestCase):
         else:
             self.AssertTrue(False,"Subtraction of string didn't raise not implemented")
         attrs=[x for x in dir(image) if not x.startswith("_")]
-        counts={(2,7):803,(3,5):846}
-        expected=counts.get(version_info[0:2],871)
+        expected=881
         self.assertEqual(len(attrs),expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs)))
         self.assertTrue(image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation")
 
