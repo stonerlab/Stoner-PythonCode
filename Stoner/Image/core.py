@@ -699,6 +699,20 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     # OTHER SPECIAL METHODS
     # ==============================================================================
 
+    def __getstate__(self):
+        """Help with pickling ImageArrays"""
+        ret = super(ImageArray, self).__getstate__()
+
+        return {"numpy": ret, "ImageArray": {"metadata": self.metadata}}
+
+    def __setstate__(self, state):
+        """Help with pickling ImageArrays"""
+        original = state.pop("numpy", tuple())
+        local = state.pop("ImageArray", {})
+        metadata = local.pop("metadata", {})
+        super(ImageArray, self).__setstate__(original)
+        self.metadata.update(metadata)
+
     def __setattr__(self, name, value):
         """Set an attribute on the object."""
         super(ImageArray, self).__setattr__(name, value)
@@ -1189,20 +1203,20 @@ class ImageFile(metadataObject):
 
     def __dir__(self):
         """Merge both the ImageFile and ImageArray dirs."""
-        parent=set(dir(metadataObject()))
+        parent = set(dir(metadataObject()))
         this = set(dir(super(ImageFile, self)))
         image = set(dir(self.image))
         return list(parent | this | image)
 
     def __getstate__(self):
-        """This is need to implement multiprocessing."""
-        state={"metadata":self.metadata}
-        state.update(self.__dict__)
-        return state
+        """Helper for pickling ImageFiles."""
+        ret = copy(self.__dict__)
+        ret.update({"metadata": self.metadata})
+        return ret
 
-    def __setstate__(self,state):
-        """This is need to implement multiprocessing."""
-        metadata=state.pop("metadata",{})
+    def __setstate__(self, state):
+        """Helper for pickling ImageFiles."""
+        metadata = state.pop("metadata", {})
         self.__dict__.update(state)
         self.metadata.update(metadata)
 

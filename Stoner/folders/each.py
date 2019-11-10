@@ -19,7 +19,7 @@ def _worker(d, **kwargs):
         func = getattr(d, func, lambda x: x)
     args = kwargs.get("args", tuple())
     kargs = kwargs.get("kargs", dict)
-    if hasattr(d,"setas"):
+    if hasattr(d, "setas"):
         d["setas"] = list(d.setas)
     d["args"] = args
     d["kargs"] = kargs
