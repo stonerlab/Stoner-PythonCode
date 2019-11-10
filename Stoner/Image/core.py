@@ -708,16 +708,16 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     def __getstate__(self):
         """Help with pickling ImageArrays"""
-        ret=super(ImageArray,self).__getstate__()
+        ret = super(ImageArray, self).__getstate__()
 
-        return {"numpy":ret,"ImageArray":{"metadata":self.metadata}}
+        return {"numpy": ret, "ImageArray": {"metadata": self.metadata}}
 
-    def __setstate__(self,state):
+    def __setstate__(self, state):
         """Help with pickling ImageArrays"""
-        original=state.pop("numpy",tuple())
-        local=state.pop("ImageArray",{})
-        metadata = local.pop("metadata",{})
-        super(ImageArray,self).__setstate__(original)
+        original = state.pop("numpy", tuple())
+        local = state.pop("ImageArray", {})
+        metadata = local.pop("metadata", {})
+        super(ImageArray, self).__setstate__(original)
         self.metadata.update(metadata)
 
     def __setattr__(self, name, value):
@@ -1195,12 +1195,12 @@ class ImageFile(metadataObject):
     def __getstate__(self):
         """Helper for pickling ImageFiles."""
         ret = copy(self.__dict__)
-        ret.update({"metadata":self.metadata})
+        ret.update({"metadata": self.metadata})
         return ret
 
-    def __setstate__(self,state):
+    def __setstate__(self, state):
         """Helper for pickling ImageFiles."""
-        metadata=state.pop("metadata",{})
+        metadata = state.pop("metadata", {})
         self.__dict__.update(state)
         self.metadata.update(metadata)
 
