@@ -29,6 +29,8 @@ pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
 
+from Stoner.compat import hyperspy_ok
+
 
 class Folders_test(unittest.TestCase):
 
@@ -86,8 +88,9 @@ class Folders_test(unittest.TestCase):
         self.setUp()
         fldr=self.fldr
         fldr+=Data()
+        offset=2 if not hyperspy_ok else 1
         self.assertEqual(len(list(fldr.loaded)),1,"loaded attribute failed {}".format(len(list(fldr.loaded))))
-        self.assertEqual(len(list(fldr.not_empty)),len(fldr)-1,"not_empty attribute failed.")
+        self.assertEqual(len(list(fldr.not_empty)),len(fldr)-offset,"not_empty attribute failed.")
         fldr-="Untitled"
 
     def test_methods(self):
@@ -172,6 +175,7 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
+    #test.test_Properties()
     #test.test_discard_earlier()
     #test.test_Folders()
     unittest.main()
