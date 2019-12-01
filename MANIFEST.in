@@ -1,2 +1,10 @@
+include COPYING
 include README.rst
 include requirements.txt
+
+graft doc
+graft sample-data
+graft scripts
+graft tests
+
+recursive-include Stoner *.*
