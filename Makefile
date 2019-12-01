@@ -6,8 +6,10 @@ endif
 PYTHON_SETUP	=	python setup.py
 
 clean:
+	$(MAKE) -C doc clean
 	rm dist/*
 	rm -rf build/*
+	find -name '__pycache__' -exec rm -rf {} \;
 
 test:
 	$(PYTHON_SETUP) test
@@ -25,10 +27,12 @@ commit: black
 	git commit -a
 	git push origin master
 
-wheel: clean test
+_build_wheel:
 	$(MAKE) -C doc readme
 	$(PYTHON_SETUP) sdist bdist_wheel --universal
 	twine upload dist/*
+
+wheel: clean test _build_wheel
 
 docbuild: FORCE
 	$(MAKE) -C doc clean
