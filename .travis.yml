@@ -35,27 +35,22 @@ install:
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda config --append channels phygbu
-  - conda config --append channels conda-forge
   - conda config --set channel_priority strict
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
 
   # Replace dep1 dep2 ... with your dependencies
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION stoner pandas
   - source activate test-environment
   # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
-  - conda install pandas # Test with pandas installed
-  - conda install --yes stoner
-  # Force upgraded scikit-image
-  # - conda install --yes scikit-image
   # Hyperspy is now an optional dependency for 3.6 onwards
-  - conda install hyperspy
+  - conda install -c conda-forge hyperspy
   # Now we unistall the stable stoner - use force to stop downgrading packages!
   - conda remove --yes --force stoner
   - if [[ "$NUMBA" == "0" ]]; then conda remove --yes --force numba; fi
   - pip install coveralls
-  - pip install .
+  - pip install --no-deps .
 
 # command to run tests
 script: coverage run --source=Stoner setup.py test

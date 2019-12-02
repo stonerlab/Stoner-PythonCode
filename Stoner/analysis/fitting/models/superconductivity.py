@@ -254,6 +254,76 @@ def ic_B_airy(B, Ic0, B_offset, A):
     return Ic0 * np.abs(2 * np.where(np.abs(arg) < 1e-5, np.ones_like(arg), J1(arg) / arg))
 
 
+def icRN_Clean(d_f,IcRn0,E_x,v_f,d_0):
+    r"""Critical Current versus ferromagnetic narrier thickness, clean limit.
+
+    Args:
+        d_f (array):
+            ferromagnetic barrier thickness (nm)
+        IcRn0 (float):
+            Characteristic voltage scaling factor
+        E_x (float):
+            Exchange energy (eV)
+        v_f (float):
+            Fermi velocity (ms^-1)
+        d_0 (float):
+            barrier thickness offset
+
+    Returns:
+        (array):
+            IcRn values
+
+    Notes:
+        Implements
+
+        Lmath:`I_cR_N = I_cR_N^0\zfrac{\sin(2E_x (d_f-d_0)/hv_f)}{2E_x(d_f-d_0)/hv_f}`
+
+    """
+    h=physical_constants['Planck constant in eV s']
+    x=(d_f-d_0)*1E-9
+    A=2*E_x/(v_f*h)
+    return IcRn0*np.abs(np.sin(A*x))/(A*x)
+
+def ic_RN_Dirty(d_f, IcRn0.E_x,v_f,d_0,tau,T):
+    r"""Critical Current versus ferromagnetic narrier thickness, clean limit.
+
+    Args:
+        d_f (array):
+            ferromagnetic barrier thickness (nm)
+        IcRn0 (float):
+            Characteristic voltage scaling factor
+        E_x (float):
+            Exchange energy (eV)
+        v_f (float):
+            Fermi velocity (ms^-1)
+        d_0 (float):
+            barrier thickness offset
+        l (float):
+            mean-free-path (nm)
+
+    Returns:
+        (array):
+            IcRn values
+
+    Notes:
+        Implements Eq 18 from F.S. Bergeret, A.F. Volkov, and K.B. Efetov, Phys. Rev. B 64, 134506 (2001).
+    """
+
+    L=v_f*tau*1E-9
+    hbar=physical_constants['Planck constant over 2 pi']
+    kb=physical_constants['Boltzmann constant']
+    t=tau/hbar
+    w_m=lambda m:(2*m+1)*T*np.pi*kb
+    k_m=lambda m:(1+2*np.abs(w_m(m))*t)+(0-2j)E_x*t
+    integrad=lambda mu,m:np.real(mu/(np.sinh(d_f*k_m(m)/(mu*L))))
+    prefactor=lambda(m):delta**2/(delta**2+w_m(m)**2)
+
+    term=lambda m:prefactor(m)*quad(integrad,-1,1,(m,))
+
+
+
+
+
 class Strijkers(Model):
 
     """strijkers Model for point-contact Andreev Reflection Spectroscopy.
@@ -451,3 +521,5 @@ class Ic_B_Airy(Model):
         pars = self.make_params(Ic0=Ic0_guess, B_offset=B_offset_guess, A=A_guess)
         pars["Ic0"].min = 0
         return update_param_vals(pars, self.prefix, **kwargs)
+
+
