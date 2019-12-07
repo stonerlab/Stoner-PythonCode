@@ -39,10 +39,9 @@ class Folders_test(unittest.TestCase):
     datadir=path.join(pth,"sample-data")
 
     def setUp(self):
-        pass
+        self.fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
 
     def test_Folders(self):
-        self.fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
         fldr=self.fldr
         fl=len(fldr)
         skip=1
@@ -70,6 +69,10 @@ class Folders_test(unittest.TestCase):
         self.fldr7.concatenate()
         self.assertEqual(self.fldr7[0].shape,(909, 4),"Concatenate failed.")
 
+    def test_groups_methods(self):
+        self.fldr.group("Loaded as")
+        self.fldr.groups.keep(["QDFile","OpenGDAFile"])
+        self.assertEqual(self.fldr.shape,(0, {'OpenGDAFile': (1, {}), 'QDFile': (4, {})}),"groups.keep method failed on folder")
 
     def test_discard_earlier(self):
         fldr2=SF.DataFolder(path.join(pth,"tests/Stoner/folder_data"),pattern="*.dat",discard_earlier=True)
@@ -330,6 +333,6 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-    #unittest.main()
-    test.test_Base_Operators()
+    unittest.main()
+    #test.test_groups_methods()
 

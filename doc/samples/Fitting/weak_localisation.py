@@ -25,7 +25,9 @@ d.lmfit(SF.WLfit, p0=copy(params), result=True, header="lmfit")
 d.setas = "xyeyy"
 d.plot(fmt=["r.", "b-", "g-"])
 
-d.annotate_fit(SF.wlfit, x=0.05, y=0.75, fontdict={"size": "x-small", "color": "blue"})
+d.annotate_fit(
+    SF.wlfit, x=0.05, y=0.75, fontdict={"size": "x-small", "color": "blue"}
+)
 d.annotate_fit(
     SF.WLfit,
     x=0.05,

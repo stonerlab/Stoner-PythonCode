@@ -39,7 +39,9 @@ result.plot(fmt="k.")
 # Have the amended results replace the existing data files
 fldr.each.odr(Quadratic, output="data")
 # Now take a slice through the metadata to get the files we want.
-result_2 = fldr.metadata.slice(["y", "Quadratic:b", "Quadratic:b err"], output="Data")
+result_2 = fldr.metadata.slice(
+    ["y", "Quadratic:b", "Quadratic:b err"], output="Data"
+)
 
 # Set the columns assignments and plot
 result_2.setas = "xye"

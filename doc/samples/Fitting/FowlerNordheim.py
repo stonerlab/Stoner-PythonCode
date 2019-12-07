@@ -11,7 +11,9 @@ dI = ones_like(V) * 10e-6
 
 d = Data(V, I, dI, setas="xye", column_headers=["Bias", "Current", "Noise"])
 
-d.curve_fit(SF.fowlerNordheim, p0=[2500, 3.2, 15.0], result=True, header="curve_fit")
+d.curve_fit(
+    SF.fowlerNordheim, p0=[2500, 3.2, 15.0], result=True, header="curve_fit"
+)
 d.setas = "xyey"
 d.plot(fmt=["r.", "b-"])
 d.annotate_fit(

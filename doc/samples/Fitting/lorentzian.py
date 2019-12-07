@@ -1,6 +1,9 @@
 """Test langevin fitting."""
 from Stoner import Data
-from Stoner.analysis.fitting.models.generic import Lorentzian_diff, lorentzian_diff
+from Stoner.analysis.fitting.models.generic import (
+    Lorentzian_diff,
+    lorentzian_diff,
+)
 
 from numpy import linspace, ones_like
 from numpy.random import normal

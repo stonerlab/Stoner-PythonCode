@@ -10,7 +10,7 @@ import numpy as np
 import unittest
 import os
 import Stoner
-Stoner.Options.multiprocessing=True
+Stoner.Options.multiprocessing=False
 
 testdir=os.path.join(os.path.dirname(__file__),"coretestdata","testims")
 

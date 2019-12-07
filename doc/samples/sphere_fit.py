@@ -1,6 +1,15 @@
 """Fit a sphere with curve_fit."""
 from Stoner import Data
-from numpy import sin, cos, pi, column_stack, zeros_like, ones_like, meshgrid, linspace
+from numpy import (
+    sin,
+    cos,
+    pi,
+    column_stack,
+    zeros_like,
+    ones_like,
+    meshgrid,
+    linspace,
+)
 from numpy.random import normal, uniform
 import matplotlib.pyplot as plt
 
@@ -51,5 +60,7 @@ y += b
 z += c
 
 ax = plt.gca(projection="3d")
-ax.plot_surface(x, y, z, rstride=1, cstride=1, color=(1.0, 0.0, 0.0, 0.25), linewidth=0)
+ax.plot_surface(
+    x, y, z, rstride=1, cstride=1, color=(1.0, 0.0, 0.0, 0.25), linewidth=0
+)
 plt.draw()

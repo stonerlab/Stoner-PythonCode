@@ -173,7 +173,10 @@ fldr.walk_groups(
 )
 # Collate the asummetry curves into one file and save it
 fldr.walk_groups(
-    collate, group=True, replace_terminal=True, walker_args={"group_key": "Position"}
+    collate,
+    group=True,
+    replace_terminal=True,
+    walker_args={"group_key": "Position"},
 )
 
 for f in fldr:

@@ -12,7 +12,12 @@ coeffs = d.polyfit(polynomial_order=3)
 str_coeffs = [format_val(c, mode="eng", places=1) for c in coeffs.ravel()]
 str_coeffs = reshape(array(str_coeffs), coeffs.shape)
 d.plot()
-d.text(-6, -800, "Coefficients\n{}".format(str_coeffs), fontdict={"size": "x-small"})
+d.text(
+    -6,
+    -800,
+    "Coefficients\n{}".format(str_coeffs),
+    fontdict={"size": "x-small"},
+)
 d.ylabel = "Data"
 d.title = "Decompose Example"
 d.tight_layout()

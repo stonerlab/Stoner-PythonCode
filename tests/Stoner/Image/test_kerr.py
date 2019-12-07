@@ -101,7 +101,7 @@ class KerrArrayTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=KerrArrayTest()
     test.setUp()
-    #test.test_kerrstack()
+    test.test_kerrstack()
     #test.test_kerr_ops()
     #test.test_tesseract_ocr()
-    unittest.main()
+    #unittest.main()
