@@ -20,9 +20,15 @@ fit = d.differential_evolution(model, result=True, header="odr", prefix="diff")
 d.setas = "x.yyy"
 d.plot(fmt=["b-", "g-", "m-"], label=["lmfit", "odr", "diff.ev."])
 
-d.annotate_fit(model, x=0.05, y=0.75, fontdict={"size": "x-small", "color": "blue"})
 d.annotate_fit(
-    model, x=0.05, y=0.5, fontdict={"size": "x-small", "color": "green"}, prefix="odr"
+    model, x=0.05, y=0.75, fontdict={"size": "x-small", "color": "blue"}
+)
+d.annotate_fit(
+    model,
+    x=0.05,
+    y=0.5,
+    fontdict={"size": "x-small", "color": "green"},
+    prefix="odr",
 )
 d.annotate_fit(
     model,

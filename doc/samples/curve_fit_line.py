@@ -9,7 +9,9 @@ def linear(x, m, c):
 
 d = Data("curve_fit_data.dat", setas="xye")
 d.plot(fmt="ro")
-fit = d.curve_fit(linear, result=True, replace=False, header="Fit", output="report")
+fit = d.curve_fit(
+    linear, result=True, replace=False, header="Fit", output="report"
+)
 d.setas = "x..y"
 d.plot(fmt="b-")
 d.annotate_fit(linear)

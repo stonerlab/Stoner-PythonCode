@@ -30,7 +30,9 @@ class Plugin(Template):
         Loads the data from filename into the data_item_number.
         """
         try:
-            datafile = Data(str(filename), debug=True)  # does all the hard work here
+            datafile = Data(
+                str(filename), debug=True
+            )  # does all the hard work here
         except Exception as e:
             ShowWarningDialog(
                 self.parent,
@@ -120,9 +122,14 @@ class SettingsDialog(wx.Dialog):
         keys.sort()
         for i, name in enumerate(keys):
             text = wx.StaticText(self, -1, name + ": ")
-            control = wx.TextCtrl(self, value=str(col_values[name]), style=wx.EXPAND)
+            control = wx.TextCtrl(
+                self, value=str(col_values[name]), style=wx.EXPAND
+            )
             col_grid.Add(
-                text, (i, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, border=5
+                text,
+                (i, 0),
+                flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL,
+                border=5,
             )
             col_grid.Add(
                 control,

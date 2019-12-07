@@ -57,9 +57,9 @@ class working(Data):
 
     def Discard(self):
         """Optionally throw out some high bias data."""
-        discard = self.config.has_option("Data", "dicard") and self.config.getboolean(
-            "Data", "discard"
-        )
+        discard = self.config.has_option(
+            "Data", "dicard"
+        ) and self.config.getboolean("Data", "discard")
         if discard:
             v_limit = self.config.get("Data", "v_limit")
             print("Discarding data beyond v_limit={}".format(v_limit))
@@ -71,9 +71,9 @@ class working(Data):
 
         Use either a simple normalisation constant or go fancy and try to use a background function.
         """
-        if self.config.has_option("Options", "normalise") and self.config.getboolean(
+        if self.config.has_option(
             "Options", "normalise"
-        ):
+        ) and self.config.getboolean("Options", "normalise"):
             print("Normalising Data")
             Gn = self.config.getfloat("Data", "Normal_conductance")
             v_scale = self.config.getfloat("Data", "v_scale")
@@ -83,7 +83,8 @@ class working(Data):
                 vmax, _ = self.max(self.vcol)
                 vmin, _ = self.min(self.vcol)
                 p, pv = self.curve_fit(
-                    quadratic, bounds=lambda x, y: (x > 0.9 * vmax) or (x < 0.9 * vmin)
+                    quadratic,
+                    bounds=lambda x, y: (x > 0.9 * vmax) or (x < 0.9 * vmin),
                 )
                 print(
                     "Fitted normal conductance background of G="
@@ -96,7 +97,8 @@ class working(Data):
                 self["normalise.coeffs"] = p
                 self["normalise.coeffs_err"] = np.sqrt(np.diag(pv))
                 self.apply(
-                    lambda x: x[self.gcol] / quadratic(x[self.vcol], *p), self.gcol
+                    lambda x: x[self.gcol] / quadratic(x[self.vcol], *p),
+                    self.gcol,
                 )
             else:
                 self.apply(lambda x: x[self.gcol] / Gn, self.gcol)
@@ -134,7 +136,10 @@ class working(Data):
         """Do the plotting of the data and the results"""
         self.figure()  # Make a new figure and show the results
         self.plot_xy(
-            self.vcol, [self.gcol, "Fit"], fmt=["ro", "b-"], label=["Data", "Fit"]
+            self.vcol,
+            [self.gcol, "Fit"],
+            fmt=["ro", "b-"],
+            label=["Data", "Fit"],
         )
         bbox_props = dict(boxstyle="square,pad=0.3", fc="white", ec="b", lw=2)
         if self.fancyresults:
@@ -157,7 +162,11 @@ class working(Data):
 
         if not chi2:  # Single fit mode, consider whether to plot and save etc
             fit = method(
-                self.model, p0=self.p0, result=True, header="Fit", output="report"
+                self.model,
+                p0=self.p0,
+                result=True,
+                header="Fit",
+                output="report",
             )
 
             if self.show_plot:

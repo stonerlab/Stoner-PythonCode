@@ -9,6 +9,7 @@ config = join(__home__, "..", "scripts", "PCAR-New.ini")
 datafile = join(__home__, "..", "sample-data", "PCAR Co Data.csv")
 
 d = cfg_data_from_ini(config, datafile)
+d.x += 0.244
 model, p0 = cfg_model_from_ini(config, data=d)
 
 fit = d.lmfit(model, result=True, header="lmfit", output="report")

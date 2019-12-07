@@ -11,7 +11,10 @@ from types import MethodType
 thisdir = dirname(__file__)
 
 imgs = ImageFolder(type=STXMImage)
-for fname in ["Sample_Image_2017-10-15_100.hdf5", "Sample_Image_2017-10-15_101.hdf5"]:
+for fname in [
+    "Sample_Image_2017-10-15_100.hdf5",
+    "Sample_Image_2017-10-15_101.hdf5",
+]:
     # Load the image
     img = STXMImage(join(thisdir, "..", "..", "..", "sample-data", fname))
     img.gridimage().crop(5, -15, 5, -5, _=True)  # regularise grid and crop

@@ -83,7 +83,10 @@ T = d.column(t_col)
 d.add_column(blochGrueneisen(T, *popt), header=r"Bloch")
 
 d.plot_xy(
-    t_col, [r_col, "Bloch"], ["ro", "b-"], label=["Data", r"$Bloch-Gr\"ueisen Fit$"]
+    t_col,
+    [r_col, "Bloch"],
+    ["ro", "b-"],
+    label=["Data", r"$Bloch-Gr\"ueisen Fit$"],
 )
 d.xlabel = "Temperature (K)"
 d.ylabel = "Resistance ($\Omega$)"
