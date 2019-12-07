@@ -5,6 +5,8 @@ else
 endif
 PYTHON_SETUP	=	python setup.py
 
+BRANCH		=	`git branch | grep '*' | cut -d ' ' -f 2`
+
 clean:
 	$(MAKE) -C doc clean
 	rm dist/*
@@ -25,7 +27,7 @@ black:
 commit: black
 	$(MAKE) -C doc readme
 	git commit -a
-	git push origin master
+	git push origin $(BRANCH)
 
 _build_wheel:
 	$(MAKE) -C doc readme
