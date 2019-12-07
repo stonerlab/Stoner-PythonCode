@@ -22,6 +22,7 @@ from .utils import pathjoin
 
 from .each import item as each_item
 from .metadata import proxy as combined_metadata_proxy
+from .groups import GroupsDict
 
 regexp_type = (_pattern_type,)
 
@@ -194,7 +195,7 @@ class baseFolder(MutableSequence):
         self._debug = kargs.pop("debug", False)
         self._object_attrs = dict()
         self._last_name = 0
-        self._groups = regexpDict()
+        self._groups = GroupsDict(base=self)
         self._objects = regexpDict()
         self._instance = None
         self._object_attrs = dict()
@@ -304,15 +305,17 @@ class baseFolder(MutableSequence):
     @property
     def groups(self):
         """Subfolders are held in an ordered dictionary of groups."""
+        self._groups.base = self
         return self._groups
 
     @groups.setter
     def groups(self, value):
         """Ensure groups gets set as a :py:class:`regexpDict`"""
-        if not isinstance(value, regexpDict):
-            self._groups = regexpDict(value)
+        if not isinstance(value, GroupsDict):
+            self._groups = GroupsDict(value, base=self)
         else:
             self._groups = value
+            self._groups.base = self
 
     @property
     def instance(self):
@@ -1083,23 +1086,7 @@ class baseFolder(MutableSequence):
         Returns:
             A copy of the now flattened DatFolder
         """
-        if base is None:
-            base = self
-        if not len(self):
-            for g in list(self.groups.keys()):
-                nk = path.join(key, g)
-                base.groups[nk] = self.groups[g]
-                del self.groups[g]
-                base.groups[nk].compress(base=base, key=nk, keep_terminal=keep_terminal)
-                if len(base.groups[nk].groups) == 0 and not keep_terminal:
-                    for f in base.groups[nk].__names__():
-                        obj = base.groups[nk].__getter__(f, instantiate=None)
-                        nf = path.join(nk, f)
-                        base.__setter__(nf, obj)
-                        base.groups[nk].__deleter__(f)
-                if len(base.groups[nk]) == 0 and len(base.groups[nk].groups) == 0:
-                    del base.groups[nk]
-        return self
+        return self.groups.compress(base=base, key=key, keep_terminal=keep_terminal)
 
     def count(self, name):  # pylint:  disable=arguments-differ
         """Provide a count method like a sequence.
@@ -1417,16 +1404,7 @@ class baseFolder(MutableSequence):
         Returns:
             A copy of thte pruned objectFolder.
         """
-        keys = list(self.groups.keys())
-        for grp in keys:
-            g = self.groups[grp]
-            g.prune(name=name)
-            if name is not None:
-                if fnmatch.fnmatch(grp, name):
-                    del self.groups[grp]
-            elif not len(g) and not len(g.groups):
-                del self.groups[grp]
-        return self
+        return self.groups.prune(name=name)
 
     def select(self, *args, **kargs):
         """A generator that can be used to select particular data files from the objectFolder
