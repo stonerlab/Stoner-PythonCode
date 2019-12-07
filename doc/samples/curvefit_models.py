@@ -6,12 +6,18 @@ from numpy import linspace, random
 
 # Make some data
 x = linspace(0, 10.0, 101)
-y = PowerLaw().func(x, 1e-1, 1.64) * random.normal(loc=1.0, scale=0.05, size=101)
+y = PowerLaw().func(x, 1e-1, 1.64) * random.normal(
+    loc=1.0, scale=0.05, size=101
+)
 d = Data(x, y, column_headers=["Time", "Signal"], setas="xy")
 
 # Do the fitting and plot the result
 fit = d.curve_fit(
-    PowerLaw, result=True, header="LM-Model Fit", residuals=True, output="report"
+    PowerLaw,
+    result=True,
+    header="LM-Model Fit",
+    residuals=True,
+    output="report",
 )
 
 ODRModel = odr_Model(PowerLaw, p0=(1, 1))

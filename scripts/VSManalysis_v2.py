@@ -41,7 +41,9 @@ def deleteCorruptLines(data):
             data.pop(data.index(line))
             delCount += 1
     if delCount > 6:
-        raw_input("I've detected a lot of bad data in your file you should check it")
+        raw_input(
+            "I've detected a lot of bad data in your file you should check it"
+        )
     return data
 
 
@@ -51,10 +53,14 @@ def driftEliminator(data, N):
     finalHarg = int(len(data[:, 1]) - 1)
     # linear fit to saturated data (+- N points from max field and final field)
     finalFit = np.polyfit(
-        data[finalHarg - N : finalHarg, 1], data[finalHarg - N : finalHarg, 2], 1
+        data[finalHarg - N : finalHarg, 1],
+        data[finalHarg - N : finalHarg, 2],
+        1,
     )
     firstFit = np.polyfit(
-        data[maxHarg - N : maxHarg + N, 1], data[maxHarg - N : maxHarg + N, 2], 1
+        data[maxHarg - N : maxHarg + N, 1],
+        data[maxHarg - N : maxHarg + N, 2],
+        1,
     )
     pt = np.zeros((2, 2))
     pt[0] = [
@@ -64,9 +70,9 @@ def driftEliminator(data, N):
     pt[1] = [data[finalHarg, 0], finalFit[0] * data[finalHarg, 1] + finalFit[1]]
     # Delete drift
     for i in range(len(data[:, 0])):
-        data[i, 2] = data[i, 2] - (pt[1, 1] - pt[0, 1]) / (pt[1, 0] - pt[0, 0]) * (
-            data[i, 0] - pt[0, 0]
-        )
+        data[i, 2] = data[i, 2] - (pt[1, 1] - pt[0, 1]) / (
+            pt[1, 0] - pt[0, 0]
+        ) * (data[i, 0] - pt[0, 0])
     return data
 
 
@@ -91,10 +97,14 @@ def diamagBackgroundRem(data, N):
 
     # linear fit to saturated data (+- N points from max/min field)
     highFit = np.polyfit(
-        data[maxHarg - N : maxHarg + N, 1], data[maxHarg - N : maxHarg + N, 2], 1
+        data[maxHarg - N : maxHarg + N, 1],
+        data[maxHarg - N : maxHarg + N, 2],
+        1,
     )
     lowFit = np.polyfit(
-        data[minHarg - N : minHarg + N, 1], data[minHarg - N : minHarg + N, 2], 1
+        data[minHarg - N : minHarg + N, 1],
+        data[minHarg - N : minHarg + N, 2],
+        1,
     )
     # Average grad
     fitGrad = (highFit[0] + lowFit[0]) / 2
@@ -106,14 +116,17 @@ def diamagBackgroundRem(data, N):
 def invert(Data):
     """flips data in y axis"""
     for i in range(len(Data.data[:, "0"])):
-        Data.data[i, Data.find_col("m (emu)")] = -Data.data[i, Data.find_col("m (emu)")]
+        Data.data[i, Data.find_col("m (emu)")] = -Data.data[
+            i, Data.find_col("m (emu)")
+        ]
     return Data
 
 
 def makeTruem(Data):
     """VSM takes m from lock in X, this takes m from lock in R, useful if theta!=0"""
     VSMcalibration = (
-        Data.data[5, Data.find_col("m (emu)")] / Data.data[5, Data.find_col("X (V)")]
+        Data.data[5, Data.find_col("m (emu)")]
+        / Data.data[5, Data.find_col("X (V)")]
     )  # taken from row 5 at random
     for i in range(len(Data.data[:, "0"])):
         Data.data[i, Data.find_col("m (emu)")] = (
@@ -153,7 +166,9 @@ def editData(Data, operations):
     """takes stoner type Data file and an operations list and performs the operations listed"""
     if 0 in operations:
         return Data
-    N = int(raw_input("Input the number of saturated data points on each arm:   "))
+    N = int(
+        raw_input("Input the number of saturated data points on each arm:   ")
+    )
     if 1 in operations:
         Data = makeTruem(Data)
     if 2 in operations:
@@ -168,7 +183,9 @@ def editData(Data, operations):
 
 
 # Set up a directory and determine files to be processed
-directoryName = raw_input("Enter path to directory in which files are stored:   ")
+directoryName = raw_input(
+    "Enter path to directory in which files are stored:   "
+)
 os.chdir(directoryName)
 filenames = os.listdir(directoryName)
 i = 0
@@ -206,7 +223,9 @@ while True:
             break
         except ValueError:
             try:
-                Data = Stoner.TDIFile("EditedFiles/" + pathsplit[0] + "_edit.txt")
+                Data = Stoner.TDIFile(
+                    "EditedFiles/" + pathsplit[0] + "_edit.txt"
+                )
                 break
             except ValueError:
                 timeout += (
@@ -256,7 +275,9 @@ while True:
     if (
         whatNext == "q"
         or raw_input(
-            "Press enter to do file {} or q to quit:".format(filenames[fCounter])
+            "Press enter to do file {} or q to quit:".format(
+                filenames[fCounter]
+            )
         )
         == "q"
     ):

@@ -26,5 +26,10 @@ data.annotate_fit(
     RSJ_Simple, prefix="simple", mode="eng", x=0.15, y=0.1, fontsize="small"
 )
 data.annotate_fit(
-    RSJ_Noiseless, prefix="noiseless", mode="eng", x=0.55, y=0.1, fontsize="small"
+    RSJ_Noiseless,
+    prefix="noiseless",
+    mode="eng",
+    x=0.55,
+    y=0.1,
+    fontsize="small",
 )

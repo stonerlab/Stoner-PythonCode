@@ -10,7 +10,13 @@ params = [265, 65, 1.0, 5]
 params2 = deepcopy(params)
 G = SF.blochGrueneisen(T, *params) + normal(size=len(T), scale=5e-5)
 dG = ones_like(T) * 5e-5
-d = Data(T, G, dG, setas="xye", column_headers=["Temperature (K)", "Resistivity", "dR"])
+d = Data(
+    T,
+    G,
+    dG,
+    setas="xye",
+    column_headers=["Temperature (K)", "Resistivity", "dR"],
+)
 
 d.curve_fit(SF.blochGrueneisen, p0=params, result=True, header="curve_fit")
 
