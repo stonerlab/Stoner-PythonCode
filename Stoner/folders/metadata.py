@@ -240,7 +240,7 @@ class proxy(MutableMapping):
             DataFile,
         ]:  # Check for good output value
             raise SyntaxError("output of slice metadata must be either dict, list, or array not {}".format(output))
-        possible = self.all_keys if mask_missing else self.common_keys
+        possible = list(self.all_keys()) if mask_missing else self.common_keys
         keys = _slice_keys(args, possible)
         results = []
         for d in self._folder:
