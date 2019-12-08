@@ -34,7 +34,7 @@ install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
-  - conda config --append channels phygbu
+  - conda config --append channels phygbu conda-forge
   - conda config --set channel_priority strict
   - conda update -q conda
   # Useful for debugging any issues with conda
@@ -45,7 +45,7 @@ install:
   - source activate test-environment
   # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
   # Hyperspy is now an optional dependency for 3.6 onwards
-  - conda install -c conda-forge hyperspy
+  - conda install hyperspy
   # Now we unistall the stable stoner - use force to stop downgrading packages!
   - conda remove --yes --force stoner
   - if [[ "$NUMBA" == "0" ]]; then conda remove --yes --force numba; fi
