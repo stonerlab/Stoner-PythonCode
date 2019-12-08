@@ -3,12 +3,49 @@
 :py:mod:`Stoner.folders.metadata` provides classes and functions to support the :py:attr:`Stoner.DataFolder.metadata` magic attribute.
 """
 __all__ = ["proxy"]
+import fnmatch
 from Stoner.compat import string_types
 from Stoner.tools import islike_list, isiterable, all_type
 from Stoner.Core import DataFile
+from lmfit import Model
+
 import numpy as np
 from collections import MutableMapping
 from Stoner.core import typeHintedDict
+
+
+def _slice_keys(args, possible=None):
+    """Work through the arguments to slice() and construct a list of keys."""
+    keys = []
+    for k in args:
+        if isinstance(k, string_types):
+            if k not in possible:
+                sub_k = fnmatch.filter(possible, k)
+                if len(sub_k) > 0:
+                    keys.extend(_slice_keys(sub_k, possible))
+                else:
+                    raise KeyError(f"No matching keys for {sub_k} in metadata")
+            else:
+                keys.append(k)
+        elif isinstance(k, type) and issubclass(k, Model):
+            model = k.__name__
+            for name in k().param_names:
+                for sub_k in [f"{model}:{name}", f"{model}:{name} err"]:
+                    if sub_k not in possible:
+                        raise KeyError(f"No matching keys for {sub_k} in metadata")
+                    keys.append(sub_k)
+        elif isinstance(k, Model):
+            model = k.__class__.__name__
+            for name in k.param_names:
+                for sub_k in [f"{model}:{name}", f"{model}:{name} err"]:
+                    if sub_k not in possible:
+                        raise KeyError(f"No matching keys for {sub_k} in metadata")
+                    keys.append(sub_k)
+        elif isiterable(k):
+            keys.extend(_slice_keys(k, possible))
+        else:
+            raise KeyError("{} cannot be used as a key name or set of key names".format(type(k)))
+    return keys
 
 
 class proxy(MutableMapping):
@@ -157,7 +194,7 @@ class proxy(MutableMapping):
         """Return a list of the metadata dictionaries for each item/file in the top level group
 
         Keyword Arguments:
-            *args (string or list of strings):
+            *args (string, lmfit.Model class or instance  or iterable of string, lmfit Models):
                 if given then only return the item(s) requested from the metadata
             values_only(bool):
                 if given and *output* not set only return tuples of the dictionary values. Mostly useful
@@ -180,10 +217,6 @@ class proxy(MutableMapping):
                 depending on *values_only* or (output* returns the sliced dictionaries or tuples/
                 values of the items
 
-        To do:
-            this should probably be a func in baseFolder and should use have
-            recursive options (build a dictionary of metadata values). And probably
-            options to extract other parts of objects (first row or whatever).
         """
         values_only = kwargs.pop("values_only", False)
         output = kwargs.pop("output", None)
@@ -207,18 +240,8 @@ class proxy(MutableMapping):
             DataFile,
         ]:  # Check for good output value
             raise SyntaxError("output of slice metadata must be either dict, list, or array not {}".format(output))
-        keys = []
-        for k in args:
-            if isinstance(k, string_types):
-                keys.append(k)
-            elif isiterable(k) and all_type(k, string_types):
-                keys.extend(k)
-            else:
-                raise KeyError("{} cannot be used as a key name or set of key names".format(type(k)))
-        if not mask_missing:
-            for k in keys:
-                if k not in self.common_keys:
-                    raise KeyError("{} is not a key in all members of the folder".format(k))
+        possible = self.all_keys if mask_missing else self.common_keys
+        keys = _slice_keys(args, possible)
         results = []
         for d in self._folder:
             results.append({k: d[k] for k in keys if k in d})

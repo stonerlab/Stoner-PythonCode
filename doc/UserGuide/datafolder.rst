@@ -157,9 +157,11 @@ Manipulating the File List in a Folder
 --------------------------------------
 
 The  :py:meth:`DataFolder.flatten` method will do the same as passing the *flat* keyword argument when creating the Lpy:class:`DataFolder` - although
-the search for folders on disk is recursive, the resulting :py:class:`DataFolder` contains a flat list of files. You can also use the
-:py:meth:`DataFolder.prune` method to remove groups (including nested groups) that have no data files in them. If you supply a *name* keyword to the
-:py:meth:`DataFolder.prune` method it will instead remove any sub-folder with a matching name (and all sub-folders within it):
+the search for folders on disk is recursive, the resulting :py:class:`DataFolder` contains a flat list of files. 
+
+You can also use the :py:meth:`Stoner.folders.groups.GroupsDict.prune` - which is aliased as :py:meth:`DataFolder.prune` method to remove 
+groups (including nested  groups) that have no data files in them. If you supply a *name* keyword to the
+:py:meth:`Stoner.folders.groups.GroupsDict.prune` method it will instead remove any sub-folder with a matching name (and all sub-folders within it):
 
 ::
 
@@ -180,7 +182,7 @@ the search for folders on disk is recursive, the resulting :py:class:`DataFolder
          |
          |-->G--> (2 files)
 
-**root.prune()** will have the effect of removing sub-folders *C*, *D*, *E*, and *F*
+**root.groups.prune()** will have the effect of removing sub-folders *C*, *D*, *E*, and *F*
 
 ::
 
@@ -193,7 +195,7 @@ the search for folders on disk is recursive, the resulting :py:class:`DataFolder
          |
          |-->G--> (2 files)
 
-**root.prune(name="B")** will have the effect of removing sub-folders *C*, *D*, and *F*
+**root.groups.prune(name="B")** will have the effect of removing sub-folders *C*, *D*, and *F*
 
 ::
 
@@ -206,7 +208,28 @@ the search for folders on disk is recursive, the resulting :py:class:`DataFolder
          |
          |-->G--> (2 files)
 
-The :py:meth:`DataFolder.compress` is useful when a :py:class:`DataFolder` contains a chain of sub-folers that have only one sub-folder in them - as can
+In contrast, the :py:meth:`Stoner.folders.groups.GroupsDict.keep` method will retain the tree branches that contain the groups that match the *name*
+parameter. For example,
+
+**root.groups.keep("B")** will have the effect of deleting everything except the folders *A*, *B*, *C*, *D* and *E*.
+
+::
+
+    Root---> (0 files)
+         |
+         |
+         |-> A--> (0 files)
+              |
+              |--> B--> (5 files)
+                    |
+                    |--> C--> (0 files)
+                    |     |
+                    |     |--> D (0files)
+                    |
+                    |--> E--> (0 files)
+
+
+The :py:meth:`Stoner.folders.groups.GroupsDict.compress` is useful when a :py:class:`DataFolder` contains a chain of sub-folers that have only one sub-folder in them - as can
 result when reading one specific directory from a deep directory tree. The :py:meth:`DataFolder.compress` method adjusts the virtual tree so that the
 root group is at the first level that contains more than just a single sub-folder.::
 
@@ -221,13 +244,13 @@ root group is at the first level that contains more than just a single sub-folde
                     |
                     |--> C--> (5 files)
 
-**root.compress** will reformat the :py:class:`DataFolder` to:
+**root.groups.compress** will reformat the :py:class:`DataFolder` to:
 
 ::
 
     Root/A/B/C---> (5 files)
 
-:py:meth:`DataFolder.compress` takes a keyword argument *keep_terminal* which will keep the final group if set to **True**. In the example above,
+:py:meth:`Stoner.folders.groups.GroupsDict.compress` takes a keyword argument *keep_terminal* which will keep the final group if set to **True**. In the example above,
 **root.compress(keep_terminal=True)** gives:
 
 ::
@@ -449,6 +472,16 @@ of )oif *values_only* is True, just a list, but the *output* parameter can chang
     -   "smart"
 
         switch between dict and list depending whether there is one or more keys.
+        
+The :py:meth:`combined_metadata_proxy.slice` will search for matching etadata names by string - including using *glob* patterns - 
+
+**root.metadata.slice("Model:*")** will return all metadata items in all files in the DataFolder that start with 'Model:'. Since one of the
+common uses of DatFolder is to fit a series of data files with a model, the :py:meth:`combined_metadata_proxy.slice` will also accept a 
+:py:class:`lmfit.Model` and will use it to pull the fitting parameters after using a :py:meth:`Stoner.DataFolder.curve_fit` or similar method.:
+
+    from Stoner.analysis.fitting.models.generic import Gaussian
+    fldr.each.lmfit(Gaussian,result=True)
+    summary=fldr.metadata.slice(Gaussian,output="data")
 
 Since :py:class:`combined_metadata_proxy` implements a :py:class:`collections.MutableMapping` it supplies the standard dictionary
 like methods such as :py:meth:`combined_metadata_proxy.keys`,:py:meth:`combined_metadata_proxy.values` and :py:meth:`combined_metadata_proxy.items`

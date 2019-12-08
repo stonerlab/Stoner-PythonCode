@@ -3,7 +3,7 @@
 
 __all__ = ["AnalysisMixin", "GetAffineTransform", "ApplyAffineTransform"]
 from warnings import warn
-import numpy as _np_
+import numpy as np
 import numpy.ma as ma
 
 from scipy.integrate import cumtrapz
@@ -86,20 +86,20 @@ class AnalysisMixin(object):
         else:
             col = _.ycol
             data = self.column(list(col)).T
-            data = _np_.row_stack((data, _np_.arange(data.shape[1])))
+            data = np.row_stack((data, np.arange(data.shape[1])))
 
         ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
         if isinstance(pad, bool) and pad:
             offset = int(points * order ** 2 / 8)
-            padv = _np_.mean(ddata[:, offset:-offset], axis=1)
-            pad = _np_.ones((ddata.shape[0], offset))
+            padv = np.mean(ddata[:, offset:-offset], axis=1)
+            pad = np.ones((ddata.shape[0], offset))
             for ix, v in enumerate(padv):
                 pad[ix] *= v
         elif isinstance(pad, float):
             offset = int(points / 2)
-            pad = _np_.ones((ddata.shape[0], offset)) * pad
+            pad = np.ones((ddata.shape[0], offset)) * pad
 
-        if _np_.all(pad) and offset > 0:
+        if np.all(pad) and offset > 0:
             ddata[:, :offset] = pad
             ddata[:, -offset:] = pad
         if order >= 1:
@@ -145,11 +145,11 @@ class AnalysisMixin(object):
                 col = col[0]
             data = self.column(col)
             name = self.column_headers[col]
-        elif isinstance(col, _np_.ndarray) and len(col.shape) == 1 and len(col) == len(self):
+        elif isinstance(col, np.ndarray) and len(col.shape) == 1 and len(col) == len(self):
             data = col
             name = "data"
         elif isinstance(col, float):
-            data = col * _np_.ones(len(self))
+            data = col * np.ones(len(self))
             name = str(col)
         else:
             raise RuntimeError("Bad column index: {}".format(col))
@@ -195,7 +195,7 @@ class AnalysisMixin(object):
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
-            err_calc = lambda adata, bdata, e1data, e2data: _np_.sqrt(e1data ** 2 + e2data ** 2)
+            err_calc = lambda adata, bdata, e1data, e2data: np.sqrt(e1data ** 2 + e2data ** 2)
         else:
             err_calc = None
         adata, aname = self.__get_math_val(a)
@@ -259,14 +259,14 @@ class AnalysisMixin(object):
         except (RuntimeError, StopIteration):
             pass
         if isiterable(ret):
-            nc = _np_.zeros((len(self), len(ret)))
+            nc = np.zeros((len(self), len(ret)))
         else:
-            nc = _np_.zeros(len(self))
+            nc = np.zeros(len(self))
         # Evaluate the data row by row
         for ix, r in enumerate(self.rows()):
             ret = func(r, **kargs)
-            if isiterable(ret) and not isinstance(ret, _np_.ndarray):
-                ret = _np_.ma.MaskedArray(ret)
+            if isiterable(ret) and not isinstance(ret, np.ndarray):
+                ret = np.ma.MaskedArray(ret)
             nc[ix] = ret
         # Work out how to handle the result
         if nc.ndim == 1:
@@ -342,48 +342,45 @@ class AnalysisMixin(object):
         if yerr is not None:
             yerr = self.find_col(yerr)
 
-        ybin = _np_.zeros((len(bin_left), len(ycol)))
-        ebin = _np_.zeros((len(bin_left), len(ycol)))
-        nbins = _np_.zeros((len(bin_left), len(ycol)))
+        ybin = np.zeros((len(bin_left), len(ycol)))
+        ebin = np.zeros((len(bin_left), len(ycol)))
+        nbins = np.zeros((len(bin_left), len(ycol)))
         xcol = self.find_col(xcol)
         i = 0
 
         for limits in zip(bin_left, bin_right):
             data = self.search(xcol, limits)
             if len(data) > 1:
-                ok = _np_.logical_not(_np_.isnan(data.y))
+                ok = np.logical_not(np.isnan(data.y))
                 data = data[ok]
-            elif len(data) == 1 and _np_.isnan(data.y):
+            elif len(data) == 1 and np.isnan(data.y):
                 shape = list(data.shape)
                 shape[0] = 0
-                data = _np_.zeros(shape)
+                data = np.zeros(shape)
             if yerr is not None:
                 w = 1.0 / data[:, yerr] ** 2
-                W = _np_.sum(w, axis=0)
+                W = np.sum(w, axis=0)
                 if data.shape[0] > 3:
-                    e = max(
-                        _np_.std(data[:, ycol], axis=0) / _np_.sqrt(data.shape[0]),
-                        (1.0 / _np_.sqrt(W)) / data.shape[0],
-                    )
+                    e = max(np.std(data[:, ycol], axis=0) / np.sqrt(data.shape[0]), (1.0 / np.sqrt(W)) / data.shape[0])
                 else:
-                    e = 1.0 / _np_.sqrt(W)
+                    e = 1.0 / np.sqrt(W)
             else:
-                w = _np_.ones((data.shape[0], len(ycol)))
+                w = np.ones((data.shape[0], len(ycol)))
                 W = data.shape[0]
                 if data[:, ycol].size > 1:
-                    e = _np_.std(data[:, ycol], axis=0) / _np_.sqrt(W)
+                    e = np.std(data[:, ycol], axis=0) / np.sqrt(W)
                 else:
-                    e = _np_.nan
+                    e = np.nan
             if data.shape[0] == 0:
                 warn("Empty bin at {}".format(limits))
-            y = _np_.sum(data[:, ycol] * (w / W), axis=0)
+            y = np.sum(data[:, ycol] * (w / W), axis=0)
             ybin[i, :] = y
             ebin[i, :] = e
             nbins[i, :] = data.shape[0]
             i += 1
         if clone:
             ret = self.clone
-            ret.data = _np_.atleast_2d(bin_centres).T
+            ret.data = np.atleast_2d(bin_centres).T
             ret.column_headers = [self.column_headers[xcol]]
             ret.setas = ["x"]
             for i in range(ybin.shape[1]):
@@ -462,7 +459,7 @@ class AnalysisMixin(object):
         if isinstance(ycol, list):
             ycol = ycol[0]  # FIXME should work with multiple output columns
         pxdata = self.search(xcol, lambda x, r: x > 0, xcol)
-        xdata = _np_.sort(_np_.append(-pxdata, pxdata))
+        xdata = np.sort(np.append(-pxdata, pxdata))
         self.data = self.interpolate(xdata, xcol=xcol)
         ydata = self.data[:, ycol]
         symd = (ydata + ydata[::-1]) / 2
@@ -512,7 +509,7 @@ class AnalysisMixin(object):
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
-            err_calc = lambda adata, bdata, e1data, e2data: _np_.sqrt(
+            err_calc = lambda adata, bdata, e1data, e2data: np.sqrt(
                 (1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e1data ** 2
                 + (-1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e2data ** 2
             )
@@ -566,7 +563,7 @@ class AnalysisMixin(object):
             e2data = self.__get_math_val(e2)[0]
             err_header = None
             err_calc = (
-                lambda adata, bdata, e1data, e2data: _np_.sqrt((e1data / adata) ** 2 + (e2data / bdata) ** 2)
+                lambda adata, bdata, e1data, e2data: np.sqrt((e1data / adata) ** 2 + (e2data / bdata) ** 2)
                 * adata
                 / bdata
             )
@@ -627,9 +624,9 @@ class AnalysisMixin(object):
             "cubic": lambda x, a, b, c, d: a * x ** 3 + b * x ** 2 + c * x + d,
         }
         errs = {
-            "linear": lambda x, me, ce: _np_.sqrt((me * x) ** 2 + ce ** 2),
-            "quadratic": lambda x, ae, be, ce: _np_.sqrt((2 * x ** 2 * ae) ** 2 + (x * be) ** 2 + ce ** 2),
-            "cubic": lambda x, ae, be, ce, de: _np_.sqrt(
+            "linear": lambda x, me, ce: np.sqrt((me * x) ** 2 + ce ** 2),
+            "quadratic": lambda x, ae, be, ce: np.sqrt((2 * x ** 2 * ae) ** 2 + (x * be) ** 2 + ce ** 2),
+            "cubic": lambda x, ae, be, ce, de: np.sqrt(
                 (3 * ae * x ** 3) ** 2 + (2 * x ** 2 * be) ** 2 + (x * ce) ** 2 + de ** 2
             ),
         }
@@ -645,7 +642,7 @@ class AnalysisMixin(object):
             new_x = [new_x]
         if isinstance(new_x, ma.MaskedArray):
             new_x = new_x.compressed
-        results = _np_.zeros((len(new_x), 2 * len(_.ycol)))
+        results = np.zeros((len(new_x), 2 * len(_.ycol)))
         work = self.clone
         for ix, x in enumerate(new_x):
             r = self.closest(x, xcol=_.xcol)
@@ -680,7 +677,7 @@ class AnalysisMixin(object):
                 ret = [ret]
             for iy, rt in enumerate(ret):
                 popt, pcov = rt
-                perr = _np_.sqrt(_np_.diag(pcov))
+                perr = np.sqrt(np.diag(pcov))
                 results[ix, 2 * iy] = kindf(x - mid_x, *popt)
                 results[ix, 2 * iy + 1] = errs[kind](x - mid_x, *perr)
         if scalar_x:
@@ -736,13 +733,13 @@ class AnalysisMixin(object):
         working = ma.mask_rowcols(working, axis=0)
         xdat = working[:, self.find_col(_.xcol)]
         ydat = working[:, self.find_col(_.ycol)]
-        ydat = _np_.atleast_2d(ydat).T
+        ydat = np.atleast_2d(ydat).T
 
         final = []
         for i in range(ydat.shape[1]):
             yd = ydat[:, i]
             resultdata = cumtrapz(yd, xdat, **kargs)
-            resultdata = _np_.append(_np_.array([0]), resultdata)
+            resultdata = np.append(np.array([0]), resultdata)
             if result is not None:
                 header = header if header is not None else "Intergral of {}".format(self.column_headers[_.ycol])
                 if isinstance(result, bool) and result:
@@ -754,7 +751,7 @@ class AnalysisMixin(object):
         if len(final) == 1:
             final = final[0]
         else:
-            final = _np_.array(final)
+            final = np.array(final)
         result_name = result_name if result_name is not None else header if header is not None else "Area"
         self[result_name] = final
         if output.lower() == "result":
@@ -794,8 +791,8 @@ class AnalysisMixin(object):
             an array of xvalues.
         """
         DataArray = self.data.__class__
-        l = _np_.shape(self.data)[0]
-        index = _np_.arange(l)
+        l = np.shape(self.data)[0]
+        index = np.arange(l)
         if xcol is None:
             xcol = self.setas._get_cols("xcol")
         elif isinstance(xcol, bool) and not xcol:
@@ -816,7 +813,7 @@ class AnalysisMixin(object):
                 if isinstance(newX, ma.MaskedArray):
                     newX = newX.compressed()
                 else:
-                    newX = _np_.array(newX)
+                    newX = np.array(newX)
                 if xcol is not None and newX is not None:  # We need to convert newX to row indices
                     xfunc = interp1d(self.column(xcol), index, kind, 0)  # xfunc(x) returns partial index
                     newX = xfunc(newX)
@@ -865,27 +862,27 @@ class AnalysisMixin(object):
         if isinstance(bins, int):  # Given a number of bins
             if mode.lower().startswith("lin"):
                 bin_width = float(xmax - xmin) / bins
-                bin_start = _np_.linspace(xmin, xmax - bin_width, bins)
-                bin_stop = _np_.linspace(xmin + bin_width, xmax, bins)
+                bin_start = np.linspace(xmin, xmax - bin_width, bins)
+                bin_stop = np.linspace(xmin + bin_width, xmax, bins)
                 bin_centres = (bin_start + bin_stop) / 2.0
             elif mode.lower().startswith("log"):
-                xminl = _np_.log(xmin)
-                xmaxl = _np_.log(xmax)
+                xminl = np.log(xmin)
+                xmaxl = np.log(xmax)
                 bin_width = float(xmaxl - xminl) / bins
-                bin_start = _np_.linspace(xminl, xmaxl - bin_width, bins)
-                bin_stop = _np_.linspace(xminl + bin_width, xmaxl, bins)
+                bin_start = np.linspace(xminl, xmaxl - bin_width, bins)
+                bin_stop = np.linspace(xminl + bin_width, xmaxl, bins)
                 bin_centres = (bin_start + bin_stop) / 2.0
-                bin_start = _np_.exp(bin_start)
-                bin_stop = _np_.exp(bin_stop)
-                bin_centres = _np_.exp(bin_centres)
+                bin_start = np.exp(bin_start)
+                bin_stop = np.exp(bin_stop)
+                bin_centres = np.exp(bin_centres)
             else:
                 raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
         elif isinstance(bins, float):  # Given a bin with as a flot
             if mode.lower().startswith("lin"):
                 bin_width = bins
-                bins = _np_.ceil(abs(float(xmax - xmin) / bins))
-                bin_start = _np_.linspace(xmin, xmax - bin_width, bins)
-                bin_stop = _np_.linspace(xmin + bin_width, xmax, bins)
+                bins = np.ceil(abs(float(xmax - xmin) / bins))
+                bin_start = np.linspace(xmin, xmax - bin_width, bins)
+                bin_stop = np.linspace(xmin + bin_width, xmax, bins)
                 bin_centres = (bin_start + bin_stop) / 2.0
             elif mode.lower().startswith("log"):
                 if not 0.0 < bins <= 1.0:
@@ -900,18 +897,18 @@ class AnalysisMixin(object):
                     centers.append(xp * (1 + bins / 2))
                     xp = xp * (1 + bins)
                 splits.append(xmax)
-                bin_start = _np_.array(splits[:-1])
-                bin_stop = _np_.array(splits[1:])
-                bin_centres = _np_.array(centers)
+                bin_start = np.array(splits[:-1])
+                bin_stop = np.array(splits[1:])
+                bin_centres = np.array(centers)
             else:
                 raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
-        elif isinstance(bins, _np_.ndarray) and bins.ndim == 1:  # Yser provided manuals bins
+        elif isinstance(bins, np.ndarray) and bins.ndim == 1:  # Yser provided manuals bins
             bin_start = bins[:-1]
             bin_stop = bins[1:]
             if mode.lower().startwith("lin"):
                 bin_centres = (bin_start + bin_stop) / 2.0
             elif mode.lower().startswith("log"):
-                bin_centres = _np_.exp(_np_.log(bin_start) + _np_.log(bin_stop) / 2.0)
+                bin_centres = np.exp(np.log(bin_start) + np.log(bin_stop) / 2.0)
             else:
                 raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
         else:
@@ -984,7 +981,7 @@ class AnalysisMixin(object):
             self._set_mask(bounds, True, _.ycol)
 
         if isiterable(sigma) and len(sigma) == len(self) and all_type(sigma, float):
-            sigma = _np_.array(sigma)
+            sigma = np.array(sigma)
             _["has_yerr"] = True
         elif _.has_yerr:
             sigma = self.data[:, _.yerr]
@@ -995,7 +992,7 @@ class AnalysisMixin(object):
             ydata = self.data[:, _.ycol]
             w = 1 / (sigma ** 2 + 1e-8)
             norm = w.sum(axis=0)
-            error = _np_.sqrt((sigma ** 2).sum(axis=0)) / len(sigma)
+            error = np.sqrt((sigma ** 2).sum(axis=0)) / len(sigma)
             result = (ydata * w).mean(axis=0) / norm, error
         if bounds is not None:
             self._pop_mask()
@@ -1066,7 +1063,7 @@ class AnalysisMixin(object):
             e2data = self.__get_math_val(e2)[0]
             err_header = None
             err_calc = (
-                lambda adata, bdata, e1data, e2data: _np_.sqrt((e1data / adata) ** 2 + (e2data / bdata) ** 2)
+                lambda adata, bdata, e1data, e2data: np.sqrt((e1data / adata) ** 2 + (e2data / bdata) ** 2)
                 * adata
                 * bdata
             )
@@ -1137,7 +1134,7 @@ class AnalysisMixin(object):
                 if not istuple(scale, float, float):
                     raise ValueError("limit parameter is either None, or limit or base is a tuple of two floats.")
                 data = self.column(t).ravel()
-                data = _np_.sort(data[~_np_.isnan(data)])
+                data = np.sort(data[~np.isnan(data)])
                 if limits != (0.0, 1.0):
                     low, high = limits
                     low = data[int(low * data.size)]
@@ -1145,8 +1142,8 @@ class AnalysisMixin(object):
                 else:
                     high = data.max()
                     low = data.min()
-                data = _np_.copy(self.data[:, t])
-                data = _np_.where(data > high, high, _np_.where(data < low, low, data))
+                data = np.copy(self.data[:, t])
+                data = np.where(data > high, high, np.where(data < low, low, data))
                 scl, sch = scale
                 data = (data - low) / (high - low) * (sch - scl) + scl
                 setas = self.setas.clone
@@ -1320,33 +1317,33 @@ class AnalysisMixin(object):
         d2 = d2[index_offset:-index_offset]
 
         # Pad the ends of d2 with the mean value
-        pad = _np_.mean(d2[index_offset:-index_offset])
+        pad = np.mean(d2[index_offset:-index_offset])
         d2[:index_offset] = pad
         d2[-index_offset:] = pad
 
         # Set the significance from the 2nd ifferential if not already set
         significance = kargs.pop(
-            "significance", _np_.max(_np_.abs(d2)) / (2 * width)
+            "significance", np.max(np.abs(d2)) / (2 * width)
         )  # Base an apriori significance on max d2y/dx2 / 20
         if isinstance(significance, int):  # integer significance is inverse to floating
-            significance = _np_.max(_np_.abs(d2)) / significance  # Base an apriori significance on max d2y/dx2 / 20
+            significance = np.max(np.abs(d2)) / significance  # Base an apriori significance on max d2y/dx2 / 20
 
-        d2_interp = interp1d(_np_.arange(len(d2)), d2, kind="cubic")
+        d2_interp = interp1d(np.arange(len(d2)), d2, kind="cubic")
         # Ensure we have some X-data
         if xcol is None:
-            xdata = _np_.arange(len(self))
+            xdata = np.arange(len(self))
         else:
             xdata = self.column(xcol)
-        xdata = interp1d(_np_.arange(len(self)), xdata, kind="cubic")
+        xdata = interp1d(np.arange(len(self)), xdata, kind="cubic")
 
-        possible_peaks = _np_.array(_threshold(0, d1, rising=troughs, falling=peaks))
-        curvature = _np_.abs(d2_interp(possible_peaks))
+        possible_peaks = np.array(_threshold(0, d1, rising=troughs, falling=peaks))
+        curvature = np.abs(d2_interp(possible_peaks))
 
         # Filter just the significant peaks
-        possible_peaks = _np_.array([p for ix, p in enumerate(possible_peaks) if abs(curvature[ix]) > significance])
+        possible_peaks = np.array([p for ix, p in enumerate(possible_peaks) if abs(curvature[ix]) > significance])
         # Sort in order of significance
         if sort:
-            possible_peaks = _np_.take(possible_peaks, _np_.argsort(_np_.abs(d2_interp(possible_peaks))))
+            possible_peaks = np.take(possible_peaks, np.argsort(np.abs(d2_interp(possible_peaks))))
 
         xdat = xdata(possible_peaks + index_offset)
 
@@ -1405,18 +1402,16 @@ class AnalysisMixin(object):
         working = self.search(_.xcol, bounds)
         if not isiterable(_.ycol):
             _.ycol = [_.ycol]
-        p = _np_.zeros((len(_.ycol), polynomial_order + 1))
+        p = np.zeros((len(_.ycol), polynomial_order + 1))
         for i, ycol in enumerate(_.ycol):
-            p[i, :] = _np_.polyfit(
-                working[:, self.find_col(_.xcol)], working[:, self.find_col(ycol)], polynomial_order
-            )
+            p[i, :] = np.polyfit(working[:, self.find_col(_.xcol)], working[:, self.find_col(ycol)], polynomial_order)
             if result is not None:
                 if header is None:
                     header = "Fitted {} with {} order polynomial".format(
                         self.column_headers[self.find_col(ycol)], ordinal(polynomial_order)
                     )
                 self.add_column(
-                    _np_.polyval(p[i, :], x=self.column(_.xcol)), index=result, replace=replace, header=header
+                    np.polyval(p[i, :], x=self.column(_.xcol)), index=result, replace=replace, header=header
                 )
         if len(_.ycol) == 1:
             p = p[0, :]
@@ -1491,9 +1486,9 @@ class AnalysisMixin(object):
             ydat2 = working2[:, other.find_col(_.ycol)]
             if len(xdat2) != len(xdat):
                 raise RuntimeError("Data lengths don't match {}!={}".format(len(xdat), len(xdat2)))
-        elif isinstance(other, _np_.ndarray):
+        elif isinstance(other, np.ndarray):
             if len(other.shape) == 1:
-                other = _np_.atleast_2d(other).T
+                other = np.atleast_2d(other).T
             if other.shape[0] != len(xdat) or not 1 <= other.shape[1] <= 2:
                 raise RuntimeError(
                     (
@@ -1514,8 +1509,8 @@ class AnalysisMixin(object):
 
         # Need two nx2 arrays of points now
 
-        xy1 = _np_.column_stack((xdat, ydat))
-        xy2 = _np_.column_stack((xdat2, ydat2))
+        xy1 = np.column_stack((xdat, ydat))
+        xy2 = np.column_stack((xdat2, ydat2))
 
         # We're going to use three points to get an estimate for the affine transform to apply
 
@@ -1523,15 +1518,15 @@ class AnalysisMixin(object):
             mid = int(len(xdat) / 2)
             try:  # may go wrong if three points are co-linear
                 m0 = GetAffineTransform(xy1[[0, mid, -1], :], xy2[[0, mid, -1], :])
-            except (RuntimeError, _np_.linalg.LinAlgError):  # So use an idnetify transformation instead
-                m0 = _np_.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
-        elif isinstance(use_estimate, _np_.ndarray) and use_estimate.shape == (
+            except (RuntimeError, np.linalg.LinAlgError):  # So use an idnetify transformation instead
+                m0 = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+        elif isinstance(use_estimate, np.ndarray) and use_estimate.shape == (
             2,
             3,
         ):  # use_estimate is an initial value transformation
             m0 = use_estimate
         else:  # Don't try to be clever
-            m0 = _np_.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+            m0 = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
         popt, perr, trans = _twoD_fit(xy1, xy2, xmode=xmode, ymode=ymode, m0=m0)
         data = self.data[:, [_.xcol, _.ycol]]
         new_data = trans(data)
@@ -1589,8 +1584,8 @@ class AnalysisMixin(object):
         if isinstance(size, float):
             interp_data = True
             xl, xh = self.span(_.xcol)
-            size = int(_np_.ceil((size / (xh - xl)) * len(self)))
-            nx = _np_.linspace(xl, xh, len(self))
+            size = int(np.ceil((size / (xh - xl)) * len(self)))
+            nx = np.linspace(xl, xh, len(self))
             data = self.interpolate(nx, kind="linear", xcol=_.xcol, replace=False)
             self["Smoothing window size"] = size
         elif isinstance(size, int_types):
@@ -1684,7 +1679,7 @@ class AnalysisMixin(object):
             if not isNone(_.yerr):
                 sigma = 1.0 / (self // _.yerr)
             else:
-                sigma = _np_.ones(len(self))
+                sigma = np.ones(len(self))
         replace = kargs.pop("replace", True)
         result = kargs.pop("result", True)  # overwirte existing y column data
         header = kargs.pop("header", self.column_headers[_.ycol])
@@ -1740,19 +1735,21 @@ class AnalysisMixin(object):
             self._set_mask(bounds, True, _.ycol)
 
         if isiterable(sigma) and len(sigma) == len(self) and all_type(sigma, float):
-            sigma = _np_.array(sigma)
-            _["has_yerr"] = True
-        elif _.has_yerr:
+            sigma = np.array(sigma)
+        elif _.yerr:
             sigma = self.data[:, _.yerr]
-
-        if not _.has_yerr:
-            result = self.data[:, _.ycol].mean()
         else:
-            ydata = self.data[:, _.ycol]
-            w = 1 / (sigma ** 2 + 1e-8)
-            norm = w.sum(axis=0)
-            error = _np_.sqrt((sigma ** 2).sum(axis=0)) / len(sigma)
-            result = (ydata * w).std(axis=0) / norm, error
+            sigma = np.ones(len(self))
+
+        ydata = self.data[:, _.ycol]
+
+        sigma = np.abs(sigma) / np.nanmax(np.abs(sigma))
+        sigma = np.where(sigma < 1e-8, 1e-8, sigma)
+        weights = 1 / sigma ** 2
+        weights[np.isnan(weights)] = 0.0
+
+        result = np.sqrt(np.cov(ydata, aweights=weights))
+
         if bounds is not None:
             self._pop_mask()
         return result
@@ -1807,10 +1804,10 @@ class AnalysisMixin(object):
         points[:, 0] += min_overlap
         otherpoints = other.column([_.xcol, _.ycol])
         otherpoints = otherpoints[otherpoints[:, 0].argsort(), :]
-        self_second = _np_.max(points[:, 0]) > _np_.max(otherpoints[:, 0])
+        self_second = np.max(points[:, 0]) > np.max(otherpoints[:, 0])
         if overlap is None:  # Calculate the overlap
-            lower = max(_np_.min(points[:, 0]), _np_.min(otherpoints[:, 0]))
-            upper = min(_np_.max(points[:, 0]), _np_.max(otherpoints[:, 0]))
+            lower = max(np.min(points[:, 0]), np.min(otherpoints[:, 0]))
+            upper = min(np.max(points[:, 0]), np.max(otherpoints[:, 0]))
         elif isinstance(overlap, int) and overlap > 0:
             if self_second:
                 lower = points[0, 0]
@@ -1825,7 +1822,7 @@ class AnalysisMixin(object):
         ):
             lower = min(overlap)
             upper = max(overlap)
-        inrange = _np_.logical_and(points[:, 0] >= lower, points[:, 0] <= upper)
+        inrange = np.logical_and(points[:, 0] >= lower, points[:, 0] <= upper)
         points = points[inrange]
         num_pts = points.shape[0]
         if self_second:
@@ -1853,10 +1850,10 @@ class AnalysisMixin(object):
                 "shift y": [3],
                 "shift both": [1, 3],
             }
-            A0 = _np_.mean(xp) - _np_.mean(x)
-            C0 = _np_.mean(yp) - _np_.mean(y)
-            B0 = (_np_.max(yp) - _np_.min(yp)) / (_np_.max(y) - _np_.min(y))
-            p = _np_.array([0, A0, B0, C0])
+            A0 = np.mean(xp) - np.mean(x)
+            C0 = np.mean(yp) - np.mean(y)
+            B0 = (np.max(yp) - np.min(yp)) / (np.max(y) - np.min(y))
+            p = np.array([0, A0, B0, C0])
             assertion(isinstance(mode, string_types), "mode keyword should be a string if func is not defined")
             mode = mode.lower()
             assertion(mode in opts, "mode keyword should be one of {}".format(opts.keys))
@@ -1870,8 +1867,8 @@ class AnalysisMixin(object):
                 len(p0) == len(args) - 2, "Keyword p0 should be the same length as the optional arguments to func"
             )
         # This is a bit of a hack, we turn (x,y) points into a 1D array of x and then y data
-        set1 = _np_.append(x, y)
-        set2 = _np_.append(xp, yp)
+        set1 = np.append(x, y)
+        set2 = np.append(xp, yp)
         assertion(len(set1) == len(set2), "The number of points in the overlap are different in the two data sets")
 
         def transform(set1, *p):
@@ -1880,11 +1877,11 @@ class AnalysisMixin(object):
             x = set1[:m]
             y = set1[m:]
             tmp = func(x, y, *p)
-            out = _np_.append(tmp[0], tmp[1])
+            out = np.append(tmp[0], tmp[1])
             return out
 
         popt, pcov = curve_fit(transform, set1, set2, p0=p0)  # Curve fit for optimal A,B,C
-        perr = _np_.sqrt(_np_.diagonal(pcov))
+        perr = np.sqrt(np.diagonal(pcov))
         self.data[:, _.xcol], self.data[:, _.ycol] = func(self.data[:, _.xcol], self.data[:, _.ycol], *popt)
         self["Stitching Coefficients"] = list(popt)
         self["Stitching Coeffient Errors"] = list(perr)
@@ -1925,7 +1922,7 @@ class AnalysisMixin(object):
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
-            err_calc = lambda adata, bdata, e1data, e2data: _np_.sqrt(e1data ** 2 + e2data ** 2)
+            err_calc = lambda adata, bdata, e1data, e2data: np.sqrt(e1data ** 2 + e2data ** 2)
         else:
             err_calc = None
         adata, aname = self.__get_math_val(a)
@@ -1997,9 +1994,9 @@ class AnalysisMixin(object):
         # Recursively call if we've got an iterable threshold
         if isiterable(threshold):
             if isinstance(xcol, bool) and not xcol:
-                ret = _np_.zeros((len(threshold), self.shape[1]))
+                ret = np.zeros((len(threshold), self.shape[1]))
             else:
-                ret = _np_.zeros_like(threshold).view(type=DataArray)
+                ret = np.zeros_like(threshold).view(type=DataArray)
             for ix, th in enumerate(threshold):
                 ret[ix] = self.threshold(th, col=col, xcol=xcol, rising=rising, falling=falling, all_vals=all_vals)
             # Now we have to clean up the  retujrn list into a DataArray
@@ -2010,7 +2007,7 @@ class AnalysisMixin(object):
                 ret.i = ret[0].i
             else:  # Either xcol was None so we got indices or we got a specified column back
                 if xcol is not None:  # Specific column
-                    ret = _np_.atleast_2d(ret)
+                    ret = np.atleast_2d(ret)
                     ret.column_headers = [self.column_headers[self.find_col(xcol)]]
                     ret.i = [r.i for r in ret]
                     ret.setas = "x"
@@ -2022,7 +2019,7 @@ class AnalysisMixin(object):
         else:
             ret = _threshold(threshold, current, rising=rising, falling=falling)
             if not all_vals:
-                ret = [ret[0]] if _np_.any(ret) else []
+                ret = [ret[0]] if np.any(ret) else []
 
         if isinstance(xcol, bool) and not xcol:
             retval = self.interpolate(ret, xcol=False)
