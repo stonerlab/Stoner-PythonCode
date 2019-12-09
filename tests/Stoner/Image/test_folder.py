@@ -6,7 +6,7 @@ Created on Fri Mar 03 18:21:52 2017
 """
 
 from Stoner import Data
-from Stoner.Image import ImageArray, ImageFolder, ImageStack, KerrStack,ImageStack2
+from Stoner.Image import ImageArray, ImageFolder, ImageStack
 import numpy as np
 import unittest
 from os import path
