@@ -22,7 +22,6 @@ from Stoner.compat import string_types, _pattern_type
 from Stoner.tools import get_option
 import fnmatch
 from numpy import array
-import itertools
 from multiprocessing.pool import ThreadPool
 import multiprocess as multiprocessing
 

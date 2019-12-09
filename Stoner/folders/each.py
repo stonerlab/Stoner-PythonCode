@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-:py:mod:`Stoner.folders.each` provides the classes and support functions for the :py:attr:`Stoner.DataFolder.each` magic attribute.
+:py:mod:`Stoner.folders.each` provides the classes and support functions for the :py:attr:`Stoner.DataFolder.each`
+magic attribute.
 """
 __all__ = ["item"]
-from inspect import ismethod
 import numpy as _np_
 from functools import wraps, partial
 from traceback import format_exc

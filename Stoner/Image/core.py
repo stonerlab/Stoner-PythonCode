@@ -908,7 +908,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         """
         # Standard filename block
         if filename is None:
-            filename = self.filename
+            filename = getattr(self, "filename", None)
         if filename is None or (isinstance(filename, bool) and not filename):
             # now go and ask for one
             filename = get_filedialog(what="file", filetypes=IMAGE_FILES)

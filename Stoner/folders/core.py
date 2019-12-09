@@ -14,8 +14,8 @@ import os.path as path
 import fnmatch
 import re
 
-from Stoner.compat import int_types, string_types, commonpath, _pattern_type, cmp
-from Stoner.tools import operator, isiterable, isproperty, all_type, get_option
+from Stoner.compat import int_types, string_types, commonpath, _pattern_type
+from Stoner.tools import operator, isiterable, all_type, get_option
 from Stoner.core.base import regexpDict
 from Stoner.core.base import metadataObject
 from .utils import pathjoin

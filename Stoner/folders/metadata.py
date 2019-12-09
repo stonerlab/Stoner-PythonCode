@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-:py:mod:`Stoner.folders.metadata` provides classes and functions to support the :py:attr:`Stoner.DataFolder.metadata` magic attribute.
+:py:mod:`Stoner.folders.metadata` provides classes and functions to support the :py:attr:`Stoner.DataFolder.metadata`
+magic attribute.
 """
 __all__ = ["proxy"]
 import fnmatch
 from Stoner.compat import string_types
-from Stoner.tools import islike_list, isiterable, all_type
+from Stoner.tools import islike_list, isiterable
 from Stoner.Core import DataFile
 from lmfit import Model
 
@@ -204,13 +205,15 @@ class proxy(MutableMapping):
 
                 - "dict" or dict - return a list of dictionary subsets of the metadata from each image
                 - "list" or list - return a list of values of each item pf the metadata
-                - "array" or np.array - return a single array - like list above, but returns as a numpy array. This can create a 2D array from multiple keys
-                - "data" or Stoner.Data - returns the metadata in a Stoner.Data object where the column headers are the metadata keys.
+                - "array" or np.array - return a single array - like list above, but returns as a numpy array.
+                  This can create a 2D array from multiple keys
+                - "data" or Stoner.Data - returns the metadata in a Stoner.Data object where the column headers
+                  are the metadata keys.
                 - "frame" - returns the metadata as a Pandas DataFrame object
                 - "smart" - switch between *dict* and *list* depending whether there is one or more keys.
             mask_missing (bool):
-                If true, then metadata entries missing in members of the folder are returned as masked values (or None), If
-                False, then an exception is raised if any entries are missing.
+                If true, then metadata entries missing in members of the folder are returned as masked values (or
+                None), If False, then an exception is raised if any entries are missing.
 
         Returns:
             ret(list of dict, tuple of values or :py:class:`Stoner.Data`):
