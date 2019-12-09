@@ -3,7 +3,7 @@
 """
 Defines the magic attriobutes that :py:class:`Stoner.Image.ImageFolder` uses.
 """
-__all__ = ["DrawProxy","MaskProxy"]
+__all__ = ["DrawProxy", "MaskProxy"]
 
 from functools import wraps
 import numpy as np
