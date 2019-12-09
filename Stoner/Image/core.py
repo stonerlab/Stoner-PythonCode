@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 """Implements core image handling classes for the :mod:`Stoner.Image` package."""
-__all__ = ["ImageArray", "ImageFile", "DrawProxy", "MaskProxy"]
+__all__ = ["ImageArray", "ImageFile"]
 import numpy as np
 import os
 import warnings
 from copy import copy, deepcopy
+import inspect
+from functools import wraps
+from io import BytesIO as StreamIO
 from skimage import (
     color,
     exposure,
@@ -19,7 +22,6 @@ from skimage import (
     segmentation,
     transform,
     viewer,
-    draw,
 )
 from PIL import Image
 from PIL import PngImagePlugin  # for saving metadata
@@ -33,11 +35,7 @@ from Stoner.compat import (
     get_filedialog,
     int_types,
 )  # Some things to help with Python2 and Python3 compatibility
-import inspect
-from functools import wraps
-
-from io import BytesIO as StreamIO
-
+from .attrs import DrawProxy, MaskProxy
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 
@@ -170,7 +168,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         if len(args) not in [0, 1]:
             raise ValueError("ImageArray expects 0 or 1 arguments, {} given".format(len(args)))
 
-        ### Deal with kwargs
+        # Deal with kwargs
         array_arg_keys = ["dtype", "copy", "order", "subok", "ndmin", "mask"]  # kwargs for array setup
         array_args = {k: kargs.pop(k) for k in array_arg_keys if k in kargs.keys()}
         user_metadata = kargs.pop("metadata", {})
@@ -179,12 +177,12 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         )  # convert_float for back compatability
         _debug = kargs.pop("debug", False)
 
-        ### 0 args initialisation
+        # 0 args initialisation
         if len(args) == 0:
             ret = np.empty((0, 0), dtype=float).view(cls)
         else:
 
-            ### 1 args initialisation
+            # 1 args initialisation
             arg = args[0]
             loadfromfile = False
             if isinstance(arg, cls):
@@ -309,15 +307,17 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
            file to open.
 
         Args:
-            arg (positional arguments): an argument that matches one of the
-                definitions above
-        Keyword Arguments: All keyword arguments that match public attributes are
-                used to set those public attributes eg metadata.
+            arg (positional arguments):
+                an argument that matches one of the definitions above
 
-                asfloat(bool):
-                    if True  and loading the image from file, convert the image
-                    to float values between 0 and 1 (necessary for some forms
-                    of processing)
+        Keyword Arguments:
+            asfloat(bool):
+                if True  and loading the image from file, convert the image
+                to float values between 0 and 1 (necessary for some forms
+                of processing)
+
+        All keyword arguments that match public attributes are used to set those public attributes eg metadata.
+
         """
         super(ImageArray, self).__init__(*args, **kwargs)
 
@@ -346,7 +346,8 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         with Image.open(filename, "r") as img:
             image = np.asarray(img).view(cls)
             # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
-            # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
+            # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the
+            # bit-depth...
             if np.issubdtype(image.dtype, np.integer):
                 bits = np.ceil(np.log2(image.max()))
                 if bits <= 8:
@@ -468,7 +469,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return slice(box[2], box[3]), slice(box[0], box[1])
 
     #################################################################################################
-    ############ Properties #########################################################################
+    ################################################ Properties #####################################
 
     @property
     def aspect(self):
@@ -648,14 +649,17 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         """Used by __getattr__ to wrap an arbitary callbable to make it a bound method of this class.
 
         Args:
-            workingfunc (callable): The callable object to be wrapped.
+            workingfunc (callable):
+                The callable object to be wrapped.
 
         Returns:
-            (function): A function with enclosure that holds additional information about this object.
+            (function):
+                A function with enclosure that holds additional information about this object.
 
         The function returned from here will call workingfunc with the first argument being a clone of this
         ImageArray. If the meothd returns an ndarray, it is wrapped back to our own class and the metadata dictionary
-        is updated. If the function returns a :py:class:`Stoner.Data` object then this is also updated with our metadata.
+        is updated. If the function returns a :py:class:`Stoner.Data` object then this is also updated with our
+        metadata.
 
         This method also updates the name and documentation strings for the wrapper to match the wrapped function -
         thus ensuring that Spyder's help window can generate useful information.
@@ -842,10 +846,11 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     def clip_intensity(self, clip_negative=False, limits=None):
         """Clip intensity outside the range -1,1 or 0,1
 
-        Keyword ArgumentsL
+        Keyword Arguments:
             clip_negative(bool):
                 if True clip to range 0,1 else range -1,1
-            limits (low,high): Clip the intensity between low and high rather than zero and 1.
+            limits (low,high):
+                Clip the intensity between low and high rather than zero and 1.
 
         Ensure data range is -1 to 1 or 0 to 1 if clip_negative is True.
 
@@ -881,17 +886,17 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         saved.
 
         Args:
-            filename (string, bool or None): Filename to save data as, if this is
-                None then the current filename for the object is used
-                If this is not set, then then a file dialog is used. If
-                filename is False then a file dialog is forced.
-        Keyword args:
-            fmt (string or list): format to save data as. 'tif', 'png' or 'npy'
-                or a list of them. If not included will guess from filename.
+            filename (string, bool or None):
+                Filename to save data as, if this is None then the current filename for the object is used
+                If this is not set, then then a file dialog is used. If filename is False then a file dialog is forced.
 
-            forcetype (bool): integer data will be converted to np.float32 type
-                for saving. if forcetype then preserve and save as int type (will
-                                                                             be unsigned).
+        Keyword args:
+            fmt (string or list):
+                format to save data as. 'tif', 'png' or 'npy' or a list of them. If not included will guess from
+                filename.
+            forcetype (bool):
+                integer data will be converted to np.float32 type for saving. if forcetype then preserve and save as
+                int type (will be unsigned).
 
         Since Stoner.Image is meant to be a general 2d array often with negative
         and floating point data this poses a problem for saving images. Images
@@ -947,17 +952,23 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         np.save(npyname, np.array(self))
 
     def save_tiff(self, filename, forcetype=False):
-        """Save the ImageArray as a tiff image with metadata
-        PIL can save in modes "L" (8bit unsigned int), "I" (32bit signed int),
-        or "F" (32bit signed float). In general max info is preserved for "F"
-        type so if forcetype is not specified then this is the default. For
-        boolean type data mode "L" will suffice and this is chosen in all cases.
-        The type name is added as a string to the metadata before saving.
+        """Save the ImageArray as a tiff image with metadata.
 
+        Args:
+            filename (str):
+                Filename to save file as.
         Keyword Args:
-            forcetype(bool): (depricated) if forcetype then preserve data type as best as
-                possible on save.
+            forcetype(bool):
+                (depricated) if forcetype then preserve data type as best as possible on save.
                 Otherwise we let the underlying pillow library choose the best data type.
+
+        Note:
+            PIL can save in modes "L" (8bit unsigned int), "I" (32bit signed int),
+            or "F" (32bit signed float). In general max info is preserved for "F"
+            type so if forcetype is not specified then this is the default. For
+            boolean type data mode "L" will suffice and this is chosen in all cases.
+            The type name is added as a string to the metadata before saving.
+
         """
         from PIL.TiffImagePlugin import ImageFileDirectory_v2
         import json
@@ -1059,9 +1070,9 @@ class ImageFile(metadataObject):
         There is one special case of creating an ImageFile from a :py:class:`Stoner.Core.DataFile`. In this case the
         the DataFile is assummed to contain (x,y,z) data that should be converted to a map of
         z on a regular grid of x,y. The columns for the x,y,z data can be taken from the DataFile's
-        :py:attr:`Stoner.Core.DataFile.setas` attribute or overridden by providing xcol, ycol and zcol keyword arguments.
-        A further *shape* keyword can spewcify the shape as a tuple or "unique" to use the unique values of x and y or if
-        omitted asquare grid will be interpolated.
+        :py:attr:`Stoner.Core.DataFile.setas` attribute or overridden by providing xcol, ycol and zcol keyword
+        arguments. A further *shape* keyword can spewcify the shape as a tuple or "unique" to use the unique values of
+        x and y or if omitted asquare grid will be interpolated.
 
         """
         super(ImageFile, self).__init__(*args, **kargs)
@@ -1079,8 +1090,8 @@ class ImageFile(metadataObject):
             self._init_from_datafile(*args, **kargs)
         self._fromstack = kargs.pop("_fromstack", False)  # for use by ImageStack
 
-    #####################################################################################################################################
-    ############################# Properties #### #######################################################################################
+    ###################################################################################################################
+    ############################# Properties #### #####################################################################
 
     @property
     def _repr_png_(self):
@@ -1182,9 +1193,8 @@ class ImageFile(metadataObject):
     def metadata(self, value):
         self.image.metadata = value
 
-    #####################################################################################################################################
-    ############################# Special methods #######################################################################################
-
+    ###################################################################################################################
+    ############################# Special methods #####################################################################
     def __getitem__(self, n):
         """A pass through to ImageArray."""
         try:
@@ -1317,19 +1327,24 @@ class ImageFile(metadataObject):
             ret = self.metadata == other.metadata and np.all(self.image == other.image)
         return ret
 
-    #####################################################################################################################################
-    ############################# Private methods #######################################################################################
+    ###################################################################################################################
+    ############################# Private methods #####################################################################
 
     def _init_from_datafile(self, *args, **kargs):
         """Initialise ImageFile from DataFile defining x,y,z co-ordinates.
 
         Args:
-            args[0] (DataFile): A :py:class:`Stoner.Core.DataFile` instance that defines x,y,z co-ordinates or has columns specified in keywords.
+            args[0] (DataFile):
+                A :py:class:`Stoner.Core.DataFile` instance that defines x,y,z co-ordinates or has columns specified
+                in keywords.
 
         Keyword Args:
-            xcol (column index): Column in the DataFile that has the x-co-ordinate
-            ycol (column index): Column in the data file that defines the y-cordinate
-            zcol (column index): Column in the datafile that defines the intensity
+            xcol (column index):
+                Column in the DataFile that has the x-co-ordinate
+            ycol (column index):
+                Column in the data file that defines the y-cordinate
+            zcol (column index):
+                Column in the datafile that defines the intensity
         """
         data = Data(args[0])
         shape = kargs.pop("shape", "unique")
@@ -1354,12 +1369,16 @@ class ImageFile(metadataObject):
         Note:
             The wrapped functions take additional keyword arguments that are stripped off from the call.
 
-            _box(:py:meth:`Stoner.ImageArray.crop` arguments): Crops the image first before calling the parent method.
-            _ (bool, None): Controls whether a :py:class:`ImageArray` return will be substituted for the current :py:class:`ImageArray`.
+        Keyword Arguments:
+            _box(:py:meth:`Stoner.ImageArray.crop` arguments):
+                Crops the image first before calling the parent method.
+            _(bool, None):
+                Controls whether a :py:class:`ImageArray` return will be substituted for the current
+                :py:class:`ImageArray`.
 
-            * True: - all ImageArray return types are substituted.
-            * False (default) - Imagearray return types are substituted if they are the same size as the original
-            * None - A copy of the current object is taken and the returned ImageArray provides the data.
+                * True: - all ImageArray return types are substituted.
+                * False (default) - Imagearray return types are substituted if they are the same size as the original
+                * None - A copy of the current object is taken and the returned ImageArray provides the data.
         """
 
         @wraps(workingfunc)
@@ -1427,241 +1446,24 @@ class ImageFile(metadataObject):
     def save(self, filename=None, **kargs):
         """Saves the image into the file 'filename'.
 
-        Metadata will be preserved in .png and .tif format.
-
-        fmt can be 'png', 'npy', 'tif', 'tiff'  or a list of more than one of those.
-        tif is recommended since metadata is lost in .npy format but data is
-        converted to integer format for png so that definition cannot be
-        saved.
-
         Args:
-            filename (string, bool or None): Filename to save data as, if this is
-                None then the current filename for the object is used
-                If this is not set, then then a file dialog is used. If
-                filename is False then a file dialog is forced.
+            filename (string, bool or None):
+                Filename to save data as, if this is None then the current filename for the object is used
+                If this is not set, then then a file dialog is used. If filename is False then a file dialog is forced.
+
         Keyword args:
-            fmt (string or list): format to save data as. 'tif', 'png' or 'npy'
-            or a list of them. If not included will guess from filename.
+            fmt (string or list):
+                format to save data as. 'tif', 'png' or 'npy' or a list of them. If not included will guess from
+                filename.
+
+        notes:
+            Metadata will be preserved in .png and .tif format.
+
+            fmt can be 'png', 'npy', 'tif', 'tiff'  or a list of more than one of those.
+            tif is recommended since metadata is lost in .npy format but data is
+            converted to integer format for png so that definition cannot be
+            saved.
+
         """
         # catch before metadataObject tries to take over.
         self.image.save(filename, **kargs)
-
-
-class DrawProxy(object):
-    """Provides a wrapper around scikit-image.draw to allow easy drawing of objects onto images."""
-
-    def __init__(self, *args, **kargs):
-        """Grab the parent image from the constructor."""
-        self.img = args[0]
-
-    def __getattr__(self, name):
-        """Retiurn a callable function that will carry out the draw operation requested."""
-        func = getattr(draw, name)
-
-        @wraps(func)
-        def _proxy(*args, **kargs):
-            value = kargs.pop("value", np.ones(1, dtype=self.img.dtype)[0])
-            coords = func(*args, **kargs)
-            self.img[coords] = value
-            return self.img
-
-        return fix_signature(_proxy, func)
-
-    def __dir__(self):
-        """Pass through to the dir of skimage.draw."""
-        own = set(self.__class__.__dict__.keys())
-        d = set(dir(draw))
-        return list(own | d)
-
-    def annulus(self, r, c, radius1, radius2, shape=None, value=1.0):
-        """Use a combination of two circles to draw and annulus.
-
-        Args:
-            r,c (float): Centre co-ordinates
-            radius1,radius2 (float): Inner and outer radius.
-
-        Keyword Arguments:
-            shape (2-tuple, None): Confine the co-ordinates to staywith shape
-            value (float): value to draw with
-        Returns:
-            A copy of the image with the annulus drawn on it.
-
-        Notes:
-            If radius2<radius1 then the sense of the whole shape is inverted
-            so that the annulus is left clear and the filed is filled.
-        """
-        if shape is None:
-            shape = self.img.shape
-        invert = radius2 < radius1
-        if invert:
-            buf = np.ones(shape)
-            fill = 0.0
-            bg = 1.0
-        else:
-            buf = np.zeros(shape)
-            fill = 1.0
-            bg = 0.0
-        radius1, radius2 = min(radius1, radius2), max(radius1, radius2)
-        rr, cc = draw.circle(r, c, radius2, shape=shape)
-        buf[rr, cc] = fill
-        rr, cc = draw.circle(r, c, radius1, shape=shape)
-        buf[rr, cc] = bg
-        self.img[:, :] = (self.img * buf + value * (1.0 - buf)).astype(self.img.dtype)
-        return self.img
-
-    def rectangle(self, r, c, w, h, angle=0.0, shape=None, value=1.0):
-        """Draw a rectangle on an image.
-
-        Args:
-            r,c (float): Centre co-ordinates
-            w,h (float): Lengths of the two sides of the rectangle
-
-        Keyword Arguments:
-            angle (float): Angle to rotate the rectangle about
-            shape (2-tuple or None): Confine the co-ordinates to this shape.
-            value (float): The value to draw with.
-
-        Returns:
-            A copy of the current image with a rectangle drawn on.
-        """
-        if shape is None:
-            shape = self.img.shape
-
-        x1 = r - h / 2
-        x2 = r + h / 2
-        y1 = c - w / 2
-        y2 = c + w / 2
-        co_ords = np.array([[x1, y1], [x2, y1], [x2, y2], [x1, y2]])
-        if angle != 0:
-            centre = np.array([r, c])
-            cos, sin, m = np.cos, np.sin, np.matmul
-            r = np.array([[cos(angle), -sin(angle)], [sin(angle), cos(angle)]])
-            co_ords = np.array([centre + m(r, xy - centre) for xy in co_ords])
-        rr, cc = draw.polygon(co_ords[:, 0], co_ords[:, 1], shape=shape)
-        self.img[rr, cc] = value
-        return self.img
-
-    def square(self, r, c, w, angle=0.0, shape=None, value=1.0):
-        """Draw a square on an image.
-
-        Args:
-            r,c (float): Centre co-ordinates
-            w (float): Length of the side of the square
-
-        Keyword Arguments:
-            angle (float): Angle to rotate the rectangle about
-            shape (2-tuple or None): Confine the co-ordinates to this shape.
-            value (float): The value to draw with.
-
-        Returns:
-            A copy of the current image with a rectangle drawn on.
-        """
-        return self.rectangle(r, c, w, w, angle=angle, shape=shape, value=value)
-
-
-class MaskProxy(object):
-
-    """Provides a wrapper to support manipulating the image mask easily."""
-
-    @property
-    def _IA(self):
-        """Get the underliying image data."""
-        return self._IF.image
-
-    @property
-    def _mask(self):
-        """Get the mask for the underlying image."""
-        self._IA.mask = np.ma.getmaskarray(self._IA)
-        return self._IA.mask
-
-    @property
-    def data(self):
-        """Get the underlying data as an array - compatibility accessor"""
-        return self[:]
-
-    @property
-    def image(self):
-        """Get the underlying data as an array - compatibility accessor"""
-        return self[:]
-
-    @property
-    def draw(self):
-        """Access the draw proxy opbject."""
-        return DrawProxy(self._mask)
-
-    def __init__(self, *args, **kargs):
-        """Keep track of the underlying objects."""
-        self._IF = args[0]
-
-    def __getitem__(self, index):
-        """Proxy through to mask index."""
-        return self._mask.__getitem__(index)
-
-    def __setitem__(self, index, value):
-        """Proxy through to underlying mask."""
-        self._IA.mask.__setitem__(index, value)
-
-    def __delitem__(self, index):
-        """Proxy through to underyling mask."""
-        self._IA.mask.__delitem__(index)
-
-    def __getattr__(self, name):
-        """Checks name against self._IA._funcs and constructs a method to edit the mask as an image."""
-        if hasattr(self._IA.mask, name):
-            return getattr(self._IA.mask, name)
-        if not ".*__{}$".format(name) in self._IA._funcs:
-            raise AttributeError("{} not a callable mask method.".format(name))
-        func = self._IA._funcs[".*__{}$".format(name)]
-
-        @wraps(func)
-        def _proxy_call(*args, **kargs):
-            retval = func(self._mask.astype(float) * 1000, *args, **kargs)
-            if isinstance(retval, np.ndarray) and retval.shape == self._IA.shape:
-                retval = (retval + retval.min()) / (retval.max() - retval.min())
-                self._IA.mask = retval > 0.5
-            return retval
-
-        _proxy_call.__doc__ = func.__doc__
-        _proxy_call.__name__ = func.__name__
-        return fix_signature(_proxy_call, func)
-
-    def __repr__(self):
-        """Make a textual representation of the image."""
-        output = ""
-        f = np.array(["."] * self._mask.shape[1])
-        t = np.array(["X"] * self._mask.shape[1])
-        for ix in self._mask:
-            row = np.where(ix, t, f)
-            output += "".join(row) + "\n"
-        return output
-
-    def __str__(self):
-        """Make a textual representation of the image."""
-        return repr(self._mask)
-
-    def __invert__(self):
-        """Invert the mask."""
-        return np.logical_not(self._mask)
-
-    def __neg__(self):
-        """Invert the mask."""
-        return np.logical_not(self._mask)
-
-    def _repr_png_(self):
-        """Provide a display function for iPython/Jupyter."""
-        fig = self._IA._funcs[".*imshow"](self._mask.astype(int))
-        data = StreamIO()
-        fig.savefig(data, format="png")
-        plt.close(fig)
-        data.seek(0)
-        ret = data.read()
-        data.close()
-        return ret
-
-    def clear(self):
-        """Clear a mask."""
-        self._IA.mask = np.zeros_like(self._IA)
-
-    def invert(self):
-        """Invert the mask."""
-        self._IA.mask = ~self._IA.mask

@@ -4,6 +4,7 @@
 """
 
 __all__ = [
+    "attrs",
     "core",
     "folders",
     "stack",
@@ -15,9 +16,8 @@ __all__ = [
     "KerrArray",
     "KerrStack",
     "MaskStack",
-    "ImageStack2",
 ]
 from .core import ImageArray, ImageFile
 from .folders import ImageFolder
-from .stack import ImageStack, ImageStack2
+from .stack import ImageStack
 from .kerr import KerrArray, KerrStack, MaskStack

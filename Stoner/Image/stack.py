@@ -464,6 +464,3 @@ class ImageStack(StackAnalysisMixin, ImageStackMixin, ImageFolderMixin, DiskBase
     """An alternative implementation of an image stack based on baseFolder."""
 
     pass
-
-
-ImageStack2 = ImageStack  # For compatibility with 0.8.x
