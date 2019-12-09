@@ -27,15 +27,15 @@ class ImageFolderTest(unittest.TestCase):
         self.td=self.td.sort(key=lambda x:x.filename.lower())
         self.ks_dir = ImageStack(testdir)
         self.ks = ImageStack(self.td) #load in two ways
-        self.ks2_dir = ImageStack2(testdir, pattern='*.png')
-        self.ks2 = ImageStack2(self.td) #load in two ways
+        self.ks2_dir = ImageStack(testdir, pattern='*.png')
+        self.ks2 = ImageStack(self.td) #load in two ways
 
     def test_load(self):
         self.assertTrue(len(self.td)==len(os.listdir(testdir)), "Didn't find all the images")
         self.assertTrue(len(self.ks)==len(os.listdir(testdir)),"ImageStack conversion from ImageFolder failed")
         self.assertTrue(len(self.ks_dir)==len(os.listdir(testdir)),"IamgeStack read from directory failed")
-        self.assertTrue(len(self.ks2)==len(os.listdir(testdir)),"ImageStack2 conversion from ImagerFolder failed")
-        self.assertTrue(len(self.ks2_dir)==len(os.listdir(testdir)),"ImageStack2 read from directory failed.")
+        self.assertTrue(len(self.ks2)==len(os.listdir(testdir)),"ImageStack conversion from ImagerFolder failed")
+        self.assertTrue(len(self.ks2_dir)==len(os.listdir(testdir)),"ImageStack read from directory failed.")
 
         self.assertTrue(isinstance(self.td[0],ImageArray), 'Getting an image array from the ImageFolder failed type is {}'.format(type(self.td[0]))) #'{}, '.format(isinstance(self.td[0], ImageArray))#
         #self.assertTrue(self.td.slice_metadata(key='field',values_only=True)==knownfieldvals, 'slice metadata failed')

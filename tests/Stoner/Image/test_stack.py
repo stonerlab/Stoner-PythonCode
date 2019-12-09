@@ -22,7 +22,7 @@ for theta in np.linspace(0,360,91):
     i.filename="Angle {}".format(theta)
     istack2.insert(0,i)
 
-class ImageStack2Test(unittest.TestCase):
+class ImageStackTest(unittest.TestCase):
 
     def setUp(self):
         self.td = ImageFolder(testdir, pattern='*.png')
@@ -31,8 +31,8 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(len(self.ks)==len(os.listdir(testdir)))
         self.istack2=istack2.clone
 
-    def test_ImageStack2(self):
-        self.assertTrue(self.istack2.shape==(91,100,100),"ImageStack2.shape wrong at {}".format(self.istack2.shape))
+    def test_ImageStack(self):
+        self.assertTrue(self.istack2.shape==(91,100,100),"ImageStack.shape wrong at {}".format(self.istack2.shape))
         i=ImageFile(np.zeros((100,100))).draw.circle(50,50,25)
         self.m1=self.istack2.mean()
         self.istack2.each.align(i,method="imreg_dft")
@@ -75,7 +75,7 @@ class ImageStack2Test(unittest.TestCase):
             listinit.append(np.arange(12).reshape(3,4))
         npinit = np.arange(1000).reshape(5,10,20)
         listinit = ImageStack(listinit)
-        self.assertTrue(listinit.shape == (10,3,4), "problem with initialising ImageStack2 with list of data")
+        self.assertTrue(listinit.shape == (10,3,4), "problem with initialising ImageStack with list of data")
         npinitist = ImageStack(npinit)
         self.assertTrue(np.allclose(npinitist.imarray,npinit), "problem initiating with 3d numpy array")
         ist2init = ImageStack(self.istack2)
@@ -113,7 +113,7 @@ class ImageStack2Test(unittest.TestCase):
     def test_methods(self):
         #check function generator machinery works
         self.istack2.each.crop(0,30,0,50)
-        self.assertTrue(self.istack2.shape==(91,50,30),"Unexpected size of imagestack2 got {} for 91x50x30".format(self.istack2.shape))
+        self.assertTrue(self.istack2.shape==(91,50,30),"Unexpected size of imagestack got {} for 91x50x30".format(self.istack2.shape))
         ist2 = ImageStack(np.arange(60).reshape(4,3,5))
         self.assertTrue(issubclass(ist2.imarray.dtype.type, np.integer),"Unexpected dtype in image stack2 got {} not int32".format(ist2.imarray.dtype))
         t1 = ImageStack(np.arange(60).reshape(4,3,5))
@@ -154,9 +154,9 @@ class ImageStack2Test(unittest.TestCase):
         self.assertTrue(np.all(ist2[3].mask), 'setting mask on an image stack item not working')
 
 if __name__=="__main__":
-    test=ImageStack2Test()
+    test=ImageStackTest()
     test.setUp()
-    #test.test_ImageStack2()
+    #test.test_ImageStack()
     #test.test_mask()
     unittest.main()
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Provide variants of :class:`Stoner.Image.ImageFolder` that store images efficiently in 3D numpy arrays."""
-__all__ = ["ImageStackMixin", "ImageStack2", "ImageStack"]
+__all__ = ["ImageStackMixin", "ImageStack", "ImageStack"]
 import numpy as np
 import numbers
 import warnings
@@ -348,7 +348,7 @@ class ImageStackMixin(object):
             self._stack = convert(self._stack, dtype=np.float64, normalise=normalise)
         if "clip_neg" in kargs:
             warnings.warn(
-                "clip_neg argument renamed to clip_negative in ImageStack2. This will cause an error in future versions of the Stoner Package."
+                "clip_neg argument renamed to clip_negative in ImageStack. This will cause an error in future versions of the Stoner Package."
             )
             clip_negative = kargs.pop("clip_neg")
         if clip or clip_negative:

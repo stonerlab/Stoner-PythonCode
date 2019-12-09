@@ -231,10 +231,6 @@ class ImageArrayTest(unittest.TestCase):
             self.n=n
             self.assertTrue(np.allclose(im, n))  #check the data
 
-
-
-
-
     def test_max_box(self):
         s=self.imarr.shape
         self.assertTrue(self.imarr.max_box==(0,s[1],0,s[0]))
