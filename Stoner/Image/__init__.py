@@ -21,4 +21,4 @@ from .core import ImageArray, ImageFile
 from .folders import ImageFolder
 from .stack import ImageStack
 from .kerr import KerrArray, KerrStack, MaskStack
-import attrs
+from . import attrs
