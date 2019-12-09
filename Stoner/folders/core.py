@@ -312,9 +312,9 @@ class baseFolder(MutableSequence):
     def groups(self, value):
         """Ensure groups gets set as a :py:class:`regexpDict`"""
         if not isinstance(value, GroupsDict):
-            self._groups = GroupsDict(value, base=self)
+            self._groups = GroupsDict(deepcopy(value), base=self)
         else:
-            self._groups = value
+            self._groups = GroupsDict({g: v.clone for g, v in value.items()})
             self._groups.base = self
 
     @property

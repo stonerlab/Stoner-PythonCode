@@ -20,6 +20,14 @@ class GroupsDict(regexpDict):
         self.base = kargs.pop("base", None)
         super(GroupsDict, self).__init__(*args, **kargs)
 
+    def __setitem__(self, name, value):
+        """Enforce type checking on values."""
+        if not isinstance(value, self.base.__class__):
+            raise ValueError(
+                f"groups attribute can only contain {type(self.base.__class__)} objects not {type(value)}"
+            )
+        super(GroupsDict, self).__setitem__(name, value)
+
     def compress(self, base=None, key=".", keep_terminal=False):
         """Compresses all empty groups from the root up until the first non-empty group is located.
 
