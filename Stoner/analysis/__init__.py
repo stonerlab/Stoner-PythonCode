@@ -1,4 +1,4 @@
 """Subpaclage to support the data analysis functions."""
-from . import fitting, utils
+from . import fitting, utils, columns
 
-__all__ = ["fitting", "utils"]
+__all__ = ["fitting", "utils", "columns", "filtering"]
