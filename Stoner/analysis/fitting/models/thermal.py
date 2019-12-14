@@ -20,6 +20,7 @@ __all__ = [
 
 import numpy as np
 import scipy.constants as consts
+from scipy.optimize import curve_fit
 
 try:
     from lmfit import Model
@@ -120,7 +121,11 @@ def vftEquation(x, A, DE, x_0):
             :outname: vft
     """
     _kb = consts.physical_constants["Boltzmann constant"][0] / consts.physical_constants["elementary charge"][0]
-    return A * np.exp(-DE / (_kb * (x - x_0)))
+    X = np.where(np.isclose(x, x_0), 1e-8, x - x_0)
+    y = A * np.exp(-DE / (_kb * X))
+    if np.any(np.isnan(y)):
+        breakpoint()
+    return y
 
 
 class Arrhenius(Model):
@@ -234,7 +239,7 @@ class ModArrhenius(Model):
 
         d1, d2 = 1.0, 0.0
         if x is not None:
-            d1, d2 = np.polyfit(-1.0 / x, np.log(data), 1)
+            d1, d2 = np.polyfit(-1.0 / x, np.log(data / x), 1)
         pars = self.make_params(A=np.exp(d2), DE=_kb * d1, n=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
@@ -265,6 +270,8 @@ class VFTEquation(Model):
 
     display_names = ["A", r"\Delta E", "x_0"]
 
+    nan_policy = "omit"
+
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
         super(VFTEquation, self).__init__(vftEquation, *args, **kwargs)
@@ -272,10 +279,17 @@ class VFTEquation(Model):
     def guess(self, data, x=None, **kwargs):
         """Guess paramneters from a set of data."""
         _kb = consts.physical_constants["Boltzmann constant"][0] / consts.physical_constants["elementary charge"][0]
-
         d1, d2, x0 = 1.0, 0.0, 1.0
+        yy = np.log(data)
         if x is not None:
+            # Getting a good x_0 is critical, so we first of all use poly fit to look
             x0 = x[np.argmin(np.abs(data))]
-            d1, d2 = np.polyfit(-1.0 / (x - x0), np.log(data), 1)
-        pars = self.make_params(A=np.exp(d2), dE=_kb * d1, x_0=x0)
+
+            def _find_x0(x, d1, d2, x0):
+                return -d1 / (x - x0) + d2
+
+            popt, pcov = curve_fit(_find_x0, x, yy, p0=[x0, 20, 10])
+            d1, d2, x0 = popt
+        pars = self.make_params(A=np.exp(d2), DE=_kb * d1, x_0=x0)
+        print(pars)
         return update_param_vals(pars, self.prefix, **kwargs)

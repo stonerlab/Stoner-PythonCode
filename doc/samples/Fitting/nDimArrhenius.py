@@ -13,15 +13,17 @@ d = Data(T, R, setas="xy", column_headers=["T", "Rate"])
 d.curve_fit(SF.nDimArrhenius, p0=[1e6, 0.5, 2], result=True, header="curve_fit")
 d.setas = "xyy"
 d.plot(fmt=["r.", "b-"])
-d.annotate_fit(SF.nDimArrhenius, x=0.25, y=0.3)
+d.annotate_fit(SF.nDimArrhenius, x=0.25, y=0.3, mode="eng")
 
 # lmfit using lmfit guesses
 fit = SF.NDimArrhenius()
 p0 = fit.guess(R, x=T)
-d.lmfit(fit, p0=p0, result=True, header="lmfit")
+d.lmfit(fit, result=True, header="lmfit")
 d.setas = "x..y"
 d.plot(fmt="g-")
-d.annotate_fit(SF.NDimArrhenius, x=0.25, y=0.05, prefix="NDimArrhenius")
+d.annotate_fit(
+    SF.NDimArrhenius, x=0.25, y=0.05, prefix="NDimArrhenius", mode="eng"
+)
 
 d.title = "n-D Arrhenius Test Fit"
 d.ylabel = "Rate"

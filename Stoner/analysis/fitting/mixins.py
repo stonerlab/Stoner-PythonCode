@@ -719,8 +719,11 @@ class FittingMixin(object):
         header = kargs.pop("header", "")
         residuals = kargs.pop("residuals", False)
         output = kargs.pop("output", "row")
+        nan_policy = kargs.pop("nan_policy", "raise")
         kargs[model.independent_vars[0]] = data[0]
-        fit = model.fit(data[1], params, scale_covar=scale_covar, weights=1.0 / data[2], **kargs)
+        fit = model.fit(
+            data[1], params, scale_covar=scale_covar, weights=1.0 / data[2], nan_policy=nan_policy, **kargs
+        )
         if fit.success:
             row = self._record_curve_fit_result(
                 model,
@@ -1374,6 +1377,7 @@ class FittingMixin(object):
         data, scale_covar, _ = self._assemnle_data_to_fit(xcol, ycol, sigma, bounds, scale_covar)
         model, prefix = _prep_lmfit_model(model, kargs)
         p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kargs)
+        nan_policy = kargs.pop("nan_policy", getattr(model, "nan_policy", "omit"))
 
         if single_fit:
             ret_val = self.__lmfit_one(
@@ -1388,6 +1392,7 @@ class FittingMixin(object):
                 replace=replace,
                 output=output,
                 residuals=residuals,
+                nan_policy=nan_policy,
             )
         else:  # chi^2 mode
             pn = p0

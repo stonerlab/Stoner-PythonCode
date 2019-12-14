@@ -23,7 +23,7 @@ d.curve_fit(vftEquation, p0=params, result=True, header="curve_fit")
 
 # lmfit uses some guesses
 p0 = params
-d.lmfit(VFTEquation, p0=p0, result=True, header="lmfit")
+d.lmfit(VFTEquation, result=True, header="lmfit")
 
 # Plot these results too
 d.setas = "x..yy"

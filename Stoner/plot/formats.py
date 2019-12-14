@@ -118,10 +118,10 @@ class TexEngFormatter(EngFormatter):
         elif value != 0.0:
             power = _np_.floor(_np_.log10(_np_.abs(value)))
             pre = _np_.ceil(power / 3.0) * 3
-            power = power % 3
-            if pre == 0:
+            if -1 <= power <= 3 or pre == 0:
                 ret = "${}\\,\\mathrm{{{}}}$".format(_round(value, 4), self.unit)
             else:
+                power = power % 3
                 v = _round(value / (10 ** pre), 4)
                 if _np_.abs(v) < 0.1:
                     v *= 1000
