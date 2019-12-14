@@ -14,7 +14,7 @@ from scipy.interpolate import interp1d, UnivariateSpline
 from scipy.signal import get_window, convolve, savgol_filter
 
 from Stoner.tools import isiterable, isNone
-from Stoner.compat import int_types, string_types, index_types, get_func_params
+from Stoner.compat import int_types, string_types, get_func_params
 
 from .utils import outlier as _outlier, _twoD_fit, GetAffineTransform
 
@@ -366,8 +366,8 @@ class FilteringOps(object):
             interpolation function takes one argument - if *xcol* was None, this argument is interpreted as
             array indices, but if *xcol* was specified, then this argument is interpreted as an array of xvalues.
         """
-        DataArray = self.data.__class__
-        lines = np.shape(self.data)[0]
+        DataArray = self.data.__class__  # pylint: disable=E0203
+        lines = np.shape(self.data)[0]  # pylint: disable=E0203
         index = np.arange(lines)
         if xcol is None:
             xcol = self.setas._get_cols("xcol")
@@ -380,7 +380,7 @@ class FilteringOps(object):
         if xcol is not None and newX is not None:  # We need to convert newX to row indices
             xfunc = interp1d(self.column(xcol), index, kind, 0)  # xfunc(x) returns partial index
             newX = xfunc(newX)
-        inter = interp1d(index, self.data, kind, 0)
+        inter = interp1d(index, self.data, kind, 0)  # pylint: disable=E0203
 
         if newX is None:  # Ok, we're going to return an interpolation function
 

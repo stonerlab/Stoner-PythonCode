@@ -443,7 +443,7 @@ class DataArray(_ma_.MaskedArray):
         xerr=None,
         yerr=None,
         zerr=None,
-        **kargs
+        **kargs,
     ):
         """Utility method that creates an object which has keys  based either on arguments or setas attribute."""
         cols = {
@@ -495,6 +495,9 @@ class DataArray(_ma_.MaskedArray):
                     ret[c] = list([ret[c]])
                 elif ret[c] is None:
                     ret[c] = []
+        for n in ["xcol", "xerr", "ycol", "yerr", "zcol", "zerr", "ucol", "vcol", "wcol", "axes"]:
+            ret[f"has_{n}"] = n in ret and not (ret[n] is None or (isinstance(ret[n], list) and not ret[n]))
+
         return ret
 
     # ============================================================================================================================

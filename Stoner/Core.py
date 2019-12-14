@@ -1632,6 +1632,8 @@ class DataFile(metadataObject):
         if index is None or isinstance(index, bool) and index:  # Enure index is set
             index = self.shape[1]
             replace = False
+        elif isinstance(index, int_types) and index == self.shape[1]:
+            replace = False
         else:
             index = self.find_col(index)
 

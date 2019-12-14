@@ -45,7 +45,7 @@ class ColumnOps(object):
             raise RuntimeError("Bad column index: {}".format(col))
         return data, name
 
-    def add(self, a, b, replace=False, header=None):
+    def add(self, a, b, replace=False, header=None, index=None):
         """Add one column, number or array (b) to another column (a).
 
         Args:
@@ -59,6 +59,8 @@ class ColumnOps(object):
                 new column header  (defaults to a-b
             replace (bool):
                 Replace the a column with the new data
+            index (column index or None):
+                Column to insert new data at.
 
         Returns:
             (:py:class:`Stoner.Data`):
@@ -88,14 +90,15 @@ class ColumnOps(object):
             header = "{}+{}".format(aname, bname)
         if err_calc is not None and err_header is None:
             err_header = "Error in " + header
+        index = self.shape[1] if index is None else self.find_col(index)
         if err_calc is not None:
             err_data = err_calc(adata, bdata, e1data, e2data)
-        self.add_column((adata + bdata), header=header, index=a, replace=replace)
+        self.add_column((adata + bdata), header=header, index=index, replace=replace)
         if err_calc is not None:
-            self.add_column(err_data, header=err_header, index=a + 1, replace=False)
+            self.add_column(err_data, header=err_header, index=index + 1, replace=False)
         return self
 
-    def diffsum(self, a, b, replace=False, header=None):
+    def diffsum(self, a, b, replace=False, header=None, index=None):
         r"""Calculate :math:`\frac{a-b}{a+b}` for the two columns *a* and *b*.
 
         Args:
@@ -109,7 +112,8 @@ class ColumnOps(object):
                 new column header  (defaults to a-b
             replace (bool):
                 Replace the a column with the new data
-
+            index (column index or None):
+                Column to insert new data at.
         Returns:
             (:py:class:`Stoner.Data`):
                 The newly modified Data object.
@@ -143,12 +147,13 @@ class ColumnOps(object):
             err_header = "Error in " + header
         if err_calc is not None:
             err_data = err_calc(adata, bdata, e1data, e2data)
-        self.add_column((adata - bdata) / (adata + bdata), header=header, index=a, replace=replace)
+        index = self.shape[1] if index is None else self.find_col(index)
+        self.add_column((adata - bdata) / (adata + bdata), header=header, index=index, replace=replace)
         if err_calc is not None:
-            self.add_column(err_data, header=err_header, index=a + 1, replace=False)
+            self.add_column(err_data, header=err_header, index=index + 1, replace=False)
         return self
 
-    def divide(self, a, b, replace=False, header=None):
+    def divide(self, a, b, replace=False, header=None, index=None):
         """Divide one column (a) by  another column, number or array (b).
 
         Args:
@@ -162,7 +167,8 @@ class ColumnOps(object):
                 new column header  (defaults to a-b
             replace (bool):
                 Replace the a column with the new data
-
+            index (column index or None):
+                Column to insert new data at.
         Returns:
             (:py:class:`Stoner.Data`):
                 The newly modified Data object.
@@ -180,11 +186,9 @@ class ColumnOps(object):
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
-            err_calc = (
-                lambda adata, bdata, e1data, e2data: np.sqrt((e1data / adata) ** 2 + (e2data / bdata) ** 2)
-                * adata
-                / bdata
-            )
+            err_calc = lambda adata, bdata, e1data, e2data: np.sqrt(
+                (e1data / adata) ** 2 + (e2data / bdata) ** 2
+            ) * np.abs(adata / bdata)
         else:
             err_calc = None
         adata, aname = self.__get_math_val(a)
@@ -195,11 +199,12 @@ class ColumnOps(object):
             header = "{}/{}".format(aname, bname)
         if err_calc is not None and err_header is None:
             err_header = "Error in " + header
+        index = self.shape[1] if index is None else self.find_col(index)
         if err_calc is not None:
             err_data = err_calc(adata, bdata, e1data, e2data)
-        self.add_column((adata / bdata), header=header, index=a, replace=replace)
+        self.add_column((adata / bdata), header=header, index=index, replace=replace)
         if err_calc is not None:
-            self.add_column(err_data, header=err_header, index=a + 1, replace=False)
+            self.add_column(err_data, header=err_header, index=index + 1, replace=False)
         return self
 
     def max(self, column=None, bounds=None):
@@ -315,7 +320,7 @@ class ColumnOps(object):
             self._pop_mask()
         return result
 
-    def multiply(self, a, b, replace=False, header=None):
+    def multiply(self, a, b, replace=False, header=None, index=None):
         """Multiply one column (a) by  another column, number or array (b).
 
         Args:
@@ -329,6 +334,8 @@ class ColumnOps(object):
                 new column header  (defaults to a-b
             replace (bool):
                 Replace the a column with the new data
+            index (column index or None):
+                Column to insert new data at.
 
         Returns:
             (:py:class:`Stoner.Data`):
@@ -347,11 +354,9 @@ class ColumnOps(object):
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
-            err_calc = (
-                lambda adata, bdata, e1data, e2data: np.sqrt((e1data / adata) ** 2 + (e2data / bdata) ** 2)
-                * adata
-                * bdata
-            )
+            err_calc = lambda adata, bdata, e1data, e2data: np.sqrt(
+                (e1data / adata) ** 2 + (e2data / bdata) ** 2
+            ) * np.abs(adata * bdata)
         else:
             err_calc = None
         adata, aname = self.__get_math_val(a)
@@ -362,11 +367,12 @@ class ColumnOps(object):
             header = "{}*{}".format(aname, bname)
         if err_calc is not None and err_header is None:
             err_header = "Error in " + header
+        index = self.shape[1] if index is None else self.find_col(index)
         if err_calc is not None:
             err_data = err_calc(adata, bdata, e1data, e2data)
-        self.add_column((adata * bdata), header=header, index=a, replace=replace)
+        self.add_column((adata * bdata), header=header, index=index, replace=replace)
         if err_calc is not None:
-            self.add_column(err_data, header=err_header, index=a + 1, replace=False)
+            self.add_column(err_data, header=err_header, index=index + 1, replace=False)
         return self
 
     def span(self, column=None, bounds=None):
@@ -444,7 +450,7 @@ class ColumnOps(object):
             self._pop_mask()
         return result
 
-    def subtract(self, a, b, replace=False, header=None):
+    def subtract(self, a, b, replace=False, header=None, index=None):
         """Subtract one column, number or array (b) from another column (a).
 
         Args:
@@ -458,6 +464,8 @@ class ColumnOps(object):
                 new column header  (defaults to a-b
             replace (bool):
                 Replace the a column with the new data
+            index (column index or None):
+                Column to insert new data at.
 
         Returns:
             (:py:class:`Stoner.Data`):
@@ -487,10 +495,11 @@ class ColumnOps(object):
             header = "{}-{}".format(aname, bname)
         if err_calc is not None and err_header is None:
             err_header = "Error in " + header
+        index = self.shape[1] if index is None else self.find_col(index)
         if err_calc is not None:
             err_data = err_calc(adata, bdata, e1data, e2data)
-        self.add_column((adata - bdata), header=header, index=a, replace=replace)
+        self.add_column((adata - bdata), header=header, index=index, replace=replace)
         if err_calc is not None:
             a = self.find_col(a)
-            self.add_column(err_data, header=err_header, index=a + 1, replace=False)
+            self.add_column(err_data, header=err_header, index=index + 1, replace=False)
         return self

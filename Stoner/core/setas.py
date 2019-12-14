@@ -839,7 +839,7 @@ class setas(MutableMapping):
         if axes == 0 and len(self.shape) >= 2 and self.shape[1] in self._col_defaults and not no_guess:
             ret = self._col_defaults[self.shape[1]]
         for n in ["xcol", "xerr", "ycol", "yerr", "zcol", "zerr", "ucol", "vcol", "wcol", "axes"]:
-            ret["has_{}".format(n)] = not (ret[n] is None or (isinstance(ret[n], list) and not ret[n]))
+            ret[f"has_{n}"] = not (ret[n] is None or (isinstance(ret[n], list) and not ret[n]))
 
         ret["has_uvw"] = ret["has_ucol"] & ret["has_vcol"] & ret["has_wcol"]
 
