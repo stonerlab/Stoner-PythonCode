@@ -283,13 +283,14 @@ class VFTEquation(Model):
         yy = np.log(data)
         if x is not None:
             # Getting a good x_0 is critical, so we first of all use poly fit to look
-            x0 = x[np.argmin(np.abs(data))]
+            x0 = x[np.argmin(np.abs(data))] * 0.95
 
             def _find_x0(x, d1, d2, x0):
-                return -d1 / (x - x0) + d2
+                X = np.where(np.isclose(x, x0), 1e-8, x - x0)
+                y = d2 - (d1 / X)
+                return y
 
-            popt, pcov = curve_fit(_find_x0, x, yy, p0=[x0, 20, 10])
+            popt, pcov = curve_fit(_find_x0, x, yy, p0=[1.0 / _kb, 25, x0])
             d1, d2, x0 = popt
         pars = self.make_params(A=np.exp(d2), DE=_kb * d1, x_0=x0)
-        print(pars)
         return update_param_vals(pars, self.prefix, **kwargs)
