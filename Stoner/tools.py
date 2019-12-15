@@ -197,13 +197,16 @@ def format_error(value, error=None, **kargs):
     if mode == "float":  # Standard
         suffix_val = ""
     elif mode == "eng":  # Use SI prefixes
-        v_mag = floor(log10(abs(value)) / 3.0) * 3.0
+        if -1 <= floor(log10(abs(value))) <= 3:
+            v_mag = 0
+        else:
+            v_mag = floor(log10(abs(value)) / 3.0) * 3.0
         prefixes = prefs.get(fmt, prefs["text"])
         if v_mag in prefixes:
             if fmt == "latex":
-                suffix_val = r"\mathrm{{{{{}}}}}".format(prefixes[v_mag])
+                suffix_val = r"\,\mathrm{{{{{}}}}}".format(prefixes[v_mag])
             else:
-                suffix_val = prefixes[v_mag]
+                suffix_val = " " + prefixes[v_mag]
             value /= 10 ** v_mag
             error /= 10 ** v_mag
         else:  # Implies 10^-3<x<10^3
@@ -211,7 +214,7 @@ def format_error(value, error=None, **kargs):
     elif mode == "sci":  # Scientific mode - raise to common power of 10
         v_mag = floor(log10(abs(value)))
         if fmt == "latex":
-            suffix_val = r"\times 10^{{{{{}}}}}".format(int(v_mag))
+            suffix_val = r"\times 10^{{{{{}}}}}\,".format(int(v_mag))
         elif fmt == "html":
             suffix_val = "&times; 10<sup>{}</sup> ".format(int(v_mag))
         else:

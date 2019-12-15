@@ -28,6 +28,31 @@ except ImportError:
     update_param_vals = None
 
 
+def blochLaw(T, Ms, Tc):
+    r"""Bloch's law for spontaneous magnetism at low temperatures.
+
+    Args:
+        T (array like):
+            Temperatures at which M has been measured (Probably in K)
+        Ms (float):
+            The magnetisation at 0K (in whtaever units M is being measured in)
+        Tc (float):
+            Curie temperature in K
+
+    Returns:
+        (array like):
+            Calculated values of M
+
+    Notes:
+        This fits the Bloch Law as given by:
+
+            :math:`M(T) = M_s\left[1 - \left(\frac{T}{T_C}\right)^\frac{3}{2}\right]`
+
+        This expression is only really valid in the low temperature regime.
+    """
+    return Ms * (1 - (T / Tc) ** 1.5)
+
+
 def langevin(H, M_s, m, T):
     r""""The Langevin function for paramagnetic M-H loops/
 
@@ -125,6 +150,52 @@ def fmr_power(H, H_res, Delta_H, K_1, K_2):
         4 * Delta_H * K_1 * (H - H_res) / (Delta_H ** 2 + 4 * (H - H_res) ** 2) ** 2
         - K_2 * (Delta_H ** 2 - 4 * (H - H_res) ** 2) / (Delta_H ** 2 + 4 * (H - H_res) ** 2) ** 2
     )
+
+
+class BlochLaw(Model):
+
+    r"""Bloch's law for spontaneous magnetism at low temperatures.
+
+    Args:
+        T (array like):
+            Temperatures at which M has been measured (Probably in K)
+        Ms (float):
+            The magnetisation at 0K (in whtaever units M is being measured in)
+        Tc (float):
+            Curie temperature in K
+
+    Returns:
+        (array like):
+            Calculated values of M
+
+    Notes:
+        This fits the Bloch Law as given by:
+
+            :math:`M(T) = M_s\left[1 - \left(\frac{T}{T_C}\right)^\frac{3}{2}\right]`
+
+        This expression is only really valid in the low temperature regime.
+    """
+
+    display_names = ["M_s", "T_C"]
+    units = ["emu/cc", "K"]
+
+    def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
+        super(BlochLaw, self).__init__(blochLaw, *args, **kwargs)
+
+    def guess(self, data, x=None, **kwargs):
+        """Guess some starting values."""
+
+        Ms = data.max() * 1.001
+        if x is not None:
+            y = np.log(1 - data / Ms)
+            X = np.log(x)
+            d1, d2 = np.polyfit(X, y, 1)
+            x0 = np.exp(d2 * 2 / 3)
+        else:
+            x0 = len(data)
+        pars = self.make_params(Ms=Ms, Tc=x0)
+        return update_param_vals(pars, self.prefix, **kwargs)
 
 
 class Langevin(Model):

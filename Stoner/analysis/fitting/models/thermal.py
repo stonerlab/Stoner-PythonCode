@@ -290,7 +290,7 @@ class VFTEquation(Model):
                 y = d2 - (d1 / X)
                 return y
 
-            popt, pcov = curve_fit(_find_x0, x, yy, p0=[1.0 / _kb, 25, x0])
+            popt = curve_fit(_find_x0, x, yy, p0=[1.0 / _kb, 25, x0])[0]
             d1, d2, x0 = popt
         pars = self.make_params(A=np.exp(d2), DE=_kb * d1, x_0=x0)
         return update_param_vals(pars, self.prefix, **kwargs)
