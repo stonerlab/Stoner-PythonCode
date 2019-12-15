@@ -20,7 +20,7 @@ d = Data(
 d.curve_fit(SF.wlfit, p0=copy(params), result=True, header="curve_fit")
 
 d.setas = "xye"
-d.lmfit(SF.WLfit, p0=copy(params), result=True, header="lmfit")
+d.lmfit(SF.WLfit, result=True, header="lmfit")
 
 d.setas = "xyeyy"
 d.plot(fmt=["r.", "b-", "g-"])

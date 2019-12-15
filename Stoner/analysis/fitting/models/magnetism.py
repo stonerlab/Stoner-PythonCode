@@ -224,7 +224,7 @@ class Langevin(Model):
         """Configure Initial fitting function."""
         super(Langevin, self).__init__(langevin, *args, **kwargs)
 
-    def guess(self, data, h=None, **kwargs):
+    def guess(self, data, x=None, **kwargs):
         """Guess some starting values.
 
         M_s is taken as half the difference of the range of thew M data,
@@ -233,8 +233,8 @@ class Langevin(Model):
         from scipy.constants import k, mu_0, e, electron_mass, hbar
 
         M_s = (np.max(data) - np.min(data)) / 2.0
-        if h is not None:
-            d = np.sort(np.row_stack((h, data)))
+        if x is not None:
+            d = np.sort(np.row_stack((x, data)))
             dd = savgol_filter(d, 7, 1)
             yd = dd[1] / dd[0]
             chi = np.interp(np.array([0]), d[0], yd)[0]

@@ -160,16 +160,18 @@ class WLfit(Model):
         """Configure Initial fitting function."""
         super(WLfit, self).__init__(wlfit, *args, **kwargs)
 
-    def guess(self, data, B=None, **kwargs):
+    def guess(self, data, x=None, **kwargs):
         """Guess parameters for weak localisation fit."""
         s0, DS, B1, B2 = 1.0, 1.0, 1.0, 1.0
-        if B is not None:
-            zpos = np.argmin(np.abs(B))
+        if x is not None:
+            zpos = np.argmin(np.abs(x))
             s0 = data[zpos]
-            B1 = np.max(B) / 2.0
-            B2 = B1
+            B1 = np.max(x) / 20.0
+            B2 = B1 * 10
             DS = 1.0
         pars = self.make_params(s0=s0, DS=DS, B1=B1, B2=B2)
+        for p in pars:
+            pars[p].min = 0.0
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -196,6 +198,7 @@ class FluchsSondheimer(Model):
     """
 
     display_names = [r"\lambda_{mfp}", "p_{refl}", r"\sigma_0"]
+    units = ["nm", "", r"\Omega^{-1}m^{-1}"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -233,7 +236,21 @@ class BlochGrueneisen(Model):
         """Configure Initial fitting function."""
         super(BlochGrueneisen, self).__init__(blochGrueneisen, *args, **kwargs)
 
-    def guess(self, data, t=None, **kwargs):  # pylint: disable=unused-argument
+    def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
         """Guess some starting values - not very clever"""
-        pars = self.make_params(thetaD=900, rho0=0.01, A=0.2, n=5.0)
+        breakpoint()
+        rho0 = data.min()
+
+        if x is None:
+            t = np.linspace(0, 1, len(data))
+        else:
+            t = x / x.max()
+        y = data - data.min()
+        t = t[y > 0.05 * y.max()]
+        y = y[y > 0.05 * y.max()]
+        A = np.polyfit(t, y, 1)[0]
+
+        pars = self.make_params(thetaD=500, rho0=rho0, A=A, n=5.0)
+        pars["A"].min = 0
+        pars["n"].vary = False
         return update_param_vals(pars, self.prefix, **kwargs)

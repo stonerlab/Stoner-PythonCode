@@ -21,7 +21,7 @@ d = Data(
 d.curve_fit(SF.blochGrueneisen, p0=params, result=True, header="curve_fit")
 
 d.setas = "xy"
-d.lmfit(SF.BlochGrueneisen, p0=params2, result=True, header="lmfit")
+d.lmfit(SF.BlochGrueneisen, result=True, header="lmfit")
 
 d.setas = "xyeyy"
 d.plot(fmt=["r.", "b-", "g-"])
