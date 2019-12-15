@@ -238,7 +238,6 @@ class BlochGrueneisen(Model):
 
     def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
         """Guess some starting values - not very clever"""
-        breakpoint()
         rho0 = data.min()
 
         if x is None:
