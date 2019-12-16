@@ -47,7 +47,9 @@ t.plot(fmt="go", plotter=pyplot.semilogy)
 main_fig = d.plot(figure=t.fig, plotter=pyplot.semilogy)
 d.show()
 # Now convert the angle to sin^2
-t.apply(lambda x: np.sin(np.radians(x[0] / 2.0)) ** 2, 0, header=r"$sin^2\theta$")
+t.apply(
+    lambda x: np.sin(np.radians(x[0] / 2.0)) ** 2, 0, header=r"$sin^2\theta$"
+)
 # Now create the m^2 order
 m = np.arange(len(t)) + fringe_offset
 m = m ** 2

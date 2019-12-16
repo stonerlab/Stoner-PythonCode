@@ -4,7 +4,9 @@ from Stoner.plot.formats import DefaultPlotStyle
 import os.path as path
 from cycler import cycler
 
-filename = path.realpath(path.join(__home__, "..", "doc", "samples", "sample.txt"))
+filename = path.realpath(
+    path.join(__home__, "..", "doc", "samples", "sample.txt")
+)
 
 d = Data(filename, setas="xyy", template=DefaultPlotStyle)
 d.normalise(2, scale=(0.0, 10.0))  # Just to keep the plot sane!

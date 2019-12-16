@@ -25,7 +25,10 @@ d.setas = "xyeyy"
 d.plot(fmt=["r.", "b-", "g-"])
 
 d.annotate_fit(
-    SF.fluchsSondheimer, x=0.2, y=0.6, fontdict={"size": "x-small", "color": "blue"}
+    SF.fluchsSondheimer,
+    x=0.2,
+    y=0.6,
+    fontdict={"size": "x-small", "color": "blue"},
 )
 d.annotate_fit(
     SF.FluchsSondheimer,

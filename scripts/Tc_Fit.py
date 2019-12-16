@@ -21,7 +21,9 @@ r_cols = ("Sample 4::R", "Sample 7::R")  # Resistance Column Labels
 iterator = "iterator"  # Temperature ramp iteration column label
 threshold = 0.85  # Fraction of transition to fit to
 
-data = Data(filename)  # Use FALSE to get a dialog box to the file containing Tc data
+data = Data(
+    filename
+)  # Use FALSE to get a dialog box to the file containing Tc data
 
 # Define my working x and y axes
 # Split one file into a folder of two files by the iterator column

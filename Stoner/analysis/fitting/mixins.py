@@ -1365,6 +1365,7 @@ class FittingMixin(object):
                 replace=replace,
                 output=output,
                 residuals=residuals,
+                **kargs
             )
         else:  # chi^2 mode
             pn = p0
@@ -1373,7 +1374,7 @@ class FittingMixin(object):
                 p0, single_fit = _prep_lmfit_p0(
                     model, data[1], data[0], pn_i, kargs
                 )  # model, data, params, prefix, columns, scale_covar,**kargs)
-                ret_val[i, :] = self.__lmfit_one(model, data, p0, prefix, _, scale_covar, output="row")
+                ret_val[i, :] = self.__lmfit_one(model, data, p0, prefix, _, scale_covar, output="row", **kargs)
             if output == "data":  # Create a data object and seet column headers etc correctly
                 ret = self.clone
                 ret.data = ret_val
