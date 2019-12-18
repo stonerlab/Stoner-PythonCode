@@ -828,7 +828,7 @@ class FittingMixin(object):
         self.mask = False
 
         if isinstance(result, bool) and result:  # Appending data to end of data
-            result = None
+            result = self.shape[1]
             tmp_mask = np.column_stack((tmp_mask, col_mask))
         else:  # Inserting data
             tmp_mask = np.column_stack((tmp_mask[:, 0:result], col_mask, tmp_mask[:, result:]))
@@ -836,8 +836,9 @@ class FittingMixin(object):
             new_col = func(self[:, xcol].T, *popt)
         else:
             new_col = func(self.column(xcol), *popt)
-        self.add_column(new_col, index=result, replace=replace, header=header)
-        if residuals:
+        if result:
+            self.add_column(new_col, index=result, replace=replace, header=header)
+        if residuals and result:
             if not islike_list(ycol):
                 ycol = [ycol]
             for yc in ycol:
@@ -1491,9 +1492,11 @@ class FittingMixin(object):
         if not isiterable(_.ycol):
             _.ycol = [_.ycol]
         p = np.zeros((len(_.ycol), polynomial_order + 1))
+        if isinstance(result, bool) and result:
+            result = self.shape[1]
         for i, ycol in enumerate(_.ycol):
             p[i, :] = np.polyfit(working[:, self.find_col(_.xcol)], working[:, self.find_col(ycol)], polynomial_order)
-            if result is not None:
+            if result:
                 if header is None:
                     header = "Fitted {} with {} order polynomial".format(
                         self.column_headers[self.find_col(ycol)], ordinal(polynomial_order)
