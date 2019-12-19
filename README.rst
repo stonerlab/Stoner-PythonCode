@@ -40,13 +40,13 @@ Getting this Code
     :alt: Introduction and Installation Guide to Stoner Pythin Package
     :width: 320
 
-The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies
-on blist, filemagic, npTDMS, imreg_dft and numba.
+The *Stoner* package requires h5py>=2.7.0, lmfit>=0.9.7, matplotlib>=2.0,numpy>=1.13, Pillow>=4.0,
+scikit-image>=0.13.0 & scipy>=1.0.0 and also optional depends on  filemagic, npTDMS, imreg_dft and numba.
 
 Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining
-dependencies are collected together in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner package is,
-therefore, to install the most recent Anaconda Python distribution (Python 3.7, 3.6, 3.5 or 2.7 should work) and then to install
-the Stoner package via:
+dependencies are collected together in the **phygbu** repositry on anaconda cloud. The easiest way to install the Stoner package is,
+therefore, to install the most recent Anaconda Python distribution (Python 3.7 or 3.6 (version <=0.9.x are compatible
+with Python 2.7 and 3.5 as well), and then run:
 
 .. code-block:: sh
 
@@ -62,8 +62,8 @@ This will install the Stoner package and any missing dependencies into your curr
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: https://github.com/stonerlab/Stoner-PythonCode
 
-The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 3.6 and 3.7  but test with
-2.7 as well. *NB* Python 3.7 is only supported in version 0.9x onwards and is known to not work with version 0.8.x.
+The development codebase is compatible with, and tested under,  Python 3.6 and Python 3.7. Python 3.8 may well work,
+ although this is untested at present),
 
 Overview
 ========
@@ -85,29 +85,44 @@ file formats.
 DataFolder
 ----------
 
-**Stoner.Folders.DataFolder** is a class for assisting with the work of processing lots of files in a common directory
+**Stoner.DataFolder** is a class for assisting with the work of processing lots of files in a common directory
 structure. It provides methods to list. filter and group data according to filename patterns or metadata and then to execute
-a function on each file or group of files. A key feature of DataFolder is its ability to work with the collated metadata from
-the individual files that are held in the DataFolder. In combination with its ability to walk through a complete heirarchy of groups of
+a function on each file or group of files and then collect metadata from each file in turn. A key feature of DataFolder is
+its ability to work with the collated metadata from the individual files that are held in the DataFolder.
+In combination with its ability to walk through a complete heirarchy of groups of
 **Data** objects, the handling of the common metadata provides powerful tools for quickly writing data reduction scripts.
 
-The **Stoner.HDF5** module provides some experimental classes to manipulate *DataFile* and *DataFolder* objects within HDF5
-format files. These are not a way to handle arbitary HDF5 files - the format is much to complex and flexible to make that
-an easy task, rather it is a way to work with large numbers of experimental sets using just a single file which may be less
-brutal to your computer's OS than having directory trees with millions of individual files. The module also provides some classes to
-support loading some other HDF5 flavoured files into a **DataFile**.
+The **Stoner.HDF5** module provides some additional classes to manipulate *Data* and *DataFolder* objects within HDF5
+format files. HDF5 is a common chouse for storing data from large scale facilties, although providing a way to handle
+arbitary HDF5 files is beyond the scope of this package at this time - the format is much too complex and flexible to make that
+an easy task. Rather it provides a way to work with large numbers of experimental sets using just a single file which may be less
+brutal to your computer's OS than having directory trees with millions of individual files.
+
+The module also provides some classes to support loading some particular HDF5 flavoured files into a **Data** object.
 
 The **Stoner.Zip** module provides a similar set of classes to **Stoner.HDF5** but working with the ubiquitous zip compressed file format.
 
 Image Subpackage
 ----------------
 
-The **Stoner.Image** package is a new feature of recent versions of the package and provides dedicated classes for working with image data,
-and in particular for analysing Kerr Microscope image files. It provides an **ImageFile** class that is functionally similar to **DataFile**
-except that the numerical data is understood to represent image data and additional methods are incorporated to facilitate processing. The **ImageFolder**
-and **ImageStack** classes provide similar functionality to **DataFolder** but with additional methods specific to handling collections of images. **ImageStack**
+The **Stoner.Image** package is a feature of recent versions of the package and provides dedicated classes for working with image data,
+and in particular for analysing Magnetic microscopy files such as Kerr Microscope image files or Scanning transmission microscopy files.
+ It provides an **ImageFile** class that is functionally similar to **Data** except that the numerical data is understood to represent
+ image data and additional methods are incorporated to facilitate processing. The **ImageFolder** and **ImageStack** classes
+ provide similar functionality to **DataFolder** but with additional methods specific to handling collections of images. **ImageStack**
 uses a 3D numpy array as it's primary image store which permits faster access (at the expense of a larger memory footprint) than the lazy loading ordered
 dictionary of **ImageFolder**
+
+The **ImageFile** class allows a direct interaction with many of the image routines in *scikit-image* and the *scipy.ndimage* modules -
+which when coupled with the ability of **ImageFolder** and **ImageStack** to iteratively process their **ImageFile** members
+can allow scripts to process large numbers of images to be written in only a few lines of code.
+
+Multiprocessing
+---------------
+
+The **DataFolder** and **ImageFolder/ImageStack** classes will make use of the *multiprocessing* module when applying a function
+to their members for more efficient parallel processing of large numbers of data files. This is disabled by default on Windows
+due to the large overhead of starting multiple instances of the python interpreter.
 
 Resources
 ==========
@@ -124,7 +139,7 @@ contributed code, ideas and bug testing.
 
 The User Guide gives the current list of other contributors to the project.
 
-This code and the sample data are all (C) The University of Leeds 2008-2017 unless otherwise indficated in the source file.
+This code and the sample data are all (C) The University of Leeds 2008-2020 unless otherwise indficated in the source file.
 The contents of this package are licensed under the terms of the GNU Public License v3
 
 Recent Changes
@@ -143,6 +158,12 @@ Development Version
 The current development version is hosted in the master branch of the repository and will become version 0.10. There is no definitive list of
 features at this time. Better integration with pandas and xarray are under consideration as is depricating some of the less optimal parts of the api.
 
+New Features in 0.10-dev include:
+
+    *   Continued refactoring of code to break large monolithic classes and modules into smaller parts
+    *   Refactoring the **baseFolder** class so that sub-groups are stored in an attribute that is an instance of a custom
+        dictionary with methods to prune and filter in the virtual tree of sub-folders.
+
 Build Status
 ~~~~~~~~~~~~
 
@@ -150,7 +171,8 @@ Version 0.7 onwards are tested using the Travis-CI services with unit test cover
 
 Version 0.9 is tested with Python 2.7, 3.5, 3.6,
 
-The development version - which will be 0.10 will be tested with Python 3.6 and Python 3.7 only until Python 3.8 becomes stable.
+The development version - which will be 0.10 will be tested with Python 3.6 and Python 3.7 only until Python 3.8 becomes stable in
+the anaconda envuronment.
 
 
 Citing the Stoner Package
