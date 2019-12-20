@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
@@ -51,8 +52,8 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DataFolder&quot;</span><span class="p">,</span> <span class="s2">&quot;PlotFolder&quot;</span><span class="p">]</span>
 
-<span class="kn">from</span> <span class="nn">.folders.core</span> <span class="k">import</span> <span class="n">baseFolder</span>
-<span class="kn">from</span> <span class="nn">.folders.mixins</span> <span class="k">import</span> <span class="n">DiskBasedFolder</span><span class="p">,</span> <span class="n">DataMethodsMixin</span><span class="p">,</span> <span class="n">PlotMethodsMixin</span>
+<span class="kn">from</span> <span class="nn">.folders.core</span> <span class="kn">import</span> <span class="n">baseFolder</span>
+<span class="kn">from</span> <span class="nn">.folders.mixins</span> <span class="kn">import</span> <span class="n">DiskBasedFolder</span><span class="p">,</span> <span class="n">DataMethodsMixin</span><span class="p">,</span> <span class="n">PlotMethodsMixin</span>
 
 
 <div class="viewcode-block" id="DataFolder"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.html#Stoner.DataFolder">[docs]</a><span class="k">class</span> <span class="nc">DataFolder</span><span class="p">(</span><span class="n">DataMethodsMixin</span><span class="p">,</span> <span class="n">DiskBasedFolder</span><span class="p">,</span> <span class="n">baseFolder</span><span class="p">):</span>
@@ -66,8 +67,8 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="DataFolder.__init__"><a class="viewcode-back" href="../../classes/Stoner.DataFolder.__init__.html#Stoner.DataFolder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
+<div class="viewcode-block" id="DataFolder.__init__"><a class="viewcode-back" href="../../classes/Stoner.DataFolder.__init__.html#Stoner.DataFolder.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">Data</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DataFolder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div></div>
@@ -114,9 +115,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

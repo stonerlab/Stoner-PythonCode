@@ -16,7 +16,14 @@ func = lambda x, A, B, C: A + B * exp(-x / C)
 
 # Do the fitting and plot the result
 fit = d.odr(
-    func, result=True, header="Fit", A=1, B=1, C=1, prefix="Model", residuals=True
+    func,
+    result=True,
+    header="Fit",
+    A=1,
+    B=1,
+    C=1,
+    prefix="Model",
+    residuals=True,
 )
 
 # Reset labels

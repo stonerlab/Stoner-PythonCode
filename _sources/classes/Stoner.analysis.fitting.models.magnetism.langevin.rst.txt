@@ -1,0 +1,6 @@
+langevin
+========
+
+.. currentmodule:: Stoner.analysis.fitting.models.magnetism
+
+.. autofunction:: langevin

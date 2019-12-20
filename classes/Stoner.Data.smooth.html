@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -62,28 +63,29 @@
 <dd><p>Smooth data by convoluting with a window.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>window</strong> (<em>string or tuple</em>) – Defines the window type to use by passing to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.3.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.get_window()</span></code></a>.</p>
+<dd class="field-odd"><p><strong>window</strong> (<em>string or tuple</em>) – Defines the window type to use by passing to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.4.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.get_window()</span></code></a>.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>xcol</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Data to use as x data if needed to define a window. If None, use <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a></p></li>
 <li><p><strong>ycvol</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Data to be smoothed</p></li>
-<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – If int, then the number of points to use in the smoothing window. If float, then the size in x-data to be used.</p></li>
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – If int, then the number of points to use in the smoothing window. If float, then the size in x-data
+to be used.</p></li>
 <li><p><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em> or </em><em>column index</em>) – Whether to add the smoothed data to the dataset and if so where.</p></li>
 <li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Replace the exiting data or insert as a new column.</p></li>
 <li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – New column header for the new data.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>(self or array)</em> –     If result is False, then the return value will be a copy of the smoothed data, otherwise the return value
-is a copy of the AnalysisMixin object with the smoothed data added,</p>
+<dd class="field-odd"><p><em>(self or array)</em> –     If result is False, then the return value will be a copy of the smoothed data, otherwise the return
+value is a copy of the AnalysisMixin object with the smoothed data added,</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If size is float, then it is necessary to map the X-data to a number of rows and to ensure that the data is evenly spaced in x.
-To do this, the number of rows in the window is found by dividing the span in x by the size and multiplying by the total
-lenfth. Then the data is interpolated to a new set of evenly space X over the same range, smoothed and then interpoalted back
-to the original x values.</p>
+<p>If size is float, then it is necessary to map the X-data to a number of rows and to ensure that the data
+is evenly spaced in x. To do this, the number of rows in the window is found by dividing the span in x
+by the size and multiplying by the total lenfth. Then the data is interpolated to a new set of evenly
+space X over the same range, smoothed and then interpoalted back to the original x values.</p>
 </dd></dl>
 
 </div>
@@ -146,9 +148,9 @@ to the original x values.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

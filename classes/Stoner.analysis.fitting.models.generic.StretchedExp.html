@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>StretchedExp &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="arrhenius" href="Stoner.analysis.fitting.models.thermal.arrhenius.html" />
+    <link rel="prev" title="Quadratic" href="Stoner.analysis.fitting.models.generic.Quadratic.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.analysis.fitting.models.generic.Quadratic.html" title="Previous document">Quadratic</a>
+        </li>
+        <li>
+          <a href="Stoner.analysis.fitting.models.thermal.arrhenius.html" title="Next document">arrhenius</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="../analysis-fitting.html">Additional Fitting models</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="stretchedexp">
+<h1>StretchedExp<a class="headerlink" href="#stretchedexp" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.generic.StretchedExp">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.generic.</code><code class="sig-name descname">StretchedExp</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/generic.html#StretchedExp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.generic.StretchedExp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>A stretched exponential fuinction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array</em>) – x data values</p></li>
+<li><p><strong>A</strong> (<em>float</em>) – Constant prefactor</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – Stretch factor</p></li>
+<li><p><strong>x_0</strong> (<em>float</em>) – Scaling factor for x data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Data for a stretched exponentional function.</p>
+</dd>
+</dl>
+<p>The stretched exponential is defined as <span class="math notranslate nohighlight">\(y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]\)</span>.</p>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.generic.StretchedExp.display_names" title="Stoner.analysis.fitting.models.generic.StretchedExp.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.generic.StretchedExp.guess" title="Stoner.analysis.fitting.models.generic.StretchedExp.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
+<td><p>Guess parameters for the stretched exponential from data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.generic.StretchedExp.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['A', '\\beta', 'x_0']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.generic.StretchedExp.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.generic.StretchedExp.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/generic.html#StretchedExp.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.generic.StretchedExp.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess parameters for the stretched exponential from data.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.generic.Quadratic.html"
+                        title="previous chapter">Quadratic</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.thermal.arrhenius.html"
+                        title="next chapter">arrhenius</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.generic.StretchedExp.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.analysis.fitting.models.generic.Quadratic.html" title="Previous document">Quadratic</a>
+        </li>
+        <li>
+          <a href="Stoner.analysis.fitting.models.thermal.arrhenius.html" title="Next document">arrhenius</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="../analysis-fitting.html">Additional Fitting models</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.2.2
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

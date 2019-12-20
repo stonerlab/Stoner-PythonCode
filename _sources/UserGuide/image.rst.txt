@@ -111,7 +111,7 @@ Somewhat analogous to :class:`Stoner.Core.DataArray`, the :class:`ImageArray` is
 store the image data in ImageFile. The numpy.ndarray like data can be accessed at any point via either :attr:`ImageFile.image` or :attr:`ImageFile.data`
 and will be accepted by functions that take an numpy.ndarray as an argument.
 
-Working with Lots of Images: :class:`ImageFolder` and :class:`ImageStack2`
+Working with Lots of Images: :class:`ImageFolder` and :class:`ImageStack`
 ==========================================================================
 
 Just as :class:`Stoner.DataFolder` allows you to efficiently process lots of separate :class:`Stoner.Data` files, :class:`ImageFolder` does the same for lots
@@ -119,9 +119,9 @@ of :class:`ImageFile` files. It is based on the same parent :class:`Stoner.Fodle
 sub-folders and so on. In addition, an :class:`Imagefolder` has additional attributes and methods for working with multiple images.
 
 Due to the potentially large amount of data involved in processing images it is good to take advantage of native numpy's speed wherever possible. To this end
-:class:`Stoner.Image.ImageStack2` is now available. This works very similarly to ImageFolder but internally represents the image stack as a 3d numpy array.
+:class:`Stoner.Image.ImageStack` is now available. This works very similarly to ImageFolder but internally represents the image stack as a 3d numpy array.
 For example::
-	imst = ImageStack2('pathtomyfolder', pattern='*.tif') #directory is held in memory but images are not loaded yet
+	imst = ImageStack('pathtomyfolder', pattern='*.tif') #directory is held in memory but images are not loaded yet
 	imst = imst['subfolder'] #take advantage of :class:`DiskBasedFolder` grouping abilities
 	imst.translate(5,3) #instantiate the stack and translate all images
 

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -78,7 +79,7 @@ with <a class="reference internal" href="../classes/Stoner.Image.ImageFile.html#
 <h3>Building a (virtual) Folder of Data<a class="headerlink" href="#building-a-virtual-folder-of-data" title="Permalink to this headline">¶</a></h3>
 <p>The first thing you probably want to do is to get a list of data files in a directory
 (possibly including its subdirectories) and probably matching some sort of filename pattern.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">DataFolder</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">DataFolder</span>
 <span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.dat&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -86,7 +87,7 @@ with <a class="reference internal" href="../classes/Stoner.Image.ImageFile.html#
 then a new instance <em>f</em> is created. The optional <em>pattern</em> keyword is used to only collect
 the files with a .dat extension. In this example, it is assumed that the files are readable by
 the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.Data</span></code> general class, if they are in some other format then the ‘type’ keyword can be used:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.FileFormats</span> <span class="k">import</span> <span class="n">XRDFile</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.FileFormats</span> <span class="kn">import</span> <span class="n">XRDFile</span>
 <span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">XRDFile</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.dql&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -190,14 +191,104 @@ The <code class="xref py py-meth docutils literal notranslate"><span class="pre"
 <div class="section" id="manipulating-the-file-list-in-a-folder">
 <h3>Manipulating the File List in a Folder<a class="headerlink" href="#manipulating-the-file-list-in-a-folder" title="Permalink to this headline">¶</a></h3>
 <p>The  <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFolder.flatten()</span></code> method will do the same as passing the <em>flat</em> keyword argument when creating the Lpy:class:<cite>DataFolder</cite> - although
-the search for folders on disk is recursive, the resulting <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> contains a flat list of files. You can also use the
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFolder.prune()</span></code> method to remove groups (including nested groups) that have no data files in them. Finally the <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFolder.compress()</span></code>
-is useful when a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> contains a chain of sub-folers that have only one sub-folder in them - as can result when reading one specific
-directory from a deep directory tree. The <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFolder.compress()</span></code> method adjusts the virtual tree so that the rpot group is at the first level that
-contains more than just a single sub-folder.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">prune</span><span class="p">()</span>
-<span class="n">f</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="n">f</span><span class="o">.</span><span class="n">compress</span><span class="p">()</span>
+the search for folders on disk is recursive, the resulting <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> contains a flat list of files.</p>
+<p>You can also use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.folders.groups.GroupsDict.prune()</span></code> - which is aliased as <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFolder.prune()</span></code> method to remove
+groups (including nested  groups) that have no data files in them. If you supply a <em>name</em> keyword to the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.folders.groups.GroupsDict.prune()</span></code> method it will instead remove any sub-folder with a matching name (and all sub-folders within it):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Root</span><span class="o">---&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>
+     <span class="o">|</span>
+     <span class="o">|-&gt;</span> <span class="n">A</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>    <span class="o">|</span>
+     <span class="o">|</span>    <span class="o">|--&gt;</span> <span class="n">B</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">5</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>    <span class="o">|</span>     <span class="o">|</span>
+     <span class="o">|</span>    <span class="o">|</span>     <span class="o">|--&gt;</span> <span class="n">C</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>    <span class="o">|</span>     <span class="o">|</span>     <span class="o">|</span>
+     <span class="o">|</span>    <span class="o">|</span>     <span class="o">|</span>     <span class="o">|--&gt;</span> <span class="n">D</span> <span class="p">(</span><span class="mi">0</span><span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>    <span class="o">|</span>     <span class="o">|</span>
+     <span class="o">|</span>    <span class="o">|</span>     <span class="o">|--&gt;</span> <span class="n">E</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>    <span class="o">|</span>
+     <span class="o">|</span>    <span class="o">|--&gt;</span> <span class="n">F</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>
+     <span class="o">|--&gt;</span><span class="n">G</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">2</span> <span class="n">files</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>root.groups.prune()</strong> will have the effect of removing sub-folders <em>C</em>, <em>D</em>, <em>E</em>, and <em>F</em></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Root</span><span class="o">---&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>
+     <span class="o">|</span>
+     <span class="o">|-&gt;</span> <span class="n">A</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>    <span class="o">|</span>
+     <span class="o">|</span>    <span class="o">|--&gt;</span> <span class="n">B</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">5</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>
+     <span class="o">|--&gt;</span><span class="n">G</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">2</span> <span class="n">files</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>root.groups.prune(name=”B”)</strong> will have the effect of removing sub-folders <em>C</em>, <em>D</em>, and <em>F</em></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Root</span><span class="o">---&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>
+     <span class="o">|</span>
+     <span class="o">|-&gt;</span> <span class="n">A</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>    <span class="o">|</span>
+     <span class="o">|</span>    <span class="o">|--&gt;</span> <span class="n">F</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>
+     <span class="o">|--&gt;</span><span class="n">G</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">2</span> <span class="n">files</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In contrast, the <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.folders.groups.GroupsDict.keep()</span></code> method will retain the tree branches that contain the groups that match the <em>name</em>
+parameter. For example,</p>
+<p><strong>root.groups.keep(“B”)</strong> will have the effect of deleting everything except the folders <em>A</em>, <em>B</em>, <em>C</em>, <em>D</em> and <em>E</em>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Root</span><span class="o">---&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>
+     <span class="o">|</span>
+     <span class="o">|-&gt;</span> <span class="n">A</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+          <span class="o">|</span>
+          <span class="o">|--&gt;</span> <span class="n">B</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">5</span> <span class="n">files</span><span class="p">)</span>
+                <span class="o">|</span>
+                <span class="o">|--&gt;</span> <span class="n">C</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+                <span class="o">|</span>     <span class="o">|</span>
+                <span class="o">|</span>     <span class="o">|--&gt;</span> <span class="n">D</span> <span class="p">(</span><span class="mi">0</span><span class="n">files</span><span class="p">)</span>
+                <span class="o">|</span>
+                <span class="o">|--&gt;</span> <span class="n">E</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.folders.groups.GroupsDict.compress()</span></code> is useful when a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> contains a chain of sub-folers that have only one sub-folder in them - as can
+result when reading one specific directory from a deep directory tree. The <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFolder.compress()</span></code> method adjusts the virtual tree so that the
+root group is at the first level that contains more than just a single sub-folder.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">::</span>
+</pre></div>
+</div>
+<blockquote>
+<div><dl>
+<dt>Root—&gt; (0 files)</dt><dd><div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<dl>
+<dt><a href="#id1"><span class="problematic" id="id2">|</span></a>-&gt; A–&gt; (0 files)</dt><dd><div class="line-block">
+<div class="line"><br /></div>
+</div>
+<dl>
+<dt><a href="#id3"><span class="problematic" id="id4">|</span></a>–&gt; B–&gt; (0 files)</dt><dd><div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><a href="#id5"><span class="problematic" id="id6">|</span></a>–&gt; C–&gt; (5 files)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>root.groups.compress</strong> will reformat the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Root</span><span class="o">/</span><span class="n">A</span><span class="o">/</span><span class="n">B</span><span class="o">/</span><span class="n">C</span><span class="o">---&gt;</span> <span class="p">(</span><span class="mi">5</span> <span class="n">files</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.folders.groups.GroupsDict.compress()</span></code> takes a keyword argument <em>keep_terminal</em> which will keep the final group if set to <strong>True</strong>. In the example above,
+<strong>root.compress(keep_terminal=True)</strong> gives:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Root</span><span class="o">/</span><span class="n">A</span><span class="o">/</span><span class="n">B</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+        <span class="o">|</span>
+        <span class="o">|--&gt;</span><span class="n">C</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">5</span> <span class="n">files</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can also use the sorted filenames in a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> to reconstruct the directory structure as
@@ -310,6 +401,11 @@ is the <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Da
 <span class="n">f</span><span class="o">.</span><span class="n">each</span><span class="p">(</span><span class="n">my_analysis</span><span class="p">,</span><span class="n">arg1</span><span class="p">,</span><span class="n">arg2</span><span class="p">,</span><span class="n">karg</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>(or alternatively using the matrix multiplication operator &#64;):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">my_analysis</span><span class="nd">@f</span><span class="p">)(</span><span class="n">arg1</span><span class="p">,</span><span class="n">arg2</span><span class="p">,</span><span class="n">karg</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>(my_analysis&#64;f)</em> creates the callable object that iterates <em>my_analysis</em> over f, the second set of parenthesis above jsut calls this iterating object.</p>
 <p>If the return value of the function is another instance of <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> (or whatever is being stored as the items in the
 <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a>) then it will replace the items inside the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a>. The call to <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFolder.each</span></code> will also return a
 simple list of the return values. If the function retuns something else, then you can have it added to the metadata of each item in the
@@ -320,11 +416,6 @@ the name of the metadata to store the return value explicitly.</p>
 <span class="n">f</span><span class="o">.</span><span class="n">each</span><span class="p">(</span><span class="n">my_analysis</span><span class="p">,</span><span class="n">arg1</span><span class="p">,</span><span class="n">arg2</span><span class="p">,</span><span class="n">karg</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">_return</span><span class="o">=</span><span class="s2">&quot;beta&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Finally if you are using Python 3.5+, then you can do the same thing as calling <code class="xref py py-attr docutils literal notranslate"><span class="pre">Datafolder.each</span></code> with the matrix multiplication oeprator &#64;:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">my_analysis</span><span class="nd">@f</span><span class="p">)(</span><span class="n">arg1</span><span class="p">,</span><span class="n">arg2</span><span class="p">,</span><span class="n">karg</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><em>(my_analysis&#64;f)</em> creates the callable object that iterates <em>my_analysis</em> over f, the second set of parenthesis above jsut calls this iterating object.</p>
 <p><a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> is also indexable and has a length:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">()</span>
 <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -359,7 +450,7 @@ is missing.:</p>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">array</span><span class="p">([</span><span class="mf">12.56</span><span class="p">,</span> <span class="mf">12.56</span><span class="p">,</span> <span class="mf">12.56</span><span class="p">,</span> <span class="mf">12.56</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>The :py:meth:<a href="#id1"><span class="problematic" id="id2">`</span></a>combined_metadata_proxy.slice” method procides more control over how the metadata stored in the data folder can be returned.:</p>
+<p>The :py:meth:<a href="#id7"><span class="problematic" id="id8">`</span></a>combined_metadata_proxy.slice” method procides more control over how the metadata stored in the data folder can be returned.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="s2">&quot;Startupaxis-X&quot;</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="p">[{</span><span class="s1">&#39;Startupaxis-X&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
      <span class="p">{</span><span class="s1">&#39;Startupaxis-X&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
@@ -408,13 +499,22 @@ of )oif <em>values_only</em> is True, just a list, but the <em>output</em> param
 </li>
 </ul>
 </div></blockquote>
+<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">combined_metadata_proxy.slice()</span></code> will search for matching etadata names by string - including using <em>glob</em> patterns -</p>
+<p><strong>root.metadata.slice(“Model:*”)</strong> will return all metadata items in all files in the DataFolder that start with ‘Model:’. Since one of the
+common uses of DatFolder is to fit a series of data files with a model, the <code class="xref py py-meth docutils literal notranslate"><span class="pre">combined_metadata_proxy.slice()</span></code> will also accept a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> and will use it to pull the fitting parameters after using a <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.DataFolder.curve_fit()</span></code> or similar method.:</p>
+<blockquote>
+<div><p>from Stoner.analysis.fitting.models.generic import Gaussian
+fldr.each.lmfit(Gaussian,result=True)
+summary=fldr.metadata.slice(Gaussian,output=”data”)</p>
+</div></blockquote>
 <p>Since <code class="xref py py-class docutils literal notranslate"><span class="pre">combined_metadata_proxy</span></code> implements a <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.MutableMapping</span></code> it supplies the standard dictionary
 like methods such as <code class="xref py py-meth docutils literal notranslate"><span class="pre">combined_metadata_proxy.keys()</span></code>,:py:meth:<cite>combined_metadata_proxy.values</cite> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">combined_metadata_proxy.items()</span></code>
 - each of which work with the set of keys common to <strong>all</strong> the data files in the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a>. If you instead want to work with all the
 keys defined in <strong>any</strong> of the data files, then there are versions <code class="xref py py-meth docutils literal notranslate"><span class="pre">combined_metadata_proxy.all_keys()</span></code>,
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">combined_metadata_proxy.all_values()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">combined_metadata_proxy.all_items()</span></code>. The <code class="xref py py-attr docutils literal notranslate"><span class="pre">combined_metadata_proxy.all</span></code>
 provides a list of all the metadata dictionaries for all the data files in the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a>.</p>
-<p>Using the <a href="#id3"><span class="problematic" id="id4">*</span></a>output*=”Data” is particularly powerful as it can be used to gather the results from e.g. a curve fitting across lots of datra files into a
+<p>Using the <a href="#id9"><span class="problematic" id="id10">*</span></a>output*=”Data” is particularly powerful as it can be used to gather the results from e.g. a curve fitting across lots of datra files into a
 single <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> object ready ofr plotting or further analysis.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fldr</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;*.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 <span class="n">fldr</span><span class="o">.</span><span class="n">each</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">PowerLaw</span><span class="p">)</span>
@@ -689,9 +789,9 @@ each and so. This presupposes that the files started of sorted by some suitable 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

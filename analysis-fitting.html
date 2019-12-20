@@ -1,0 +1,513 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Additional Fitting models &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="linear" href="classes/Stoner.analysis.fitting.models.generic.linear.html" />
+    <link rel="prev" title="FittingMixin" href="classes/Stoner.analysis.fitting.FittingMixin.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="classes/Stoner.analysis.fitting.FittingMixin.html" title="Previous document">FittingMixin</a>
+        </li>
+        <li>
+          <a href="classes/Stoner.analysis.fitting.models.generic.linear.html" title="Next document">linear</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="index.html">Stoner Package</a></li>
+      <li>
+        <a href="Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="additional-fitting-models">
+<span id="fitting-models"></span><h1>Additional Fitting models<a class="headerlink" href="#additional-fitting-models" title="Permalink to this headline">¶</a></h1>
+<p>The Stoner package contains several pre-build fitting models that are provided as individual
+functions for use with <a class="reference internal" href="classes/Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.curve_fit()</span></code></a> and <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> classes.Additional
+The latter also support the ability to determine an initial value of the parameters from the Data
+and so can simplify the fitting code considerably. Many of the models come with an example function.</p>
+<div class="section" id="generic-modles">
+<h2>Generic Modles<a class="headerlink" href="#generic-modles" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-Stoner.analysis.fitting.models.generic">
+<span id="stoner-analysis-fitting-models-generic-module"></span><h3>Stoner.analysis.fitting.models.generic Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.generic" title="Permalink to this headline">¶</a></h3>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various generic models.</p>
+<div class="section" id="functions">
+<h4>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h4>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.linear.html#Stoner.analysis.fitting.models.generic.linear" title="Stoner.analysis.fitting.models.generic.linear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">linear</span></code></a>(x, intercept, slope)</p></td>
+<td><p>Simple linear function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.lorentzian_diff.html#Stoner.analysis.fitting.models.generic.lorentzian_diff" title="Stoner.analysis.fitting.models.generic.lorentzian_diff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lorentzian_diff</span></code></a>(x, A, sigma, mu)</p></td>
+<td><p>Implement a differential form of a Lorentzian peak.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.powerLaw.html#Stoner.analysis.fitting.models.generic.powerLaw" title="Stoner.analysis.fitting.models.generic.powerLaw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">powerLaw</span></code></a>(x, A, k)</p></td>
+<td><p>Power Law Fitting Equation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.quadratic.html#Stoner.analysis.fitting.models.generic.quadratic" title="Stoner.analysis.fitting.models.generic.quadratic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quadratic</span></code></a>(x, a, b, c)</p></td>
+<td><p>A Simple quadratic fitting function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.stretchedExp.html#Stoner.analysis.fitting.models.generic.stretchedExp" title="Stoner.analysis.fitting.models.generic.stretchedExp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stretchedExp</span></code></a>(x, A, beta, x_0)</p></td>
+<td><p>A stretched exponential fuinction.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h4>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h4>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.Linear.html#Stoner.analysis.fitting.models.generic.Linear" title="Stoner.analysis.fitting.models.generic.Linear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Linear</span></code></a>([independent_vars, prefix, nan_policy])</p></td>
+<td><p>Simple linear fit</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.Lorentzian_diff.html#Stoner.analysis.fitting.models.generic.Lorentzian_diff" title="Stoner.analysis.fitting.models.generic.Lorentzian_diff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lorentzian_diff</span></code></a>(*args, **kwargs)</p></td>
+<td><p>lmfit Model rerprenting the differential form of a Lorentzian Peak.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
+<td><p>Model class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.PowerLaw.html#Stoner.analysis.fitting.models.generic.PowerLaw" title="Stoner.analysis.fitting.models.generic.PowerLaw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PowerLaw</span></code></a>([independent_vars, prefix, nan_policy])</p></td>
+<td><p>Power Law Fitting Equation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.Quadratic.html#Stoner.analysis.fitting.models.generic.Quadratic" title="Stoner.analysis.fitting.models.generic.Quadratic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quadratic</span></code></a>([independent_vars, prefix, nan_policy])</p></td>
+<td><p>A Simple quadratic fitting function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.StretchedExp.html#Stoner.analysis.fitting.models.generic.StretchedExp" title="Stoner.analysis.fitting.models.generic.StretchedExp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StretchedExp</span></code></a>(*args, **kwargs)</p></td>
+<td><p>A stretched exponential fuinction.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="thermal-physics-models">
+<h2>Thermal Physics models<a class="headerlink" href="#thermal-physics-models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-Stoner.analysis.fitting.models.thermal">
+<span id="stoner-analysis-fitting-models-thermal-module"></span><h3>Stoner.analysis.fitting.models.thermal Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.thermal" title="Permalink to this headline">¶</a></h3>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various thermal physics models.</p>
+<div class="section" id="id1">
+<h4>Functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.arrhenius.html#Stoner.analysis.fitting.models.thermal.arrhenius" title="Stoner.analysis.fitting.models.thermal.arrhenius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arrhenius</span></code></a>(x, A, DE)</p></td>
+<td><p>Arrhenius Equation without T dependendent prefactor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.modArrhenius.html#Stoner.analysis.fitting.models.thermal.modArrhenius" title="Stoner.analysis.fitting.models.thermal.modArrhenius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modArrhenius</span></code></a>(x, A, DE, n)</p></td>
+<td><p>Arrhenius Equation with a variable T power dependent prefactor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.nDimArrhenius.html#Stoner.analysis.fitting.models.thermal.nDimArrhenius" title="Stoner.analysis.fitting.models.thermal.nDimArrhenius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nDimArrhenius</span></code></a>(x, A, DE, n)</p></td>
+<td><p>Arrhenius Equation without T dependendent prefactor for various dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.vftEquation.html#Stoner.analysis.fitting.models.thermal.vftEquation" title="Stoner.analysis.fitting.models.thermal.vftEquation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vftEquation</span></code></a>(x, A, DE, x_0)</p></td>
+<td><p>Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id2">
+<h4>Classes<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.Arrhenius.html#Stoner.analysis.fitting.models.thermal.Arrhenius" title="Stoner.analysis.fitting.models.thermal.Arrhenius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Arrhenius</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Arrhenius Equation without T dependendent prefactor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.ModArrhenius.html#Stoner.analysis.fitting.models.thermal.ModArrhenius" title="Stoner.analysis.fitting.models.thermal.ModArrhenius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModArrhenius</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Arrhenius Equation with a variable T power dependent prefactor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
+<td><p>Model class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.NDimArrhenius.html#Stoner.analysis.fitting.models.thermal.NDimArrhenius" title="Stoner.analysis.fitting.models.thermal.NDimArrhenius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NDimArrhenius</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Arrhenius Equation without T dependendent prefactor for various dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.VFTEquation.html#Stoner.analysis.fitting.models.thermal.VFTEquation" title="Stoner.analysis.fitting.models.thermal.VFTEquation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VFTEquation</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="electron-tunnelling-models">
+<h2>Electron Tunnelling models<a class="headerlink" href="#electron-tunnelling-models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-Stoner.analysis.fitting.models.tunnelling">
+<span id="stoner-analysis-fitting-models-tunnelling-module"></span><h3>Stoner.analysis.fitting.models.tunnelling Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.tunnelling" title="Permalink to this headline">¶</a></h3>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various models of electron tunnelling.</p>
+<div class="section" id="id3">
+<h4>Functions<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.bdr.html#Stoner.analysis.fitting.models.tunnelling.bdr" title="Stoner.analysis.fitting.models.tunnelling.bdr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bdr</span></code></a>(V, A, phi, dphi, d, mass)</p></td>
+<td><p>BDR model tunnelling.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.fowlerNordheim.html#Stoner.analysis.fitting.models.tunnelling.fowlerNordheim" title="Stoner.analysis.fitting.models.tunnelling.fowlerNordheim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fowlerNordheim</span></code></a>(V, A, phi, d)</p></td>
+<td><p>Fowler Nordhiem Model of electron tunnelling.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.simmons.html#Stoner.analysis.fitting.models.tunnelling.simmons" title="Stoner.analysis.fitting.models.tunnelling.simmons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simmons</span></code></a>(V, A, phi, d)</p></td>
+<td><p>Simmons model of electron tunnelling.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.tersoffHammann.html#Stoner.analysis.fitting.models.tunnelling.tersoffHammann" title="Stoner.analysis.fitting.models.tunnelling.tersoffHammann"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tersoffHammann</span></code></a>(V, A)</p></td>
+<td><p>TersoffHamman model for tunnelling through STM tip.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id4">
+<h4>Classes<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.BDR.html#Stoner.analysis.fitting.models.tunnelling.BDR" title="Stoner.analysis.fitting.models.tunnelling.BDR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BDR</span></code></a>(*args, **kwargs)</p></td>
+<td><p>BDR model tunnelling.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.html#Stoner.analysis.fitting.models.tunnelling.FowlerNordheim" title="Stoner.analysis.fitting.models.tunnelling.FowlerNordheim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FowlerNordheim</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Fowler Nordhiem Model of electron tunnelling.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
+<td><p>Model class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.Simmons.html#Stoner.analysis.fitting.models.tunnelling.Simmons" title="Stoner.analysis.fitting.models.tunnelling.Simmons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Simmons</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Simmons model of electron tunnelling.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.TersoffHammann.html#Stoner.analysis.fitting.models.tunnelling.TersoffHammann" title="Stoner.analysis.fitting.models.tunnelling.TersoffHammann"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TersoffHammann</span></code></a>(*args, **kwargs)</p></td>
+<td><p>TersoffHamman model for tunnelling through STM tip.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="other-electron-transpoort-models">
+<h2>Other Electron Transpoort models<a class="headerlink" href="#other-electron-transpoort-models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-Stoner.analysis.fitting.models.e_transport">
+<span id="stoner-analysis-fitting-models-e-transport-module"></span><h3>Stoner.analysis.fitting.models.e_transport Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.e_transport" title="Permalink to this headline">¶</a></h3>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various models of electron transport (other than tunnelling processes).</p>
+<div class="section" id="id5">
+<h4>Functions<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.e_transport.blochGrueneisen.html#Stoner.analysis.fitting.models.e_transport.blochGrueneisen" title="Stoner.analysis.fitting.models.e_transport.blochGrueneisen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">blochGrueneisen</span></code></a>(T, thetaD, rho0, A, n)</p></td>
+<td><p>BlochGrueneiseen Function for fitting R(T).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.e_transport.fluchsSondheimer.html#Stoner.analysis.fitting.models.e_transport.fluchsSondheimer" title="Stoner.analysis.fitting.models.e_transport.fluchsSondheimer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fluchsSondheimer</span></code></a>(t, l, p, sigma_0)</p></td>
+<td><p>Evaluate a Fluchs-Sondheumer model function for conductivity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.e_transport.wlfit.html#Stoner.analysis.fitting.models.e_transport.wlfit" title="Stoner.analysis.fitting.models.e_transport.wlfit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wlfit</span></code></a>(B, s0, DS, B1, B2)</p></td>
+<td><p>Weak localisation</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id6">
+<h4>Classes<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.html#Stoner.analysis.fitting.models.e_transport.BlochGrueneisen" title="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlochGrueneisen</span></code></a>(*args, **kwargs)</p></td>
+<td><p>BlochGrueneiseen Function for fitting R(T).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.html#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer" title="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FluchsSondheimer</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Evaluate a Fluchs-Sondheumer model function for conductivity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.e_transport.WLfit.html#Stoner.analysis.fitting.models.e_transport.WLfit" title="Stoner.analysis.fitting.models.e_transport.WLfit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WLfit</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Weak localisation</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="magnetism-and-magnetic-materials-models">
+<h2>Magnetism and Magnetic Materials models<a class="headerlink" href="#magnetism-and-magnetic-materials-models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-Stoner.analysis.fitting.models.magnetism">
+<span id="stoner-analysis-fitting-models-magnetism-module"></span><h3>Stoner.analysis.fitting.models.magnetism Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.magnetism" title="Permalink to this headline">¶</a></h3>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various magnetism and magnetic materials models.</p>
+<div class="section" id="id7">
+<h4>Functions<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.fmr_power.html#Stoner.analysis.fitting.models.magnetism.fmr_power" title="Stoner.analysis.fitting.models.magnetism.fmr_power"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fmr_power</span></code></a>(H, H_res, Delta_H, K_1, K_2)</p></td>
+<td><p>A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.inverse_kittel.html#Stoner.analysis.fitting.models.magnetism.inverse_kittel" title="Stoner.analysis.fitting.models.magnetism.inverse_kittel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_kittel</span></code></a>(f, g, M_s, H_k)</p></td>
+<td><p>Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.kittelEquation.html#Stoner.analysis.fitting.models.magnetism.kittelEquation" title="Stoner.analysis.fitting.models.magnetism.kittelEquation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kittelEquation</span></code></a>(H, g, M_s, H_k)</p></td>
+<td><p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.langevin.html#Stoner.analysis.fitting.models.magnetism.langevin" title="Stoner.analysis.fitting.models.magnetism.langevin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">langevin</span></code></a>(H, M_s, m, T)</p></td>
+<td><p>“The Langevin function for paramagnetic M-H loops/</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id8">
+<h4>Classes<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.FMR_Power.html#Stoner.analysis.fitting.models.magnetism.FMR_Power" title="Stoner.analysis.fitting.models.magnetism.FMR_Power"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FMR_Power</span></code></a>(*args, **kwargs)</p></td>
+<td><p>A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html#Stoner.analysis.fitting.models.magnetism.Inverse_Kittel" title="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Inverse_Kittel</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.KittelEquation.html#Stoner.analysis.fitting.models.magnetism.KittelEquation" title="Stoner.analysis.fitting.models.magnetism.KittelEquation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KittelEquation</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.Langevin.html#Stoner.analysis.fitting.models.magnetism.Langevin" title="Stoner.analysis.fitting.models.magnetism.Langevin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Langevin</span></code></a>(*args, **kwargs)</p></td>
+<td><p>“The Langevin function for paramagnetic M-H loops/</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
+<td><p>Model class.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="superconductivity-models">
+<h2>superconductivity models<a class="headerlink" href="#superconductivity-models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-Stoner.analysis.fitting.models.superconductivity">
+<span id="stoner-analysis-fitting-models-superconductivity-module"></span><h3>Stoner.analysis.fitting.models.superconductivity Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.superconductivity" title="Permalink to this headline">¶</a></h3>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various superconductivity related models.</p>
+<div class="section" id="id9">
+<h4>Functions<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.rsj_noiseless.html#Stoner.analysis.fitting.models.superconductivity.rsj_noiseless" title="Stoner.analysis.fitting.models.superconductivity.rsj_noiseless"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsj_noiseless</span></code></a>(I, Ic_p, Ic_n, Rn, V_offset)</p></td>
+<td><p>Implements a simple noiseless RSJ model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.rsj_simple.html#Stoner.analysis.fitting.models.superconductivity.rsj_simple" title="Stoner.analysis.fitting.models.superconductivity.rsj_simple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsj_simple</span></code></a>(I, Ic, Rn, V_offset)</p></td>
+<td><p>Implements a simple noiseless symmetric RSJ model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.strijkers.html#Stoner.analysis.fitting.models.superconductivity.strijkers" title="Stoner.analysis.fitting.models.superconductivity.strijkers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strijkers</span></code></a>(V, omega, delta, P, Z)</p></td>
+<td><p>strijkers Model for point-contact Andreev Reflection Spectroscopy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.ic_B_airy.html#Stoner.analysis.fitting.models.superconductivity.ic_B_airy" title="Stoner.analysis.fitting.models.superconductivity.ic_B_airy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ic_B_airy</span></code></a>(B, Ic0, B_offset, A)</p></td>
+<td><p>Critical Current for a round Josepshon Junction wrt to Field.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id10">
+<h4>Classes<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless" title="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSJ_Noiseless</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Implements a simple noiseless RSJ model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html#Stoner.analysis.fitting.models.superconductivity.RSJ_Simple" title="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSJ_Simple</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Implements a simple noiseless symmetric RSJ model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.Strijkers.html#Stoner.analysis.fitting.models.superconductivity.Strijkers" title="Stoner.analysis.fitting.models.superconductivity.Strijkers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Strijkers</span></code></a>(*args, **kwargs)</p></td>
+<td><p>strijkers Model for point-contact Andreev Reflection Spectroscopy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html#Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy" title="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ic_B_Airy</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Critical Current for a round Josepshon Junction wrt to Field.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Additional Fitting models</a><ul>
+<li><a class="reference internal" href="#generic-modles">Generic Modles</a><ul>
+<li><a class="reference internal" href="#module-Stoner.analysis.fitting.models.generic">Stoner.analysis.fitting.models.generic Module</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#thermal-physics-models">Thermal Physics models</a><ul>
+<li><a class="reference internal" href="#module-Stoner.analysis.fitting.models.thermal">Stoner.analysis.fitting.models.thermal Module</a><ul>
+<li><a class="reference internal" href="#id1">Functions</a></li>
+<li><a class="reference internal" href="#id2">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#electron-tunnelling-models">Electron Tunnelling models</a><ul>
+<li><a class="reference internal" href="#module-Stoner.analysis.fitting.models.tunnelling">Stoner.analysis.fitting.models.tunnelling Module</a><ul>
+<li><a class="reference internal" href="#id3">Functions</a></li>
+<li><a class="reference internal" href="#id4">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-electron-transpoort-models">Other Electron Transpoort models</a><ul>
+<li><a class="reference internal" href="#module-Stoner.analysis.fitting.models.e_transport">Stoner.analysis.fitting.models.e_transport Module</a><ul>
+<li><a class="reference internal" href="#id5">Functions</a></li>
+<li><a class="reference internal" href="#id6">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#magnetism-and-magnetic-materials-models">Magnetism and Magnetic Materials models</a><ul>
+<li><a class="reference internal" href="#module-Stoner.analysis.fitting.models.magnetism">Stoner.analysis.fitting.models.magnetism Module</a><ul>
+<li><a class="reference internal" href="#id7">Functions</a></li>
+<li><a class="reference internal" href="#id8">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#superconductivity-models">superconductivity models</a><ul>
+<li><a class="reference internal" href="#module-Stoner.analysis.fitting.models.superconductivity">Stoner.analysis.fitting.models.superconductivity Module</a><ul>
+<li><a class="reference internal" href="#id9">Functions</a></li>
+<li><a class="reference internal" href="#id10">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="classes/Stoner.analysis.fitting.FittingMixin.html"
+                        title="previous chapter">FittingMixin</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="classes/Stoner.analysis.fitting.models.generic.linear.html"
+                        title="next chapter">linear</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/analysis-fitting.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="classes/Stoner.analysis.fitting.FittingMixin.html" title="Previous document">FittingMixin</a>
+        </li>
+        <li>
+          <a href="classes/Stoner.analysis.fitting.models.generic.linear.html" title="Next document">linear</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="index.html">Stoner Package</a></li>
+      <li>
+        <a href="Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.2.2
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

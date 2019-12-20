@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -64,9 +65,9 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ycol</strong> (<em>index</em>) – the column name or index of the data in which to search for peaks</p></li>
-<li><p><strong>width</strong> (<em>int or float</em>) – the expected minium halalf-width of a peak in terms of the number of data points (int) or distance in x (float).
-This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
-to experimental noise, smaller means better eable to see sharp peaks</p></li>
+<li><p><strong>width</strong> (<em>int or float</em>) – the expected minium halalf-width of a peak in terms of the number of data points (int) or distance
+in x (float). This is used in the differnetiation code to find local maxima. Bigger equals less
+sensitive to experimental noise, smaller means better eable to see sharp peaks</p></li>
 <li><p><strong>poly</strong> (<em>int</em>) – the order of polynomial to use when differentiating the data to locate a peak. Must &gt;=2, higher numbers
 will find sharper peaks more accurately but at the risk of finding more false positives.</p></li>
 </ul>
@@ -74,21 +75,24 @@ will find sharper peaks more accurately but at the risk of finding more false po
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>significance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – used to decide whether a local maxmima is a significant peak. Essentially just the curvature
-of the data. Bigger means less sensistive, smaller means more likely to detect noise. Default is the maximum curvature/(2*width)</p></li>
+of the data. Bigger means less sensistive, smaller means more likely to detect noise. Default is the
+maximum curvature/(2*width)</p></li>
 <li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – name or index of data column that p[rovides the x-coordinate (default None)</p></li>
 <li><p><strong>peaks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – select whether to measure peaks in data (default True)</p></li>
 <li><p><strong>troughs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – select whether to measure troughs in data (default False)</p></li>
 <li><p><strong>sort</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Sor the results by significance of peak</p></li>
 <li><p><strong>modify</strong> (<em>book</em>) – If true, then the returned object is a copy of self with only the peaks/troughs left in the data.</p></li>
-<li><p><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True (default) then all columns of the data at which peaks in the <em>ycol</em> column are found. <em>modify</em> true implies
-<em>full_data</em> is also true. If <em>full_data</em> is False, then only the x-column values of the peaks are returned.</p></li>
+<li><p><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True (default) then all columns of the data at which peaks in the <em>ycol</em> column are found.
+<em>modify</em> true implies <em>full_data</em> is also true. If <em>full_data</em> is False, then only the x-column
+values of the peaks are returned.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>(various)</em> –     If <em>modify</em> is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs. If <em>modify</em> is false (default),
-then the return value depends on <em>ycol</em> and <em>xcol</em>. If <em>ycol</em> is not None and <em>xcol</em> is None, then returns conplete rows of
-data corresponding to the found peaks/troughs. If <em>xcol</em> is not None, or <em>ycol</em> is None and <em>xcol</em> is None, then
-returns a 1D array of the x positions of the peaks/troughs.</p>
+<dd class="field-odd"><p><em>(various)</em> –     If <em>modify</em> is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs.
+If <em>modify</em> is false (default), then the return value depends on <em>ycol</em> and <em>xcol</em>. If <em>ycol</em> is
+not None and <em>xcol</em> is None, then returns conplete rows of data corresponding to the found
+peaks/troughs. If <em>xcol</em> is not None, or <em>ycol</em> is None and <em>xcol</em> is None, then returns a 1D array
+of the x positions of the peaks/troughs.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -157,9 +161,9 @@ returns a 1D array of the x positions of the peaks/troughs.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

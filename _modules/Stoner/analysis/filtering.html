@@ -1,0 +1,948 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Stoner.analysis.filtering &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../../../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../../Stoner.html">Stoner</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Stoner.analysis.filtering</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Filtering and smoothing functions for analysis code.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FilteringOps&quot;</span><span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span> <span class="k">as</span> <span class="n">copy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ma</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span><span class="p">,</span> <span class="n">UnivariateSpline</span>
+<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">get_window</span><span class="p">,</span> <span class="n">convolve</span><span class="p">,</span> <span class="n">savgol_filter</span>
+
+<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">isiterable</span><span class="p">,</span> <span class="n">isNone</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">get_func_params</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">outlier</span> <span class="k">as</span> <span class="n">_outlier</span><span class="p">,</span> <span class="n">_twoD_fit</span><span class="p">,</span> <span class="n">GetAffineTransform</span>
+
+
+<span class="k">class</span> <span class="nc">FilteringOps</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional filtering snd</span>
+<span class="sd">    smoothing methods.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">SG_Filter</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implements Savitsky-Golay filtering of data for smoothing and differentiating data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            col (column index):</span>
+<span class="sd">                Column of Data to be filtered. if None, first y-column in setas is filtered.</span>
+<span class="sd">            points (int):</span>
+<span class="sd">                Number of data points to use in the filtering window. Should be an odd number &gt; poly+1 (default 15)</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            xcol (coilumn index):</span>
+<span class="sd">                If *order*&gt;1 then can be used to specify an x-column to differentiate with respect to.</span>
+<span class="sd">            poly (int):</span>
+<span class="sd">                Order of polynomial to fit to the data. Must be equal or greater than order (default 1)</span>
+<span class="sd">            order (int):</span>
+<span class="sd">                Order of differentiation to carry out. Default=0 meaning smooth the data only.</span>
+<span class="sd">            pad (bool or float):</span>
+<span class="sd">                Pad the start and end of the array with the mean value (True, default) or specired value (float) or</span>
+<span class="sd">                leave as is.</span>
+<span class="sd">            result (None,True, or column_index):</span>
+<span class="sd">                If not None, column index to insert new data, or True to append as last column</span>
+<span class="sd">            header (string or None):</span>
+<span class="sd">                Header for new column if result is not None. If header is Nne, a suitable column header is generated.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (numpy array or self):</span>
+<span class="sd">                If result is None, a numpy array representing the smoothed or differentiated data is returned.</span>
+<span class="sd">                Otherwise, a copy of the modified AnalysisMixin object is returned.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used</span>
+<span class="sd">            to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column</span>
+<span class="sd">            for differentiating data. This is now a pass through to :py:func:`scipy.signal.savgol_filter`</span>
+
+<span class="sd">            Padding can help stop wildly wrong artefacts in the data at the start and enf of the data, particularly</span>
+<span class="sd">            when the differntial order is &gt;1.</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            User guide section :ref:`smoothing_guide`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="kn">import</span> <span class="n">ordinal</span>
+
+        <span class="n">points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">points</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Ensure window length is odd</span>
+            <span class="n">points</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">_</span><span class="o">.</span><span class="n">xcol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span> <span class="o">+</span> <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">col</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">col</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+
+        <span class="n">ddata</span> <span class="o">=</span> <span class="n">savgol_filter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">polyorder</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">deriv</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;interp&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pad</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pad</span><span class="p">:</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points</span> <span class="o">*</span> <span class="n">order</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="n">padv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ddata</span><span class="p">[:,</span> <span class="n">offset</span><span class="p">:</span><span class="o">-</span><span class="n">offset</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">pad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">ddata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">offset</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">padv</span><span class="p">):</span>
+                <span class="n">pad</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">*=</span> <span class="n">v</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pad</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">pad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">ddata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">offset</span><span class="p">))</span> <span class="o">*</span> <span class="n">pad</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">pad</span><span class="p">)</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ddata</span><span class="p">[:,</span> <span class="p">:</span><span class="n">offset</span><span class="p">]</span> <span class="o">=</span> <span class="n">pad</span>
+            <span class="n">ddata</span><span class="p">[:,</span> <span class="o">-</span><span class="n">offset</span><span class="p">:]</span> <span class="o">=</span> <span class="n">pad</span>
+        <span class="k">if</span> <span class="n">order</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">ddata</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">ddata</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">ddata</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">col</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> after </span><span class="si">{}</span><span class="s2"> order Savitsky-Golay Filter&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">ordinal</span><span class="p">(</span><span class="n">order</span><span class="p">))</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="n">header</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">):</span>
+                <span class="n">iterdata</span> <span class="o">=</span> <span class="n">r</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">iterdata</span> <span class="o">=</span> <span class="n">r</span>
+            <span class="k">for</span> <span class="n">column</span><span class="p">,</span> <span class="n">head</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">iterdata</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">column</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">header</span><span class="o">=</span><span class="n">head</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">r</span>
+
+    <span class="k">def</span> <span class="nf">bin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Bin x-y data into new values of x with an error bar.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            xcol (index):</span>
+<span class="sd">                Index of column of data with X values</span>
+<span class="sd">            ycol (index):</span>
+<span class="sd">                Index of column of data with Y values</span>
+<span class="sd">            bins (int, float or 1d array):</span>
+<span class="sd">                Number of bins (if integer) or size of bins (if float), or bin edges (if array)</span>
+<span class="sd">            mode (string):</span>
+<span class="sd">                &quot;log&quot; or &quot;lin&quot; for logarithmic or linear binning</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            yerr (index):</span>
+<span class="sd">                Column with y-error data if present.</span>
+<span class="sd">            bin_start (float):</span>
+<span class="sd">                Manually override the minimum bin value</span>
+<span class="sd">            bin_stop (float):</span>
+<span class="sd">                Manually override the maximum bin value</span>
+<span class="sd">            clone (bool):</span>
+<span class="sd">                Return a clone of the current AnalysisMixin with binned data (True)</span>
+<span class="sd">                or just the numbers (False).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (:py:class:`Stoner.Data` or tuple of 4 array-like):</span>
+<span class="sd">                Either a clone of the current data set with the new binned data or</span>
+<span class="sd">                tuple of (bin centres, bin values, bin errors, number points/bin),</span>
+<span class="sd">                depending on the *clone* parameter.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Algorithm inspired by MatLab code wbin,    Copyright (c) 2012:</span>
+<span class="sd">            Michael Lindholm Nielsen</span>
+
+
+<span class="sd">        See Also:</span>
+<span class="sd">            User Guide section :ref:`binning_guide`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;yerr&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="n">yerr</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;yerr&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">yerr</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="p">):</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">xcol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">xcol</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">ycol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ycol</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;ycol&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;yerr&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kargs</span> <span class="ow">and</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;has_yerr&quot;</span><span class="p">]:</span>
+                <span class="n">yerr</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;yerr&quot;</span><span class="p">]</span>
+
+        <span class="n">bin_left</span><span class="p">,</span> <span class="n">bin_right</span><span class="p">,</span> <span class="n">bin_centres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_bins</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
+        <span class="n">ycol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">ycol</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">yerr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">yerr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">yerr</span><span class="p">)</span>
+
+        <span class="n">ybin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">bin_left</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ycol</span><span class="p">)))</span>
+        <span class="n">ebin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">bin_left</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ycol</span><span class="p">)))</span>
+        <span class="n">nbins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">bin_left</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ycol</span><span class="p">)))</span>
+        <span class="n">xcol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">limits</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bin_left</span><span class="p">,</span> <span class="n">bin_right</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="n">limits</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ok</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ok</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">):</span>
+                <span class="n">shape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">yerr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">yerr</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">e</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">ycol</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">W</span><span class="p">))</span> <span class="o">/</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">e</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">ycol</span><span class="p">)))</span>
+                <span class="n">W</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">ycol</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">ycol</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Empty bin at </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">limits</span><span class="p">))</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">ycol</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="n">W</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">ybin</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">y</span>
+            <span class="n">ebin</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">e</span>
+            <span class="n">nbins</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">clone</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">bin_centres</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">xcol</span><span class="p">]]</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ybin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">head</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">ycol</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+
+                <span class="n">ret</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">ybin</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">header</span><span class="o">=</span><span class="n">head</span><span class="p">)</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">ebin</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;d</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">head</span><span class="p">))</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">nbins</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;#/bin </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">head</span><span class="p">))</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span>
+                <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">]</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="n">s</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span><span class="n">bin_centres</span><span class="p">,</span> <span class="n">ybin</span><span class="p">,</span> <span class="n">ebin</span><span class="p">,</span> <span class="n">nbins</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span> <span class="nf">extrapolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Extrapolate data based on local fit to x,y data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            new_x (float or array):</span>
+<span class="sd">                New values of x data.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            xcol (column index, None):</span>
+<span class="sd">                column containing x-data or None to use setas attribute</span>
+<span class="sd">            ycol (column index(es) or None):</span>
+<span class="sd">                column(s) containing the y-data or None to use setas attribute.</span>
+<span class="sd">            yerr (column index(es) or None):</span>
+<span class="sd">                y error data column or None to use setas attribute</span>
+<span class="sd">            overlap (float or int):</span>
+<span class="sd">                range of x-data used for the local fit for extrapolating. If int then overlap number of</span>
+<span class="sd">                points is used, if float then that range x-axis space is used.</span>
+<span class="sd">            kind (str or callable):</span>
+<span class="sd">                Determines local fitting function. If string should be &quot;linear&quot;, &quot;quadratic&quot; or &quot;cubic&quot; if</span>
+<span class="sd">                callable, then represents a function to be fitted to the data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (array):</span>
+<span class="sd">                Extrapolated values.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If the new_x values lie outside the span of the x-data, then the nearest *overlap* portion of the data</span>
+<span class="sd">            is used to estimate the values. If the new_x values are within the span of the x-data then the portion</span>
+<span class="sd">            of the data centred about the point and overlap points long will be used to interpolate a value.</span>
+
+<span class="sd">            If *kind* is callable, it should take x values in the first parameter and free fitting parameters as</span>
+<span class="sd">            the other parameters (i.e. as with :py:meth:`AnalysisMixin.curve_fit`).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">yerr</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">kinds</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;linear&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="n">m</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span><span class="p">,</span>
+            <span class="s2">&quot;quadratic&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span><span class="p">,</span>
+            <span class="s2">&quot;cubic&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">c</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">d</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">errs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;linear&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">me</span><span class="p">,</span> <span class="n">ce</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">me</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ce</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="s2">&quot;quadratic&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">ae</span><span class="p">,</span> <span class="n">be</span><span class="p">,</span> <span class="n">ce</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ae</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">be</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ce</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="s2">&quot;cubic&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">ae</span><span class="p">,</span> <span class="n">be</span><span class="p">,</span> <span class="n">ce</span><span class="p">,</span> <span class="n">de</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">ae</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">be</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">ce</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">de</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">kind</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">kinds</span><span class="p">:</span>
+            <span class="n">kindf</span> <span class="o">=</span> <span class="n">kinds</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Failed to recognise extrpolation function &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kind</span><span class="p">))</span>
+        <span class="n">scalar_x</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">new_x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scalar_x</span><span class="p">:</span>
+            <span class="n">new_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_x</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_x</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
+            <span class="n">new_x</span> <span class="o">=</span> <span class="n">new_x</span><span class="o">.</span><span class="n">compressed</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">new_x</span><span class="p">),</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">)))</span>
+        <span class="n">work</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">new_x</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">closest</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overlap</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="o">-</span> <span class="n">overlap</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ll</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">hl</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">overlap</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="o">+</span> <span class="n">overlap</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                    <span class="n">hl</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                    <span class="n">ll</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">hl</span> <span class="o">-</span> <span class="n">overlap</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ll</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="o">-</span> <span class="n">overlap</span> <span class="o">/</span> <span class="mi">2</span>
+                    <span class="n">hl</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="o">+</span> <span class="n">overlap</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;_i__between&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">ll</span><span class="p">,</span> <span class="n">hl</span><span class="p">)}</span>
+                <span class="n">mid_x</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">ll</span><span class="p">,</span> <span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="p">[</span><span class="n">hl</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overlap</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">]</span> <span class="o">-</span> <span class="n">overlap</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">ll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">hl</span> <span class="o">=</span> <span class="n">ll</span> <span class="o">+</span> <span class="n">overlap</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">]</span> <span class="o">+</span> <span class="n">overlap</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">hl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">ll</span> <span class="o">=</span> <span class="n">hl</span> <span class="o">-</span> <span class="n">overlap</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ll</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">]</span> <span class="o">-</span> <span class="n">overlap</span> <span class="o">/</span> <span class="mi">2</span>
+                    <span class="n">hl</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">]</span> <span class="o">+</span> <span class="n">overlap</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">__between&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">]):</span> <span class="p">(</span><span class="n">ll</span><span class="p">,</span> <span class="n">hl</span><span class="p">)}</span>
+                <span class="n">mid_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">ll</span> <span class="o">+</span> <span class="n">hl</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">pointdata</span> <span class="o">=</span> <span class="n">work</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="o">**</span><span class="n">bounds</span><span class="p">)</span>
+            <span class="n">pointdata</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">]</span> <span class="o">=</span> <span class="n">pointdata</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">)</span> <span class="o">-</span> <span class="n">mid_x</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">pointdata</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">kindf</span><span class="p">,</span> <span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">,</span> <span class="n">absolute_sigma</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="n">ret</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">iy</span><span class="p">,</span> <span class="n">rt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ret</span><span class="p">):</span>
+                <span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">rt</span>
+                <span class="n">perr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">pcov</span><span class="p">))</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="n">kindf</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mid_x</span><span class="p">,</span> <span class="o">*</span><span class="n">popt</span><span class="p">)</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">iy</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">errs</span><span class="p">[</span><span class="n">kind</span><span class="p">](</span><span class="n">x</span> <span class="o">-</span> <span class="n">mid_x</span><span class="p">,</span> <span class="o">*</span><span class="n">perr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scalar_x</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newX</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Interpolate a dataset to get a new set of values for a given set of x data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ewX (1D array or None):</span>
+<span class="sd">                Row indices or X column values to interpolate with. If None, then the</span>
+<span class="sd">                :py:meth:`AnalysisMixin.interpolate` returns an interpolation function. Unlike the raw interpolation</span>
+<span class="sd">                function from scipy, this interpolation function will work with MaskedArrays by compressing them</span>
+<span class="sd">                first.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            kind (string):</span>
+<span class="sd">                Type of interpolation function to use - does a pass through from numpy. Default is linear.</span>
+<span class="sd">            xcol (index or None):</span>
+<span class="sd">                Column index or label that contains the data to use with newX to determine which rows to return.</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            replace (bool):</span>
+<span class="sd">                If true, then the current AnalysisMixin&#39;s data is replaced with the  newly interpolated data and the</span>
+<span class="sd">                current AnalysisMixin is returned.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (2D numpy array):</span>
+<span class="sd">                Section of the current object&#39;s data if replace is False(default) or the modofied AnalysisMixin if</span>
+<span class="sd">                replace is true.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is</span>
+<span class="sd">            interpreted as (fractional) row indices. Otherwise, the column specified in xcol is thresholded with the</span>
+<span class="sd">            values given in newX and the resultant row indices used to return the data.</span>
+
+<span class="sd">            If the positional argument, newX is None, then the return value is an interpolation function. This</span>
+<span class="sd">            interpolation function takes one argument - if *xcol* was None, this argument is interpreted as</span>
+<span class="sd">            array indices, but if *xcol* was specified, then this argument is interpreted as an array of xvalues.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">DataArray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="vm">__class__</span>  <span class="c1"># pylint: disable=E0203</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># pylint: disable=E0203</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xcol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">xcol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="s2">&quot;xcol&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">xcol</span><span class="p">:</span>
+            <span class="n">xcol</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">newX</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
+            <span class="n">newX</span> <span class="o">=</span> <span class="n">newX</span><span class="o">.</span><span class="n">compressed</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">xcol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">newX</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># We need to convert newX to row indices</span>
+            <span class="n">xfunc</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">xcol</span><span class="p">),</span> <span class="n">index</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># xfunc(x) returns partial index</span>
+            <span class="n">newX</span> <span class="o">=</span> <span class="n">xfunc</span><span class="p">(</span><span class="n">newX</span><span class="p">)</span>
+        <span class="n">inter</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># pylint: disable=E0203</span>
+
+        <span class="k">if</span> <span class="n">newX</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Ok, we&#39;re going to return an interpolation function</span>
+
+            <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">newX</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot;Wrapper for interpolation function.&quot;&quot;&quot;</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">newX</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
+                    <span class="n">newX</span> <span class="o">=</span> <span class="n">newX</span><span class="o">.</span><span class="n">compressed</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">newX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">newX</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">xcol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">newX</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># We need to convert newX to row indices</span>
+                    <span class="n">xfunc</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">xcol</span><span class="p">),</span> <span class="n">index</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># xfunc(x) returns partial index</span>
+                    <span class="n">newX</span> <span class="o">=</span> <span class="n">xfunc</span><span class="p">(</span><span class="n">newX</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">inter</span><span class="p">(</span><span class="n">newX</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">wrapper</span>
+
+        <span class="k">if</span> <span class="n">replace</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">inter</span><span class="p">(</span><span class="n">newX</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">inter</span><span class="p">(</span><span class="n">newX</span><span class="p">),</span> <span class="n">isrow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span> <span class="nf">make_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Utility method to generate bin boundaries and centres along an axis.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            xcol (index):</span>
+<span class="sd">                Column of data with X values</span>
+<span class="sd">            bins (1d_)array or int or float):</span>
+<span class="sd">                Number of bins (int) or width of bins (if float)</span>
+<span class="sd">            mode (string):</span>
+<span class="sd">                &quot;lin&quot; for linear binning, &quot;log&quot; for logarithmic binning.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            bin_start (float):</span>
+<span class="sd">                Override minimum bin value</span>
+<span class="sd">            bin_stop (float):</span>
+<span class="sd">                Override the maximum bin value</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (tuple of 4 arrays):</span>
+<span class="sd">                bin_start,bin_stop,bin_centres (1D arrays): The locations of the bin</span>
+<span class="sd">                boundaries and centres for each bin.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;log&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mode should be either  &#39;lin&#39; or &#39;log&#39; not </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="s2">&quot;bin_start&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="n">xmin</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;bin_start&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;bin_stop&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="n">xmax</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;bin_stop&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>  <span class="c1"># Given a number of bins</span>
+            <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;lin&quot;</span><span class="p">):</span>
+                <span class="n">bin_width</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">)</span> <span class="o">/</span> <span class="n">bins</span>
+                <span class="n">bin_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">-</span> <span class="n">bin_width</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+                <span class="n">bin_stop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span> <span class="o">+</span> <span class="n">bin_width</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+                <span class="n">bin_centres</span> <span class="o">=</span> <span class="p">(</span><span class="n">bin_start</span> <span class="o">+</span> <span class="n">bin_stop</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="k">elif</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">):</span>
+                <span class="n">xminl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">xmin</span><span class="p">)</span>
+                <span class="n">xmaxl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">xmax</span><span class="p">)</span>
+                <span class="n">bin_width</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">xmaxl</span> <span class="o">-</span> <span class="n">xminl</span><span class="p">)</span> <span class="o">/</span> <span class="n">bins</span>
+                <span class="n">bin_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xminl</span><span class="p">,</span> <span class="n">xmaxl</span> <span class="o">-</span> <span class="n">bin_width</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+                <span class="n">bin_stop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xminl</span> <span class="o">+</span> <span class="n">bin_width</span><span class="p">,</span> <span class="n">xmaxl</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+                <span class="n">bin_centres</span> <span class="o">=</span> <span class="p">(</span><span class="n">bin_start</span> <span class="o">+</span> <span class="n">bin_stop</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+                <span class="n">bin_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">bin_start</span><span class="p">)</span>
+                <span class="n">bin_stop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">bin_stop</span><span class="p">)</span>
+                <span class="n">bin_centres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">bin_centres</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mode should be either lin(ear) or log(arthimitc) not </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>  <span class="c1"># Given a bin with as a flot</span>
+            <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;lin&quot;</span><span class="p">):</span>
+                <span class="n">bin_width</span> <span class="o">=</span> <span class="n">bins</span>
+                <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">)</span> <span class="o">/</span> <span class="n">bins</span><span class="p">))</span>
+                <span class="n">bin_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">-</span> <span class="n">bin_width</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+                <span class="n">bin_stop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span> <span class="o">+</span> <span class="n">bin_width</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+                <span class="n">bin_centres</span> <span class="o">=</span> <span class="p">(</span><span class="n">bin_start</span> <span class="o">+</span> <span class="n">bin_stop</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="k">elif</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">bins</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bin width must be between 0 ans 1 for log binning&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">xmin</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The start of the binning must be a positive value in log mode.&quot;</span><span class="p">)</span>
+                <span class="n">xp</span> <span class="o">=</span> <span class="n">xmin</span>
+                <span class="n">splits</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">centers</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">while</span> <span class="n">xp</span> <span class="o">&lt;</span> <span class="n">xmax</span><span class="p">:</span>
+                    <span class="n">splits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span>
+                    <span class="n">centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xp</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">bins</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+                    <span class="n">xp</span> <span class="o">=</span> <span class="n">xp</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">bins</span><span class="p">)</span>
+                <span class="n">splits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xmax</span><span class="p">)</span>
+                <span class="n">bin_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">splits</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">bin_stop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">splits</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="n">bin_centres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">centers</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mode should be either lin(ear) or log(arthimitc) not </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">bins</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Yser provided manuals bins</span>
+            <span class="n">bin_start</span> <span class="o">=</span> <span class="n">bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">bin_stop</span> <span class="o">=</span> <span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startwith</span><span class="p">(</span><span class="s2">&quot;lin&quot;</span><span class="p">):</span>
+                <span class="n">bin_centres</span> <span class="o">=</span> <span class="p">(</span><span class="n">bin_start</span> <span class="o">+</span> <span class="n">bin_stop</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="k">elif</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">):</span>
+                <span class="n">bin_centres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">bin_start</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">bin_stop</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mode should be either lin(ear) or log(arthimitc) not </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;bins must be either an integer or a float, not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">bins</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bin_start</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Attempting to bin into more bins than there is data.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bin_start</span><span class="p">,</span> <span class="n">bin_stop</span><span class="p">,</span> <span class="n">bin_centres</span>
+
+    <span class="k">def</span> <span class="nf">outlier_detection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">certainty</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Function to detect outliers in a column of data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column(column index):</span>
+<span class="sd">                specifing column for outlier detection. If not set,</span>
+<span class="sd">                defaults to the current y set column.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            window(int):</span>
+<span class="sd">                data window for anomoly detection</span>
+<span class="sd">            certainty(float):</span>
+<span class="sd">                eg 3 detects data 3 standard deviations from average</span>
+<span class="sd">            action(str or callable):</span>
+<span class="sd">                what to do with outlying points, options are</span>
+<span class="sd">                * &#39;mask&#39; outlier points are masked (default)</span>
+<span class="sd">                * &#39;mask row&#39; outlier rows are masked</span>
+<span class="sd">                * &#39;delete&#39;  outlier rows are deleted</span>
+<span class="sd">                * callable  the value of the action keyword is called with the outlier row</span>
+<span class="sd">                * anything else defaults to do nothing.</span>
+
+<span class="sd">            width(odd integer):</span>
+<span class="sd">                Number of rows that an outliing spike could occupy. Defaults to 1.</span>
+<span class="sd">            func (callable):</span>
+<span class="sd">                A function that determines if the current row is an outlier.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (:py:class:`Stoner.Data`):</span>
+<span class="sd">                The newly modified Data object.</span>
+
+<span class="sd">        outlier_detection will add row numbers of detected outliers to the metadata</span>
+<span class="sd">        of d, also will perform action depending on request eg &#39;mask&#39;, &#39;delete&#39;</span>
+<span class="sd">        (any other action defaults to doing nothing).</span>
+
+<span class="sd">        The detection looks at a window of the data, takes the average and looks</span>
+<span class="sd">        to see if the current data point falls certainty * std deviations away from</span>
+<span class="sd">        data average.</span>
+
+<span class="sd">        The outlier detection function has the signatrure::</span>
+
+<span class="sd">            def outlier(row,column,window,certainity,**kargs)</span>
+<span class="sd">                #code</span>
+<span class="sd">                return True # or False</span>
+
+<span class="sd">        All extra keyword arguments are passed to the outlier detector.</span>
+
+<span class="sd">        IF *action* is a callable function then it should take the form of::</span>
+
+<span class="sd">            def action(i,column,row):</span>
+<span class="sd">                pass</span>
+
+<span class="sd">        where *i* is the number of the outlier row, *column* the same value as above</span>
+<span class="sd">        and *row* is the data for the row.</span>
+
+<span class="sd">        In all cases the indices of the outlier rows are added to the ;outlier&#39; metadata.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. plot:: samples/outlier.py</span>
+<span class="sd">                :include-source:</span>
+<span class="sd">                :outname: outlier</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="n">_outlier</span>
+
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">get_func_params</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">_</span><span class="p">:</span>
+                <span class="n">kargs</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">_</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">action</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;delete&quot;</span><span class="p">,</span> <span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="s2">&quot;mask row&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">action</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Do&#39;n know what to do with action=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">action</span><span class="p">))</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rolling_window</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">exclude_centre</span><span class="o">=</span><span class="n">width</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">t</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">certainty</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;outliers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>  <span class="c1"># add outlier indecies to metadata</span>
+        <span class="n">index</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>  <span class="c1"># Always reverse the index in case we&#39;re deleting rows in sucession</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;mask&quot;</span> <span class="ow">or</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;mask row&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;mask&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;delete&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">action</span><span class="p">):</span>  <span class="c1"># this will call the action function with each row in turn from back to start</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span>
+                <span class="n">action</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scale the x and y data in this DataFile to match the x and y data in another DataFile.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (DataFile):</span>
+<span class="sd">                The other isntance of a datafile to match to</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            xcol (column index):</span>
+<span class="sd">                Column with x points in it, default to None to use setas attribute value</span>
+<span class="sd">            ycol (column index):</span>
+<span class="sd">                Column with ypoints in it, default to None to use setas attribute value</span>
+<span class="sd">            xmode (&#39;affine&#39;, &#39;linear&#39;,&#39;scale&#39;,&#39;offset&#39;):</span>
+<span class="sd">                How to manipulate the x-data to match up</span>
+<span class="sd">            ymode (&#39;linear&#39;,&#39;scale&#39;,&#39;offset&#39;):</span>
+<span class="sd">                How to manipulate the y-data to match up.</span>
+<span class="sd">            bounds (callable):</span>
+<span class="sd">                Used to identiyf the set of (x,y) points to be used for scaling. Defaults to the whole data set if</span>
+<span class="sd">                not speicifed.</span>
+<span class="sd">            otherbounds (callable):</span>
+<span class="sd">                Used to detemrine the set of (x,y) points in the other data file. Defaults to bounds if not given.</span>
+<span class="sd">            use_estimate (bool or 3x2 array):</span>
+<span class="sd">                Specifies whether to estimate an initial transformation value or to use the provided one, or</span>
+<span class="sd">                start with an identity transformation.</span>
+<span class="sd">            replace (bool):</span>
+<span class="sd">                Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true)</span>
+<span class="sd">                or to just return the results of the scaling.</span>
+<span class="sd">            headers (2-element list or tuple of strings):</span>
+<span class="sd">                new column headers to use if replace is True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (various):</span>
+<span class="sd">                Either a copy of the :py:class:Stoner.Data` modified so that the x and y columns match *other*</span>
+<span class="sd">                if *replace* is True, or *opt_trans*,*trans_err*,*new_xy_data*. Where *opt_trans* is the optimum</span>
+<span class="sd">                affine transformation, *trans_err* is a matrix giving the standard error in the transformation</span>
+<span class="sd">                matrix components and  *new_xy_data* is an (n x 2) array of the transformed data.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. plot:: samples/scale_curves.py</span>
+<span class="sd">                :include-source:</span>
+<span class="sd">                :outname: scale</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">)</span>
+        <span class="c1">#</span>
+        <span class="c1"># Sort out keyword srguments</span>
+        <span class="c1">#</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;bounds&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">otherbounds</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;otherbounds&quot;</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)</span>
+        <span class="n">replace</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;headers&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">xmode</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;xmode&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+        <span class="n">ymode</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ymode&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+        <span class="n">use_estimate</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;use_estimate&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Get our working data from this DataFile and remove masked rows</span>
+
+        <span class="n">working</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)</span>
+        <span class="n">working</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">mask_rowcols</span><span class="p">(</span><span class="n">working</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">xdat</span> <span class="o">=</span> <span class="n">working</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">)]</span>
+        <span class="n">ydat</span> <span class="o">=</span> <span class="n">working</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">)]</span>
+
+        <span class="c1"># Get data from the other. If it is already an ndarray, check size and dimensions</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_baseclass</span><span class="p">):</span>
+            <span class="n">working2</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">otherbounds</span><span class="p">)</span>
+            <span class="n">working2</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">mask_rowcols</span><span class="p">(</span><span class="n">working2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">xdat2</span> <span class="o">=</span> <span class="n">working2</span><span class="p">[:,</span> <span class="n">other</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">)]</span>
+            <span class="n">ydat2</span> <span class="o">=</span> <span class="n">working2</span><span class="p">[:,</span> <span class="n">other</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xdat2</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xdat</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Data lengths don&#39;t match </span><span class="si">{}</span><span class="s2">!=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xdat</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">xdat2</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">other</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+            <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xdat</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="s2">&quot;If other is a numpy array it must be the same length as the number of points to match &quot;</span>
+                        <span class="o">+</span> <span class="s2">&quot;to and 1 or 2 columns. (other shape=</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">xdat2</span> <span class="o">=</span> <span class="n">xdat</span>
+                <span class="n">ydat2</span> <span class="o">=</span> <span class="n">other</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xdat2</span> <span class="o">=</span> <span class="n">other</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="n">ydat2</span> <span class="o">=</span> <span class="n">other</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;other should be either a numpy array or subclass of DataFile, not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Need two nx2 arrays of points now</span>
+
+        <span class="n">xy1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">xdat</span><span class="p">,</span> <span class="n">ydat</span><span class="p">))</span>
+        <span class="n">xy2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">xdat2</span><span class="p">,</span> <span class="n">ydat2</span><span class="p">))</span>
+
+        <span class="c1"># We&#39;re going to use three points to get an estimate for the affine transform to apply</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_estimate</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">use_estimate</span><span class="p">:</span>
+            <span class="n">mid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xdat</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>  <span class="c1"># may go wrong if three points are co-linear</span>
+                <span class="n">m0</span> <span class="o">=</span> <span class="n">GetAffineTransform</span><span class="p">(</span><span class="n">xy1</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">:],</span> <span class="n">xy2</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">:])</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">):</span>  <span class="c1"># So use an idnetify transformation instead</span>
+                <span class="n">m0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_estimate</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">use_estimate</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span>
+            <span class="mi">2</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">,</span>
+        <span class="p">):</span>  <span class="c1"># use_estimate is an initial value transformation</span>
+            <span class="n">m0</span> <span class="o">=</span> <span class="n">use_estimate</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Don&#39;t try to be clever</span>
+            <span class="n">m0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+        <span class="n">popt</span><span class="p">,</span> <span class="n">perr</span><span class="p">,</span> <span class="n">trans</span> <span class="o">=</span> <span class="n">_twoD_fit</span><span class="p">(</span><span class="n">xy1</span><span class="p">,</span> <span class="n">xy2</span><span class="p">,</span> <span class="n">xmode</span><span class="o">=</span><span class="n">xmode</span><span class="p">,</span> <span class="n">ymode</span><span class="o">=</span><span class="n">ymode</span><span class="p">,</span> <span class="n">m0</span><span class="o">=</span><span class="n">m0</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">]]</span>
+        <span class="n">new_data</span> <span class="o">=</span> <span class="n">trans</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">replace</span><span class="p">:</span>  <span class="c1"># In place scaling, replace and return self</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Transform&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">popt</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Transform Err&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">headers</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">]</span> <span class="o">=</span> <span class="n">headers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">]</span> <span class="o">=</span> <span class="n">headers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Return results but don&#39;t change self.</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">popt</span><span class="p">,</span> <span class="n">perr</span><span class="p">,</span> <span class="n">new_data</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span> <span class="nf">smooth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="s2">&quot;boxcar&quot;</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Smooth data by convoluting with a window.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            window (string or tuple):</span>
+<span class="sd">                Defines the window type to use by passing to :py:func:`scipy.signal.get_window`.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            xcol(column index or None):</span>
+<span class="sd">                Data to use as x data if needed to define a window. If None, use :py:attr:`Stoner.Core.DataFile.setas`</span>
+<span class="sd">            ycvol (column index or None):</span>
+<span class="sd">                Data to be smoothed</span>
+<span class="sd">            size (int or float):</span>
+<span class="sd">                If int, then the number of points to use in the smoothing window. If float, then the size in x-data</span>
+<span class="sd">                to be used.</span>
+<span class="sd">            result (bool or column index):</span>
+<span class="sd">                Whether to add the smoothed data to the dataset and if so where.</span>
+<span class="sd">            replace (bool):</span>
+<span class="sd">                Replace the exiting data or insert as a new column.</span>
+<span class="sd">            header (string):</span>
+<span class="sd">                New column header for the new data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (self or array):</span>
+<span class="sd">                If result is False, then the return value will be a copy of the smoothed data, otherwise the return</span>
+<span class="sd">                value is a copy of the AnalysisMixin object with the smoothed data added,</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If size is float, then it is necessary to map the X-data to a number of rows and to ensure that the data</span>
+<span class="sd">            is evenly spaced in x. To do this, the number of rows in the window is found by dividing the span in x</span>
+<span class="sd">            by the size and multiplying by the total lenfth. Then the data is interpolated to a new set of evenly</span>
+<span class="sd">            space X over the same range, smoothed and then interpoalted back to the original x values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">)</span>
+        <span class="n">replace</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>  <span class="c1"># overwirte existing y column data</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">])</span>
+
+        <span class="c1"># Sort out window size</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">interp_data</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">xl</span><span class="p">,</span> <span class="n">xh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">)</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">size</span> <span class="o">/</span> <span class="p">(</span><span class="n">xh</span> <span class="o">-</span> <span class="n">xl</span><span class="p">))</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+            <span class="n">nx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xl</span><span class="p">,</span> <span class="n">xh</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Smoothing window size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">int_types</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">interp_data</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;size should either be a float or integer, not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">size</span><span class="p">)))</span>
+
+        <span class="n">window</span> <span class="o">=</span> <span class="n">get_window</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+        <span class="c1"># Handle multiple or single y columns</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">):</span>
+            <span class="n">_</span><span class="o">.</span><span class="n">ycol</span> <span class="o">=</span> <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">]</span>
+
+        <span class="c1"># Do the convolution itself</span>
+        <span class="k">for</span> <span class="n">yc</span> <span class="ow">in</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[:,</span> <span class="n">yc</span><span class="p">]</span> <span class="o">=</span> <span class="n">convolve</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">yc</span><span class="p">],</span> <span class="n">window</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">size</span>
+
+        <span class="c1"># Reinterpolate the smoothed data back if necessary</span>
+        <span class="k">if</span> <span class="n">interp_data</span><span class="p">:</span>
+            <span class="n">nx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">]</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+            <span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Fix return value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">yc</span> <span class="ow">in</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">yc</span><span class="p">],</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">spline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct a spline through x and y data and replace, add new data or return spline function.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            xcol (column index):</span>
+<span class="sd">                Column with x data or if None, use setas attribute.</span>
+<span class="sd">            ycol (column index):</span>
+<span class="sd">                Column with y data or if None, use the setas attribute</span>
+<span class="sd">            sigma (column index, or array of data):</span>
+<span class="sd">                Column with weights, or if None use the 1/yerr column.</span>
+<span class="sd">            replace (Boolean or column index or None):</span>
+<span class="sd">                If True then the y-column data is repalced, if a column index then the</span>
+<span class="sd">                new data is added after the specified index, if False then the new y-data is returned and if None,</span>
+<span class="sd">                then spline object is returned.</span>
+<span class="sd">            header (string):</span>
+<span class="sd">                If *replace* is True or a column index then use this string as the new column header.</span>
+<span class="sd">            order (int):</span>
+<span class="sd">                The order of spline to use (1-5)</span>
+<span class="sd">            smoothing (float or None):</span>
+<span class="sd">                The smoothing factor to use when fitting the spline. A value of zero will create an</span>
+<span class="sd">                interpolating spline.</span>
+<span class="sd">            bbox (tuple of length 2):</span>
+<span class="sd">                Bounding box for the spline - defaults to range of x values</span>
+<span class="sd">            ext (int or str):</span>
+<span class="sd">                How to extrapolate, default is &quot;extrapolate&quot;, but can also be &quot;raise&quot;,&quot;zeros&quot; or &quot;const&quot;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (various):</span>
+<span class="sd">                Depending on the value of *replace*, returns a copy of the AnalysisMixin, a 1D numpy array of</span>
+<span class="sd">                data or an :[y:class:`scipy.interpolate.UniverateSpline` object.</span>
+
+<span class="sd">        This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the</span>
+<span class="sd">        extrapolate function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sigma</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">isNone</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">)</span> <span class="ow">or</span> <span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">isNone</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">):</span>
+                <span class="n">sigma</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span> <span class="o">//</span> <span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="n">replace</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>  <span class="c1"># overwirte existing y column data</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">])</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;order&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;smoothing&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;bbox&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ext&quot;</span><span class="p">,</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">//</span> <span class="n">_</span><span class="o">.</span><span class="n">xcol</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">//</span> <span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">)</span>
+        <span class="n">spline</span> <span class="o">=</span> <span class="n">UnivariateSpline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">bbox</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">ext</span><span class="p">)</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">spline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">result</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">new_y</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">elif</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">new_y</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">spline</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+<form class="search" action="../../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../../Stoner.html">Stoner</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.2.2
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

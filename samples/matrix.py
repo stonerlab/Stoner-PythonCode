@@ -3,7 +3,9 @@ from Stoner import Data
 import numpy as np
 
 x, y = np.meshgrid(np.linspace(-2, 2, 101), np.linspace(-2, 2, 101))
-z = np.cos(4 * np.pi * np.sqrt(x ** 2 + y ** 2)) * np.exp(-np.sqrt(x ** 2 + y ** 2))
+z = np.cos(4 * np.pi * np.sqrt(x ** 2 + y ** 2)) * np.exp(
+    -np.sqrt(x ** 2 + y ** 2)
+)
 
 p = Data()
 p = p & np.linspace(-2, 2, 101) & z

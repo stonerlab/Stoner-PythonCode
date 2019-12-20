@@ -1,0 +1,10 @@
+<map id="inheritance88a7ff70f4" name="inheritance88a7ff70f4">
+<area shape="rect" id="node1" href="classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" target="_top" title="A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods." alt="" coords="2,143,85,153"/>
+<area shape="rect" id="node4" href="classes/Stoner.Data.html#Stoner.Data" target="_top" title="A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and" alt="" coords="258,172,296,181"/>
+<area shape="rect" id="node2" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" target="_top" title=":py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers." alt="" coords="95,143,154,153"/>
+<area shape="rect" id="node3" href="classes/Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject" target="_top" title="Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object." alt="" coords="78,115,170,125"/>
+<area shape="rect" id="node5" href="classes/Stoner.analysis.fitting.FittingMixin.html#Stoner.analysis.fitting.FittingMixin" target="_top" title="A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional curve_fiotting" alt="" coords="163,143,275,153"/>
+<area shape="rect" id="node6" title="A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional stats methods." alt="" coords="285,143,384,153"/>
+<area shape="rect" id="node7" title="A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional filtering snd" alt="" coords="393,143,492,153"/>
+<area shape="rect" id="node8" href="classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" target="_top" title="A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality." alt="" coords="502,143,574,153"/>
+</map>

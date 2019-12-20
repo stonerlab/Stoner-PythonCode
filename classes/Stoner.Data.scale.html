@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -70,19 +71,21 @@
 <li><p><strong>ycol</strong> (<em>column index</em>) – Column with ypoints in it, default to None to use setas attribute value</p></li>
 <li><p><strong>xmode</strong> (<em>'affine'</em><em>, </em><em>'linear'</em><em>,</em><em>'scale'</em><em>,</em><em>'offset'</em>) – How to manipulate the x-data to match up</p></li>
 <li><p><strong>ymode</strong> (<em>'linear'</em><em>,</em><em>'scale'</em><em>,</em><em>'offset'</em>) – How to manipulate the y-data to match up.</p></li>
-<li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Used to identiyf the set of (x,y) points to be used for scaling. Defaults to the whole data set if not speicifed.</p></li>
+<li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Used to identiyf the set of (x,y) points to be used for scaling. Defaults to the whole data set if
+not speicifed.</p></li>
 <li><p><strong>otherbounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Used to detemrine the set of (x,y) points in the other data file. Defaults to bounds if not given.</p></li>
 <li><p><strong>use_estimate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em> or </em><em>3x2 array</em>) – Specifies whether to estimate an initial transformation value or to use the provided one, or
 start with an identity transformation.</p></li>
-<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true) or to just return
-the results of the scaling.</p></li>
+<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true)
+or to just return the results of the scaling.</p></li>
 <li><p><strong>headers</strong> (<em>2-element list</em><em> or </em><em>tuple of strings</em>) – new column headers to use if replace is True.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>(various)</em> –     Either a copy of the :py:class:Stoner.Data` modified so that the x and y columns match <em>other</em> if <em>replace</em> is True, or
-<em>opt_trans</em>,*trans_err*,*new_xy_data*. Where <em>opt_trans</em> is the optimum affine transformation, <em>trans_err</em> is a matrix
-giving the standard error in the transformation matrix components and  <em>new_xy_data</em> is an (n x 2) array of the transformed data.</p>
+<dd class="field-odd"><p><em>(various)</em> –     Either a copy of the :py:class:Stoner.Data` modified so that the x and y columns match <em>other</em>
+if <em>replace</em> is True, or <em>opt_trans</em>,*trans_err*,*new_xy_data*. Where <em>opt_trans</em> is the optimum
+affine transformation, <em>trans_err</em> is a matrix giving the standard error in the transformation
+matrix components and  <em>new_xy_data</em> is an (n x 2) array of the transformed data.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -90,10 +93,10 @@ giving the standard error in the transformation matrix components and  <em>new_x
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">column_stack</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 
-<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">usetex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">usetex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">pi</span><span class="p">,</span> <span class="mi">201</span><span class="p">)</span>
 <span class="n">x2</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="mf">1.5</span> <span class="o">+</span> <span class="mf">0.23</span>
@@ -103,20 +106,22 @@ giving the standard error in the transformation matrix components and  <em>new_x
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="s2">&quot;Signal 1&quot;</span><span class="p">],</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 <span class="n">d2</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="s2">&quot;Signal 2&quot;</span><span class="p">],</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;1$^</span><span class="se">\\</span><span class="s2">mathrm{st}$ signal&quot;</span><span class="p">)</span>
-<span class="n">d2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">figure</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;2$^</span><span class="se">\\</span><span class="s2">mathrm{nd}$ signal&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;1$^</span><span class="se">\\</span><span class="s2">mathrm</span><span class="si">{st}</span><span class="s2">$ signal&quot;</span><span class="p">)</span>
+<span class="n">d2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">figure</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;2$^</span><span class="se">\\</span><span class="s2">mathrm</span><span class="si">{nd}</span><span class="s2">$ signal&quot;</span><span class="p">)</span>
 <span class="n">d3</span> <span class="o">=</span> <span class="n">d2</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Signal 2 scaled&quot;</span><span class="p">,</span> <span class="n">xmode</span><span class="o">=</span><span class="s2">&quot;affine&quot;</span><span class="p">)</span>
-<span class="n">d3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">figure</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;1$^</span><span class="se">\\</span><span class="s2">mathrm{st}$ scaled signals&quot;</span><span class="p">)</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">figure</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;1$^</span><span class="se">\\</span><span class="s2">mathrm</span><span class="si">{st}</span><span class="s2">$ scaled signals&quot;</span><span class="p">)</span>
 <span class="n">d3</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="n">txt</span> <span class="o">=</span> <span class="n">tabulate</span><span class="p">(</span><span class="n">d3</span><span class="p">[</span><span class="s2">&quot;Transform&quot;</span><span class="p">],</span> <span class="n">floatfmt</span><span class="o">=</span><span class="s2">&quot;.2f&quot;</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;grid&quot;</span><span class="p">)</span>
-<span class="n">d3</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Transform</span><span class="se">\n</span><span class="s2">{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">txt</span><span class="p">),</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Transform</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">txt</span><span class="p">),</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 
 <span class="n">np_data</span> <span class="o">=</span> <span class="n">column_stack</span><span class="p">((</span><span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">))</span>
-<span class="n">d4</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">np_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Signal 2 scaled&quot;</span><span class="p">,</span> <span class="n">xmode</span><span class="o">=</span><span class="s2">&quot;affine&quot;</span><span class="p">,</span> <span class="n">use_estimate</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">d4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">figure</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;2$^</span><span class="se">\\</span><span class="s2">mathrm{nd}$ scaled signal&quot;</span><span class="p">)</span>
+<span class="n">d4</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span>
+    <span class="n">np_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Signal 2 scaled&quot;</span><span class="p">,</span> <span class="n">xmode</span><span class="o">=</span><span class="s2">&quot;affine&quot;</span><span class="p">,</span> <span class="n">use_estimate</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="n">d4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">figure</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;2$^</span><span class="se">\\</span><span class="s2">mathrm</span><span class="si">{nd}</span><span class="s2">$ scaled signal&quot;</span><span class="p">)</span>
 <span class="n">d4</span><span class="o">.</span><span class="n">ylim</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
 <span class="n">txt</span> <span class="o">=</span> <span class="n">tabulate</span><span class="p">(</span><span class="n">d4</span><span class="p">[</span><span class="s2">&quot;Transform&quot;</span><span class="p">],</span> <span class="n">floatfmt</span><span class="o">=</span><span class="s2">&quot;.2f&quot;</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;grid&quot;</span><span class="p">)</span>
-<span class="n">d4</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;Transform</span><span class="se">\n</span><span class="s2">{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">txt</span><span class="p">),</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
+<span class="n">d4</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;Transform</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">txt</span><span class="p">),</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 
 <span class="n">d4</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Scaling Example&quot;</span>
 </pre></div>
@@ -187,9 +192,9 @@ giving the standard error in the transformation matrix components and  <em>new_x
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

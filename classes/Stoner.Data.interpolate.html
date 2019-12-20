@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -70,22 +71,25 @@ first.</p>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Type of interpolation function to use - does a pass through from numpy. Default is linear.</p></li>
-<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.</p></li>
-<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If true, then the current AnalysisMixin’s data is replaced with the  newly interpolated data and the current AnalysisMixin is
-returned.</p></li>
+<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Column index or label that contains the data to use with newX to determine which rows to return.
+Defaults to None.</p></li>
+<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If true, then the current AnalysisMixin’s data is replaced with the  newly interpolated data and the
+current AnalysisMixin is returned.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>(2D numpy array)</em> –     Section of the current object’s data if replace is False(default) or the modofied AnalysisMixin if replace is true.</p>
+<dd class="field-odd"><p><em>(2D numpy array)</em> –     Section of the current object’s data if replace is False(default) or the modofied AnalysisMixin if
+replace is true.</p>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.
-Otherwise, the column specified in xcol is thresholded with the values given in newX and the resultant row indices used to return the data.</p>
-<p>If the positional argument, newX is None, then the return value is an interpolation function. This interpolation function takes one argument
-- if <em>xcol</em> was None, this argument is interpreted as array indices, but if <em>xcol</em> was specified, then this argument is interpreted as
-an array of xvalues.</p>
+<p>Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is
+interpreted as (fractional) row indices. Otherwise, the column specified in xcol is thresholded with the
+values given in newX and the resultant row indices used to return the data.</p>
+<p>If the positional argument, newX is None, then the return value is an interpolation function. This
+interpolation function takes one argument - if <em>xcol</em> was None, this argument is interpreted as
+array indices, but if <em>xcol</em> was specified, then this argument is interpreted as an array of xvalues.</p>
 </div>
 </dd></dl>
 
@@ -149,9 +153,9 @@ an array of xvalues.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

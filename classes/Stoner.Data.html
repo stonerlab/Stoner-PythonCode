@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -56,7 +57,8 @@
 <dl class="class">
 <dt id="Stoner.Data">
 <em class="property">class </em><code class="sig-prename descclassname">Stoner.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Data" title="Permalink to this definition">¶</a></dt>
-<dd><p>A merged class of <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a>, <a class="reference internal" href="Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin</span></code></a> and <a class="reference internal" href="Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin</span></code></a></p>
+<dd><p>A merged class of <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a>, <a class="reference internal" href="Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin</span></code></a> and
+<a class="reference internal" href="Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin</span></code></a></p>
 <p>Also has the <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.FielFormats</span></code> loaded redy for use.
 This ‘kitchen-sink’ class is intended as a convenience for writing scripts that carry out both plotting and
 analysis on data files.</p>
@@ -73,7 +75,7 @@ analysis on data files.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="Stoner.Data.__init__.html#Stoner.Data.__init__" title="Stoner.Data.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kargs)</p></td>
 <td><p>Constructor of  PlotMixin class.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Data.add.html#Stoner.Data.add" title="Stoner.Data.add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code></a>(a, b[, replace, header])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Data.add.html#Stoner.Data.add" title="Stoner.Data.add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code></a>(a, b[, replace, header, index])</p></td>
 <td><p>Add one column, number or array (b) to another column (a).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="Stoner.Data.add_column.html#Stoner.Data.add_column" title="Stoner.Data.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(column_data[, header, index])</p></td>
@@ -133,13 +135,13 @@ analysis on data files.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="Stoner.Data.differential_evolution.html#Stoner.Data.differential_evolution" title="Stoner.Data.differential_evolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">differential_evolution</span></code></a>(model[, xcol, ycol, …])</p></td>
 <td><p>Fit model to the data using a differential evolution algorithm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Data.diffsum.html#Stoner.Data.diffsum" title="Stoner.Data.diffsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diffsum</span></code></a>(a, b[, replace, header])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Data.diffsum.html#Stoner.Data.diffsum" title="Stoner.Data.diffsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diffsum</span></code></a>(a, b[, replace, header, index])</p></td>
 <td><p>Calculate <span class="math notranslate nohighlight">\(\frac{a-b}{a+b}\)</span> for the two columns <em>a</em> and <em>b</em>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="Stoner.Data.dir.html#Stoner.Data.dir" title="Stoner.Data.dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dir</span></code></a>([pattern])</p></td>
 <td><p>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Data.divide.html#Stoner.Data.divide" title="Stoner.Data.divide"><code class="xref py py-obj docutils literal notranslate"><span class="pre">divide</span></code></a>(a, b[, replace, header])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Data.divide.html#Stoner.Data.divide" title="Stoner.Data.divide"><code class="xref py py-obj docutils literal notranslate"><span class="pre">divide</span></code></a>(a, b[, replace, header, index])</p></td>
 <td><p>Divide one column (a) by  another column, number or array (b).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="Stoner.Data.extrapolate.html#Stoner.Data.extrapolate" title="Stoner.Data.extrapolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extrapolate</span></code></a>(new_x[, xcol, ycol, yerr, …])</p></td>
@@ -205,7 +207,7 @@ analysis on data files.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="Stoner.Data.min.html#Stoner.Data.min" title="Stoner.Data.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>([column, bounds])</p></td>
 <td><p>Find minimum value and index in a column of data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Data.multiply.html#Stoner.Data.multiply" title="Stoner.Data.multiply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiply</span></code></a>(a, b[, replace, header])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Data.multiply.html#Stoner.Data.multiply" title="Stoner.Data.multiply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiply</span></code></a>(a, b[, replace, header, index])</p></td>
 <td><p>Multiply one column (a) by  another column, number or array (b).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="Stoner.Data.normalise.html#Stoner.Data.normalise" title="Stoner.Data.normalise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalise</span></code></a>([target, base, replace, header, …])</p></td>
@@ -310,7 +312,7 @@ analysis on data files.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Data.subplot2grid.html#Stoner.Data.subplot2grid" title="Stoner.Data.subplot2grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplot2grid</span></code></a>(*args, **kargs)</p></td>
 <td><p>Pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot2grid.html#matplotlib.pyplot.subplot2grid" title="(in Matplotlib v3.1.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.subplot2grid()</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Data.subtract.html#Stoner.Data.subtract" title="Stoner.Data.subtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code></a>(a, b[, replace, header])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Data.subtract.html#Stoner.Data.subtract" title="Stoner.Data.subtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code></a>(a, b[, replace, header, index])</p></td>
 <td><p>Subtract one column, number or array (b) from another column (a).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Data.swap_column.html#Stoner.Data.swap_column" title="Stoner.Data.swap_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swap_column</span></code></a>(*swp, **kargs)</p></td>
@@ -506,9 +508,9 @@ analysis on data files.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,0 +1,6 @@
+arrhenius
+=========
+
+.. currentmodule:: Stoner.analysis.fitting.models.thermal
+
+.. autofunction:: arrhenius

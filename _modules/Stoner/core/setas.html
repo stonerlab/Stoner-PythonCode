@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -55,11 +56,11 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
 
-<span class="kn">from</span> <span class="nn">..compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">index_types</span><span class="p">,</span> <span class="n">_pattern_type</span>
-<span class="kn">from</span> <span class="nn">..tools</span> <span class="k">import</span> <span class="n">_attribute_store</span><span class="p">,</span> <span class="n">isiterable</span><span class="p">,</span> <span class="n">typedList</span><span class="p">,</span> <span class="n">islike_list</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">decode_string</span>
+<span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">index_types</span><span class="p">,</span> <span class="n">_pattern_type</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="kn">import</span> <span class="n">_attribute_store</span><span class="p">,</span> <span class="n">isiterable</span><span class="p">,</span> <span class="n">typedList</span><span class="p">,</span> <span class="n">islike_list</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">decode_string</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Mapping</span>
 
 
 <div class="viewcode-block" id="setas"><a class="viewcode-back" href="../../../classes/Stoner.core.setas.setas.html#Stoner.core.setas">[docs]</a><span class="k">class</span> <span class="nc">setas</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
@@ -87,7 +88,7 @@
 <span class="sd">            assignments before setting new ones (default).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bless</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bless</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructs the setas instance and sets an initial value.</span>
 
 <span class="sd">        Args:</span>
@@ -304,7 +305,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;shape attribute should be a 2-tuple not a </span><span class="si">{}</span><span class="s2">-tuple&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
 
-<div class="viewcode-block" id="setas.__call__"><a class="viewcode-back" href="../../../classes/Stoner.core.setas.setas.html#Stoner.core.setas.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="setas.__call__"><a class="viewcode-back" href="../../../classes/Stoner.core.setas.setas.html#Stoner.core.setas.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Treat the current instance as a callable object and assign columns accordingly.</span>
 
 <span class="sd">        Variois forms of this method are accepted::</span>
@@ -376,7 +377,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span></div>
 
-    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Use getitem to test for membership. Either column assignments or column index types are tested.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
@@ -384,13 +385,13 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Unset either by column index or column assignment.</span>
 
 <span class="sd">        Equivalent to unsetting the same object.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unset</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Checks to see if this is the same object, or has the same headers and the same setas values.&quot;&quot;&quot;</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>  <span class="c1"># Expand strings and convert to list</span>
@@ -412,13 +413,13 @@
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">column_headers</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">setas</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Try to see if attribute name is a key in self.cols and return that instead.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;_cols&quot;</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">setas</span><span class="p">,</span> <span class="bp">self</span><span class="p">),</span> <span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Permit the setas attribute to be treated like either a list or a dictionary.</span>
 
 <span class="sd">        Args:</span>
@@ -456,7 +457,7 @@
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> was not found in the setas attribute.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterate over thew column assignments.</span>
 
 <span class="sd">        .. warn::</span>
@@ -467,11 +468,11 @@
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">c</span>
 
-    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;!= is the same as no ==.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Allow setting of the setas variable like a dictionary or a list.</span>
 
 <span class="sd">        Args:</span>
@@ -499,15 +500,15 @@
             <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">force_list</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return our own length.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Our representation is as a list of the values.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Our string representation is just fromed by joing the assingments together.&quot;&quot;&quot;</span>
         <span class="c1"># Quick string conversion routine</span>
         <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span>
@@ -537,12 +538,12 @@
                 <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Unable to workout what do with </span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2"> when setting the setas attribute.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">new</span>
 
-    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Jump to the core.&quot;&quot;&quot;</span>
         <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__add_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Jump to the core.&quot;&quot;&quot;</span>
         <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__add_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
@@ -592,12 +593,12 @@
             <span class="k">return</span> <span class="n">new</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Jump to the core.&quot;&quot;&quot;</span>
         <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Jump to the core.&quot;&quot;&quot;</span>
         <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
@@ -886,7 +887,7 @@
         <span class="k">if</span> <span class="n">axes</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_defaults</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">no_guess</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_defaults</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">,</span> <span class="s2">&quot;xerr&quot;</span><span class="p">,</span> <span class="s2">&quot;ycol&quot;</span><span class="p">,</span> <span class="s2">&quot;yerr&quot;</span><span class="p">,</span> <span class="s2">&quot;zcol&quot;</span><span class="p">,</span> <span class="s2">&quot;zerr&quot;</span><span class="p">,</span> <span class="s2">&quot;ucol&quot;</span><span class="p">,</span> <span class="s2">&quot;vcol&quot;</span><span class="p">,</span> <span class="s2">&quot;wcol&quot;</span><span class="p">,</span> <span class="s2">&quot;axes&quot;</span><span class="p">]:</span>
-            <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;has_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">]))</span>
+            <span class="n">ret</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;has_</span><span class="si">{n}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">]))</span>
 
         <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;has_uvw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;has_ucol&quot;</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;has_vcol&quot;</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;has_wcol&quot;</span><span class="p">]</span>
 
@@ -935,9 +936,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

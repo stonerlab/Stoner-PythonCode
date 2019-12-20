@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -90,13 +91,13 @@
     <span class="s2">&quot;do_nothing&quot;</span><span class="p">,</span>
     <span class="s2">&quot;denoise&quot;</span><span class="p">,</span>
 <span class="p">]</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">string_types</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span><span class="o">,</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">istuple</span><span class="p">,</span> <span class="n">isiterable</span>
-<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">griddata</span>
-<span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">feature</span><span class="p">,</span> <span class="n">measure</span><span class="p">,</span> <span class="n">transform</span>
-<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="k">import</span> <span class="n">Normalize</span>
+<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">istuple</span><span class="p">,</span> <span class="n">isiterable</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">griddata</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">feature</span><span class="p">,</span> <span class="n">measure</span><span class="p">,</span> <span class="n">transform</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">Normalize</span>
 <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>
 
 <span class="k">try</span><span class="p">:</span>  <span class="c1"># Make OpenCV an optional import</span>
@@ -110,13 +111,13 @@
     <span class="n">imreg_dft</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="k">try</span><span class="p">:</span>  <span class="c1"># image_registration module</span>
-    <span class="kn">from</span> <span class="nn">image_registration</span> <span class="k">import</span> <span class="n">chi2_shift</span>
-    <span class="kn">from</span> <span class="nn">image_registration</span> <span class="k">import</span> <span class="n">fft_tools</span>
+    <span class="kn">from</span> <span class="nn">image_registration</span> <span class="kn">import</span> <span class="n">chi2_shift</span>
+    <span class="kn">from</span> <span class="nn">image_registration</span> <span class="kn">import</span> <span class="n">fft_tools</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">chi2_shift</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">ImageArray</span>
-<span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">ImageArray</span>
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 
 
 <span class="k">def</span> <span class="nf">_scale</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">to_pixel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -211,7 +212,8 @@
         <span class="n">im1</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wrap&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">scharr</span><span class="p">()</span>
         <span class="n">im1</span> <span class="o">=</span> <span class="n">im1</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">ref1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;imreg_dft&quot;</span><span class="p">)</span>
         <span class="n">tvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">im1</span><span class="p">[</span><span class="s2">&quot;tvec&quot;</span><span class="p">])</span>
-        <span class="n">new_im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">tvec</span><span class="p">)</span>
+        <span class="n">prefilter</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefilter&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">new_im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">tvec</span><span class="p">,</span> <span class="n">prefilter</span><span class="o">=</span><span class="n">prefilter</span><span class="p">)</span>
         <span class="n">new_im</span><span class="p">[</span><span class="s2">&quot;tvec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="o">-</span><span class="n">tvec</span><span class="p">)</span>
         <span class="n">new_im</span> <span class="o">=</span> <span class="n">new_im</span><span class="o">.</span><span class="n">T</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">chi2_shift</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;chi2_shift&quot;</span><span class="p">:</span>
@@ -227,6 +229,7 @@
             <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">imreg_dft</span><span class="o">.</span><span class="n">similarity</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">)</span>
         <span class="n">new_im</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;timg&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">new_im</span> <span class="o">=</span> <span class="n">new_im</span><span class="o">.</span><span class="n">T</span>
         <span class="n">new_im</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
         <span class="n">new_im</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cv2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;cv2&quot;</span><span class="p">:</span>
@@ -671,7 +674,7 @@
 <span class="sd">    Use this method if you have an image with a small number of pixels with extreme values that are</span>
 <span class="sd">    out of range.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">interp1d</span>
+    <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
 
     <span class="n">cdf</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">cumulative_distribution</span><span class="p">(</span><span class="n">nbins</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="n">im</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
     <span class="n">cdf</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
@@ -869,9 +872,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

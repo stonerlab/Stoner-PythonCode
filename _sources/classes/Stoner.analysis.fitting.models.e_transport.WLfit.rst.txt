@@ -1,0 +1,27 @@
+WLfit
+=====
+
+.. currentmodule:: Stoner.analysis.fitting.models.e_transport
+
+.. autoclass:: WLfit
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~WLfit.display_names
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~WLfit.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

@@ -1,0 +1,27 @@
+FittingMixin
+============
+
+.. currentmodule:: Stoner.analysis.fitting
+
+.. autoclass:: FittingMixin
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~FittingMixin.annotate_fit
+      ~FittingMixin.curve_fit
+      ~FittingMixin.differential_evolution
+      ~FittingMixin.lmfit
+      ~FittingMixin.odr
+      ~FittingMixin.polyfit
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: annotate_fit
+   .. automethod:: curve_fit
+   .. automethod:: differential_evolution
+   .. automethod:: lmfit
+   .. automethod:: odr
+   .. automethod:: polyfit

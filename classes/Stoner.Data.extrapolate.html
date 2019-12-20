@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -81,11 +82,11 @@ callable, then represents a function to be fitted to the data.</p></li>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If the new_x values lie outside the span of the x-data, then the nearest <em>overlap</em> portion of the data is used
-to estimate the values. If the new_x values are within the span of the x-data then the portion of the data
-centred about the point and overlap points long will be used to interpolate a value.</p>
-<p>If <em>kind</em> is callable, it should take x values in the first parameter and free fitting parameters as the other
-parameters (i.e. as with <code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code>).</p>
+<p>If the new_x values lie outside the span of the x-data, then the nearest <em>overlap</em> portion of the data
+is used to estimate the values. If the new_x values are within the span of the x-data then the portion
+of the data centred about the point and overlap points long will be used to interpolate a value.</p>
+<p>If <em>kind</em> is callable, it should take x values in the first parameter and free fitting parameters as
+the other parameters (i.e. as with <code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.curve_fit()</span></code>).</p>
 </div>
 </dd></dl>
 
@@ -149,9 +150,9 @@ parameters (i.e. as with <code class="xref py py-meth docutils literal notransla
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

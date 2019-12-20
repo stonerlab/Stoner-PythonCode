@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Stoner.analysis.fitting.models.e_transport &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../../../../../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../../../../Stoner.html">Stoner</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Stoner.analysis.fitting.models.e_transport</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:py:class:`lmfit.Model` model classes and functions for various models of electron transport (other than tunnelling processes).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BlochGrueneisen&quot;</span><span class="p">,</span> <span class="s2">&quot;FluchsSondheimer&quot;</span><span class="p">,</span> <span class="s2">&quot;WLfit&quot;</span><span class="p">,</span> <span class="s2">&quot;blochGrueneisen&quot;</span><span class="p">,</span> <span class="s2">&quot;fluchsSondheimer&quot;</span><span class="p">,</span> <span class="s2">&quot;wlfit&quot;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">quad</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">digamma</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">lmfit</span> <span class="kn">import</span> <span class="n">Model</span>
+    <span class="kn">from</span> <span class="nn">lmfit.models</span> <span class="kn">import</span> <span class="n">update_param_vals</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">Model</span> <span class="o">=</span> <span class="nb">object</span>
+    <span class="n">update_param_vals</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">_bgintegrand</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The integrand for the Bloch Grueneisen model.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">**</span> <span class="n">n</span> <span class="o">/</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)))</span>
+
+
+<div class="viewcode-block" id="wlfit"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.wlfit.html#Stoner.analysis.fitting.models.e_transport.wlfit">[docs]</a><span class="k">def</span> <span class="nf">wlfit</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">DS</span><span class="p">,</span> <span class="n">B1</span><span class="p">,</span> <span class="n">B2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Weak localisation</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        B (array): mag. field</span>
+<span class="sd">        s0 (float): zero field conductance</span>
+<span class="sd">        DS (float): scaling parameter</span>
+<span class="sd">        B1 (float): elastic characteristic field (B1)</span>
+<span class="sd">        B2 (float): inelastic characteristic field (B2)</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        Conductance vs Field for a weak localisation system</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">       2D WL model as per Wu et al  PRL 98, 136801 (2007), Porter et al PRB 86, 064423 (2012)</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. plot:: samples/Fitting/weak_localisation.py</span>
+<span class="sd">            :include-source:</span>
+<span class="sd">            :outname: wlfit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">e</span> <span class="o">=</span> <span class="mf">1.6e-19</span>  <span class="c1"># C</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="mf">6.62e-34</span>  <span class="c1"># Js</span>
+    <span class="c1"># Sets up conductivity fit array</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">B2</span> <span class="o">==</span> <span class="n">B1</span><span class="p">:</span>
+        <span class="n">B2</span> <span class="o">=</span> <span class="n">B1</span> <span class="o">*</span> <span class="mf">1.00001</span>  <span class="c1"># prevent dividing by zero</span>
+
+    <span class="c1"># performs calculation for all parts</span>
+    <span class="k">for</span> <span class="n">tt</span><span class="p">,</span> <span class="n">Bi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">B</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Bi</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># prevent dividing by zero</span>
+            <span class="n">WLpt1</span> <span class="o">=</span> <span class="n">digamma</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">B2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Bi</span><span class="p">))</span>
+            <span class="n">WLpt2</span> <span class="o">=</span> <span class="n">digamma</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">B1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Bi</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">WLpt1</span> <span class="o">=</span> <span class="p">(</span><span class="n">digamma</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">B2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">tt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]))</span> <span class="o">+</span> <span class="n">digamma</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">B2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">tt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])))</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">WLpt2</span> <span class="o">=</span> <span class="p">(</span><span class="n">digamma</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">B1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">tt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]))</span> <span class="o">+</span> <span class="n">digamma</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">B1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">tt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])))</span> <span class="o">/</span> <span class="mi">2</span>
+
+        <span class="n">WLpt3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">B2</span> <span class="o">/</span> <span class="n">B1</span><span class="p">)</span>
+
+        <span class="c1"># Calculates fermi level smearing</span>
+        <span class="n">cond</span><span class="p">[</span><span class="n">tt</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">WLpt1</span> <span class="o">-</span> <span class="n">WLpt2</span> <span class="o">-</span> <span class="n">WLpt3</span><span class="p">)</span>
+    <span class="c1"># cond = s0*cond / min(cond)</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="n">s0</span> <span class="o">+</span> <span class="n">DS</span> <span class="o">*</span> <span class="n">cond</span>
+    <span class="k">return</span> <span class="n">cond</span></div>
+
+
+<div class="viewcode-block" id="fluchsSondheimer"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.fluchsSondheimer.html#Stoner.analysis.fitting.models.e_transport.fluchsSondheimer">[docs]</a><span class="k">def</span> <span class="nf">fluchsSondheimer</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">sigma_0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Evaluate a Fluchs-Sondheumer model function for conductivity.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        t (array): Thickness values</span>
+<span class="sd">        l (float): mean-free-path</span>
+<span class="sd">        p (float): reflection co-efficient</span>
+<span class="sd">        sigma_0 (float): intrinsic conductivity</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        Reduced Resistivity</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. plot:: samples/Fitting/f_s.py</span>
+<span class="sd">            :include-source:</span>
+<span class="sd">            :outname: fluchssondheimer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="n">l</span>
+
+    <span class="n">kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k</span> <span class="o">*</span> <span class="n">x</span><span class="p">))</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+        <span class="n">ret1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">v</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">v</span><span class="p">))</span>
+        <span class="n">ret2</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">v</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret1</span> <span class="o">*</span> <span class="n">ret2</span>
+    <span class="k">return</span> <span class="n">result</span> <span class="o">/</span> <span class="n">sigma_0</span></div>
+
+
+<div class="viewcode-block" id="blochGrueneisen"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.blochGrueneisen.html#Stoner.analysis.fitting.models.e_transport.blochGrueneisen">[docs]</a><span class="k">def</span> <span class="nf">blochGrueneisen</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">thetaD</span><span class="p">,</span> <span class="n">rho0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;BlochGrueneiseen Function for fitting R(T).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        T (array): Temperature Values to fit</span>
+<span class="sd">        thetaD (float): Debye Temperature</span>
+<span class="sd">        rho0 (float): Residual resisitivity</span>
+<span class="sd">        A (float): scattering scaling factor</span>
+<span class="sd">        n (float): Exponent term</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        Evaluation of the BlochGrueneisen function for R(T)</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. plot:: samples/Fitting/b_g.py</span>
+<span class="sd">            :include-source:</span>
+<span class="sd">            :outname: blochgruneisen</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+        <span class="n">intg</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">_bgintegrand</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">thetaD</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="p">(</span><span class="n">n</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho0</span> <span class="o">+</span> <span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span> <span class="o">/</span> <span class="n">thetaD</span><span class="p">)</span> <span class="o">**</span> <span class="n">n</span> <span class="o">*</span> <span class="n">intg</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="WLfit"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.WLfit.html#Stoner.analysis.fitting.models.e_transport.WLfit">[docs]</a><span class="k">class</span> <span class="nc">WLfit</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Weak localisation</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        B (array): mag. field</span>
+<span class="sd">        s0 (float): zero field conductance</span>
+<span class="sd">        DS (float): scaling parameter</span>
+<span class="sd">        B1 (float): elastic characteristic field (B1)</span>
+<span class="sd">        B2 (float): inelastic characteristic field (B2)</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        Conductance vs Field for a weak localisation system</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">       2D WL model as per Wu et al  PRL 98, 136801 (2007), Porter et al PRB 86, 064423 (2012)</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. plot:: samples/Fitting/weak_localisation.py</span>
+<span class="sd">            :include-source:</span>
+<span class="sd">            :outname: wlfit-class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">display_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;\sigma_0&quot;</span><span class="p">,</span> <span class="s2">&quot;D_S&quot;</span><span class="p">,</span> <span class="s2">&quot;B_1&quot;</span><span class="p">,</span> <span class="s2">&quot;B_2&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Configure Initial fitting function.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WLfit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wlfit</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WLfit.guess"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.WLfit.html#Stoner.analysis.fitting.models.e_transport.WLfit.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Guess parameters for weak localisation fit.&quot;&quot;&quot;</span>
+        <span class="n">s0</span><span class="p">,</span> <span class="n">DS</span><span class="p">,</span> <span class="n">B1</span><span class="p">,</span> <span class="n">B2</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">zpos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+            <span class="n">s0</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">zpos</span><span class="p">]</span>
+            <span class="n">B1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="mf">20.0</span>
+            <span class="n">B2</span> <span class="o">=</span> <span class="n">B1</span> <span class="o">*</span> <span class="mi">10</span>
+            <span class="n">DS</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">s0</span><span class="o">=</span><span class="n">s0</span><span class="p">,</span> <span class="n">DS</span><span class="o">=</span><span class="n">DS</span><span class="p">,</span> <span class="n">B1</span><span class="o">=</span><span class="n">B1</span><span class="p">,</span> <span class="n">B2</span><span class="o">=</span><span class="n">B2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pars</span><span class="p">:</span>
+            <span class="n">pars</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="FluchsSondheimer"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.html#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer">[docs]</a><span class="k">class</span> <span class="nc">FluchsSondheimer</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Evaluate a Fluchs-Sondheumer model function for conductivity.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        t (array): Thickness values</span>
+<span class="sd">        l (float): mean-free-path</span>
+<span class="sd">        p (float): reflection co-efficient</span>
+<span class="sd">        sigma_0 (float): intrinsic conductivity</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        Reduced Resistivity</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. plot:: samples/Fitting/f_s.py</span>
+<span class="sd">            :include-source:</span>
+<span class="sd">            :outname: fluchsdondheimer-class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">display_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;\lambda_</span><span class="si">{mfp}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;p_</span><span class="si">{refl}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\sigma_0&quot;</span><span class="p">]</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;nm&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\Omega^{-1}m^{-1}&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Configure Initial fitting function.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FluchsSondheimer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fluchsSondheimer</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FluchsSondheimer.guess"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.html#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+        <span class="sd">&quot;&quot;&quot;Guess some starting values - not very clever&quot;&quot;&quot;</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">sigma_0</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="BlochGrueneisen"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.html#Stoner.analysis.fitting.models.e_transport.BlochGrueneisen">[docs]</a><span class="k">class</span> <span class="nc">BlochGrueneisen</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;BlochGrueneiseen Function for fitting R(T).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        T (array): Temperature Values to fit</span>
+<span class="sd">        thetaD (float): Debye Temperature</span>
+<span class="sd">        rho0 (float): Residual resisitivity</span>
+<span class="sd">        A (float): scattering scaling factor</span>
+<span class="sd">        n (float): Exponent term</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        Evaluation of the BlochGrueneisen function for R(T)</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. plot:: samples/Fitting/b_g.py</span>
+<span class="sd">            :include-source:</span>
+<span class="sd">            :outname: blochgruneisen-class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">display_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;\theta_D&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\rho_0&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Configure Initial fitting function.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BlochGrueneisen</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">blochGrueneisen</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BlochGrueneisen.guess"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.html#Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+        <span class="sd">&quot;&quot;&quot;Guess some starting values - not very clever&quot;&quot;&quot;</span>
+        <span class="n">rho0</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">data</span> <span class="o">-</span> <span class="n">data</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">thetaD</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">rho0</span><span class="o">=</span><span class="n">rho0</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
+        <span class="n">pars</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pars</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">vary</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../../index.html">
+              <img class="logo" src="../../../../../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+<form class="search" action="../../../../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../../../../Stoner.html">Stoner</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.2.2
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

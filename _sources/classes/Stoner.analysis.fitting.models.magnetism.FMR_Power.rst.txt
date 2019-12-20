@@ -1,0 +1,27 @@
+FMR_Power
+=========
+
+.. currentmodule:: Stoner.analysis.fitting.models.magnetism
+
+.. autoclass:: FMR_Power
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~FMR_Power.display_names
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~FMR_Power.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

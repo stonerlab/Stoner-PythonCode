@@ -1,0 +1,7 @@
+Linear
+======
+
+.. currentmodule:: Stoner.analysis.fitting.models.generic
+
+.. autoclass:: Linear
+   :show-inheritance:

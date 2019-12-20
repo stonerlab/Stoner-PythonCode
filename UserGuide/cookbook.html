@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -65,7 +66,7 @@ functions.</p>
 the plotting functions of <a class="reference internal" href="../classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin</span></code></a>. This can be done easily by creating a
 subclass that inherits from both, but for convenience, the <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Util</span></code> module provides the <code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>
 class that does this for you.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">Data</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;File-of-data.txt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -75,7 +76,7 @@ class that does this for you.:</p>
 <p>So far the module just contains one function that will take a single <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a>
 object and split it into a series of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> objects where one column is either
 rising or falling. This is designed to help deal with analysis problems involving hysteretic data.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">split_up_down</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="kn">import</span> <span class="n">split_up_down</span>
 <span class="n">folder</span><span class="o">=</span><span class="n">split_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">column</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -88,7 +89,7 @@ don’t already exist) and files will be added.</p>
 <h3>Analysis of Hysteresis Loops<a class="headerlink" href="#analysis-of-hysteresis-loops" title="Permalink to this headline">¶</a></h3>
 <p>Since much of our group’s work is concerned with measuring magnetic hystersis loops, the <a class="reference internal" href="../classes/Stoner.Util.hysteresis_correct.html#Stoner.Util.hysteresis_correct" title="Stoner.Util.hysteresis_correct"><code class="xref py py-func docutils literal notranslate"><span class="pre">hysteresis_correct()</span></code></a> function
 provides a handy way to correct some instrumental artifacts and measure properties of hysteresis loops.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">hysteresis_correct</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="kn">import</span> <span class="n">hysteresis_correct</span>
 <span class="n">d</span><span class="o">=</span><span class="n">hysteresis_correct</span><span class="p">(</span><span class="s1">&#39;QD-SQUID-VSM.dat&#39;</span><span class="p">,</span><span class="n">correct_background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">correct_H</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">e</span><span class="o">=</span><span class="n">hysteresis_correct</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 
@@ -121,8 +122,8 @@ extrema in H). The keyword parameter <em>saturation_fraction</em> controls the e
 a measurement to one signficant figure, and then quote the value to the same number of decimal places. Whilst doing this
 might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Util</span></code> module
 provides the <code class="xref py py-func docutils literal notranslate"><span class="pre">Stoner.Util.format_error()</span></code> function.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">format_error</span>
-<span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="k">import</span> <span class="n">hbar</span><span class="p">,</span><span class="n">m_e</span><span class="p">,</span><span class="n">m_u</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="kn">import</span> <span class="n">format_error</span>
+<span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">hbar</span><span class="p">,</span><span class="n">m_e</span><span class="p">,</span><span class="n">m_u</span>
 <span class="nb">print</span> <span class="n">format_error</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">error</span><span class="p">)</span>
 <span class="nb">print</span> <span class="n">format_error</span><span class="p">(</span><span class="n">m_e</span><span class="p">,</span><span class="n">hbar</span><span class="p">,</span><span class="n">latex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span> <span class="n">format_error</span><span class="p">(</span><span class="n">hbar</span><span class="o">/</span><span class="n">m_e</span><span class="p">,</span><span class="n">hbar</span><span class="o">/</span><span class="n">m_u</span><span class="p">,</span><span class="n">latex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">)</span>
@@ -149,8 +150,8 @@ illustrates this by fitting a plane to a collection of points in 3D space.</p>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">meshgrid</span><span class="p">,</span> <span class="n">column_stack</span>
-<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="kn">as</span> <span class="nn">cmap</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cmap</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 
 <span class="k">def</span> <span class="nf">plane</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
@@ -172,13 +173,15 @@ illustrates this by fitting a plane to a collection of points in 3D space.</p>
 <span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s2">&quot;scatter&quot;</span><span class="p">)</span>
 
-<span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy.z&quot;</span>
 
 <span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">)</span>
 
 <span class="n">txt</span> <span class="o">=</span> <span class="s2">&quot;$z=c-ax+by$</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="n">txt</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;plane:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">]])</span>
+<span class="n">txt</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;plane:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">latex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">]]</span>
+<span class="p">)</span>
 
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">50</span><span class="p">,</span> <span class="n">txt</span><span class="p">)</span>
@@ -196,9 +199,18 @@ and make your function take a tuple of 1D-arrays and pass <em>ycol</em> as an ar
 For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Fit a sphere with curve_fit.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">column_stack</span><span class="p">,</span> <span class="n">zeros_like</span><span class="p">,</span> <span class="n">ones_like</span><span class="p">,</span> <span class="n">meshgrid</span><span class="p">,</span> <span class="n">linspace</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">sin</span><span class="p">,</span>
+    <span class="n">cos</span><span class="p">,</span>
+    <span class="n">pi</span><span class="p">,</span>
+    <span class="n">column_stack</span><span class="p">,</span>
+    <span class="n">zeros_like</span><span class="p">,</span>
+    <span class="n">ones_like</span><span class="p">,</span>
+    <span class="n">meshgrid</span><span class="p">,</span>
+    <span class="n">linspace</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span><span class="p">,</span> <span class="n">uniform</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 
 <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
@@ -247,7 +259,9 @@ For example:</p>
 <span class="n">z</span> <span class="o">+=</span> <span class="n">c</span>
 
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">rstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">rstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -304,8 +318,8 @@ directly from the <a class="reference internal" href="../classes/Stoner.plot.Plo
 -Y0..y0 and want to quickly get a view of the surface. This problem can be easily done
 by creating a random distribution of (x,y) points, evaluating the function and then
 using the <code class="xref py py-class docutils literal notranslate"><span class="pre">PlotFile</span></code> methods to generate the surface.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">uniform</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">uniform</span>
 
 <span class="n">samples</span><span class="o">=</span><span class="mi">5000</span>
 
@@ -325,7 +339,7 @@ using the <code class="xref py py-class docutils literal notranslate"><span clas
 modelling codes, such OOMMF or MuMax. When modelling a 3D system, it is often useful to
 be able to examine a cross-section of the simulation. The Stoner package provides tools
 to quickly examine the output data:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.FileFormats</span> <span class="k">import</span> <span class="n">OVFFile</span> <span class="c1"># reads OOMMF vector field files</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.FileFormats</span> <span class="kn">import</span> <span class="n">OVFFile</span> <span class="c1"># reads OOMMF vector field files</span>
 <span class="kn">import</span> <span class="nn">Stoner.plot</span>
 <span class="n">p</span><span class="o">=</span><span class="n">SP</span><span class="o">.</span><span class="n">PlotFile</span><span class="p">(</span><span class="s1">&#39;my_simulation.ovf&#39;</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyzuvw&quot;</span>
@@ -420,9 +434,9 @@ to quickly examine the output data:</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

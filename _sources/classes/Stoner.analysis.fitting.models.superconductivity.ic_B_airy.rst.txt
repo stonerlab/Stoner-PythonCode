@@ -1,0 +1,6 @@
+ic_B_airy
+=========
+
+.. currentmodule:: Stoner.analysis.fitting.models.superconductivity
+
+.. autofunction:: ic_B_airy

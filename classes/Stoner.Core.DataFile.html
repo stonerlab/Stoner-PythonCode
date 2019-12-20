@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -599,7 +600,7 @@ string name of the subclass and the class object.</p>
 
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">patterns</code><em class="property"> = ['*.txt', '*.tdi', '*.dat', '*.png', '*.340', '*.ovf', '*.ras', '*.spc', '*.tdms', '*.fld', '*.dql', '*.iv', '*.rvt', '*.emd', '*.dm4', '*.csv', '*.hdf', '*.hf5', '*.zip']</em></dt>
+<code class="sig-name descname">patterns</code><em class="property"> = ['*.txt', '*.tdi', '*.dat', '*.png', '*.340', '*.ovf', '*.ras', '*.spc', '*.tdms', '*.fld', '*.dql', '*.iv', '*.rvt', '*.csv', '*.hdf', '*.hf5', '*.zip']</em></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -627,7 +628,7 @@ string name of the subclass and the class object.</p>
 
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">subclasses</code><em class="property"> = {'BNLFile': &lt;class 'Stoner.formats.facilities.BNLFile'&gt;, 'BigBlueFile': &lt;class 'Stoner.formats.rigs.BigBlueFile'&gt;, 'BirgeIVFile': &lt;class 'Stoner.formats.rigs.BirgeIVFile'&gt;, 'CSVFile': &lt;class 'Stoner.formats.generic.CSVFile'&gt;, 'Data': &lt;class 'Stoner.Data'&gt;, 'DataFile': &lt;class 'Stoner.Core.DataFile'&gt;, 'EasyPlotFile': &lt;class 'Stoner.FileFormats.EasyPlotFile'&gt;, 'FmokeFile': &lt;class 'Stoner.formats.rigs.FmokeFile'&gt;, 'GenXFile': &lt;class 'Stoner.FileFormats.GenXFile'&gt;, 'HDF5File': &lt;class 'Stoner.HDF5.HDF5File'&gt;, 'HGXFile': &lt;class 'Stoner.HDF5.HGXFile'&gt;, 'HyperSpyFile': &lt;class 'Stoner.formats.generic.HyperSpyFile'&gt;, 'JustNumbersFile': &lt;class 'Stoner.formats.generic.JustNumbersFile'&gt;, 'KermitPNGFile': &lt;class 'Stoner.formats.generic.KermitPNGFile'&gt;, 'LSTemperatureFile': &lt;class 'Stoner.formats.instruments.LSTemperatureFile'&gt;, 'MDAASCIIFile': &lt;class 'Stoner.formats.facilities.MDAASCIIFile'&gt;, 'MokeFile': &lt;class 'Stoner.formats.rigs.MokeFile'&gt;, 'OVFFile': &lt;class 'Stoner.FileFormats.OVFFile'&gt;, 'OpenGDAFile': &lt;class 'Stoner.formats.facilities.OpenGDAFile'&gt;, 'PinkLibFile': &lt;class 'Stoner.FileFormats.PinkLibFile'&gt;, 'QDFile': &lt;class 'Stoner.formats.instruments.QDFile'&gt;, 'RasorFile': &lt;class 'Stoner.formats.facilities.RasorFile'&gt;, 'RigakuFile': &lt;class 'Stoner.formats.instruments.RigakuFile'&gt;, 'SLS_STXMFile': &lt;class 'Stoner.HDF5.SLS_STXMFile'&gt;, 'SNSFile': &lt;class 'Stoner.formats.facilities.SNSFile'&gt;, 'SPCFile': &lt;class 'Stoner.formats.instruments.SPCFile'&gt;, 'TDMSFile': &lt;class 'Stoner.formats.generic.TDMSFile'&gt;, 'VSMFile': &lt;class 'Stoner.formats.instruments.VSMFile'&gt;, 'XRDFile': &lt;class 'Stoner.formats.instruments.XRDFile'&gt;, 'ZippedFile': &lt;class 'Stoner.Zip.ZippedFile'&gt;}</em></dt>
+<code class="sig-name descname">subclasses</code><em class="property"> = {'BNLFile': &lt;class 'Stoner.formats.facilities.BNLFile'&gt;, 'BigBlueFile': &lt;class 'Stoner.formats.rigs.BigBlueFile'&gt;, 'BirgeIVFile': &lt;class 'Stoner.formats.rigs.BirgeIVFile'&gt;, 'CSVFile': &lt;class 'Stoner.formats.generic.CSVFile'&gt;, 'Data': &lt;class 'Stoner.Data'&gt;, 'DataFile': &lt;class 'Stoner.Core.DataFile'&gt;, 'EasyPlotFile': &lt;class 'Stoner.FileFormats.EasyPlotFile'&gt;, 'FmokeFile': &lt;class 'Stoner.formats.rigs.FmokeFile'&gt;, 'GenXFile': &lt;class 'Stoner.FileFormats.GenXFile'&gt;, 'HDF5File': &lt;class 'Stoner.HDF5.HDF5File'&gt;, 'HGXFile': &lt;class 'Stoner.HDF5.HGXFile'&gt;, 'JustNumbersFile': &lt;class 'Stoner.formats.generic.JustNumbersFile'&gt;, 'KermitPNGFile': &lt;class 'Stoner.formats.generic.KermitPNGFile'&gt;, 'LSTemperatureFile': &lt;class 'Stoner.formats.instruments.LSTemperatureFile'&gt;, 'MDAASCIIFile': &lt;class 'Stoner.formats.facilities.MDAASCIIFile'&gt;, 'MokeFile': &lt;class 'Stoner.formats.rigs.MokeFile'&gt;, 'OVFFile': &lt;class 'Stoner.FileFormats.OVFFile'&gt;, 'OpenGDAFile': &lt;class 'Stoner.formats.facilities.OpenGDAFile'&gt;, 'PinkLibFile': &lt;class 'Stoner.FileFormats.PinkLibFile'&gt;, 'QDFile': &lt;class 'Stoner.formats.instruments.QDFile'&gt;, 'RasorFile': &lt;class 'Stoner.formats.facilities.RasorFile'&gt;, 'RigakuFile': &lt;class 'Stoner.formats.instruments.RigakuFile'&gt;, 'SLS_STXMFile': &lt;class 'Stoner.HDF5.SLS_STXMFile'&gt;, 'SNSFile': &lt;class 'Stoner.formats.facilities.SNSFile'&gt;, 'SPCFile': &lt;class 'Stoner.formats.instruments.SPCFile'&gt;, 'TDMSFile': &lt;class 'Stoner.formats.generic.TDMSFile'&gt;, 'VSMFile': &lt;class 'Stoner.formats.instruments.VSMFile'&gt;, 'XRDFile': &lt;class 'Stoner.formats.instruments.XRDFile'&gt;, 'ZippedFile': &lt;class 'Stoner.Zip.ZippedFile'&gt;}</em></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods Documentation</p>
@@ -1210,7 +1211,9 @@ then pass them via the first positional dictionary value.</p>
 
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="s2">&quot;sample.txt&quot;</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;b-&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__gt</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Res__between</span><span class="o">=</span><span class="p">(</span><span class="mf">5.3</span><span class="p">,</span> <span class="mf">6.3</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;portion 1&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__gt</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Res__between</span><span class="o">=</span><span class="p">(</span><span class="mf">5.3</span><span class="p">,</span> <span class="mf">6.3</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;portion 1&quot;</span>
+<span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__lt</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;g&lt;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;portion 2&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1393,9 +1396,9 @@ subclass of the <a class="reference internal" href="Stoner.core.typeHintedDict.h
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

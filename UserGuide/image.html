@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -178,15 +179,15 @@ i
 store the image data in ImageFile. The numpy.ndarray like data can be accessed at any point via either <code class="xref py py-attr docutils literal notranslate"><span class="pre">ImageFile.image</span></code> or <code class="xref py py-attr docutils literal notranslate"><span class="pre">ImageFile.data</span></code>
 and will be accepted by functions that take an numpy.ndarray as an argument.</p>
 </div>
-<div class="section" id="working-with-lots-of-images-imagefolder-and-imagestack2">
-<h2>Working with Lots of Images: <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFolder</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageStack2</span></code><a class="headerlink" href="#working-with-lots-of-images-imagefolder-and-imagestack2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="working-with-lots-of-images-imagefolder-and-imagestack">
+<h2>Working with Lots of Images: <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFolder</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageStack</span></code><a class="headerlink" href="#working-with-lots-of-images-imagefolder-and-imagestack" title="Permalink to this headline">¶</a></h2>
 <p>Just as <a class="reference internal" href="../classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.DataFolder</span></code></a> allows you to efficiently process lots of separate <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> files, <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFolder</span></code> does the same for lots
 of <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFile</span></code> files. It is based on the same parent <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Fodlers.baseFolder</span></code> class - so has similar abilities to iterate, form into
 sub-folders and so on. In addition, an <code class="xref py py-class docutils literal notranslate"><span class="pre">Imagefolder</span></code> has additional attributes and methods for working with multiple images.</p>
 <p>Due to the potentially large amount of data involved in processing images it is good to take advantage of native numpy’s speed wherever possible. To this end
-<a class="reference internal" href="../classes/Stoner.Image.ImageStack2.html#Stoner.Image.ImageStack2" title="Stoner.Image.ImageStack2"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Image.ImageStack2</span></code></a> is now available. This works very similarly to ImageFolder but internally represents the image stack as a 3d numpy array.
+<a class="reference internal" href="../classes/Stoner.Image.ImageStack.html#Stoner.Image.ImageStack" title="Stoner.Image.ImageStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Image.ImageStack</span></code></a> is now available. This works very similarly to ImageFolder but internally represents the image stack as a 3d numpy array.
 For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">imst</span> <span class="o">=</span> <span class="n">ImageStack2</span><span class="p">(</span><span class="s1">&#39;pathtomyfolder&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.tif&#39;</span><span class="p">)</span> <span class="c1">#directory is held in memory but images are not loaded yet</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">imst</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="p">(</span><span class="s1">&#39;pathtomyfolder&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.tif&#39;</span><span class="p">)</span> <span class="c1">#directory is held in memory but images are not loaded yet</span>
 <span class="n">imst</span> <span class="o">=</span> <span class="n">imst</span><span class="p">[</span><span class="s1">&#39;subfolder&#39;</span><span class="p">]</span> <span class="c1">#take advantage of :class:`DiskBasedFolder` grouping abilities</span>
 <span class="n">imst</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="c1">#instantiate the stack and translate all images</span>
 </pre></div>
@@ -221,7 +222,7 @@ For example:</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#imagearray-a-numpy-array-like-class"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageArray</span></code>: A numpy array like class</a></li>
-<li><a class="reference internal" href="#working-with-lots-of-images-imagefolder-and-imagestack2">Working with Lots of Images: <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFolder</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageStack2</span></code></a></li>
+<li><a class="reference internal" href="#working-with-lots-of-images-imagefolder-and-imagestack">Working with Lots of Images: <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFolder</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageStack</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -272,9 +273,9 @@ For example:</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

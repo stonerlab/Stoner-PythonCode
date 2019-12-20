@@ -1,0 +1,6 @@
+fluchsSondheimer
+================
+
+.. currentmodule:: Stoner.analysis.fitting.models.e_transport
+
+.. autofunction:: fluchsSondheimer

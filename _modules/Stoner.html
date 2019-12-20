@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -64,18 +65,19 @@
 <span class="p">]</span>
 
 <span class="c1"># These fake the old namespace if you do an import Stoner</span>
-<span class="kn">from</span> <span class="nn">sys</span> <span class="k">import</span> <span class="n">float_info</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">float_info</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span> <span class="k">as</span> <span class="n">_path_</span>
 
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Core</span><span class="p">,</span> <span class="n">FileFormats</span><span class="p">,</span> <span class="n">formats</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="n">Analysis</span><span class="p">,</span> <span class="n">tools</span><span class="p">,</span> <span class="n">Folders</span>
+<span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.mixins</span> <span class="kn">import</span> <span class="n">FittingMixin</span>
+<span class="kn">from</span> <span class="nn">Stoner.analysis.columns</span> <span class="kn">import</span> <span class="n">ColumnOps</span>
+<span class="kn">from</span> <span class="nn">Stoner.analysis.filtering</span> <span class="kn">import</span> <span class="n">FilteringOps</span>
+<span class="kn">from</span> <span class="nn">.Folders</span> <span class="kn">import</span> <span class="n">DataFolder</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">Core</span><span class="p">,</span> <span class="n">FileFormats</span><span class="p">,</span> <span class="n">formats</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="n">Analysis</span><span class="p">,</span> <span class="n">tools</span><span class="p">,</span> <span class="n">Folders</span>
-<span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.mixins</span> <span class="k">import</span> <span class="n">FittingMixin</span>
-<span class="kn">from</span> <span class="nn">.Folders</span> <span class="k">import</span> <span class="n">DataFolder</span>
-
-<span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="n">format_error</span><span class="p">,</span> <span class="n">set_option</span><span class="p">,</span> <span class="n">get_option</span><span class="p">,</span> <span class="n">_Options</span>
+<span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="n">format_error</span><span class="p">,</span> <span class="n">set_option</span><span class="p">,</span> <span class="n">get_option</span><span class="p">,</span> <span class="n">_Options</span>
 
 <span class="n">Options</span> <span class="o">=</span> <span class="n">_Options</span><span class="p">()</span>
 
-<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">path</span> <span class="k">as</span> <span class="n">_path_</span>
 
 <span class="n">__version_info__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;10&quot;</span><span class="p">,</span> <span class="s2">&quot;0dev&quot;</span><span class="p">)</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__version_info__</span><span class="p">)</span>
@@ -83,9 +85,10 @@
 <span class="n">__home__</span> <span class="o">=</span> <span class="n">_path_</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">_path_</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../classes/Stoner.Data.html#Stoner.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="n">Analysis</span><span class="o">.</span><span class="n">AnalysisMixin</span><span class="p">,</span> <span class="n">FittingMixin</span><span class="p">,</span> <span class="n">plot</span><span class="o">.</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../classes/Stoner.Data.html#Stoner.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="n">Analysis</span><span class="o">.</span><span class="n">AnalysisMixin</span><span class="p">,</span> <span class="n">FittingMixin</span><span class="p">,</span> <span class="n">ColumnOps</span><span class="p">,</span> <span class="n">FilteringOps</span><span class="p">,</span> <span class="n">plot</span><span class="o">.</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`</span>
+    <span class="sd">&quot;&quot;&quot;A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and</span>
+<span class="sd">    :py:class:`Stoner.plot.PlotMixin`</span>
 
 <span class="sd">    Also has the :py:mod:`Stoner.FielFormats` loaded redy for use.</span>
 <span class="sd">    This &#39;kitchen-sink&#39; class is intended as a convenience for writing scripts that carry out both plotting and</span>
@@ -102,20 +105,25 @@
 <span class="sd">                * &quot;latex&quot; - latex output</span>
 <span class="sd">                * &quot;html&quot; - html entities</span>
 
-<span class="sd">            escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)</span>
-<span class="sd">            mode (string): If &quot;float&quot; (default) the number is formatted as is, if &quot;eng&quot; the value and error is converted</span>
-<span class="sd">                to the next samllest power of 1000 and the appropriate SI index appended. If mode is &quot;sci&quot; then a scientifc,</span>
-<span class="sd">                i.e. mantissa and exponent format is used.</span>
-<span class="sd">            units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are</span>
-<span class="sd">                prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm</span>
-<span class="sd">            prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is</span>
+<span class="sd">            escape (bool):</span>
+<span class="sd">                Specifies whether to escape the prefix and units for unprintable characters in non</span>
+<span class="sd">                text formats )default False)</span>
+<span class="sd">            mode (string):</span>
+<span class="sd">                If &quot;float&quot; (default) the number is formatted as is, if &quot;eng&quot; the value and error is converted</span>
+<span class="sd">                to the next samllest power of 1000 and the appropriate SI index appended. If mode is &quot;sci&quot; then a</span>
+<span class="sd">                scientifc, i.e. mantissa and exponent format is used.</span>
+<span class="sd">            units (string):</span>
+<span class="sd">                A suffix providing the units of the value. If si mode is used, then appropriate si</span>
+<span class="sd">                prefixes are prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm</span>
+<span class="sd">            prefix (string):</span>
+<span class="sd">                A prefix string that should be included before the value and error string. in LaTeX mode this is</span>
 <span class="sd">                inside the math-mode markers, but not embedded in \mathrm.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A pretty string representation.</span>
 
-<span class="sd">        The if key=&quot;key&quot;, then the value is self[&quot;key&quot;], the error is self[&quot;key err&quot;], the default prefix is self[&quot;key label&quot;]+&quot;=&quot; or &quot;key=&quot;,</span>
-<span class="sd">        the units are self[&quot;key units&quot;] or &quot;&quot;.</span>
+<span class="sd">        The if key=&quot;key&quot;, then the value is self[&quot;key&quot;], the error is self[&quot;key err&quot;], the default prefix is</span>
+<span class="sd">        self[&quot;key label&quot;]+&quot;=&quot; or &quot;key=&quot;, the units are self[&quot;key units&quot;] or &quot;&quot;.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mode</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;float&quot;</span><span class="p">)</span>
@@ -171,9 +179,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

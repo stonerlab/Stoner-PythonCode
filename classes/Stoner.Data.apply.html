@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -83,11 +84,11 @@ then these can be supplied in a dictionary argument <em>_extra</em>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
 </pre></div>
 </div>
-<p>and should return either a single float, in which case it will be used to repalce the specified column, or an
-array, in which case it is used to completely replace the row of data.</p>
-<p>If the function returns a complete row of data, then the <em>replace</em> parameter will cause the return value to be
-a new datafile, leaving the original unchanged. The <em>headers</em> parameter can give the complete column headers for
-the new data file.</p>
+<p>and should return either a single float, in which case it will be used to repalce the specified column,
+or an array, in which case it is used to completely replace the row of data.</p>
+<p>If the function returns a complete row of data, then the <em>replace</em> parameter will cause the return
+value to be a new datafile, leaving the original unchanged. The <em>headers</em> parameter can give the complete
+column headers for the new data file.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -156,9 +157,9 @@ the new data file.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

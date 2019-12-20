@@ -10,62 +10,22 @@ AnalysisMixin
 
    .. autosummary::
 
-      ~AnalysisMixin.SG_Filter
-      ~AnalysisMixin.add
       ~AnalysisMixin.apply
-      ~AnalysisMixin.bin
       ~AnalysisMixin.clip
       ~AnalysisMixin.decompose
-      ~AnalysisMixin.diffsum
-      ~AnalysisMixin.divide
-      ~AnalysisMixin.extrapolate
       ~AnalysisMixin.integrate
-      ~AnalysisMixin.interpolate
-      ~AnalysisMixin.make_bins
-      ~AnalysisMixin.max
-      ~AnalysisMixin.mean
-      ~AnalysisMixin.min
-      ~AnalysisMixin.multiply
       ~AnalysisMixin.normalise
-      ~AnalysisMixin.outlier_detection
       ~AnalysisMixin.peaks
-      ~AnalysisMixin.polyfit
-      ~AnalysisMixin.scale
-      ~AnalysisMixin.smooth
-      ~AnalysisMixin.span
-      ~AnalysisMixin.spline
-      ~AnalysisMixin.std
       ~AnalysisMixin.stitch
-      ~AnalysisMixin.subtract
       ~AnalysisMixin.threshold
 
    .. rubric:: Methods Documentation
 
-   .. automethod:: SG_Filter
-   .. automethod:: add
    .. automethod:: apply
-   .. automethod:: bin
    .. automethod:: clip
    .. automethod:: decompose
-   .. automethod:: diffsum
-   .. automethod:: divide
-   .. automethod:: extrapolate
    .. automethod:: integrate
-   .. automethod:: interpolate
-   .. automethod:: make_bins
-   .. automethod:: max
-   .. automethod:: mean
-   .. automethod:: min
-   .. automethod:: multiply
    .. automethod:: normalise
-   .. automethod:: outlier_detection
    .. automethod:: peaks
-   .. automethod:: polyfit
-   .. automethod:: scale
-   .. automethod:: smooth
-   .. automethod:: span
-   .. automethod:: spline
-   .. automethod:: std
    .. automethod:: stitch
-   .. automethod:: subtract
    .. automethod:: threshold

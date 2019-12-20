@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -108,7 +109,9 @@ then pass them via the first positional dictionary value.</p>
 
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="s2">&quot;sample.txt&quot;</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;b-&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__gt</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Res__between</span><span class="o">=</span><span class="p">(</span><span class="mf">5.3</span><span class="p">,</span> <span class="mf">6.3</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;portion 1&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__gt</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Res__between</span><span class="o">=</span><span class="p">(</span><span class="mf">5.3</span><span class="p">,</span> <span class="mf">6.3</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;portion 1&quot;</span>
+<span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__lt</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;g&lt;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;portion 2&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -180,9 +183,9 @@ then pass them via the first positional dictionary value.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

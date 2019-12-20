@@ -24,7 +24,9 @@ txt = tabulate(d3["Transform"], floatfmt=".2f", tablefmt="grid")
 d3.text(10, 4, "Transform\n{}".format(txt), fontdict={"size": "x-small"})
 
 np_data = column_stack((x2, y2))
-d4 = d.scale(np_data, header="Signal 2 scaled", xmode="affine", use_estimate=True)
+d4 = d.scale(
+    np_data, header="Signal 2 scaled", xmode="affine", use_estimate=True
+)
 d4.plot(figure=d.fig, label="2$^\\mathrm{nd}$ scaled signal")
 d4.ylim = (-7, 9)
 txt = tabulate(d4["Transform"], floatfmt=".2f", tablefmt="grid")

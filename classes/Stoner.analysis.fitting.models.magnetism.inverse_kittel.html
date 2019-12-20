@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>inverse_kittel &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="kittelEquation" href="Stoner.analysis.fitting.models.magnetism.kittelEquation.html" />
+    <link rel="prev" title="fmr_power" href="Stoner.analysis.fitting.models.magnetism.fmr_power.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.analysis.fitting.models.magnetism.fmr_power.html" title="Previous document">fmr_power</a>
+        </li>
+        <li>
+          <a href="Stoner.analysis.fitting.models.magnetism.kittelEquation.html" title="Next document">kittelEquation</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="../analysis-fitting.html">Additional Fitting models</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="inverse-kittel">
+<h1>inverse_kittel<a class="headerlink" href="#inverse-kittel" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="Stoner.analysis.fitting.models.magnetism.inverse_kittel">
+<code class="sig-prename descclassname">Stoner.analysis.fitting.models.magnetism.</code><code class="sig-name descname">inverse_kittel</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">g</em>, <em class="sig-param">M_s</em>, <em class="sig-param">H_k</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#inverse_kittel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.inverse_kittel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> (<em>array</em>) – Resonance Frequency in Hz</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – g factor for the gyromagnetic radius</p></li>
+<li><p><strong>M_s</strong> (<em>float</em>) – Magnetisation of sample in A/m</p></li>
+<li><p><strong>H_k</strong> (<em>float</em>) – Anisotropy field term (including demagnetising factors) in A/m</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Reesonance peak frequencies in Hz</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>In practice one often measures FMR by sweepign field for constant frequency and then locates the
+peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a <span class="math notranslate nohighlight">\(H_{res}\pm \Delta H_{res}\)</span>
+In order to make use of this data with <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin.lmfit()</span></code> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Analysis.AnalysisMixin.curve_fit()</span></code>
+it makes more sense to fit the Kittel Equation written in terms of H than frequency.</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(H_{res}=- H_{k} - \frac{M_{s}}{2} + \frac{1}{2 \gamma \mu_{0}} \sqrt{M_{s}^{2} \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}\)</span></p>
+</div></blockquote>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.fmr_power.html"
+                        title="previous chapter">fmr_power</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.kittelEquation.html"
+                        title="next chapter">kittelEquation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.magnetism.inverse_kittel.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.analysis.fitting.models.magnetism.fmr_power.html" title="Previous document">fmr_power</a>
+        </li>
+        <li>
+          <a href="Stoner.analysis.fitting.models.magnetism.kittelEquation.html" title="Next document">kittelEquation</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="../analysis-fitting.html">Additional Fitting models</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.2.2
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

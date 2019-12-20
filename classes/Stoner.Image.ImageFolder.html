@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -109,7 +110,7 @@ type (<a class="reference internal" href="Stoner.Image.ImageArray.html#Stoner.Im
 <tr class="row-even"><td><p><a class="reference internal" href="Stoner.Image.ImageFolder.clear.html#Stoner.Image.ImageFolder.clear" title="Stoner.Image.ImageFolder.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
 <td><p>Clear the subgroups.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Image.ImageFolder.compress.html#Stoner.Image.ImageFolder.compress" title="Stoner.Image.ImageFolder.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>([base, key])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Image.ImageFolder.compress.html#Stoner.Image.ImageFolder.compress" title="Stoner.Image.ImageFolder.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>([base, key, keep_terminal])</p></td>
 <td><p>Compresses all empty groups from the root up until the first non-empty group is located.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="Stoner.Image.ImageFolder.count.html#Stoner.Image.ImageFolder.count" title="Stoner.Image.ImageFolder.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>(name)</p></td>
@@ -178,7 +179,7 @@ type (<a class="reference internal" href="Stoner.Image.ImageArray.html#Stoner.Im
 <tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Image.ImageFolder.popitem.html#Stoner.Image.ImageFolder.popitem" title="Stoner.Image.ImageFolder.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
 <td><p>Return the most recent subgroup from this folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Image.ImageFolder.prune.html#Stoner.Image.ImageFolder.prune" title="Stoner.Image.ImageFolder.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Image.ImageFolder.prune.html#Stoner.Image.ImageFolder.prune" title="Stoner.Image.ImageFolder.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>([name])</p></td>
 <td><p>Remove any empty groups from the objectFolder (and subgroups).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Image.ImageFolder.remove.html#Stoner.Image.ImageFolder.remove" title="Stoner.Image.ImageFolder.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</p></td>
@@ -383,9 +384,9 @@ type (<a class="reference internal" href="Stoner.Image.ImageArray.html#Stoner.Im
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

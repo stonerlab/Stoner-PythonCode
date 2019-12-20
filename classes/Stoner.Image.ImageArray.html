@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -139,7 +140,7 @@ I would call im=im.translate((4,10))</p>
 <td><p>An object to simplify the interaction of the array with the ctypes module.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.data" title="Stoner.Image.ImageArray.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
-<td><p>Return the current data, as a view of the original underlying data.</p></td>
+<td><p>Returns the underlying data, as a view of the masked array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.draw" title="Stoner.Image.ImageArray.draw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw</span></code></a></p></td>
 <td><p>DrawProxy is an opbject for accessing the skimage draw sub module.</p></td>
@@ -148,7 +149,7 @@ I would call im=im.translate((4,10))</p>
 <td><p>Data-type of the array’s elements.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.fill_value" title="Stoner.Image.ImageArray.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
-<td><p>Filling value.</p></td>
+<td><p>The filling value of the masked array is a scalar.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.flags" title="Stoner.Image.ImageArray.flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flags</span></code></a></p></td>
 <td><p>Information about the memory layout of the array.</p></td>
@@ -163,13 +164,13 @@ I would call im=im.translate((4,10))</p>
 <td><p>Hardness of the mask</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.imag" title="Stoner.Image.ImageArray.imag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">imag</span></code></a></p></td>
-<td><p>Imaginary part.</p></td>
+<td><p>The imaginary part of the masked array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.itemsize" title="Stoner.Image.ImageArray.itemsize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">itemsize</span></code></a></p></td>
 <td><p>Length of one array element in bytes.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.mask" title="Stoner.Image.ImageArray.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
-<td><p>Mask</p></td>
+<td><p>Current mask.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.max_box" title="Stoner.Image.ImageArray.max_box"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_box</span></code></a></p></td>
 <td><p>return the coordinate extent (xmin,xmax,ymin,ymax)</p></td>
@@ -184,10 +185,10 @@ I would call im=im.translate((4,10))</p>
 <td><p>Number of array dimensions.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.real" title="Stoner.Image.ImageArray.real"><code class="xref py py-obj docutils literal notranslate"><span class="pre">real</span></code></a></p></td>
-<td><p>Real part</p></td>
+<td><p>The real part of the masked array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.recordmask" title="Stoner.Image.ImageArray.recordmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recordmask</span></code></a></p></td>
-<td><p>Return the mask of the records.</p></td>
+<td><p>Get or set the mask of the array if it has no named fields.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.shape" title="Stoner.Image.ImageArray.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Tuple of array dimensions.</p></td>
@@ -322,13 +323,13 @@ I would call im=im.translate((4,10))</p>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.get_fill_value" title="Stoner.Image.ImageArray.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a>()</p></td>
-<td><p>Return the filling value of the masked array.</p></td>
+<td><p>The filling value of the masked array is a scalar.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.get_imag" title="Stoner.Image.ImageArray.get_imag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_imag</span></code></a>()</p></td>
-<td><p>Return the imaginary part of the masked array.</p></td>
+<td><p>The imaginary part of the masked array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.get_real" title="Stoner.Image.ImageArray.get_real"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_real</span></code></a>()</p></td>
-<td><p>Return the real part of the masked array.</p></td>
+<td><p>The real part of the masked array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.getfield" title="Stoner.Image.ImageArray.getfield"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getfield</span></code></a>(dtype[, offset])</p></td>
 <td><p>Returns a field of the given array as a certain type.</p></td>
@@ -418,13 +419,13 @@ I would call im=im.translate((4,10))</p>
 <td><p>Save the ImageArray with metadata in a png file.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.save_tiff" title="Stoner.Image.ImageArray.save_tiff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_tiff</span></code></a>(filename[, forcetype])</p></td>
-<td><p>Save the ImageArray as a tiff image with metadata PIL can save in modes “L” (8bit unsigned int), “I” (32bit signed int), or “F” (32bit signed float).</p></td>
+<td><p>Save the ImageArray as a tiff image with metadata.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.searchsorted" title="Stoner.Image.ImageArray.searchsorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">searchsorted</span></code></a>(v[, side, sorter])</p></td>
 <td><p>Find indices where elements of v should be inserted in a to maintain order.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.set_fill_value" title="Stoner.Image.ImageArray.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a>([value])</p></td>
-<td><p>Set the filling value of the masked array.</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.setdefault" title="Stoner.Image.ImageArray.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[,d])</p></td>
 <td><p></p></td>
@@ -580,8 +581,8 @@ as arguments to a shared library.</p>
 in “Guide to NumPy” (we have omitted undocumented public attributes,
 as well as documented private attributes):</p>
 <dl class="attribute">
-<dt id="numpy.core._internal.ImageArray._ctypes.data">
-<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">data</code><a class="headerlink" href="#numpy.core._internal.ImageArray._ctypes.data" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">data</code></dt>
 <dd><p>A pointer to the memory area of the array as a Python integer.
 This memory area may contain data that is not aligned, or not in correct
 byte-order. The memory area may not even be writeable. The array
@@ -596,8 +597,8 @@ pointer to a deallocated array, and should be spelt
 </dd></dl>
 
 <dl class="attribute">
-<dt id="numpy.core._internal.ImageArray._ctypes.shape">
-<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">shape</code><a class="headerlink" href="#numpy.core._internal.ImageArray._ctypes.shape" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">shape</code></dt>
 <dd><p>A ctypes array of length self.ndim where
 the basetype is the C-integer corresponding to <code class="docutils literal notranslate"><span class="pre">dtype('p')</span></code> on this
 platform. This base-type could be <cite>ctypes.c_int</cite>, <cite>ctypes.c_long</cite>, or
@@ -612,8 +613,8 @@ The ctypes array contains the shape of the underlying array.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="numpy.core._internal.ImageArray._ctypes.strides">
-<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">strides</code><a class="headerlink" href="#numpy.core._internal.ImageArray._ctypes.strides" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">strides</code></dt>
 <dd><p>A ctypes array of length self.ndim where
 the basetype is the same as for the shape attribute. This ctypes array
 contains the strides information from the underlying array. This strides
@@ -627,8 +628,8 @@ get to the next element in the array.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="numpy.core._internal.ImageArray._ctypes.data_as">
-<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">data_as</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span><a class="headerlink" href="#numpy.core._internal.ImageArray._ctypes.data_as" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">data_as</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span></dt>
 <dd><p>Return the data pointer cast to a particular c-types object.
 For example, calling <code class="docutils literal notranslate"><span class="pre">self._as_parameter_</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">self.data_as(ctypes.c_void_p)</span></code>. Perhaps you want to use the data as a
@@ -638,15 +639,15 @@ pointer to a ctypes array of floating-point data:
 </dd></dl>
 
 <dl class="method">
-<dt id="numpy.core._internal.ImageArray._ctypes.shape_as">
-<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">shape_as</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span><a class="headerlink" href="#numpy.core._internal.ImageArray._ctypes.shape_as" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">shape_as</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span></dt>
 <dd><p>Return the shape tuple as an array of some other c-types
 type. For example: <code class="docutils literal notranslate"><span class="pre">self.shape_as(ctypes.c_short)</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="numpy.core._internal.ImageArray._ctypes.strides_as">
-<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">strides_as</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span><a class="headerlink" href="#numpy.core._internal.ImageArray._ctypes.strides_as" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">strides_as</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span></dt>
 <dd><p>Return the strides tuple as an array of some other
 c-types type. For example: <code class="docutils literal notranslate"><span class="pre">self.strides_as(ctypes.c_longlong)</span></code>.</p>
 </dd></dl>
@@ -654,7 +655,7 @@ c-types type. For example: <code class="docutils literal notranslate"><span clas
 <p>If the ctypes module is not available, then the ctypes attribute
 of array objects still returns something useful, but ctypes objects
 are not returned and errors may be raised instead. In particular,
-the object will still have the as parameter attribute which will
+the object will still have the <code class="docutils literal notranslate"><span class="pre">as_parameter</span></code> attribute which will
 return an integer equal to the data attribute.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ctypes</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
@@ -683,8 +684,17 @@ return an integer equal to the data attribute.</p>
 <dl class="attribute">
 <dt id="Stoner.Image.ImageArray.data">
 <code class="sig-name descname">data</code><a class="headerlink" href="#Stoner.Image.ImageArray.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the current data, as a view of the original
-underlying data.</p>
+<dd><p>Returns the underlying data, as a view of the masked array.</p>
+<p>If the underlying data is a subclass of <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, it is
+returned as such.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]),</span> <span class="n">mask</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">data</span>
+<span class="go">matrix([[1, 2],</span>
+<span class="go">        [3, 4]])</span>
+</pre></div>
+</div>
+<p>The type of the data can be accessed through the <a class="reference internal" href="#Stoner.Image.ImageArray.baseclass" title="Stoner.Image.ImageArray.baseclass"><code class="xref py py-attr docutils literal notranslate"><span class="pre">baseclass</span></code></a>
+attribute.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -714,7 +724,31 @@ underlying data.</p>
 <dl class="attribute">
 <dt id="Stoner.Image.ImageArray.fill_value">
 <code class="sig-name descname">fill_value</code><a class="headerlink" href="#Stoner.Image.ImageArray.fill_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filling value.</p>
+<dd><p>The filling value of the masked array is a scalar. When setting, None
+will set to a default based on the data type.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">get_fill_value</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="go">999999</span>
+<span class="go">999999</span>
+<span class="go">1e+20</span>
+<span class="go">(1e+20+0j)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span> <span class="n">fill_value</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span>
+<span class="go">-inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span>
+<span class="go">3.1415926535897931 # may vary</span>
+</pre></div>
+</div>
+<p>Reset to default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span>
+<span class="go">1e+20</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="attribute">
@@ -807,7 +841,16 @@ Fortran-style contiguous arrays is true.</p>
 <dl class="attribute">
 <dt id="Stoner.Image.ImageArray.imag">
 <code class="sig-name descname">imag</code><a class="headerlink" href="#Stoner.Image.ImageArray.imag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Imaginary part.</p>
+<dd><p>The imaginary part of the masked array.</p>
+<p>This property is a view on the imaginary part of this <cite>MaskedArray</cite>.</p>
+<p>real</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">+</span><span class="mf">1.</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="n">j</span><span class="p">,</span> <span class="mf">3.45</span><span class="o">+</span><span class="mf">1.6</span><span class="n">j</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">imag</span>
+<span class="go">masked_array(data=[1.0, --, 1.6],</span>
+<span class="go">             mask=[False,  True, False],</span>
+<span class="go">       fill_value=1e+20)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="attribute">
@@ -827,7 +870,7 @@ Fortran-style contiguous arrays is true.</p>
 <dl class="attribute">
 <dt id="Stoner.Image.ImageArray.mask">
 <code class="sig-name descname">mask</code><a class="headerlink" href="#Stoner.Image.ImageArray.mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mask</p>
+<dd><p>Current mask.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -874,14 +917,31 @@ array object.</p>
 <dl class="attribute">
 <dt id="Stoner.Image.ImageArray.real">
 <code class="sig-name descname">real</code><a class="headerlink" href="#Stoner.Image.ImageArray.real" title="Permalink to this definition">¶</a></dt>
-<dd><p>Real part</p>
+<dd><p>The real part of the masked array.</p>
+<p>This property is a view on the real part of this <cite>MaskedArray</cite>.</p>
+<p>imag</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">+</span><span class="mf">1.</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="n">j</span><span class="p">,</span> <span class="mf">3.45</span><span class="o">+</span><span class="mf">1.6</span><span class="n">j</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">real</span>
+<span class="go">masked_array(data=[1.0, --, 3.45],</span>
+<span class="go">             mask=[False,  True, False],</span>
+<span class="go">       fill_value=1e+20)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Image.ImageArray.recordmask">
 <code class="sig-name descname">recordmask</code><a class="headerlink" href="#Stoner.Image.ImageArray.recordmask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the mask of the records.</p>
-<p>A record is masked when all the fields are masked.</p>
+<dd><p>Get or set the mask of the array if it has no named fields. For
+structured arrays, returns a ndarray of booleans where entries are
+<code class="docutils literal notranslate"><span class="pre">True</span></code> if <strong>all</strong> the fields are masked, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)],</span>
+<span class="gp">... </span>        <span class="n">mask</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+<span class="gp">... </span>       <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">recordmask</span>
+<span class="go">array([False, False,  True, False, False])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="attribute">
@@ -1040,9 +1100,9 @@ the array type.</p>
 <p>mean : Compute the mean of the array.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">anom</span><span class="p">()</span>
-<span class="go">masked_array(data = [-1.  0.  1.],</span>
-<span class="go">             mask = False,</span>
-<span class="go">       fill_value = 1e+20)</span>
+<span class="go">masked_array(data=[-1.,  0.,  1.],</span>
+<span class="go">             mask=False,</span>
+<span class="go">       fill_value=1e+20)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1106,15 +1166,19 @@ minimum values along the given axis.  Otherwise, returns a scalar
 of index to the minimum values along the given axis.</p>
 </dd>
 </dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[[-- --]</span>
-<span class="go"> [2 3]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
-<span class="go">[0 0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">9</span><span class="p">))</span>
-<span class="go">[1 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[--, --],</span>
+<span class="go">        [2, 3]],</span>
+<span class="go">  mask=[[ True,  True],</span>
+<span class="go">        [False, False]],</span>
+<span class="go">  fill_value=999999)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">array([0, 0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+<span class="go">array([1, 1])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1132,7 +1196,7 @@ of index to the minimum values along the given axis.</p>
 
 <dl class="method">
 <dt id="Stoner.Image.ImageArray.argsort">
-<code class="sig-name descname">argsort</code><span class="sig-paren">(</span><em class="sig-param">axis=&lt;no value&gt;</em>, <em class="sig-param">kind='quicksort'</em>, <em class="sig-param">order=None</em>, <em class="sig-param">endwith=True</em>, <em class="sig-param">fill_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.argsort" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">argsort</code><span class="sig-paren">(</span><em class="sig-param">axis=&lt;no value&gt;</em>, <em class="sig-param">kind=None</em>, <em class="sig-param">order=None</em>, <em class="sig-param">endwith=True</em>, <em class="sig-param">fill_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.argsort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an ndarray of indices that sort the array along the
 specified axis.  Masked values are filled beforehand to
 <cite>fill_value</cite>.</p>
@@ -1147,7 +1211,7 @@ Until then, the axis should be given explicitly when
 <code class="docutils literal notranslate"><span class="pre">arr.ndim</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>, to avoid a FutureWarning.</p>
 </div>
 </dd>
-<dt>kind<span class="classifier">{‘quicksort’, ‘mergesort’, ‘heapsort’, ‘stable’}, optional</span></dt><dd><p>Sorting algorithm.</p>
+<dt>kind<span class="classifier">{‘quicksort’, ‘mergesort’, ‘heapsort’, ‘stable’}, optional</span></dt><dd><p>The sorting algorithm used.</p>
 </dd>
 <dt>order<span class="classifier">list, optional</span></dt><dd><p>When <cite>a</cite> is an array with fields defined, this argument specifies
 which fields to compare first, second, etc.  Not all fields need be
@@ -1174,9 +1238,9 @@ ndarray.sort : Inplace sort.</p>
 <p>See <cite>sort</cite> for notes on the different sorting algorithms.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
-<span class="go">masked_array(data = [3 2 --],</span>
-<span class="go">             mask = [False False  True],</span>
-<span class="go">       fill_value = 999999)</span>
+<span class="go">masked_array(data=[3, 2, --],</span>
+<span class="go">             mask=[False, False,  True],</span>
+<span class="go">       fill_value=999999)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
 <span class="go">array([1, 0, 2])</span>
 </pre></div>
@@ -1269,7 +1333,7 @@ one should use <code class="docutils literal notranslate"><span class="pre">a.re
 </dl>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">array([ 1. ,  2. ,  2.5])</span>
+<span class="go">array([1. ,  2. ,  2.5])</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -1300,19 +1364,20 @@ a view to self.</p>
 </dd>
 </dl>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">8755</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">map</span><span class="p">(</span><span class="nb">hex</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">hex</span><span class="p">,</span> <span class="n">A</span><span class="p">))</span>
 <span class="go">[&#39;0x1&#39;, &#39;0x100&#39;, &#39;0x2233&#39;]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">byteswap</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">array([  256,     1, 13090], dtype=int16)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">map</span><span class="p">(</span><span class="nb">hex</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">hex</span><span class="p">,</span> <span class="n">A</span><span class="p">))</span>
 <span class="go">[&#39;0x100&#39;, &#39;0x1&#39;, &#39;0x3322&#39;]</span>
 </pre></div>
 </div>
 <p>Arrays of strings are not swapped</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;ceg&#39;</span><span class="p">,</span> <span class="s1">&#39;fac&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
-<span class="go">array([&#39;ceg&#39;, &#39;fac&#39;],</span>
-<span class="go">      dtype=&#39;|S3&#39;)</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">UnicodeDecodeError</span>: <span class="n">...</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1332,7 +1397,7 @@ a view to self.</p>
 
 <dl class="method">
 <dt id="Stoner.Image.ImageArray.clip">
-<code class="sig-name descname">clip</code><span class="sig-paren">(</span><em class="sig-param">min=None</em>, <em class="sig-param">max=None</em>, <em class="sig-param">out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.clip" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clip</code><span class="sig-paren">(</span><em class="sig-param">min=None</em>, <em class="sig-param">max=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.clip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an array whose values are limited to <code class="docutils literal notranslate"><span class="pre">[min,</span> <span class="pre">max]</span></code>.
 One of max or min must be given.</p>
 <p>Refer to <cite>numpy.clip</cite> for full documentation.</p>
@@ -1343,12 +1408,12 @@ One of max or min must be given.</p>
 <dt id="Stoner.Image.ImageArray.clip_intensity">
 <code class="sig-name descname">clip_intensity</code><span class="sig-paren">(</span><em class="sig-param">clip_negative=False</em>, <em class="sig-param">limits=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.clip_intensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.clip_intensity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clip intensity outside the range -1,1 or 0,1</p>
-<dl>
-<dt>Keyword ArgumentsL</dt><dd><dl class="simple">
-<dt>clip_negative(bool):</dt><dd><p>if True clip to range 0,1 else range -1,1</p>
-</dd>
-</dl>
-<p>limits (low,high): Clip the intensity between low and high rather than zero and 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clip_negative</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if True clip to range 0,1 else range -1,1</p></li>
+<li><p><strong>limits</strong> (<em>low</em><em>,</em><em>high</em>) – Clip the intensity between low and high rather than zero and 1.</p></li>
+</ul>
 </dd>
 </dl>
 <p>Ensure data range is -1 to 1 or 0 to 1 if clip_negative is True.</p>
@@ -1380,26 +1445,30 @@ necessary.</p>
 The output of <a class="reference internal" href="#Stoner.Image.ImageArray.compress" title="Stoner.Image.ImageArray.compress"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compress()</span></code></a> has a mask, the output of
 <a class="reference internal" href="#Stoner.Image.ImageArray.compressed" title="Stoner.Image.ImageArray.compressed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compressed()</span></code></a> does not.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[[1 -- 3]</span>
-<span class="go"> [-- 5 --]</span>
-<span class="go"> [7 -- 9]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[1, --, 3],</span>
+<span class="go">        [--, 5, --],</span>
+<span class="go">        [7, --, 9]],</span>
+<span class="go">  mask=[[False,  True, False],</span>
+<span class="go">        [ True, False,  True],</span>
+<span class="go">        [False,  True, False]],</span>
+<span class="go">  fill_value=999999)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">compress</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-<span class="go">masked_array(data = [1 3],</span>
-<span class="go">      mask = [False False],</span>
-<span class="go">      fill_value=999999)</span>
+<span class="go">masked_array(data=[1, 3],</span>
+<span class="go">             mask=[False, False],</span>
+<span class="go">       fill_value=999999)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">compress</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="go">masked_array(data =</span>
-<span class="go"> [[1 3]</span>
-<span class="go"> [-- --]</span>
-<span class="go"> [7 9]],</span>
-<span class="go">      mask =</span>
-<span class="go"> [[False False]</span>
-<span class="go"> [ True  True]</span>
-<span class="go"> [False False]],</span>
-<span class="go">      fill_value=999999)</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[1, 3],</span>
+<span class="go">        [--, --],</span>
+<span class="go">        [7, 9]],</span>
+<span class="go">  mask=[[False, False],</span>
+<span class="go">        [ True,  True],</span>
+<span class="go">        [False, False]],</span>
+<span class="go">  fill_value=999999)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1417,7 +1486,7 @@ The output of <a class="reference internal" href="#Stoner.Image.ImageArray.compr
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">compressed</span><span class="p">()</span>
 <span class="go">array([0, 1])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">compressed</span><span class="p">())</span>
-<span class="go">&lt;type &#39;numpy.ndarray&#39;&gt;</span>
+<span class="go">&lt;class &#39;numpy.ndarray&#39;&gt;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1521,13 +1590,12 @@ scalar is returned.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
-<span class="go">masked_array(data =</span>
-<span class="go"> [[0 1 2]</span>
-<span class="go"> [-- -- --]],</span>
-<span class="go">             mask =</span>
-<span class="go"> [[False False False]</span>
-<span class="go"> [ True  True  True]],</span>
-<span class="go">       fill_value = 999999)</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[0, 1, 2],</span>
+<span class="go">        [--, --, --]],</span>
+<span class="go">  mask=[[False, False, False],</span>
+<span class="go">        [ True,  True,  True]],</span>
+<span class="go">  fill_value=999999)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 <span class="go">3</span>
 </pre></div>
@@ -1605,8 +1673,11 @@ raised on overflow.</p>
 <p>ndarray.cumsum : corresponding function for ndarrays
 numpy.cumsum : equivalent function</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">marr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">marr</span><span class="o">.</span><span class="n">cumsum</span><span class="p">())</span>
-<span class="go">[0 1 3 -- -- -- 9 16 24 33]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">marr</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+<span class="go">masked_array(data=[0, 1, 3, --, --, --, 9, 16, 24, 33],</span>
+<span class="go">             mask=[False, False, False,  True,  True,  True, False, False,</span>
+<span class="go">                   False, False],</span>
+<span class="go">       fill_value=999999)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1678,8 +1749,11 @@ even if the image dtype allows negative values.</p></li>
 <code class="sig-name descname">dump</code><span class="sig-paren">(</span><em class="sig-param">file</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.dump" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dump a pickle of the array to the specified file.
 The array can be read back with pickle.load or numpy.load.</p>
-<dl class="simple">
-<dt>file<span class="classifier">str</span></dt><dd><p>A string naming the dump file.</p>
+<dl>
+<dt>file<span class="classifier">str or Path</span></dt><dd><p>A string naming the dump file.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 1.17.0: </span><cite>pathlib.Path</cite> objects are now accepted.</p>
+</div>
 </dd>
 </dl>
 </dd></dl>
@@ -1707,7 +1781,7 @@ pickle.loads or numpy.loads will convert the string back to an array.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
-<span class="go">array([ 1.,  1.])</span>
+<span class="go">array([1.,  1.])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1733,9 +1807,9 @@ be replaced.</p>
 <p>The result is <strong>not</strong> a MaskedArray!</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mi">999</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">filled</span><span class="p">()</span>
-<span class="go">array([1, 2, -999, 4, -999])</span>
+<span class="go">array([   1,    2, -999,    4, -999])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">filled</span><span class="p">())</span>
-<span class="go">&lt;type &#39;numpy.ndarray&#39;&gt;</span>
+<span class="go">&lt;class &#39;numpy.ndarray&#39;&gt;</span>
 </pre></div>
 </div>
 <p>Subclassing is preserved. This means that if, e.g., the data part of
@@ -1786,11 +1860,8 @@ flat : A 1-D flat iterator over the array.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageArray.get_fill_value">
 <code class="sig-name descname">get_fill_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.get_fill_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the filling value of the masked array.</p>
-<dl class="simple">
-<dt>fill_value<span class="classifier">scalar</span></dt><dd><p>The filling value.</p>
-</dd>
-</dl>
+<dd><p>The filling value of the masked array is a scalar. When setting, None
+will set to a default based on the data type.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">get_fill_value</span><span class="p">()</span>
 <span class="gp">...</span>
@@ -1801,8 +1872,17 @@ flat : A 1-D flat iterator over the array.</p>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span> <span class="n">fill_value</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">get_fill_value</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span>
 <span class="go">-inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span>
+<span class="go">3.1415926535897931 # may vary</span>
+</pre></div>
+</div>
+<p>Reset to default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span>
+<span class="go">1e+20</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1810,20 +1890,14 @@ flat : A 1-D flat iterator over the array.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageArray.get_imag">
 <code class="sig-name descname">get_imag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.get_imag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the imaginary part of the masked array.</p>
-<p>The returned array is a view on the imaginary part of the <cite>MaskedArray</cite>
-whose <cite>get_imag</cite> method is called.</p>
-<p>None</p>
-<dl class="simple">
-<dt>result<span class="classifier">MaskedArray</span></dt><dd><p>The imaginary part of the masked array.</p>
-</dd>
-</dl>
-<p>get_real, real, imag</p>
+<dd><p>The imaginary part of the masked array.</p>
+<p>This property is a view on the imaginary part of this <cite>MaskedArray</cite>.</p>
+<p>real</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">+</span><span class="mf">1.</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="n">j</span><span class="p">,</span> <span class="mf">3.45</span><span class="o">+</span><span class="mf">1.6</span><span class="n">j</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">get_imag</span><span class="p">()</span>
-<span class="go">masked_array(data = [1.0 -- 1.6],</span>
-<span class="go">             mask = [False  True False],</span>
-<span class="go">       fill_value = 1e+20)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">imag</span>
+<span class="go">masked_array(data=[1.0, --, 1.6],</span>
+<span class="go">             mask=[False,  True, False],</span>
+<span class="go">       fill_value=1e+20)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1831,20 +1905,14 @@ whose <cite>get_imag</cite> method is called.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageArray.get_real">
 <code class="sig-name descname">get_real</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.get_real" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the real part of the masked array.</p>
-<p>The returned array is a view on the real part of the <cite>MaskedArray</cite>
-whose <cite>get_real</cite> method is called.</p>
-<p>None</p>
-<dl class="simple">
-<dt>result<span class="classifier">MaskedArray</span></dt><dd><p>The real part of the masked array.</p>
-</dd>
-</dl>
-<p>get_imag, real, imag</p>
+<dd><p>The real part of the masked array.</p>
+<p>This property is a view on the real part of this <cite>MaskedArray</cite>.</p>
+<p>imag</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">+</span><span class="mf">1.</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="n">j</span><span class="p">,</span> <span class="mf">3.45</span><span class="o">+</span><span class="mf">1.6</span><span class="n">j</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">get_real</span><span class="p">()</span>
-<span class="go">masked_array(data = [1.0 -- 3.45],</span>
-<span class="go">             mask = [False  True False],</span>
-<span class="go">       fill_value = 1e+20)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">real</span>
+<span class="go">masked_array(data=[1.0, --, 3.45],</span>
+<span class="go">             mask=[False,  True, False],</span>
+<span class="go">       fill_value=1e+20)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1869,18 +1937,18 @@ than that of the array itself.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">1.</span><span class="o">+</span><span class="mf">1.</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">4.</span><span class="n">j</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">array([[ 1.+1.j,  0.+0.j],</span>
-<span class="go">       [ 0.+0.j,  2.+4.j]])</span>
+<span class="go">array([[1.+1.j,  0.+0.j],</span>
+<span class="go">       [0.+0.j,  2.+4.j]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">getfield</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-<span class="go">array([[ 1.,  0.],</span>
-<span class="go">       [ 0.,  2.]])</span>
+<span class="go">array([[1.,  0.],</span>
+<span class="go">       [0.,  2.]])</span>
 </pre></div>
 </div>
 <p>By choosing an offset of 8 bytes we can select the complex part of the
 array for our view:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">getfield</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
-<span class="go">array([[ 1.,  0.],</span>
-<span class="go">   [ 0.,  4.]])</span>
+<span class="go">array([[1.,  0.],</span>
+<span class="go">       [0.,  4.]])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1901,14 +1969,14 @@ its <cite>hardmask</cite> property. <cite>harden_mask</cite> sets <cite>hardmask
 <p>None</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ids</span><span class="p">()</span>
-<span class="go">(166670640, 166659832)</span>
+<span class="go">(166670640, 166659832) # may vary</span>
 </pre></div>
 </div>
 <p>If the array has no mask, the address of <cite>nomask</cite> is returned. This address
 is typically not close to the data in memory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ids</span><span class="p">()</span>
-<span class="go">(166691080, 3083169284L)</span>
+<span class="go">(166691080, 3083169284L) # may vary</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1966,19 +2034,20 @@ unless fields are defined, in which case a tuple is returned.</p>
 a standard Python scalar is returned. This can be useful for speeding up
 access to elements of the array and doing arithmetic on elements of the
 array using Python’s optimized math.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">array([[3, 1, 7],</span>
-<span class="go">       [2, 8, 3],</span>
-<span class="go">       [8, 5, 3]])</span>
+<span class="go">array([[2, 2, 6],</span>
+<span class="go">       [1, 3, 6],</span>
+<span class="go">       [1, 0, 1]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="go">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
-<span class="go">5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="go">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="go">3</span>
+<span class="go">1</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2011,17 +2080,18 @@ among other problems, it complicates the appearance of the code.
 Also, when using <cite>itemset</cite> (and <cite>item</cite>) inside a loop, be sure
 to assign the methods to a local variable to avoid the attribute
 look-up at each loop iteration.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">array([[3, 1, 7],</span>
-<span class="go">       [2, 8, 3],</span>
-<span class="go">       [8, 5, 3]])</span>
+<span class="go">array([[2, 2, 6],</span>
+<span class="go">       [1, 3, 6],</span>
+<span class="go">       [1, 0, 1]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">itemset</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">itemset</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">9</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">array([[3, 1, 7],</span>
-<span class="go">       [2, 0, 3],</span>
-<span class="go">       [8, 5, 9]])</span>
+<span class="go">array([[2, 2, 6],</span>
+<span class="go">       [1, 0, 6],</span>
+<span class="go">       [1, 0, 9]])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2070,9 +2140,9 @@ numpy.mean : Equivalent function
 numpy.ma.average: Weighted average.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
-<span class="go">masked_array(data = [1 2 --],</span>
-<span class="go">             mask = [False False  True],</span>
-<span class="go">       fill_value = 999999)</span>
+<span class="go">masked_array(data=[1, 2, --],</span>
+<span class="go">             mask=[False, False,  True],</span>
+<span class="go">       fill_value=999999)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 <span class="go">1.5</span>
 </pre></div>
@@ -2131,27 +2201,36 @@ dimension one smaller than the array on which <cite>mini</cite> is called.</p>
 </dd>
 </dl>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[[0 --]</span>
-<span class="go"> [2 3]</span>
-<span class="go"> [4 --]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[0, --],</span>
+<span class="go">        [2, 3],</span>
+<span class="go">        [4, --]],</span>
+<span class="go">  mask=[[False,  True],</span>
+<span class="go">        [False, False],</span>
+<span class="go">        [False,  True]],</span>
+<span class="go">  fill_value=999999)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">mini</span><span class="p">()</span>
-<span class="go">0</span>
+<span class="go">masked_array(data=0,</span>
+<span class="go">             mask=False,</span>
+<span class="go">       fill_value=999999)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">mini</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">masked_array(data = [0 3],</span>
-<span class="go">             mask = [False False],</span>
-<span class="go">       fill_value = 999999)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">mini</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-<span class="go">[0 2 4]</span>
+<span class="go">masked_array(data=[0, 3],</span>
+<span class="go">             mask=[False, False],</span>
+<span class="go">       fill_value=999999)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">mini</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">masked_array(data=[0, 2, 4],</span>
+<span class="go">             mask=[False, False, False],</span>
+<span class="go">       fill_value=999999)</span>
 </pre></div>
 </div>
 <p>There is a small difference between <cite>mini</cite> and <cite>min</cite>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mini</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">masked_array(data = --,</span>
-<span class="go">             mask = True,</span>
-<span class="go">       fill_value = 999999)</span>
+<span class="go">masked_array(data=3,</span>
+<span class="go">             mask=False,</span>
+<span class="go">       fill_value=999999)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">masked</span>
+<span class="go">3</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2225,13 +2304,12 @@ array.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">masked_array(data =</span>
-<span class="go"> [[ 1.  0.  0.]</span>
-<span class="go"> [ 0.  1.  0.]</span>
-<span class="go"> [ 0.  0.  1.]],</span>
-<span class="go">      mask =</span>
-<span class="go"> False,</span>
-<span class="go">      fill_value=1e+20)</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[1., 0., 0.],</span>
+<span class="go">        [0., 1., 0.],</span>
+<span class="go">        [0., 0., 1.]],</span>
+<span class="go">  mask=False,</span>
+<span class="go">  fill_value=1e+20)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span>
 <span class="go">(array([0, 1, 2]), array([0, 1, 2]))</span>
 </pre></div>
@@ -2239,15 +2317,14 @@ array.</p>
 <p>Masked elements are ignored.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">masked_array(data =</span>
-<span class="go"> [[1.0 0.0 0.0]</span>
-<span class="go"> [0.0 -- 0.0]</span>
-<span class="go"> [0.0 0.0 1.0]],</span>
-<span class="go">      mask =</span>
-<span class="go"> [[False False False]</span>
-<span class="go"> [False  True False]</span>
-<span class="go"> [False False False]],</span>
-<span class="go">      fill_value=1e+20)</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[1.0, 0.0, 0.0],</span>
+<span class="go">        [0.0, --, 0.0],</span>
+<span class="go">        [0.0, 0.0, 1.0]],</span>
+<span class="go">  mask=[[False, False, False],</span>
+<span class="go">        [False,  True, False],</span>
+<span class="go">        [False, False, False]],</span>
+<span class="go">  fill_value=1e+20)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span>
 <span class="go">(array([0, 2]), array([0, 2]))</span>
 </pre></div>
@@ -2264,13 +2341,12 @@ boolean array and since False is interpreted as 0, ma.nonzero(a &gt; 3)
 yields the indices of the <cite>a</cite> where the condition is true.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">&gt;</span> <span class="mi">3</span>
-<span class="go">masked_array(data =</span>
-<span class="go"> [[False False False]</span>
-<span class="go"> [ True  True  True]</span>
-<span class="go"> [ True  True  True]],</span>
-<span class="go">      mask =</span>
-<span class="go"> False,</span>
-<span class="go">      fill_value=999999)</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[False, False, False],</span>
+<span class="go">        [ True,  True,  True],</span>
+<span class="go">        [ True,  True,  True]],</span>
+<span class="go">  mask=False,</span>
+<span class="go">  fill_value=True)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ma</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span>
 <span class="go">(array([1, 1, 1, 2, 2, 2]), array([0, 1, 2, 0, 1, 2]))</span>
 </pre></div>
@@ -2324,6 +2400,7 @@ sort : Full sort.</p>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">partition</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
 <span class="go">array([1, 2, 3, 4])</span>
 </pre></div>
 </div>
@@ -2409,22 +2486,37 @@ in consequence, else the corresponding values are unmasked.</p>
 </dl>
 <p><cite>values</cite> can be a scalar or length 1 array.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[[1 -- 3]</span>
-<span class="go"> [-- 5 --]</span>
-<span class="go"> [7 -- 9]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[1, --, 3],</span>
+<span class="go">        [--, 5, --],</span>
+<span class="go">        [7, --, 9]],</span>
+<span class="go">  mask=[[False,  True, False],</span>
+<span class="go">        [ True, False,  True],</span>
+<span class="go">        [False,  True, False]],</span>
+<span class="go">  fill_value=999999)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">put</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[[10 -- 3]</span>
-<span class="go"> [-- 20 --]</span>
-<span class="go"> [7 -- 30]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[10, --, 3],</span>
+<span class="go">        [--, 20, --],</span>
+<span class="go">        [7, --, 30]],</span>
+<span class="go">  mask=[[False,  True, False],</span>
+<span class="go">        [ True, False,  True],</span>
+<span class="go">        [False,  True, False]],</span>
+<span class="go">  fill_value=999999)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">999</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[[10 -- 3]</span>
-<span class="go"> [-- 999 --]</span>
-<span class="go"> [7 -- 30]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[10, --, 3],</span>
+<span class="go">        [--, 999, --],</span>
+<span class="go">        [7, --, 30]],</span>
+<span class="go">  mask=[[False,  True, False],</span>
+<span class="go">        [ True, False,  True],</span>
+<span class="go">        [False,  True, False]],</span>
+<span class="go">  fill_value=999999)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2454,12 +2546,20 @@ By default, ‘C’ index order is used.</p>
 </dd>
 </dl>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[[1 -- 3]</span>
-<span class="go"> [-- 5 --]</span>
-<span class="go"> [7 -- 9]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
-<span class="go">[1 -- 3 -- 5 -- 7 -- 9]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[1, --, 3],</span>
+<span class="go">        [--, 5, --],</span>
+<span class="go">        [7, --, 9]],</span>
+<span class="go">  mask=[[False,  True, False],</span>
+<span class="go">        [ True, False,  True],</span>
+<span class="go">        [False,  True, False]],</span>
+<span class="go">  fill_value=999999)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="go">masked_array(data=[1, --, 3, --, 5, --, 7, --, 9],</span>
+<span class="go">             mask=[False,  True, False,  True, False,  True, False,  True,</span>
+<span class="go">                   False],</span>
+<span class="go">       fill_value=999999)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2498,15 +2598,25 @@ numpy.reshape : Equivalent function in the NumPy module.</p>
 <p>The reshaping operation cannot guarantee that a copy will not be made,
 to modify the shape in place, use <code class="docutils literal notranslate"><span class="pre">a.shape</span> <span class="pre">=</span> <span class="pre">s</span></code></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[[-- 2]</span>
-<span class="go"> [3 --]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[--, 2],</span>
+<span class="go">        [3, --]],</span>
+<span class="go">  mask=[[ True, False],</span>
+<span class="go">        [False,  True]],</span>
+<span class="go">  fill_value=999999)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[[--]</span>
-<span class="go"> [2]</span>
-<span class="go"> [3]</span>
-<span class="go"> [--]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[--],</span>
+<span class="go">        [2],</span>
+<span class="go">        [3],</span>
+<span class="go">        [--]],</span>
+<span class="go">  mask=[[ True],</span>
+<span class="go">        [False],</span>
+<span class="go">        [False],</span>
+<span class="go">        [ True]],</span>
+<span class="go">  fill_value=999999)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2544,21 +2654,15 @@ converted to integer format for png so that definition cannot be
 saved.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>string, bool or None</em>) – Filename to save data as, if this is
-None then the current filename for the object is used
-If this is not set, then then a file dialog is used. If
-filename is False then a file dialog is forced.</p>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string, bool or None</em>) – Filename to save data as, if this is None then the current filename for the object is used
+If this is not set, then then a file dialog is used. If filename is False then a file dialog is forced.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>fmt</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – format to save data as. ‘tif’, ‘png’ or ‘npy’
-or a list of them. If not included will guess from filename.</p></li>
-<li><p><strong>forcetype</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – <p>integer data will be converted to np.float32 type
-for saving. if forcetype then preserve and save as int type (will</p>
-<blockquote>
-<div><p>be unsigned).</p>
-</div></blockquote>
-</p></li>
+<li><p><strong>fmt</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – format to save data as. ‘tif’, ‘png’ or ‘npy’ or a list of them. If not included will guess from
+filename.</p></li>
+<li><p><strong>forcetype</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – integer data will be converted to np.float32 type for saving. if forcetype then preserve and save as
+int type (will be unsigned).</p></li>
 </ul>
 </dd>
 </dl>
@@ -2588,19 +2692,24 @@ to be a loss of precision on floating point data</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageArray.save_tiff">
 <code class="sig-name descname">save_tiff</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">forcetype=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.save_tiff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.save_tiff" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the ImageArray as a tiff image with metadata
-PIL can save in modes “L” (8bit unsigned int), “I” (32bit signed int),
+<dd><p>Save the ImageArray as a tiff image with metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Filename to save file as.</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><p><strong>forcetype</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – (depricated) if forcetype then preserve data type as best as possible on save.
+Otherwise we let the underlying pillow library choose the best data type.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>PIL can save in modes “L” (8bit unsigned int), “I” (32bit signed int),
 or “F” (32bit signed float). In general max info is preserved for “F”
 type so if forcetype is not specified then this is the default. For
 boolean type data mode “L” will suffice and this is chosen in all cases.
 The type name is added as a string to the metadata before saving.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
-<dd class="field-odd"><p><strong>forcetype</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – (depricated) if forcetype then preserve data type as best as
-possible on save.
-Otherwise we let the underlying pillow library choose the best data type.</p>
-</dd>
-</dl>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -2614,28 +2723,7 @@ Otherwise we let the underlying pillow library choose the best data type.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageArray.set_fill_value">
 <code class="sig-name descname">set_fill_value</code><span class="sig-paren">(</span><em class="sig-param">value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.set_fill_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the filling value of the masked array.</p>
-<dl class="simple">
-<dt>value<span class="classifier">scalar, optional</span></dt><dd><p>The new filling value. Default is None, in which case a default
-based on the data type is used.</p>
-</dd>
-</dl>
-<p>ma.set_fill_value : Equivalent function.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span> <span class="n">fill_value</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span>
-<span class="go">-inf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">set_fill_value</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span>
-<span class="go">3.1415926535897931</span>
-</pre></div>
-</div>
-<p>Reset to default:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">set_fill_value</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">fill_value</span>
-<span class="go">1e+20</span>
-</pre></div>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="Stoner.Image.ImageArray.setdefault">
@@ -2660,23 +2748,23 @@ bytes into the field.</p>
 <p>getfield</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">getfield</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-<span class="go">array([[ 1.,  0.,  0.],</span>
-<span class="go">       [ 0.,  1.,  0.],</span>
-<span class="go">       [ 0.,  0.,  1.]])</span>
+<span class="go">array([[1.,  0.,  0.],</span>
+<span class="go">       [0.,  1.,  0.],</span>
+<span class="go">       [0.,  0.,  1.]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">setfield</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">getfield</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 <span class="go">array([[3, 3, 3],</span>
 <span class="go">       [3, 3, 3],</span>
-<span class="go">       [3, 3, 3]])</span>
+<span class="go">       [3, 3, 3]], dtype=int32)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">array([[  1.00000000e+000,   1.48219694e-323,   1.48219694e-323],</span>
-<span class="go">       [  1.48219694e-323,   1.00000000e+000,   1.48219694e-323],</span>
-<span class="go">       [  1.48219694e-323,   1.48219694e-323,   1.00000000e+000]])</span>
+<span class="go">array([[1.0e+000, 1.5e-323, 1.5e-323],</span>
+<span class="go">       [1.5e-323, 1.0e+000, 1.5e-323],</span>
+<span class="go">       [1.5e-323, 1.5e-323, 1.0e+000]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">setfield</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">array([[ 1.,  0.,  0.],</span>
-<span class="go">       [ 0.,  1.,  0.],</span>
-<span class="go">       [ 0.,  0.,  1.]])</span>
+<span class="go">array([[1.,  0.,  0.],</span>
+<span class="go">       [0.,  1.,  0.],</span>
+<span class="go">       [0.,  0.,  1.]])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2715,7 +2803,10 @@ by .base). When the C-API function PyArray_ResolveWritebackIfCopy is
 called, the base array will be updated with the contents of this array.</p>
 <p>All flags can be accessed using the single (upper case) letter as well
 as the full name.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+<span class="gp">... </span>              <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>              <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
 <span class="go">array([[3, 1, 7],</span>
 <span class="go">       [2, 0, 0],</span>
 <span class="go">       [8, 5, 9]])</span>
@@ -2755,6 +2846,11 @@ as the full name.</p>
 <span class="go">array([[False, False],</span>
 <span class="go">       [False, False]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">shrink_mask</span><span class="p">()</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[1, 2],</span>
+<span class="go">        [3, 4]],</span>
+<span class="go">  mask=False,</span>
+<span class="go">  fill_value=999999)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">mask</span>
 <span class="go">False</span>
 </pre></div>
@@ -2772,7 +2868,7 @@ its <cite>hardmask</cite> property. <cite>soften_mask</cite> sets <cite>hardmask
 
 <dl class="method">
 <dt id="Stoner.Image.ImageArray.sort">
-<code class="sig-name descname">sort</code><span class="sig-paren">(</span><em class="sig-param">axis=-1</em>, <em class="sig-param">kind='quicksort'</em>, <em class="sig-param">order=None</em>, <em class="sig-param">endwith=True</em>, <em class="sig-param">fill_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.sort" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sort</code><span class="sig-paren">(</span><em class="sig-param">axis=-1</em>, <em class="sig-param">kind=None</em>, <em class="sig-param">order=None</em>, <em class="sig-param">endwith=True</em>, <em class="sig-param">fill_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.sort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sort the array, in-place</p>
 <dl class="simple">
 <dt>a<span class="classifier">array_like</span></dt><dd><p>Array to be sorted.</p>
@@ -2780,7 +2876,7 @@ its <cite>hardmask</cite> property. <cite>soften_mask</cite> sets <cite>hardmask
 <dt>axis<span class="classifier">int, optional</span></dt><dd><p>Axis along which to sort. If None, the array is flattened before
 sorting. The default is -1, which sorts along the last axis.</p>
 </dd>
-<dt>kind<span class="classifier">{‘quicksort’, ‘mergesort’, ‘heapsort’, ‘stable’}, optional</span></dt><dd><p>Sorting algorithm. Default is ‘quicksort’.</p>
+<dt>kind<span class="classifier">{‘quicksort’, ‘mergesort’, ‘heapsort’, ‘stable’}, optional</span></dt><dd><p>The sorting algorithm used.</p>
 </dd>
 <dt>order<span class="classifier">list, optional</span></dt><dd><p>When <cite>a</cite> is a structured array, this argument specifies which fields
 to compare first, second, and so on.  This list does not need to
@@ -2788,7 +2884,7 @@ include all of the fields.</p>
 </dd>
 <dt>endwith<span class="classifier">{True, False}, optional</span></dt><dd><p>Whether missing values (if any) should be treated as the largest values
 (True) or the smallest values (False)
-When the array contains unmasked values at the same extremes of the
+When the array contains unmasked values sorting at the same extremes of the
 datatype, the ordering of these values and the masked values is
 undefined.</p>
 </dd>
@@ -2805,25 +2901,31 @@ argsort : Indirect sort.
 lexsort : Indirect stable sort on multiple keys.
 searchsorted : Find elements in a sorted array.</p>
 <p>See <code class="docutils literal notranslate"><span class="pre">sort</span></code> for notes on the different sorting algorithms.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span><span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span><span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Default</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-<span class="go">[1 3 5 -- --]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">masked_array(data=[1, 3, 5, --, --],</span>
+<span class="go">             mask=[False, False, False,  True,  True],</span>
+<span class="go">       fill_value=999999)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span><span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span><span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Put missing values in the front</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">endwith</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-<span class="go">[-- -- 1 3 5]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">masked_array(data=[--, --, 1, 3, 5],</span>
+<span class="go">             mask=[ True,  True, False, False, False],</span>
+<span class="go">       fill_value=999999)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span><span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span><span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># fill_value takes over endwith</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">endwith</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-<span class="go">[1 -- -- 3 5]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">masked_array(data=[1, --, --, 3, 5],</span>
+<span class="go">             mask=[False,  True,  True, False, False],</span>
+<span class="go">       fill_value=999999)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2855,18 +2957,27 @@ numpy.std : Equivalent function</p>
 <p>ndarray.sum : corresponding function for ndarrays
 numpy.sum : equivalent function</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[[1 -- 3]</span>
-<span class="go"> [-- 5 --]</span>
-<span class="go"> [7 -- 9]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[1, --, 3],</span>
+<span class="go">        [--, 5, --],</span>
+<span class="go">        [7, --, 9]],</span>
+<span class="go">  mask=[[False,  True, False],</span>
+<span class="go">        [ True, False,  True],</span>
+<span class="go">        [False,  True, False]],</span>
+<span class="go">  fill_value=999999)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 <span class="go">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-<span class="go">[4 5 16]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-<span class="go">[8 5 12]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">masked_array(data=[4, 5, 16],</span>
+<span class="go">             mask=[False, False, False],</span>
+<span class="go">       fill_value=999999)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">masked_array(data=[8, 5, 12],</span>
+<span class="go">             mask=[False, False, False],</span>
+<span class="go">       fill_value=999999)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
-<span class="go">&lt;type &#39;numpy.int64&#39;&gt;</span>
+<span class="go">&lt;class &#39;numpy.int64&#39;&gt;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2911,7 +3022,7 @@ tolist, tofile</p>
 but also about <cite>fill_value</cite>, will be lost.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]),</span> <span class="n">mask</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
-<span class="go">&#39;\x01\x00\x00\x00?B\x0f\x00?B\x0f\x00\x04\x00\x00\x00&#39;</span>
+<span class="go">b&#39;\x01\x00\x00\x00\x00\x00\x00\x00?B\x0f\x00\x00\x00\x00\x00?B\x0f\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00&#39;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2949,14 +3060,20 @@ mask boolean. The returned record shape matches self.shape.</p>
 <p>A side-effect of transforming a masked array into a flexible <cite>ndarray</cite> is
 that meta information (<code class="docutils literal notranslate"><span class="pre">fill_value</span></code>, …) will be lost.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[[1 -- 3]</span>
-<span class="go"> [-- 5 --]</span>
-<span class="go"> [7 -- 9]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">toflex</span><span class="p">())</span>
-<span class="go">[[(1, False) (2, True) (3, False)]</span>
-<span class="go"> [(4, True) (5, False) (6, True)]</span>
-<span class="go"> [(7, False) (8, True) (9, False)]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[1, --, 3],</span>
+<span class="go">        [--, 5, --],</span>
+<span class="go">        [7, --, 9]],</span>
+<span class="go">  mask=[[False,  True, False],</span>
+<span class="go">        [ True, False,  True],</span>
+<span class="go">        [False,  True, False]],</span>
+<span class="go">  fill_value=999999)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">toflex</span><span class="p">()</span>
+<span class="go">array([[(1, False), (2,  True), (3, False)],</span>
+<span class="go">       [(4,  True), (5, False), (6,  True)],</span>
+<span class="go">       [(7, False), (8,  True), (9, False)]],</span>
+<span class="go">      dtype=[(&#39;_data&#39;, &#39;&lt;i8&#39;), (&#39;_mask&#39;, &#39;?&#39;)])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3004,14 +3121,20 @@ mask boolean. The returned record shape matches self.shape.</p>
 <p>A side-effect of transforming a masked array into a flexible <cite>ndarray</cite> is
 that meta information (<code class="docutils literal notranslate"><span class="pre">fill_value</span></code>, …) will be lost.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[[1 -- 3]</span>
-<span class="go"> [-- 5 --]</span>
-<span class="go"> [7 -- 9]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">toflex</span><span class="p">())</span>
-<span class="go">[[(1, False) (2, True) (3, False)]</span>
-<span class="go"> [(4, True) (5, False) (6, True)]</span>
-<span class="go"> [(7, False) (8, True) (9, False)]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(</span>
+<span class="go">  data=[[1, --, 3],</span>
+<span class="go">        [--, 5, --],</span>
+<span class="go">        [7, --, 9]],</span>
+<span class="go">  mask=[[False,  True, False],</span>
+<span class="go">        [ True, False,  True],</span>
+<span class="go">        [False,  True, False]],</span>
+<span class="go">  fill_value=999999)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">toflex</span><span class="p">()</span>
+<span class="go">array([[(1, False), (2,  True), (3, False)],</span>
+<span class="go">       [(4,  True), (5, False), (6,  True)],</span>
+<span class="go">       [(7, False), (8,  True), (9, False)]],</span>
+<span class="go">      dtype=[(&#39;_data&#39;, &#39;&lt;i8&#39;), (&#39;_mask&#39;, &#39;?&#39;)])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3035,9 +3158,11 @@ returns bytes not strings.</p>
 <dt id="Stoner.Image.ImageArray.transpose">
 <code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">*axes</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a view of the array with axes transposed.</p>
-<p>For a 1-D array, this has no effect. (To change between column and
-row vectors, first cast the 1-D array into a matrix object.)
-For a 2-D array, this is the usual matrix transpose.
+<p>For a 1-D array this has no effect, as a transposed vector is simply the
+same vector. To convert a 1-D array into a 2D column vector, an additional
+dimension must be added. <cite>np.atleast2d(a).T</cite> achieves this, as does
+<cite>a[:, np.newaxis]</cite>.
+For a 2-D array, this is a standard matrix transpose.
 For an n-D array, if axes are given, their order indicates how the
 axes are permuted (see Examples). If axes are not provided and
 <code class="docutils literal notranslate"><span class="pre">a.shape</span> <span class="pre">=</span> <span class="pre">(i[0],</span> <span class="pre">i[1],</span> <span class="pre">...</span> <span class="pre">i[n-2],</span> <span class="pre">i[n-1])</span></code>, then
@@ -3056,7 +3181,8 @@ intended simply as a “convenience” alternative to the tuple form)</p></li>
 <dt>out<span class="classifier">ndarray</span></dt><dd><p>View of <cite>a</cite>, with axes suitably permuted.</p>
 </dd>
 </dl>
-<p>ndarray.T : Array property returning the array transposed.</p>
+<p>ndarray.T : Array property returning the array transposed.
+ndarray.reshape : Give a new shape to an array without changing its data.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
 <span class="go">array([[1, 2],</span>
@@ -3144,7 +3270,7 @@ exceptions will be raised.</p>
 otherwise, a reference to the output array is returned.</p>
 </dd>
 </dl>
-<p>std , mean, nanmean, nanstd, nanvar
+<p>std, mean, nanmean, nanstd, nanvar
 numpy.doc.ufuncs : Section “Output arguments”</p>
 <p>The variance is the average of the squared deviations from the mean,
 i.e.,  <code class="docutils literal notranslate"><span class="pre">var</span> <span class="pre">=</span> <span class="pre">mean(abs(x</span> <span class="pre">-</span> <span class="pre">x.mean())**2)</span></code>.</p>
@@ -3165,9 +3291,9 @@ keyword can alleviate this issue.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 <span class="go">1.25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">array([ 1.,  1.])</span>
+<span class="go">array([1.,  1.])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="go">array([ 0.25,  0.25])</span>
+<span class="go">array([0.25,  0.25])</span>
 </pre></div>
 </div>
 <p>In single precision, var() can be inaccurate:</p>
@@ -3180,7 +3306,7 @@ keyword can alleviate this issue.</p>
 </div>
 <p>Computing the variance in float64 is more accurate:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-<span class="go">0.20249999932944759</span>
+<span class="go">0.20249999932944759 # may vary</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.55</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.1</span><span class="o">-</span><span class="mf">0.55</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
 <span class="go">0.2025</span>
 </pre></div>
@@ -3226,7 +3352,7 @@ results.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
 <span class="go">matrix([[513]], dtype=int16)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
-<span class="go">&lt;class &#39;numpy.matrixlib.defmatrix.matrix&#39;&gt;</span>
+<span class="go">&lt;class &#39;numpy.matrix&#39;&gt;</span>
 </pre></div>
 </div>
 <p>Creating a view on a structured array so it can be used in calculations</p>
@@ -3236,19 +3362,19 @@ results.</p>
 <span class="go">array([[1, 2],</span>
 <span class="go">       [3, 4]], dtype=int8)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">xv</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">array([ 2.,  3.])</span>
+<span class="go">array([2.,  3.])</span>
 </pre></div>
 </div>
 <p>Making changes to the view changes the underlying array</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">xv</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">[(1, 20) (3, 4)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">array([(1, 20), (3,  4)], dtype=[(&#39;a&#39;, &#39;i1&#39;), (&#39;b&#39;, &#39;i1&#39;)])</span>
 </pre></div>
 </div>
 <p>Using a view to convert an array to a recarray:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">recarray</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">.</span><span class="n">a</span>
-<span class="go">array([1], dtype=int8)</span>
+<span class="go">array([1, 3], dtype=int8)</span>
 </pre></div>
 </div>
 <p>Views share data:</p>
@@ -3266,8 +3392,8 @@ avoided on arrays defined by slices, transposes, fortran-ordering, etc.:</p>
 <span class="go">       [4, 5]], dtype=int16)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)])</span>
 <span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
-<span class="gr">ValueError</span>: <span class="n">new type not compatible with array.</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">To change to a dtype of a different size, the array must be C-contiguous</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)])</span>
 <span class="go">array([[(1, 2)],</span>
@@ -3335,9 +3461,9 @@ avoided on arrays defined by slices, transposes, fortran-ordering, etc.:</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

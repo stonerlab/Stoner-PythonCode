@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>TexEngFormatter &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="DefaultPlotStyle" href="Stoner.plot.formats.DefaultPlotStyle.html" />
+    <link rel="prev" title="TexFormatter" href="Stoner.plot.formats.TexFormatter.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.plot.formats.TexFormatter.html" title="Previous document">TexFormatter</a>
+        </li>
+        <li>
+          <a href="Stoner.plot.formats.DefaultPlotStyle.html" title="Next document">DefaultPlotStyle</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="texengformatter">
+<h1>TexEngFormatter<a class="headerlink" href="#texengformatter" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.plot.formats.TexEngFormatter">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.plot.formats.</code><code class="sig-name descname">TexEngFormatter</code><span class="sig-paren">(</span><em class="sig-param">unit=''</em>, <em class="sig-param">places=None</em>, <em class="sig-param">sep=' '</em>, <em class="sig-param">*</em>, <em class="sig-param">usetex=None</em>, <em class="sig-param">useMathText=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexEngFormatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexEngFormatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/api/ticker_api.html#matplotlib.ticker.EngFormatter" title="(in Matplotlib v3.1.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.ticker.EngFormatter</span></code></a></p>
+<p>An axis tick label formatter that emits Tex formula mode code.</p>
+<p>Formatting is set so that large numbers are registered as with SI prefixes
+rather than using E notation.</p>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.TexEngFormatter.prefix" title="Stoner.plot.formats.TexEngFormatter.prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prefix</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.TexEngFormatter.__call__" title="Stoner.plot.formats.TexEngFormatter.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(value[, pos])</p></td>
+<td><p>Return the value ina  suitable texable format</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.formats.TexEngFormatter.format_data" title="Stoner.plot.formats.TexEngFormatter.format_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_data</span></code></a>(value)</p></td>
+<td><p>Returns the full string representation of the value with the position unspecified.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.TexEngFormatter.format_data_short" title="Stoner.plot.formats.TexEngFormatter.format_data_short"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_data_short</span></code></a>(value)</p></td>
+<td><p>Return a short string version of the tick value.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.plot.formats.TexEngFormatter.prefix">
+<code class="sig-name descname">prefix</code><em class="property"> = {-24: 'y', -21: 'z', -18: 'a', -15: 'f', -12: 'p', -9: 'n', -6: '\\mu', -3: 'm', 0: '', 3: 'k', 6: 'M', 9: 'G', 12: 'T', 15: 'P', 18: 'E', 21: 'Z', 24: 'Y'}</em><a class="headerlink" href="#Stoner.plot.formats.TexEngFormatter.prefix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.plot.formats.TexEngFormatter.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">pos=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexEngFormatter.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexEngFormatter.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value ina  suitable texable format</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.plot.formats.TexEngFormatter.format_data">
+<code class="sig-name descname">format_data</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexEngFormatter.format_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexEngFormatter.format_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the full string representation of the value with the position unspecified.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.plot.formats.TexEngFormatter.format_data_short">
+<code class="sig-name descname">format_data_short</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexEngFormatter.format_data_short"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexEngFormatter.format_data_short" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a short string version of the tick value.</p>
+<p>Defaults to the position-independent long value.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.plot.formats.TexFormatter.html"
+                        title="previous chapter">TexFormatter</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.plot.formats.DefaultPlotStyle.html"
+                        title="next chapter">DefaultPlotStyle</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.plot.formats.TexEngFormatter.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.plot.formats.TexFormatter.html" title="Previous document">TexFormatter</a>
+        </li>
+        <li>
+          <a href="Stoner.plot.formats.DefaultPlotStyle.html" title="Next document">DefaultPlotStyle</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.2.2
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

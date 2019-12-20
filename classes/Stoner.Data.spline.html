@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -67,8 +68,8 @@
 <li><p><strong>ycol</strong> (<em>column index</em>) – Column with y data or if None, use the setas attribute</p></li>
 <li><p><strong>sigma</strong> (<em>column index</em><em>, or </em><em>array of data</em>) – Column with weights, or if None use the 1/yerr column.</p></li>
 <li><p><strong>replace</strong> (<em>Boolean</em><em> or </em><em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – If True then the y-column data is repalced, if a column index then the
-new data is added after the specified index, if False then the new y-data is returned and if None, then
-spline object is returned.</p></li>
+new data is added after the specified index, if False then the new y-data is returned and if None,
+then spline object is returned.</p></li>
 <li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – If <em>replace</em> is True or a column index then use this string as the new column header.</p></li>
 <li><p><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The order of spline to use (1-5)</p></li>
 <li><p><strong>smoothing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The smoothing factor to use when fitting the spline. A value of zero will create an
@@ -78,12 +79,12 @@ interpolating spline.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>(various)</em> –     Depending on the value of <em>replace</em>, returns a copy of the AnalysisMixin, a 1D numpy array of data or an
-scipy.interpolate.UniverateSpline object.</p>
+<dd class="field-even"><p><em>(various)</em> –     Depending on the value of <em>replace</em>, returns a copy of the AnalysisMixin, a 1D numpy array of
+data or an :[y:class:<cite>scipy.interpolate.UniverateSpline</cite> object.</p>
 </dd>
 </dl>
-<p>This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the extrapolate
-function.</p>
+<p>This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the
+extrapolate function.</p>
 </dd></dl>
 
 </div>
@@ -146,9 +147,9 @@ function.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

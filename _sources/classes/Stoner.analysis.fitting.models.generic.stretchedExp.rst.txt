@@ -1,0 +1,6 @@
+stretchedExp
+============
+
+.. currentmodule:: Stoner.analysis.fitting.models.generic
+
+.. autofunction:: stretchedExp

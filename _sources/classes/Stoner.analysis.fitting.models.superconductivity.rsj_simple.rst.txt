@@ -1,0 +1,6 @@
+rsj_simple
+==========
+
+.. currentmodule:: Stoner.analysis.fitting.models.superconductivity
+
+.. autofunction:: rsj_simple

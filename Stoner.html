@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="_static/better.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
@@ -74,64 +75,21 @@
 </table>
 <div class="section" id="inheritance-diagrams">
 <h3>Inheritance Diagrams<a class="headerlink" href="#inheritance-diagrams" title="Permalink to this headline">¶</a></h3>
-digraph inheritance88a7ff70f4 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Stoner.Analysis.AnalysisMixin&quot; [URL=&quot;classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods.&quot;];
-  &quot;Stoner.Core.DataFile&quot; [URL=&quot;classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;:py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers.&quot;];
-  &quot;Stoner.core.base.metadataObject&quot; -&gt; &quot;Stoner.Core.DataFile&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.Data&quot; [URL=&quot;classes/Stoner.Data.html#Stoner.Data&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`&quot;];
-  &quot;Stoner.Analysis.AnalysisMixin&quot; -&gt; &quot;Stoner.Data&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.analysis.fitting.mixins.FittingMixin&quot; -&gt; &quot;Stoner.Data&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.plot.core.PlotMixin&quot; -&gt; &quot;Stoner.Data&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.Core.DataFile&quot; -&gt; &quot;Stoner.Data&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.analysis.fitting.mixins.FittingMixin&quot; [URL=&quot;classes/Stoner.analysis.fitting.FittingMixin.html#Stoner.analysis.fitting.FittingMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional curve_fiotting methods.&quot;];
-  &quot;Stoner.core.base.metadataObject&quot; [URL=&quot;classes/Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.&quot;];
-  &quot;collections.abc.MutableMapping&quot; -&gt; &quot;Stoner.core.base.metadataObject&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.plot.core.PlotMixin&quot; [URL=&quot;classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.&quot;];
-  &quot;collections.abc.Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sized&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Container&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Mapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Collection&quot; -&gt; &quot;collections.abc.Mapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.MutableMapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Mapping&quot; -&gt; &quot;collections.abc.MutableMapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-}
-digraph inheritancebd3fb28729 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Stoner.Folders.DataFolder&quot; [URL=&quot;classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Provide an interface to manipulating lots of data files stored within a directory structure on disc.&quot;];
-  &quot;Stoner.folders.mixins.DataMethodsMixin&quot; -&gt; &quot;Stoner.Folders.DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.folders.mixins.DiskBasedFolder&quot; -&gt; &quot;Stoner.Folders.DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.folders.core.baseFolder&quot; -&gt; &quot;Stoner.Folders.DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.folders.core.baseFolder&quot; [URL=&quot;classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.&quot;];
-  &quot;collections.abc.MutableSequence&quot; -&gt; &quot;Stoner.folders.core.baseFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.folders.mixins.DataMethodsMixin&quot; [URL=&quot;classes/Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A mixin class that provides a :py:class:`Stoner.folders.core.baseFolder` with methods for working with :py:class:`Stoner.Data` objects.&quot;];
-  &quot;Stoner.folders.mixins.DiskBasedFolder&quot; [URL=&quot;classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin class that implmenets reading metadataObjects from disc.&quot;];
-  &quot;collections.abc.Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sized&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Container&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sequence&quot; -&gt; &quot;collections.abc.MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; -&gt; &quot;collections.abc.Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
-  &quot;collections.abc.Reversible&quot; -&gt; &quot;collections.abc.Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Collection&quot; -&gt; &quot;collections.abc.Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-}
-</div>
+<div class="graphviz"><img src="_images/inheritance-8f642f192d3d42fb32beb82427a8f5d23b7032f1.png" alt="Inheritance diagram of Data" usemap="#inheritance88a7ff70f4" class="inheritance graphviz" /></div>
+<map id="inheritance88a7ff70f4" name="inheritance88a7ff70f4">
+<area shape="rect" id="node1" href="classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" target="_top" title="A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods." alt="" coords="2,143,85,153"/>
+<area shape="rect" id="node4" href="classes/Stoner.Data.html#Stoner.Data" target="_top" title="A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and" alt="" coords="258,172,296,181"/>
+<area shape="rect" id="node2" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" target="_top" title=":py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers." alt="" coords="95,143,154,153"/>
+<area shape="rect" id="node3" href="classes/Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject" target="_top" title="Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object." alt="" coords="78,115,170,125"/>
+<area shape="rect" id="node5" href="classes/Stoner.analysis.fitting.FittingMixin.html#Stoner.analysis.fitting.FittingMixin" target="_top" title="A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional curve_fiotting" alt="" coords="163,143,275,153"/>
+<area shape="rect" id="node8" href="classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" target="_top" title="A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality." alt="" coords="502,143,574,153"/>
+</map><div class="graphviz"><img src="_images/inheritance-caaa5f1ad2265c5646bccb8253e1665426a14c4f.png" alt="Inheritance diagram of DataFolder" usemap="#inheritancebd3fb28729" class="inheritance graphviz" /></div>
+<map id="inheritancebd3fb28729" name="inheritancebd3fb28729">
+<area shape="rect" id="node1" href="classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" target="_top" title="Provide an interface to manipulating lots of data files stored within a directory structure on disc." alt="" coords="245,256,376,274"/>
+<area shape="rect" id="node2" href="classes/Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin" target="_top" title="A mixin class that provides a :py:class:`Stoner.folders.core.baseFolder` with methods for working with :py:class:`Stoner.Data` objects." alt="" coords="4,206,200,223"/>
+<area shape="rect" id="node3" href="classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="216,206,405,223"/>
+<area shape="rect" id="node4" href="classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="422,206,572,223"/>
+</map></div>
 </div>
 <div class="section" id="numerical-data-objects">
 <h2>Numerical Data Objects<a class="headerlink" href="#numerical-data-objects" title="Permalink to this headline">¶</a></h2>
@@ -335,16 +293,10 @@ size=&quot;6.0, 8.0&quot;;
 </div>
 <div class="section" id="class-inheritance-diagram">
 <h5>Class Inheritance Diagram<a class="headerlink" href="#class-inheritance-diagram" title="Permalink to this headline">¶</a></h5>
-digraph inheritance0c896e7710 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Dialect&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Describe a CSV dialect.&quot;];
-  &quot;tab_delimited&quot; [URL=&quot;classes/Stoner.core.utils.tab_delimited.html#Stoner.core.utils.tab_delimited&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A customised csv dialect class for reading tab delimited text files.&quot;];
-  &quot;Dialect&quot; -&gt; &quot;tab_delimited&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
-</div>
+<div class="graphviz"><img src="_images/inheritance-91a066c8f0ff77a9e217874244d149cd5da2d320.png" alt="Inheritance diagram of Stoner.core.utils.tab_delimited" usemap="#inheritance0c896e7710" class="inheritance graphviz" /></div>
+<map id="inheritance0c896e7710" name="inheritance0c896e7710">
+<area shape="rect" id="node2" href="classes/Stoner.core.utils.tab_delimited.html#Stoner.core.utils.tab_delimited" target="_top" title="A customised csv dialect class for reading tab delimited text files." alt="" coords="5,79,117,104"/>
+</map></div>
 </div>
 <div class="section" id="module-Stoner.Core">
 <span id="stoner-core-module"></span><h4>Stoner.Core Module<a class="headerlink" href="#module-Stoner.Core" title="Permalink to this headline">¶</a></h4>
@@ -427,317 +379,21 @@ size=&quot;6.0, 8.0&quot;;
 </table>
 </div>
 </div>
-<div class="section" id="module-Stoner.analysis.fitting.models.generic">
-<span id="stoner-analysis-fitting-models-generic-module"></span><h4>Stoner.analysis.fitting.models.generic Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.generic" title="Permalink to this headline">¶</a></h4>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various generic models.</p>
-<div class="section" id="id11">
-<h5>Functions<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h5>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">linear</span></code>(x, intercept, slope)</p></td>
-<td><p>Simple linear function</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lorentzian_diff</span></code>(x, A, sigma, mu)</p></td>
-<td><p>Implement a differential form of a Lorentzian peak.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">powerLaw</span></code>(x, A, k)</p></td>
-<td><p>Power Law Fitting Equation.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">quadratic</span></code>(x, a, b, c)</p></td>
-<td><p>A Simple quadratic fitting function.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stretchedExp</span></code>(x, A, beta, x_0)</p></td>
-<td><p>A stretched exponential fuinction.</p></td>
-</tr>
-</tbody>
-</table>
 </div>
-<div class="section" id="id12">
-<h5>Classes<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h5>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.Linear.html#Stoner.analysis.fitting.models.generic.Linear" title="Stoner.analysis.fitting.models.generic.Linear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Linear</span></code></a>([independent_vars, prefix, nan_policy])</p></td>
-<td><p>Simple linear fit</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.Lorentzian_diff.html#Stoner.analysis.fitting.models.generic.Lorentzian_diff" title="Stoner.analysis.fitting.models.generic.Lorentzian_diff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lorentzian_diff</span></code></a>(*args, **kwargs)</p></td>
-<td><p>lmfit Model rerprenting the differential form of a Lorentzian Peak.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.PowerLaw.html#Stoner.analysis.fitting.models.generic.PowerLaw" title="Stoner.analysis.fitting.models.generic.PowerLaw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PowerLaw</span></code></a>([independent_vars, prefix, nan_policy])</p></td>
-<td><p>Power Law Fitting Equation.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.Quadratic.html#Stoner.analysis.fitting.models.generic.Quadratic" title="Stoner.analysis.fitting.models.generic.Quadratic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quadratic</span></code></a>([independent_vars, prefix, nan_policy])</p></td>
-<td><p>A Simple quadratic fitting function.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.StretchedExp.html#Stoner.analysis.fitting.models.generic.StretchedExp" title="Stoner.analysis.fitting.models.generic.StretchedExp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StretchedExp</span></code></a>(*args, **kwargs)</p></td>
-<td><p>A stretched exponential fuinction.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section" id="module-Stoner.analysis.fitting.models.thermal">
-<span id="stoner-analysis-fitting-models-thermal-module"></span><h4>Stoner.analysis.fitting.models.thermal Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.thermal" title="Permalink to this headline">¶</a></h4>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various thermal physics models.</p>
-<div class="section" id="id13">
-<h5>Functions<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h5>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">arrhenius</span></code>(x, A, DE)</p></td>
-<td><p>Arrhenius Equation without T dependendent prefactor.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">modArrhenius</span></code>(x, A, DE, n)</p></td>
-<td><p>Arrhenius Equation with a variable T power dependent prefactor.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nDimArrhenius</span></code>(x, A, DE, n)</p></td>
-<td><p>Arrhenius Equation without T dependendent prefactor for various dimensions.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">vftEquation</span></code>(x, A, DE, x_0)</p></td>
-<td><p>Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="id14">
-<h5>Classes<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h5>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.Arrhenius.html#Stoner.analysis.fitting.models.thermal.Arrhenius" title="Stoner.analysis.fitting.models.thermal.Arrhenius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Arrhenius</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Arrhenius Equation without T dependendent prefactor.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.ModArrhenius.html#Stoner.analysis.fitting.models.thermal.ModArrhenius" title="Stoner.analysis.fitting.models.thermal.ModArrhenius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModArrhenius</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Arrhenius Equation with a variable T power dependent prefactor.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.NDimArrhenius.html#Stoner.analysis.fitting.models.thermal.NDimArrhenius" title="Stoner.analysis.fitting.models.thermal.NDimArrhenius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NDimArrhenius</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Arrhenius Equation without T dependendent prefactor for various dimensions.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.VFTEquation.html#Stoner.analysis.fitting.models.thermal.VFTEquation" title="Stoner.analysis.fitting.models.thermal.VFTEquation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VFTEquation</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section" id="module-Stoner.analysis.fitting.models.tunnelling">
-<span id="stoner-analysis-fitting-models-tunnelling-module"></span><h4>Stoner.analysis.fitting.models.tunnelling Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.tunnelling" title="Permalink to this headline">¶</a></h4>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various models of electron tunnelling.</p>
-<div class="section" id="id15">
-<h5>Functions<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h5>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bdr</span></code>(V, A, phi, dphi, d, mass)</p></td>
-<td><p>BDR model tunnelling.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fowlerNordheim</span></code>(V, A, phi, d)</p></td>
-<td><p>Fowler Nordhiem Model of electron tunnelling.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">simmons</span></code>(V, A, phi, d)</p></td>
-<td><p>Simmons model of electron tunnelling.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tersoffHammann</span></code>(V, A)</p></td>
-<td><p>TersoffHamman model for tunnelling through STM tip.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="id16">
-<h5>Classes<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h5>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.BDR.html#Stoner.analysis.fitting.models.tunnelling.BDR" title="Stoner.analysis.fitting.models.tunnelling.BDR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BDR</span></code></a>(*args, **kwargs)</p></td>
-<td><p>BDR model tunnelling.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.html#Stoner.analysis.fitting.models.tunnelling.FowlerNordheim" title="Stoner.analysis.fitting.models.tunnelling.FowlerNordheim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FowlerNordheim</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Fowler Nordhiem Model of electron tunnelling.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.Simmons.html#Stoner.analysis.fitting.models.tunnelling.Simmons" title="Stoner.analysis.fitting.models.tunnelling.Simmons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Simmons</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Simmons model of electron tunnelling.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.TersoffHammann.html#Stoner.analysis.fitting.models.tunnelling.TersoffHammann" title="Stoner.analysis.fitting.models.tunnelling.TersoffHammann"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TersoffHammann</span></code></a>(*args, **kwargs)</p></td>
-<td><p>TersoffHamman model for tunnelling through STM tip.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section" id="module-Stoner.analysis.fitting.models.e_transport">
-<span id="stoner-analysis-fitting-models-e-transport-module"></span><h4>Stoner.analysis.fitting.models.e_transport Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.e_transport" title="Permalink to this headline">¶</a></h4>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various models of electron transport (other than tunnelling processes).</p>
-<div class="section" id="id17">
-<h5>Functions<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h5>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">blochGrueneisen</span></code>(T, thetaD, rho0, A, n)</p></td>
-<td><p>BlochGrueneiseen Function for fitting R(T).</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fluchsSondheimer</span></code>(t, l, p, sigma_0)</p></td>
-<td><p>Evaluate a Fluchs-Sondheumer model function for conductivity.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wlfit</span></code>(B, s0, DS, B1, B2)</p></td>
-<td><p>Weak localisation</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="id18">
-<h5>Classes<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h5>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.html#Stoner.analysis.fitting.models.e_transport.BlochGrueneisen" title="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlochGrueneisen</span></code></a>(*args, **kwargs)</p></td>
-<td><p>BlochGrueneiseen Function for fitting R(T).</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.html#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer" title="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FluchsSondheimer</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Evaluate a Fluchs-Sondheumer model function for conductivity.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.e_transport.WLfit.html#Stoner.analysis.fitting.models.e_transport.WLfit" title="Stoner.analysis.fitting.models.e_transport.WLfit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WLfit</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Weak localisation</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section" id="module-Stoner.analysis.fitting.models.magnetism">
-<span id="stoner-analysis-fitting-models-magnetism-module"></span><h4>Stoner.analysis.fitting.models.magnetism Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.magnetism" title="Permalink to this headline">¶</a></h4>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various magnetism and magnetic materials models.</p>
-<div class="section" id="id19">
-<h5>Functions<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h5>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fmr_power</span></code>(H, H_res, Delta_H, K_1, K_2)</p></td>
-<td><p>A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_kittel</span></code>(f, g, M_s, H_k)</p></td>
-<td><p>Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kittelEquation</span></code>(H, g, M_s, H_k)</p></td>
-<td><p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">langevin</span></code>(H, M_s, m, T)</p></td>
-<td><p>“The Langevin function for paramagnetic M-H loops/</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="id20">
-<h5>Classes<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h5>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.FMR_Power.html#Stoner.analysis.fitting.models.magnetism.FMR_Power" title="Stoner.analysis.fitting.models.magnetism.FMR_Power"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FMR_Power</span></code></a>(*args, **kwargs)</p></td>
-<td><p>A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html#Stoner.analysis.fitting.models.magnetism.Inverse_Kittel" title="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Inverse_Kittel</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.KittelEquation.html#Stoner.analysis.fitting.models.magnetism.KittelEquation" title="Stoner.analysis.fitting.models.magnetism.KittelEquation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KittelEquation</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.Langevin.html#Stoner.analysis.fitting.models.magnetism.Langevin" title="Stoner.analysis.fitting.models.magnetism.Langevin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Langevin</span></code></a>(*args, **kwargs)</p></td>
-<td><p>“The Langevin function for paramagnetic M-H loops/</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section" id="module-Stoner.analysis.fitting.models.superconductivity">
-<span id="stoner-analysis-fitting-models-superconductivity-module"></span><h4>Stoner.analysis.fitting.models.superconductivity Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.superconductivity" title="Permalink to this headline">¶</a></h4>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various superconductivity related models.</p>
-<div class="section" id="id21">
-<h5>Functions<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h5>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsj_noiseless</span></code>(I, Ic_p, Ic_n, Rn, V_offset)</p></td>
-<td><p>Implements a simple noiseless RSJ model.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsj_simple</span></code>(I, Ic, Rn, V_offset)</p></td>
-<td><p>Implements a simple noiseless symmetric RSJ model.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">strijkers</span></code>(V, omega, delta, P, Z)</p></td>
-<td><p>strijkers Model for point-contact Andreev Reflection Spectroscopy.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ic_B_airy</span></code>(B, Ic0, B_offset, A)</p></td>
-<td><p>Critical Current for a round Josepshon Junction wrt to Field.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="id22">
-<h5>Classes<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h5>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless" title="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSJ_Noiseless</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Implements a simple noiseless RSJ model.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html#Stoner.analysis.fitting.models.superconductivity.RSJ_Simple" title="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSJ_Simple</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Implements a simple noiseless symmetric RSJ model.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.Strijkers.html#Stoner.analysis.fitting.models.superconductivity.Strijkers" title="Stoner.analysis.fitting.models.superconductivity.Strijkers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Strijkers</span></code></a>(*args, **kwargs)</p></td>
-<td><p>strijkers Model for point-contact Andreev Reflection Spectroscopy.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html#Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy" title="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ic_B_Airy</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Critical Current for a round Josepshon Junction wrt to Field.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<div class="section" id="fitting-models">
+<h3>Fitting Models<a class="headerlink" href="#fitting-models" title="Permalink to this headline">¶</a></h3>
+<div class="toctree-wrapper compound" id="models-toc">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="analysis-fitting.html">Fitting Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="analysis-fitting.html#generic-modles">Generic Modles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis-fitting.html#thermal-physics-models">Thermal Physics models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis-fitting.html#electron-tunnelling-models">Electron Tunnelling models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis-fitting.html#other-electron-transpoort-models">Other Electron Transpoort models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis-fitting.html#magnetism-and-magnetic-materials-models">Magnetism and Magnetic Materials models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis-fitting.html#superconductivity-models">superconductivity models</a></li>
+</ul>
+</li>
+</ul>
 </div>
 </div>
 <div class="section" id="plot-package-and-modules">
@@ -748,8 +404,8 @@ size=&quot;6.0, 8.0&quot;;
 <p>Most of the plotting functionailty is provided by the <a class="reference internal" href="classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlotMixin</span></code></a> mixin class which is available through the <a class="reference internal" href="classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> classs.</p>
 <p>The <a class="reference internal" href="#module-Stoner.plot.formats" title="Stoner.plot.formats"><code class="xref py py-mod docutils literal notranslate"><span class="pre">formats</span></code></a> module provides a set of template classes for producing different plot styles and formats. The :mod:#util# module provides
 some handy utility functions.</p>
-<div class="section" id="id23">
-<h5>Functions<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id11">
+<h5>Functions<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -765,8 +421,8 @@ some handy utility functions.</p>
 </tbody>
 </table>
 </div>
-<div class="section" id="id24">
-<h5>Classes<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id12">
+<h5>Classes<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -783,8 +439,8 @@ some handy utility functions.</p>
 <div class="section" id="module-Stoner.plot.formats">
 <span id="stoner-plot-formats-module"></span><h4>Stoner.plot.formats Module<a class="headerlink" href="#module-Stoner.plot.formats" title="Permalink to this headline">¶</a></h4>
 <p>Plot Templates module - contains classes that style plots produced by <a class="reference internal" href="classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a></p>
-<div class="section" id="id25">
-<h5>Classes<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id13">
+<h5>Classes<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -821,54 +477,25 @@ some handy utility functions.</p>
 </tbody>
 </table>
 </div>
-<div class="section" id="id26">
-<h5>Class Inheritance Diagram<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h5>
-digraph inheritance1b9730fac1 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DefaultPlotStyle&quot; [URL=&quot;classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Produces a default plot style.&quot;];
-  &quot;MutableMapping&quot; -&gt; &quot;DefaultPlotStyle&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;EngFormatter&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Formats axis values using engineering prefixes to represent powers&quot;];
-  &quot;Formatter&quot; -&gt; &quot;EngFormatter&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Formatter&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Create a string based on a tick value and location.&quot;];
-  &quot;TickHelper&quot; -&gt; &quot;Formatter&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;GBPlotStyle&quot; [URL=&quot;classes/Stoner.plot.formats.GBPlotStyle.html#Stoner.plot.formats.GBPlotStyle&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Template developed for Gavin's plotting.&quot;];
-  &quot;DefaultPlotStyle&quot; -&gt; &quot;GBPlotStyle&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;JTBPlotStyle&quot; [URL=&quot;classes/Stoner.plot.formats.JTBPlotStyle.html#Stoner.plot.formats.JTBPlotStyle&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Template class for Joe's Plot settings.&quot;];
-  &quot;DefaultPlotStyle&quot; -&gt; &quot;JTBPlotStyle&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;JTBinsetStyle&quot; [URL=&quot;classes/Stoner.plot.formats.JTBinsetStyle.html#Stoner.plot.formats.JTBinsetStyle&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Template class for Joe's Plot settings.&quot;];
-  &quot;DefaultPlotStyle&quot; -&gt; &quot;JTBinsetStyle&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Mapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Mapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableMapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Mapping&quot; -&gt; &quot;MutableMapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;PRBPlotStyle&quot; [URL=&quot;classes/Stoner.plot.formats.PRBPlotStyle.html#Stoner.plot.formats.PRBPlotStyle&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A figure Style for making figures for Phys Rev * Jounrals.&quot;];
-  &quot;DefaultPlotStyle&quot; -&gt; &quot;PRBPlotStyle&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;SeabornPlotStyle&quot; [URL=&quot;classes/Stoner.plot.formats.SeabornPlotStyle.html#Stoner.plot.formats.SeabornPlotStyle&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.&quot;];
-  &quot;DefaultPlotStyle&quot; -&gt; &quot;SeabornPlotStyle&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;SketchPlot&quot; [URL=&quot;classes/Stoner.plot.formats.SketchPlot.html#Stoner.plot.formats.SketchPlot&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Turn on xkcd plot style.&quot;];
-  &quot;DefaultPlotStyle&quot; -&gt; &quot;SketchPlot&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;TexEngFormatter&quot; [URL=&quot;classes/Stoner.plot.formats.TexEngFormatter.html#Stoner.plot.formats.TexEngFormatter&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;An axis tick label formatter that emits Tex formula mode code.&quot;];
-  &quot;EngFormatter&quot; -&gt; &quot;TexEngFormatter&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;TexFormatter&quot; [URL=&quot;classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;An axis tick label formatter that emits Tex formula mode code.&quot;];
-  &quot;Formatter&quot; -&gt; &quot;TexFormatter&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;TickHelper&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-}
-</div>
+<div class="section" id="id14">
+<h5>Class Inheritance Diagram<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h5>
+<div class="graphviz"><img src="_images/inheritance-e5f3a82cd0bc642d944dfb381fb1b11a660243a5.png" alt="Inheritance diagram of Stoner.plot.formats.TexFormatter, Stoner.plot.formats.TexEngFormatter, Stoner.plot.formats.DefaultPlotStyle, Stoner.plot.formats.GBPlotStyle, Stoner.plot.formats.JTBPlotStyle, Stoner.plot.formats.JTBinsetStyle, Stoner.plot.formats.PRBPlotStyle, Stoner.plot.formats.SketchPlot, Stoner.plot.formats.SeabornPlotStyle" usemap="#inheritance1b9730fac1" class="inheritance graphviz" /></div>
+<map id="inheritance1b9730fac1" name="inheritance1b9730fac1">
+<area shape="rect" id="node5" href="classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle" target="_top" title="Produces a default plot style." alt="" coords="192,223,288,242"/>
+<area shape="rect" id="node10" href="classes/Stoner.plot.formats.GBPlotStyle.html#Stoner.plot.formats.GBPlotStyle" target="_top" title="Template developed for Gavin&#39;s plotting." alt="" coords="4,278,78,297"/>
+<area shape="rect" id="node11" href="classes/Stoner.plot.formats.JTBPlotStyle.html#Stoner.plot.formats.JTBPlotStyle" target="_top" title="Template class for Joe&#39;s Plot settings." alt="" coords="96,278,171,297"/>
+<area shape="rect" id="node12" href="classes/Stoner.plot.formats.JTBinsetStyle.html#Stoner.plot.formats.JTBinsetStyle" target="_top" title="Template class for Joe&#39;s Plot settings." alt="" coords="190,278,271,297"/>
+<area shape="rect" id="node14" href="classes/Stoner.plot.formats.PRBPlotStyle.html#Stoner.plot.formats.PRBPlotStyle" target="_top" title="A figure Style for making figures for Phys Rev * Jounrals." alt="" coords="289,278,369,297"/>
+<area shape="rect" id="node15" href="classes/Stoner.plot.formats.SeabornPlotStyle.html#Stoner.plot.formats.SeabornPlotStyle" target="_top" title="A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots." alt="" coords="387,278,486,297"/>
+<area shape="rect" id="node16" href="classes/Stoner.plot.formats.SketchPlot.html#Stoner.plot.formats.SketchPlot" target="_top" title="Turn on xkcd plot style." alt="" coords="504,278,572,297"/>
+<area shape="rect" id="node17" href="classes/Stoner.plot.formats.TexEngFormatter.html#Stoner.plot.formats.TexEngFormatter" target="_top" title="An axis tick label formatter that emits Tex formula mode code." alt="" coords="339,168,438,187"/>
+<area shape="rect" id="node18" href="classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter" target="_top" title="An axis tick label formatter that emits Tex formula mode code." alt="" coords="448,114,529,133"/>
+</map></div>
 </div>
 <div class="section" id="stoner-plot-utils-module">
 <h4>Stoner.plot.utils Module<a class="headerlink" href="#stoner-plot-utils-module" title="Permalink to this headline">¶</a></h4>
-<div class="section" id="id27">
-<h5>Functions<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id15">
+<h5>Functions<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -981,8 +608,8 @@ they should then return an array of y values the same size as the x array.</p>
 i.e. the parameters are expanded to separate arguements.</p>
 </div>
 </div>
-<div class="section" id="id28">
-<h3>Functions<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id16">
+<h3>Functions<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1078,8 +705,8 @@ i.e. the parameters are expanded to separate arguements.</p>
 <h3>HDF Support<a class="headerlink" href="#hdf-support" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="stoner-hdf5-module">
 <h4>Stoner.HDF5 Module<a class="headerlink" href="#stoner-hdf5-module" title="Permalink to this headline">¶</a></h4>
-<div class="section" id="id29">
-<h5>Classes<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id17">
+<h5>Classes<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1110,8 +737,8 @@ i.e. the parameters are expanded to separate arguements.</p>
 <h3>Zip File Support<a class="headerlink" href="#zip-file-support" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="stoner-zip-module">
 <h4>Stoner.Zip Module<a class="headerlink" href="#stoner-zip-module" title="Permalink to this headline">¶</a></h4>
-<div class="section" id="id30">
-<h5>Functions<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id18">
+<h5>Functions<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1124,8 +751,8 @@ i.e. the parameters are expanded to separate arguements.</p>
 </tbody>
 </table>
 </div>
-<div class="section" id="id31">
-<h5>Classes<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id19">
+<h5>Classes<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1150,8 +777,8 @@ i.e. the parameters are expanded to separate arguements.</p>
 <h3>Utility Functions<a class="headerlink" href="#utility-functions" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="stoner-util-module">
 <h4>Stoner.Util Module<a class="headerlink" href="#stoner-util-module" title="Permalink to this headline">¶</a></h4>
-<div class="section" id="id32">
-<h5>Functions<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id20">
+<h5>Functions<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1175,8 +802,8 @@ i.e. the parameters are expanded to separate arguements.</p>
 <span id="stoner-tools-module"></span><h4>Stoner.tools Module<a class="headerlink" href="#module-Stoner.tools" title="Permalink to this headline">¶</a></h4>
 <p>Support functions for Stoner package.</p>
 <p>These functions depend only on Stoner.compat which is used to ensure a consistent namespace between python 2.7 and 3.x.</p>
-<div class="section" id="id33">
-<h5>Functions<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id21">
+<h5>Functions<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1234,8 +861,8 @@ i.e. the parameters are expanded to separate arguements.</p>
 </tbody>
 </table>
 </div>
-<div class="section" id="id34">
-<h5>Classes<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id22">
+<h5>Classes<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1262,8 +889,8 @@ i.e. the parameters are expanded to separate arguements.</p>
 <span id="stoner-folders-module"></span><h4>Stoner.Folders Module<a class="headerlink" href="#module-Stoner.Folders" title="Permalink to this headline">¶</a></h4>
 <p>Stoner.Folders : Classes for working collections of <a class="reference internal" href="classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> files.</p>
 <p>The core classes provides a means to access them as an ordered collection or as a mapping.</p>
-<div class="section" id="id35">
-<h5>Classes<a class="headerlink" href="#id35" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id23">
+<h5>Classes<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1279,41 +906,17 @@ i.e. the parameters are expanded to separate arguements.</p>
 </tbody>
 </table>
 </div>
-<div class="section" id="id36">
-<h5>Class Inheritance Diagram<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h5>
-digraph inheritance4d7d1f0691 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DataFolder&quot; [URL=&quot;classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Provide an interface to manipulating lots of data files stored within a directory structure on disc.&quot;];
-  &quot;DataMethodsMixin&quot; -&gt; &quot;DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolder&quot; -&gt; &quot;DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;baseFolder&quot; -&gt; &quot;DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DataMethodsMixin&quot; [URL=&quot;classes/Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A mixin class that provides a :py:class:`Stoner.folders.core.baseFolder` with methods for working with :py:class:`Stoner.Data` objects.&quot;];
-  &quot;DiskBasedFolder&quot; [URL=&quot;classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin class that implmenets reading metadataObjects from disc.&quot;];
-  &quot;Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; -&gt; &quot;MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;PlotFolder&quot; [URL=&quot;classes/Stoner.Folders.PlotFolder.html#Stoner.Folders.PlotFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A :py:class:`Stoner.folders.baseFolder` that knows how to ploth its underlying data files.&quot;];
-  &quot;PlotMethodsMixin&quot; -&gt; &quot;PlotFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DataFolder&quot; -&gt; &quot;PlotFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;PlotMethodsMixin&quot; [URL=&quot;classes/Stoner.folders.mixins.PlotMethodsMixin.html#Stoner.folders.mixins.PlotMethodsMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin for :py:class:`Stoner.folders.core.baseFolder` with extra methods for plotting lots of files.&quot;];
-  &quot;Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
-  &quot;Reversible&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;baseFolder&quot; [URL=&quot;classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.&quot;];
-  &quot;MutableSequence&quot; -&gt; &quot;baseFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
-</div>
+<div class="section" id="id24">
+<h5>Class Inheritance Diagram<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h5>
+<div class="graphviz"><img src="_images/inheritance-de4e8e486828ed5c8b0b2bf3c6c39f3b8558f317.png" alt="Inheritance diagram of Stoner.Folders.DataFolder, Stoner.Folders.PlotFolder" usemap="#inheritance4d7d1f0691" class="inheritance graphviz" /></div>
+<map id="inheritance4d7d1f0691" name="inheritance4d7d1f0691">
+<area shape="rect" id="node5" href="classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" target="_top" title="Provide an interface to manipulating lots of data files stored within a directory structure on disc." alt="" coords="191,372,285,397"/>
+<area shape="rect" id="node11" href="classes/Stoner.Folders.PlotFolder.html#Stoner.Folders.PlotFolder" target="_top" title="A :py:class:`Stoner.folders.baseFolder` that knows how to ploth its underlying data files." alt="" coords="124,445,211,471"/>
+<area shape="rect" id="node6" href="classes/Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin" target="_top" title="A mixin class that provides a :py:class:`Stoner.folders.core.baseFolder` with methods for working with :py:class:`Stoner.Data` objects." alt="" coords="5,299,148,324"/>
+<area shape="rect" id="node7" href="classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="173,299,303,324"/>
+<area shape="rect" id="node8" href="classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="327,299,421,324"/>
+<area shape="rect" id="node12" href="classes/Stoner.folders.mixins.PlotMethodsMixin.html#Stoner.folders.mixins.PlotMethodsMixin" target="_top" title="A Mixin for :py:class:`Stoner.folders.core.baseFolder` with extra methods for plotting lots of files." alt="" coords="29,372,167,397"/>
+</map></div>
 </div>
 </div>
 <div class="section" id="folders-package-and-submodules">
@@ -1325,8 +928,8 @@ size=&quot;6.0, 8.0&quot;;
 <div class="section" id="module-Stoner.folders.core">
 <span id="stoner-folders-core-module"></span><h4>Stoner.folders.core Module<a class="headerlink" href="#module-Stoner.folders.core" title="Permalink to this headline">¶</a></h4>
 <p><a class="reference internal" href="#module-Stoner.folders.core" title="Stoner.folders.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.folders.core</span></code></a> provides the base class and functions for the <a class="reference internal" href="classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.DataFolder</span></code></a> class.</p>
-<div class="section" id="id37">
-<h5>Classes<a class="headerlink" href="#id37" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id25">
+<h5>Classes<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1343,8 +946,8 @@ size=&quot;6.0, 8.0&quot;;
 <div class="section" id="module-Stoner.folders.mixins">
 <span id="stoner-folders-mixins-module"></span><h4>Stoner.folders.mixins Module<a class="headerlink" href="#module-Stoner.folders.mixins" title="Permalink to this headline">¶</a></h4>
 <p>mixin calsses for <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.core.baseFoler</span></code>.</p>
-<div class="section" id="id38">
-<h5>Classes<a class="headerlink" href="#id38" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id26">
+<h5>Classes<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1366,9 +969,10 @@ size=&quot;6.0, 8.0&quot;;
 </div>
 <div class="section" id="module-Stoner.folders.each">
 <span id="stoner-folders-each-module"></span><h4>Stoner.folders.each Module<a class="headerlink" href="#module-Stoner.folders.each" title="Permalink to this headline">¶</a></h4>
-<p><a class="reference internal" href="#module-Stoner.folders.each" title="Stoner.folders.each"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.folders.each</span></code></a> provides the classes and support functions for the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.DataFolder.each</span></code> magic attribute.</p>
-<div class="section" id="id39">
-<h5>Classes<a class="headerlink" href="#id39" title="Permalink to this headline">¶</a></h5>
+<p><a class="reference internal" href="#module-Stoner.folders.each" title="Stoner.folders.each"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.folders.each</span></code></a> provides the classes and support functions for the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.DataFolder.each</span></code>
+magic attribute.</p>
+<div class="section" id="id27">
+<h5>Classes<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1381,22 +985,19 @@ size=&quot;6.0, 8.0&quot;;
 </tbody>
 </table>
 </div>
-<div class="section" id="id40">
-<h5>Class Inheritance Diagram<a class="headerlink" href="#id40" title="Permalink to this headline">¶</a></h5>
-digraph inheritance79fa03a85f {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;item&quot; [URL=&quot;classes/Stoner.folders.each.item.html#Stoner.folders.each.item&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Provides a proxy object for accessing methods on the inividual members of a Folder.&quot;];
-}
-</div>
+<div class="section" id="id28">
+<h5>Class Inheritance Diagram<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h5>
+<div class="graphviz"><img src="_images/inheritance-ab3160af7812fb0700924ac9794d888701a9c98c.png" alt="Inheritance diagram of Stoner.folders.each.item" usemap="#inheritance79fa03a85f" class="inheritance graphviz" /></div>
+<map id="inheritance79fa03a85f" name="inheritance79fa03a85f">
+<area shape="rect" id="node1" href="classes/Stoner.folders.each.item.html#Stoner.folders.each.item" target="_top" title="Provides a proxy object for accessing methods on the inividual members of a Folder." alt="" coords="5,5,77,31"/>
+</map></div>
 </div>
 <div class="section" id="module-Stoner.folders.metadata">
 <span id="stoner-folders-metadata-module"></span><h4>Stoner.folders.metadata Module<a class="headerlink" href="#module-Stoner.folders.metadata" title="Permalink to this headline">¶</a></h4>
-<p><a class="reference internal" href="#module-Stoner.folders.metadata" title="Stoner.folders.metadata"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.folders.metadata</span></code></a> provides classes and functions to support the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.DataFolder.metadata</span></code> magic attribute.</p>
-<div class="section" id="id41">
-<h5>Classes<a class="headerlink" href="#id41" title="Permalink to this headline">¶</a></h5>
+<p><a class="reference internal" href="#module-Stoner.folders.metadata" title="Stoner.folders.metadata"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.folders.metadata</span></code></a> provides classes and functions to support the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.DataFolder.metadata</span></code>
+magic attribute.</p>
+<div class="section" id="id29">
+<h5>Classes<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1409,28 +1010,12 @@ size=&quot;6.0, 8.0&quot;;
 </tbody>
 </table>
 </div>
-<div class="section" id="id42">
-<h5>Class Inheritance Diagram<a class="headerlink" href="#id42" title="Permalink to this headline">¶</a></h5>
-digraph inheritance2d431350a9 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Mapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Mapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableMapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Mapping&quot; -&gt; &quot;MutableMapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;proxy&quot; [URL=&quot;classes/Stoner.folders.metadata.proxy.html#Stoner.folders.metadata.proxy&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Provide methods to interact with a whole collection of metadataObjects' metadata.&quot;];
-  &quot;MutableMapping&quot; -&gt; &quot;proxy&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
-</div>
+<div class="section" id="id30">
+<h5>Class Inheritance Diagram<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h5>
+<div class="graphviz"><img src="_images/inheritance-afac47c9e610f3ce755dc2025a25a093e56695fc.png" alt="Inheritance diagram of Stoner.folders.metadata.proxy" usemap="#inheritance2d431350a9" class="inheritance graphviz" /></div>
+<map id="inheritance2d431350a9" name="inheritance2d431350a9">
+<area shape="rect" id="node7" href="classes/Stoner.folders.metadata.proxy.html#Stoner.folders.metadata.proxy" target="_top" title="Provide methods to interact with a whole collection of metadataObjects&#39; metadata." alt="" coords="101,299,173,324"/>
+</map></div>
 </div>
 </div>
 </div>
@@ -1440,10 +1025,11 @@ size=&quot;6.0, 8.0&quot;;
 <h3>Main Image Classes<a class="headerlink" href="#main-image-classes" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="module-Stoner.Image">
 <span id="stoner-image-package"></span><h4>Stoner.Image Package<a class="headerlink" href="#module-Stoner.Image" title="Permalink to this headline">¶</a></h4>
-<p>The <a class="reference internal" href="#module-Stoner.Image" title="Stoner.Image"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Image</span></code></a> package provides a means to carry out image processing functions in a smilar way that <a class="reference internal" href="#module-Stoner.Core" title="Stoner.Core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Core</span></code></a> and <a class="reference internal" href="classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> and
-<a class="reference internal" href="classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.DataFolder</span></code></a> do. The <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stomner.Image.core</span></code> module contains the key classes for achieving this.</p>
-<div class="section" id="id43">
-<h5>Classes<a class="headerlink" href="#id43" title="Permalink to this headline">¶</a></h5>
+<p>The <a class="reference internal" href="#module-Stoner.Image" title="Stoner.Image"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Image</span></code></a> package provides a means to carry out image processing functions in a smilar way that
+<a class="reference internal" href="#module-Stoner.Core" title="Stoner.Core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Core</span></code></a> and <a class="reference internal" href="classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> and <a class="reference internal" href="classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.DataFolder</span></code></a> do. The <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stomner.Image.core</span></code> module
+contains the key classes for achieving this.</p>
+<div class="section" id="id31">
+<h5>Classes<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1471,81 +1057,31 @@ size=&quot;6.0, 8.0&quot;;
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Image.MaskStack.html#Stoner.Image.MaskStack" title="Stoner.Image.MaskStack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MaskStack</span></code></a>(*args, **kargs)</p></td>
 <td><p>A set of masks for Kerr images.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.Image.ImageStack2.html#Stoner.Image.ImageStack2" title="Stoner.Image.ImageStack2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImageStack2</span></code></a></p></td>
-<td><p>alias of <a class="reference internal" href="classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack" title="Stoner.Image.stack.ImageStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Image.stack.ImageStack</span></code></a></p></td>
-</tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="id44">
-<h5>Class Inheritance Diagram<a class="headerlink" href="#id44" title="Permalink to this headline">¶</a></h5>
-digraph inheritance152766639f {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolder&quot; [URL=&quot;classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin class that implmenets reading metadataObjects from disc.&quot;];
-  &quot;ImageArray&quot; [URL=&quot;classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;:py:class:`Stoner.Image.core.ImageArray` is a numpy array like class with a metadata parameter and pass through to skimage methods.&quot;];
-  &quot;MaskedArray&quot; -&gt; &quot;ImageArray&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;metadataObject&quot; -&gt; &quot;ImageArray&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageFile&quot; [URL=&quot;classes/Stoner.Image.ImageFile.html#Stoner.Image.ImageFile&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;An Image file type that is analagous to DataFile.&quot;];
-  &quot;metadataObject&quot; -&gt; &quot;ImageFile&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageFolder&quot; [URL=&quot;classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Folder object for images.&quot;];
-  &quot;ImageFolderMixin&quot; -&gt; &quot;ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolder&quot; -&gt; &quot;ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;baseFolder&quot; -&gt; &quot;ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageFolderMixin&quot; [URL=&quot;classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Mixin to provide a folder object for images.&quot;];
-  &quot;ImageStack&quot; [URL=&quot;classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;An alternative implementation of an image stack based on baseFolder.&quot;];
-  &quot;StackAnalysisMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageStackMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageFolderMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolder&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;baseFolder&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageStackMixin&quot; [URL=&quot;classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.stack.ImageStackMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Implement an interface for a baseFolder to store images in a 3D numpy array for faster access.&quot;];
-  &quot;Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;KerrArray&quot; [URL=&quot;classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.kerr.KerrArray&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A subclass for Kerr microscopy specific image functions.&quot;];
-  &quot;ImageArray&quot; -&gt; &quot;KerrArray&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;KerrStack&quot; [URL=&quot;classes/Stoner.Image.kerr.KerrStack.html#Stoner.Image.kerr.KerrStack&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Represents a stack of Kerr images.&quot;];
-  &quot;KerrStackMixin&quot; -&gt; &quot;KerrStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageStack&quot; -&gt; &quot;KerrStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;KerrStackMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;A mixin for :py:class:`ImageStack` that adds some functionality particular to Kerr images.&quot;];
-  &quot;Mapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Mapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MaskStack&quot; [URL=&quot;classes/Stoner.Image.kerr.MaskStack.html#Stoner.Image.kerr.MaskStack&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A set of masks for Kerr images.&quot;];
-  &quot;MaskStackMixin&quot; -&gt; &quot;MaskStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;KerrStackMixin&quot; -&gt; &quot;MaskStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageStack&quot; -&gt; &quot;MaskStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MaskStackMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;A Mixin for :py:class:`Stoner.Image.ImageStack` but made for stacks of boolean or binary images&quot;];
-  &quot;MaskedArray&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;An array class with possibly masked values.&quot;];
-  &quot;ndarray&quot; -&gt; &quot;MaskedArray&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableMapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Mapping&quot; -&gt; &quot;MutableMapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; -&gt; &quot;MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
-  &quot;Reversible&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;StackAnalysisMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Add some analysis capability to ImageStack. These functions may override&quot;];
-  &quot;baseFolder&quot; [URL=&quot;classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.&quot;];
-  &quot;MutableSequence&quot; -&gt; &quot;baseFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;metadataObject&quot; [URL=&quot;classes/Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.&quot;];
-  &quot;MutableMapping&quot; -&gt; &quot;metadataObject&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ndarray&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;ndarray(shape, dtype=float, buffer=None, offset=0,&quot;];
-}
-</div>
+<div class="section" id="id32">
+<h5>Class Inheritance Diagram<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h5>
+<div class="graphviz"><img src="_images/inheritance-2573a3fbd875f897c720e8cf933c9f7ce560e8ee.png" alt="Inheritance diagram of Stoner.Image.core.ImageArray, Stoner.Image.core.ImageFile, Stoner.Image.folders.ImageFolder, Stoner.Image.stack.ImageStack, Stoner.Image.kerr.KerrArray, Stoner.Image.kerr.KerrStack, Stoner.Image.kerr.MaskStack" usemap="#inheritance7eb37f3103" class="inheritance graphviz" /></div>
+<map id="inheritance7eb37f3103" name="inheritance7eb37f3103">
+<area shape="rect" id="node5" href="classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="160,166,233,180"/>
+<area shape="rect" id="node10" href="classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder" target="_top" title="Folder object for images." alt="" coords="256,207,313,221"/>
+<area shape="rect" id="node13" href="classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack" target="_top" title="An alternative implementation of an image stack based on baseFolder." alt="" coords="335,207,390,221"/>
+<area shape="rect" id="node6" href="classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray" target="_top" title=":py:class:`Stoner.Image.core.ImageArray` is a numpy array like class with a metadata parameter and pass through to skimage methods." alt="" coords="13,207,68,221"/>
+<area shape="rect" id="node16" href="classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.kerr.KerrArray" target="_top" title="A subclass for Kerr microscopy specific image functions." alt="" coords="17,248,63,262"/>
+<area shape="rect" id="node8" href="classes/Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject" target="_top" title="Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object." alt="" coords="76,166,147,180"/>
+<area shape="rect" id="node9" href="classes/Stoner.Image.ImageFile.html#Stoner.Image.ImageFile" target="_top" title="An Image file type that is analagous to DataFile." alt="" coords="88,207,135,221"/>
+<area shape="rect" id="node11" href="classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin" target="_top" title="Mixin to provide a folder object for images." alt="" coords="246,166,323,180"/>
+<area shape="rect" id="node12" href="classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="337,166,389,180"/>
+<area shape="rect" id="node17" href="classes/Stoner.Image.kerr.KerrStack.html#Stoner.Image.kerr.KerrStack" target="_top" title="Represents a stack of Kerr images." alt="" coords="345,248,392,262"/>
+<area shape="rect" id="node20" href="classes/Stoner.Image.kerr.MaskStack.html#Stoner.Image.kerr.MaskStack" target="_top" title="A set of masks for Kerr images." alt="" coords="411,248,463,262"/>
+<area shape="rect" id="node15" href="classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.stack.ImageStackMixin" target="_top" title="Implement an interface for a baseFolder to store images in a 3D numpy array for faster access." alt="" coords="402,166,477,180"/>
+</map></div>
 </div>
 <div class="section" id="stoner-image-folders-module">
 <h4>Stoner.Image.folders Module<a class="headerlink" href="#stoner-image-folders-module" title="Permalink to this headline">¶</a></h4>
-<div class="section" id="id45">
-<h5>Classes<a class="headerlink" href="#id45" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id33">
+<h5>Classes<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1564,43 +1100,21 @@ size=&quot;6.0, 8.0&quot;;
 </tbody>
 </table>
 </div>
-<div class="section" id="id46">
-<h5>Class Inheritance Diagram<a class="headerlink" href="#id46" title="Permalink to this headline">¶</a></h5>
-digraph inheritance504182e052 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolder&quot; [URL=&quot;classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin class that implmenets reading metadataObjects from disc.&quot;];
-  &quot;ImageFolder&quot; [URL=&quot;classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Folder object for images.&quot;];
-  &quot;ImageFolderMixin&quot; -&gt; &quot;ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolder&quot; -&gt; &quot;ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;baseFolder&quot; -&gt; &quot;ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageFolderMixin&quot; [URL=&quot;classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Mixin to provide a folder object for images.&quot;];
-  &quot;Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; -&gt; &quot;MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
-  &quot;Reversible&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;_generator&quot; [URL=&quot;classes/Stoner.Image.folders._generator.html#Stoner.Image.folders._generator&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A helper class to iterator over ImageFolder yet remember it's own length.&quot;];
-  &quot;baseFolder&quot; [URL=&quot;classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.&quot;];
-  &quot;MutableSequence&quot; -&gt; &quot;baseFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
-</div>
+<div class="section" id="id34">
+<h5>Class Inheritance Diagram<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h5>
+<div class="graphviz"><img src="_images/inheritance-16db5e02564b78912187eb21211d46d826957170.png" alt="Inheritance diagram of Stoner.Image.folders._generator, Stoner.Image.folders.ImageFolderMixin, Stoner.Image.folders.ImageFolder" usemap="#inheritance504182e052" class="inheritance graphviz" /></div>
+<map id="inheritance504182e052" name="inheritance504182e052">
+<area shape="rect" id="node5" href="classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="5,299,136,324"/>
+<area shape="rect" id="node6" href="classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder" target="_top" title="Folder object for images." alt="" coords="178,372,281,397"/>
+<area shape="rect" id="node7" href="classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin" target="_top" title="Mixin to provide a folder object for images." alt="" coords="160,299,299,324"/>
+<area shape="rect" id="node8" href="classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="323,299,416,324"/>
+<area shape="rect" id="node12" href="classes/Stoner.Image.folders._generator.html#Stoner.Image.folders._generator" target="_top" title="A helper class to iterator over ImageFolder yet remember it&#39;s own length." alt="" coords="445,5,537,31"/>
+</map></div>
 </div>
 <div class="section" id="stoner-image-stack-module">
 <h4>Stoner.Image.stack Module<a class="headerlink" href="#stoner-image-stack-module" title="Permalink to this headline">¶</a></h4>
-<div class="section" id="id47">
-<h5>Classes<a class="headerlink" href="#id47" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id35">
+<h5>Classes<a class="headerlink" href="#id35" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1610,8 +1124,8 @@ size=&quot;6.0, 8.0&quot;;
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.stack.ImageStackMixin" title="Stoner.Image.stack.ImageStackMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImageStackMixin</span></code></a>(*args, **kargs)</p></td>
 <td><p>Implement an interface for a baseFolder to store images in a 3D numpy array for faster access.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.Image.stack.ImageStack2.html#Stoner.Image.stack.ImageStack2" title="Stoner.Image.stack.ImageStack2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImageStack2</span></code></a></p></td>
-<td><p>alias of <a class="reference internal" href="classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack" title="Stoner.Image.stack.ImageStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Image.stack.ImageStack</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack" title="Stoner.Image.stack.ImageStack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImageStack</span></code></a>(*args, **kargs)</p></td>
+<td><p>An alternative implementation of an image stack based on baseFolder.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack" title="Stoner.Image.stack.ImageStack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImageStack</span></code></a>(*args, **kargs)</p></td>
 <td><p>An alternative implementation of an image stack based on baseFolder.</p></td>
@@ -1619,49 +1133,24 @@ size=&quot;6.0, 8.0&quot;;
 </tbody>
 </table>
 </div>
-<div class="section" id="id48">
-<h5>Class Inheritance Diagram<a class="headerlink" href="#id48" title="Permalink to this headline">¶</a></h5>
-digraph inheritance14c469e509 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolder&quot; [URL=&quot;classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin class that implmenets reading metadataObjects from disc.&quot;];
-  &quot;ImageFolderMixin&quot; [URL=&quot;classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Mixin to provide a folder object for images.&quot;];
-  &quot;ImageStack&quot; [URL=&quot;classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;An alternative implementation of an image stack based on baseFolder.&quot;];
-  &quot;StackAnalysisMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageStackMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageFolderMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolder&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;baseFolder&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageStackMixin&quot; [URL=&quot;classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.stack.ImageStackMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Implement an interface for a baseFolder to store images in a 3D numpy array for faster access.&quot;];
-  &quot;Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; -&gt; &quot;MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
-  &quot;Reversible&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;StackAnalysisMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Add some analysis capability to ImageStack. These functions may override&quot;];
-  &quot;baseFolder&quot; [URL=&quot;classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.&quot;];
-  &quot;MutableSequence&quot; -&gt; &quot;baseFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
-</div>
+<div class="section" id="id36">
+<h5>Class Inheritance Diagram<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h5>
+<div class="graphviz"><img src="_images/inheritance-dbda11e4acee4485edba9267e001dac6145d0f64.png" alt="Inheritance diagram of Stoner.Image.stack.ImageStackMixin, Stoner.Image.stack.ImageStack, Stoner.Image.stack.ImageStack" usemap="#inheritance14c469e509" class="inheritance graphviz" /></div>
+<map id="inheritance14c469e509" name="inheritance14c469e509">
+<area shape="rect" id="node5" href="classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="4,228,104,248"/>
+<area shape="rect" id="node7" href="classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack" target="_top" title="An alternative implementation of an image stack based on baseFolder." alt="" coords="266,284,342,304"/>
+<area shape="rect" id="node6" href="classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin" target="_top" title="Mixin to provide a folder object for images." alt="" coords="122,228,228,248"/>
+<area shape="rect" id="node9" href="classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.stack.ImageStackMixin" target="_top" title="Implement an interface for a baseFolder to store images in a 3D numpy array for faster access." alt="" coords="379,228,482,248"/>
+<area shape="rect" id="node10" href="classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="501,228,572,248"/>
+</map></div>
 </div>
 </div>
 <div class="section" id="additional-image-functions">
 <h3>Additional Image Functions<a class="headerlink" href="#additional-image-functions" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="stoner-image-imagefuncs-module">
 <h4>Stoner.Image.imagefuncs Module<a class="headerlink" href="#stoner-image-imagefuncs-module" title="Permalink to this headline">¶</a></h4>
-<div class="section" id="id49">
-<h5>Functions<a class="headerlink" href="#id49" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id37">
+<h5>Functions<a class="headerlink" href="#id37" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1687,7 +1176,7 @@ size=&quot;6.0, 8.0&quot;;
 <td><p>Alias for skimage.filters.gaussian</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.gridimage.html#Stoner.Image.imagefuncs.gridimage" title="Stoner.Image.imagefuncs.gridimage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gridimage</span></code></a>(im[, points, xi, method, …])</p></td>
-<td><p>Use <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html#scipy.interpolate.griddata" title="(in SciPy v1.3.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.interpolate.griddata()</span></code></a> to shift the image to a regular grid of co-ordinates.</p></td>
+<td><p>Use <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html#scipy.interpolate.griddata" title="(in SciPy v1.4.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.interpolate.griddata()</span></code></a> to shift the image to a regular grid of co-ordinates.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.hist.html#Stoner.Image.imagefuncs.hist" title="Stoner.Image.imagefuncs.hist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hist</span></code></a>(im, *args, **kargs)</p></td>
 <td><p>Pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.hist.html#matplotlib.pyplot.hist" title="(in Matplotlib v3.1.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.hist()</span></code></a> function.</p></td>
@@ -1738,8 +1227,8 @@ size=&quot;6.0, 8.0&quot;;
 <div class="section" id="module-Stoner.Image.util">
 <span id="stoner-image-util-module"></span><h4>Stoner.Image.util Module<a class="headerlink" href="#module-Stoner.Image.util" title="Permalink to this headline">¶</a></h4>
 <p>Code adapted from skimage module</p>
-<div class="section" id="id50">
-<h5>Functions<a class="headerlink" href="#id50" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id38">
+<h5>Functions<a class="headerlink" href="#id38" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1758,8 +1247,8 @@ size=&quot;6.0, 8.0&quot;;
 <h3>Kerr Image Handling<a class="headerlink" href="#kerr-image-handling" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="stoner-image-kerr-module">
 <h4>Stoner.Image.kerr Module<a class="headerlink" href="#stoner-image-kerr-module" title="Permalink to this headline">¶</a></h4>
-<div class="section" id="id51">
-<h5>Classes<a class="headerlink" href="#id51" title="Permalink to this headline">¶</a></h5>
+<div class="section" id="id39">
+<h5>Classes<a class="headerlink" href="#id39" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1844,51 +1333,22 @@ size=&quot;6.0, 8.0&quot;;
 <li><a class="reference internal" href="#id10">Classes</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-Stoner.analysis.fitting.models.generic">Stoner.analysis.fitting.models.generic Module</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#fitting-models">Fitting Models</a></li>
+<li><a class="reference internal" href="#plot-package-and-modules">Plot Package and Modules</a><ul>
+<li><a class="reference internal" href="#module-Stoner.plot">Stoner.plot Package</a><ul>
 <li><a class="reference internal" href="#id11">Functions</a></li>
 <li><a class="reference internal" href="#id12">Classes</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-Stoner.analysis.fitting.models.thermal">Stoner.analysis.fitting.models.thermal Module</a><ul>
-<li><a class="reference internal" href="#id13">Functions</a></li>
-<li><a class="reference internal" href="#id14">Classes</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-Stoner.analysis.fitting.models.tunnelling">Stoner.analysis.fitting.models.tunnelling Module</a><ul>
-<li><a class="reference internal" href="#id15">Functions</a></li>
-<li><a class="reference internal" href="#id16">Classes</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-Stoner.analysis.fitting.models.e_transport">Stoner.analysis.fitting.models.e_transport Module</a><ul>
-<li><a class="reference internal" href="#id17">Functions</a></li>
-<li><a class="reference internal" href="#id18">Classes</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-Stoner.analysis.fitting.models.magnetism">Stoner.analysis.fitting.models.magnetism Module</a><ul>
-<li><a class="reference internal" href="#id19">Functions</a></li>
-<li><a class="reference internal" href="#id20">Classes</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-Stoner.analysis.fitting.models.superconductivity">Stoner.analysis.fitting.models.superconductivity Module</a><ul>
-<li><a class="reference internal" href="#id21">Functions</a></li>
-<li><a class="reference internal" href="#id22">Classes</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#plot-package-and-modules">Plot Package and Modules</a><ul>
-<li><a class="reference internal" href="#module-Stoner.plot">Stoner.plot Package</a><ul>
-<li><a class="reference internal" href="#id23">Functions</a></li>
-<li><a class="reference internal" href="#id24">Classes</a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#module-Stoner.plot.formats">Stoner.plot.formats Module</a><ul>
-<li><a class="reference internal" href="#id25">Classes</a></li>
-<li><a class="reference internal" href="#id26">Class Inheritance Diagram</a></li>
+<li><a class="reference internal" href="#id13">Classes</a></li>
+<li><a class="reference internal" href="#id14">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#stoner-plot-utils-module">Stoner.plot.utils Module</a><ul>
-<li><a class="reference internal" href="#id27">Functions</a></li>
+<li><a class="reference internal" href="#id15">Functions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#generic-fomats">Generic Fomats</a></li>
@@ -1897,30 +1357,30 @@ size=&quot;6.0, 8.0&quot;;
 <li><a class="reference internal" href="#module-Stoner.Fit">Stoner.Fit Module</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id28">Functions</a></li>
+<li><a class="reference internal" href="#id16">Functions</a></li>
 <li><a class="reference internal" href="#hdf-support">HDF Support</a><ul>
 <li><a class="reference internal" href="#stoner-hdf5-module">Stoner.HDF5 Module</a><ul>
-<li><a class="reference internal" href="#id29">Classes</a></li>
+<li><a class="reference internal" href="#id17">Classes</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><a class="reference internal" href="#zip-file-support">Zip File Support</a><ul>
 <li><a class="reference internal" href="#stoner-zip-module">Stoner.Zip Module</a><ul>
-<li><a class="reference internal" href="#id30">Functions</a></li>
-<li><a class="reference internal" href="#id31">Classes</a></li>
+<li><a class="reference internal" href="#id18">Functions</a></li>
+<li><a class="reference internal" href="#id19">Classes</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><a class="reference internal" href="#utility-functions">Utility Functions</a><ul>
 <li><a class="reference internal" href="#stoner-util-module">Stoner.Util Module</a><ul>
-<li><a class="reference internal" href="#id32">Functions</a></li>
+<li><a class="reference internal" href="#id20">Functions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-Stoner.tools">Stoner.tools Module</a><ul>
-<li><a class="reference internal" href="#id33">Functions</a></li>
-<li><a class="reference internal" href="#id34">Classes</a></li>
+<li><a class="reference internal" href="#id21">Functions</a></li>
+<li><a class="reference internal" href="#id22">Classes</a></li>
 </ul>
 </li>
 </ul>
@@ -1930,8 +1390,8 @@ size=&quot;6.0, 8.0&quot;;
 <li><a class="reference internal" href="#folders-pacakge-collections-classes">Folders pacakge - Collections Classes</a><ul>
 <li><a class="reference internal" href="#main-classes">Main Classes</a><ul>
 <li><a class="reference internal" href="#module-Stoner.Folders">Stoner.Folders Module</a><ul>
-<li><a class="reference internal" href="#id35">Classes</a></li>
-<li><a class="reference internal" href="#id36">Class Inheritance Diagram</a></li>
+<li><a class="reference internal" href="#id23">Classes</a></li>
+<li><a class="reference internal" href="#id24">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 </ul>
@@ -1939,21 +1399,21 @@ size=&quot;6.0, 8.0&quot;;
 <li><a class="reference internal" href="#folders-package-and-submodules">Folders Package and Submodules</a><ul>
 <li><a class="reference internal" href="#module-Stoner.folders">Stoner.folders Package</a></li>
 <li><a class="reference internal" href="#module-Stoner.folders.core">Stoner.folders.core Module</a><ul>
-<li><a class="reference internal" href="#id37">Classes</a></li>
+<li><a class="reference internal" href="#id25">Classes</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-Stoner.folders.mixins">Stoner.folders.mixins Module</a><ul>
-<li><a class="reference internal" href="#id38">Classes</a></li>
+<li><a class="reference internal" href="#id26">Classes</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-Stoner.folders.each">Stoner.folders.each Module</a><ul>
-<li><a class="reference internal" href="#id39">Classes</a></li>
-<li><a class="reference internal" href="#id40">Class Inheritance Diagram</a></li>
+<li><a class="reference internal" href="#id27">Classes</a></li>
+<li><a class="reference internal" href="#id28">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-Stoner.folders.metadata">Stoner.folders.metadata Module</a><ul>
-<li><a class="reference internal" href="#id41">Classes</a></li>
-<li><a class="reference internal" href="#id42">Class Inheritance Diagram</a></li>
+<li><a class="reference internal" href="#id29">Classes</a></li>
+<li><a class="reference internal" href="#id30">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 </ul>
@@ -1963,36 +1423,36 @@ size=&quot;6.0, 8.0&quot;;
 <li><a class="reference internal" href="#image-subpackage">Image Subpackage</a><ul>
 <li><a class="reference internal" href="#main-image-classes">Main Image Classes</a><ul>
 <li><a class="reference internal" href="#module-Stoner.Image">Stoner.Image Package</a><ul>
-<li><a class="reference internal" href="#id43">Classes</a></li>
-<li><a class="reference internal" href="#id44">Class Inheritance Diagram</a></li>
+<li><a class="reference internal" href="#id31">Classes</a></li>
+<li><a class="reference internal" href="#id32">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#stoner-image-folders-module">Stoner.Image.folders Module</a><ul>
-<li><a class="reference internal" href="#id45">Classes</a></li>
-<li><a class="reference internal" href="#id46">Class Inheritance Diagram</a></li>
+<li><a class="reference internal" href="#id33">Classes</a></li>
+<li><a class="reference internal" href="#id34">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#stoner-image-stack-module">Stoner.Image.stack Module</a><ul>
-<li><a class="reference internal" href="#id47">Classes</a></li>
-<li><a class="reference internal" href="#id48">Class Inheritance Diagram</a></li>
+<li><a class="reference internal" href="#id35">Classes</a></li>
+<li><a class="reference internal" href="#id36">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><a class="reference internal" href="#additional-image-functions">Additional Image Functions</a><ul>
 <li><a class="reference internal" href="#stoner-image-imagefuncs-module">Stoner.Image.imagefuncs Module</a><ul>
-<li><a class="reference internal" href="#id49">Functions</a></li>
+<li><a class="reference internal" href="#id37">Functions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-Stoner.Image.util">Stoner.Image.util Module</a><ul>
-<li><a class="reference internal" href="#id50">Functions</a></li>
+<li><a class="reference internal" href="#id38">Functions</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><a class="reference internal" href="#kerr-image-handling">Kerr Image Handling</a><ul>
 <li><a class="reference internal" href="#stoner-image-kerr-module">Stoner.Image.kerr Module</a><ul>
-<li><a class="reference internal" href="#id51">Classes</a></li>
+<li><a class="reference internal" href="#id39">Classes</a></li>
 </ul>
 </li>
 </ul>
@@ -2046,9 +1506,9 @@ size=&quot;6.0, 8.0&quot;;
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

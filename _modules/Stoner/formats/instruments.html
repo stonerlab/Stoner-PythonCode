@@ -1,0 +1,912 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Stoner.formats.instruments &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../../../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../../Stoner.html">Stoner</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Stoner.formats.instruments</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Implement DataFile like classes to represent Instrument Manufacturer&#39;s File Formats&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;LSTemperatureFile&quot;</span><span class="p">,</span> <span class="s2">&quot;QDFile&quot;</span><span class="p">,</span> <span class="s2">&quot;RigakuFile&quot;</span><span class="p">,</span> <span class="s2">&quot;SPCFile&quot;</span><span class="p">,</span> <span class="s2">&quot;XRDFile&quot;</span><span class="p">]</span>
+
+<span class="c1"># Standard Library imports</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">Stoner.Core</span> <span class="k">as</span> <span class="nn">Core</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">str2bytes</span><span class="p">,</span> <span class="n">bytes2str</span>
+<span class="kn">from</span> <span class="nn">Stoner.core.exceptions</span> <span class="kn">import</span> <span class="n">StonerAssertionError</span><span class="p">,</span> <span class="n">assertion</span><span class="p">,</span> <span class="n">StonerLoadError</span>
+<span class="kn">from</span> <span class="nn">Stoner.core.base</span> <span class="kn">import</span> <span class="n">string_to_type</span>
+
+
+<div class="viewcode-block" id="LSTemperatureFile"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.LSTemperatureFile.html#Stoner.FileFormats.LSTemperatureFile">[docs]</a><span class="k">class</span> <span class="nc">LSTemperatureFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;A class that reads and writes Lakeshore Temperature Calibration Curves.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        This class works for cernox curves in Log Ohms/Kelvin and Log Ohms/Log Kelvin. It may or may not work with any</span>
+<span class="sd">        other temperature calibration data !</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
+    <span class="c1">#   .. note::</span>
+    <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
+    <span class="c1">#      file type before attempting to read data.</span>
+    <span class="n">priority</span> <span class="o">=</span> <span class="mi">16</span>
+    <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
+    <span class="c1"># the file load/save dialog boxes.</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.340&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Data loader function for 340 files.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">bytes2str</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Header doesn&#39;t contain two parts at </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Overan the end of the file&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">keys</span> <span class="o">!=</span> <span class="p">[</span>
+                <span class="s2">&quot;Sensor Model&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Serial Number&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Data Format&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;SetPoint Limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Temperature coefficient&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Number of Breakpoints&quot;</span><span class="p">,</span>
+            <span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Header did not contain recognised keys.&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">vals</span><span class="p">):</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">string_to_type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="n">bytes2str</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">data</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">column_headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">dat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">column_headers</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="LSTemperatureFile.save"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.LSTemperatureFile.save.html#Stoner.FileFormats.LSTemperatureFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (string): Filename to save as (using the same rules as for the load routines)</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            deliminator (string): Record deliniminator (defaults to a comma)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">):</span>  <span class="c1"># now go and ask for one</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__file_dialog</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># 2 columns, let&#39;s hope they&#39;re the right way round!</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">has_xcol</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">has_ycol</span>
+        <span class="p">):</span>  <span class="c1"># Use ycol, x col but assume x is real temperature and y is resistance</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">ycol</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">xcol</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;Sensor Model&quot;</span><span class="p">,</span> <span class="s2">&quot;CX-1070-SD&quot;</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;Serial Number&quot;</span><span class="p">,</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;Data Format&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;SetPoint Limit&quot;</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;Temperature coefficient&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;Number of Breakpoints&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+            <span class="p">):</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Sensor Model&quot;</span><span class="p">,</span> <span class="s2">&quot;Serial Number&quot;</span><span class="p">,</span> <span class="s2">&quot;Data Format&quot;</span><span class="p">,</span> <span class="s2">&quot;SetPoint Limit&quot;</span><span class="p">]:</span>
+                    <span class="n">kstr</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:16s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">kstr</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">:   &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;Data Format&quot;</span><span class="p">:</span>
+                    <span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;()&quot;</span><span class="p">,</span> <span class="s2">&quot;()&quot;</span><span class="p">,</span> <span class="s2">&quot;()&quot;</span><span class="p">,</span> <span class="s2">&quot;()&quot;</span><span class="p">,</span> <span class="s2">&quot;(Log Ohms/Kelvin)&quot;</span><span class="p">,</span> <span class="s2">&quot;(Log Ohms/Log Kelvin)&quot;</span><span class="p">]</span>
+                    <span class="n">vstr</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">      </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">units</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)])</span>
+                <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;SetPointLimit&quot;</span><span class="p">:</span>
+                    <span class="n">vstr</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">      (Kelvin)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;Temperature coefficient&quot;</span><span class="p">:</span>
+                    <span class="n">vstr</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;(positive)&quot;</span><span class="p">,</span> <span class="s2">&quot;(negative)&quot;</span><span class="p">][</span><span class="n">v</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;Number of Breakpoints&quot;</span><span class="p">:</span>
+                    <span class="n">vstr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">vstr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;</span><span class="si">{}{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kstr</span><span class="p">,</span> <span class="n">vstr</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;No.   &quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;</span><span class="si">{:11s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="p">):</span>  <span class="c1"># This is a slow way to write the data, but there should only ever be 200 lines</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">{:&lt;10.8f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">cols</span><span class="p">]])</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;</span><span class="si">{}</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+
+
+<div class="viewcode-block" id="QDFile"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.QDFile.html#Stoner.FileFormats.QDFile">[docs]</a><span class="k">class</span> <span class="nc">QDFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Extends Core.DataFile to load files from Quantum Design Systems - including PPMS, MPMS and SQUID-VSM&quot;&quot;&quot;</span>
+
+    <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
+    <span class="c1">#   .. note::</span>
+    <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
+    <span class="c1">#      file type before attempting to read data.</span>
+    <span class="n">priority</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># Is able to make a positive ID of its file content, so get priority to check</span>
+    <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
+    <span class="c1"># the file load/save dialog boxes.</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.dat&quot;</span><span class="p">]</span>  <span class="c1"># Recognised filename patterns</span>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;QD system file loader routine.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (string or bool): File to load. If None then the existing filename is used,</span>
+<span class="sd">                if False, then a file dialog will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of the itself after loading the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="n">setas</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># Read filename linewise</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">line</span> <span class="o">!=</span> <span class="s2">&quot;[Header]&quot;</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a Quantum Design File !&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;[Header]&quot;</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">elif</span> <span class="s2">&quot;[Data]&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="s2">&quot;,&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;No data in file!&quot;</span><span class="p">)</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;SEQUENCE FILE&quot;</span><span class="p">:</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;INFO&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;APPNAME&quot;</span><span class="p">:</span>
+                        <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;No data in file!&quot;</span><span class="p">)</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;BYAPP&quot;</span><span class="p">,</span> <span class="s2">&quot;FILEOPENTIME&quot;</span><span class="p">]:</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="k">elif</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;FIELDGROUP&quot;</span><span class="p">:</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">{}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">:]))</span>
+                <span class="k">elif</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;STARTUPAXIS&quot;</span><span class="p">:</span>
+                    <span class="n">axis</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                    <span class="n">setas</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">setas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="p">[])</span> <span class="o">+</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Startupaxis-</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">string_to_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;No data in file!&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;Byapp&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a Quantum Design File !&quot;</span><span class="p">)</span>
+
+            <span class="n">column_headers</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">([</span><span class="n">str2bytes</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">invalid_raise</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;No data in file!&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_headers</span><span class="p">):</span>  <span class="c1"># Trap for buggy QD software not giving ewnough columns of data</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_headers</span><span class="p">)</span> <span class="o">-</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_headers</span><span class="p">):</span>  <span class="c1"># too much data</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_headers</span><span class="p">)</span> <span class="o">-</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">column_headers</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">setas</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="n">setas</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+                <span class="n">s</span><span class="p">[</span><span class="n">ix</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="n">s</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="RigakuFile"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.RigakuFile.html#Stoner.FileFormats.RigakuFile">[docs]</a><span class="k">class</span> <span class="nc">RigakuFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Loads a .ras file as produced by Rigaku X-ray diffractormeters&quot;&quot;&quot;</span>
+
+    <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
+    <span class="c1">#   .. note::</span>
+    <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
+    <span class="c1">#      file type before attempting to read data.</span>
+    <span class="n">priority</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># Can make a positive id of file from first line</span>
+    <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
+    <span class="c1"># the file load/save dialog boxes.</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.ras&quot;</span><span class="p">]</span>  <span class="c1"># Recognised filename patterns</span>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads an Rigaku ras file including handling the metadata nicely</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (string or bool): File to load. If None then the existing filename is used,</span>
+<span class="sd">                if False, then a file dialog will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of the itself after loading the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
+
+        <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">reopen</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">filetype</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">filetype</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+            <span class="n">reopen</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="n">sh</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\*([^\s]+)\s+(.*)$&quot;</span><span class="p">)</span>  <span class="c1"># Regexp to grab the keys</span>
+        <span class="n">ka</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(.*)\-(\d+)$&quot;</span><span class="p">)</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">bytes2str</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">pos</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">line</span> <span class="o">!=</span> <span class="s2">&quot;*RAS_DATA_START&quot;</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a Rigaku file!&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">pos</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;*RAS_HEADER_START&quot;</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">bytes2str</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">sh</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">if</span> <span class="s2">&quot;*RAS_INT_START&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">ka</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">newvalue</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="n">newvalue</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">newvalue</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                    <span class="n">newvalue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># trap for missing float value</span>
+                <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">))):</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]])</span>
+                            <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                            <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">newvalue</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                            <span class="n">listval</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                            <span class="n">listval</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">newvalue</span>
+                            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">listval</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">arrayval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                            <span class="n">arrayval</span> <span class="o">=</span> <span class="n">arrayval</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">newvalue</span><span class="p">))</span>
+                            <span class="n">arrayval</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">newvalue</span>
+                            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">arrayval</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])))</span>
+                            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">newvalue</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                    <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                                <span class="p">)</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">newvalue</span>
+                            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                                <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">newvalue</span>
+
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+            <span class="n">max_rows</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">max_rows</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">bytes2str</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s2">&quot;RAS_INT_END&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="n">endpos</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">max_rows</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
+                    <span class="n">f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">invalid_raise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">max_rows</span><span class="o">=</span><span class="n">max_rows</span>
+                <span class="p">)</span>
+                <span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Column&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+                <span class="n">column_headers</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;meas.scan.unit.x&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;meas.scan.unit.y&quot;</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">column_headers</span>
+        <span class="k">if</span> <span class="n">reopen</span><span class="p">:</span>
+            <span class="n">filename</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">endpos</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;_endpos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">endpos</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="RigakuFile.to_Q"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.RigakuFile.to_Q.html#Stoner.FileFormats.RigakuFile.to_Q">[docs]</a>    <span class="k">def</span> <span class="nf">to_Q</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mf">1.540593</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds an additional function to covert an angualr scale to momentum transfer.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a copy of itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">((</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">l</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">360</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Momentum Transfer, Q ($</span><span class="se">\\</span><span class="s2">AA$)&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SPCFile"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.SPCFile.html#Stoner.FileFormats.SPCFile">[docs]</a><span class="k">class</span> <span class="nc">SPCFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Extends Core.DataFile to load SPC files from Raman&quot;&quot;&quot;</span>
+
+    <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
+    <span class="c1">#   .. note::</span>
+    <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
+    <span class="c1">#      file type before attempting to read data.</span>
+    <span class="n">priority</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># Can&#39;t make a positive ID of itself</span>
+    <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
+    <span class="c1"># the file load/save dialog boxes.</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.spc&quot;</span><span class="p">]</span>  <span class="c1"># Recognised filename patterns</span>
+
+    <span class="n">mime_type</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;application/octet-stream&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_read_xdata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read the xdata from the spc file.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;fnpts&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;ftflgs&quot;</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mi">128</span><span class="p">:</span>  <span class="c1"># We need to read some X Data</span>
+            <span class="k">if</span> <span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filesize</span> <span class="o">-</span> <span class="n">f</span><span class="o">.</span><span class="n">tell</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Trying to read too much data!&quot;</span><span class="p">)</span>
+            <span class="n">xvals</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts</span><span class="p">)</span>  <span class="c1"># I think storing X vals directly implies that each one is 4 bytes....</span>
+            <span class="n">xdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">str2bytes</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f&quot;</span><span class="p">),</span> <span class="n">xvals</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Generate the X Data ourselves</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;ffirst&quot;</span><span class="p">]</span>
+            <span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;flast&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts</span> <span class="o">&gt;</span> <span class="mf">1e6</span><span class="p">:</span>  <span class="c1"># Something not right here !</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;More than 1 million points requested. Bugging out now!&quot;</span><span class="p">)</span>
+            <span class="n">xdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xdata</span>
+
+    <span class="k">def</span> <span class="nf">_read_ydata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">column_headers</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read the y data and column headers from spc file.&quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;fnsub&quot;</span><span class="p">]</span>
+        <span class="n">subhdr_keys</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;subflgs&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;subexp&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;subindx&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;subtime&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;subnext&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;subnois&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;subnpts&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;subscan&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;subwlevel&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;subresv&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;ftflgs&quot;</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">y_width</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="n">y_fmt</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span>
+            <span class="n">divisor</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">16</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y_width</span> <span class="o">=</span> <span class="mi">4</span>
+            <span class="n">y_fmt</span> <span class="o">=</span> <span class="s2">&quot;i&quot;</span>
+            <span class="n">divisor</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">32</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="n">y_width</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts</span> <span class="o">+</span> <span class="mi">32</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filesize</span> <span class="o">-</span> <span class="n">f</span><span class="o">.</span><span class="n">tell</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;No good, going to read too much data!&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>  <span class="c1"># We have n sub-scans</span>
+            <span class="c1"># Read the subheader and import into the main metadata dictionary as scan#:&lt;subheader item&gt;</span>
+            <span class="n">subhdr</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;BBHfffIIf4s&quot;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+            <span class="n">subheader</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;scan&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">subhdr_keys</span><span class="p">],</span> <span class="n">subhdr</span><span class="p">))</span>
+
+            <span class="c1"># Now read the y-data</span>
+            <span class="n">exponent</span> <span class="o">=</span> <span class="n">subheader</span><span class="p">[</span><span class="s2">&quot;scan&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:subexp&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">-</span><span class="mi">128</span><span class="p">:</span>  <span class="c1"># Data is unscaled direct floats</span>
+                <span class="n">ydata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">str2bytes</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f&quot;</span><span class="p">),</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts</span> <span class="o">*</span> <span class="n">y_width</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># Data is scaled by exponent</span>
+                <span class="n">yvals</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">str2bytes</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts</span><span class="p">)</span> <span class="o">+</span> <span class="n">y_fmt</span><span class="p">),</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts</span> <span class="o">*</span> <span class="n">y_width</span><span class="p">))</span>
+                <span class="n">ydata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">yvals</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float64&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">exponent</span><span class="p">)</span> <span class="o">/</span> <span class="n">divisor</span>
+            <span class="n">data</span><span class="p">[:,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ydata</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_header</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">,</span> <span class="o">**</span><span class="n">subheader</span><span class="p">)</span>
+            <span class="n">column_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Scan&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yvars</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;fytype&quot;</span><span class="p">]])</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">_read_loginfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read the log info section of the spc file.&quot;&quot;&quot;</span>
+        <span class="n">logstc</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;IIIII44s&quot;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">64</span><span class="p">))</span>
+        <span class="n">logstc_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;logsizd&quot;</span><span class="p">,</span> <span class="s2">&quot;logsizm&quot;</span><span class="p">,</span> <span class="s2">&quot;logtxto&quot;</span><span class="p">,</span> <span class="s2">&quot;logbins&quot;</span><span class="p">,</span> <span class="s2">&quot;logdsks&quot;</span><span class="p">,</span> <span class="s2">&quot;logrsvr&quot;</span><span class="p">)</span>
+        <span class="n">logheader</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">logstc_keys</span><span class="p">,</span> <span class="n">logstc</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_header</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">,</span> <span class="o">**</span><span class="n">logheader</span><span class="p">)</span>
+
+        <span class="c1"># Can&#39;t handle either binary log information or ion disk log information (wtf is this anyway !)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;logbins&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;logdsks&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filesize</span> <span class="o">-</span> <span class="n">f</span><span class="o">.</span><span class="n">tell</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Too much logfile data to read&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;logbins&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;logdsks&quot;</span><span class="p">])</span>
+
+        <span class="c1"># The renishaw seems to put a 16 character timestamp next - it&#39;s not in the spec but never mind that.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;Date-Time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+        <span class="c1"># Now read the rest of the file as log text</span>
+        <span class="n">logtext</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="c1"># We expect things to be single lines terminated with a CR-LF of the format key=value</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;[</span><span class="se">\r\n</span><span class="s2">]+&quot;</span><span class="p">,</span> <span class="n">logtext</span><span class="p">):</span>
+            <span class="k">if</span> <span class="sa">b</span><span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads a .scf file produced by the Renishaw Raman system (amongs others)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (string or bool): File to load. If None then the existing filename is used,</span>
+<span class="sd">                if False, then a file dialog will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of the itself after loading the data.</span>
+
+<span class="sd">        Todo:</span>
+<span class="sd">            Implement the second form of the file that stores multiple x-y curves in the one file.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            Metadata keys are pretty much as specified in the spc.h file that defines the filerformat.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="c1"># Open the file and read the main file header and unpack into a dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filesize</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">st_size</span>
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">spchdr</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s&quot;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">512</span><span class="p">))</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;ftflgs&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fversn&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fexper&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fexp&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fnpts&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ffirst&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;flast&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fnsub&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fxtype&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fytype&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fztype&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fpost&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fres&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fsource&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fpeakpt&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fspare1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fspare2&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fspare3&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fspare4&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fspare5&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fspare6&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fspare7&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fspare8&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fcm&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;nt&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fcatx&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;flogoff&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fmods&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fprocs&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;flevel&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fsampin&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ffactor&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fmethod&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fzinc&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fwplanes&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fwinc&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fwtype&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fwtype&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fresv&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xvars</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;Arbitrary&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Wavenumber (cm-1)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Micrometers (um)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Nanometers (nm)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Seconds&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Minutes&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Hertz (Hz)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Kilohertz (KHz)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Megahertz (MHz)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Mass (M/z)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Parts per million (PPM)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Days&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Years&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Raman Shift (cm-1)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Raman Shift (cm-1)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;eV&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;XYZ text labels in fcatxt (old 0x4D version only)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Diode Number&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Channel&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Degrees&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Temperature (F)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Temperature (C)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Temperature (K)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Data Points&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Milliseconds (mSec)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Microseconds (uSec)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Nanoseconds (nSec)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Gigahertz (GHz)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Centimeters (cm)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Meters (m)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Millimeters (mm)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Hours&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Hours&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_yvars</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;Arbitrary Intensity&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Interferogram&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Absorbance&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Kubelka-Monk&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Counts&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Volts&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Degrees&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Milliamps&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Millimeters&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Millivolts&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Log(1/R)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Percent&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Percent&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Intensity&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Relative Intensity&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Energy&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Decibel&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Temperature (F)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Temperature (C)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Temperature (K)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Index of Refraction [N]&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Extinction Coeff. [K]&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Real&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Imaginary&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Complex&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Complex&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Transmission (ALL HIGHER MUST HAVE VALLEYS!)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Reflectance&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Arbitrary or Single Beam with Valley Peaks&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Emission&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Emission&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_header</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">spchdr</span><span class="p">))</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;fnsub&quot;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;ftflgs&quot;</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mi">64</span> <span class="o">==</span> <span class="mi">64</span> <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span>
+                <span class="mi">75</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;fversn&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">77</span>
+            <span class="p">):</span>  <span class="c1"># This is the multiple XY curves in file flag.</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span>
+                    <span class="s2">&quot;Filetype not implemented yet ! ftflgs=</span><span class="si">{ftflgs}</span><span class="s2">, fversn=</span><span class="si">{fversn}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># A single XY curve in the file.</span>
+                <span class="c1"># Read the xdata and add it to the file.</span>
+                <span class="n">xdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_xdata</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>  <span class="c1"># initialise the data soace</span>
+                <span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">xdata</span>  <span class="c1"># Put in the X-Data</span>
+                <span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_xvars</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;fxtype&quot;</span><span class="p">]]]</span>  <span class="c1"># And label the X column correctly</span>
+
+                <span class="c1"># Now we&#39;re going to read the Y-data</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_ydata</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">column_headers</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="s2">&quot;flogoff&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Ok, we&#39;ve got a log, so read the log header and merge into metadata</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_read_loginfo</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="c1"># Ok now build the Stoner.Core.DataFile instance to return</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="c1"># The next bit generates the metadata. We don&#39;t just copy the metadata because we need to figure out the typehints first - hence the loop</span>
+            <span class="c1"># here to call Core.DataFile.__setitem()</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">column_headers</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
+            <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="VSMFile"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.VSMFile.html#Stoner.FileFormats.VSMFile">[docs]</a><span class="k">class</span> <span class="nc">VSMFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Extends Core.DataFile to open VSM Files&quot;&quot;&quot;</span>
+
+    <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
+    <span class="c1">#   .. note::</span>
+    <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
+    <span class="c1">#      file type before attempting to read data.</span>
+    <span class="n">priority</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># Now makes a positive ID of its contents</span>
+    <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
+    <span class="c1"># the file load/save dialog boxes.</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.fld&quot;</span><span class="p">]</span>  <span class="c1"># Recognised filename patterns</span>
+
+    <span class="k">def</span> <span class="nf">__parse_VSM</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header_line</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">data_line</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">header_delim</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;An intrernal function for parsing deliminated data without a leading column of metadata.copy</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            header_line (int): The line in the file that contains the column headers.</span>
+<span class="sd">                If None, then column headers are auotmatically generated.</span>
+<span class="sd">            data_line (int): The line on which the data starts</span>
+<span class="sd">            header_delim (strong): The delimiter used for separating header values</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Nothing, but modifies the current object.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The default values are configured fir read VSM data files</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        <span class="n">check</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">],</span> <span class="s2">&quot;</span><span class="si">%a</span><span class="s2"> %b </span><span class="si">%d</span><span class="s2"> %H:%M:%S %Y&quot;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">check</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a VSM file ?&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">assertion</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">header_string</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="n">header_line</span><span class="p">:</span>
+                        <span class="n">unit_string</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        <span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span>
+                            <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">u</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                            <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">u</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">header_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">header_delim</span><span class="p">),</span> <span class="n">unit_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">header_delim</span><span class="p">))</span>
+                        <span class="p">]</span>
+                    <span class="k">elif</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+                        <span class="k">break</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">StonerAssertionError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a VSM File&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span>
+            <span class="n">usemask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">skip_header</span><span class="o">=</span><span class="n">data_line</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">missing_values</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;6:0&quot;</span><span class="p">,</span> <span class="s2">&quot;---&quot;</span><span class="p">],</span>
+            <span class="n">invalid_raise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">mask_rows</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">compressed</span><span class="p">(),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">cols</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">column_headers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;H_vsm (T)&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;m (emu)&quot;</span><span class="p">)</span>  <span class="c1"># pylint: disable=not-callable</span>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;VSM file loader routine.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (string or bool): File to load. If None then the existing filename is used,</span>
+<span class="sd">                if False, then a file dialog will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of the itself after loading the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__parse_VSM</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="XRDFile"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.XRDFile.html#Stoner.FileFormats.XRDFile">[docs]</a><span class="k">class</span> <span class="nc">XRDFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Loads Files from a Brucker D8 Discovery X-Ray Diffractometer&quot;&quot;&quot;</span>
+
+    <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
+    <span class="c1">#   .. note::</span>
+    <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
+    <span class="c1">#      file type before attempting to read data.</span>
+    <span class="n">priority</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># Makes a positive id of its file contents</span>
+    <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
+    <span class="c1"># the file load/save dialog boxes.</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.dql&quot;</span><span class="p">]</span>  <span class="c1"># Recognised filename patterns</span>
+
+<div class="viewcode-block" id="XRDFile.__init__"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.XRDFile.__init__.html#Stoner.FileFormats.XRDFile.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a public attribute to XRD File.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">XRDFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;four_bounce&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">}</span></div>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads an XRD Core.DataFile as produced by the Brucker diffractometer</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (string or bool): File to load. If None then the existing filename is used,</span>
+<span class="sd">                if False, then a file dialog will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of the itself after loading the data.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            Format is ini file like but not enough to do standard inifile processing - in particular</span>
+<span class="sd">            one can have multiple sections with the same name (!)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="n">sh</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\[(.+)\]&quot;</span><span class="p">)</span>  <span class="c1"># Regexp to grab section name</span>
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># Read filename linewise</span>
+            <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;;RAW4.00&quot;</span><span class="p">:</span>  <span class="c1"># Check we have the corrrect fileformat</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;File Format Not Recognized !&quot;</span><span class="p">)</span>
+            <span class="n">drive</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># for each line</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">sh</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">m</span><span class="p">:</span>  <span class="c1"># This is a new section</span>
+                    <span class="n">section</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;Drive&quot;</span><span class="p">:</span>  <span class="c1"># If this is a Drive section we need to know which Drive Section it is</span>
+                        <span class="n">section</span> <span class="o">=</span> <span class="n">section</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">drive</span><span class="p">)</span>
+                        <span class="n">drive</span> <span class="o">=</span> <span class="n">drive</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;Data&quot;</span><span class="p">:</span>  <span class="c1"># Data section contains the business but has a redundant first line</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># Now start reading lines in this section...</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+                        <span class="p">):</span>  <span class="c1"># A blank line marks the end of the section, so go back to the outer loop which will handle a new section</span>
+                            <span class="k">break</span>
+                        <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;Data&quot;</span><span class="p">:</span>  <span class="c1"># In the Data section read lines of data value,vale</span>
+                            <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+                            <span class="n">angle</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                            <span class="n">counts</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                            <span class="n">dataline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">counts</span><span class="p">)])</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dataline</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Other sections contain metadata</span>
+                            <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+                            <span class="n">key</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                            <span class="n">data</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                            <span class="c1"># Keynames in main metadata are section:key - use theCore.DataFile magic to do type determination</span>
+                            <span class="bp">self</span><span class="p">[</span><span class="n">section</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">string_to_type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Angle&quot;</span><span class="p">,</span> <span class="s2">&quot;Counts&quot;</span><span class="p">]</span>  <span class="c1"># Assume the columns were Angles and Counts</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">four_bounce</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;HardwareConfiguration:Monochromator&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">column_headers</span>
+        <span class="k">if</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Q&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">to_Q</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="XRDFile.to_Q"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.XRDFile.to_Q.html#Stoner.FileFormats.XRDFile.to_Q">[docs]</a>    <span class="k">def</span> <span class="nf">to_Q</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mf">1.540593</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds an additional function to covert an angualr scale to momentum transfer</span>
+
+<span class="sd">        returns a copy of itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span>
+            <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">l</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">360</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Momentum Transfer, Q ($</span><span class="se">\\</span><span class="s2">AA^{-1}$)&quot;</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+<form class="search" action="../../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../../Stoner.html">Stoner</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.2.2
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

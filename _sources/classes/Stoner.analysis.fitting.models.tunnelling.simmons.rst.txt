@@ -1,0 +1,6 @@
+simmons
+=======
+
+.. currentmodule:: Stoner.analysis.fitting.models.tunnelling
+
+.. autofunction:: simmons

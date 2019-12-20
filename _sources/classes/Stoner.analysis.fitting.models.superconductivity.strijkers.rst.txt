@@ -1,0 +1,6 @@
+strijkers
+=========
+
+.. currentmodule:: Stoner.analysis.fitting.models.superconductivity
+
+.. autofunction:: strijkers

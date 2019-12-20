@@ -1,0 +1,6 @@
+bdr
+===
+
+.. currentmodule:: Stoner.analysis.fitting.models.tunnelling
+
+.. autofunction:: bdr

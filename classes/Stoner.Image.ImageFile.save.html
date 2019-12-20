@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -60,25 +61,22 @@
 <dt id="Stoner.Image.ImageFile.save">
 <code class="sig-prename descclassname">ImageFile.</code><code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageFile.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageFile.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the image into the file ‘filename’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string, bool or None</em>) – Filename to save data as, if this is None then the current filename for the object is used
+If this is not set, then then a file dialog is used. If filename is False then a file dialog is forced.</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><p><strong>fmt</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – format to save data as. ‘tif’, ‘png’ or ‘npy’ or a list of them. If not included will guess from
+filename.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
 <p>Metadata will be preserved in .png and .tif format.</p>
 <p>fmt can be ‘png’, ‘npy’, ‘tif’, ‘tiff’  or a list of more than one of those.
 tif is recommended since metadata is lost in .npy format but data is
 converted to integer format for png so that definition cannot be
 saved.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>string, bool or None</em>) – Filename to save data as, if this is
-None then the current filename for the object is used
-If this is not set, then then a file dialog is used. If
-filename is False then a file dialog is forced.</p>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>fmt</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – format to save data as. ‘tif’, ‘png’ or ‘npy’</p></li>
-<li><p><strong>a list of them. If not included will guess from filename.</strong> (<em>or</em>) – </p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 </div>
@@ -141,9 +139,9 @@ filename is False then a file dialog is forced.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

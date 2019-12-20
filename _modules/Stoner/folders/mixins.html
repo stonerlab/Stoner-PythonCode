@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -48,26 +49,26 @@
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;mixin calsses for :py:class:`Stoner.folders.core.baseFoler`.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DiskBasedFolder&quot;</span><span class="p">,</span> <span class="s2">&quot;DataMethodsMixin&quot;</span><span class="p">,</span> <span class="s2">&quot;PlotMethodsMixin&quot;</span><span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="nb">any</span> <span class="k">as</span> <span class="n">np_any</span><span class="p">,</span> <span class="n">floor</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">ceil</span>
-<span class="kn">from</span> <span class="nn">numpy.ma</span> <span class="k">import</span> <span class="n">masked_invalid</span>
-<span class="kn">from</span> <span class="nn">matplotlib.pyplot</span> <span class="k">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">subplot</span><span class="p">,</span> <span class="n">tight_layout</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="nb">any</span> <span class="k">as</span> <span class="n">np_any</span><span class="p">,</span> <span class="n">floor</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">ceil</span>
+<span class="kn">from</span> <span class="nn">numpy.ma</span> <span class="kn">import</span> <span class="n">masked_invalid</span>
+<span class="kn">from</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">subplot</span><span class="p">,</span> <span class="n">tight_layout</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">get_filedialog</span><span class="p">,</span> <span class="n">_pattern_type</span><span class="p">,</span> <span class="n">makedirs</span>
-<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">isiterable</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">get_filedialog</span><span class="p">,</span> <span class="n">_pattern_type</span><span class="p">,</span> <span class="n">makedirs</span>
+<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">isiterable</span>
 
-<span class="kn">from</span> <span class="nn">Stoner.core.base</span> <span class="k">import</span> <span class="n">metadataObject</span><span class="p">,</span> <span class="n">string_to_type</span>
-<span class="kn">from</span> <span class="nn">Stoner.core.exceptions</span> <span class="k">import</span> <span class="n">StonerUnrecognisedFormat</span>
-<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">baseFolder</span><span class="p">,</span> <span class="n">__add_core__</span> <span class="k">as</span> <span class="n">_base__add_core__</span><span class="p">,</span> <span class="n">__sub_core__</span> <span class="k">as</span> <span class="n">_base__sub_core__</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">scan_dir</span><span class="p">,</span> <span class="n">discard_earlier</span><span class="p">,</span> <span class="n">filter_files</span><span class="p">,</span> <span class="n">get_pool</span><span class="p">,</span> <span class="n">removeDisallowedFilenameChars</span>
-<span class="kn">from</span> <span class="nn">Stoner.core.exceptions</span> <span class="k">import</span> <span class="n">assertion</span>
+<span class="kn">from</span> <span class="nn">Stoner.core.base</span> <span class="kn">import</span> <span class="n">metadataObject</span><span class="p">,</span> <span class="n">string_to_type</span>
+<span class="kn">from</span> <span class="nn">Stoner.core.exceptions</span> <span class="kn">import</span> <span class="n">StonerUnrecognisedFormat</span>
+<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">baseFolder</span><span class="p">,</span> <span class="n">__add_core__</span> <span class="k">as</span> <span class="n">_base__add_core__</span><span class="p">,</span> <span class="n">__sub_core__</span> <span class="k">as</span> <span class="n">_base__sub_core__</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">scan_dir</span><span class="p">,</span> <span class="n">discard_earlier</span><span class="p">,</span> <span class="n">filter_files</span><span class="p">,</span> <span class="n">get_pool</span><span class="p">,</span> <span class="n">removeDisallowedFilenameChars</span>
+<span class="kn">from</span> <span class="nn">Stoner.core.exceptions</span> <span class="kn">import</span> <span class="n">assertion</span>
 
 <span class="n">regexp_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">_pattern_type</span><span class="p">,)</span>
 
@@ -149,9 +150,9 @@
         <span class="s2">&quot;discard_earlier&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Additional constructor for DiskbasedFolders&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
+        <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span>  <span class="c1"># Force the default store to be populated.</span>
         <span class="k">if</span> <span class="s2">&quot;directory&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_store</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_store</span><span class="p">[</span><span class="s2">&quot;directory&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -279,25 +280,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tmp</span>
 
-    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement the addition operator for baseFolder and metadataObjects.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">__add_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement the addition operator for baseFolder and metadataObjects.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">__add_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement the addition operator for baseFolder and metadataObjects.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement the addition operator for baseFolder and metadataObjects.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
@@ -696,7 +697,7 @@
         <span class="n">plts</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">plts</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="s2">&quot;plot&quot;</span><span class="p">):</span>  <span class="c1"># switch the objects to being Stoner.Data instances</span>
-            <span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
+            <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
                 <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
@@ -779,9 +780,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

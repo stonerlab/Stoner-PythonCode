@@ -1,0 +1,6 @@
+modArrhenius
+============
+
+.. currentmodule:: Stoner.analysis.fitting.models.thermal
+
+.. autofunction:: modArrhenius

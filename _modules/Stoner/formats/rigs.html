@@ -1,0 +1,299 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Stoner.formats.rigs &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../../../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../../Stoner.html">Stoner</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Stoner.formats.rigs</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Implement DataFile like classes for Various experimental rigs</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BigBlueFile&quot;</span><span class="p">,</span> <span class="s2">&quot;BirgeIVFile&quot;</span><span class="p">,</span> <span class="s2">&quot;MokeFile&quot;</span><span class="p">,</span> <span class="s2">&quot;FmokeFile&quot;</span><span class="p">]</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">Stoner.Core</span> <span class="k">as</span> <span class="nn">Core</span>
+<span class="kn">from</span> <span class="nn">.generic</span> <span class="kn">import</span> <span class="n">CSVFile</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">bytes2str</span>
+<span class="kn">from</span> <span class="nn">Stoner.core.base</span> <span class="kn">import</span> <span class="n">string_to_type</span>
+
+
+<div class="viewcode-block" id="BigBlueFile"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile">[docs]</a><span class="k">class</span> <span class="nc">BigBlueFile</span><span class="p">(</span><span class="n">CSVFile</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Extends CSVFile to load files from Nick Porter&#39;s old BigBlue code&quot;&quot;&quot;</span>
+
+    <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
+    <span class="c1">#   .. note::</span>
+    <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
+    <span class="c1">#      file type before attempting to read data.</span>
+    <span class="n">priority</span> <span class="o">=</span> <span class="mi">64</span>  <span class="c1"># Also rather generic file format so make a lower priority</span>
+    <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
+    <span class="c1"># the file load/save dialog boxes.</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.dat&quot;</span><span class="p">,</span> <span class="s2">&quot;*.iv&quot;</span><span class="p">,</span> <span class="s2">&quot;*.rvt&quot;</span><span class="p">]</span>  <span class="c1"># Recognised filename patterns</span>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Just call the parent class but with the right parameters set</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (string or bool): File to load. If None then the existing filename is used,</span>
+<span class="sd">                if False, then a file dialog will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of the itself after loading the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">BigBlueFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">header_line</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">data_line</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">data_delim</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">header_delim</span><span class="o">=</span><span class="s2">&quot;,&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;All data was NaN in Big Blue format&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<span class="k">class</span> <span class="nc">BirgeIVFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Implements the IV File format used by the Birge Group in Michigan State University Condesned Matter Physiscs.&quot;&quot;&quot;</span>
+
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.dat&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;File loader for PinkLib.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (string or bool): File to load. If None then the existing filename is used,</span>
+<span class="sd">                if False, then a file dialog will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of the itself after loading the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="n">ix</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># Read filename linewise</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d{1,2}/\d{1,2}/\d</span><span class="si">{4}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()):</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a BirgeIVFile as no date on first line&quot;</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+            <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Vo(-))&quot;</span><span class="p">,</span> <span class="s2">&quot;Vo(+))&quot;</span><span class="p">,</span> <span class="s2">&quot;Ic(+)&quot;</span><span class="p">,</span> <span class="s2">&quot;Ic(-)&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:],</span> <span class="n">expected</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">l</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a BirgeIVFile as wrong footer line&quot;</span><span class="p">)</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">l</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)]</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">:]</span>
+                <span class="k">if</span> <span class="s2">&quot;STDEV&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+                    <span class="n">ix2</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;STDEV&quot;</span><span class="p">)</span>
+                    <span class="n">key2</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">ix2</span> <span class="p">:</span> <span class="n">ix2</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span>
+                    <span class="n">val2</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">ix2</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="p">:]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key2</span><span class="p">]</span> <span class="o">=</span> <span class="n">string_to_type</span><span class="p">(</span><span class="n">val2</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="p">[:</span><span class="n">ix2</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">string_to_type</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>  <span class="c1"># Scan the ough lines to get metadata</span>
+                <span class="k">if</span> <span class="s2">&quot;:&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="n">string_to_type</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="s2">&quot;,&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">):</span>
+                        <span class="n">parts</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="n">string_to_type</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;H &quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;H&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">string_to_type</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)]</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Oops ran off the end of the file!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="n">ix</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">skip_footer</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">headers</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+
+<div class="viewcode-block" id="MokeFile"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.MokeFile.html#Stoner.FileFormats.MokeFile">[docs]</a><span class="k">class</span> <span class="nc">MokeFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Class that extgends Core.DataFile to load files from the Leeds MOKE system.&quot;&quot;&quot;</span>
+
+    <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
+    <span class="c1">#   .. note::</span>
+    <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
+    <span class="c1">#      file type before attempting to read data.</span>
+    <span class="n">priotity</span> <span class="o">=</span> <span class="mi">16</span>
+    <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
+    <span class="c1"># the file load/save dialog boxes.</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.dat&quot;</span><span class="p">,</span> <span class="s2">&quot;*.txt&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Leeds  MOKE file loader routine.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (string or bool): File to load. If None then the existing filename is used,</span>
+<span class="sd">                if False, then a file dialog will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of the itself after loading the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">bytes2str</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">!=</span> <span class="s2">&quot;#Leeds CM Physics MOKE&quot;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a Core.DataFile from the Leeds MOKE&quot;</span><span class="p">)</span>
+            <span class="k">while</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">bytes2str</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy.de&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">column_headers</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="FmokeFile"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.FmokeFile.html#Stoner.FileFormats.FmokeFile">[docs]</a><span class="k">class</span> <span class="nc">FmokeFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Extends Core.DataFile to open Fmoke Files&quot;&quot;&quot;</span>
+
+    <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
+    <span class="c1">#   .. note::</span>
+    <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
+    <span class="c1">#      file type before attempting to read data.</span>
+    <span class="n">priority</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># Makes a positive ID check of its contents so give it priority in autoloading</span>
+    <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
+    <span class="c1"># the file load/save dialog boxes.</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.dat&quot;</span><span class="p">]</span>  <span class="c1"># Recognised filename patterns</span>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sheffield Focussed MOKE file loader routine.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (string or bool): File to load. If None then the existing filename is used,</span>
+<span class="sd">                if False, then a file dialog will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of the itself after loading the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bytes2str</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)]</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not an FMOKE file?&quot;</span><span class="p">)</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bytes2str</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;Header:&quot;</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a Focussed MOKE file !&quot;</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>  <span class="c1"># Create metatdata from first 2 lines</span>
+            <span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bytes2str</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">invalid_raise</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">column_headers</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+<form class="search" action="../../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../../Stoner.html">Stoner</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.2.2
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

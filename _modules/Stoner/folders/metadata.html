@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -47,22 +48,60 @@
   <h1>Source code for Stoner.folders.metadata</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">:py:mod:`Stoner.folders.metadata` provides classes and functions to support the :py:attr:`Stoner.DataFolder.metadata` magic attribute.</span>
+<span class="sd">:py:mod:`Stoner.folders.metadata` provides classes and functions to support the :py:attr:`Stoner.DataFolder.metadata`</span>
+<span class="sd">magic attribute.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;proxy&quot;</span><span class="p">]</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span>
-<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">islike_list</span><span class="p">,</span> <span class="n">isiterable</span><span class="p">,</span> <span class="n">all_type</span>
-<span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">DataFile</span>
+<span class="kn">import</span> <span class="nn">fnmatch</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">islike_list</span><span class="p">,</span> <span class="n">isiterable</span>
+<span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="kn">import</span> <span class="n">DataFile</span>
+<span class="kn">from</span> <span class="nn">lmfit</span> <span class="kn">import</span> <span class="n">Model</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">MutableMapping</span>
-<span class="kn">from</span> <span class="nn">Stoner.core</span> <span class="k">import</span> <span class="n">typeHintedDict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">MutableMapping</span>
+<span class="kn">from</span> <span class="nn">Stoner.core</span> <span class="kn">import</span> <span class="n">typeHintedDict</span>
+
+
+<span class="k">def</span> <span class="nf">_slice_keys</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">possible</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Work through the arguments to slice() and construct a list of keys.&quot;&quot;&quot;</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">possible</span><span class="p">:</span>
+                <span class="n">sub_k</span> <span class="o">=</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">possible</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_k</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_slice_keys</span><span class="p">(</span><span class="n">sub_k</span><span class="p">,</span> <span class="n">possible</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No matching keys for </span><span class="si">{sub_k}</span><span class="s2"> in metadata&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">k</span><span class="p">()</span><span class="o">.</span><span class="n">param_names</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">sub_k</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{model}</span><span class="s2">:</span><span class="si">{name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{model}</span><span class="s2">:</span><span class="si">{name}</span><span class="s2"> err&quot;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">sub_k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">possible</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No matching keys for </span><span class="si">{sub_k}</span><span class="s2"> in metadata&quot;</span><span class="p">)</span>
+                    <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_k</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">k</span><span class="o">.</span><span class="n">param_names</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">sub_k</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{model}</span><span class="s2">:</span><span class="si">{name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{model}</span><span class="s2">:</span><span class="si">{name}</span><span class="s2"> err&quot;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">sub_k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">possible</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No matching keys for </span><span class="si">{sub_k}</span><span class="s2"> in metadata&quot;</span><span class="p">)</span>
+                    <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_k</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_slice_keys</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">possible</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> cannot be used as a key name or set of key names&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">k</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">keys</span>
 
 
 <div class="viewcode-block" id="proxy"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.proxy.html#Stoner.folders.metadata.proxy">[docs]</a><span class="k">class</span> <span class="nc">proxy</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Provide methods to interact with a whole collection of metadataObjects&#39; metadata.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span> <span class="o">=</span> <span class="n">folder</span>
 
@@ -107,26 +146,26 @@
                 <span class="n">output</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
         <span class="k">return</span> <span class="n">output</span>
 
-    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check for membership of all possible kes.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_keys</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterate over objects.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_keys</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">k</span>
 
-    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Out length is our common_keys.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">common_keys</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Give an informative dispaly of the metadata represenation.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;The </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> has </span><span class="si">{}</span><span class="s2"> common keys of metadata in </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> objects&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Attempt to delte item from all members of the folder.&quot;&quot;&quot;</span>
         <span class="n">ok</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">:</span>
@@ -138,14 +177,14 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">:</span>  <span class="c1"># item was not a key in any data file</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> was not recognised as a metadata key in any object in the folder.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return an array formed by getting a single key from each object in the Folder.&quot;&quot;&quot;</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">mask_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;array&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ret</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> did not match any keys in any file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">:</span>
             <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
@@ -204,7 +243,7 @@
         <span class="sd">&quot;&quot;&quot;Return a list of the metadata dictionaries for each item/file in the top level group</span>
 
 <span class="sd">        Keyword Arguments:</span>
-<span class="sd">            *args (string or list of strings):</span>
+<span class="sd">            *args (string, lmfit.Model class or instance  or iterable of string, lmfit Models):</span>
 <span class="sd">                if given then only return the item(s) requested from the metadata</span>
 <span class="sd">            values_only(bool):</span>
 <span class="sd">                if given and *output* not set only return tuples of the dictionary values. Mostly useful</span>
@@ -214,23 +253,21 @@
 
 <span class="sd">                - &quot;dict&quot; or dict - return a list of dictionary subsets of the metadata from each image</span>
 <span class="sd">                - &quot;list&quot; or list - return a list of values of each item pf the metadata</span>
-<span class="sd">                - &quot;array&quot; or np.array - return a single array - like list above, but returns as a numpy array. This can create a 2D array from multiple keys</span>
-<span class="sd">                - &quot;data&quot; or Stoner.Data - returns the metadata in a Stoner.Data object where the column headers are the metadata keys.</span>
+<span class="sd">                - &quot;array&quot; or np.array - return a single array - like list above, but returns as a numpy array.</span>
+<span class="sd">                  This can create a 2D array from multiple keys</span>
+<span class="sd">                - &quot;data&quot; or Stoner.Data - returns the metadata in a Stoner.Data object where the column headers</span>
+<span class="sd">                  are the metadata keys.</span>
 <span class="sd">                - &quot;frame&quot; - returns the metadata as a Pandas DataFrame object</span>
 <span class="sd">                - &quot;smart&quot; - switch between *dict* and *list* depending whether there is one or more keys.</span>
 <span class="sd">            mask_missing (bool):</span>
-<span class="sd">                If true, then metadata entries missing in members of the folder are returned as masked values (or None), If</span>
-<span class="sd">                False, then an exception is raised if any entries are missing.</span>
+<span class="sd">                If true, then metadata entries missing in members of the folder are returned as masked values (or</span>
+<span class="sd">                None), If False, then an exception is raised if any entries are missing.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            ret(list of dict, tuple of values or :py:class:`Stoner.Data`):</span>
 <span class="sd">                depending on *values_only* or (output* returns the sliced dictionaries or tuples/</span>
 <span class="sd">                values of the items</span>
 
-<span class="sd">        To do:</span>
-<span class="sd">            this should probably be a func in baseFolder and should use have</span>
-<span class="sd">            recursive options (build a dictionary of metadata values). And probably</span>
-<span class="sd">            options to extract other parts of objects (first row or whatever).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">values_only</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;values_only&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -254,18 +291,8 @@
             <span class="n">DataFile</span><span class="p">,</span>
         <span class="p">]:</span>  <span class="c1"># Check for good output value</span>
             <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;output of slice metadata must be either dict, list, or array not </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
-        <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-                <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-                <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> cannot be used as a key name or set of key names&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">k</span><span class="p">)))</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">mask_missing</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_keys</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a key in all members of the folder&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+        <span class="n">possible</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_keys</span><span class="p">())</span> <span class="k">if</span> <span class="n">mask_missing</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_keys</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">_slice_keys</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">possible</span><span class="p">)</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">:</span>
             <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">d</span><span class="p">})</span>
@@ -296,8 +323,8 @@
         <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="n">results</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DataFrame</span>
-            <span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
+            <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+            <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 
             <span class="n">frame</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
             <span class="n">mask</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
@@ -347,9 +374,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

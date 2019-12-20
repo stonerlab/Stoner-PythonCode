@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
@@ -57,14 +58,14 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;test_is_zip&quot;</span><span class="p">,</span> <span class="s2">&quot;ZippedFile&quot;</span><span class="p">,</span> <span class="s2">&quot;ZipFolderMixin&quot;</span><span class="p">,</span> <span class="s2">&quot;ZipFolder&quot;</span><span class="p">]</span>
 <span class="kn">import</span> <span class="nn">zipfile</span> <span class="k">as</span> <span class="nn">zf</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
-<span class="kn">from</span> <span class="nn">traceback</span> <span class="k">import</span> <span class="n">format_exc</span>
+<span class="kn">from</span> <span class="nn">traceback</span> <span class="kn">import</span> <span class="n">format_exc</span>
 <span class="kn">import</span> <span class="nn">fnmatch</span>
 
-<span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">bytes2str</span><span class="p">,</span> <span class="n">str2bytes</span><span class="p">,</span> <span class="n">get_filedialog</span><span class="p">,</span> <span class="n">_pattern_type</span>
-<span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">StonerLoadError</span>
-<span class="kn">from</span> <span class="nn">.Folders</span> <span class="k">import</span> <span class="n">DiskBasedFolder</span>
-<span class="kn">from</span> <span class="nn">.folders.core</span> <span class="k">import</span> <span class="n">baseFolder</span>
-<span class="kn">from</span> <span class="nn">.folders.utils</span> <span class="k">import</span> <span class="n">pathjoin</span>
+<span class="kn">from</span> <span class="nn">.compat</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">bytes2str</span><span class="p">,</span> <span class="n">str2bytes</span><span class="p">,</span> <span class="n">get_filedialog</span><span class="p">,</span> <span class="n">_pattern_type</span>
+<span class="kn">from</span> <span class="nn">.Core</span> <span class="kn">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">StonerLoadError</span>
+<span class="kn">from</span> <span class="nn">.Folders</span> <span class="kn">import</span> <span class="n">DiskBasedFolder</span>
+<span class="kn">from</span> <span class="nn">.folders.core</span> <span class="kn">import</span> <span class="n">baseFolder</span>
+<span class="kn">from</span> <span class="nn">.folders.utils</span> <span class="kn">import</span> <span class="n">pathjoin</span>
 
 
 <div class="viewcode-block" id="test_is_zip"><a class="viewcode-back" href="../../classes/Stoner.Zip.test_is_zip.html#Stoner.Zip.test_is_zip">[docs]</a><span class="k">def</span> <span class="nf">test_is_zip</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">member</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
@@ -112,7 +113,7 @@
 
     <span class="n">mime_type</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;application/zip&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="s2">&quot;Constructor to catch initialising with an open zf.ZipFile&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">other</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -294,7 +295,7 @@
         <span class="s2">&quot;readlist&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="s2">&quot;Constructor for the ZipFolderMixin Class.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ZipFolderMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
@@ -555,7 +556,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="s2">&quot;Constructor for the ZipFolderMixin Class.&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ZipFolder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
 </pre></div>
@@ -596,9 +597,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

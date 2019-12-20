@@ -1,0 +1,6 @@
+quadratic
+=========
+
+.. currentmodule:: Stoner.analysis.fitting.models.generic
+
+.. autofunction:: quadratic

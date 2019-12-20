@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -17,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="adjust_contrast" href="Stoner.Image.imagefuncs.adjust_contrast.html" />
-    <link rel="prev" title="ImageStack2" href="Stoner.Image.stack.ImageStack2.html" />
+    <link rel="prev" title="ImageStackMixin" href="Stoner.Image.stack.ImageStackMixin.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -28,7 +29,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Image.stack.ImageStack2.html" title="Previous document">ImageStack2</a>
+          <a href="Stoner.Image.stack.ImageStackMixin.html" title="Previous document">ImageStackMixin</a>
         </li>
         <li>
           <a href="Stoner.Image.imagefuncs.adjust_contrast.html" title="Next document">adjust_contrast</a>
@@ -191,7 +192,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStack.clear" title="Stoner.Image.stack.ImageStack.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
 <td><p>Clear the subgroups.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStack.compress" title="Stoner.Image.stack.ImageStack.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>([base, key])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStack.compress" title="Stoner.Image.stack.ImageStack.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>([base, key, keep_terminal])</p></td>
 <td><p>Compresses all empty groups from the root up until the first non-empty group is located.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStack.correct_drifts" title="Stoner.Image.stack.ImageStack.correct_drifts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">correct_drifts</span></code></a>(refindex[, threshold, …])</p></td>
@@ -269,7 +270,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStack.popitem" title="Stoner.Image.stack.ImageStack.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
 <td><p>Return the most recent subgroup from this folder.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStack.prune" title="Stoner.Image.stack.ImageStack.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStack.prune" title="Stoner.Image.stack.ImageStack.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>([name])</p></td>
 <td><p>Remove any empty groups from the objectFolder (and subgroups).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStack.remove" title="Stoner.Image.stack.ImageStack.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</p></td>
@@ -621,14 +622,11 @@ If clip_negative then clip values outside the range 0,1</p>
 
 <dl class="method">
 <dt id="Stoner.Image.stack.ImageStack.compress">
-<code class="sig-name descname">compress</code><span class="sig-paren">(</span><em class="sig-param">base=None</em>, <em class="sig-param">key='.'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.stack.ImageStack.compress" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compress</code><span class="sig-paren">(</span><em class="sig-param">base=None</em>, <em class="sig-param">key='.'</em>, <em class="sig-param">keep_terminal=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.stack.ImageStack.compress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compresses all empty groups from the root up until the first non-empty group is located.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
-<dd class="field-odd"><p><strong>)</strong> (<a class="reference internal" href="Stoner.Image.ImageStack.html#Stoner.Image.ImageStack.depth" title="Stoner.Image.ImageStack.depth"><em>depth</em></a>) – Only flatten ub-groups that are within (<em>depth</em> of the deepest level.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A copy of the now flattened DatFolder</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A copy of the now flattened DatFolder</p>
 </dd>
 </dl>
 </dd></dl>
@@ -940,7 +938,7 @@ the correct one.</p>
 
 <dl class="method">
 <dt id="Stoner.Image.stack.ImageStack.prune">
-<code class="sig-name descname">prune</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.stack.ImageStack.prune" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">prune</code><span class="sig-paren">(</span><em class="sig-param">name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.stack.ImageStack.prune" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove any empty groups from the objectFolder (and subgroups).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1238,8 +1236,8 @@ where f is either a objectFolder or metadataObject.</p>
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Image.stack.ImageStack2.html"
-                        title="previous chapter">ImageStack2</a></p>
+  <p class="topless"><a href="Stoner.Image.stack.ImageStackMixin.html"
+                        title="previous chapter">ImageStackMixin</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Image.imagefuncs.adjust_contrast.html"
                         title="next chapter">adjust_contrast</a></p>
@@ -1266,7 +1264,7 @@ where f is either a objectFolder or metadataObject.</p>
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Image.stack.ImageStack2.html" title="Previous document">ImageStack2</a>
+          <a href="Stoner.Image.stack.ImageStackMixin.html" title="Previous document">ImageStackMixin</a>
         </li>
         <li>
           <a href="Stoner.Image.imagefuncs.adjust_contrast.html" title="Next document">adjust_contrast</a>
@@ -1283,9 +1281,9 @@ where f is either a objectFolder or metadataObject.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,0 +1,6 @@
+fmr_power
+=========
+
+.. currentmodule:: Stoner.analysis.fitting.models.magnetism
+
+.. autofunction:: fmr_power

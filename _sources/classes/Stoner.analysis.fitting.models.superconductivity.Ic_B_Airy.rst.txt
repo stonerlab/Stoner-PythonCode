@@ -1,0 +1,27 @@
+Ic_B_Airy
+=========
+
+.. currentmodule:: Stoner.analysis.fitting.models.superconductivity
+
+.. autoclass:: Ic_B_Airy
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Ic_B_Airy.display_names
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Ic_B_Airy.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

@@ -1,0 +1,17 @@
+FowlerNordheim
+==============
+
+.. currentmodule:: Stoner.analysis.fitting.models.tunnelling
+
+.. autoclass:: FowlerNordheim
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~FowlerNordheim.guess
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -93,7 +94,7 @@
 <span class="k">def</span> <span class="nf">extra</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Function for customising each individual plot&quot;&quot;&quot;</span>
     <span class="n">d</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\nu={:.1f}\,$GHz&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;Frequency&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">)</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\nu=</span><span class="si">{:.1f}</span><span class="s2">\,$GHz&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;Frequency&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;Field $\mu_0H\,$&quot;</span>
     <span class="n">d</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;Abs. (arb)&quot;</span>
     <span class="n">d</span><span class="o">.</span><span class="n">plt_legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
@@ -103,10 +104,10 @@
 <span class="k">def</span> <span class="nf">do_fit</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Function to fit just one set of data.&quot;&quot;&quot;</span>
     <span class="n">f</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template</span>
-    <span class="n">f</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="mf">1.75e5</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">f</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="mf">1.75e5</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span>
         <span class="n">FMR_Power</span><span class="p">,</span>
-        <span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span>
         <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">],</span>
         <span class="n">output</span><span class="o">=</span><span class="s2">&quot;row&quot;</span><span class="p">,</span>
@@ -131,7 +132,7 @@
     <span class="n">d</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;multi[1]:y&quot;</span><span class="p">,</span> <span class="s2">&quot;Field&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;multi[0]:y&quot;</span><span class="p">,</span> <span class="s2">&quot;Frequency&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
         <span class="s2">&quot;Absorption::X&quot;</span><span class="p">,</span> <span class="s2">&quot;FMR&quot;</span>
     <span class="p">)</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># Deine x and y columns and normalise to a big number</span>
     <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;FMR&quot;</span><span class="p">)</span>  <span class="c1"># pylint: disable=not-callable</span>
@@ -145,13 +146,15 @@
         <span class="n">f</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="o">.</span><span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">f</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="o">.</span><span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="n">resfldr</span> <span class="o">=</span> <span class="n">PlotFolder</span><span class="p">()</span>  <span class="c1"># Somewhere to keep the results from +ve and -ve fields</span>
+    <span class="n">resfldr</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">PlotFolder</span><span class="p">()</span>
+    <span class="p">)</span>  <span class="c1"># Somewhere to keep the results from +ve and -ve fields</span>
 
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">fldr</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>  <span class="c1"># Fit each FMR spectra</span>
         <span class="n">subfldr</span> <span class="o">=</span> <span class="n">fldr</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
         <span class="n">subfldr</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Field Sign&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
 
-        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;s={}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;s=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">subfldr</span><span class="o">.</span><span class="n">each</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">do_fit</span><span class="p">)):</span>
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
@@ -187,18 +190,18 @@
     <span class="c1"># Doing the Kittel fit with an orthogonal distance regression as we have x errors not y errors</span>
     <span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mf">200e3</span><span class="p">,</span> <span class="mf">10e3</span><span class="p">]</span>  <span class="c1"># Some sensible guesses</span>
     <span class="n">result</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span>
-        <span class="n">Inverse_Kittel</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Kittel Fit&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;report&quot;</span>
+        <span class="n">Inverse_Kittel</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Kittel Fit&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;report&quot;</span>
     <span class="p">)</span>
     <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
 
     <span class="n">result</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">yformatter</span> <span class="o">=</span> <span class="n">TexEngFormatter</span>
     <span class="n">result</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">xformatter</span> <span class="o">=</span> <span class="n">TexEngFormatter</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">result</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
     <span class="n">result</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
     <span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r.&quot;</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">])</span>
     <span class="n">result</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">Inverse_Kittel</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">7e9</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1e5</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;$H_{res} </span><span class="se">\\</span><span class="s2">mathrm{(Am^{-1})}$&quot;</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;$H_</span><span class="si">{res}</span><span class="s2"> </span><span class="se">\\</span><span class="s2">mathrm{(Am^{-1})}$&quot;</span>
     <span class="n">result</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Inverse Kittel Fit&quot;</span>
 
     <span class="c1"># Get alpha</span>
@@ -206,7 +209,7 @@
     <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Delta_H&quot;</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="s2">&quot;Delta_H.stderr&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Freq&quot;</span><span class="p">)</span>
     <span class="n">result</span><span class="o">.</span><span class="n">y</span> <span class="o">/=</span> <span class="n">mu_0</span>
     <span class="n">result</span><span class="o">.</span><span class="n">e</span> <span class="o">/=</span> <span class="n">mu_0</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">Linear</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Width&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;report&quot;</span><span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">Linear</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Width&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;report&quot;</span><span class="p">)</span>
     <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
     <span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r.&quot;</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">])</span>
     <span class="n">result</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">Linear</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">5.5e9</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">2.8e3</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
@@ -327,9 +330,9 @@ from the aspect ratio of the figure and the number of files in the <code class="
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

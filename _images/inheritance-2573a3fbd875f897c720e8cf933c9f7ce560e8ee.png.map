@@ -1,0 +1,20 @@
+<map id="inheritance7eb37f3103" name="inheritance7eb37f3103">
+<area shape="rect" id="node25" title="All the operations on a read&#45;only sequence." alt="" coords="250,85,297,99"/>
+<area shape="rect" id="node5" href="classes/Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder" target="_top" title="A Mixin class that implmenets reading metadataObjects from disc." alt="" coords="160,166,233,180"/>
+<area shape="rect" id="node10" href="classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder" target="_top" title="Folder object for images." alt="" coords="256,207,313,221"/>
+<area shape="rect" id="node13" href="classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack" target="_top" title="An alternative implementation of an image stack based on baseFolder." alt="" coords="335,207,390,221"/>
+<area shape="rect" id="node6" href="classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray" target="_top" title=":py:class:`Stoner.Image.core.ImageArray` is a numpy array like class with a metadata parameter and pass through to skimage methods." alt="" coords="13,207,68,221"/>
+<area shape="rect" id="node16" href="classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.kerr.KerrArray" target="_top" title="A subclass for Kerr microscopy specific image functions." alt="" coords="17,248,63,262"/>
+<area shape="rect" id="node7" title="An array class with possibly masked values." alt="" coords="3,166,62,180"/>
+<area shape="rect" id="node8" href="classes/Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject" target="_top" title="Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object." alt="" coords="76,166,147,180"/>
+<area shape="rect" id="node9" href="classes/Stoner.Image.ImageFile.html#Stoner.Image.ImageFile" target="_top" title="An Image file type that is analagous to DataFile." alt="" coords="88,207,135,221"/>
+<area shape="rect" id="node11" href="classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin" target="_top" title="Mixin to provide a folder object for images." alt="" coords="246,166,323,180"/>
+<area shape="rect" id="node12" href="classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" target="_top" title="A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself." alt="" coords="337,166,389,180"/>
+<area shape="rect" id="node17" href="classes/Stoner.Image.kerr.KerrStack.html#Stoner.Image.kerr.KerrStack" target="_top" title="Represents a stack of Kerr images." alt="" coords="345,248,392,262"/>
+<area shape="rect" id="node20" href="classes/Stoner.Image.kerr.MaskStack.html#Stoner.Image.kerr.MaskStack" target="_top" title="A set of masks for Kerr images." alt="" coords="411,248,463,262"/>
+<area shape="rect" id="node14" title="Add some analysis capability to ImageStack. These functions may override" alt="" coords="491,166,573,180"/>
+<area shape="rect" id="node15" href="classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.stack.ImageStackMixin" target="_top" title="Implement an interface for a baseFolder to store images in a 3D numpy array for faster access." alt="" coords="402,166,477,180"/>
+<area shape="rect" id="node18" title="A mixin for :py:class:`ImageStack` that adds some functionality particular to Kerr images." alt="" coords="404,207,470,221"/>
+<area shape="rect" id="node21" title="A Mixin for :py:class:`Stoner.Image.ImageStack` but made for stacks of boolean or binary images" alt="" coords="483,207,554,221"/>
+<area shape="rect" id="node22" title="ndarray(shape, dtype=float, buffer=None, offset=0," alt="" coords="13,125,53,139"/>
+</map>

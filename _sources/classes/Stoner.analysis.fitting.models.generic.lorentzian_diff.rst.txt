@@ -1,0 +1,6 @@
+lorentzian_diff
+===============
+
+.. currentmodule:: Stoner.analysis.fitting.models.generic
+
+.. autofunction:: lorentzian_diff

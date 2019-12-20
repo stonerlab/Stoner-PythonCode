@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>strijkers &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ic_B_airy" href="Stoner.analysis.fitting.models.superconductivity.ic_B_airy.html" />
+    <link rel="prev" title="rsj_simple" href="Stoner.analysis.fitting.models.superconductivity.rsj_simple.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.analysis.fitting.models.superconductivity.rsj_simple.html" title="Previous document">rsj_simple</a>
+        </li>
+        <li>
+          <a href="Stoner.analysis.fitting.models.superconductivity.ic_B_airy.html" title="Next document">ic_B_airy</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="../analysis-fitting.html">Additional Fitting models</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="strijkers">
+<h1>strijkers<a class="headerlink" href="#strijkers" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="Stoner.analysis.fitting.models.superconductivity.strijkers">
+<code class="sig-prename descclassname">Stoner.analysis.fitting.models.superconductivity.</code><code class="sig-name descname">strijkers</code><span class="sig-paren">(</span><em class="sig-param">V</em>, <em class="sig-param">omega</em>, <em class="sig-param">delta</em>, <em class="sig-param">P</em>, <em class="sig-param">Z</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#strijkers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.strijkers" title="Permalink to this definition">¶</a></dt>
+<dd><p>strijkers Model for point-contact Andreev Reflection Spectroscopy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>V</strong> (<em>array</em>) – bias voltages</p></li>
+<li><p><strong>omega</strong> (<em>float</em>) – Broadening</p></li>
+<li><p><strong>delta</strong> (<em>float</em>) – SC energy Gap</p></li>
+<li><p><strong>P</strong> (<em>float</em>) – Interface parameter</p></li>
+<li><p><strong>Z</strong> (<em>float</em>) – Current spin polarization through contact</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Conductance vs bias data.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000</p>
+</div>
+<p>This version only uses 1 delta, not modified for proximity</p>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Demo of new Stoner.Analysis.AnalyseFile.lmfit</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">__home__</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
+<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">cfg_data_from_ini</span><span class="p">,</span> <span class="n">cfg_model_from_ini</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;scripts&quot;</span><span class="p">,</span> <span class="s2">&quot;PCAR-New.ini&quot;</span><span class="p">)</span>
+<span class="n">datafile</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;sample-data&quot;</span><span class="p">,</span> <span class="s2">&quot;PCAR Co Data.csv&quot;</span><span class="p">)</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="n">cfg_data_from_ini</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">datafile</span><span class="p">)</span>
+<span class="n">model</span><span class="p">,</span> <span class="n">p0</span> <span class="o">=</span> <span class="n">cfg_model_from_ini</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+
+<span class="n">fit</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;report&quot;</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;r-&quot;</span><span class="p">,</span> <span class="s2">&quot;bo&quot;</span><span class="p">])</span>  <span class="c1"># plot the data</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/strijkers_func.png">png</a>, <a class="reference external" href="../samples/strijkers_func.hires.png">hires.png</a>, <a class="reference external" href="../samples/strijkers_func.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="../_images/strijkers_func.png" src="../_images/strijkers_func.png" />
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.rsj_simple.html"
+                        title="previous chapter">rsj_simple</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.ic_B_airy.html"
+                        title="next chapter">ic_B_airy</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.superconductivity.strijkers.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.analysis.fitting.models.superconductivity.rsj_simple.html" title="Previous document">rsj_simple</a>
+        </li>
+        <li>
+          <a href="Stoner.analysis.fitting.models.superconductivity.ic_B_airy.html" title="Next document">ic_B_airy</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="../analysis-fitting.html">Additional Fitting models</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.2.2
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

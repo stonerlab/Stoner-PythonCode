@@ -1,0 +1,19 @@
+odr_Model
+=========
+
+.. currentmodule:: Stoner.analysis.fitting
+
+.. autoclass:: odr_Model
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~odr_Model.p0
+      ~odr_Model.param_names
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: p0
+   .. autoattribute:: param_names

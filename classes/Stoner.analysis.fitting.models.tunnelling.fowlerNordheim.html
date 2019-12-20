@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>fowlerNordheim &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="simmons" href="Stoner.analysis.fitting.models.tunnelling.simmons.html" />
+    <link rel="prev" title="bdr" href="Stoner.analysis.fitting.models.tunnelling.bdr.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.analysis.fitting.models.tunnelling.bdr.html" title="Previous document">bdr</a>
+        </li>
+        <li>
+          <a href="Stoner.analysis.fitting.models.tunnelling.simmons.html" title="Next document">simmons</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="../analysis-fitting.html">Additional Fitting models</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="fowlernordheim">
+<h1>fowlerNordheim<a class="headerlink" href="#fowlernordheim" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="Stoner.analysis.fitting.models.tunnelling.fowlerNordheim">
+<code class="sig-prename descclassname">Stoner.analysis.fitting.models.tunnelling.</code><code class="sig-name descname">fowlerNordheim</code><span class="sig-paren">(</span><em class="sig-param">V</em>, <em class="sig-param">A</em>, <em class="sig-param">phi</em>, <em class="sig-param">d</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/tunnelling.html#fowlerNordheim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.tunnelling.fowlerNordheim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fowler Nordhiem Model of electron tunnelling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>V</strong> (<em>array</em>) – Bias voltage</p></li>
+<li><p><strong>A</strong> (<em>float</em>) – Area of barrier in m^2</p></li>
+<li><p><strong>phi</strong> (<em>float</em>) – barrier height in eV</p></li>
+<li><p><strong>d</strong> (<em>float</em>) – barrier width in angstroms</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tunneling rate according to Fowler Nordheim model.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example of nDimArrhenius Fit.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.tunnelling</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">fowlerNordheim</span><span class="p">,</span>
+    <span class="n">FowlerNordheim</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">ones_like</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
+
+<span class="c1"># Make some data</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">I</span> <span class="o">=</span> <span class="n">fowlerNordheim</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="mi">2500</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+<span class="n">dI</span> <span class="o">=</span> <span class="n">ones_like</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="o">*</span> <span class="mf">10e-6</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">dI</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Bias&quot;</span><span class="p">,</span> <span class="s2">&quot;Current&quot;</span><span class="p">,</span> <span class="s2">&quot;Noise&quot;</span><span class="p">])</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span>
+    <span class="n">fowlerNordheim</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="mi">2500</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">],</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;curve_fit&quot;</span>
+<span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xyey&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r.&quot;</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span>
+    <span class="n">fowlerNordheim</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;fowlerNordheim&quot;</span><span class="p">,</span>
+    <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xye&quot;</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">FowlerNordheim</span><span class="p">()</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2500</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">]</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">guess</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">V</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">mi</span><span class="p">,</span> <span class="n">mx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mi">2500</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mf">1e4</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">]</span>
+<span class="p">):</span>
+    <span class="n">p0</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="n">p0</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span><span class="n">mi</span><span class="p">,</span> <span class="n">mx</span><span class="p">]</span>
+<span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">FowlerNordheim</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;x...y&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;g-&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span>
+    <span class="n">fit</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;FowlerNordheim&quot;</span><span class="p">,</span>
+    <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;Current&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Fowler-Nordheim Model test&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/Fitting/fowlernordheim.png">png</a>, <a class="reference external" href="../samples/Fitting/fowlernordheim.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/fowlernordheim.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="../_images/fowlernordheim.png" src="../_images/fowlernordheim.png" />
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.tunnelling.bdr.html"
+                        title="previous chapter">bdr</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.tunnelling.simmons.html"
+                        title="next chapter">simmons</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.tunnelling.fowlerNordheim.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.analysis.fitting.models.tunnelling.bdr.html" title="Previous document">bdr</a>
+        </li>
+        <li>
+          <a href="Stoner.analysis.fitting.models.tunnelling.simmons.html" title="Next document">simmons</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="../analysis-fitting.html">Additional Fitting models</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.2.2
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

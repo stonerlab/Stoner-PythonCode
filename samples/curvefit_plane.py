@@ -32,7 +32,9 @@ d.setas = "xy.z"
 d.plot_xyz(linewidth=0, cmap=cmap.jet)
 
 txt = "$z=c-ax+by$\n"
-txt += "\n".join([d.format("plane:{}".format(k), latex=True) for k in ["a", "b", "c"]])
+txt += "\n".join(
+    [d.format("plane:{}".format(k), latex=True) for k in ["a", "b", "c"]]
+)
 
 ax = plt.gca(projection="3d")
 ax.text(15, 5, -50, txt)

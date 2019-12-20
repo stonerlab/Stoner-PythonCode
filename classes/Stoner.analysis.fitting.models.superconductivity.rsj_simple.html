@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>rsj_simple &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="strijkers" href="Stoner.analysis.fitting.models.superconductivity.strijkers.html" />
+    <link rel="prev" title="rsj_noiseless" href="Stoner.analysis.fitting.models.superconductivity.rsj_noiseless.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.analysis.fitting.models.superconductivity.rsj_noiseless.html" title="Previous document">rsj_noiseless</a>
+        </li>
+        <li>
+          <a href="Stoner.analysis.fitting.models.superconductivity.strijkers.html" title="Next document">strijkers</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="../analysis-fitting.html">Additional Fitting models</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="rsj-simple">
+<h1>rsj_simple<a class="headerlink" href="#rsj-simple" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="Stoner.analysis.fitting.models.superconductivity.rsj_simple">
+<code class="sig-prename descclassname">Stoner.analysis.fitting.models.superconductivity.</code><code class="sig-name descname">rsj_simple</code><span class="sig-paren">(</span><em class="sig-param">I</em>, <em class="sig-param">Ic</em>, <em class="sig-param">Rn</em>, <em class="sig-param">V_offset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#rsj_simple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.rsj_simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements a simple noiseless symmetric RSJ model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>I</strong> (<em>array-like</em>) – Current values</p></li>
+<li><p><strong>Ic</strong> (<em>foat</em>) – Critical current</p></li>
+<li><p><strong>Rn</strong> (<em>float</em>) – Normal state resistance</p></li>
+<li><p><strong>V_offset</strong> (<em>float</em>) – Offset volage in measurement</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>(array)</em> –     Calculated volatages</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Impleemtns a simple form of the RSJ model for a Josephson Junction:</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}\)</span></p>
+</div></blockquote>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Fit IV data to various RSJ models</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">__home__</span>
+<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">RSJ_Noiseless</span><span class="p">,</span> <span class="n">RSJ_Simple</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;Fitting&quot;</span><span class="p">))</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="s2">&quot;data/IV.txt&quot;</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="s2">&quot;Current&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;Voltage&quot;</span><span class="p">})</span>
+
+<span class="c1"># Fit data with both versions of the RSJ model</span>
+<span class="n">data</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">RSJ_Simple</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Simple&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">RSJ_Noiseless</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Noiseless&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;noiseless&quot;</span><span class="p">)</span>
+
+<span class="c1"># Set column assignments and plot the data and fits</span>
+<span class="n">data</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="s2">&quot;Current&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Voltage&quot;</span><span class="p">,</span> <span class="s2">&quot;Simple&quot;</span><span class="p">,</span> <span class="s2">&quot;Noiseless&quot;</span><span class="p">]}</span>
+<span class="n">data</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r+&quot;</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">])</span>
+
+<span class="c1"># Annotate fits</span>
+<span class="n">data</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span>
+    <span class="n">RSJ_Simple</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span>
+<span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span>
+    <span class="n">RSJ_Noiseless</span><span class="p">,</span>
+    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;noiseless&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/Fitting/rsj_simple_func.png">png</a>, <a class="reference external" href="../samples/Fitting/rsj_simple_func.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/rsj_simple_func.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="../_images/rsj_simple_func.png" src="../_images/rsj_simple_func.png" />
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.rsj_noiseless.html"
+                        title="previous chapter">rsj_noiseless</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.strijkers.html"
+                        title="next chapter">strijkers</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.superconductivity.rsj_simple.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.analysis.fitting.models.superconductivity.rsj_noiseless.html" title="Previous document">rsj_noiseless</a>
+        </li>
+        <li>
+          <a href="Stoner.analysis.fitting.models.superconductivity.strijkers.html" title="Next document">strijkers</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="../analysis-fitting.html">Additional Fitting models</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.2.2
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

@@ -1,0 +1,6 @@
+nDimArrhenius
+=============
+
+.. currentmodule:: Stoner.analysis.fitting.models.thermal
+
+.. autofunction:: nDimArrhenius

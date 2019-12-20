@@ -1,0 +1,29 @@
+FluchsSondheimer
+================
+
+.. currentmodule:: Stoner.analysis.fitting.models.e_transport
+
+.. autoclass:: FluchsSondheimer
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~FluchsSondheimer.display_names
+      ~FluchsSondheimer.units
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~FluchsSondheimer.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+   .. autoattribute:: units
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

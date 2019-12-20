@@ -1,0 +1,8 @@
+
+
+TDMSFile.to_pandas
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.to_pandas

@@ -1,0 +1,6 @@
+vftEquation
+===========
+
+.. currentmodule:: Stoner.analysis.fitting.models.thermal
+
+.. autofunction:: vftEquation

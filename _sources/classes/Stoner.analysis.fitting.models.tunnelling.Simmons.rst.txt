@@ -1,0 +1,27 @@
+Simmons
+=======
+
+.. currentmodule:: Stoner.analysis.fitting.models.tunnelling
+
+.. autoclass:: Simmons
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Simmons.display_names
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Simmons.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

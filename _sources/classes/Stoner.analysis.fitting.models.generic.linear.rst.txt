@@ -1,0 +1,6 @@
+linear
+======
+
+.. currentmodule:: Stoner.analysis.fitting.models.generic
+
+.. autofunction:: linear

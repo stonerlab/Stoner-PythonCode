@@ -1,0 +1,7 @@
+Quadratic
+=========
+
+.. currentmodule:: Stoner.analysis.fitting.models.generic
+
+.. autoclass:: Quadratic
+   :show-inheritance:

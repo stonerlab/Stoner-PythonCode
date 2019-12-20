@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -58,14 +59,11 @@
 <h1>ImageFolder.compress<a class="headerlink" href="#imagefolder-compress" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Image.ImageFolder.compress">
-<code class="sig-prename descclassname">ImageFolder.</code><code class="sig-name descname">compress</code><span class="sig-paren">(</span><em class="sig-param">base=None</em>, <em class="sig-param">key='.'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageFolder.compress" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ImageFolder.</code><code class="sig-name descname">compress</code><span class="sig-paren">(</span><em class="sig-param">base=None</em>, <em class="sig-param">key='.'</em>, <em class="sig-param">keep_terminal=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageFolder.compress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compresses all empty groups from the root up until the first non-empty group is located.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
-<dd class="field-odd"><p><strong>)</strong> (<a class="reference internal" href="Stoner.Image.ImageStack.html#Stoner.Image.ImageStack.depth" title="Stoner.Image.ImageStack.depth"><em>depth</em></a>) – Only flatten ub-groups that are within (<em>depth</em> of the deepest level.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A copy of the now flattened DatFolder</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A copy of the now flattened DatFolder</p>
 </dd>
 </dl>
 </dd></dl>
@@ -130,9 +128,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

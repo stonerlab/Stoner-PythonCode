@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="_static/better.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
@@ -66,12 +67,12 @@ API Reference guide. The <a class="reference external" href="http://www.github.c
 <div class="section" id="getting-this-code">
 <h2>Getting this Code<a class="headerlink" href="#getting-this-code" title="Permalink to this headline">¶</a></h2>
 <a class="reference external image-reference" href="https://www.youtube.com/watch?v=uZ_yKs11W18"><img alt="Introduction and Installation Guide to Stoner Pythin Package" src="https://i.imgur.com/h4mWwM0.png" style="width: 320px;" /></a>
-<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.5, h5py, lmfit,Pillow  and has a number of optional dependencies
-on blist, filemagic, npTDMS, imreg_dft and numba.</p>
+<p>The <em>Stoner</em> package requires h5py&gt;=2.7.0, lmfit&gt;=0.9.7, matplotlib&gt;=2.0,numpy&gt;=1.13, Pillow&gt;=4.0,
+scikit-image&gt;=0.13.0 &amp; scipy&gt;=1.0.0 and also optional depends on  filemagic, npTDMS, imreg_dft and numba.</p>
 <p>Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining
-dependencies are collected together in the phygbu repositry on anaconda cloud. The easiest way to install the Stoner package is,
-therefore, to install the most recent Anaconda Python distribution (Python 3.7, 3.6, 3.5 or 2.7 should work) and then to install
-the Stoner package via:</p>
+dependencies are collected together in the <strong>phygbu</strong> repositry on anaconda cloud. The easiest way to install the Stoner package is,
+therefore, to install the most recent Anaconda Python distribution (Python 3.7 or 3.6 (version &lt;=0.9.x are compatible
+with Python 2.7 and 3.5 as well), and then run:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>conda install -c phygbu Stoner
 </pre></div>
 </div>
@@ -82,8 +83,10 @@ the Stoner package via:</p>
 <p>This will install the Stoner package and any missing dependencies into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: <a class="reference external" href="https://github.com/stonerlab/Stoner-PythonCode">https://github.com/stonerlab/Stoner-PythonCode</a></p>
-<p>The codebase is compatible with Python 2.7 and Python 3.5+, at present we still develop primarily in Python 3.6 and 3.7  but test with
-2.7 as well. <em>NB</em> Python 3.7 is only supported in version 0.9x onwards and is known to not work with version 0.8.x.</p>
+<dl class="simple">
+<dt>The development codebase is compatible with, and tested under,  Python 3.6 and Python 3.7. Python 3.8 may well work,</dt><dd><p>although this is untested at present),</p>
+</dd>
+</dl>
 </div>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
@@ -102,26 +105,40 @@ file formats.</p>
 </div>
 <div class="section" id="datafolder">
 <h3>DataFolder<a class="headerlink" href="#datafolder" title="Permalink to this headline">¶</a></h3>
-<p><strong>Stoner.Folders.DataFolder</strong> is a class for assisting with the work of processing lots of files in a common directory
+<p><strong>Stoner.DataFolder</strong> is a class for assisting with the work of processing lots of files in a common directory
 structure. It provides methods to list. filter and group data according to filename patterns or metadata and then to execute
-a function on each file or group of files. A key feature of DataFolder is its ability to work with the collated metadata from
-the individual files that are held in the DataFolder. In combination with its ability to walk through a complete heirarchy of groups of
+a function on each file or group of files and then collect metadata from each file in turn. A key feature of DataFolder is
+its ability to work with the collated metadata from the individual files that are held in the DataFolder.
+In combination with its ability to walk through a complete heirarchy of groups of
 <strong>Data</strong> objects, the handling of the common metadata provides powerful tools for quickly writing data reduction scripts.</p>
-<p>The <strong>Stoner.HDF5</strong> module provides some experimental classes to manipulate <em>DataFile</em> and <em>DataFolder</em> objects within HDF5
-format files. These are not a way to handle arbitary HDF5 files - the format is much to complex and flexible to make that
-an easy task, rather it is a way to work with large numbers of experimental sets using just a single file which may be less
-brutal to your computer’s OS than having directory trees with millions of individual files. The module also provides some classes to
-support loading some other HDF5 flavoured files into a <strong>DataFile</strong>.</p>
+<p>The <strong>Stoner.HDF5</strong> module provides some additional classes to manipulate <em>Data</em> and <em>DataFolder</em> objects within HDF5
+format files. HDF5 is a common chouse for storing data from large scale facilties, although providing a way to handle
+arbitary HDF5 files is beyond the scope of this package at this time - the format is much too complex and flexible to make that
+an easy task. Rather it provides a way to work with large numbers of experimental sets using just a single file which may be less
+brutal to your computer’s OS than having directory trees with millions of individual files.</p>
+<p>The module also provides some classes to support loading some particular HDF5 flavoured files into a <strong>Data</strong> object.</p>
 <p>The <strong>Stoner.Zip</strong> module provides a similar set of classes to <strong>Stoner.HDF5</strong> but working with the ubiquitous zip compressed file format.</p>
 </div>
 <div class="section" id="image-subpackage">
 <h3>Image Subpackage<a class="headerlink" href="#image-subpackage" title="Permalink to this headline">¶</a></h3>
-<p>The <strong>Stoner.Image</strong> package is a new feature of recent versions of the package and provides dedicated classes for working with image data,
-and in particular for analysing Kerr Microscope image files. It provides an <strong>ImageFile</strong> class that is functionally similar to <strong>DataFile</strong>
-except that the numerical data is understood to represent image data and additional methods are incorporated to facilitate processing. The <strong>ImageFolder</strong>
-and <strong>ImageStack</strong> classes provide similar functionality to <strong>DataFolder</strong> but with additional methods specific to handling collections of images. <strong>ImageStack</strong>
-uses a 3D numpy array as it’s primary image store which permits faster access (at the expense of a larger memory footprint) than the lazy loading ordered
+<p>The <strong>Stoner.Image</strong> package is a feature of recent versions of the package and provides dedicated classes for working with image data,
+and in particular for analysing Magnetic microscopy files such as Kerr Microscope image files or Scanning transmission microscopy files.</p>
+<blockquote>
+<div><p>It provides an <strong>ImageFile</strong> class that is functionally similar to <strong>Data</strong> except that the numerical data is understood to represent
+image data and additional methods are incorporated to facilitate processing. The <strong>ImageFolder</strong> and <strong>ImageStack</strong> classes
+provide similar functionality to <strong>DataFolder</strong> but with additional methods specific to handling collections of images. <strong>ImageStack</strong></p>
+</div></blockquote>
+<p>uses a 3D numpy array as it’s primary image store which permits faster access (at the expense of a larger memory footprint) than the lazy loading ordered
 dictionary of <strong>ImageFolder</strong></p>
+<p>The <strong>ImageFile</strong> class allows a direct interaction with many of the image routines in <em>scikit-image</em> and the <em>scipy.ndimage</em> modules -
+which when coupled with the ability of <strong>ImageFolder</strong> and <strong>ImageStack</strong> to iteratively process their <strong>ImageFile</strong> members
+can allow scripts to process large numbers of images to be written in only a few lines of code.</p>
+</div>
+<div class="section" id="multiprocessing">
+<h3>Multiprocessing<a class="headerlink" href="#multiprocessing" title="Permalink to this headline">¶</a></h3>
+<p>The <strong>DataFolder</strong> and <strong>ImageFolder/ImageStack</strong> classes will make use of the <em>multiprocessing</em> module when applying a function
+to their members for more efficient parallel processing of large numbers of data files. This is disabled by default on Windows
+due to the large overhead of starting multiple instances of the python interpreter.</p>
 </div>
 </div>
 <div class="section" id="resources">
@@ -135,7 +152,7 @@ for carrying out various operations and some sample data files for testing the l
 <p>The lead developer for this code is <a class="reference external" href="http://www.stoner.leeds.ac.uk/people/gb">Dr Gavin Burnell</a> &lt;<a class="reference external" href="mailto:g&#46;burnell&#37;&#52;&#48;leeds&#46;ac&#46;uk">g<span>&#46;</span>burnell<span>&#64;</span>leeds<span>&#46;</span>ac<span>&#46;</span>uk</a>&gt;, but many current and former members of the CM Physics group have
 contributed code, ideas and bug testing.</p>
 <p>The User Guide gives the current list of other contributors to the project.</p>
-<p>This code and the sample data are all (C) The University of Leeds 2008-2017 unless otherwise indficated in the source file.
+<p>This code and the sample data are all (C) The University of Leeds 2008-2020 unless otherwise indficated in the source file.
 The contents of this package are licensed under the terms of the GNU Public License v3</p>
 </div>
 <div class="section" id="recent-changes">
@@ -149,11 +166,20 @@ making beta packages available.</p>
 <h3>Development Version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h3>
 <p>The current development version is hosted in the master branch of the repository and will become version 0.10. There is no definitive list of
 features at this time. Better integration with pandas and xarray are under consideration as is depricating some of the less optimal parts of the api.</p>
+<p>New Features in 0.10-dev include:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Continued refactoring of code to break large monolithic classes and modules into smaller parts</p></li>
+<li><p>Refactoring the <strong>baseFolder</strong> class so that sub-groups are stored in an attribute that is an instance of a custom
+dictionary with methods to prune and filter in the virtual tree of sub-folders.</p></li>
+</ul>
+</div></blockquote>
 <div class="section" id="build-status">
 <h4>Build Status<a class="headerlink" href="#build-status" title="Permalink to this headline">¶</a></h4>
 <p>Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls.</p>
 <p>Version 0.9 is tested with Python 2.7, 3.5, 3.6,</p>
-<p>The development version - which will be 0.10 will be tested with Python 3.6 and Python 3.7 only until Python 3.8 becomes stable.</p>
+<p>The development version - which will be 0.10 will be tested with Python 3.6 and Python 3.7 only until Python 3.8 becomes stable in
+the anaconda envuronment.</p>
 </div>
 <div class="section" id="citing-the-stoner-package">
 <h4>Citing the Stoner Package<a class="headerlink" href="#citing-the-stoner-package" title="Permalink to this headline">¶</a></h4>
@@ -257,6 +283,7 @@ encourage any users to cite this package via that doi.</p>
 <li><a class="reference internal" href="#data-and-friends">Data and Friends</a></li>
 <li><a class="reference internal" href="#datafolder">DataFolder</a></li>
 <li><a class="reference internal" href="#image-subpackage">Image Subpackage</a></li>
+<li><a class="reference internal" href="#multiprocessing">Multiprocessing</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#resources">Resources</a></li>
@@ -313,9 +340,9 @@ encourage any users to cite this package via that doi.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

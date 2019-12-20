@@ -84,7 +84,9 @@ if __name__ == "__main__":
         f.x = -f.x[::-1]
         f.y = -f.y[::-1]
 
-    resfldr = PlotFolder()  # Somewhere to keep the results from +ve and -ve fields
+    resfldr = (
+        PlotFolder()
+    )  # Somewhere to keep the results from +ve and -ve fields
 
     for s in fldr.groups:  # Fit each FMR spectra
         subfldr = fldr[s]

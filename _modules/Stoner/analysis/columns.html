@@ -1,0 +1,602 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Stoner.analysis.columns &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../../../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../../Stoner.html">Stoner</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Stoner.analysis.columns</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Channel column operations functions for analysis code.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ColumnOps&quot;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">isiterable</span><span class="p">,</span> <span class="n">all_type</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">index_types</span>
+
+
+<span class="k">class</span> <span class="nc">ColumnOps</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional stats methods.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__get_math_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Utility routine to interpret col as either a column index or value or an array of values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            col (various):</span>
+<span class="sd">                If col can be interpreted as a column index then return the first matching column.</span>
+<span class="sd">                If col is a 1D array of the same length as the data then just return the data. If col is a</span>
+<span class="sd">                float then just return it as a float.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (tuple of (:py:class:`Stoner.cpre.DataArray`,str)):</span>
+<span class="sd">                The matching data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">index_types</span><span class="p">):</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">col</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">col</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Bad column index: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add one column, number or array (b) to another column (a).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            a (index):</span>
+<span class="sd">                First column to work with</span>
+<span class="sd">            b (index, float or 1D array):</span>
+<span class="sd">                Second column to work with.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            header (string or None):</span>
+<span class="sd">                new column header  (defaults to a-b</span>
+<span class="sd">            replace (bool):</span>
+<span class="sd">                Replace the a column with the new data</span>
+<span class="sd">            index (column index or None):</span>
+<span class="sd">                Column to insert new data at.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (:py:class:`Stoner.Data`):</span>
+<span class="sd">                The newly modified Data object.</span>
+
+<span class="sd">        If a and b are tuples of length two, then the firstelement is assumed to be the value and</span>
+<span class="sd">        the second element an uncertainty in the value. The uncertainties will then be propagated and an</span>
+<span class="sd">        additional column with the uncertainites will be added to the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="p">):</span>  <span class="c1"># Error columns on</span>
+            <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span> <span class="o">=</span> <span class="n">a</span>
+            <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">e2</span><span class="p">)</span> <span class="o">=</span> <span class="n">b</span>
+            <span class="n">e1data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">e1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">e2data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">e2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">err_header</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">err_calc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">adata</span><span class="p">,</span> <span class="n">bdata</span><span class="p">,</span> <span class="n">e1data</span><span class="p">,</span> <span class="n">e2data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">e1data</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">e2data</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">err_calc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">adata</span><span class="p">,</span> <span class="n">aname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">bdata</span><span class="p">,</span> <span class="n">bname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">header</span><span class="p">,</span> <span class="n">err_header</span> <span class="o">=</span> <span class="n">header</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">+</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aname</span><span class="p">,</span> <span class="n">bname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">err_header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_header</span> <span class="o">=</span> <span class="s2">&quot;Error in &quot;</span> <span class="o">+</span> <span class="n">header</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_data</span> <span class="o">=</span> <span class="n">err_calc</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">bdata</span><span class="p">,</span> <span class="n">e1data</span><span class="p">,</span> <span class="n">e2data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">((</span><span class="n">adata</span> <span class="o">+</span> <span class="n">bdata</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">err_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">err_header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">diffsum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate :math:`\frac{a-b}{a+b}` for the two columns *a* and *b*.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            a (index):</span>
+<span class="sd">                First column to work with</span>
+<span class="sd">            b (index, float or 1D array):</span>
+<span class="sd">                Second column to work with.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            header (string or None):</span>
+<span class="sd">                new column header  (defaults to a-b</span>
+<span class="sd">            replace (bool):</span>
+<span class="sd">                Replace the a column with the new data</span>
+<span class="sd">            index (column index or None):</span>
+<span class="sd">                Column to insert new data at.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (:py:class:`Stoner.Data`):</span>
+<span class="sd">                The newly modified Data object.</span>
+
+<span class="sd">        If a and b are tuples of length two, then the firstelement is assumed to be the value and</span>
+<span class="sd">        the second element an uncertainty in the value. The uncertainties will then be propagated and an</span>
+<span class="sd">        additional column with the uncertainites will be added to the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="p">):</span>  <span class="c1"># Error columns on</span>
+            <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span> <span class="o">=</span> <span class="n">a</span>
+            <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">e2</span><span class="p">)</span> <span class="o">=</span> <span class="n">b</span>
+            <span class="n">e1data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">e1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">e2data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">e2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">err_header</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">err_calc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">adata</span><span class="p">,</span> <span class="n">bdata</span><span class="p">,</span> <span class="n">e1data</span><span class="p">,</span> <span class="n">e2data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">adata</span> <span class="o">+</span> <span class="n">bdata</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">adata</span> <span class="o">-</span> <span class="n">bdata</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">adata</span> <span class="o">+</span> <span class="n">bdata</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">e1data</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">adata</span> <span class="o">+</span> <span class="n">bdata</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">adata</span> <span class="o">-</span> <span class="n">bdata</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">adata</span> <span class="o">+</span> <span class="n">bdata</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">e2data</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">err_calc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">adata</span><span class="p">,</span> <span class="n">aname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">bdata</span><span class="p">,</span> <span class="n">bname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">header</span><span class="p">,</span> <span class="n">err_header</span> <span class="o">=</span> <span class="n">header</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;(</span><span class="si">{}</span><span class="s2">-</span><span class="si">{}</span><span class="s2">)/(</span><span class="si">{}</span><span class="s2">+</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aname</span><span class="p">,</span> <span class="n">bname</span><span class="p">,</span> <span class="n">aname</span><span class="p">,</span> <span class="n">bname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">err_header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_header</span> <span class="o">=</span> <span class="s2">&quot;Error in &quot;</span> <span class="o">+</span> <span class="n">header</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_data</span> <span class="o">=</span> <span class="n">err_calc</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">bdata</span><span class="p">,</span> <span class="n">e1data</span><span class="p">,</span> <span class="n">e2data</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">((</span><span class="n">adata</span> <span class="o">-</span> <span class="n">bdata</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">adata</span> <span class="o">+</span> <span class="n">bdata</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">err_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">err_header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Divide one column (a) by  another column, number or array (b).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            a (index):</span>
+<span class="sd">                First column to work with</span>
+<span class="sd">            b (index, float or 1D array):</span>
+<span class="sd">                Second column to work with.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            header (string or None):</span>
+<span class="sd">                new column header  (defaults to a-b</span>
+<span class="sd">            replace (bool):</span>
+<span class="sd">                Replace the a column with the new data</span>
+<span class="sd">            index (column index or None):</span>
+<span class="sd">                Column to insert new data at.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (:py:class:`Stoner.Data`):</span>
+<span class="sd">                The newly modified Data object.</span>
+
+<span class="sd">        If a and b are tuples of length two, then the firstelement is assumed to be the value and</span>
+<span class="sd">        the second element an uncertainty in the value. The uncertainties will then be propagated and an</span>
+<span class="sd">        additional column with the uncertainites will be added to the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="p">):</span>  <span class="c1"># Error columns on</span>
+            <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span> <span class="o">=</span> <span class="n">a</span>
+            <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">e2</span><span class="p">)</span> <span class="o">=</span> <span class="n">b</span>
+            <span class="n">e1data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">e1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">e2data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">e2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">err_header</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">err_calc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">adata</span><span class="p">,</span> <span class="n">bdata</span><span class="p">,</span> <span class="n">e1data</span><span class="p">,</span> <span class="n">e2data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">e1data</span> <span class="o">/</span> <span class="n">adata</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">e2data</span> <span class="o">/</span> <span class="n">bdata</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">adata</span> <span class="o">/</span> <span class="n">bdata</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">err_calc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">adata</span><span class="p">,</span> <span class="n">aname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">bdata</span><span class="p">,</span> <span class="n">bname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">header</span><span class="p">,</span> <span class="n">err_header</span> <span class="o">=</span> <span class="n">header</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aname</span><span class="p">,</span> <span class="n">bname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">err_header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_header</span> <span class="o">=</span> <span class="s2">&quot;Error in &quot;</span> <span class="o">+</span> <span class="n">header</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_data</span> <span class="o">=</span> <span class="n">err_calc</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">bdata</span><span class="p">,</span> <span class="n">e1data</span><span class="p">,</span> <span class="n">e2data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">((</span><span class="n">adata</span> <span class="o">/</span> <span class="n">bdata</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">err_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">err_header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find maximum value and index in a column of data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column (index):</span>
+<span class="sd">                Column to look for the maximum in</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            bounds (callable):</span>
+<span class="sd">                A callable function that takes a single argument list of</span>
+<span class="sd">                numbers representing one row, and returns True for all rows to search in.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (float,int):</span>
+<span class="sd">                (maximum value,row index of max value)</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If column is not defined (or is None) the :py:attr:`DataFile.setas` column</span>
+<span class="sd">            assignments are used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="s2">&quot;ycol&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_push_mask</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_mask</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pop_mask</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find mean value of a data column.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column (index):</span>
+<span class="sd">                Column to look for the maximum in</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            sigma (column index or array):</span>
+<span class="sd">                The uncertainity noted for each value in the mean</span>
+<span class="sd">            bounds (callable):</span>
+<span class="sd">                A callable function that takes a single argument list of</span>
+<span class="sd">                numbers representing one row, and returns True for all rows to search in.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (float):</span>
+<span class="sd">                The mean of the data.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If column is not defined (or is None) the :py:attr:`DataFile.setas` column</span>
+<span class="sd">            assignments are used.</span>
+
+<span class="sd">        .. todo::</span>
+<span class="sd">            Fix the row index when the bounds function is used - see note of :py:meth:`AnalysisMixin.max`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_push_mask</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_mask</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">[</span><span class="s2">&quot;has_yerr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">_</span><span class="o">.</span><span class="n">has_yerr</span><span class="p">:</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_</span><span class="o">.</span><span class="n">has_yerr</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ydata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">]</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">ydata</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm</span><span class="p">,</span> <span class="n">error</span>
+        <span class="k">if</span> <span class="n">bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pop_mask</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">min</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find minimum value and index in a column of data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column (index):</span>
+<span class="sd">                Column to look for the maximum in</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            bounds (callable):</span>
+<span class="sd">                A callable function that takes a single argument list of</span>
+<span class="sd">                numbers representing one row, and returns True for all rows to search in.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (float,int):</span>
+<span class="sd">                (minimum value,row index of min value)</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If column is not defined (or is None) the :py:attr:`DataFile.setas` column</span>
+<span class="sd">            assignments are used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="s2">&quot;ycol&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_push_mask</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_mask</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pop_mask</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Multiply one column (a) by  another column, number or array (b).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            a (index):</span>
+<span class="sd">                First column to work with</span>
+<span class="sd">            b (index, float or 1D array):</span>
+<span class="sd">                Second column to work with.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            header (string or None):</span>
+<span class="sd">                new column header  (defaults to a-b</span>
+<span class="sd">            replace (bool):</span>
+<span class="sd">                Replace the a column with the new data</span>
+<span class="sd">            index (column index or None):</span>
+<span class="sd">                Column to insert new data at.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (:py:class:`Stoner.Data`):</span>
+<span class="sd">                The newly modified Data object.</span>
+
+<span class="sd">        If a and b are tuples of length two, then the firstelement is assumed to be the value and</span>
+<span class="sd">        the second element an uncertainty in the value. The uncertainties will then be propagated and an</span>
+<span class="sd">        additional column with the uncertainites will be added to the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="p">):</span>  <span class="c1"># Error columns on</span>
+            <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span> <span class="o">=</span> <span class="n">a</span>
+            <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">e2</span><span class="p">)</span> <span class="o">=</span> <span class="n">b</span>
+            <span class="n">e1data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">e1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">e2data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">e2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">err_header</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">err_calc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">adata</span><span class="p">,</span> <span class="n">bdata</span><span class="p">,</span> <span class="n">e1data</span><span class="p">,</span> <span class="n">e2data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">e1data</span> <span class="o">/</span> <span class="n">adata</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">e2data</span> <span class="o">/</span> <span class="n">bdata</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">adata</span> <span class="o">*</span> <span class="n">bdata</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">err_calc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">adata</span><span class="p">,</span> <span class="n">aname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">bdata</span><span class="p">,</span> <span class="n">bname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">header</span><span class="p">,</span> <span class="n">err_header</span> <span class="o">=</span> <span class="n">header</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">*</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aname</span><span class="p">,</span> <span class="n">bname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">err_header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_header</span> <span class="o">=</span> <span class="s2">&quot;Error in &quot;</span> <span class="o">+</span> <span class="n">header</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_data</span> <span class="o">=</span> <span class="n">err_calc</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">bdata</span><span class="p">,</span> <span class="n">e1data</span><span class="p">,</span> <span class="n">e2data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">((</span><span class="n">adata</span> <span class="o">*</span> <span class="n">bdata</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">err_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">err_header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">span</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a tuple of the maximum and minumum values within the given column and bounds by calling into</span>
+<span class="sd">        :py:meth:`AnalysisMixin.max` and :py:meth:`AnalysisMixin.min`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column (index):</span>
+<span class="sd">                Column to look for the maximum in</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            bounds (callable):</span>
+<span class="sd">                A callable function that takes a single argument list of</span>
+<span class="sd">                numbers representing one row, and returns True for all rows to search in.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (float,float):</span>
+<span class="sd">                A tuple of (min value, max value)</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If column is not defined (or is None) the :py:attr:`DataFile.setas` column</span>
+<span class="sd">            assignments are used.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find standard deviation value of a data column.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column (index):</span>
+<span class="sd">                Column to look for the maximum in</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            sigma (column index or array):</span>
+<span class="sd">                The uncertainity noted for each value in the mean</span>
+<span class="sd">            bounds (callable):</span>
+<span class="sd">                A callable function that takes a single argument list of</span>
+<span class="sd">                numbers representing one row, and returns True for all rows to search in.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (float):</span>
+<span class="sd">                The standard deviation of the data.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If column is not defined (or is None) the :py:attr:`DataFile.setas` column</span>
+<span class="sd">            assignments are used.</span>
+
+<span class="sd">        .. todo::</span>
+<span class="sd">            Fix the row index when the bounds function is used - see note of :py:meth:`AnalysisMixin.max`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_push_mask</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_mask</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">:</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+        <span class="n">ydata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">]</span>
+
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sigma</span> <span class="o">&lt;</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">weights</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">weights</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">ydata</span><span class="p">,</span> <span class="n">aweights</span><span class="o">=</span><span class="n">weights</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pop_mask</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">subtract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Subtract one column, number or array (b) from another column (a).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            a (index):</span>
+<span class="sd">                First column to work with</span>
+<span class="sd">            b (index, float or 1D array):</span>
+<span class="sd">                Second column to work with.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            header (string or None):</span>
+<span class="sd">                new column header  (defaults to a-b</span>
+<span class="sd">            replace (bool):</span>
+<span class="sd">                Replace the a column with the new data</span>
+<span class="sd">            index (column index or None):</span>
+<span class="sd">                Column to insert new data at.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (:py:class:`Stoner.Data`):</span>
+<span class="sd">                The newly modified Data object.</span>
+
+<span class="sd">        If a and b are tuples of length two, then the firstelement is assumed to be the value and</span>
+<span class="sd">        the second element an uncertainty in the value. The uncertainties will then be propagated and an</span>
+<span class="sd">        additional column with the uncertainites will be added to the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="p">):</span>  <span class="c1"># Error columns on</span>
+            <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span> <span class="o">=</span> <span class="n">a</span>
+            <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">e2</span><span class="p">)</span> <span class="o">=</span> <span class="n">b</span>
+            <span class="n">e1data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">e1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">e2data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">e2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">err_header</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">err_calc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">adata</span><span class="p">,</span> <span class="n">bdata</span><span class="p">,</span> <span class="n">e1data</span><span class="p">,</span> <span class="n">e2data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">e1data</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">e2data</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">err_calc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">adata</span><span class="p">,</span> <span class="n">aname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">bdata</span><span class="p">,</span> <span class="n">bname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_math_val</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">header</span><span class="p">,</span> <span class="n">err_header</span> <span class="o">=</span> <span class="n">header</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">-</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aname</span><span class="p">,</span> <span class="n">bname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">err_header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_header</span> <span class="o">=</span> <span class="s2">&quot;Error in &quot;</span> <span class="o">+</span> <span class="n">header</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_data</span> <span class="o">=</span> <span class="n">err_calc</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">bdata</span><span class="p">,</span> <span class="n">e1data</span><span class="p">,</span> <span class="n">e2data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">((</span><span class="n">adata</span> <span class="o">-</span> <span class="n">bdata</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">err_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">err_header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+<form class="search" action="../../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../../Stoner.html">Stoner</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.2.2
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

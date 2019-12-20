@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -89,7 +90,12 @@
 <span class="n">str_coeffs</span> <span class="o">=</span> <span class="p">[</span><span class="n">format_val</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">coeffs</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span>
 <span class="n">str_coeffs</span> <span class="o">=</span> <span class="n">reshape</span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="n">str_coeffs</span><span class="p">),</span> <span class="n">coeffs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">800</span><span class="p">,</span> <span class="s2">&quot;Coefficients</span><span class="se">\n</span><span class="s2">{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">str_coeffs</span><span class="p">),</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
+<span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+    <span class="o">-</span><span class="mi">6</span><span class="p">,</span>
+    <span class="o">-</span><span class="mi">800</span><span class="p">,</span>
+    <span class="s2">&quot;Coefficients</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">str_coeffs</span><span class="p">),</span>
+    <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">},</span>
+<span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;Data&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Decompose Example&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
@@ -161,9 +167,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

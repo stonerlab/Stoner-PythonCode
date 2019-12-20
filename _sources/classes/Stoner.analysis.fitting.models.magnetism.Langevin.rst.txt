@@ -1,0 +1,17 @@
+Langevin
+========
+
+.. currentmodule:: Stoner.analysis.fitting.models.magnetism
+
+.. autoclass:: Langevin
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Langevin.guess
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

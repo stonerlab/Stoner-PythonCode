@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -72,7 +73,8 @@
 <li><p><strong>overlap</strong> (<em>tuple of</em><em> (</em><em>lower</em><em>,</em><em>higher</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The band of x values that are used in both data sets to match,
 if left as None, thenthe common overlap of the x data is used.</p></li>
 <li><p><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – If you know that overlap must be bigger than a certain amount, the bounds between the two
-data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.</p></li>
+data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap
+on this DataFile.</p></li>
 <li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</p></li>
 <li><p><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – a stitching function that transforms <span class="math notranslate nohighlight">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
 functions defined by <em>mode</em></p></li>
@@ -84,8 +86,8 @@ functions defined by <em>mode</em></p></li>
 </dd>
 </dl>
 <p>To stitch the data together, the x and y data in the current data file is transforms so that
-<span class="math notranslate nohighlight">\(x'=x+A\)</span> and <span class="math notranslate nohighlight">\(y'=By+C\)</span> where <span class="math notranslate nohighlight">\(A,B,C\)</span> are constants and <span class="math notranslate nohighlight">\((x',y')\)</span> are close matches to the
-<span class="math notranslate nohighlight">\((x,y)\)</span> data in <em>other</em>. The algorithm assumes that the overlap region contains equal
+<span class="math notranslate nohighlight">\(x'=x+A\)</span> and <span class="math notranslate nohighlight">\(y'=By+C\)</span> where <span class="math notranslate nohighlight">\(A,B,C\)</span> are constants and <span class="math notranslate nohighlight">\((x',y')\)</span> are close matches
+to the <span class="math notranslate nohighlight">\((x,y)\)</span> data in <em>other</em>. The algorithm assumes that the overlap region contains equal
 numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <em>mode</em> controls whether A,B, and C are fixed or adjustable</p>
 <blockquote>
 <div><ul class="simple">
@@ -164,9 +166,9 @@ numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <e
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

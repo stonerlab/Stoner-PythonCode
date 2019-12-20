@@ -1,0 +1,6 @@
+fowlerNordheim
+==============
+
+.. currentmodule:: Stoner.analysis.fitting.models.tunnelling
+
+.. autofunction:: fowlerNordheim

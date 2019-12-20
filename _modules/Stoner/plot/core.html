@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -53,11 +54,11 @@
 <span class="sd">Classes:</span>
 <span class="sd">    PlotMixin - A class that uses matplotlib to plot data</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PlotMixin&quot;</span><span class="p">,</span> <span class="s2">&quot;hsl2rgb&quot;</span><span class="p">]</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">index_types</span><span class="p">,</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">getargspec</span>
-<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">index_types</span><span class="p">,</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">getargspec</span>
+<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">_attribute_store</span><span class="p">,</span>
     <span class="n">isNone</span><span class="p">,</span>
     <span class="n">isAnyNone</span><span class="p">,</span>
@@ -67,22 +68,22 @@
     <span class="n">get_option</span><span class="p">,</span>
     <span class="n">fix_signature</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.formats</span> <span class="k">import</span> <span class="n">DefaultPlotStyle</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">errorfill</span>
+<span class="kn">from</span> <span class="nn">.formats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">errorfill</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
-<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">griddata</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">griddata</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">figure</span> <span class="k">as</span> <span class="n">mplfig</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">cm</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">figure</span> <span class="k">as</span> <span class="n">mplfig</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
 
 <span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">colorsys</span> <span class="k">import</span> <span class="n">hls_to_rgb</span>
-<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">colorsys</span> <span class="kn">import</span> <span class="n">hls_to_rgb</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span> <span class="ow">and</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Darwin&quot;</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">matplotlib</span>
@@ -90,8 +91,8 @@
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;MacOSX&quot;</span><span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>  <span class="c1"># Check we&#39;ve got 3D plotting</span>
-    <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="k">import</span> <span class="n">Axes3D</span>  <span class="c1"># pylint: disable=unused-import</span>
-    <span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="k">import</span> <span class="n">host_subplot</span><span class="p">,</span> <span class="n">inset_locator</span>  <span class="c1"># pylint: disable=unused-import</span>
+    <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>  <span class="c1"># pylint: disable=unused-import</span>
+    <span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="kn">import</span> <span class="n">host_subplot</span><span class="p">,</span> <span class="n">inset_locator</span>  <span class="c1"># pylint: disable=unused-import</span>
     <span class="kn">import</span> <span class="nn">mpl_toolkits.axisartist</span> <span class="k">as</span> <span class="nn">AA</span>  <span class="c1"># pylint: disable=unused-import</span>
 
     <span class="n">_3D</span> <span class="o">=</span> <span class="kc">True</span>
@@ -145,7 +146,7 @@
     <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">multiple</span> <span class="o">=</span> <span class="s2">&quot;common&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>  <span class="c1"># Do the import of plt here to speed module load</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>  <span class="c1"># Do the import of plt here to speed module load</span>
         <span class="sd">&quot;&quot;&quot;Constructor of \b PlotMixin class. Imports plt and then calls the parent constructor.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -398,7 +399,7 @@
 <span class="sd">            An mlab figure reference.</span>
 <span class="sd">            &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">mayavi</span> <span class="k">import</span> <span class="n">mlab</span>  <span class="c1"># might not work !</span>
+            <span class="kn">from</span> <span class="nn">mayavi</span> <span class="kn">import</span> <span class="n">mlab</span>  <span class="c1"># might not work !</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="s2">&quot;scalars&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
@@ -435,7 +436,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Handles the local attributes as well as the inherited ones.&quot;&quot;&quot;</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="nb">dir</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__dir__</span><span class="p">())</span>
@@ -533,7 +534,7 @@
         <span class="k">if</span> <span class="s2">&quot;save_filename&quot;</span> <span class="ow">in</span> <span class="n">kargs</span> <span class="ow">and</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;save_filename&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;save_filename&quot;</span><span class="p">]))</span>
 
-    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Attribute accessor.</span>
 
 <span class="sd">        Args:</span>
@@ -623,7 +624,7 @@
 
         <span class="k">return</span> <span class="n">fix_signature</span><span class="p">(</span><span class="n">_proxy</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the specified attribute.</span>
 
 <span class="sd">        Args:</span>
@@ -1538,7 +1539,7 @@
 <span class="sd">                A mayavi scene instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">mayavi</span> <span class="k">import</span> <span class="n">mlab</span><span class="p">,</span> <span class="n">core</span>
+            <span class="kn">from</span> <span class="nn">mayavi</span> <span class="kn">import</span> <span class="n">mlab</span><span class="p">,</span> <span class="n">core</span>
 
             <span class="n">mlab</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
             <span class="n">mayavi</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1873,9 +1874,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

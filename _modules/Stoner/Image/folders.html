@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -48,12 +49,12 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Implements a baseFolder type structure for working with collections of images.&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_generator&quot;</span><span class="p">,</span> <span class="s2">&quot;ImageFolderMixin&quot;</span><span class="p">,</span> <span class="s2">&quot;ImageFolder&quot;</span><span class="p">]</span>
-<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">ImageArray</span>
-<span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="k">import</span> <span class="n">DiskBasedFolder</span><span class="p">,</span> <span class="n">baseFolder</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span>
-<span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">ImageFile</span>
+<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">ImageArray</span>
+<span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="kn">import</span> <span class="n">DiskBasedFolder</span><span class="p">,</span> <span class="n">baseFolder</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="kn">import</span> <span class="n">ImageFile</span>
 
-<span class="kn">from</span> <span class="nn">skimage.viewer</span> <span class="k">import</span> <span class="n">CollectionViewer</span>
+<span class="kn">from</span> <span class="nn">skimage.viewer</span> <span class="kn">import</span> <span class="n">CollectionViewer</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
@@ -67,7 +68,7 @@
 
     <span class="sd">&quot;&quot;&quot;A helper class to iterator over ImageFolder yet remember it&#39;s own length.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fldr</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fldr</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialise the generator object.</span>
 
 <span class="sd">        Args:</span>
@@ -78,7 +79,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fldr</span> <span class="o">=</span> <span class="n">fldr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fldr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the length of the iterator</span>
 
 <span class="sd">        Returns:</span>
@@ -87,7 +88,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span>
 
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return an iterator object.</span>
 
 <span class="sd">        Returns:</span>
@@ -96,7 +97,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ix</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterator accessor.</span>
 
 <span class="sd">        Raises:</span>
@@ -112,7 +113,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">(</span><span class="s2">&quot;Finished iterating Folder.&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Item accessor method</span>
 
 <span class="sd">        Args:</span>
@@ -164,7 +165,7 @@
     <span class="n">_defaults</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">ImageArray</span><span class="p">,</span> <span class="s2">&quot;pattern&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;*.png&quot;</span><span class="p">,</span> <span class="s2">&quot;*.tiff&quot;</span><span class="p">,</span> <span class="s2">&quot;*.jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;*.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;*.tif&quot;</span><span class="p">]}</span>
     <span class="n">_no_defaults</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;flat&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;nitialise the ImageFolder.</span>
 
 <span class="sd">        Mostly a pass through to the :py:class:`Stoner.Folders.baseFolder` class.</span>
@@ -276,7 +277,7 @@
 
 <div class="viewcode-block" id="ImageFolderMixin.as_stack"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.as_stack">[docs]</a>    <span class="k">def</span> <span class="nf">as_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a ImageStack of the images in the current group.&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">ImageStack</span>
+        <span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="kn">import</span> <span class="n">ImageStack</span>
 
         <span class="n">k</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">k</span></div>
@@ -384,9 +385,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Oct 25, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.0
+      2.2.2
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 
