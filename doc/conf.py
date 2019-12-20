@@ -134,6 +134,10 @@ primary_domain = "py"
 # a list of builtin themes.
 html_theme = 'better'
 html_theme_path = [better_theme_path]
+
+html_css_files = [
+    'css/custom.css',
+]
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
