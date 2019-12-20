@@ -1,3 +1,5 @@
+.. _fitting-models:
+
 -------------------------
 Additional Fitting models
 -------------------------

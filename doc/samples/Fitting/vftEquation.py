@@ -48,7 +48,7 @@ d.annotate_fit(
 # reset the columns for the fit
 d.setas = "xye.."
 # Now do the odr fit (will overwrite lmfit's metadata)
-d.odr(VFTEquation, p0=p0)
+d.odr(VFTEquation, result=True)
 d.setas = "x4.y"
 
 # And plot and annotate
