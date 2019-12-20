@@ -79,6 +79,7 @@ Fitting Models
 ^^^^^^^^^^^^^^
 .. toctree::
     :maxdepth: 2
+    :name: models=toc
 
     Fitting Models <analysis-fitting>
 
