@@ -34,13 +34,14 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-__all__ = ["errorfill", "extrema_from_error_input", "fill_between", "fill_between_x"]
+__all__ = ["errorfill", "extrema_from_error_input", "fill_between", "fill_between_x", "hsl2rgb", "joy_division"]
 import warnings
 
 import numpy as np
 import matplotlib.pyplot as plt
 from Stoner.compat import mpl_version
 from distutils.version import LooseVersion
+from colorsys import hls_to_rgb
 
 __all__ = ["errorfill"]
 
@@ -157,6 +158,34 @@ def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
         kwargs["alpha"] = alpha * h
         ax.fill_betweenx(x, y1, y2, **kwargs)
     ax.add_patch(plt.Rectangle((0, 0), 0, 0, **kwargs))
+
+
+def hsl2rgb(h, s, l):
+    """Converts from hsl colourspace to rgb colour space with numpy arrays for speed.
+
+    Args:
+        h (array): Hue value
+        s (array): Saturation value
+        l (array): Luminence value
+
+    Returns:
+        2D array (Mx3) of unsigned 8bit integers
+    """
+    if isinstance(h, float):
+        h = np.array([h])
+    if isinstance(s, float):
+        s = np.array([s])
+    if isinstance(l, float):
+        l = np.array([l])
+
+    if h.shape != l.shape or h.shape != s.shape:
+        raise RuntimeError("Must have equal shaped arrays for h, s and l")
+
+    rgb = np.zeros((len(h), 3))
+    hls = np.column_stack([h, l, s])
+    for i in range(len(h)):
+        rgb[i, :] = np.array(hls_to_rgb(*hls[i]))
+    return (255 * rgb).astype("u1")
 
 
 def joy_division(x, y, z, **kargs):
