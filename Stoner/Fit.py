@@ -66,7 +66,7 @@ __all__ = [
 
 from warnings import warn
 
-from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini, make_model, _get_model_
+from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini, make_model
 
 from Stoner.analysis.fitting.models.generic import (
     Linear,

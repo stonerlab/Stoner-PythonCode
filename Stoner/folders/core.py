@@ -435,10 +435,12 @@ class baseFolder(MutableSequence):
 
     @property
     def setas(self):
+        """Return the proxy for the setas attribute for each object in the folder."""
         return self.each.setas
 
     @setas.setter
     def setas(self, value):
+        """Set a value to the proxy setas object for each item in the folder."""
         self.each.setas = value
 
     @property

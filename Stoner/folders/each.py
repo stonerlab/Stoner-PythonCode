@@ -46,8 +46,8 @@ class setas_wrapper(MutableSequence):
 
     def __call__(self, *args, **kargs):
         """Simple pass through the calls the setas method of each item in our folder."""
-        for object in self._folder:
-            object.setas(*args, **kargs)
+        for obj in self._folder:
+            obj.setas(*args, **kargs)
         return self._folder
 
     def __len__(self):
@@ -72,7 +72,7 @@ class setas_wrapper(MutableSequence):
         for data in self._folder:
             data.setas[index] = "."
 
-    def insert(self, index, iobject):
+    def insert(self, index, value):
         """Cannot insert items into the proxy setas object."""
         raise IndexError("Cannot insert into the objectFolder's setas - insdert into the objectFolder instead!")
 

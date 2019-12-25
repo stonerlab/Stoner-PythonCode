@@ -7,6 +7,10 @@ from Stoner import __home__, DataFolder, Data
 from Stoner.plot.formats import TexEngFormatter
 from Stoner.analysis.fitting.models.generic import Quadratic
 
+from Stoner import Options
+
+Options.multiprocessing = False
+
 # Set up the directory with our data
 datafiles = join(__home__, "..", "sample-data", "NLIV")
 

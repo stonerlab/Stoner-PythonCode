@@ -650,8 +650,6 @@ class PlotMethodsMixin(object):
         plts = min(plts, len(self))
 
         if not hasattr(self.type, "plot"):  # switch the objects to being Stoner.Data instances
-            from Stoner import Data
-
             for i, d in enumerate(self):
                 self[i] = Data(d)
 
