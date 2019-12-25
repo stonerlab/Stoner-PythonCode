@@ -157,9 +157,9 @@ Manipulating the File List in a Folder
 --------------------------------------
 
 The  :py:meth:`DataFolder.flatten` method will do the same as passing the *flat* keyword argument when creating the Lpy:class:`DataFolder` - although
-the search for folders on disk is recursive, the resulting :py:class:`DataFolder` contains a flat list of files. 
+the search for folders on disk is recursive, the resulting :py:class:`DataFolder` contains a flat list of files.
 
-You can also use the :py:meth:`Stoner.folders.groups.GroupsDict.prune` - which is aliased as :py:meth:`DataFolder.prune` method to remove 
+You can also use the :py:meth:`Stoner.folders.groups.GroupsDict.prune` - which is aliased as :py:meth:`DataFolder.prune` method to remove
 groups (including nested  groups) that have no data files in them. If you supply a *name* keyword to the
 :py:meth:`Stoner.folders.groups.GroupsDict.prune` method it will instead remove any sub-folder with a matching name (and all sub-folders within it):
 
@@ -231,7 +231,7 @@ parameter. For example,
 
 The :py:meth:`Stoner.folders.groups.GroupsDict.compress` is useful when a :py:class:`DataFolder` contains a chain of sub-folers that have only one sub-folder in them - as can
 result when reading one specific directory from a deep directory tree. The :py:meth:`DataFolder.compress` method adjusts the virtual tree so that the
-root group is at the first level that contains more than just a single sub-folder.::
+root group is at the first level that contains more than just a single sub-folder.
 
 ::
 
@@ -472,11 +472,11 @@ of )oif *values_only* is True, just a list, but the *output* parameter can chang
     -   "smart"
 
         switch between dict and list depending whether there is one or more keys.
-        
-The :py:meth:`combined_metadata_proxy.slice` will search for matching etadata names by string - including using *glob* patterns - 
+
+The :py:meth:`combined_metadata_proxy.slice` will search for matching etadata names by string - including using *glob* patterns -
 
 **root.metadata.slice("Model:*")** will return all metadata items in all files in the DataFolder that start with 'Model:'. Since one of the
-common uses of DatFolder is to fit a series of data files with a model, the :py:meth:`combined_metadata_proxy.slice` will also accept a 
+common uses of DatFolder is to fit a series of data files with a model, the :py:meth:`combined_metadata_proxy.slice` will also accept a
 :py:class:`lmfit.Model` and will use it to pull the fitting parameters after using a :py:meth:`Stoner.DataFolder.curve_fit` or similar method.:
 
     from Stoner.analysis.fitting.models.generic import Gaussian

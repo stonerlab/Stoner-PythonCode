@@ -1,6 +1,6 @@
 """Example of Arrhenius Fit."""
 from Stoner import Data
-from Stoner.Fit import vftEquation, VFTEquation
+from Stoner.analysis.fitting.models.thermal import vftEquation, VFTEquation
 from numpy import logspace, log10
 from numpy.random import normal
 

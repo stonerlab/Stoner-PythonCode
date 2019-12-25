@@ -1,16 +1,19 @@
 """Demo of Fitting a directory of files
 """
 from os.path import join
+from matplotlib.pyplot import figure
 
 from Stoner import __home__, DataFolder, Data
 from Stoner.plot.formats import TexEngFormatter
-from Stoner.Fit import Quadratic
+from Stoner.analysis.fitting.models.generic import Quadratic
 
 # Set up the directory with our data
 datafiles = join(__home__, "..", "sample-data", "NLIV")
 
 # DataFolder of our data files
-fldr = DataFolder(datafiles, pattern="*.txt", setas="yx.")
+fldr = DataFolder(datafiles, pattern="*.txt").sort("y")
+
+fldr.setas = "yx"
 
 # Another Data object to keep the results in
 result = Data()
@@ -30,19 +33,20 @@ result.template.xformatter = TexEngFormatter
 result.template.yformatter = TexEngFormatter
 
 # Plot
-result.plot(fmt="k.")
+result.plot(fmt="k.", capsize=2)
 
 # An alternative way to run the Analysis - this time with
 # an orthogonal didstance regression algorithm
 
 # Run the fitt for each file in the fldr. Set the outpout to "data" to
 # Have the amended results replace the existing data files
-fldr.each.odr(Quadratic, output="data")
+fldr.each.odr(Quadratic, output="data", result=True, header="fit")
+fig = figure()
+fldr.setas = "yx.y"
+fldr.each.plot(fmt=["+", "-"], label="Field = {y}mT", figure=fig)
 # Now take a slice through the metadata to get the files we want.
-result_2 = fldr.metadata.slice(
-    ["y", "Quadratic:b", "Quadratic:b err"], output="Data"
-)
+result_2 = fldr.metadata.slice(["y", Quadratic], output="Data")
 
 # Set the columns assignments and plot
-result_2.setas = "xye"
-result_2.plot(fmt="r.", figure=result.fig)
+result_2.setas = "x..ye"
+result_2.plot(fmt="r.", figure=result.fig, capsize=2)

@@ -4,7 +4,8 @@
 magic attribute.
 """
 __all__ = ["item"]
-import numpy as _np_
+import numpy as np
+from collections import MutableSequence
 from functools import wraps, partial
 from traceback import format_exc
 from .utils import get_pool
@@ -34,6 +35,48 @@ def _worker(d, **kwargs):
     return (d, ret)
 
 
+class setas_wrapper(MutableSequence):
+
+    """This class manages wrapping each member of the folder's setas attribute."""
+
+    def __init__(self, parent):
+        """Note a reference to the parent item class instance and folder."""
+        self._each = parent
+        self._folder = parent._folder
+
+    def __call__(self, *args, **kargs):
+        """Simple pass through the calls the setas method of each item in our folder."""
+        for object in self._folder:
+            object.setas(*args, **kargs)
+        return self._folder
+
+    def __len__(self):
+        """Return the lengths of all the setas elements in the folder (or a sclar if all the same)"""
+        lengths = np.array([len(data.setas) for data in self._folder])
+        if len(np.unique(lengths)) == 1:
+            return lengths[0]
+        else:
+            return lengths.tolist()
+
+    def __getitem__(self, index):
+        """Get the corresponding item from all the setas items in the folder."""
+        return [data.setas[index] for data in self._folder]
+
+    def __setitem__(self, index, value):
+        """Set the value of the specified item on the setas elements in the folder."""
+        for data in self._folder:
+            data.setas[index] = value
+
+    def __delitem__(self, index):
+        """Cannot delete items from the proxy setas object - so simply clear it instead."""
+        for data in self._folder:
+            data.setas[index] = "."
+
+    def insert(self, index, iobject):
+        """Cannot insert items into the proxy setas object."""
+        raise IndexError("Cannot insert into the objectFolder's setas - insdert into the objectFolder instead!")
+
+
 class item(object):
 
     """Provides a proxy object for accessing methods on the inividual members of a Folder.
@@ -49,6 +92,16 @@ class item(object):
     def __init__(self, folder):
 
         self._folder = folder
+
+    @property
+    def setas(self):
+        """Return a proxy object for manipulating all the setas objects in a folder."""
+        return setas_wrapper(self)
+
+    @setas.setter
+    def setas(self, value):
+        """Manipualte the setas property of all the objects in the folder."""
+        return self.setas(value)
 
     def __call__(self, func, *args, **kargs):
         """Iterate over the baseFolder, calling func on each item.
@@ -110,7 +163,7 @@ class item(object):
                 elif len(self._folder):
                     ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
                     mask, values = zip(*ret)
-                    ret = _np_.ma.MaskedArray(values)
+                    ret = np.ma.MaskedArray(values)
                     ret.mask = mask
                 else:
                     ret = getattr(instance, name, None)
@@ -122,7 +175,7 @@ class item(object):
             if len(self._folder) and hasattr(self._folder[0], name):
                 ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
                 mask, values = zip(*ret)
-                ret = _np_.ma.MaskedArray(values)
+                ret = np.ma.MaskedArray(values)
                 ret.mask = mask
             else:
                 raise err

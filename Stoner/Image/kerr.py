@@ -8,11 +8,11 @@ Derivatives of ImageArray and ImageStack specific to processing Kerr images.
 """
 __all__ = ["KerrArray", "KerrStack", "MaskStack"]
 
-from Stoner import Data
 from Stoner.Core import typeHintedDict
 from Stoner.Image import ImageArray, ImageStack, ImageFile
 from Stoner.core.exceptions import assertion, StonerAssertionError
 from Stoner.compat import which
+from Stoner.core.data import Data
 import numpy as np
 import os
 import subprocess
@@ -407,6 +407,9 @@ class KerrStackMixin(object):
             list of applied fields in stack. This is the most important metadata
             for things like hysteresis.
     """
+
+    def __init__(self, *args, **kargs):
+        super(KerrStackMixin, self).__init__(*args, **kargs)
 
     @property
     def fields(self):

@@ -145,7 +145,7 @@ Facility Outputs
     RasorFile
     SNSFile
 
-.. automodapi:: Stoner.Fit
+.. automodapi:: Stoner.analysis.fitting
     :no-inheritance-diagram:
 
 

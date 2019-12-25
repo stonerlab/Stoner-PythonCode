@@ -21,6 +21,8 @@ from Stoner.core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder, __add_core__ as _base__add_core__, __sub_core__ as _base__sub_core__
 from .utils import scan_dir, discard_earlier, filter_files, get_pool, removeDisallowedFilenameChars
 from Stoner.core.exceptions import assertion
+from Stoner.core.data import Data
+
 
 regexp_type = (_pattern_type,)
 
@@ -104,7 +106,6 @@ class DiskBasedFolder(object):
 
     def __init__(self, *args, **kargs):
         """Additional constructor for DiskbasedFolders"""
-        from Stoner import Data
 
         _ = self.defaults  # Force the default store to be populated.
         if "directory" in self._default_store and self._default_store["directory"] is None:
@@ -694,3 +695,25 @@ class PlotMethodsMixin(object):
             extra(i, j, d)
         tight_layout()
         return ret
+
+
+class DataFolder(DataMethodsMixin, DiskBasedFolder, baseFolder):
+
+    """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
+
+    By default, the members of the DataFolder are isntances of :class:`Stoner.Data`. The DataFolder emplys a lazy
+    open strategy, so that files are only read in from disc when actually needed.
+
+    .. inheritance-diagram:: DataFolder
+
+    """
+
+    def __init__(self, *args, **kargs):
+
+        self.type = kargs.pop("type", Data)
+        super(DataFolder, self).__init__(*args, **kargs)
+
+
+class PlotFolder(PlotMethodsMixin, DataFolder):
+
+    """A :py:class:`Stoner.folders.baseFolder` that knows how to ploth its underlying data files."""

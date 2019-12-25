@@ -305,7 +305,7 @@ def hysteresis_correct(data, **kargs):
             Hc_err[i] = sem(hc)
 
         if h_sat_method == "linear_intercept":
-            from Stoner.Fit import Linear
+            from Stoner.analysis.fitting.models.generic import Linear
 
             # Fit a striaght line to the central fraction of the data
             if i == 1:

@@ -260,7 +260,7 @@ class VFTEquation(Model):
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
     a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
 
-    See :py:func:`Stoner.Fit.vftEquation` for an example.
+    See :py:func:`vftEquation` for an example.
 
     Example:
         .. plot:: samples/Fitting/vftEquation.py

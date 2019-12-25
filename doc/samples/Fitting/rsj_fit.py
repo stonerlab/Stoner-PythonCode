@@ -5,7 +5,10 @@ Fit IV data to various RSJ models
 """
 
 from Stoner import Data, __home__
-from Stoner.Fit import RSJ_Noiseless, RSJ_Simple
+from Stoner.analysis.fitting.models.superconductivity import (
+    RSJ_Noiseless,
+    RSJ_Simple,
+)
 
 import os
 

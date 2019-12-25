@@ -146,30 +146,42 @@ class baseFolder(MutableSequence):
     """A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.
 
     Attributes:
-        groups(regexpDict): A dictionary of similar baseFolder instances
+        groups(GroupsDict): A dictionary of similar baseFolder instances
         objects(regexptDict): A dictionary of metadataObjects
-        _index(list): An index of the keys associated with objects
         _defaults (dict): A dictionary of default balues for the constructor of the class when combined with mixin classes
         _no_defaults (list): A list of default parameters to veto when setting the constructor.
 
     Properties:
-        depth (int): The maximum number of levels of nested groups in the folder
-        files (list of str or metadataObject): the indivdual objects or their names if they are not loaded
-        instance (metadataObject): an empty instance of the data type stored in the folder
-        loaded (generator of (str name, metadataObject value): iterate over only the loaded into memory items of the folder
-        ls (list of str): the names of the objects in the folder, loaded or not
-        lsgrp (list of str): the names of all the groups in the folder
-        mindepth (int): the minimum level of nesting groups in the folder.
-        not_empty (iterator of metadaaObject): iterates over all members of the folder that have non-zero length
-        shape (tuple): a data structure that indicates the structure of the objectFolder - tuple of number of files and dictionary of the shape of each group.
-        type (subclass of metadtaObject): the class of objects sotred in this folder
+        depth (int):
+            The maximum number of levels of nested groups in the folder
+        files (list of str or metadataObject):
+            The indivdual objects or their names if they are not loaded
+        instance (metadataObject):
+            An empty instance of the data type stored in the folder
+        loaded (generator of (str name, metadataObject value):
+            Iterate over only the loaded into memory items of the folder
+        ls (list of str):
+            The names of the objects in the folder, loaded or not
+        lsgrp (list of str):
+            The names of all the groups in the folder
+        mindepth (int):
+            Fhe minimum level of nesting groups in the folder.
+        not_empty (iterator of metadaaObject):
+            Iterates over all members of the folder that have non-zero length
+        shape (tuple):
+            A data structure that indicates the structure of the objectFolder - tuple of number of files and
+            dictionary of the shape of each group.
+        type (subclass of metadtaObject):
+            The class of objects sotred in this folder
 
     Notes:
-        A baseFolder is a multable sequence object that should store a mapping of instances of some sort of data object (typically a
-        :py:class:`Stoner.Core.metadataobject`) which can be iterated over in a reproducible and predicatable way as well as being accessed by a key. The
-        other requirement is that it stores a mapping to objects of its own type to allow an in-memory tree object to be constructed.
+        A baseFolder is a multable sequence object that should store a mapping of instances of some sort of data
+        object (typically a :py:class:`Stoner.Core.metadataobject`) which can be iterated over in a reproducible and
+        predicatable way as well as being accessed by a key. The other requirement is that it stores a mapping to
+        objects of its own type to allow an in-memory tree object to be constructed.
 
-        Additional functionality is built in by providing mixin classes that override the accessors for the data object store. Minimally this should include
+        Additional functionality is built in by providing mixin classes that override the accessors for the data
+        object store. Minimally this should include
 
         - __lookup__ take a keyname and return a canonical accessor key
         - __names__ returns the ordered list of mapping keys to the object store
@@ -189,7 +201,8 @@ class baseFolder(MutableSequence):
     def __new__(cls, *args, **kargs):
         """The __new__ method is used to create the underlying storage attributes.
 
-        We do this in __new__ so that the mixin classes can access baseFolders state storage before baseFolder does further __init__() work.
+        We do this in __new__ so that the mixin classes can access baseFolders state storage before baseFolder does
+        further __init__() work.
         """
         self = super(baseFolder, cls).__new__(cls)
         self._debug = kargs.pop("debug", False)
@@ -286,7 +299,8 @@ class baseFolder(MutableSequence):
 
     @property
     def each(self):
-        """Return a :py:class:`Stoner.folders.each.item` proxy object for calling attributes of the member type of the folder."""
+        """Return a :py:class:`Stoner.folders.each.item` proxy object for calling attributes of the member type of
+        the folder."""
         return each_item(self)
 
     @property
@@ -341,7 +355,8 @@ class baseFolder(MutableSequence):
 
     @property
     def loaded(self):
-        """An iterator that indicates wether the contents of the :py:class:`Stoner.Folders.objectFolder` has been loaded into memory."""
+        """An iterator that indicates wether the contents of the :py:class:`Stoner.Folders.objectFolder` has been
+        loaded into memory."""
         for f in self.__names__():
             val = self.__getter__(f, instantiate=None)
             if isinstance(val, self.type):
@@ -374,7 +389,8 @@ class baseFolder(MutableSequence):
 
     @property
     def metadata(self):
-        """Returns a :py:class:`Stoner.folders.metadata.combined_metadata_pryx` object for operations on combined metadata."""
+        """Returns a :py:class:`Stoner.folders.metadata.combined_metadata_pryx` object for operations on combined
+        metadata."""
         return combined_metadata_proxy(self)
 
     @property
@@ -416,6 +432,14 @@ class baseFolder(MutableSequence):
             self._objects = regexpDict(value)
         else:
             self._objects = value
+
+    @property
+    def setas(self):
+        return self.each.setas
+
+    @setas.setter
+    def setas(self, value):
+        self.each.setas = value
 
     @property
     def shape(self):
@@ -491,14 +515,17 @@ class baseFolder(MutableSequence):
                 the baseFolder class uses a :py:class:`regexpDict` to store objects in.
 
         Keyword Arguments:
-            instatiate (bool): If True (default) then always return a metadataObject. If False,
-                the __getter__ method may return a key that can be used by it later to actually get the
-                metadataObject. If None, then will return whatever is held in the object cache, either instance or name.
+            instatiate (bool):
+                If True (default) then always return a metadataObject. If False, the __getter__ method may return a
+                key that can be used by it later to actually get the metadataObject. If None, then will return
+                whatever is held in the object cache, either instance
+                or name.
 
         Returns:
-            (metadataObject): The metadataObject
+            (metadataObject):
+                The metadataObject
 
-            Note:
+        Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
 
@@ -690,9 +717,10 @@ class baseFolder(MutableSequence):
         """Attempts to store a value in either the groups or objects.
 
         Parameters:
-            name(str or int): If the name is a string and the value is a baseFolder, then assumes we're accessing a group.
-                if name is an integer, then it must be a metadataObject.
-            value (baseFolder,metadataObject,str): The value to be storred.
+            name(str or int): If the name is a string and the value is a baseFolder, then assumes we're accessing
+            a group. if name is an integer, then it must be a metadataObject.
+        value (baseFolder,metadataObject,str):
+            The value to be storred.
         """
         if isinstance(name, string_types):
             if isinstance(value, baseFolder):
@@ -770,7 +798,8 @@ class baseFolder(MutableSequence):
     def __invert__(self):
         """For a :py:class:`naseFolder`, inverting means either flattening or unflattening the folder.
 
-        If we have no sub-groups then we assume we are unflattening the Folder and that the object names have embedded path separators.
+        If we have no sub-groups then we assume we are unflattening the Folder and that the object names have
+        embedded path separators.
         If we have sub-groups then we assume that we need to flatten the data..
         """
         result = deepcopy(self)
@@ -868,7 +897,8 @@ class baseFolder(MutableSequence):
     #         from evaluating the method for each file in the Folder.
 
     #     Notes:
-    #         This is now simply a proxy into getting the attribute on the baseFolder.each instead. This then makes use of multiprocess Pools to speed things up.
+    #         This is now simply a proxy into getting the attribute on the baseFolder.each instead. This then
+    #           makes use of multiprocess Pools to speed things up.
     #     """
     #     return getattr(self.each, item)
 
@@ -931,7 +961,8 @@ class baseFolder(MutableSequence):
             and hasattr(self, "_type")
             and name in dir(self._type() and not callable(getattr(self._type, name)))
         ):
-            # If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
+            # If we're tracking the object attributes and have a type set, then we can store this for adding to all
+            # loaded objects on read.
             del self._object_attrs[name]
         elif name in self._instance_attrs:
             del self._instance_attrs[name]
@@ -961,7 +992,8 @@ class baseFolder(MutableSequence):
     #         and name in dir(self._type)
     #         and not callable(getattr(self._type, name))
     #     ):
-    #         # If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
+    #         # If we're tracking the object attributes and have a type set, then we can store this for adding to all
+    #        loaded objects on read.
     #         self._object_attrs[name] = value
     #     else:
     #         self._instance_attrs.add(name)
@@ -987,24 +1019,31 @@ class baseFolder(MutableSequence):
         return obj
 
     def __walk_groups(self, walker, **kargs):
-        """"Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
+        """"Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've
+        already visited.
 
         Args:
-            walker (callable): a callable object that takes either a metadataObject instance or a objectFolder instance.
+            walker (callable):
+                A callable object that takes either a metadataObject instance or a objectFolder instance.
 
         Keyword Arguments:
-            group (bool): (default False) determines whether the wealker function will expect to be given the objectFolder
+            group (bool):
+                (default False) determines whether the wealker function will expect to be given the objectFolder
                 representing the lowest level group or individual metadataObject objects from the lowest level group
-            replace_terminal (bool): if group is True and the walker function returns an instance of metadataObject then the return value is appended
-                to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.
-            only_terminal (bool): Only iterate over the files in the group if the group has no sub-groups.
-            walker_args (dict): a dictionary of static arguments for the walker function.
-            bbreadcrumb (list of strings): a list of the group names or key values that we've walked through
+            replace_terminal (bool):
+                If group is True and the walker function returns an instance of metadataObject then the return value
+                is appended to the files and the group is removed from the current objectFolder. This will unwind
+                the group heirarchy by one level.
+            only_terminal (bool):
+                Only iterate over the files in the group if the group has no sub-groups.
+            walker_args (dict):
+                A dictionary of static arguments for the walker function.
+            bbreadcrumb (list of strings):
+                A list of the group names or key values that we've walked through
 
         Notes:
-            The walker function should have a prototype of the form:
-                walker(f,list_of_group_names,**walker_args)
-                where f is either a objectFolder or metadataObject.
+            The walker function should have a prototype of the form: walker(f,list_of_group_names,**walker_args)
+            where f is either a objectFolder or metadataObject.
         """
         group = kargs.pop("group", False)
         replace_terminal = kargs.pop("replace_terminal", False)
@@ -1097,9 +1136,11 @@ class baseFolder(MutableSequence):
         Returns:
             (int): The number of matching metadataObject instances.
 
-        If *name* is a string, then matching is based on either exact matches of the name, or if it includes a * or ? then the basis of a globbing match.
-        *name* may also be a regular expressiuon, in which case matches are made on the basis of  the match with the name of the metadataObject. Finally,
-        if *name* is a metadataObject, then it matches for an equyality test.
+        Notes:
+            If *name* is a string, then matching is based on either exact matches of the name, or if it includes a
+            * or ? then the basis of a globbing match. *name* may also be a regular expressiuon, in which case
+            matches are made on the basis of  the match with the name of the metadataObject. Finally, if *name*
+            is a metadataObject, then  it matches for an equyality test.
         """
         if isinstance(name, string_types):
             if "*" in name or "?" in name:  # globbing pattern
@@ -1124,15 +1165,20 @@ class baseFolder(MutableSequence):
         """Recursively add groups in order to put the named value into a virtual tree of :py:class:`baseFolder`.
 
         Args:
-            name(str): A name (which may be a nested path) of the object to file.
-            value(metadataObject): The object to be filed - it should be an instance of :py:attr:`baseFolder.type`.
+            name(str):
+                A name (which may be a nested path) of the object to file.
+            value(metadataObject):
+                The object to be filed - it should be an instance of :py:attr:`baseFolder.type`.
 
         Keyword Aprameters:
-            create(bool): Whether to create missing groups or to raise an error (default True to create groups).
-            pathsplit(str or None): Character to use to split the name into path components. Defaults to using os.path.split()
+            create(bool):
+                Whether to create missing groups or to raise an error (default True to create groups).
+            pathsplit(str or None):
+                Character to use to split the name into path components. Defaults to using os.path.split()
 
         Returns:
-            (baseFolder): A reference to the group where the value was eventually filed
+            (baseFolder):
+                A reference to the group where the value was eventually filed
 
         """
         if pathsplit is None:
@@ -1168,12 +1214,16 @@ class baseFolder(MutableSequence):
         """Filter the current set of files by some criterion
 
         Args:
-            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a
-                metadataObject and evaluates True or False
+            filter (string or callable):
+                Either a string flename pattern or a callable function which takes a single parameter x which is an
+                instance of a metadataObject and evaluates True or False
 
         Keyword Arguments:
-            invert (bool): Invert the sense of the filter (done by doing an XOR whith the filter condition
-            copy (bool): If set True then the :py:class:`DataFolder` is copied before being filtered. \Default is False - work in place.
+            invert (bool):
+                Invert the sense of the filter (done by doing an XOR whith the filter condition
+            copy (bool):
+                If set True then the :py:class:`DataFolder` is copied before being filtered. \Default is False -
+                work in place.
 
         Returns:
             The current objectFolder object
@@ -1205,11 +1255,14 @@ class baseFolder(MutableSequence):
         """Synonym for self.filter(filter,invert=True)
 
         Args:
-            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a
-                metadataObject and evaluates True or False
+            filter (string or callable):
+                Either a string flename pattern or a callable function which takes a single parameter x which is an
+                instance of a metadataObject and evaluates True or False
 
         Keyword Arguments:
-            copy (bool): If set True then the :py:class:`DataFolder` is copied before being filtered. \Default is False - work in place.
+            copy (bool):
+                If set True then the :py:class:`DataFolder` is copied before being filtered. \Default is False -
+                work in place.
 
         Returns:
             The current objectFolder object with the files in the file list filtered.
@@ -1220,7 +1273,8 @@ class baseFolder(MutableSequence):
         """Compresses all the groups and sub-groups iunto a single flat file list.
 
         Keyword Arguments:
-            depth )(int or None): Only flatten ub-=groups that are within (*depth* of the deepest level.
+            depth )(int or None):
+            Only flatten ub-=groups that are within (*depth* of the deepest level.
 
         Returns:
             A copy of the now flattened DatFolder
@@ -1265,17 +1319,23 @@ class baseFolder(MutableSequence):
         return ret
 
     def group(self, key):
-        """Take the files and sort them into a series of separate objectFolder objects according to the value of the key
+        """Take the files and sort them into a series of separate objectFolder objects according to the value
+        of the key
 
         Args:
-            key (string or callable or list): Either a simple string or callable function or a list. If a string then it is interpreted as an item of
-                metadata in each file. If a callable function then takes a single argument x which should be an instance of a metadataObject and returns
-                some vale. If key is a list then the grouping is done recursively for each element in key.
+            key (string or callable or list):
+                Either a simple string or callable function or a list. If a string then it is interpreted as an item of
+                metadata in each file. If a callable function then takes a single argument x which should be an
+                instance of a metadataObject and returns some vale. If key is a list then the grouping is
+                done recursively for each element in key.
         Returns:
-            A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder objects with sub lists of files
+            A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder
+            objects with sub lists of files
 
-        If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group
-        with key None. Metadata keys that are generated from the filename are supported.
+        Notes:
+            If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the
+            fiiles will be returned into the grou with key None. Metadata keys that are generated from the filename
+            are supported.
         """
         if isinstance(key, list):
             next_keys = key[1:]
@@ -1300,17 +1360,22 @@ class baseFolder(MutableSequence):
         """Provide an index method like a sequence.
 
         Args:
-            name(str, regexp, or :py:class:`Stoner.Core.metadataObject`): The thing to search for.
+            name(str, regexp, or :py:class:`Stoner.Core.metadataObject`):
+                The thing to search for.
 
         Keyword Arguments:
-            start,end(int): limit the index search to a sub-range as per Python 3.5+ list.index
+            start,end(int):
+                Limit the index search to a sub-range as per Python 3.5+ list.index
 
         Returns:
-            (int): The index of the first matching metadataObject instances.
+            (int):
+                The index of the first matching metadataObject instances.
 
-        If *name* is a string, then matching is based on either exact matches of the name, or if it includes a * or ? then the basis of a globbing match.
-        *name* may also be a regular expressiuon, in which case matches are made on the basis of  the match with the name of the metadataObject. Finally,
-        if *name* is a metadataObject, then it matches for an equyality test.
+        Notes:
+            If *name* is a string, then matching is based on either exact matches of the name, or if it includes a
+            * or ? then the basis of a globbing match. *name* may also be a regular expressiuon, in which case
+            matches are made on the basis of  the match with the name of the metadataObject. Finally, if *name*
+            is a metadataObject, then it matches for an equyality test.
         """
         if start is None:
             start = 0
@@ -1407,39 +1472,46 @@ class baseFolder(MutableSequence):
         return self.groups.prune(name=name)
 
     def select(self, *args, **kargs):
-        """A generator that can be used to select particular data files from the objectFolder
+        """Select a subset of the objects in the folder based on flexible search criteria on the metadata.
 
         Args:
-            args (various): A single positional argument if present is interpreted as follows:
+            args (various):
+                A single positional argument if present is interpreted as follows:
 
-            * If a callable function is given, the entire metadataObject is presented to it.
-                If it evaluates True then that metadataObject is selected. This allows arbitary select operations
-            * If a dict is given, then it and the kargs dictionary are merged and used to select the metadataObjects
+                *   If a callable function is given, the entire metadataObject is presented to it.
+                    If it evaluates True then that metadataObject is selected. This allows arbitary select operations
+                *   If a dict is given, then it and the kargs dictionary are merged and used to select the
+                    metadataObjects
 
         Keyword Arguments:
-            recurse (bool): Also recursively slect through the sub groups
-            kargs (varuous): Arbitary keyword arguments are interpreted as requestion matches against the corresponding
-                metadata values. The keyword argument may have an additional *__operator** appended to it which is interpreted
-                as follows:
+            recurse (bool):
+                Also recursively slect through the sub groups
+            kargs (varuous):
+                Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+                metadata values. The keyword argument may have an additional **__operator** appended to it which is
+                interpreted as follows:
 
-                - *eq* metadata value equals argument value (this is the default test for scalar argument)
-                - *ne* metadata value doe not equal argument value
-                - *gt* metadata value doe greater than argument value
-                - *lt* metadata value doe less than argument value
-                - *ge* metadata value doe greater than or equal to argument value
-                - *le* metadata value doe less than or equal to argument value
-                - *contains* metadata value contains argument value
-                - *in* metadata value is in the argument value (this is the default test for non-tuple iterable arguments)
-                - *startswith* metadata value startswith argument value
-                - *endswith* metadata value endwith argument value
-                - *icontains*,*iin*, *istartswith*,*iendswith* as above but case insensitive
-                - *between* metadata value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)
-                - *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values
+                -   *eq* metadata value equals argument value (this is the default test for scalar argument)
+                -   *ne* metadata value doe not equal argument value
+                -   *gt* metadata value doe greater than argument value
+                -   *lt* metadata value doe less than argument value
+                -   *ge* metadata value doe greater than or equal to argument value
+                -   *le* metadata value doe less than or equal to argument value
+                -   *contains* metadata value contains argument value
+                -   *in* metadata value is in the argument value (this is the default test for non-tuple iterable
+                                                                arguments)
+                -   *startswith* metadata value startswith argument value
+                -   *endswith* metadata value endwith argument value
+                -   *icontains*,*iin*, *istartswith*,*iendswith* as above but case insensitive
+                -   *between* metadata value lies beween the minimum and maximum values of the arguement
+                    (the default test for 2-length tuple arguments)
+                -   *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values
 
             The syntax is inspired by the Django project for selecting, but is not quite as rich.
 
         Returns:
-            (baseFGolder): a new baseFolder instance that contains just the matching metadataObjects.
+            (baseFGolder):
+                A new baseFolder instance that contains just the matching metadataObjects.
 
         Note:
             If any of the tests is True, then the metadataObject will be selected, so the effect is a logical OR. To
@@ -1449,10 +1521,14 @@ class baseFolder(MutableSequence):
 
             will select metadata objects that have either temp or vti_temp metadata values below 4.2 AND field metadata values greater than 3.
 
-            If you need to select on a aparameter called *recurse*, pass a dictionary of {"recurse":value} as the sole
-            positional argument. If you need to select on a metadata value that ends in an operator word, then append
-            *__eq* in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
-            then pass them via the first positional dictionary value.
+            There are a few cases where special treatment is needed:
+
+            -   If you need to select on a aparameter called *recurse*, pass a dictionary of {"recurse":value} as
+                the sole positional argument.
+            -   If you need to select on a metadata value that ends in an operator word, then append *__eq* in the
+                keyword name to force the equality test.
+            -   If the metadata keys to select on are not valid python  identifiers, then pass them via the first
+                positional dictionary value.
         """
         recurse = kargs.pop("recurse", False)
         negate = kargs.pop("negate", False)
@@ -1516,18 +1592,20 @@ class baseFolder(MutableSequence):
             key(str, regexp or list of str): the meta data key(s) to return
 
         Keyword Parameters:
-            output (str): Output format - values are
-            -   dict: return an array of dictionaries
-            -   list: return a list of lists
-            -   array: return a numpy array
-            -   Data: return a :py:class:`Stoner.Data` object
-            -   smart: (default) return either a list if only one key or a list of dictionaries
+            output (str):
+                Output format - values are
+                -   dict: return an array of dictionaries
+                -   list: return a list of lists
+                -   array: return a numpy array
+                -   Data: return a :py:class:`Stoner.Data` object
+                -   smart: (default) return either a list if only one key or a list of dictionaries
 
         Returns:
-            (array of metadata): If single key is given and is an exact match then
-                returns an array of the matching values. If the key results in a regular
-                expression match, then returns an array of dictionaries of all matching keys. If key is a
-                list ir other iterable, then return a 2D array where each column corresponds to one of the keys.
+            (array of metadata):
+                If single key is given and is an exact match then returns an array of the matching values.
+                If the key results in a regular expression match, then returns an array of dictionaries of all
+                matching keys. If key is a list ir other iterable, then return a 2D array where each column
+                corresponds to one of the keys.
 
         TODO:
             Add options to recurse through all groups? Put back RCT's values only functionality?
@@ -1538,12 +1616,14 @@ class baseFolder(MutableSequence):
         """Sort the files by some key
 
         Keyword Arguments:
-            key (string, callable or None): Either a string or a callable function. If a string then this is interpreted as a
+            key (string, callable or None):
+                Either a string or a callable function. If a string then this is interpreted as a
                 metadata key, if callable then it is assumed that this is a a function of one paramater x
                 that is a :py:class:`Stoner.Core.metadataObject` object and that returns a key value.
                 If key is not specified (default), then a sort is performed on the filename
 
-        reverse (bool): Optionally sort in reverse order
+        reverse (bool):
+            Optionally sort in reverse order
 
         Returns:
             A copy of the current objectFolder object
@@ -1614,20 +1694,29 @@ class baseFolder(MutableSequence):
         """Walks through a heirarchy of groups and calls walker for each file.
 
         Args:
-            walker (callable): a callable object that takes either a metadataObject instance or a objectFolder instance.
+            walker (callable):
+                A callable object that takes either a metadataObject instance or a objectFolder instance.
 
         Keyword Arguments:
-            group (bool): (default False) determines whether the walker function will expect to be given the objectFolder
+            group (bool):
+                (default False) determines whether the walker function will expect to be given the objectFolder
                 representing the lowest level group or individual metadataObject objects from the lowest level group
-            replace_terminal (bool): if group is True and the walker function returns an instance of metadataObject then the return value is appended
-                to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.
-            obly_terminal(bool): Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal groups)
-            walker_args (dict): a dictionary of static arguments for the walker function.
+            replace_terminal (bool):
+                If group is True and the walker function returns an instance of metadataObject then the return value
+                is appended to the files and the group is removed from the current objectFolder. This will unwind
+                the group heirarchy by one level.
+            obly_terminal(bool):
+                Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal
+                groups)
+            walker_args (dict):
+                A dictionary of static arguments for the walker function.
 
         Notes:
-            The walker function should have a prototype of the form:
+            The walker function should have a prototype of the form::
+
                 walker(f,list_of_group_names,**walker_args)
-                where f is either a objectFolder or metadataObject.
+
+            where f is either a objectFolder or metadataObject.
         """
         group = kargs.pop("group", False)
         replace_terminal = kargs.pop("replace_terminal", False)
@@ -1647,11 +1736,13 @@ class baseFolder(MutableSequence):
         """Return a list of tuples of metadataObjects drawn from the specified groups
 
         Args:
-            groups(list of strings): A list of keys of groups in the Lpy:class:`objectFolder`
+            groups(list of strings):
+                A list of keys of groups in the Lpy:class:`objectFolder`
 
         Returns:
             A list of tuples of groups of files:
-                [(grp_1_file_1,grp_2_file_1....grp_n_files_1),(grp_1_file_2,grp_2_file_2....grp_n_file_2)....(grp_1_file_m,grp_2_file_m...grp_n_file_m)]
+                [(grp_1_file_1,grp_2_file_1....grp_n_files_1),(grp_1_file_2,
+                grp_2_file_2....grp_n_file_2)....(grp_1_file_m,grp_2_file_m...grp_n_file_m)]
         """
         if not isinstance(groups, list):
             raise SyntaxError("groups must be a list of groups")

@@ -27,8 +27,8 @@ from PIL import Image
 from PIL import PngImagePlugin  # for saving metadata
 import matplotlib.pyplot as plt
 from Stoner.Core import typeHintedDict, metadataObject, regexpDict, DataFile
+from Stoner.core.data import Data
 from Stoner.Image.util import convert
-from Stoner import Data
 from Stoner.tools import istuple, fix_signature, islike_list
 from Stoner.compat import (
     string_types,
