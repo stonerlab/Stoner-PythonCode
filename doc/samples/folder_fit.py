@@ -7,10 +7,6 @@ from Stoner import __home__, DataFolder, Data
 from Stoner.plot.formats import TexEngFormatter
 from Stoner.analysis.fitting.models.generic import Quadratic
 
-from Stoner import Options
-
-Options.multiprocessing = False
-
 # Set up the directory with our data
 datafiles = join(__home__, "..", "sample-data", "NLIV")
 
@@ -44,10 +40,16 @@ result.plot(fmt="k.", capsize=2)
 
 # Run the fitt for each file in the fldr. Set the outpout to "data" to
 # Have the amended results replace the existing data files
-fldr.each.odr(Quadratic, output="data", result=True, header="fit")
+fldr.each.odr(Quadratic, output="data", result=True, header="fit", _serial=True)
 fig = figure()
-fldr.setas = "yx.y"
-fldr.each.plot(fmt=["+", "-"], label="Field = {y}mT", figure=fig)
+fldr.setas(Current="x", Voltage="y")
+fldr.setas[3] = "y"
+
+
+fldr.each.plot(fmt=["+", "-"], label="Field = {y}mT", figure=fig, _serial=True)
+fldr[0].legend(ncol=2, fontsize="xx-small")
+fldr[0].title = "Non-local IV Curves"
+
 # Now take a slice through the metadata to get the files we want.
 result_2 = fldr.metadata.slice(["y", Quadratic], output="Data")
 

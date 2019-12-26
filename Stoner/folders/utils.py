@@ -109,13 +109,13 @@ def filter_files(files, patterns, keep=True):
     return files
 
 
-def get_pool():
+def get_pool(_serial=False):
     """Utility method to get a Pool and map implementation depending on options.
 
     Returns:
         Pool(),map: Pool object if possible and map implementation.
     """
-    if get_option("multiprocessing"):
+    if get_option("multiprocessing") and not _serial:
         try:
             if get_option("threading"):
                 p = ThreadPool(processes=int(multiprocessing.cpu_count() - 1))

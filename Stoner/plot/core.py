@@ -941,6 +941,11 @@ class PlotMixin(object):
             parent = plt.gca()
         return inset_locator.inset_axes(parent, width, height, loc, **kargs)
 
+    def legend(self, *args, **kargs):
+        """Pass Through to stop attribute access over-riding a handy method."""
+        self.gca().legend(*args, **kargs)
+        return self
+
     def plot(self, *args, **kargs):
         """Try to make an appropriate plot based on the defined column assignments.
 
