@@ -12,9 +12,10 @@ from Stoner.analysis.filtering import FilteringOps
 from Stoner.plot import PlotMixin
 from Stoner.Core import DataFile
 
-import Stoner.formats
-import Stoner.HDF5
-import Stoner.Zip
+# Bring all the subclasses into memory (idnore unused imports warnings)
+import Stoner.formats  # pylint: disable=W0611
+import Stoner.HDF5  # pylint: disable=W0611
+import Stoner.Zip  # pylint: disable=W0611
 
 from Stoner.tools import format_error
 
