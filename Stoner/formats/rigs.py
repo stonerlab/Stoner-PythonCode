@@ -3,9 +3,10 @@
 """
 Implement DataFile like classes for Various experimental rigs
 """
-__all__ = ["BigBlueFile", "BirgeIVFile", "MokeFile", "FmokeFile"]
+__all__ = ["BigBlueFile", "BirgeIVFile", "MokeFile", "FmokeFile", "EasyPlotFile", "PinkLibFile"]
 import io
 import re
+import csv
 
 import numpy as np
 
@@ -199,4 +200,149 @@ class FmokeFile(Core.DataFile):
             column_headers = [x.strip() for x in bytes2str(f.readline()).split("\t")]
             self.data = np.genfromtxt(f, dtype="float", delimiter="\t", invalid_raise=False)
             self.column_headers = column_headers
+        return self
+
+
+class EasyPlotFile(Core.DataFile):
+
+    """A class that will extract as much as it can from an EasyPlot save File."""
+
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority = 32  # Fairly generic, but can do some explicit testing
+
+    def _load(self, filename, *args, **kargs):
+        """Private loader method."""
+        if filename is None or not filename:
+            self.get_filename("r")
+        else:
+            self.filename = filename
+
+        datastart = -1
+        dataend = -1
+
+        i = 0
+        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as data:
+            if "******** EasyPlot save file ********" not in data.read(1024):
+                raise Core.StonerLoadError("Not an EasyPlot Save file?")
+            else:
+                data.seek(0)
+            for i, line in enumerate(data):
+                line = line.strip()
+                if line == "":
+                    continue
+                if line[0] not in "-0123456789" and datastart > 0 and dataend < 0:
+                    dataend = i
+                if line.startswith('"') and ":" in line:
+                    parts = [x.strip() for x in line.strip('"').split(":")]
+                    self[parts[0]] = string_to_type(":".join(parts[1:]))
+                elif line.startswith("/"):  # command
+                    parts = [x.strip('"') for x in next(csv.reader([line], delimiter=" ")) if x != ""]
+                    cmd = parts[0].strip("/")
+                    if len(cmd) > 1:
+                        cmdname = "_{}_cmd".format(cmd)
+                        if cmdname in dir(self):  # If this command is implemented as a function run it
+                            cmd = getattr(self, "_{}_cmd".format(cmd))
+                            cmd(parts[1:])
+                        else:
+                            if len(parts[1:]) > 1:
+                                cmd = cmd + "." + parts[1]
+                                value = ",".join(parts[2:])
+                            elif len(parts[1:]) == 1:
+                                value = parts[1]
+                            else:
+                                value = True
+                            self[cmd] = value
+                elif line[0] in "-0123456789" and datastart < 0:  # start of data
+                    datastart = i
+                    if "," in line:
+                        delimiter = ","
+                    else:
+                        delimiter = None
+        if dataend < 0:
+            dataend = i
+        self.data = np.genfromtxt(self.filename, skip_header=datastart, skip_footer=i - dataend, delimiter=delimiter)
+        if self.data.shape[1] == 2:
+            self.setas = "xy"
+        return self
+
+    def _extend_columns(self, i):
+        """Ensure the column headers are at least i long."""
+        if len(self.column_headers) < i:
+            l = len(self.column_headers)
+            self.data = np.append(
+                self.data, np.zeros((self.shape[0], i - l)), axis=1
+            )  # Need to expand the array first
+            self.column_headers.extend(["Column {}".format(x) for x in range(l, i)])
+
+    def _et_cmd(self, parts):
+        """Handle axis labellling command."""
+        if parts[0] == "x":
+            self._extend_columns(1)
+            self.column_headers[0] = parts[1]
+        elif parts[0] == "y":
+            self._extend_columns(2)
+            self.column_headers[1] = parts[1]
+        elif parts[0] == "g":
+            self["title"] = parts[1]
+
+    def _td_cmd(self, parts):
+        self.setas = parts[0]
+
+    def _sa_cmd(self, parts):
+        """The sa (set-axis?) command."""
+        if parts[0] == "l":  # Legend
+            col = int(parts[2])
+            self._extend_columns(col + 1)
+            self.column_headers[col] = parts[1]
+
+
+class PinkLibFile(Core.DataFile):
+
+    """Extends Core.DataFile to load files from MdV's PINK library - as used by the GMR anneal rig."""
+
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority = 32  # reasonably generic format
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns = ["*.dat"]  # Recognised filename patterns
+
+    def _load(self, filename=None, *args, **kargs):
+        """File loader for PinkLib.
+
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+
+        Returns:
+            A copy of the itself after loading the data.
+        """
+        if filename is None or not filename:
+            self.get_filename("r")
+        else:
+            self.filename = filename
+        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as f:  # Read filename linewise
+            if "PINKlibrary" not in f.readline():
+                raise Core.StonerLoadError("Not a PINK file")
+            f = f.readlines()
+            happened_before = False
+            for i, line in enumerate(f):
+                if line[0] != "#" and not happened_before:
+                    header_line = i - 2  # -2 because there's a commented out data line
+                    happened_before = True
+                    continue  # want to get the metadata at the bottom of the file too
+                elif any(s in line for s in ("Start time", "End time", "Title")):
+                    tmp = line.strip("#").split(":")
+                    self.metadata[tmp[0].strip()] = ":".join(tmp[1:]).strip()
+            column_headers = f[header_line].strip("#\t ").split("\t")
+        data = np.genfromtxt(self.filename, dtype="float", delimiter="\t", invalid_raise=False, comments="#")
+        self.data = data[:, 0:-2]  # Deal with an errant tab at the end of each line
+        self.column_headers = column_headers
+        if np.all([h in column_headers for h in ("T (C)", "R (Ohm)")]):
+            self.setas(x="T (C)", y="R (Ohm)")  # pylint: disable=not-callable
         return self

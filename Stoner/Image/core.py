@@ -27,9 +27,8 @@ from PIL import Image
 from PIL import PngImagePlugin  # for saving metadata
 import matplotlib.pyplot as plt
 from Stoner.Core import typeHintedDict, metadataObject, regexpDict, DataFile
-from Stoner.core.data import Data
 from Stoner.Image.util import convert
-from Stoner.tools import istuple, fix_signature, islike_list
+from Stoner.tools import istuple, fix_signature, islike_list, make_Data
 from Stoner.compat import (
     string_types,
     get_filedialog,
@@ -675,10 +674,10 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             else:
                 change = self.clone
             r = workingfunc(change, *args, **kwargs)  # send copy of self as the first arg
-            if isinstance(r, Data):
+            if isinstance(r, make_Data(None)):
                 pass  # Data return is ok
             elif isinstance(r, np.ndarray) and np.prod(r.shape) == np.max(r.shape):  # 1D Array
-                r = Data(r)
+                r = make_Data(r)
                 r.metadata = self.metadata.copy()
                 r.column_headers[0] = workingfunc.__name__
             elif isinstance(r, np.ndarray):  # make sure we return a ImageArray
@@ -1346,7 +1345,7 @@ class ImageFile(metadataObject):
             zcol (column index):
                 Column in the datafile that defines the intensity
         """
-        data = Data(args[0])
+        data = make_Data(args[0])
         shape = kargs.pop("shape", "unique")
 
         _ = data._col_args(**kargs)

@@ -12,6 +12,10 @@ from Stoner.analysis.filtering import FilteringOps
 from Stoner.plot import PlotMixin
 from Stoner.Core import DataFile
 
+import Stoner.formats
+import Stoner.HDF5
+import Stoner.Zip
+
 from Stoner.tools import format_error
 
 

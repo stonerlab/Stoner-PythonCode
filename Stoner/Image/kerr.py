@@ -12,7 +12,7 @@ from Stoner.Core import typeHintedDict
 from Stoner.Image import ImageArray, ImageStack, ImageFile
 from Stoner.core.exceptions import assertion, StonerAssertionError
 from Stoner.compat import which
-from Stoner.core.data import Data
+from Stoner.tools import make_Data
 import numpy as np
 import os
 import subprocess
@@ -445,7 +445,7 @@ class KerrStackMixin(object):
                 hyst[i, 1] = np.average(im[np.invert(mask[i])])
             else:
                 hyst[i, 1] = np.average(im)
-        d = Data(hyst, setas="xy")
+        d = make_Data(hyst, setas="xy")
         d.column_headers = ["Field", "Intensity"]
         return d
 

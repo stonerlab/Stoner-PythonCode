@@ -14,14 +14,13 @@ from matplotlib.pyplot import figure, Figure, subplot, tight_layout
 from copy import deepcopy
 
 from Stoner.compat import string_types, get_filedialog, _pattern_type, makedirs
-from Stoner.tools import isiterable
+from Stoner.tools import isiterable, make_Data
 
 from Stoner.core.base import metadataObject, string_to_type
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder, __add_core__ as _base__add_core__, __sub_core__ as _base__sub_core__
 from .utils import scan_dir, discard_earlier, filter_files, get_pool, removeDisallowedFilenameChars
 from Stoner.core.exceptions import assertion
-from Stoner.core.data import Data
 
 
 regexp_type = (_pattern_type,)
@@ -111,7 +110,7 @@ class DiskBasedFolder(object):
         if "directory" in self._default_store and self._default_store["directory"] is None:
             self._default_store["directory"] = os.getcwd()
         if "type" in self._default_store and self._default_store["type"] is None and self._type == metadataObject:
-            self._default_store["type"] = Data
+            self._default_store["type"] = make_Data(None)
         elif self._type != metadataObject:  # Looks like we've already set our type in a subbclass
             self._default_store.pop("type")
         flat = kargs.pop("flat", self._default_store.get("flat", False))
@@ -651,7 +650,7 @@ class PlotMethodsMixin(object):
 
         if not hasattr(self.type, "plot"):  # switch the objects to being Stoner.Data instances
             for i, d in enumerate(self):
-                self[i] = Data(d)
+                self[i] = make_Data(d)
 
         extra = kargs.pop("extra", lambda i, j, d: None)
         tight = kargs.pop("tight_layout", {})
@@ -708,7 +707,7 @@ class DataFolder(DataMethodsMixin, DiskBasedFolder, baseFolder):
 
     def __init__(self, *args, **kargs):
 
-        self.type = kargs.pop("type", Data)
+        self.type = kargs.pop("type", make_Data(None))
         super(DataFolder, self).__init__(*args, **kargs)
 
 

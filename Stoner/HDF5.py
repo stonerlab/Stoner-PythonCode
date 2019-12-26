@@ -11,10 +11,11 @@ to :py:class:`Stoner.Core.Data`.
 """
 __all__ = ["HDF5File", "HDF5Folder", "HGXFile", "SLS_STXMFile", "STXMImage"]
 from .compat import string_types, bytes2str, get_filedialog
+from .tools import make_Data
 import h5py
 import numpy as _np_
 from .Core import StonerLoadError, metadataObject, DataFile
-from . import Data, DataFolder
+from .folders import DataFolder
 from .Image.core import ImageFile
 import os.path as path
 import os
@@ -640,7 +641,8 @@ class STXMImage(ImageFile):
             d = SLS_STXMFile(args[0])
             args = args[1:]
         else:
-            d = Data()
+
+            d = make_Data()
         super(STXMImage, self).__init__(*args[1:], **kargs)
         self.image = d.data
         self.metadata.update(d.metadata)

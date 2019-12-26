@@ -23,6 +23,7 @@ from lmfit import Model
 from lmfit.models import update_param_vals
 
 from Stoner.compat import string_types
+from Stoner.tools import make_Data
 import Stoner.Core as _SC_
 from . import generic, thermal, magnetism, tunnelling, e_transport, superconductivity
 
@@ -203,8 +204,7 @@ def cfg_data_from_ini(inifile, filename=None, **kargs):
         typ = __import__(typ_mod, fromlist=[typ]).__getattribute__(typ)
     else:
         typ = None
-    Data = import_module("Stoner.core.data").Data
-    data = Data(**kargs)
+    data = make_Data(**kargs)
     if filename is None:
         if not config.has_option("Data", "filename"):
             filename = False
