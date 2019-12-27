@@ -1341,9 +1341,15 @@ class PlotMixin(object):
             for k in temp_kwords:
                 if isinstance(temp_kwords[k], string_types) and "$" not in temp_kwords[k]:
                     temp_kwords[k] = temp_kwords[k].format(**self)
+            temp_nonkargs = {}
+            for k in nonkargs:
+                if isinstance(nonkargs[k], string_types) and "$" not in nonkargs[k]:
+                    temp_nonkargs[k] = nonkargs[k].format(**self)
+                else:
+                    temp_nonkargs[k] = nonkargs[k]
 
-            self._Plot(c.xcol, c.ycol[ix], fmt_t, nonkargs["plotter"], self.__figure, **temp_kwords)
-            self._fix_titles(ix, multiple, **nonkargs)
+            self._Plot(c.xcol, c.ycol[ix], fmt_t, temp_nonkargs["plotter"], self.__figure, **temp_kwords)
+            self._fix_titles(ix, multiple, **temp_nonkargs)
             if ix > 0:  # Hooks for multiple subplots
                 if multiple == "panels":
                     loc, lab = plt.yticks()

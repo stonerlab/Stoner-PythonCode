@@ -450,7 +450,7 @@ class setas(MutableMapping):
             and value in "xyzuvwdef.-"
         ):
             for c in self.find_col(name, force_list=True):
-                self._setas[c] = value
+                self.setas[c] = value
         else:
             raise IndexError(f"Failed to set setas as couldn't workout what todo with setas[{name}] = {value}")
 

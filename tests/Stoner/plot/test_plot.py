@@ -157,5 +157,5 @@ class Plottest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Plottest("test_extra_plots")
     test.setUp()
-    test.test_extra_plots()
-    #unittest.main()
+    #test.test_extra_plots()
+    unittest.main()
