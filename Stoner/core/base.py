@@ -448,6 +448,8 @@ class typeHintedDict(regexpDict):
                 except ValueError:
                     pass  # Silently fail
         else:
+            if isinstance(value, string_types):
+                value = string_to_type(value)
             self._typehints[name] = self.findtype(value)
             super(typeHintedDict, self).__setitem__(name, value)
 
