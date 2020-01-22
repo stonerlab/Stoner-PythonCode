@@ -10,6 +10,7 @@ to :py:class:`Stoner.Core.Data`.
 
 """
 __all__ = ["HDF5File", "HDF5Folder", "HGXFile", "SLS_STXMFile", "STXMImage"]
+import importlib
 from .compat import string_types, bytes2str, get_filedialog
 import h5py
 import numpy as _np_
@@ -136,11 +137,44 @@ class HDF5File(DataFile):
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
             f = filename
         else:
-            _raise_error(f, message="Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
-        if (
-            "type" not in f.attrs or bytes2str(f.attrs["type"]) != "HDF5File"
-        ):  # Ensure that if we have a type attribute it tells us we're the right type !
-            _raise_error(f, message="HDF5 group doesn't hold an HD5File")
+            _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
+        if "type" not in f.attrs:
+            _raise_error(f, message=f"HDF5 Group does not specify the type attribute used to check we can load it.")
+        typ = bytes2str(f.attrs["type"])
+        if typ != self.__class__.__name__ and "module" not in f.attrs:
+            _raise_error(
+                f,
+                message=f"HDF5 Group is not a {self.__class__.__name__} and does not specify a module to use to load.",
+            )
+        loader = None
+        if typ == self.__class__.__name__:
+            loader = getattr(self.__clas__, "read_HDF")
+        else:
+            mod = importlib.import_module(bytes2str(f.attrs["module"]))
+            cls = getattr(mod, typ)
+            loader = getattr(cls, "read_JDF")
+        if loader is None:
+            _raise_error(f, message="Could not et loader for {bytes2str(f.attrs['module'])}.{typ}")
+
+        return loader(f, *args, **kargs)
+
+    @classmethod
+    def read_HDF(cls, filename, *args, **kargs):
+        """Class method to create a new HDF5File from an actual HDF file."""
+
+        self = cls()
+        if filename is None or not filename:
+            self.get_filename("r")
+            filename = self.filename
+        if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
+            f = _open_filename(filename)
+            self.filename = filename
+        elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
+            f = filename
+            self.filename = f.filename
+        else:
+            _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
+
         data = f["data"]
         if _np_.product(_np_.array(data.shape)) > 0:
             self.data = data[...]
@@ -188,6 +222,19 @@ class HDF5File(DataFile):
         Returns
             A copy of the object
         """
+        return self.to_HDF(filename, **kargs)  # Just a pass through to our own to_HDF method
+
+    def to_HDF(self, filename=None, **kargs):
+        """Writes the current object into  an hdf5 file or group within a file in afashion that is compatible with being loaded in again.
+
+        Args:
+            filename (string or h5py.Group): Either a string, of h5py.File or h5py.Group object into which
+                to save the file. If this is a string, the corresponding file is opened for
+                writing, written to and save again.
+
+        Returns
+            A copy of the object
+        """
         if filename is None:
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
@@ -218,7 +265,8 @@ class HDF5File(DataFile):
                     metadata.attrs[k] = "=".join(parts[1:])
             f.attrs["column_headers"] = [x.encode("utf8") for x in self.column_headers]
             f.attrs["filename"] = self.filename
-            f.attrs["type"] = "HDF5File"
+            f.attrs["type"] = self.__class__.__name__
+            f.attrs["module"] = self.__class__.__module__
         except Exception as e:
             if isinstance(filename, str):
                 f.file.close()
