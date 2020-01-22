@@ -283,7 +283,7 @@ defined by the window function. This is handled by the <code class="xref py py-m
 </pre></div>
 </div>
 <p>In both these examples, the data to be smoothed is determined from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.
-The first argument is passed to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.4.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
+The first argument is passed to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.2.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
 can either be an integer to sepcify the number of rows in the window, or a float to specify the size of the window in
 terms of the x data. In the latter case, the data is first reinterpolated to an evenly space set in terms of the x-column
 and then smoothed and then reinterpolated back to the original x data co-ordinates.</p>
@@ -657,9 +657,9 @@ less equal significance. By default, only peaks are returned in order of x posit
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

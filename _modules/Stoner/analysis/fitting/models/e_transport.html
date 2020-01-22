@@ -71,7 +71,7 @@
     <span class="k">return</span> <span class="n">x</span> <span class="o">**</span> <span class="n">n</span> <span class="o">/</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)))</span>
 
 
-<div class="viewcode-block" id="wlfit"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.wlfit.html#Stoner.analysis.fitting.models.e_transport.wlfit">[docs]</a><span class="k">def</span> <span class="nf">wlfit</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">DS</span><span class="p">,</span> <span class="n">B1</span><span class="p">,</span> <span class="n">B2</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">wlfit</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">DS</span><span class="p">,</span> <span class="n">B1</span><span class="p">,</span> <span class="n">B2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Weak localisation</span>
 
@@ -117,10 +117,10 @@
         <span class="n">cond</span><span class="p">[</span><span class="n">tt</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">WLpt1</span> <span class="o">-</span> <span class="n">WLpt2</span> <span class="o">-</span> <span class="n">WLpt3</span><span class="p">)</span>
     <span class="c1"># cond = s0*cond / min(cond)</span>
     <span class="n">cond</span> <span class="o">=</span> <span class="n">s0</span> <span class="o">+</span> <span class="n">DS</span> <span class="o">*</span> <span class="n">cond</span>
-    <span class="k">return</span> <span class="n">cond</span></div>
+    <span class="k">return</span> <span class="n">cond</span>
 
 
-<div class="viewcode-block" id="fluchsSondheimer"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.fluchsSondheimer.html#Stoner.analysis.fitting.models.e_transport.fluchsSondheimer">[docs]</a><span class="k">def</span> <span class="nf">fluchsSondheimer</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">sigma_0</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">fluchsSondheimer</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">sigma_0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Evaluate a Fluchs-Sondheumer model function for conductivity.</span>
 
 <span class="sd">    Args:</span>
@@ -149,10 +149,10 @@
         <span class="n">ret1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">v</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">v</span><span class="p">))</span>
         <span class="n">ret2</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">v</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret1</span> <span class="o">*</span> <span class="n">ret2</span>
-    <span class="k">return</span> <span class="n">result</span> <span class="o">/</span> <span class="n">sigma_0</span></div>
+    <span class="k">return</span> <span class="n">result</span> <span class="o">/</span> <span class="n">sigma_0</span>
 
 
-<div class="viewcode-block" id="blochGrueneisen"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.blochGrueneisen.html#Stoner.analysis.fitting.models.e_transport.blochGrueneisen">[docs]</a><span class="k">def</span> <span class="nf">blochGrueneisen</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">thetaD</span><span class="p">,</span> <span class="n">rho0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">blochGrueneisen</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">thetaD</span><span class="p">,</span> <span class="n">rho0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;BlochGrueneiseen Function for fitting R(T).</span>
 
 <span class="sd">    Args:</span>
@@ -174,7 +174,7 @@
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
         <span class="n">intg</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">_bgintegrand</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">thetaD</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="p">(</span><span class="n">n</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho0</span> <span class="o">+</span> <span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span> <span class="o">/</span> <span class="n">thetaD</span><span class="p">)</span> <span class="o">**</span> <span class="n">n</span> <span class="o">*</span> <span class="n">intg</span>
-    <span class="k">return</span> <span class="n">ret</span></div>
+    <span class="k">return</span> <span class="n">ret</span>
 
 
 <div class="viewcode-block" id="WLfit"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.e_transport.WLfit.html#Stoner.analysis.fitting.models.e_transport.WLfit">[docs]</a><span class="k">class</span> <span class="nc">WLfit</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -339,9 +339,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

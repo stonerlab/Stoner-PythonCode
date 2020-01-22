@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>langevin &#8212; Stoner Pacakge API Documentation</title>
+    <title>Langevin &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="FMR_Power" href="Stoner.analysis.fitting.models.magnetism.FMR_Power.html" />
-    <link rel="prev" title="kittelEquation" href="Stoner.analysis.fitting.models.magnetism.kittelEquation.html" />
+    <link rel="next" title="RSJ_Noiseless" href="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html" />
+    <link rel="prev" title="KittelEquation" href="Stoner.analysis.fitting.models.magnetism.KittelEquation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,10 +29,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.magnetism.kittelEquation.html" title="Previous document">kittelEquation</a>
+          <a href="Stoner.analysis.fitting.models.magnetism.KittelEquation.html" title="Previous document">KittelEquation</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.magnetism.FMR_Power.html" title="Next document">FMR_Power</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html" title="Next document">RSJ_Noiseless</a>
           &rarr;
         </li>
     </ul>
@@ -56,17 +56,18 @@
           <div class="body" role="main">
             
   <div class="section" id="langevin">
-<h1>langevin<a class="headerlink" href="#langevin" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.magnetism.langevin">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.magnetism.</code><code class="sig-name descname">langevin</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">M_s</em>, <em class="sig-param">m</em>, <em class="sig-param">T</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#langevin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.langevin" title="Permalink to this definition">¶</a></dt>
-<dd><p>“The Langevin function for paramagnetic M-H loops/</p>
+<h1>Langevin<a class="headerlink" href="#langevin" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.magnetism.Langevin">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.magnetism.</code><code class="sig-name descname">Langevin</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#Langevin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.Langevin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>“The Langevin function for paramagnetic M-H loops/</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>array</em>) – The applied magnetic field</p></li>
 <li><p><strong>M_s</strong> (<em>float</em>) – Saturation magnetisation</p></li>
-<li><p><strong>m</strong> (<em>float</em>)</p></li>
+<li><p><strong>m</strong> (<em>float</em>) – is the moment of a single cluster</p></li>
 <li><p><strong>T</strong> (<em>float</em>) – Temperature</p></li>
 </ul>
 </dd>
@@ -132,10 +133,27 @@
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;langevin Fit&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/langevin.png">png</a>, <a class="reference external" href="../samples/Fitting/langevin.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/langevin.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/langevin.png" src="../_images/langevin.png" />
-</div>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.magnetism.Langevin.guess" title="Stoner.analysis.fitting.models.magnetism.Langevin.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
+<td><p>Guess some starting values.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.magnetism.Langevin.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#Langevin.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.Langevin.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess some starting values.</p>
+<p>M_s is taken as half the difference of the range of thew M data,
+we can find m/T from the susceptibility chi= M_s mu_o m / kT,</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -150,15 +168,15 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.kittelEquation.html"
-                        title="previous chapter">kittelEquation</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.KittelEquation.html"
+                        title="previous chapter">KittelEquation</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.FMR_Power.html"
-                        title="next chapter">FMR_Power</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html"
+                        title="next chapter">RSJ_Noiseless</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.magnetism.langevin.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.magnetism.Langevin.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -178,10 +196,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.magnetism.kittelEquation.html" title="Previous document">kittelEquation</a>
+          <a href="Stoner.analysis.fitting.models.magnetism.KittelEquation.html" title="Previous document">KittelEquation</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.magnetism.FMR_Power.html" title="Next document">FMR_Power</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html" title="Next document">RSJ_Noiseless</a>
           &rarr;
         </li>
     </ul>
@@ -198,9 +216,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

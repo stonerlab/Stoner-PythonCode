@@ -82,12 +82,12 @@
     <span class="n">update_param_vals</span> <span class="o">=</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="linear"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.generic.linear.html#Stoner.analysis.fitting.models.generic.linear">[docs]</a><span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simple linear function&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">intercept</span></div>
+    <span class="k">return</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">intercept</span>
 
 
-<div class="viewcode-block" id="quadratic"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.generic.quadratic.html#Stoner.analysis.fitting.models.generic.quadratic">[docs]</a><span class="k">def</span> <span class="nf">quadratic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">quadratic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A Simple quadratic fitting function.</span>
 
 <span class="sd">    Args:</span>
@@ -106,10 +106,10 @@
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: quadratic</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span></div>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span>
 
 
-<div class="viewcode-block" id="powerLaw"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.generic.powerLaw.html#Stoner.analysis.fitting.models.generic.powerLaw">[docs]</a><span class="k">def</span> <span class="nf">powerLaw</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">powerLaw</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Power Law Fitting Equation.</span>
 
 <span class="sd">    Args:</span>
@@ -127,10 +127,10 @@
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: powerlaw</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="n">k</span></div>
+    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="n">k</span>
 
 
-<div class="viewcode-block" id="stretchedExp"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.generic.stretchedExp.html#Stoner.analysis.fitting.models.generic.stretchedExp">[docs]</a><span class="k">def</span> <span class="nf">stretchedExp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">x_0</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">stretchedExp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">x_0</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A stretched exponential fuinction.</span>
 
 <span class="sd">    Args:</span>
@@ -144,10 +144,10 @@
 
 <span class="sd">    The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="n">beta</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="n">beta</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="lorentzian_diff"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.generic.lorentzian_diff.html#Stoner.analysis.fitting.models.generic.lorentzian_diff">[docs]</a><span class="k">def</span> <span class="nf">lorentzian_diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">lorentzian_diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implement a differential form of a Lorentzian peak.</span>
 
 <span class="sd">    Args:</span>
@@ -165,7 +165,7 @@
 <span class="sd">        :include-source:</span>
 <span class="sd">        :outname: lorentzian_diff_func</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="n">mu</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="n">mu</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Linear"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.generic.Linear.html#Stoner.analysis.fitting.models.generic.Linear">[docs]</a><span class="k">class</span> <span class="nc">Linear</span><span class="p">(</span><span class="n">_Linear</span><span class="p">):</span>
@@ -344,9 +344,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

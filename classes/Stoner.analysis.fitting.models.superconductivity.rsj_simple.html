@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>rsj_simple &#8212; Stoner Pacakge API Documentation</title>
+    <title>RSJ_Simple &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="strijkers" href="Stoner.analysis.fitting.models.superconductivity.strijkers.html" />
-    <link rel="prev" title="rsj_noiseless" href="Stoner.analysis.fitting.models.superconductivity.rsj_noiseless.html" />
+    <link rel="next" title="Strijkers" href="Stoner.analysis.fitting.models.superconductivity.Strijkers.html" />
+    <link rel="prev" title="RSJ_Noiseless" href="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,10 +29,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.superconductivity.rsj_noiseless.html" title="Previous document">rsj_noiseless</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html" title="Previous document">RSJ_Noiseless</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.superconductivity.strijkers.html" title="Next document">strijkers</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.Strijkers.html" title="Next document">Strijkers</a>
           &rarr;
         </li>
     </ul>
@@ -56,11 +56,12 @@
           <div class="body" role="main">
             
   <div class="section" id="rsj-simple">
-<h1>rsj_simple<a class="headerlink" href="#rsj-simple" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.superconductivity.rsj_simple">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.superconductivity.</code><code class="sig-name descname">rsj_simple</code><span class="sig-paren">(</span><em class="sig-param">I</em>, <em class="sig-param">Ic</em>, <em class="sig-param">Rn</em>, <em class="sig-param">V_offset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#rsj_simple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.rsj_simple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements a simple noiseless symmetric RSJ model.</p>
+<h1>RSJ_Simple<a class="headerlink" href="#rsj-simple" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.superconductivity.</code><code class="sig-name descname">RSJ_Simple</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#RSJ_Simple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>Implements a simple noiseless symmetric RSJ model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -71,7 +72,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>(array)</em> –     Calculated volatages</p>
+<dd class="field-even"><p>(array) Calculated volatages</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -117,10 +118,43 @@
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/rsj_simple_func.png">png</a>, <a class="reference external" href="../samples/Fitting/rsj_simple_func.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/rsj_simple_func.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/rsj_simple_func.png" src="../_images/rsj_simple_func.png" />
-</div>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.display_names" title="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.guess" title="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data, **kwargs)</p></td>
+<td><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['I_c', 'R_N', 'V_{offset}']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#RSJ_Simple.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -135,15 +169,15 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.rsj_noiseless.html"
-                        title="previous chapter">rsj_noiseless</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html"
+                        title="previous chapter">RSJ_Noiseless</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.strijkers.html"
-                        title="next chapter">strijkers</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.Strijkers.html"
+                        title="next chapter">Strijkers</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.superconductivity.rsj_simple.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -163,10 +197,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.superconductivity.rsj_noiseless.html" title="Previous document">rsj_noiseless</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html" title="Previous document">RSJ_Noiseless</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.superconductivity.strijkers.html" title="Next document">strijkers</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.Strijkers.html" title="Next document">Strijkers</a>
           &rarr;
         </li>
     </ul>
@@ -183,9 +217,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

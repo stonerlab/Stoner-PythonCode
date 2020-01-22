@@ -173,7 +173,7 @@
     <span class="k">return</span> <span class="n">cond</span>
 
 
-<div class="viewcode-block" id="strijkers"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.superconductivity.strijkers.html#Stoner.analysis.fitting.models.superconductivity.strijkers">[docs]</a><span class="k">def</span> <span class="nf">strijkers</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">strijkers</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;strijkers Model for point-contact Andreev Reflection Spectroscopy.</span>
 
 <span class="sd">    Args:</span>
@@ -197,10 +197,10 @@
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: strijkers_func</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_strijkers_core</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_strijkers_core</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="rsj_noiseless"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.superconductivity.rsj_noiseless.html#Stoner.analysis.fitting.models.superconductivity.rsj_noiseless">[docs]</a><span class="k">def</span> <span class="nf">rsj_noiseless</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">Ic_p</span><span class="p">,</span> <span class="n">Ic_n</span><span class="p">,</span> <span class="n">Rn</span><span class="p">,</span> <span class="n">V_offset</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">rsj_noiseless</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">Ic_p</span><span class="p">,</span> <span class="n">Ic_n</span><span class="p">,</span> <span class="n">Rn</span><span class="p">,</span> <span class="n">V_offset</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implements a simple noiseless RSJ model.</span>
 
 <span class="sd">    Args:</span>
@@ -229,10 +229,10 @@
     <span class="n">normal_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">I</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">Ic_n</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">Rn</span>
     <span class="n">p_branch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">I</span> <span class="o">&gt;</span> <span class="n">Ic_p</span><span class="p">,</span> <span class="n">normal_p</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">I</span><span class="p">))</span>
     <span class="n">n_branch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">I</span> <span class="o">&lt;</span> <span class="n">Ic_n</span><span class="p">,</span> <span class="n">normal_n</span><span class="p">,</span> <span class="n">p_branch</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">n_branch</span> <span class="o">+</span> <span class="n">V_offset</span></div>
+    <span class="k">return</span> <span class="n">n_branch</span> <span class="o">+</span> <span class="n">V_offset</span>
 
 
-<div class="viewcode-block" id="rsj_simple"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.superconductivity.rsj_simple.html#Stoner.analysis.fitting.models.superconductivity.rsj_simple">[docs]</a><span class="k">def</span> <span class="nf">rsj_simple</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">Ic</span><span class="p">,</span> <span class="n">Rn</span><span class="p">,</span> <span class="n">V_offset</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">rsj_simple</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">Ic</span><span class="p">,</span> <span class="n">Rn</span><span class="p">,</span> <span class="n">V_offset</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implements a simple noiseless symmetric RSJ model.</span>
 
 <span class="sd">    Args:</span>
@@ -263,10 +263,10 @@
 
     <span class="n">normal</span> <span class="o">=</span> <span class="n">Rn</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">I</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">Ic</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
     <span class="n">ic_branch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Ic</span><span class="p">,</span> <span class="n">ic_branch</span><span class="p">,</span> <span class="n">normal</span><span class="p">)</span> <span class="o">+</span> <span class="n">V_offset</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Ic</span><span class="p">,</span> <span class="n">ic_branch</span><span class="p">,</span> <span class="n">normal</span><span class="p">)</span> <span class="o">+</span> <span class="n">V_offset</span>
 
 
-<div class="viewcode-block" id="ic_B_airy"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.superconductivity.ic_B_airy.html#Stoner.analysis.fitting.models.superconductivity.ic_B_airy">[docs]</a><span class="k">def</span> <span class="nf">ic_B_airy</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">Ic0</span><span class="p">,</span> <span class="n">B_offset</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">ic_B_airy</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">Ic0</span><span class="p">,</span> <span class="n">B_offset</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Critical Current for a round Josepshon Junction wrt to Field.</span>
 
 <span class="sd">    Args:</span>
@@ -300,7 +300,7 @@
 
     <span class="n">arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">B</span> <span class="o">-</span> <span class="n">B_offset</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">Phi_0</span>
 
-    <span class="k">return</span> <span class="n">Ic0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">arg</span><span class="p">),</span> <span class="n">J1</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">/</span> <span class="n">arg</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">Ic0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">arg</span><span class="p">),</span> <span class="n">J1</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">/</span> <span class="n">arg</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">icRN_Clean</span><span class="p">(</span><span class="n">d_f</span><span class="p">,</span> <span class="n">IcRn0</span><span class="p">,</span> <span class="n">E_x</span><span class="p">,</span> <span class="n">v_f</span><span class="p">,</span> <span class="n">d_0</span><span class="p">):</span>
@@ -606,9 +606,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

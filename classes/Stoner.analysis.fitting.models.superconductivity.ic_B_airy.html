@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>ic_B_airy &#8212; Stoner Pacakge API Documentation</title>
+    <title>Ic_B_Airy &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="RSJ_Noiseless" href="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html" />
-    <link rel="prev" title="strijkers" href="Stoner.analysis.fitting.models.superconductivity.strijkers.html" />
+    <link rel="next" title="hsl2rgb" href="Stoner.plot.hsl2rgb.html" />
+    <link rel="prev" title="Strijkers" href="Stoner.analysis.fitting.models.superconductivity.Strijkers.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,10 +29,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.superconductivity.strijkers.html" title="Previous document">strijkers</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.Strijkers.html" title="Previous document">Strijkers</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html" title="Next document">RSJ_Noiseless</a>
+          <a href="Stoner.plot.hsl2rgb.html" title="Next document">hsl2rgb</a>
           &rarr;
         </li>
     </ul>
@@ -56,11 +56,12 @@
           <div class="body" role="main">
             
   <div class="section" id="ic-b-airy">
-<h1>ic_B_airy<a class="headerlink" href="#ic-b-airy" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.superconductivity.ic_B_airy">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.superconductivity.</code><code class="sig-name descname">ic_B_airy</code><span class="sig-paren">(</span><em class="sig-param">B</em>, <em class="sig-param">Ic0</em>, <em class="sig-param">B_offset</em>, <em class="sig-param">A</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#ic_B_airy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.ic_B_airy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Critical Current for a round Josepshon Junction wrt to Field.</p>
+<h1>Ic_B_Airy<a class="headerlink" href="#ic-b-airy" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.superconductivity.</code><code class="sig-name descname">Ic_B_Airy</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#Ic_B_Airy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>Critical Current for a round Josepshon Junction wrt to Field.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -79,9 +80,7 @@
 <dt>Represents the critical current as:</dt><dd><p><span class="math notranslate nohighlight">\(I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}{\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|\)</span></p>
 </dd>
 </dl>
-<p>where <span class="math notranslate nohighlight">\(J_1\)</span> is a first order Bessel function.</p>
-<p>For small ($&lt;1^{-5}$)values of the Bessel function argument, this will return Ic0 to
-ensure correct evaluation for 0 flux.</p>
+<p>where <cite>J_1</cite> is a first order Bessel function.</p>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
@@ -110,10 +109,43 @@ ensure correct evaluation for 0 flux.</p>
 <span class="n">data</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;Critical Current $I_c (A)$&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/ic_b_airy_func.png">png</a>, <a class="reference external" href="../samples/Fitting/ic_b_airy_func.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/ic_b_airy_func.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/ic_b_airy_func.png" src="../_images/ic_b_airy_func.png" />
-</div>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.display_names" title="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.guess" title="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data, **kwargs)</p></td>
+<td><p>Guess parameters as max(data), x[argmax(data)] and from FWHM of peak</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['I_{c0}', 'B_{offset}']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#Ic_B_Airy.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess parameters as max(data), x[argmax(data)] and from FWHM of peak</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -128,15 +160,15 @@ ensure correct evaluation for 0 flux.</p>
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.strijkers.html"
-                        title="previous chapter">strijkers</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.Strijkers.html"
+                        title="previous chapter">Strijkers</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html"
-                        title="next chapter">RSJ_Noiseless</a></p>
+  <p class="topless"><a href="Stoner.plot.hsl2rgb.html"
+                        title="next chapter">hsl2rgb</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.superconductivity.ic_B_airy.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -156,10 +188,10 @@ ensure correct evaluation for 0 flux.</p>
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.superconductivity.strijkers.html" title="Previous document">strijkers</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.Strijkers.html" title="Previous document">Strijkers</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html" title="Next document">RSJ_Noiseless</a>
+          <a href="Stoner.plot.hsl2rgb.html" title="Next document">hsl2rgb</a>
           &rarr;
         </li>
     </ul>
@@ -176,9 +208,9 @@ ensure correct evaluation for 0 flux.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

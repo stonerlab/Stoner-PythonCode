@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>fowlerNordheim &#8212; Stoner Pacakge API Documentation</title>
+    <title>FowlerNordheim &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="simmons" href="Stoner.analysis.fitting.models.tunnelling.simmons.html" />
-    <link rel="prev" title="bdr" href="Stoner.analysis.fitting.models.tunnelling.bdr.html" />
+    <link rel="next" title="Simmons" href="Stoner.analysis.fitting.models.tunnelling.Simmons.html" />
+    <link rel="prev" title="BDR" href="Stoner.analysis.fitting.models.tunnelling.BDR.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,10 +29,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.tunnelling.bdr.html" title="Previous document">bdr</a>
+          <a href="Stoner.analysis.fitting.models.tunnelling.BDR.html" title="Previous document">BDR</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.tunnelling.simmons.html" title="Next document">simmons</a>
+          <a href="Stoner.analysis.fitting.models.tunnelling.Simmons.html" title="Next document">Simmons</a>
           &rarr;
         </li>
     </ul>
@@ -56,11 +56,12 @@
           <div class="body" role="main">
             
   <div class="section" id="fowlernordheim">
-<h1>fowlerNordheim<a class="headerlink" href="#fowlernordheim" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.tunnelling.fowlerNordheim">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.tunnelling.</code><code class="sig-name descname">fowlerNordheim</code><span class="sig-paren">(</span><em class="sig-param">V</em>, <em class="sig-param">A</em>, <em class="sig-param">phi</em>, <em class="sig-param">d</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/tunnelling.html#fowlerNordheim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.tunnelling.fowlerNordheim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fowler Nordhiem Model of electron tunnelling.</p>
+<h1>FowlerNordheim<a class="headerlink" href="#fowlernordheim" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.tunnelling.FowlerNordheim">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.tunnelling.</code><code class="sig-name descname">FowlerNordheim</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/tunnelling.html#FowlerNordheim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.tunnelling.FowlerNordheim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>Fowler Nordhiem Model of electron tunnelling.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -129,10 +130,25 @@
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/fowlernordheim.png">png</a>, <a class="reference external" href="../samples/Fitting/fowlernordheim.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/fowlernordheim.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/fowlernordheim.png" src="../_images/fowlernordheim.png" />
-</div>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.guess" title="Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, V])</p></td>
+<td><p>Just set the A, phi and d values to typical answers for a small tunnel junction</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">V=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/tunnelling.html#FowlerNordheim.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Just set the A, phi and d values to typical answers for a small tunnel junction</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -147,15 +163,15 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.tunnelling.bdr.html"
-                        title="previous chapter">bdr</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.tunnelling.BDR.html"
+                        title="previous chapter">BDR</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.tunnelling.simmons.html"
-                        title="next chapter">simmons</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.tunnelling.Simmons.html"
+                        title="next chapter">Simmons</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.tunnelling.fowlerNordheim.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -175,10 +191,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.tunnelling.bdr.html" title="Previous document">bdr</a>
+          <a href="Stoner.analysis.fitting.models.tunnelling.BDR.html" title="Previous document">BDR</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.tunnelling.simmons.html" title="Next document">simmons</a>
+          <a href="Stoner.analysis.fitting.models.tunnelling.Simmons.html" title="Next document">Simmons</a>
           &rarr;
         </li>
     </ul>
@@ -195,9 +211,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

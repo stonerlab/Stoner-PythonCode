@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>wlfit &#8212; Stoner Pacakge API Documentation</title>
+    <title>WLfit &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="BlochGrueneisen" href="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.html" />
-    <link rel="prev" title="fluchsSondheimer" href="Stoner.analysis.fitting.models.e_transport.fluchsSondheimer.html" />
+    <link rel="next" title="FMR_Power" href="Stoner.analysis.fitting.models.magnetism.FMR_Power.html" />
+    <link rel="prev" title="FluchsSondheimer" href="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,10 +29,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.e_transport.fluchsSondheimer.html" title="Previous document">fluchsSondheimer</a>
+          <a href="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.html" title="Previous document">FluchsSondheimer</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.html" title="Next document">BlochGrueneisen</a>
+          <a href="Stoner.analysis.fitting.models.magnetism.FMR_Power.html" title="Next document">FMR_Power</a>
           &rarr;
         </li>
     </ul>
@@ -56,11 +56,12 @@
           <div class="body" role="main">
             
   <div class="section" id="wlfit">
-<h1>wlfit<a class="headerlink" href="#wlfit" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.e_transport.wlfit">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.e_transport.</code><code class="sig-name descname">wlfit</code><span class="sig-paren">(</span><em class="sig-param">B</em>, <em class="sig-param">s0</em>, <em class="sig-param">DS</em>, <em class="sig-param">B1</em>, <em class="sig-param">B2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#wlfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.wlfit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Weak localisation</p>
+<h1>WLfit<a class="headerlink" href="#wlfit" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.e_transport.WLfit">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.e_transport.</code><code class="sig-name descname">WLfit</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#WLfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.WLfit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>Weak localisation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -121,10 +122,43 @@
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/wlfit.png">png</a>, <a class="reference external" href="../samples/Fitting/wlfit.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/wlfit.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/wlfit.png" src="../_images/wlfit.png" />
-</div>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.e_transport.WLfit.display_names" title="Stoner.analysis.fitting.models.e_transport.WLfit.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.e_transport.WLfit.guess" title="Stoner.analysis.fitting.models.e_transport.WLfit.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
+<td><p>Guess parameters for weak localisation fit.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.e_transport.WLfit.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['\\sigma_0', 'D_S', 'B_1', 'B_2']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.WLfit.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.e_transport.WLfit.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#WLfit.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.WLfit.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess parameters for weak localisation fit.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -139,15 +173,15 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.e_transport.fluchsSondheimer.html"
-                        title="previous chapter">fluchsSondheimer</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.html"
+                        title="previous chapter">FluchsSondheimer</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.html"
-                        title="next chapter">BlochGrueneisen</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.FMR_Power.html"
+                        title="next chapter">FMR_Power</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.e_transport.wlfit.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.e_transport.WLfit.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -167,10 +201,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.e_transport.fluchsSondheimer.html" title="Previous document">fluchsSondheimer</a>
+          <a href="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.html" title="Previous document">FluchsSondheimer</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.html" title="Next document">BlochGrueneisen</a>
+          <a href="Stoner.analysis.fitting.models.magnetism.FMR_Power.html" title="Next document">FMR_Power</a>
           &rarr;
         </li>
     </ul>
@@ -187,9 +221,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

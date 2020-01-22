@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>kittelEquation &#8212; Stoner Pacakge API Documentation</title>
+    <title>KittelEquation &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="langevin" href="Stoner.analysis.fitting.models.magnetism.langevin.html" />
-    <link rel="prev" title="inverse_kittel" href="Stoner.analysis.fitting.models.magnetism.inverse_kittel.html" />
+    <link rel="next" title="Langevin" href="Stoner.analysis.fitting.models.magnetism.Langevin.html" />
+    <link rel="prev" title="Inverse_Kittel" href="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,10 +29,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.magnetism.inverse_kittel.html" title="Previous document">inverse_kittel</a>
+          <a href="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html" title="Previous document">Inverse_Kittel</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.magnetism.langevin.html" title="Next document">langevin</a>
+          <a href="Stoner.analysis.fitting.models.magnetism.Langevin.html" title="Next document">Langevin</a>
           &rarr;
         </li>
     </ul>
@@ -56,16 +56,17 @@
           <div class="body" role="main">
             
   <div class="section" id="kittelequation">
-<h1>kittelEquation<a class="headerlink" href="#kittelequation" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.magnetism.kittelEquation">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.magnetism.</code><code class="sig-name descname">kittelEquation</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">g</em>, <em class="sig-param">M_s</em>, <em class="sig-param">H_k</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#kittelEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.kittelEquation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p>
+<h1>KittelEquation<a class="headerlink" href="#kittelequation" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.magnetism.KittelEquation">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.magnetism.</code><code class="sig-name descname">KittelEquation</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#KittelEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.KittelEquation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>array</em>) – Magnetic fields in A/m</p></li>
-<li><p><strong>g</strong> (<em>float</em>) – g factor for the gyromagnetic radius</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – h g factor for the gyromagnetic radius</p></li>
 <li><p><strong>M_s</strong> (<em>float</em>) – Magnetisation of sample in A/m</p></li>
 <li><p><strong>H_k</strong> (<em>float</em>) – Anisotropy field term (including demagnetising factors) in A/m</p></li>
 </ul>
@@ -132,10 +133,43 @@
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/kittel.png">png</a>, <a class="reference external" href="../samples/Fitting/kittel.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/kittel.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/kittel.png" src="../_images/kittel.png" />
-</div>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.magnetism.KittelEquation.display_names" title="Stoner.analysis.fitting.models.magnetism.KittelEquation.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.magnetism.KittelEquation.guess" title="Stoner.analysis.fitting.models.magnetism.KittelEquation.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
+<td><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.magnetism.KittelEquation.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['g', 'M_s', 'H_k']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.KittelEquation.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.magnetism.KittelEquation.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#KittelEquation.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.KittelEquation.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -150,15 +184,15 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.inverse_kittel.html"
-                        title="previous chapter">inverse_kittel</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html"
+                        title="previous chapter">Inverse_Kittel</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.langevin.html"
-                        title="next chapter">langevin</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.Langevin.html"
+                        title="next chapter">Langevin</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.magnetism.kittelEquation.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.magnetism.KittelEquation.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -178,10 +212,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.magnetism.inverse_kittel.html" title="Previous document">inverse_kittel</a>
+          <a href="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html" title="Previous document">Inverse_Kittel</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.magnetism.langevin.html" title="Next document">langevin</a>
+          <a href="Stoner.analysis.fitting.models.magnetism.Langevin.html" title="Next document">Langevin</a>
           &rarr;
         </li>
     </ul>
@@ -198,9 +232,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

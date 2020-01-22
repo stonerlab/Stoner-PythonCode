@@ -1,6 +1,27 @@
-lorentzian_diff
+Lorentzian_diff
 ===============
 
 .. currentmodule:: Stoner.analysis.fitting.models.generic
 
-.. autofunction:: lorentzian_diff
+.. autoclass:: Lorentzian_diff
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Lorentzian_diff.display_names
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Lorentzian_diff.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

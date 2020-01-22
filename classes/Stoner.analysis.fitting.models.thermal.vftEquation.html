@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>vftEquation &#8212; Stoner Pacakge API Documentation</title>
+    <title>VFTEquation &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Arrhenius" href="Stoner.analysis.fitting.models.thermal.Arrhenius.html" />
-    <link rel="prev" title="nDimArrhenius" href="Stoner.analysis.fitting.models.thermal.nDimArrhenius.html" />
+    <link rel="next" title="BDR" href="Stoner.analysis.fitting.models.tunnelling.BDR.html" />
+    <link rel="prev" title="NDimArrhenius" href="Stoner.analysis.fitting.models.thermal.NDimArrhenius.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,10 +29,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.thermal.nDimArrhenius.html" title="Previous document">nDimArrhenius</a>
+          <a href="Stoner.analysis.fitting.models.thermal.NDimArrhenius.html" title="Previous document">NDimArrhenius</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.thermal.Arrhenius.html" title="Next document">Arrhenius</a>
+          <a href="Stoner.analysis.fitting.models.tunnelling.BDR.html" title="Next document">BDR</a>
           &rarr;
         </li>
     </ul>
@@ -56,15 +56,16 @@
           <div class="body" role="main">
             
   <div class="section" id="vftequation">
-<h1>vftEquation<a class="headerlink" href="#vftequation" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.thermal.vftEquation">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.thermal.</code><code class="sig-name descname">vftEquation</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">A</em>, <em class="sig-param">DE</em>, <em class="sig-param">x_0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/thermal.html#vftEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.vftEquation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.</p>
+<h1>VFTEquation<a class="headerlink" href="#vftequation" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.thermal.VFTEquation">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.thermal.</code><code class="sig-name descname">VFTEquation</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/thermal.html#VFTEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.VFTEquation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>float</em>) – Temperature in K</p></li>
+<li><p><strong>x</strong> (<em>array</em>) – Temperature in K</p></li>
 <li><p><strong>A</strong> (<em>float</em>) – Prefactror (not temperature dependent)</p></li>
 <li><p><strong>DE</strong> (<em>float</em>) – Energy barrier in eV</p></li>
 <li><p><strong>x_0</strong> (<em>float</em>) – Offset temeprature in K</p></li>
@@ -74,8 +75,9 @@
 <dd class="field-even"><p>Rates according the VFT equation.</p>
 </dd>
 </dl>
-<p>The VFT equation is defined as as rr`tau = Aexpleft(frac{DE}{x-x_0}right)` and represents
+<p>The VFT equation is defined as as <span class="math notranslate nohighlight">\(\tau = A\exp\left(\frac{DE}{x-x_0}\right)\)</span> and represents
 a modifed form of the Arrenhius distribution with a freezing point of <span class="math notranslate nohighlight">\(x_0\)</span>.</p>
+<p>See <code class="xref py py-func docutils literal notranslate"><span class="pre">Stoner.Fit.vftEquation()</span></code> for an example.</p>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example of Arrhenius Fit.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
@@ -148,6 +150,51 @@ a modifed form of the Arrenhius distribution with a freezing point of <span clas
 <span class="n">d</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="s2">&quot;Temperature (K)&quot;</span>
 </pre></div>
 </div>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.thermal.VFTEquation.display_names" title="Stoner.analysis.fitting.models.thermal.VFTEquation.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.thermal.VFTEquation.nan_policy" title="Stoner.analysis.fitting.models.thermal.VFTEquation.nan_policy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nan_policy</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.thermal.VFTEquation.guess" title="Stoner.analysis.fitting.models.thermal.VFTEquation.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
+<td><p>Guess paramneters from a set of data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.thermal.VFTEquation.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['A', '\\Delta E', 'x_0']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.VFTEquation.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.thermal.VFTEquation.nan_policy">
+<code class="sig-name descname">nan_policy</code><em class="property"> = 'omit'</em><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.VFTEquation.nan_policy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.thermal.VFTEquation.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/thermal.html#VFTEquation.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.VFTEquation.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess paramneters from a set of data.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -162,15 +209,15 @@ a modifed form of the Arrenhius distribution with a freezing point of <span clas
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.thermal.nDimArrhenius.html"
-                        title="previous chapter">nDimArrhenius</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.thermal.NDimArrhenius.html"
+                        title="previous chapter">NDimArrhenius</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.thermal.Arrhenius.html"
-                        title="next chapter">Arrhenius</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.tunnelling.BDR.html"
+                        title="next chapter">BDR</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.thermal.vftEquation.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.thermal.VFTEquation.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -190,10 +237,10 @@ a modifed form of the Arrenhius distribution with a freezing point of <span clas
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.thermal.nDimArrhenius.html" title="Previous document">nDimArrhenius</a>
+          <a href="Stoner.analysis.fitting.models.thermal.NDimArrhenius.html" title="Previous document">NDimArrhenius</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.thermal.Arrhenius.html" title="Next document">Arrhenius</a>
+          <a href="Stoner.analysis.fitting.models.tunnelling.BDR.html" title="Next document">BDR</a>
           &rarr;
         </li>
     </ul>
@@ -210,9 +257,9 @@ a modifed form of the Arrenhius distribution with a freezing point of <span clas
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>fluchsSondheimer &#8212; Stoner Pacakge API Documentation</title>
+    <title>FluchsSondheimer &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="wlfit" href="Stoner.analysis.fitting.models.e_transport.wlfit.html" />
-    <link rel="prev" title="blochGrueneisen" href="Stoner.analysis.fitting.models.e_transport.blochGrueneisen.html" />
+    <link rel="next" title="WLfit" href="Stoner.analysis.fitting.models.e_transport.WLfit.html" />
+    <link rel="prev" title="BlochGrueneisen" href="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,10 +29,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.e_transport.blochGrueneisen.html" title="Previous document">blochGrueneisen</a>
+          <a href="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.html" title="Previous document">BlochGrueneisen</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.e_transport.wlfit.html" title="Next document">wlfit</a>
+          <a href="Stoner.analysis.fitting.models.e_transport.WLfit.html" title="Next document">WLfit</a>
           &rarr;
         </li>
     </ul>
@@ -56,11 +56,12 @@
           <div class="body" role="main">
             
   <div class="section" id="fluchssondheimer">
-<h1>fluchsSondheimer<a class="headerlink" href="#fluchssondheimer" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.e_transport.fluchsSondheimer">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.e_transport.</code><code class="sig-name descname">fluchsSondheimer</code><span class="sig-paren">(</span><em class="sig-param">t</em>, <em class="sig-param">l</em>, <em class="sig-param">p</em>, <em class="sig-param">sigma_0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#fluchsSondheimer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.fluchsSondheimer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate a Fluchs-Sondheumer model function for conductivity.</p>
+<h1>FluchsSondheimer<a class="headerlink" href="#fluchssondheimer" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.e_transport.</code><code class="sig-name descname">FluchsSondheimer</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#FluchsSondheimer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>Evaluate a Fluchs-Sondheumer model function for conductivity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -125,10 +126,51 @@
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/fluchssondheimer.png">png</a>, <a class="reference external" href="../samples/Fitting/fluchssondheimer.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/fluchssondheimer.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/fluchssondheimer.png" src="../_images/fluchssondheimer.png" />
-</div>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.display_names" title="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.units" title="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.guess" title="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, t])</p></td>
+<td><p>Guess some starting values - not very clever</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['\\lambda_{mfp}', 'p_{refl}', '\\sigma_0']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.units">
+<code class="sig-name descname">units</code><em class="property"> = ['nm', '', '\\Omega^{-1}m^{-1}']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.units" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">t=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#FluchsSondheimer.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess some starting values - not very clever</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -143,15 +185,15 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.e_transport.blochGrueneisen.html"
-                        title="previous chapter">blochGrueneisen</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.html"
+                        title="previous chapter">BlochGrueneisen</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.e_transport.wlfit.html"
-                        title="next chapter">wlfit</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.e_transport.WLfit.html"
+                        title="next chapter">WLfit</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.e_transport.fluchsSondheimer.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -171,10 +213,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.e_transport.blochGrueneisen.html" title="Previous document">blochGrueneisen</a>
+          <a href="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.html" title="Previous document">BlochGrueneisen</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.e_transport.wlfit.html" title="Next document">wlfit</a>
+          <a href="Stoner.analysis.fitting.models.e_transport.WLfit.html" title="Next document">WLfit</a>
           &rarr;
         </li>
     </ul>
@@ -191,9 +233,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

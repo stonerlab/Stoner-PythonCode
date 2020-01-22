@@ -1,6 +1,27 @@
-rsj_noiseless
+RSJ_Noiseless
 =============
 
 .. currentmodule:: Stoner.analysis.fitting.models.superconductivity
 
-.. autofunction:: rsj_noiseless
+.. autoclass:: RSJ_Noiseless
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~RSJ_Noiseless.display_names
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~RSJ_Noiseless.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

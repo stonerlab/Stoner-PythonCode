@@ -113,11 +113,11 @@ False)</p></li>
 </p>
 </dd>
 </dl>
-<p>This function is essentially a wrapper around the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.differential_evolution.html#scipy.optimize.differential_evolution" title="(in SciPy v1.4.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.differential_evolution()</span></code></a> funtion
+<p>This function is essentially a wrapper around the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.differential_evolution.html#scipy.optimize.differential_evolution" title="(in SciPy v1.2.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.differential_evolution()</span></code></a> funtion
 that presents the same interface as the other Stoner package curve fitting functions. The parent function,
 however, does not provide the variance-covariance matrix to estimate the fitting errors. To work around this,
 this function does the initial fit with the differential evolution, but then uses that to give a starting
-vector to a call to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v1.4.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.curve_fit()</span></code></a> to calculate the covariance matrix.</p>
+vector to a call to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v1.2.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.curve_fit()</span></code></a> to calculate the covariance matrix.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <ul class="simple">
@@ -176,10 +176,6 @@ vector to a call to <a class="reference external" href="https://docs.scipy.org/d
 <span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">7.2</span><span class="p">,</span> <span class="mf">3.9</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;Differential Evolution  Fit&quot;</span>
 </pre></div>
-</div>
-<p>(<a class="reference external" href="../samples/diffev1.png">png</a>, <a class="reference external" href="../samples/diffev1.hires.png">hires.png</a>, <a class="reference external" href="../samples/diffev1.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/diffev1.png" src="../_images/diffev1.png" />
 </div>
 </dd></dl>
 
@@ -243,9 +239,9 @@ vector to a call to <a class="reference external" href="https://docs.scipy.org/d
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

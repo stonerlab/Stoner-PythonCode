@@ -1,6 +1,27 @@
-inverse_kittel
+Inverse_Kittel
 ==============
 
 .. currentmodule:: Stoner.analysis.fitting.models.magnetism
 
-.. autofunction:: inverse_kittel
+.. autoclass:: Inverse_Kittel
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Inverse_Kittel.display_names
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Inverse_Kittel.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

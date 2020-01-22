@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>modArrhenius &#8212; Stoner Pacakge API Documentation</title>
+    <title>ModArrhenius &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="nDimArrhenius" href="Stoner.analysis.fitting.models.thermal.nDimArrhenius.html" />
-    <link rel="prev" title="arrhenius" href="Stoner.analysis.fitting.models.thermal.arrhenius.html" />
+    <link rel="next" title="NDimArrhenius" href="Stoner.analysis.fitting.models.thermal.NDimArrhenius.html" />
+    <link rel="prev" title="Arrhenius" href="Stoner.analysis.fitting.models.thermal.Arrhenius.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,10 +29,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.thermal.arrhenius.html" title="Previous document">arrhenius</a>
+          <a href="Stoner.analysis.fitting.models.thermal.Arrhenius.html" title="Previous document">Arrhenius</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.thermal.nDimArrhenius.html" title="Next document">nDimArrhenius</a>
+          <a href="Stoner.analysis.fitting.models.thermal.NDimArrhenius.html" title="Next document">NDimArrhenius</a>
           &rarr;
         </li>
     </ul>
@@ -56,11 +56,12 @@
           <div class="body" role="main">
             
   <div class="section" id="modarrhenius">
-<h1>modArrhenius<a class="headerlink" href="#modarrhenius" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.thermal.modArrhenius">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.thermal.</code><code class="sig-name descname">modArrhenius</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">A</em>, <em class="sig-param">DE</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/thermal.html#modArrhenius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.modArrhenius" title="Permalink to this definition">¶</a></dt>
-<dd><p>Arrhenius Equation with a variable T power dependent prefactor.</p>
+<h1>ModArrhenius<a class="headerlink" href="#modarrhenius" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.thermal.ModArrhenius">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.thermal.</code><code class="sig-name descname">ModArrhenius</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/thermal.html#ModArrhenius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.ModArrhenius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>Arrhenius Equation with a variable T power dependent prefactor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -74,7 +75,7 @@
 <dd class="field-even"><p>Typically a rate corresponding to the given temperature values.</p>
 </dd>
 </dl>
-<p>The modified Arrhenius function is defined as <span class="math notranslate nohighlight">\(\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)\)</span> where
+<p>The Arrhenius function is defined as <span class="math notranslate nohighlight">\(\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)\)</span> where
 <span class="math notranslate nohighlight">\(k_B\)</span> is Boltzmann’s constant.</p>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example of nDimArrhenius Fit.&quot;&quot;&quot;</span>
@@ -107,10 +108,43 @@
 <span class="n">d</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="s2">&quot;Temperature (K)&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/modarrhenius.png">png</a>, <a class="reference external" href="../samples/Fitting/modarrhenius.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/modarrhenius.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/modarrhenius.png" src="../_images/modarrhenius.png" />
-</div>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.thermal.ModArrhenius.display_names" title="Stoner.analysis.fitting.models.thermal.ModArrhenius.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.thermal.ModArrhenius.guess" title="Stoner.analysis.fitting.models.thermal.ModArrhenius.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
+<td><p>Guess paramneters from a set of data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.thermal.ModArrhenius.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['A', '\\Delta E', 'n']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.ModArrhenius.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.thermal.ModArrhenius.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/thermal.html#ModArrhenius.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.ModArrhenius.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess paramneters from a set of data.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -125,15 +159,15 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.thermal.arrhenius.html"
-                        title="previous chapter">arrhenius</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.thermal.Arrhenius.html"
+                        title="previous chapter">Arrhenius</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.thermal.nDimArrhenius.html"
-                        title="next chapter">nDimArrhenius</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.thermal.NDimArrhenius.html"
+                        title="next chapter">NDimArrhenius</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.thermal.modArrhenius.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.thermal.ModArrhenius.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -153,10 +187,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.thermal.arrhenius.html" title="Previous document">arrhenius</a>
+          <a href="Stoner.analysis.fitting.models.thermal.Arrhenius.html" title="Previous document">Arrhenius</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.thermal.nDimArrhenius.html" title="Next document">nDimArrhenius</a>
+          <a href="Stoner.analysis.fitting.models.thermal.NDimArrhenius.html" title="Next document">NDimArrhenius</a>
           &rarr;
         </li>
     </ul>
@@ -173,9 +207,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

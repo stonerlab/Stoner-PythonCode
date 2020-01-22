@@ -91,7 +91,7 @@ Default to None for not adding fitted data</p></li>
 <dd class="field-odd"><p><p><em>( various )</em> –</p>
 <dl>
 <dt>The return value is determined by the <em>output</em> parameter. Options are</dt><dd><ul>
-<li><p>”fit”    just the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Output.html#scipy.odr.Output" title="(in SciPy v1.4.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Output</span></code></a> instance (default)</p></li>
+<li><p>”fit”    just the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Output.html#scipy.odr.Output" title="(in SciPy v1.2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Output</span></code></a> instance (default)</p></li>
 <li><dl class="simple">
 <dt>”row”     just a one dimensional numpy array of the fit paraeters interleaved with their</dt><dd><p>uncertainties</p>
 </dd>
@@ -116,7 +116,7 @@ Default to None for not adding fitted data</p></li>
 <p>The function tries to make use of whatever model you give it. Specifically, it accepts:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>A subclass or an instance of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.4.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> : this is the native model type for the
+<li><p>A subclass or an instance of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> : this is the native model type for the
 underlying scipy odr package.</p></li>
 <li><p>A subclass or instance of an lmfit.models.Model: the <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Fit</span></code></a> module has a number of
 useful prebuilt lmfit models that can be used directly by this function.</p></li>
@@ -193,10 +193,6 @@ scip.odr stadnard f(beta,x)</p></li>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;Orthogonal Distance Regression  Fit&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/odrfit1.png">png</a>, <a class="reference external" href="../samples/odrfit1.hires.png">hires.png</a>, <a class="reference external" href="../samples/odrfit1.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/odrfit1.png" src="../_images/odrfit1.png" />
-</div>
 </dd></dl>
 
 </div>
@@ -259,9 +255,9 @@ scip.odr stadnard f(beta,x)</p></li>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

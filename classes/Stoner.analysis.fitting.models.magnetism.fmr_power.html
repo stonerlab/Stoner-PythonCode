@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>fmr_power &#8212; Stoner Pacakge API Documentation</title>
+    <title>FMR_Power &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,7 +17,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="inverse_kittel" href="Stoner.analysis.fitting.models.magnetism.inverse_kittel.html" />
+    <link rel="next" title="Inverse_Kittel" href="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html" />
     <link rel="prev" title="WLfit" href="Stoner.analysis.fitting.models.e_transport.WLfit.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -32,7 +32,7 @@
           <a href="Stoner.analysis.fitting.models.e_transport.WLfit.html" title="Previous document">WLfit</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.magnetism.inverse_kittel.html" title="Next document">inverse_kittel</a>
+          <a href="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html" title="Next document">Inverse_Kittel</a>
           &rarr;
         </li>
     </ul>
@@ -56,11 +56,12 @@
           <div class="body" role="main">
             
   <div class="section" id="fmr-power">
-<h1>fmr_power<a class="headerlink" href="#fmr-power" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.magnetism.fmr_power">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.magnetism.</code><code class="sig-name descname">fmr_power</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">H_res</em>, <em class="sig-param">Delta_H</em>, <em class="sig-param">K_1</em>, <em class="sig-param">K_2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#fmr_power"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.fmr_power" title="Permalink to this definition">¶</a></dt>
-<dd><p>A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</p>
+<h1>FMR_Power<a class="headerlink" href="#fmr-power" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.magnetism.FMR_Power">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.magnetism.</code><code class="sig-name descname">FMR_Power</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#FMR_Power"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.FMR_Power" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -75,6 +76,43 @@
 </dd>
 </dl>
 <p><span class="math notranslate nohighlight">\(\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}\)</span></p>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.magnetism.FMR_Power.display_names" title="Stoner.analysis.fitting.models.magnetism.FMR_Power.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.magnetism.FMR_Power.guess" title="Stoner.analysis.fitting.models.magnetism.FMR_Power.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
+<td><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.magnetism.FMR_Power.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['H_{res}', '\\Delta_H', 'K_1', 'K_2']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.FMR_Power.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.magnetism.FMR_Power.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#FMR_Power.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.FMR_Power.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -92,12 +130,12 @@
   <p class="topless"><a href="Stoner.analysis.fitting.models.e_transport.WLfit.html"
                         title="previous chapter">WLfit</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.inverse_kittel.html"
-                        title="next chapter">inverse_kittel</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html"
+                        title="next chapter">Inverse_Kittel</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.magnetism.fmr_power.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.magnetism.FMR_Power.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -120,7 +158,7 @@
           <a href="Stoner.analysis.fitting.models.e_transport.WLfit.html" title="Previous document">WLfit</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.magnetism.inverse_kittel.html" title="Next document">inverse_kittel</a>
+          <a href="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html" title="Next document">Inverse_Kittel</a>
           &rarr;
         </li>
     </ul>
@@ -137,9 +175,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

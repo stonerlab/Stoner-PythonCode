@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>blochGrueneisen &#8212; Stoner Pacakge API Documentation</title>
+    <title>BlochGrueneisen &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,7 +17,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fluchsSondheimer" href="Stoner.analysis.fitting.models.e_transport.fluchsSondheimer.html" />
+    <link rel="next" title="FluchsSondheimer" href="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.html" />
     <link rel="prev" title="TersoffHammann" href="Stoner.analysis.fitting.models.tunnelling.TersoffHammann.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -32,7 +32,7 @@
           <a href="Stoner.analysis.fitting.models.tunnelling.TersoffHammann.html" title="Previous document">TersoffHammann</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.e_transport.fluchsSondheimer.html" title="Next document">fluchsSondheimer</a>
+          <a href="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.html" title="Next document">FluchsSondheimer</a>
           &rarr;
         </li>
     </ul>
@@ -56,11 +56,12 @@
           <div class="body" role="main">
             
   <div class="section" id="blochgrueneisen">
-<h1>blochGrueneisen<a class="headerlink" href="#blochgrueneisen" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.e_transport.blochGrueneisen">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.e_transport.</code><code class="sig-name descname">blochGrueneisen</code><span class="sig-paren">(</span><em class="sig-param">T</em>, <em class="sig-param">thetaD</em>, <em class="sig-param">rho0</em>, <em class="sig-param">A</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#blochGrueneisen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.blochGrueneisen" title="Permalink to this definition">¶</a></dt>
-<dd><p>BlochGrueneiseen Function for fitting R(T).</p>
+<h1>BlochGrueneisen<a class="headerlink" href="#blochgrueneisen" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.e_transport.</code><code class="sig-name descname">BlochGrueneisen</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#BlochGrueneisen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.BlochGrueneisen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>BlochGrueneiseen Function for fitting R(T).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -119,10 +120,43 @@
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/blochgruneisen.png">png</a>, <a class="reference external" href="../samples/Fitting/blochgruneisen.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/blochgruneisen.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/blochgruneisen.png" src="../_images/blochgruneisen.png" />
-</div>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.display_names" title="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.guess" title="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
+<td><p>Guess some starting values - not very clever</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['\\theta_D', '\\rho_0', 'A', 'n']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#BlochGrueneisen.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess some starting values - not very clever</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -140,12 +174,12 @@
   <p class="topless"><a href="Stoner.analysis.fitting.models.tunnelling.TersoffHammann.html"
                         title="previous chapter">TersoffHammann</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.e_transport.fluchsSondheimer.html"
-                        title="next chapter">fluchsSondheimer</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.html"
+                        title="next chapter">FluchsSondheimer</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.e_transport.blochGrueneisen.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -168,7 +202,7 @@
           <a href="Stoner.analysis.fitting.models.tunnelling.TersoffHammann.html" title="Previous document">TersoffHammann</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.e_transport.fluchsSondheimer.html" title="Next document">fluchsSondheimer</a>
+          <a href="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.html" title="Next document">FluchsSondheimer</a>
           &rarr;
         </li>
     </ul>
@@ -185,9 +219,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

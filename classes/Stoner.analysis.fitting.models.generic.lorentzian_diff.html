@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>lorentzian_diff &#8212; Stoner Pacakge API Documentation</title>
+    <title>Lorentzian_diff &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="powerLaw" href="Stoner.analysis.fitting.models.generic.powerLaw.html" />
-    <link rel="prev" title="linear" href="Stoner.analysis.fitting.models.generic.linear.html" />
+    <link rel="next" title="PowerLaw" href="Stoner.analysis.fitting.models.generic.PowerLaw.html" />
+    <link rel="prev" title="Linear" href="Stoner.analysis.fitting.models.generic.Linear.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,10 +29,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.generic.linear.html" title="Previous document">linear</a>
+          <a href="Stoner.analysis.fitting.models.generic.Linear.html" title="Previous document">Linear</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.generic.powerLaw.html" title="Next document">powerLaw</a>
+          <a href="Stoner.analysis.fitting.models.generic.PowerLaw.html" title="Next document">PowerLaw</a>
           &rarr;
         </li>
     </ul>
@@ -56,11 +56,12 @@
           <div class="body" role="main">
             
   <div class="section" id="lorentzian-diff">
-<h1>lorentzian_diff<a class="headerlink" href="#lorentzian-diff" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.generic.lorentzian_diff">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.generic.</code><code class="sig-name descname">lorentzian_diff</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">A</em>, <em class="sig-param">sigma</em>, <em class="sig-param">mu</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/generic.html#lorentzian_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.generic.lorentzian_diff" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implement a differential form of a Lorentzian peak.</p>
+<h1>Lorentzian_diff<a class="headerlink" href="#lorentzian-diff" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.generic.Lorentzian_diff">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.generic.</code><code class="sig-name descname">Lorentzian_diff</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/generic.html#Lorentzian_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.generic.Lorentzian_diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>lmfit Model rerprenting the differential form of a Lorentzian Peak.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -118,10 +119,43 @@
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Differential Lorentzian Fit&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/lorentzian_diff_func.png">png</a>, <a class="reference external" href="../samples/Fitting/lorentzian_diff_func.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/lorentzian_diff_func.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/lorentzian_diff_func.png" src="../_images/lorentzian_diff_func.png" />
-</div>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.generic.Lorentzian_diff.display_names" title="Stoner.analysis.fitting.models.generic.Lorentzian_diff.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.generic.Lorentzian_diff.guess" title="Stoner.analysis.fitting.models.generic.Lorentzian_diff.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
+<td><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.generic.Lorentzian_diff.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['A', '\\sigma', '\\mu']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.generic.Lorentzian_diff.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.generic.Lorentzian_diff.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/generic.html#Lorentzian_diff.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.generic.Lorentzian_diff.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -136,15 +170,15 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.generic.linear.html"
-                        title="previous chapter">linear</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.generic.Linear.html"
+                        title="previous chapter">Linear</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.generic.powerLaw.html"
-                        title="next chapter">powerLaw</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.generic.PowerLaw.html"
+                        title="next chapter">PowerLaw</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.generic.lorentzian_diff.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.generic.Lorentzian_diff.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -164,10 +198,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.generic.linear.html" title="Previous document">linear</a>
+          <a href="Stoner.analysis.fitting.models.generic.Linear.html" title="Previous document">Linear</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.generic.powerLaw.html" title="Next document">powerLaw</a>
+          <a href="Stoner.analysis.fitting.models.generic.PowerLaw.html" title="Next document">PowerLaw</a>
           &rarr;
         </li>
     </ul>
@@ -184,9 +218,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

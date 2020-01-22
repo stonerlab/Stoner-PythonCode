@@ -1,6 +1,27 @@
-rsj_simple
+RSJ_Simple
 ==========
 
 .. currentmodule:: Stoner.analysis.fitting.models.superconductivity
 
-.. autofunction:: rsj_simple
+.. autoclass:: RSJ_Simple
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~RSJ_Simple.display_names
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~RSJ_Simple.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

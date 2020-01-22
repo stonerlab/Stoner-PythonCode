@@ -75,7 +75,7 @@
     <span class="n">update_param_vals</span> <span class="o">=</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="simmons"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.tunnelling.simmons.html#Stoner.analysis.fitting.models.tunnelling.simmons">[docs]</a><span class="k">def</span> <span class="nf">simmons</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">simmons</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simmons model of electron tunnelling.</span>
 
 <span class="sd">    Args:</span>
@@ -105,10 +105,10 @@
             <span class="o">-</span> <span class="p">(</span><span class="n">phi</span> <span class="o">+</span> <span class="n">V</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">1.025</span> <span class="o">*</span> <span class="n">d</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi</span> <span class="o">+</span> <span class="n">V</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
         <span class="p">)</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">I</span></div>
+    <span class="k">return</span> <span class="n">I</span>
 
 
-<div class="viewcode-block" id="bdr"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.tunnelling.bdr.html#Stoner.analysis.fitting.models.tunnelling.bdr">[docs]</a><span class="k">def</span> <span class="nf">bdr</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">dphi</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">mass</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">bdr</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">dphi</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">mass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;BDR model tunnelling.</span>
 
 <span class="sd">    Args:</span>
@@ -141,10 +141,10 @@
         <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">1.028</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span>
         <span class="o">*</span> <span class="p">(</span><span class="n">V</span> <span class="o">-</span> <span class="mf">0.0214</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span> <span class="o">*</span> <span class="n">d</span> <span class="o">*</span> <span class="n">dphi</span> <span class="o">/</span> <span class="n">phi</span> <span class="o">**</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">V</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">0.0110</span> <span class="o">*</span> <span class="n">mass</span> <span class="o">*</span> <span class="n">d</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">phi</span> <span class="o">*</span> <span class="n">V</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">I</span></div>
+    <span class="k">return</span> <span class="n">I</span>
 
 
-<div class="viewcode-block" id="fowlerNordheim"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.tunnelling.fowlerNordheim.html#Stoner.analysis.fitting.models.tunnelling.fowlerNordheim">[docs]</a><span class="k">def</span> <span class="nf">fowlerNordheim</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">fowlerNordheim</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Fowler Nordhiem Model of electron tunnelling.</span>
 
 <span class="sd">    Args:</span>
@@ -162,10 +162,10 @@
 <span class="sd">            :outname: fowlernordheim</span>
 <span class="sd">        &quot;&quot;&quot;</span>
     <span class="n">I</span> <span class="o">=</span> <span class="n">V</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.38e6</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">V</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">d</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.689</span> <span class="o">*</span> <span class="n">phi</span> <span class="o">**</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">d</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">I</span></div>
+    <span class="k">return</span> <span class="n">I</span>
 
 
-<div class="viewcode-block" id="tersoffHammann"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.tunnelling.tersoffHammann.html#Stoner.analysis.fitting.models.tunnelling.tersoffHammann">[docs]</a><span class="k">def</span> <span class="nf">tersoffHammann</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">tersoffHammann</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;TersoffHamman model for tunnelling through STM tip.</span>
 
 <span class="sd">    Args:</span>
@@ -176,7 +176,7 @@
 <span class="sd">        A linear fit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">I</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">V</span>
-    <span class="k">return</span> <span class="n">I</span></div>
+    <span class="k">return</span> <span class="n">I</span>
 
 
 <div class="viewcode-block" id="Simmons"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.tunnelling.Simmons.html#Stoner.analysis.fitting.models.tunnelling.Simmons">[docs]</a><span class="k">class</span> <span class="nc">Simmons</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -336,9 +336,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

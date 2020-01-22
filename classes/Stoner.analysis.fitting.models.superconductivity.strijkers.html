@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>strijkers &#8212; Stoner Pacakge API Documentation</title>
+    <title>Strijkers &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="ic_B_airy" href="Stoner.analysis.fitting.models.superconductivity.ic_B_airy.html" />
-    <link rel="prev" title="rsj_simple" href="Stoner.analysis.fitting.models.superconductivity.rsj_simple.html" />
+    <link rel="next" title="Ic_B_Airy" href="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html" />
+    <link rel="prev" title="RSJ_Simple" href="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,10 +29,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.superconductivity.rsj_simple.html" title="Previous document">rsj_simple</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html" title="Previous document">RSJ_Simple</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.superconductivity.ic_B_airy.html" title="Next document">ic_B_airy</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html" title="Next document">Ic_B_Airy</a>
           &rarr;
         </li>
     </ul>
@@ -56,11 +56,12 @@
           <div class="body" role="main">
             
   <div class="section" id="strijkers">
-<h1>strijkers<a class="headerlink" href="#strijkers" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.superconductivity.strijkers">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.superconductivity.</code><code class="sig-name descname">strijkers</code><span class="sig-paren">(</span><em class="sig-param">V</em>, <em class="sig-param">omega</em>, <em class="sig-param">delta</em>, <em class="sig-param">P</em>, <em class="sig-param">Z</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#strijkers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.strijkers" title="Permalink to this definition">¶</a></dt>
-<dd><p>strijkers Model for point-contact Andreev Reflection Spectroscopy.</p>
+<h1>Strijkers<a class="headerlink" href="#strijkers" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.superconductivity.Strijkers">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.superconductivity.</code><code class="sig-name descname">Strijkers</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#Strijkers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.Strijkers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>strijkers Model for point-contact Andreev Reflection Spectroscopy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -102,10 +103,43 @@
 <span class="nb">print</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">())</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/strijkers_func.png">png</a>, <a class="reference external" href="../samples/strijkers_func.hires.png">hires.png</a>, <a class="reference external" href="../samples/strijkers_func.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/strijkers_func.png" src="../_images/strijkers_func.png" />
-</div>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.superconductivity.Strijkers.display_names" title="Stoner.analysis.fitting.models.superconductivity.Strijkers.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.superconductivity.Strijkers.guess" title="Stoner.analysis.fitting.models.superconductivity.Strijkers.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data, **kwargs)</p></td>
+<td><p>Guess starting values for a good Nb contact to a ferromagnet at 4.2K</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.superconductivity.Strijkers.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['\\omega', '\\Delta', 'P', 'Z']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.Strijkers.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.superconductivity.Strijkers.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#Strijkers.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.Strijkers.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess starting values for a good Nb contact to a ferromagnet at 4.2K</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -120,15 +154,15 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.rsj_simple.html"
-                        title="previous chapter">rsj_simple</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html"
+                        title="previous chapter">RSJ_Simple</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.ic_B_airy.html"
-                        title="next chapter">ic_B_airy</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html"
+                        title="next chapter">Ic_B_Airy</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.superconductivity.strijkers.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.superconductivity.Strijkers.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -148,10 +182,10 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.superconductivity.rsj_simple.html" title="Previous document">rsj_simple</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html" title="Previous document">RSJ_Simple</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.superconductivity.ic_B_airy.html" title="Next document">ic_B_airy</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html" title="Next document">Ic_B_Airy</a>
           &rarr;
         </li>
     </ul>
@@ -168,9 +202,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

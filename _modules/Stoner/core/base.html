@@ -496,6 +496,8 @@
                 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                     <span class="k">pass</span>  <span class="c1"># Silently fail</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
+                <span class="n">value</span><span class="o">=</span><span class="n">string_to_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">findtype</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
@@ -625,8 +627,7 @@
         <span class="n">k</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">v</span> <span class="o">=</span> <span class="s2">&quot;=&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>  <span class="c1"># rejoin any = in the value string</span>
         <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span></div></div>
-
-
+        
 <div class="viewcode-block" id="metadataObject"><a class="viewcode-back" href="../../../classes/Stoner.core.metadataObject.html#Stoner.metadataObject">[docs]</a><span class="k">class</span> <span class="nc">metadataObject</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.</span>
@@ -753,9 +754,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

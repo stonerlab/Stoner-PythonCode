@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>rsj_noiseless &#8212; Stoner Pacakge API Documentation</title>
+    <title>RSJ_Noiseless &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,7 +17,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="rsj_simple" href="Stoner.analysis.fitting.models.superconductivity.rsj_simple.html" />
+    <link rel="next" title="RSJ_Simple" href="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html" />
     <link rel="prev" title="Langevin" href="Stoner.analysis.fitting.models.magnetism.Langevin.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -32,7 +32,7 @@
           <a href="Stoner.analysis.fitting.models.magnetism.Langevin.html" title="Previous document">Langevin</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.superconductivity.rsj_simple.html" title="Next document">rsj_simple</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html" title="Next document">RSJ_Simple</a>
           &rarr;
         </li>
     </ul>
@@ -56,11 +56,12 @@
           <div class="body" role="main">
             
   <div class="section" id="rsj-noiseless">
-<h1>rsj_noiseless<a class="headerlink" href="#rsj-noiseless" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.superconductivity.rsj_noiseless">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.superconductivity.</code><code class="sig-name descname">rsj_noiseless</code><span class="sig-paren">(</span><em class="sig-param">I</em>, <em class="sig-param">Ic_p</em>, <em class="sig-param">Ic_n</em>, <em class="sig-param">Rn</em>, <em class="sig-param">V_offset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#rsj_noiseless"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.rsj_noiseless" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements a simple noiseless RSJ model.</p>
+<h1>RSJ_Noiseless<a class="headerlink" href="#rsj-noiseless" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.superconductivity.</code><code class="sig-name descname">RSJ_Noiseless</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#RSJ_Noiseless"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>Implements a simple noiseless RSJ model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -118,10 +119,43 @@
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/rsj_noiseless_func.png">png</a>, <a class="reference external" href="../samples/Fitting/rsj_noiseless_func.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/rsj_noiseless_func.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/rsj_noiseless_func.png" src="../_images/rsj_noiseless_func.png" />
-</div>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.display_names" title="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.guess" title="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data, **kwargs)</p></td>
+<td><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['I_c^p', 'I_c^n', 'R_N', 'V_{offset}']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#RSJ_Noiseless.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -139,12 +173,12 @@
   <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.Langevin.html"
                         title="previous chapter">Langevin</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.rsj_simple.html"
-                        title="next chapter">rsj_simple</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html"
+                        title="next chapter">RSJ_Simple</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.superconductivity.rsj_noiseless.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -167,7 +201,7 @@
           <a href="Stoner.analysis.fitting.models.magnetism.Langevin.html" title="Previous document">Langevin</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.superconductivity.rsj_simple.html" title="Next document">rsj_simple</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html" title="Next document">RSJ_Simple</a>
           &rarr;
         </li>
     </ul>
@@ -184,9 +218,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

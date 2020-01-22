@@ -1,6 +1,7 @@
-powerLaw
+PowerLaw
 ========
 
 .. currentmodule:: Stoner.analysis.fitting.models.generic
 
-.. autofunction:: powerLaw
+.. autoclass:: PowerLaw
+   :show-inheritance:

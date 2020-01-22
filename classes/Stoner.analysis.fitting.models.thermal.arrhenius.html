@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>arrhenius &#8212; Stoner Pacakge API Documentation</title>
+    <title>Arrhenius &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -17,7 +17,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="modArrhenius" href="Stoner.analysis.fitting.models.thermal.modArrhenius.html" />
+    <link rel="next" title="ModArrhenius" href="Stoner.analysis.fitting.models.thermal.ModArrhenius.html" />
     <link rel="prev" title="StretchedExp" href="Stoner.analysis.fitting.models.generic.StretchedExp.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -32,7 +32,7 @@
           <a href="Stoner.analysis.fitting.models.generic.StretchedExp.html" title="Previous document">StretchedExp</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.thermal.modArrhenius.html" title="Next document">modArrhenius</a>
+          <a href="Stoner.analysis.fitting.models.thermal.ModArrhenius.html" title="Next document">ModArrhenius</a>
           &rarr;
         </li>
     </ul>
@@ -56,11 +56,12 @@
           <div class="body" role="main">
             
   <div class="section" id="arrhenius">
-<h1>arrhenius<a class="headerlink" href="#arrhenius" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="Stoner.analysis.fitting.models.thermal.arrhenius">
-<code class="sig-prename descclassname">Stoner.analysis.fitting.models.thermal.</code><code class="sig-name descname">arrhenius</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">A</em>, <em class="sig-param">DE</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/thermal.html#arrhenius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.arrhenius" title="Permalink to this definition">¶</a></dt>
-<dd><p>Arrhenius Equation without T dependendent prefactor.</p>
+<h1>Arrhenius<a class="headerlink" href="#arrhenius" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.analysis.fitting.models.thermal.Arrhenius">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.thermal.</code><code class="sig-name descname">Arrhenius</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/thermal.html#Arrhenius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.Arrhenius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<p>Arrhenius Equation without T dependendent prefactor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -135,10 +136,43 @@
 <span class="n">d</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/Fitting/arrhenius.png">png</a>, <a class="reference external" href="../samples/Fitting/arrhenius.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/arrhenius.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/arrhenius.png" src="../_images/arrhenius.png" />
-</div>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.thermal.Arrhenius.display_names" title="Stoner.analysis.fitting.models.thermal.Arrhenius.display_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.thermal.Arrhenius.guess" title="Stoner.analysis.fitting.models.thermal.Arrhenius.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
+<td><p>Estimate fitting parameters from data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.analysis.fitting.models.thermal.Arrhenius.display_names">
+<code class="sig-name descname">display_names</code><em class="property"> = ['A', '\\Delta E']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.Arrhenius.display_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.analysis.fitting.models.thermal.Arrhenius.guess">
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/thermal.html#Arrhenius.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.thermal.Arrhenius.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate fitting parameters from data.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -156,12 +190,12 @@
   <p class="topless"><a href="Stoner.analysis.fitting.models.generic.StretchedExp.html"
                         title="previous chapter">StretchedExp</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.thermal.modArrhenius.html"
-                        title="next chapter">modArrhenius</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.thermal.ModArrhenius.html"
+                        title="next chapter">ModArrhenius</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.thermal.arrhenius.rst.txt"
+      <li><a href="../_sources/classes/Stoner.analysis.fitting.models.thermal.Arrhenius.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -184,7 +218,7 @@
           <a href="Stoner.analysis.fitting.models.generic.StretchedExp.html" title="Previous document">StretchedExp</a>
         </li>
         <li>
-          <a href="Stoner.analysis.fitting.models.thermal.modArrhenius.html" title="Next document">modArrhenius</a>
+          <a href="Stoner.analysis.fitting.models.thermal.ModArrhenius.html" title="Next document">ModArrhenius</a>
           &rarr;
         </li>
     </ul>
@@ -201,9 +235,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

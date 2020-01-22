@@ -207,7 +207,7 @@ tuple or array. IF callable, it should take the form:</p>
 </dl>
 </div></blockquote>
 <p>and return a list of parameter values that is in the same order as the model function. If p0 is not
-given and a <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> or <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.4.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> is supplied as the model function,
+given and a <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> or <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> is supplied as the model function,
 then the model’s estimates of the starting values will be used instead.</p>
 </div>
 <div class="admonition seealso">
@@ -277,11 +277,11 @@ False)</p></li>
 </p>
 </dd>
 </dl>
-<p>This function is essentially a wrapper around the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.differential_evolution.html#scipy.optimize.differential_evolution" title="(in SciPy v1.4.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.differential_evolution()</span></code></a> funtion
+<p>This function is essentially a wrapper around the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.differential_evolution.html#scipy.optimize.differential_evolution" title="(in SciPy v1.2.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.differential_evolution()</span></code></a> funtion
 that presents the same interface as the other Stoner package curve fitting functions. The parent function,
 however, does not provide the variance-covariance matrix to estimate the fitting errors. To work around this,
 this function does the initial fit with the differential evolution, but then uses that to give a starting
-vector to a call to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v1.4.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.curve_fit()</span></code></a> to calculate the covariance matrix.</p>
+vector to a call to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v1.2.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.optimize.curve_fit()</span></code></a> to calculate the covariance matrix.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <ul class="simple">
@@ -340,10 +340,6 @@ vector to a call to <a class="reference external" href="https://docs.scipy.org/d
 <span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">7.2</span><span class="p">,</span> <span class="mf">3.9</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;Differential Evolution  Fit&quot;</span>
 </pre></div>
-</div>
-<p>(<a class="reference external" href="../samples/diffev1.png">png</a>, <a class="reference external" href="../samples/diffev1.hires.png">hires.png</a>, <a class="reference external" href="../samples/diffev1.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/diffev1.png" src="../_images/diffev1.png" />
 </div>
 </dd></dl>
 
@@ -466,10 +462,6 @@ parameters with an additional column for <span class="math notranslate nohighlig
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;Levenberg-Marquardt Fit&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/lmfit2.png">png</a>, <a class="reference external" href="../samples/lmfit2.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit2.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/lmfit2.png" src="../_images/lmfit2.png" />
-</div>
 </dd></dl>
 
 <dl class="method">
@@ -506,7 +498,7 @@ Default to None for not adding fitted data</p></li>
 <dd class="field-odd"><p><p><em>( various )</em> –</p>
 <dl>
 <dt>The return value is determined by the <em>output</em> parameter. Options are</dt><dd><ul>
-<li><p>”fit”    just the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Output.html#scipy.odr.Output" title="(in SciPy v1.4.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Output</span></code></a> instance (default)</p></li>
+<li><p>”fit”    just the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Output.html#scipy.odr.Output" title="(in SciPy v1.2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Output</span></code></a> instance (default)</p></li>
 <li><dl class="simple">
 <dt>”row”     just a one dimensional numpy array of the fit paraeters interleaved with their</dt><dd><p>uncertainties</p>
 </dd>
@@ -531,7 +523,7 @@ Default to None for not adding fitted data</p></li>
 <p>The function tries to make use of whatever model you give it. Specifically, it accepts:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>A subclass or an instance of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.4.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> : this is the native model type for the
+<li><p>A subclass or an instance of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> : this is the native model type for the
 underlying scipy odr package.</p></li>
 <li><p>A subclass or instance of an lmfit.models.Model: the <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Fit</span></code></a> module has a number of
 useful prebuilt lmfit models that can be used directly by this function.</p></li>
@@ -607,10 +599,6 @@ scip.odr stadnard f(beta,x)</p></li>
 <span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">7.2</span><span class="p">,</span> <span class="mf">3.9</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;Orthogonal Distance Regression  Fit&quot;</span>
 </pre></div>
-</div>
-<p>(<a class="reference external" href="../samples/odrfit1.png">png</a>, <a class="reference external" href="../samples/odrfit1.hires.png">hires.png</a>, <a class="reference external" href="../samples/odrfit1.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/odrfit1.png" src="../_images/odrfit1.png" />
 </div>
 </dd></dl>
 
@@ -702,9 +690,9 @@ curve_fit</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 20, 2019.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.2.2
+      2.3.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 
