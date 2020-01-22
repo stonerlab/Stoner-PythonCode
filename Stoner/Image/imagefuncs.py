@@ -43,14 +43,17 @@ __all__ = [
     "do_nothing",
     "denoise",
 ]
-from Stoner.compat import string_types
 import warnings
-import numpy as np, matplotlib.pyplot as plt, os
-from Stoner.tools import istuple, isiterable
+
 from scipy.interpolate import griddata
 from skimage import feature, measure, transform
 from matplotlib.colors import Normalize
 import matplotlib.cm as cm
+
+from Stoner.compat import string_types
+import numpy as np, matplotlib.pyplot as plt, os
+from Stoner.tools import istuple, isiterable, make_Data
+from .core import ImageArray
 
 try:  # Make OpenCV an optional import
     import cv2
@@ -67,9 +70,6 @@ try:  # image_registration module
     from image_registration import fft_tools
 except ImportError:
     chi2_shift = None
-
-from .core import ImageArray
-from Stoner import Data
 
 
 def _scale(coord, scale=1.0, to_pixel=True):
@@ -341,7 +341,7 @@ def hist(im, *args, **kargs):
     """Pass through to :py:func:`matplotlib.pyplot.hist` function."""
     counts, edges = np.histogram(im.ravel(), *args, **kargs)
     centres = (edges[1:] + edges[:-1]) / 2
-    new = Data(np.column_stack((centres, counts)))
+    new = make_Data(np.column_stack((centres, counts)))
     new.column_headers = ["Intensity", "Frequency"]
     new.setas = "xy"
     return new
@@ -565,7 +565,7 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
 
     result = measure.profile_line(img, src, dst, linewidth, order, mode, cval)
     points = measure.profile._line_profile_coordinates(src, dst, linewidth)[:, :, 0]
-    ret = Data()
+    ret = make_Data()
     ret.data = points.T
     ret.setas = "xy"
     ret &= np.sqrt(ret.x ** 2 + ret.y ** 2) * scale

@@ -8,7 +8,7 @@ Classes:
 """
 from __future__ import division
 
-__all__ = ["PlotMixin", "hsl2rgb"]
+__all__ = ["PlotMixin"]
 from Stoner.compat import string_types, index_types, int_types, getargspec
 from Stoner.tools import (
     _attribute_store,
@@ -34,8 +34,8 @@ from matplotlib import cm
 
 import platform
 import copy
-from colorsys import hls_to_rgb
-from warnings import warn
+
+from .utils import hsl2rgb
 
 if os.name == "posix" and platform.system() == "Darwin":
     import matplotlib
@@ -197,7 +197,7 @@ class PlotMixin(object):
         elif isiterable(value) and all_type(value, string_types):
             self._labels = typedList(string_types, value)
         else:
-            raise TypeError("labels should be iterable and all strings, or None, not {}".format(type(value)))
+            raise TypeError(f"labels should be iterable and all strings, or None, not {type(value)}")
 
     @property
     def showfig(self):
@@ -213,7 +213,7 @@ class PlotMixin(object):
     def showfig(self, value):
         """Force a figure to be displayed."""
         if not (value is None or isinstance(value, bool)):
-            raise AttributeError("showfig should be a boolean value not a {}".format(type(value)))
+            raise AttributeError(f"showfig should be a boolean value not a {type(value)}")
         else:
             self._showfig = value
 
@@ -239,18 +239,18 @@ class PlotMixin(object):
         if isinstance(value, DefaultPlotStyle):
             self._template = value
         else:
-            raise ValueError("Template is not of the right class:{}".format(type(value)))
+            raise ValueError(f"Template is not of the right class:{type(value)}")
         self._template.apply()
 
-    @property
-    def title(self):
-        """Unmask the underlying attribute so we can fiddle plots."""
-        return self.ax_title
+    # @property
+    # def title(self):
+    #     """Unmask the underlying attribute so we can fiddle plots."""
+    #     return self.ax_title
 
-    @title.setter
-    def title(self, value):
-        """Set the plot title as well as setting the parent title value."""
-        self.ax_title = value
+    # @title.setter
+    # def title(self, value):
+    #     """Set the plot title as well as setting the parent title value."""
+    #     self.ax_title = value
 
     def _Plot(self, ix, iy, fmt, plotter, figure, **kwords):
         """Private method for plotting a single plot to a figure.
@@ -530,16 +530,16 @@ class PlotMixin(object):
                     pass
 
         # Nowcheck for prefixed access on axes and figures with get_
-        if name.startswith("ax_") and "get_{}".format(name[3:]) in dir(plt.Axes):
+        if name.startswith("ax_") and f"get_{name[3:]}" in dir(plt.Axes):
             name = name[3:]
-        if "get_{}".format(name) in dir(plt.Axes) and self.__figure:
+        if f"get_{name}" in dir(plt.Axes) and self.__figure:
             ax = self.fig.gca()
-            func = ax.__getattribute__("get_{}".format(name))
-        if name.startswith("fig_") and "get_{}".format(name[4:]) in dir(plt.Figure):
+            func = ax.__getattribute__(f"get_{name}")
+        if name.startswith("fig_") and f"get_{name[4:]}" in dir(plt.Figure):
             name = name[4:]
-        if "get_{}".format(name) in dir(plt.Figure) and self.__figure:
+        if f"get_{name}" in dir(plt.Figure) and self.__figure:
             fig = self.fig
-            func = fig.__getattribute__("get_{}".format(name))
+            func = fig.__getattribute__(f"get_{name}")
 
         if func is None:  # Ok Fallback to lookinf again at parent class
             return super(PlotMixin, self).__getattr__(o_name)
@@ -600,21 +600,21 @@ class PlotMixin(object):
             tax = None
         func = None
         o_name = name
-        if name.startswith("ax_") and "set_{}".format(name[3:]) in dir(plt.Axes):
+        if name.startswith("ax_") and f"set_{name[3:]}" in dir(plt.Axes):
             name = name[3:]
-        if "set_{}".format(name) in dir(plt.Axes) and self.fig:
+        if f"set_{name}" in dir(plt.Axes) and self.fig:
             if self.fig is None:  # oops we need a figure first!
                 self.figure()
             ax = self.fig.gca()
-            func = ax.__getattribute__("set_{}".format(name))
-        elif name.startswith("fig_") and "set_{}".format(name[4:]) in dir(plt.Figure):
-            name = "set_{}".format(name[4:])
+            func = ax.__getattribute__(f"set_{name}")
+        elif name.startswith("fig_") and f"set_{name[4:]}" in dir(plt.Figure):
+            name = f"set_{name[4:]}"
             func = getattr(self.fig, name)
-        elif "set_{}".format(name) in dir(plt.Figure) and self.fig:
+        elif f"set_{name}" in dir(plt.Figure) and self.fig:
             if self.fig is None:  # oops we need a figure first!
                 self.figure()
             fig = self.fig
-            func = fig.__getattribute__("set_{}".format(name))
+            func = fig.__getattribute__(f"set_{name}")
 
         if o_name in dir(type(self)) or func is None:
             try:
@@ -623,7 +623,10 @@ class PlotMixin(object):
                 pass
 
         if func is None:
-            raise AttributeError("Unable to set attribute {}".format(o_name))
+            raise AttributeError(f"Unable to set attribute {o_name}")
+
+        if isinstance(value, string_types) and "$" not in value:
+            value = value.format(**self)
 
         if not isiterable(value) or isinstance(value, string_types):
             value = (value,)
@@ -866,7 +869,7 @@ class PlotMixin(object):
         if len(Z.shape) == 2:
             Z = cmap(Z)
         elif len(Z.shape) != 3:
-            raise RuntimeError("Z Data has a bad shape: {}".format(Z.shape))
+            raise RuntimeError(f"Z Data has a bad shape: {Z.shape}")
         xmin = _np_.min(X.ravel())
         xmax = _np_.max(X.ravel())
         ymin = _np_.min(Y.ravel())
@@ -921,22 +924,27 @@ class PlotMixin(object):
             elif loc in locations2:
                 loc = locations2.index(loc)
             else:
-                raise RuntimeError("Couldn't work out where {} was supposed to be".format(loc))
+                raise RuntimeError(f"Couldn't work out where {loc} was supposed to be")
         if isinstance(width, int):
-            width = "{}%".format(width)
+            width = f"{width}%"
         elif isinstance(width, float) and 0 < width <= 1:
-            width = "{}%".format(width * 100)
+            width = f"{width*100}%"
         elif not isinstance(width, string_types):
-            raise RuntimeError("didn't Recognize width specification {}".format(width))
+            raise RuntimeError(f"didn't Recognize width specification {width}")
         if isinstance(height, int):
-            height = "{}%".format(height)
+            height = f"{height}%"
         elif isinstance(height, float) and 0 < height <= 1:
-            height = "{}%".format(height * 100)
+            height = "{height * 100}%"
         elif not isinstance(height, string_types):
-            raise RuntimeError("didn't Recognize width specification {}".format(width))
+            raise RuntimeError("didn't Recognize height specification {height}")
         if parent is None:
             parent = plt.gca()
         return inset_locator.inset_axes(parent, width, height, loc, **kargs)
+
+    def legend(self, *args, **kargs):
+        """Pass Through to stop attribute access over-riding a handy method."""
+        self.gca().legend(*args, **kargs)
+        return self
 
     def plot(self, *args, **kargs):
         """Try to make an appropriate plot based on the defined column assignments.
@@ -975,7 +983,7 @@ class PlotMixin(object):
         zlabel=None,
         figure=None,
         plotter=None,
-        **kwords
+        **kwords,
     ):
         """Plots a surface plot by assuming that the current dataset represents a regular matrix of points.
 
@@ -1329,8 +1337,19 @@ class PlotMixin(object):
                 temp_kwords["yerr"] = kargs["yerr"][ix]
             # Call plot
 
-            self._Plot(c.xcol, c.ycol[ix], fmt_t, nonkargs["plotter"], self.__figure, **temp_kwords)
-            self._fix_titles(ix, multiple, **nonkargs)
+            # Do interpolation of metadata
+            for k in temp_kwords:
+                if isinstance(temp_kwords[k], string_types) and "$" not in temp_kwords[k]:
+                    temp_kwords[k] = temp_kwords[k].format(**self)
+            temp_nonkargs = {}
+            for k in nonkargs:
+                if isinstance(nonkargs[k], string_types) and "$" not in nonkargs[k]:
+                    temp_nonkargs[k] = nonkargs[k].format(**self)
+                else:
+                    temp_nonkargs[k] = nonkargs[k]
+
+            self._Plot(c.xcol, c.ycol[ix], fmt_t, temp_nonkargs["plotter"], self.__figure, **temp_kwords)
+            self._fix_titles(ix, multiple, **temp_nonkargs)
             if ix > 0:  # Hooks for multiple subplots
                 if multiple == "panels":
                     loc, lab = plt.yticks()
@@ -1597,7 +1616,7 @@ class PlotMixin(object):
             self.column(c.ucol),
             self.column(c.vcol),
             self.column(c.wcol),
-            **kargs
+            **kargs,
         )
         if nonkargs["show_plot"]:
             if mayavi:
@@ -1676,7 +1695,7 @@ class PlotMixin(object):
             self.column(self.find_col(ycol)),
             self.column(self.find_col(ucol)),
             self.column(self.find_col(vcol)),
-            **kargs
+            **kargs,
         )
         self._fix_titles(0, "non", **nonkargs)
         return fig
@@ -1746,45 +1765,3 @@ class PlotMixin(object):
         plt.subplots_adjust(right=self.__figure.subplotpars.right - 0.05)
         plt.sca(ax2)
         return ax2
-
-
-def hsl2rgb(h, s, l):
-    """Converts from hsl colourspace to rgb colour space with numpy arrays for speed.
-
-    Args:
-        h (array): Hue value
-        s (array): Saturation value
-        l (array): Luminence value
-
-    Returns:
-        2D array (Mx3) of unsigned 8bit integers
-    """
-    if isinstance(h, float):
-        h = _np_.array([h])
-    if isinstance(s, float):
-        s = _np_.array([s])
-    if isinstance(l, float):
-        l = _np_.array([l])
-
-    if h.shape != l.shape or h.shape != s.shape:
-        raise RuntimeError("Must have equal shaped arrays for h, s and l")
-
-    rgb = _np_.zeros((len(h), 3))
-    hls = _np_.column_stack([h, l, s])
-    for i in range(len(h)):
-        rgb[i, :] = _np_.array(hls_to_rgb(*hls[i]))
-    return (255 * rgb).astype("u1")
-
-
-def PlotFile(*args, **kargs):
-    """Issue a warning and then create a class anyway."""
-    warn("PlotFile is deprecated in favour of Stoner.Data or the PlotMixin", DeprecationWarning)
-    import Stoner.Core as _SC_
-
-    class PlotFile(PlotMixin, _SC_.DataFile):
-
-        """Extends DataFile with plotting functions from :py:class:`Stoner.Plot.PlotMixin`"""
-
-        pass
-
-    return PlotFile(*args, **kargs)

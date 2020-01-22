@@ -1,6 +1,6 @@
 """Example of using lmfit to do a bounded fit."""
 from Stoner import Data
-from Stoner.Fit import StretchedExp
+from Stoner.analysis.fitting.models.generic import StretchedExp
 
 # Load dat and plot
 d = Data("lmfit_data.txt", setas="xy")

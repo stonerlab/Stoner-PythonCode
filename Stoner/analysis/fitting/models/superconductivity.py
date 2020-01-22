@@ -320,7 +320,7 @@ def ic_RN_Dirty(d_f, IcRn0, E_x, v_f, d_0, tau, delta, T):
     integrad = lambda mu, m: np.real(mu / (np.sinh(d_f * k_m(m) / (mu * L))))
     prefactor = lambda m: delta ** 2 / (delta ** 2 + w_m(m) ** 2)
 
-    term = lambda m: prefactor(m) * quad(integrad, -1, 1, (m,))
+    term = lambda m: prefactor(m) * quad(integrad, -1, 1, (m,))  # pylint: disable=W0612
 
 
 class Strijkers(Model):

@@ -14,13 +14,14 @@ from matplotlib.pyplot import figure, Figure, subplot, tight_layout
 from copy import deepcopy
 
 from Stoner.compat import string_types, get_filedialog, _pattern_type, makedirs
-from Stoner.tools import isiterable
+from Stoner.tools import isiterable, make_Data
 
 from Stoner.core.base import metadataObject, string_to_type
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder, __add_core__ as _base__add_core__, __sub_core__ as _base__sub_core__
 from .utils import scan_dir, discard_earlier, filter_files, get_pool, removeDisallowedFilenameChars
 from Stoner.core.exceptions import assertion
+
 
 regexp_type = (_pattern_type,)
 
@@ -104,13 +105,12 @@ class DiskBasedFolder(object):
 
     def __init__(self, *args, **kargs):
         """Additional constructor for DiskbasedFolders"""
-        from Stoner import Data
 
         _ = self.defaults  # Force the default store to be populated.
         if "directory" in self._default_store and self._default_store["directory"] is None:
             self._default_store["directory"] = os.getcwd()
         if "type" in self._default_store and self._default_store["type"] is None and self._type == metadataObject:
-            self._default_store["type"] = Data
+            self._default_store["type"] = make_Data(None)
         elif self._type != metadataObject:  # Looks like we've already set our type in a subbclass
             self._default_store.pop("type")
         flat = kargs.pop("flat", self._default_store.get("flat", False))
@@ -614,9 +614,10 @@ class PlotMethodsMixin(object):
 
         self._fig_kargs = getattr(self, "fig_defaults", {})
         self._fig_kargs.update(kargs)
-        self.__figure = figure(*self._fig_args, **self._fig_kargs)
-        self.each.fig = self.__figure
-        return self.__figure
+        fig = figure(*self._fig_args, **self._fig_kargs)
+        self.each.fig = fig
+        self._figure = fig
+        return self._figure
 
     def plot(self, *args, **kargs):
         """Call the plot method for each metadataObject, but switching to a subplot each time.
@@ -649,15 +650,13 @@ class PlotMethodsMixin(object):
         plts = min(plts, len(self))
 
         if not hasattr(self.type, "plot"):  # switch the objects to being Stoner.Data instances
-            from Stoner import Data
-
             for i, d in enumerate(self):
-                self[i] = Data(d)
+                self[i] = make_Data(d)
 
         extra = kargs.pop("extra", lambda i, j, d: None)
         tight = kargs.pop("tight_layout", {})
 
-        fig_num = kargs.pop("figure", getattr(self, "__figure", None))
+        fig_num = kargs.pop("figure", getattr(self, "_figure", None))
         if isinstance(fig_num, Figure):
             fig_num = fig_num.number
         fig_args = getattr(self, "_fig_args", [])
@@ -668,7 +667,7 @@ class PlotMethodsMixin(object):
         if fig_num is None:
             fig = figure(*fig_args, **fig_kargs)
         else:
-            fig = figure(fig_num, **fig_args)
+            fig = figure(fig_num, **fig_kargs)
         w, h = fig.get_size_inches()
         plt_x = int(floor(sqrt(plts * w / h)))
         plt_y = int(ceil(plts / plt_x))
@@ -694,3 +693,25 @@ class PlotMethodsMixin(object):
             extra(i, j, d)
         tight_layout()
         return ret
+
+
+class DataFolder(DataMethodsMixin, DiskBasedFolder, baseFolder):
+
+    """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
+
+    By default, the members of the DataFolder are isntances of :class:`Stoner.Data`. The DataFolder emplys a lazy
+    open strategy, so that files are only read in from disc when actually needed.
+
+    .. inheritance-diagram:: DataFolder
+
+    """
+
+    def __init__(self, *args, **kargs):
+
+        self.type = kargs.pop("type", make_Data(None))
+        super(DataFolder, self).__init__(*args, **kargs)
+
+
+class PlotFolder(PlotMethodsMixin, DataFolder):
+
+    """A :py:class:`Stoner.folders.baseFolder` that knows how to ploth its underlying data files."""

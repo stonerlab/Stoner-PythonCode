@@ -6,11 +6,10 @@ Created on Tue Oct 08 20:14:34 2013
 @author: phygbu
 """
 __all__ = ["split_up_down", "ordinal", "hysteresis_correct"]
-from .tools import format_error
-import Stoner.Core as _SC_  # pylint: disable=import-error
-from .Folders import DataFolder as _SF_
+from .tools import format_error, make_Data
+from Stoner.Core import DataFile
+from . import DataFolder
 from .Fit import linear
-from . import Data
 import numpy as np
 from numpy import max, argmax, mean  # pylint: disable=redefined-builtin
 from scipy.stats import sem
@@ -115,7 +114,7 @@ def split_up_down(data, col=None, folder=None):
     Returns:
         (:py:class:`Sonter.Folder.DataFolder`): with two groups, rising and falling
     """
-    a = Data(data)
+    a = make_Data(data)
     if col is None:
         _ = a._col_args()
         col = _.xcol
@@ -134,7 +133,7 @@ def split_up_down(data, col=None, folder=None):
     elif troughs:  # Fall then rise
         order = False
     else:  # No peaks or troughs so just return a single rising
-        ret = _SF_(readlist=False)
+        ret = DataFolder(readlist=False)
         ret += data
         return ret
     splits = [0, len(a)]
@@ -142,8 +141,8 @@ def split_up_down(data, col=None, folder=None):
     splits.extend(troughs)
     splits.sort()
     splits = [int(s) for s in splits]
-    if not isinstance(folder, _SF_):  # Create a new DataFolder object
-        output = _SF_(readlist=False)
+    if not isinstance(folder, DataFolder):  # Create a new DataFolder object
+        output = DataFolder(readlist=False)
     else:
         output = folder
     output.add_group("rising")
@@ -223,10 +222,10 @@ def hysteresis_correct(data, **kargs):
             The original loop with the x and y columns replaced with corrected data and extra metadata added to give the
             background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.
     """
-    if isinstance(data, _SC_.DataFile):
+    if isinstance(data, DataFile):
         cls = data.__class__
     else:
-        cls = Data
+        cls = make_Data(None)
     data = cls(data)
 
     # Get other keyword arguments
@@ -305,7 +304,7 @@ def hysteresis_correct(data, **kargs):
             Hc_err[i] = sem(hc)
 
         if h_sat_method == "linear_intercept":
-            from Stoner.Fit import Linear
+            from Stoner.analysis.fitting.models.generic import Linear
 
             # Fit a striaght line to the central fraction of the data
             if i == 1:
@@ -326,7 +325,7 @@ def hysteresis_correct(data, **kargs):
             xi = d.SG_Filter(order=1)[0, :-1]
             m, h = d.SG_Filter()
             tmp = np.column_stack((h, m, xi))[4:-4]
-            tmp = Data(tmp, setas="x.y")
+            tmp = make_Data(tmp, setas="x.y")
             threshold = tmp.mean(bounds=lambda r: not 7 < r.i < len(tmp) - 7) * h_sat_fraction
             hs = tmp.threshold(threshold, all_vals=True, rising=i != 0, falling=i == 0)  # Get the H_sat value
             Hsat[1 - i] = mean(hs)  # Get the H_sat value
@@ -337,7 +336,7 @@ def hysteresis_correct(data, **kargs):
         elif h_sat_method == "delta_M":  # threshold on m_sat
             m, h = d.SG_Filter()
             tmp = np.column_stack((h, m))[4:-4]
-            tmp = Data(tmp, setas="xy")
+            tmp = make_Data(tmp, setas="xy")
             threshold = m_sat[i]
             hs = tmp.threshold(threshold, all_vals=True, rising=True, falling=True).view(
                 np.ndarray

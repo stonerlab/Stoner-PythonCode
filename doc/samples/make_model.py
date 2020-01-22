@@ -5,7 +5,7 @@
 from numpy import linspace
 from numpy.random import normal
 from Stoner import Data
-from Stoner.Fit import make_model
+from Stoner.analysis.fitting.models import make_model
 
 # Make our model
 @make_model

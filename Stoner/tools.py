@@ -30,10 +30,20 @@ import re
 import os
 import inspect
 import copy
+from importlib import import_module
 
 from numpy import log10, floor, abs, logical_and, isnan, round, ndarray, dtype  # pylint: disable=redefined-builtin
 from cgi import escape as html_escape
 from copy import deepcopy
+
+try:
+    from memoization import cached
+except ImportError:
+
+    def cached(func, *_):
+        """Null dectorator."""
+        return func
+
 
 operator = {
     "eq": lambda k, v: k == v,
@@ -353,6 +363,17 @@ def fix_signature(proxy_func, wrapped_func):
         except AttributeError:
             pass
     return proxy_func
+
+
+@cached
+def make_Data(*args, **kargs):
+    """Return an instance of Stoner.Data passig through constructor arguments
+
+    Calling make_Data(None) is a speical case to return the Data class ratther than an instance
+    """
+    if len(args) == 1 and args[0] is None:
+        return import_module("Stoner.core.data").Data
+    return import_module("Stoner.core.data").Data(*args, **kargs)
 
 
 def get_option(name):

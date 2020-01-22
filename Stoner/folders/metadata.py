@@ -6,7 +6,7 @@ magic attribute.
 __all__ = ["proxy"]
 import fnmatch
 from Stoner.compat import string_types
-from Stoner.tools import islike_list, isiterable
+from Stoner.tools import islike_list, isiterable, make_Data
 from Stoner.Core import DataFile
 from lmfit import Model
 
@@ -276,14 +276,13 @@ class proxy(MutableMapping):
             ret = results
         else:
             from pandas import DataFrame
-            from Stoner import Data
 
             frame = DataFrame(results)
             mask = frame.isna()
             if output == "frame":
                 ret = frame
             else:
-                ret = Data(frame)
+                ret = make_Data(frame)
                 ret.mask = mask
                 if output in ["array", np.ndarray]:
                     ret = ret.data

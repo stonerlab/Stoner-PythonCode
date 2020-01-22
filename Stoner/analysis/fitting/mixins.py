@@ -1560,8 +1560,8 @@ class FittingMixin(object):
 
                 -   A subclass or an instance of :py:class:`scipy.odr.Model` : this is the native model type for the
                     underlying scipy odr package.
-                -   A subclass or instance of an lmfit.models.Model: the :py:mod:`Stoner.Fit` module has a number of
-                    useful prebuilt lmfit models that can be used directly by this function.
+                -   A subclass or instance of an lmfit.models.Model: the :py:mod:`Stoner.analysis.fitting.models`
+                    package has a number of useful prebuilt lmfit models that can be used directly by this function.
                 -   A callable function which should have a signature f(x,parameter1,parameter2...) and *not* the
                     scip.odr stadnard f(beta,x)
 

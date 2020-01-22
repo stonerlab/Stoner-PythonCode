@@ -4,7 +4,8 @@
 magic attribute.
 """
 __all__ = ["item"]
-import numpy as _np_
+import numpy as np
+from collections import MutableSequence
 from functools import wraps, partial
 from traceback import format_exc
 from .utils import get_pool
@@ -34,12 +35,86 @@ def _worker(d, **kwargs):
     return (d, ret)
 
 
+class setas_wrapper(MutableSequence):
+
+    """This class manages wrapping each member of the folder's setas attribute."""
+
+    def __init__(self, parent):
+        """Note a reference to the parent item class instance and folder."""
+        self._each = parent
+        self._folder = parent._folder
+
+    def __call__(self, *args, **kargs):
+        """Simple pass through the calls the setas method of each item in our folder."""
+        for obj in self._folder:
+            obj.setas(*args, **kargs)
+        return self._folder
+
+    def __len__(self):
+        """Return the lengths of all the setas elements in the folder (or a sclar if all the same)"""
+        lengths = np.array([len(data.setas) for data in self._folder])
+        if len(np.unique(lengths)) == 1:
+            return lengths[0]
+        else:
+            return lengths.tolist()
+
+    def __getitem__(self, index):
+        """Get the corresponding item from all the setas items in the folder."""
+        return [data.setas[index] for data in self._folder]
+
+    def __setitem__(self, index, value):
+        """Set the value of the specified item on the setas elements in the folder.
+
+        Args:
+            index (int):
+                The column index of the individual setas attributes to change
+            value (iterable):
+                The set of values to apply to the setas attributes.
+
+        Notes:
+            If value has a length less than the data folder, then the final value is repeated to encompass the
+            remaining elements.
+        """
+        if len(value) < len(self._folder):
+            value = value + value[-1] * (len(self._folder) - len(value))
+        for v, data in zip(value, self._folder):
+            data.setas[index] = v
+        setas = self._folder._object_attrs.get("setas", ["."] * len(self._folder))
+        if len(setas) <= index:
+            setas.extend(["."] * (index + 1 - len(setas)))
+        setas[index] = v
+        self._folder._object_attrs["setas"] = setas
+
+    def __delitem__(self, index):
+        """Cannot delete items from the proxy setas object - so simply clear it instead."""
+        for data in self._folder:
+            data.setas[index] = "."
+        setas = self._folder._object_attrs.get("setas", ["." * len(self._folder)])
+        setas[index] = "."
+        self._folder._object_attrs["setas"] = setas
+
+    def insert(self, index, value):
+        """Cannot insert items into the proxy setas object."""
+        raise IndexError("Cannot insert into the objectFolder's setas - insdert into the objectFolder instead!")
+
+    def collapse(self):
+        """Collapse the setas into a single list if possible."""
+        setas = []
+        for v in self:
+            if len(v):
+                if np.unique(v).size == 1:
+                    setas.append(v[0])
+                else:
+                    setas.append("-")
+        return setas
+
+
 class item(object):
 
     """Provides a proxy object for accessing methods on the inividual members of a Folder.
     8
     Notes:
-        The prupose of this class is to allow it to be explicit that we're calling methods
+        The pupose of this class is to allow it to be explicit that we're calling methods
         on the members of the folder rather than a collective method. This allows us to work
         around nameclashes.
     """
@@ -49,6 +124,19 @@ class item(object):
     def __init__(self, folder):
 
         self._folder = folder
+
+    @property
+    def setas(self):
+        """Return a proxy object for manipulating all the setas objects in a folder."""
+        return setas_wrapper(self)
+
+    @setas.setter
+    def setas(self, value):
+        """Manipualte the setas property of all the objects in the folder."""
+        setas = self.setas
+        setas(value)
+        self._folder._object_attrs["setas"] = setas.collapse()
+        return setas
 
     def __call__(self, func, *args, **kargs):
         """Iterate over the baseFolder, calling func on each item.
@@ -73,11 +161,11 @@ class item(object):
 
     def __dir__(self):
         """Return a list of the common set of attributes of the instances in the folder."""
-        if len(self._folder) != 0:
+        if self._folder and len(self._folder) != 0:
             res = set(dir(self._folder[0]))
         else:
             res = set()
-        if len(self._folder) > 0:
+        if self._folder and len(self._folder) > 0:
             for d in self._folder[1:]:
                 res &= set(dir(d))
         return list(res)
@@ -110,7 +198,7 @@ class item(object):
                 elif len(self._folder):
                     ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
                     mask, values = zip(*ret)
-                    ret = _np_.ma.MaskedArray(values)
+                    ret = np.ma.MaskedArray(values)
                     ret.mask = mask
                 else:
                     ret = getattr(instance, name, None)
@@ -122,7 +210,7 @@ class item(object):
             if len(self._folder) and hasattr(self._folder[0], name):
                 ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
                 mask, values = zip(*ret)
-                ret = _np_.ma.MaskedArray(values)
+                ret = np.ma.MaskedArray(values)
                 ret.mask = mask
             else:
                 raise err
@@ -144,7 +232,7 @@ class item(object):
             If *value* is iterable and the same length as the folder, then each element in the folder is loaded and
             the corresponding element of *value* is assigned to the attribute of the member.
         """
-        if name in self.__dict__ or name.startswith("_"):  # Handle setting our own attributes
+        if hasattr(self.__class__, name) or name.startswith("_"):  # Handle setting our own attributes
             super(item, self).__setattr__(name, value)
         elif name in dir(self._folder.instance) or (
             len(self._folder) and hasattr(self._folder[0], name)
@@ -239,8 +327,9 @@ class item(object):
         """
         _return = kargs.pop("_return", None)
         _byname = kargs.pop("_byname", False)
+        _serial = kargs.pop("_serial", False)
         self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
-        p, imap = get_pool()
+        p, imap = get_pool(_serial)
         for ix, (f, ret) in enumerate(
             imap(partial(_worker, func=func, args=args, kargs=kargs, byname=_byname), self._folder)
         ):

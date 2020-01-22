@@ -451,6 +451,8 @@ class setas(MutableMapping):
         ):
             for c in self.find_col(name, force_list=True):
                 self.setas[c] = value
+        else:
+            raise IndexError(f"Failed to set setas as couldn't workout what todo with setas[{name}] = {value}")
 
     def __len__(self):
         """Return our own length."""

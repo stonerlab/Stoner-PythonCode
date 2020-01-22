@@ -6,7 +6,6 @@ The :mod:`.formats` module provides a set of template classes for producing diff
 some handy utility functions.
 """
 
-from .core import PlotMixin, hsl2rgb
-from .core import PlotFile
+from .core import PlotMixin
 
-__all__ = ["PlotMixin", "hsl2rgb", "formats", "utils", "PlotFile"]
+__all__ = ["PlotMixin", "formats", "utils"]

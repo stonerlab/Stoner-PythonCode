@@ -190,7 +190,7 @@ class BlochLaw(Model):
         if x is not None:
             y = np.log(1 - data / Ms)
             X = np.log(x)
-            d1, d2 = np.polyfit(X, y, 1)
+            d2 = np.polyfit(X, y, 1)[1]
             x0 = np.exp(d2 * 2 / 3)
         else:
             x0 = len(data)

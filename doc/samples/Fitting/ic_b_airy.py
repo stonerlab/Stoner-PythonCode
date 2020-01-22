@@ -5,7 +5,7 @@ Fit Ic(B) to Airy function.
 """
 
 from Stoner import Data, __home__
-from Stoner.Fit import Ic_B_Airy
+from Stoner.analysis.fitting.models.superconductivity import Ic_B_Airy
 
 import os
 

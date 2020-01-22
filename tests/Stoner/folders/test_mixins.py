@@ -41,14 +41,14 @@ class folders_mixins_test(unittest.TestCase):
 
     def test_plotting(self):
         Options.multiprocessing=False
-        self.fldr.figure(figsize=(9,6))
-        self.fldr.each.plot()
+        self.fldr.plots_per_page=len(self.fldr)
+        self.fldr.plot(figsize=(18,12),title="{iterator}")
         self.assertEqual(len(plt.get_fignums()),1,"Plotting to a single figure in PlotFolder failed.")
-        plt.close("all")
+        self.fldr.figure(figsize=(18,12))
         self.fldr.plot(extra=extra)
         self.assertEqual(len(plt.get_fignums()),2,"Plotting to a single figure in PlotFolder failed.")
         self.ax=self.fldr[0].subplots
-        self.assertEqual(len(self.ax),12,"Subplots check failed.")
+        self.assertEqual(len(self.ax),16,"Subplots check failed.")
 
         plt.close("all")
         Options.multiprocessing=True

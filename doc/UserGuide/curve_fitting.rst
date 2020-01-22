@@ -195,7 +195,7 @@ a series of :py:class:`lmfit.model.Model` subclasses that represent various mode
 
 The operation of :py:meth:`Data.lmfit` is very similar to that of :py:meth:`Data.curve_fit`::
 
-    from Stoner.Fit import Arrehenius
+    from Stoner.analysis.fitting.models.thermal import Arrehenius
     model=Arrehenius(A=1E7,DE=0.01)
     fit=a.lmfit(model,xcol="Temp",ycol="Cond",result=True,header="Fit")
     print fit.fit_report()
@@ -212,7 +212,7 @@ The return value from :py:meth:`Data.lmfit` is controlled by the *output* keywor
 instance. This contains all the information about the fit and fitting process.
 
 You can pass the model as a subclass of model, if you don't pass initial values either via the *p0* parameter or as keyword arguements, then the model's
-*guess* method is called (e.g. :py:meth:`Stoner.Fit.Arrhenius.guess`) to determine parameters fromt he data. For example:
+*guess* method is called (e.g. :py:meth:`Stoner.analysis.fitting.models.thermal.Arrhenius.guess`) to determine parameters fromt he data. For example:
 
 .. plot:: samples/lmfit_example.py
     :include-source:
@@ -258,80 +258,99 @@ set of parameters. This hybrid approach allows a good fit localtion to be identi
 Included Fitting Models
 =======================
 
-The :py:mod:`Stoner.Fit` module provides a number of standard fitting models suitable for solida state physics. Each model is provided either as an
+The :py:mod:`Stoner.analysis.fitting.models` module provides a number of standard fitting models suitable for solida state physics. Each model is provided either as an
 :py:class:`lmfit.model.Model` and callable function. The former case often also provides a means to guess initial values from the data.
 
 Elementary Models
 -----------------
 
-Amongst the incluided models are very generic model functions including:
+Amongst the incluided models are very generic model functions (in :py:mod:`Stoner.analysis.fitting.models.generic`) including:
+.. currentmodule:: Stoner.analysis.fitting.models.generic
 
-    -   :py:class:`Stoner.Fit.Linear` - straight line fit :math:`y=mx+c`
-    -   :py:class:`Stoner.Fit.Quadratic` - 2nd order polynomial :math:`y=ax^2+bx+c`
-    -   :py:class:`Stoner.Fit.PowerLaw` - A general powerlaw expression :math:`y=Ax^k`
+    -   :py:class:`Linear` - straight line fit :math:`y=mx+c`
+    -   :py:class:`Quadratic` - 2nd order polynomial :math:`y=ax^2+bx+c`
+    -   :py:class:`PowerLaw` - A general powerlaw expression :math:`y=Ax^k`
+    -   :py:class:`StretchedExponential` is a standard exponential decay with an additional power :math:`\beta` -
+        :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`
 
 Thermal Physics Models
 ----------------------
 
-The :py:mod:`Stoner.Fit` module also supports a range of models suitable for various thermal physics related expressions:
+The :py:mod:`Stoner.analysis.fitting.models.thermal` module supports a range of models suitable for various thermal physics related expressions:
+.. currentmodule:: Stoner.analysis.fitting.models.thermal
 
-    -   :py:class:`Stoner.Fit.Arrhenius` - The Arrhenius expression is used to describe processes whose rate is controlled by a thermal distribution,
+    -   :py:class:`Arrhenius` - The Arrhenius expression is used to describe processes whose rate is controlled by a thermal distribution,
         it is essentially an exponential decay :math:`y=A\exp\left(\frac{-\Delta E}{k_Bx}\right)`.
-    -   :py:class:`Stoner.Fit.ModArrhenius` - The modified Arrhenous expresses :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` is used when the
+    -   :py:class:`ModArrhenius` - The modified Arrhenous expresses :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` is used when the
         prefactor in the regular Arrhenius theory has a temperature dependence. Typically the prefactor exponent ranges for :math:`-1<n<1`.
-    -   :py:class:`Stoner.Fit.StretchedExponential` is a standard exponential decay with an additional power :math:`\beta` -
-        :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`
     -   :py:class:`NDimArrhenius` is suitable for thermally activated transport in more than 1 dimension, or in variable range hopping processes -
         :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)`
     -   :py:class:`VFTEquation` - the Vogel-Flucher-Tammann Equation is another modification of the Arrhenius equiation which can apply when a process
         has both an activation energy and a threshold temperature (duue to a phase transition for example) and is given by
         :math:`\tau = A\exp\left(\frac{\Delta E}{x-x_0}\right)`
 
-Peak Models
------------
-
-The :py:mod:`lmfit` package comes with several common peak function models built in which can be used firectly. The Stoner package adds a coouple more to the
-selection:
-
-    -   :py:class:`Stoner.Fit.Lorentzian_diff` - the :py:mod:`lmfit` module incluides built in classes for Lorentzian peaks - but this model is the differential
-        of a Lorentzian peak.
-    -   :py:class:`Stoner.Fit.FMR_Power` - although this model is usually used specifically for calculating the absorption spectrum for a Ferromagnetic Resonance
-        process, it is in fact a generic combination of both Lorentzian peak and differential forms.
-
 Tunnelling Electron Transport Models
 ------------------------------------
 
-We also have a number of models for electron tunnelling processes built into the library:
+We also have a number of models for electron tunnelling processes built into the library in :py:mod:`Stoner.analysis.fitting.models.tunnelling`:
+.. currentmodule:: Stoner.analysis.fitting.models.tunnelling
 
-    -   :py:class:`Stoner.Fit.Simmons` - the Simmons model describes tunneling through a square barrer potential for the limit where the barrier height
+    -   :py:class:`Simmons` - the Simmons model describes tunneling through a square barrer potential for the limit where the barrier height
         is comparable to the junction bias.
-    -   :py:class:`Stoner.Fit.BDR` - this model introduces a trapezoidal barrier where the barrier height is different between the two electrondes - e.g. where the
+    -   :py:class:`BDR` - this model introduces a trapezoidal barrier where the barrier height is different between the two electrondes - e.g. where the
         electrodes are composed of different materials.
-    -   :py:class:`Stoner.Fit.FowlerNordheim` - this is another simplified model of electron tunneling that has a single barrier heigt and width parameters.
+    -   :py:class:`FowlerNordheim` - this is another simplified model of electron tunneling that has a single barrier heigt and width parameters.
     -   :py:class:`Stoner.Fit.TersoffHammann` - this model just treats tunneling as a linear I-V process and is applicable when the barrier height is large compared
         to the bias across the tunnel barrier.
-    -   :py:class:`Stoner.Fit.Strijkers` - this tunnel model describes electrons passing from a superconductor to a non-superconductor with a potential step or
-        barrier between the two. In one limit it describes Andreev reflection in a clean interface and in the other, a Giaever Junction (S-I-N).
-    -   :todo: Resistively Shunted Josephson junctiuons, under-damped Josephson Junctions
 
 Magnetism Related Models
 ------------------------
 
-    -   :py:class:`Stoner.Fit.Langevin` model is used to describe the magnetic momement versus field of a paramagnet.
+The :py:mod:`Stoner.analysis.fitting.models.magnetism` includes models related to magnetism and magnetic materials.
+.. currentmodule:: Stoner.analysis.fitting.models.magnetism
+
+    -   :py:class:`Langevin` model is used to describe the magnetic momement versus field of a paramagnet.
+    -   :py:class:`KittelEquation` and :py:class:`Stoner.Fit.Inverse_Kittel` - the Kittel equation is used to described the magnetic field and frequency
+        reponse of the ferromagnetic resonance peak.
+    -   :py:class:`KittelEquation` and :py:class:`Inverse_Kittel` - the Kittel equation is used to described the magnetic field and frequency
+        reponse of the ferromagnetic resonance peak.
+
+
+Peak Models
+-----------
+
+The :py:mod:`lmfit` package comes with several common peak function models built in which can be used firectly. The Stoner package adds a coouple more to the
+selection - these are particularly useful for fitting ferromagnetic resonance data:
+
+    -   :py:class:`Lorentzian_diff` - the :py:mod:`lmfit` module incluides built in classes for Lorentzian peaks - but this model is the differential
+        of a Lorentzian peak.
+    -   :py:class:`FMR_Power` - although this model is usually used specifically for calculating the absorption spectrum for a Ferromagnetic Resonance
+        process, it is in fact a generic combination of both Lorentzian peak and differential forms.
+
+Superconductivity Related Models
+--------------------------------
+
+The :py:mod:`Stoner.analysis.fitting.models.superconductivity` offers some models related to superconducting materials and devices.
+.. currentmodule:: Stoner.analysis.fitting.models.superconductivity
+
+
+    -   :py:class:`Strijkers` - this tunnel model describes electrons passing from a superconductor to a non-superconductor with a potential step or
+        barrier between the two. In one limit it describes Andreev reflection in a clean interface and in the other, a Giaever Junction (S-I-N).
+
+
 
 Other Electrical Transport Models
 ---------------------------------
 
-Finally we incliudde some other common electrical transport models for solid-state physics.
+Finally we incliudde some other common electrical transport models for solid-state physics in the :py:mod:`Stoner.analysis.fitting.models.e_transport` module.
+.. currentmodule:: Stoner.analysis.fitting.models.e_transport
 
-    -   :py:class:`Stoner.Fit.BlochGrueneisen` - this model describes electrical resistivity of a metal as a function of temperature and can be used to
+    -   :py:class:`BlochGrueneisen` - this model describes electrical resistivity of a metal as a function of temperature and can be used to
         extract the Debye temperature :math:`\Theta_D`.
-    -   :py:class:`Stoner.Fit.FluchsSondheimer` - this model describes the electrical resistivity of a thin film as a function of its thickness and can
+    -   :py:class:`FluchsSondheimer` - this model describes the electrical resistivity of a thin film as a function of its thickness and can
         be used to extract a mean free path :math:  `\lambda_{mfp}` and intrinsic conductivity.
-    -   :py:class:`Stoner.Fit.WLfit` - the weak localisation fit can be used to describe rthe magnetoconductance of a system with sufficient scattering that
+    -   :py:class:`WLfit` - the weak localisation fit can be used to describe rthe magnetoconductance of a system with sufficient scattering that
         weak-localisation effects appear,
-    -   :py:class:`Stoner.Fit.KittelEquation` and :py:class:`Stoner.Fit.Inverse_Kittel` - the Kittel equation is used to described the magnetic field and frequency
-        reponse of the ferromagnetic resonance peak.
 
 Making Fitting Models
 =====================

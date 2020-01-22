@@ -1,6 +1,6 @@
 """Simple use of lmfit to fit data."""
 from Stoner import Data
-from Stoner.Fit import PowerLaw
+from Stoner.analysis.fitting.models.generic import PowerLaw
 from Stoner.analysis.fitting import odr_Model
 from numpy import linspace, random
 
