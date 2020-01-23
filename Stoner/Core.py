@@ -2194,7 +2194,7 @@ class DataFile(metadataObject):
                     if self.debug and filemagic is not None:
                         print("Trying: {} =mimetype {}".format(cls.__name__, test.mime_type))
 
-                    test._load(self.filename, auto_load=False, *args, **kargs)
+                    test = test._load(self.filename, auto_load=False, *args, **kargs)
                     try:
                         kargs = test._kargs
                         delattr(test, "_kargs")

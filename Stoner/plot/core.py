@@ -815,7 +815,7 @@ class PlotMixin(object):
         if len(zdata.shape) == 1:
             Z = griddata(points, zdata, pts, method=method)
         elif len(zdata.shape) == 2:
-            Z = np.zeros((np.shape[0], np.shape[1], zdata.shape[1]))
+            Z = np.zeros((pts.shape[0], pts.shape[1], zdata.shape[1]))
             for i in range(zdata.shape[1]):
                 Z[:, :, i] = griddata(points, zdata[:, i], pts, method=method)
 

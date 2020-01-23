@@ -170,9 +170,12 @@ class HDF5File(DataFile):
         if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
             f = _open_filename(filename)
             self.filename = filename
-        elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
+        elif isinstance(filename, h5py.File):
             f = filename
             self.filename = f.filename
+        elif isinstance(filename, h5py.Group):
+            f = filename
+            self.filename = f.file.filename
         else:
             _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
 
