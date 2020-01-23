@@ -145,7 +145,7 @@ class AttocubeScan(ImageStack):
             root_name = kargs.pop("root", None)
             scan = kargs.pop("scan", -1)
 
-        regrid = kargs.pop("regrid", True)
+        regrid = kargs.pop("regrid", False)
 
         super(AttocubeScan, self).__init__(*args, **kargs)
 
@@ -237,10 +237,9 @@ class AttocubeScan(ImageStack):
         else:  # Otherwise it must be something with a data attribute
             tmp = self.type()
             tmp.data = self._stack[:r, :c, idx]
-        tmp.metadata = self._metadata[self.__names__()[idx]]
-        for k in self._common_metadata:
-            if k not in tmp.metadata:
-                tmp.metadata[k] = self._common_metadata[k]
+        tmp.metadata = deepcopy(self._common_metadata)
+        tmp.metadata.update(self._metadata[self.__names__()[idx]])
+        tmp.metadata["Scan #"] = self.scan_no
         tmp._fromstack = True
         return tmp
 
@@ -410,7 +409,7 @@ class AttocubeScan(ImageStack):
             raise ValueError("Could not get a callable method to flatten the data")
         data = self[signal]
         ys, xs = data.shape
-        X, Y = meshgrid(linspace(0, 1, xs), linspace(0, 1, ys))
+        X, Y = meshgrid(linspace(-1, 1, xs), linspace(-1, 1, ys))
         Z = data.data
         X = X.ravel()
         Y = Y.ravel()
@@ -493,7 +492,8 @@ class AttocubeScan(ImageStack):
     @classmethod
     def read_HDF(cls, filename, *args, **kargs):
         """Create a new instance from an hdf file."""
-        self = cls()
+        self = cls(regrid=False)
+        close_me = False
         if filename is None or not filename:
             self.get_filename("r")
             filename = self.filename
@@ -501,6 +501,7 @@ class AttocubeScan(ImageStack):
             self.filename = filename
         if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
             f = _open_filename(filename)
+            close_me = True
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
             f = filename
         else:
@@ -527,4 +528,6 @@ class AttocubeScan(ImageStack):
             else:  # This is an actual image!
                 g = f[grp]
             self.append(self._read_signal(g))
+        if close_me:
+            f.close()
         return self

@@ -1,0 +1,136 @@
+Daisy Parameter Snapshot
+
+Date:                           2020-01-16T14:38:57
+Written to:                     D:\Installation\SHPM\LT\noise measurement\SC_085-Parameters.txt
+
+Daisy Version:                  2.7
+
+Use Sensor Position:            off 
+Scan Position X:                -2.078e+06 nm
+Scan Position Y:                -1.845e+06 nm
+Scan Lines:                     200 
+Scan Columns:                   200 
+Pixel Size:                     10 nm
+Scan Range X:                   2000 nm
+Scan Range Y:                   2000 nm
+Scan Offset X:                  4.6e+04 nm
+Scan Offset Y:                  3.187e+04 nm
+Scan Rotation:                  0 deg
+Sample Time:                    2250 us
+Line Frequency:                 1.106 Hz
+Frame Time:                     180.9 s
+Scan Speed:                     4444 nm/s
+
+Dual Pass:                      off 
+DP Feedback Mode:               Feedback 
+DP Lift Offset:                 0 nm
+DP Wait Time:                   0 s
+Z Control:                      retract 
+Input Signal:                   HF 1 Ampl 
+Regulator P:                    0.001 
+Regulator I:                    10 Hz
+Regulator Setpoint:             75 mV 
+Z Limit Min:                    0 nm
+Z Limit Max:                    1.831e+04 nm
+Z Out:                          8708.958 nm
+Slope Compensation X:           0.05005 %
+Slope Compensation Y:           -0.6006 %
+
+Excitation Amplitude:           3.2 V
+Excitation Frequency:           78.39928 kHz
+Amplitude Control Loop:         off 
+Amp. Control P:                 0 
+Amp. Control I:                 0 Hz
+Amp. Control Setpoint:          0 ? 
+
+Frequency Control Loop:         off 
+Frq. Control P:                 0 
+Frq. Control I:                 0 Hz
+Frq. Control Setpoint:          0 ? 
+
+HF Demod. Sensitivity Range:    2 V
+HF Demod. Phase Shift:          -180 deg
+HF Demod. Integration Time:     3267 us
+LF Modulation Amplitude:        0 V
+LF Modulation Frequency:        0 kHz
+LF Demod. Sensitivity Range:    0 V
+LF Demod. Phase Shift:          0 deg
+LF Demod. Integration Time:     1.25e+05 us
+
+DAC 1:                          0.8399 V
+DAC 2:                          0 V
+DAC 3:                          0 V
+DAC 4:                          0 V
+
+Piezo Temperature:              292 K
+Max. Scan Actuator Voltage X:   4.162 V
+Max. Scan Actuator Voltage Y:   4.162 V
+Max. Scan Range X:              7.946e+04 nm
+Max. Scan Range Y:              7.946e+04 nm
+Max. Z Actuator Voltage:        4.162 V
+Max. Z Range:                   1.839e+04 nm
+
+Positioning Speed:              10000 nm/s
+
+Z Feedback Ts:                  1.28ms 
+Amplitude Feedback Ts:          20us 
+Frequency Feedback Ts:          20us 
+
+Intensity Ext. Transfer Fct Gain:1 
+Intensity Ext. Transfer Fct Offset:0 mV
+Intensity Ext. Transfer Fct Unit:? 
+Intensity Int. Transfer Fct Gain:1 
+Intensity Int. Transfer Fct Offset:0 mV
+Intensity Active Compensation:  off 
+Intensity Bias Compensation:    0 mV
+Intensity Compensation Gain:    x1 
+
+ADC2 Ext. Transfer Fct Gain:    1 
+ADC2 Ext. Transfer Fct Offset:  0 mV
+ADC2 Ext. Transfer Fct Unit:    ? 
+ADC2 Int. Transfer Fct Gain:    1 
+ADC2 Int. Transfer Fct Offset:  0 mV
+ADC2 Active Compensation:       off 
+ADC2 Bias Compensation:         0 mV
+ADC2 Compensation Gain:         x1 
+ADC3 Ext. Transfer Fct Gain:    1 
+
+ADC3 Ext. Transfer Fct Offset:  0 mV
+ADC3 Ext. Transfer Fct Unit:    ? 
+ADC3 Int. Transfer Fct Gain:    1 
+ADC3 Int. Transfer Fct Offset:  0 mV
+ADC3 Active Compensation:       off 
+ADC3 Bias Compensation:         0 mV
+ADC3 Compensation Gain:         x1 
+Crosslink 1 Control:            off 
+Crosslink 1 P:                  0  
+Crosslink 1 I:                  0 mHz 
+Crosslink 2 Control:            off 
+Crosslink 2 P:                  0  
+Crosslink 2 I:                  0 mHz 
+Dual Pass Alt. Setpoint Enable: off 
+Dual Pass Alt. Setpoint:        0 mV 
+Dual Pass Alt. DAC 1 Enable:    off 
+Dual Pass Alt. DAC 1:           0 V 
+Dual Pass Alt. DAC 2 Enable:    off 
+Dual Pass Alt. DAC 2:           0 V 
+Dual Pass Alt. DAC 3 Enable:    off 
+Dual Pass Alt. DAC 3:           0 V 
+Dual Pass Alt. DAC 4 Enable:    off 
+Dual Pass Alt. DAC 4:           0 V 
+Dual Pass Alt. Aexc. Enable:    off 
+Dual Pass Alt. Aexc.:           0 V 
+Dual Pass Alt. Fexc. Enable:    off 
+Dual Pass Alt. Fexc.:           0 kHz 
+Dual Pass Alt. Crosslink 1 Enable:off 
+Dual Pass Alt. Crosslink 1:     disable 
+Dual Pass Alt. Crosslink 2 Enable:off 
+Dual Pass Alt. Crosslink 2:     disable 
+Dual Pass Alt. Lockin Mode Enable:off 
+Dual Pass Alt. Lockin Mode:     A,phi 
+Q Control Enable:               off 
+Q Control Phase:                0 deg
+Q Control Feedback:             0 
+Lockin Sensitivity Range:       2 V
+Lockin Phase Shift:             -180 deg
+Lockin Integration Time:        3267 us

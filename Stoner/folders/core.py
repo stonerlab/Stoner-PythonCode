@@ -797,6 +797,24 @@ class baseFolder(MutableSequence):
         result = self
         return __div_core__(result, other)
 
+    def __eq__(self, other):
+        """TEst whether two objectFolders are the same."""
+        if not isinstance(other, baseFolder):
+            return False
+        if other.shape != self.shape:
+            return False
+        for mine, theirs in zip(self.groups, other.groups):
+            if mine != theirs:
+                return False
+            if self.groups[mine] != other.groups[theirs]:
+                return False
+        self_names = sorted(self.ls)
+        other_names = sorted(other.ls)
+        for mine, theirs in zip(self_names, other_names):
+            if self[mine] != other[theirs]:
+                return False
+        return True
+
     def __invert__(self):
         """For a :py:class:`naseFolder`, inverting means either flattening or unflattening the folder.
 
