@@ -1327,6 +1327,7 @@ class DataFile(metadataObject):
         if len(self.data.shape) >= 2 and self.data.shape[1] > 0:
             self.column_headers = col_headers_tmp
         self["TDI Format"] = fmt
+        return self
 
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata.
@@ -2195,6 +2196,8 @@ class DataFile(metadataObject):
                         print("Trying: {} =mimetype {}".format(cls.__name__, test.mime_type))
 
                     test = test._load(self.filename, auto_load=False, *args, **kargs)
+                    if test is None:
+                        raise SyntaxError(f"Class {cls.__name__}'s _load returned None !!")
                     try:
                         kargs = test._kargs
                         delattr(test, "_kargs")
@@ -2228,7 +2231,7 @@ class DataFile(metadataObject):
         else:
             if filetype is None:
                 test = cls()
-                test._load(self.filename, *args, **kargs)
+                test = test._load(self.filename, *args, **kargs)
                 kargs = getattr(test, "_kargs", kargs)
                 self["Loaded as"] = cls.__name__
                 self.data = test.data
@@ -2236,7 +2239,7 @@ class DataFile(metadataObject):
                 failed = False
             elif issubclass(filetype, DataFile):
                 test = filetype()
-                test._load(self.filename, *args, **kargs)
+                test = test._load(self.filename, *args, **kargs)
                 kargs = getattr(test, "_kargs", kargs)
                 self["Loaded as"] = filetype.__name__
                 self.data = test.data
@@ -2245,7 +2248,7 @@ class DataFile(metadataObject):
                 failed = False
             elif isinstance(filetype, DataFile):
                 test = filetype.clone
-                test._load(self.filename, *args, **kargs)
+                test = test._load(self.filename, *args, **kargs)
                 kargs = getattr(test, "_kargs", kargs)
                 self["Loaded as"] = filetype.__name__
                 self.data = test.data
