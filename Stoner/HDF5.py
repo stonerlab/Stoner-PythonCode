@@ -157,13 +157,14 @@ class HDF5File(DataFile):
         if loader is None:
             _raise_error(f, message="Could not et loader for {bytes2str(f.attrs['module'])}.{typ}")
 
-        return loader(f, *args, **kargs)
+        loader(f, *args, instance=self, **kargs)
+        return self
 
     @classmethod
     def read_HDF(cls, filename, *args, **kargs):
         """Class method to create a new HDF5File from an actual HDF file."""
 
-        self = cls()
+        self = kargs.pop("instance", cls())
         if filename is None or not filename:
             self.get_filename("r")
             filename = self.filename

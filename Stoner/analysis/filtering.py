@@ -456,7 +456,7 @@ class FilteringOps(object):
         elif isinstance(bins, float):  # Given a bin with as a flot
             if mode.lower().startswith("lin"):
                 bin_width = bins
-                bins = np.ceil(abs(float(xmax - xmin) / bins))
+                bins = int(np.ceil(abs(float(xmax - xmin) / bins)))
                 bin_start = np.linspace(xmin, xmax - bin_width, bins)
                 bin_stop = np.linspace(xmin + bin_width, xmax, bins)
                 bin_centres = (bin_start + bin_stop) / 2.0

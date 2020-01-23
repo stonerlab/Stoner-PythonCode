@@ -17,5 +17,5 @@ Classes may also provide :py:attr:`Stoner.Core.DataFile.patterns` atribute which
 provide a :py:attr:`Stoner.Core.DataFile.mime_type` attribute which gives a list of mime types that this class might
 be able to open. This helps identify classes that could be use to load particular file types.
 """
-__all__ = ["instruments", "generic", "rigs", "facilities", "simulations"]
-from . import instruments, generic, rigs, facilities, simulations
+__all__ = ["instruments", "generic", "rigs", "facilities", "simulations", "attocube"]
+from . import instruments, generic, rigs, facilities, simulations, attocube

@@ -225,7 +225,7 @@ def copy_into(source, dest):
             continue
         try:
             setattr(dest, attr, copy.deepcopy(getattr(source, attr)))
-        except NotImplementedError:  # Deepcopying failed, so just copy a reference instead
+        except (NotImplementedError, TypeError):  # Deepcopying failed, so just copy a reference instead
             setattr(dest, attr, getattr(source, attr))
     return dest
 
