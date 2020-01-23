@@ -63,7 +63,7 @@ def string_to_type(value):
     if not isinstance(value, string_types):
         raise TypeError("Value must be a string not a {}".format(type(value)))
     value = value.strip()
-    if value:
+    if value != "None":
         tests = ["list(" + value + ")", "dict(" + value + ")"]
         try:
             i = "[{".index(value[0])
@@ -80,6 +80,8 @@ def string_to_type(value):
                         continue
                 else:
                     ret = None
+        except IndexError:  # raised when 0-length struing is used
+            ret = value
     return ret
 
 
