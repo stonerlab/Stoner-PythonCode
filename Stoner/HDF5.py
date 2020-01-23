@@ -149,7 +149,7 @@ class HDF5File(DataFile):
             )
         loader = None
         if typ == self.__class__.__name__:
-            loader = getattr(self.__clas__, "read_HDF")
+            loader = getattr(self.__class__, "read_HDF")
         else:
             mod = importlib.import_module(bytes2str(f.attrs["module"]))
             cls = getattr(mod, typ)
