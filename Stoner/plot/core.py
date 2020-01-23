@@ -23,7 +23,7 @@ from Stoner.tools import (
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 
-import numpy as _np_
+import numpy as np
 from scipy.interpolate import griddata
 import os
 from collections import Mapping, OrderedDict
@@ -302,7 +302,7 @@ class PlotMixin(object):
         if not _3D:
             raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
         ax = plt.gca(projection="3d")
-        Z = _np_.nan_to_num(Z)
+        Z = np.nan_to_num(Z)
         surf = ax.plot_surface(X, Y, Z, **kargs)
         self.fig.colorbar(surf, shrink=0.5, aspect=5, extend="both")
 
@@ -314,21 +314,20 @@ class PlotMixin(object):
 
         if isinstance(c.wcol, index_types):  # 3D vector field
             wdata = self.column(c.wcol)
-            phidata = (wdata - _np_.min(wdata)) / (_np_.max(wdata) - _np_.min(wdata))
+            phidata = (wdata - np.min(wdata)) / (np.max(wdata) - np.min(wdata))
         else:  # 2D vector field
-            phidata = _np_.ones(len(self)) * 0.5
+            phidata = np.ones(len(self)) * 0.5
             wdata = phidata - 0.5
-        qdata = 0.5 + (_np_.arctan2(self.column(c.ucol), self.column(c.vcol)) / (2 * _np_.pi))
-        rdata = _np_.sqrt(self.column(c.ucol) ** 2 + self.column(c.vcol) ** 2 + wdata ** 2)
+        qdata = 0.5 + (np.arctan2(self.column(c.ucol), self.column(c.vcol)) / (2 * np.pi))
+        rdata = np.sqrt(self.column(c.ucol) ** 2 + self.column(c.vcol) ** 2 + wdata ** 2)
         rdata = rdata / rdata.max()
         Z = hsl2rgb(qdata, rdata, phidata).astype("f") / 255.0
         return Z
 
     def _span_slice(self, col, num):
         """Create a slice that covers the range of a given column."""
-        v = self.column(col)
-        v1, v2 = _np_.min(v), _np_.max(v)
-        v = _np_.linspace(v1, v2, num)
+        v1, v2 = self.span(col)
+        v = np.linspace(v1, v2, num)
         delta = v[1] - v[0]
         if isinstance(delta, int_types):
             v2 = v2 + delta
@@ -359,9 +358,9 @@ class PlotMixin(object):
         else:
             col_mode = "color_by_vector"
         if "scalars" in kargs and isinstance(kargs["scalars"], bool) and kargs["scalars"]:  # fancy mode on
-            kargs["scalars"] = _np_.arange(len(self))
+            kargs["scalars"] = np.arange(len(self))
             colors = self._vector_color() * 255
-            colors = _np_.column_stack((colors, _np_.ones(len(self)) * 255))
+            colors = np.column_stack((colors, np.ones(len(self)) * 255))
             quiv = mlab.quiver3d(X, Y, Z, U, V, W, **kargs)
             quiv.glyph.color_mode = col_mode
             quiv.module_manager.scalar_lut_manager.lut.table = colors
@@ -782,7 +781,7 @@ class PlotMixin(object):
                 if len(cols["zcol"]) > 0:
                     zcol = cols["zcol"][0]
         if shape is None or not (isinstance(shape, tuple) and len(shape) == 2):
-            shape = (_np_.floor(_np_.sqrt(len(self))), _np_.floor(_np_.sqrt(len(self))))
+            shape = (int(np.floor(np.sqrt(len(self)))), int(np.floor(np.sqrt(len(self)))))
         if xlim is None:
             xlim = self._span_slice(xcol, shape[0])
         elif isinstance(xlim, tuple) and len(xlim) == 2:
@@ -804,23 +803,23 @@ class PlotMixin(object):
         else:
             raise RuntimeError("Y limit specification not good.")
 
-        np = _np_.mgrid[xlim, ylim].T
+        pts = np.mgrid[xlim, ylim].T
 
-        points = _np_.array([self.column(xcol), self.column(ycol)]).T
+        points = np.array([self.column(xcol), self.column(ycol)]).T
         if zcol is None:
-            zdata = _np_.zeros(len(self))
-        elif isinstance(zcol, _np_.ndarray) and zcol.shape[0] == len(self):  # zcol is some data
+            zdata = np.zeros(len(self))
+        elif isinstance(zcol, np.ndarray) and zcol.shape[0] == len(self):  # zcol is some data
             zdata = zcol
         else:
             zdata = self.column(zcol)
         if len(zdata.shape) == 1:
-            Z = griddata(points, zdata, np, method=method)
+            Z = griddata(points, zdata, pts, method=method)
         elif len(zdata.shape) == 2:
-            Z = _np_.zeros((np.shape[0], np.shape[1], zdata.shape[1]))
+            Z = np.zeros((np.shape[0], np.shape[1], zdata.shape[1]))
             for i in range(zdata.shape[1]):
-                Z[:, :, i] = griddata(points, zdata[:, i], np, method=method)
+                Z[:, :, i] = griddata(points, zdata[:, i], pts, method=method)
 
-        return np[:, :, 0], np[:, :, 1], Z
+        return pts[:, :, 0], pts[:, :, 1], Z
 
     def image_plot(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, **kargs):
         """Grid up the three columns of data and plot.
@@ -870,10 +869,10 @@ class PlotMixin(object):
             Z = cmap(Z)
         elif len(Z.shape) != 3:
             raise RuntimeError(f"Z Data has a bad shape: {Z.shape}")
-        xmin = _np_.min(X.ravel())
-        xmax = _np_.max(X.ravel())
-        ymin = _np_.min(Y.ravel())
-        ymax = _np_.max(Y.ravel())
+        xmin = np.min(X.ravel())
+        xmax = np.max(X.ravel())
+        ymin = np.min(Y.ravel())
+        ymax = np.max(Y.ravel())
         aspect = (xmax - xmin) / (ymax - ymin)
         extent = [xmin, xmax, ymin, ymax]
         fig = plotter(Z, extent=extent, aspect=aspect, **kargs)
@@ -1017,8 +1016,8 @@ class PlotMixin(object):
             ):  # We have a rectang, but we need to adjust the row origin
                 rectang[0] = yvals + 1
             yvals = self[yvals]  # change the yvals into a numpy array
-        elif isinstance(yvals, (list, tuple, _np_.ndarray)):  # We're given the yvals as a list already
-            yvals = _np_.array(yvals)
+        elif isinstance(yvals, (list, tuple, np.ndarray)):  # We're given the yvals as a list already
+            yvals = np.array(yvals)
         elif yvals is None:  # No yvals, so we'l try column headings
             if isinstance(xvals, index_types):  # Do we have an xcolumn header to take away ?
                 xvals = self.find_col(xvals)
@@ -1028,7 +1027,7 @@ class PlotMixin(object):
                 headers = self.column_headers[1:]
             else:
                 headers = self.column_headers
-            yvals = _np_.array([float(x) for x in headers])  # Ok try to construct yvals aray
+            yvals = np.array([float(x) for x in headers])  # Ok try to construct yvals aray
         else:
             raise RuntimeError("uvals must be either an integer, list, tuple, numpy array or None")
         # Sort out xvls values
@@ -1040,9 +1039,9 @@ class PlotMixin(object):
             elif isinstance(rectang, tuple):  # Do we need to adjust the rectan column origin ?
                 rectang[1] = xvals + 1
             xvals = self.column(xvals)
-        elif isinstance(xvals, (list, tuple, _np_.ndarray)):  # Xvals as a data item
-            xvals = _np_.array(xvals)
-        elif isinstance(xvals, _np_.ndarray):
+        elif isinstance(xvals, (list, tuple, np.ndarray)):  # Xvals as a data item
+            xvals = np.array(xvals)
+        elif isinstance(xvals, np.ndarray):
             pass
         elif xvals is None:  # xvals from column 0
             xvals = self.column(0)
@@ -1055,17 +1054,17 @@ class PlotMixin(object):
             rectang = (
                 rectang[0],
                 rectang[1],
-                _np_.shape(self.data)[0] - rectang[0],
-                _np_.shape(self.data)[1] - rectang[1],
+                np.shape(self.data)[0] - rectang[0],
+                np.shape(self.data)[1] - rectang[1],
             )
         elif rectang is None:
-            rectang = (0, 0, _np_.shape(self.data)[0], _np_.shape(self.data)[1])
+            rectang = (0, 0, np.shape(self.data)[0], np.shape(self.data)[1])
         elif isinstance(rectang, tuple) and len(rectang) == 4:  # Ok, just make sure we have enough data points left.
             rectang = (
                 rectang[0],
                 rectang[1],
-                min(rectang[2], _np_.shape(self.data)[0] - rectang[0]),
-                min(rectang[3], _np_.shape(self.data)[1] - rectang[1]),
+                min(rectang[2], np.shape(self.data)[0] - rectang[0]),
+                min(rectang[3], np.shape(self.data)[1] - rectang[1]),
             )
         else:
             raise RuntimeError("rectang should either be a 2 or 4 tuple or None")
@@ -1074,7 +1073,7 @@ class PlotMixin(object):
         zdata = self.data[rectang[0] : rectang[0] + rectang[2], rectang[1] : rectang[1] + rectang[3]]
         xvals = xvals[0 : rectang[2]]
         yvals = yvals[0 : rectang[3]]
-        xdata, ydata = _np_.meshgrid(xvals, yvals)
+        xdata, ydata = np.meshgrid(xvals, yvals)
 
         # This is the same as for the plot_xyz routine'
         if isinstance(figure, int):
@@ -1290,13 +1289,13 @@ class PlotMixin(object):
                     if isinstance(kargs[err][i], index_types):
                         kargs[err][i] = self.column(kargs[err][i])
                     else:
-                        kargs[err][i] = _np_.zeros(len(self))
+                        kargs[err][i] = np.zeros(len(self))
             elif isiterable(kargs[err]) and len(kargs[err]) == len(self):
-                kargs[err] = _np_.array(kargs[err])
+                kargs[err] = np.array(kargs[err])
             elif isinstance(kargs[err], float):
-                kargs[err] = _np_.ones(len(self)) * kargs[err]
+                kargs[err] = np.ones(len(self)) * kargs[err]
             else:
-                kargs[err] = _np_.zeros(len(self))
+                kargs[err] = np.zeros(len(self))
 
         temp_kwords = copy.copy(kargs)
         if isinstance(c.ycol, (index_types)):
@@ -1305,8 +1304,8 @@ class PlotMixin(object):
             if multiple == "panels":
                 self.__figure, _ = plt.subplots(nrows=len(c.ycol), sharex=True, gridspec_kw={"hspace": 0})
             elif multiple == "subplots":
-                m = int(_np_.floor(_np_.sqrt(len(c.ycol))))
-                n = int(_np_.ceil(len(c.ycol) / m))
+                m = int(np.floor(np.sqrt(len(c.ycol))))
+                n = int(np.ceil(len(c.ycol) / m))
                 self.__figure, _ = plt.subplots(nrows=m, ncols=n)
             else:
                 self.__figure, _ = self._fix_fig(nonkargs["figure"], **fig_kargs)
@@ -1559,7 +1558,7 @@ class PlotMixin(object):
                 "cmap": cm.jet,
                 "scale": 1.0,
                 "units": "xy",
-                "color": hsl2rgb((1 + self.q / _np_.pi) / 2, self.r / _np_.max(self.r), (1 + self.w) / 2) / 255.0,
+                "color": hsl2rgb((1 + self.q / np.pi) / 2, self.r / np.max(self.r), (1 + self.w) / 2) / 255.0,
             }
             projection = kargs.pop("projection", "3d")
             coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}
@@ -1580,10 +1579,10 @@ class PlotMixin(object):
             pass
         elif isinstance(colors, index_types):
             colors = self.column(colors)
-        elif isinstance(colors, _np_.ndarray):
+        elif isinstance(colors, np.ndarray):
             pass
         elif callable(colors):
-            colors = _np_.array([colors(x) for x in self.rows()])
+            colors = np.array([colors(x) for x in self.rows()])
         else:
             raise RuntimeError("Do not recognise what to do with the colors keyword.")
         if mayavi:
