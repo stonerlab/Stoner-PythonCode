@@ -6,11 +6,12 @@
 """
 
 __all__ = [
+    "BlochLaw",
     "FMR_Power",
     "Inverse_Kittel",
     "KittelEquation",
     "Langevin",
-    "Model",
+    "blochLaw",
     "fmr_power",
     "inverse_kittel",
     "kittelEquation",

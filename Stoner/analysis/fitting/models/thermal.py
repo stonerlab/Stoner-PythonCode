@@ -112,7 +112,7 @@ def vftEquation(x, A, DE, x_0):
     Return:
         Rates according the VFT equation.
 
-    The VFT equation is defined as as rr`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
+    The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
     a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
 
     Example:
