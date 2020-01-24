@@ -57,7 +57,7 @@ Core Package and Modules
    :no-main-docstr:
     :headings: -~
 
-.. module:: Stoner.formats.generic
+.. module:: Stoner.Core
 
 Stoner.Core Classes
 -------------------
@@ -166,8 +166,8 @@ Measurement Rig Files
 
 .. module:: Stoner.formats.simulations
 
-Measurement Rig Files
----------------------
+Simulation Package Files
+-------------------------
 
 .. autosummary::
    :toctree: classes
