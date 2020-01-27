@@ -178,6 +178,15 @@ class regexpDict(sorteddict):
         """Define equals operation in terms of xor operation."""
         return len(self ^ other) == 0 and len(other ^ self) == 0
 
+    def __sub__(self, other):
+        """Give the difference between two arrays."""
+        if not isinstance(other, Mapping):
+            return NotImplemented
+        mk = set(self.keys())
+        ok = set(other.keys())
+        ret = self.__class__({k: self[k] for k in (mk - ok)})
+        return ret
+
     def __xor__(self, other):
         """Give the difference between two arrays."""
         if not isinstance(other, Mapping):

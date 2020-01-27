@@ -137,7 +137,7 @@ class ImageStackMixin(object):
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
-        return self._names
+        return list(self._metadata.keys())
 
     def __getter__(self, name, instantiate=True):
         """Stub method to do whatever is needed to transform a key to a metadataObject.

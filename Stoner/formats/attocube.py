@@ -91,32 +91,32 @@ def plane(X, a, b, c):
 class AttocubeScan(ImageStack):
 
     """ An ImageStack subclass that can load scans from the AttocubeScan SPM System.
-    
+
     AttocubeScan represents a scan from an Attocube SPM system as a 3D stack of scan data with
     associated metadata. Indexing the AttocubeScan with either an integer or a partial match to one the
     signals saved in the scan will pull out that particular scan as a :py:class:`Stoner.Image.ImageFile`.
-    
+
     If the scan was a dual pass scan with forwards and backwards data, then the root AttocubeScan will
     contain the common metadata derived from the Scan parameters and then two sub-stacks that represent
     the forwards ('fwd') and backwards ('bwd') scans.
-    
+
     The AttocubeScan constructor will with take a *rrot name* of the scan - e.g. "SC_099" or alternatively
     a scan number integer. It will then look in the stack's directory for matching files and builds the scan stack
     from them. Currently, it uses the scan parameters.txt file and any ASCII stream files .asc files. 2D linescans
     are not currently supported or imported.
-    
+
     The native file format for an AttocubeScan is an HDF5 file with a particilar structure. The stack is saved into
     an HDF5 group which then has a *type* and *module* attribute that specifies the class and module pf the Python
     object that created the group - sof for an AttocubeScan, the type attribute is *AttocubeScan*.
-    
+
     There is a class method :py:meth:`AttocubeSca.read_HDF` to read the stack from the HDSF format and an instance method
     :py:meth:`AttocubeScan.to_HDF` that will save to either a new or existing HDF file format.
-    
+
     The class provides other methods to regrid and flatten images and may gain other capabilities in the future.
-    
+
     TODO:
         Implement load and save to/from multipage TIFF files.
-        
+
     Attrs:
         scan_no (int):
             The scan number as defined in the Attocube software.
@@ -124,7 +124,7 @@ class AttocubeScan(ImageStack):
             The HDF5 compression algorithm to use when writing files
         compression_opts (int):
             The lelbel of compression to use (depends on compression algorithm)
-    
+
     """
 
     def __init__(self, *args, **kargs):
@@ -317,7 +317,7 @@ class AttocubeScan(ImageStack):
         metadata = tmp.metadata
         tmp.image = genfromtxt(filename).reshape((xpx, ypx))
         tmp.metadata = metadata
-        tmp.filename = filename
+        tmp.filename = tmp["display"]
         self.append(tmp)
         return self
 
@@ -344,14 +344,14 @@ class AttocubeScan(ImageStack):
                 tmp.metadata["{}{{{}}}".format(i, t).strip()] = "{}".format(v).strip()
             else:
                 tmp[i] = metadata.attrs[i]
-        tmp.filename = g.name
+        tmp.filename = path.basename(g.name)
         return tmp
 
     def regrid(self, **kargs):
         """Regrid the data sets based on PosX and PosY channels.
 
         Keyword Parameters:
-            x_range, y_range (tuple of start, stop, points): 
+            x_range, y_range (tuple of start, stop, points):
                 Range of x-y co-rdinates to regrid the data to. Used as an argument to :py:func:`np.linspace` to generate the co-ordinate
                 vector.
             in_place (bool):
@@ -390,15 +390,15 @@ class AttocubeScan(ImageStack):
 
         return new
 
-    def flatten(self, method="plane", signal="Amp"):
+    def level_image(self, method="plane", signal="Amp"):
         """Remove a background signla by fitting an appropriate function.
-        
+
         Keyword Arguments:
             method (str or callable):
                 Eirther the name of a fitting function in the global scope, or a callable. *plane* and *parabola* are already defined.
             signal (str):
                 The name of the dataset to be flattened. Defaults to the Amplitude signal
-                
+
         Returns:
             (AttocubeScan):
                 The current scan object with the data modified.

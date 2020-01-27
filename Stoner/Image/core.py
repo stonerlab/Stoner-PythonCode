@@ -6,6 +6,7 @@ import os
 import warnings
 from copy import copy, deepcopy
 import inspect
+from importlib import import_module
 from functools import wraps
 from io import BytesIO as StreamIO
 from skimage import (
@@ -380,8 +381,15 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 from json import loads
 
                 try:
-                    metadata_string = tags[270]
-                    metadata = loads(metadata_string)
+                    userdata = loads(tags[270])
+                    typ = userdata.get("type", cls.__name__)
+                    mod = userdata.get("module", cls.__module__)
+
+                    mod = import_module(mod)
+                    typ = getattr(mod, typ)
+                    if not issubclass(typ, ImageArray):
+                        raise TypeError(f"Bad type in Tiff file {typ.__name__} is not a subclass of Stoner.ImageArray")
+                    metadata = userdata.get("metadata", [])
                 except Exception:
                     metadata = []
             else:
@@ -993,7 +1001,13 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 except TypeError:
                     im = Image.fromarray(self.astype("float32"))
         ifd = ImageFileDirectory_v2()
-        ifd[270] = json.dumps(self.metadata.export_all())
+        ifd[270] = json.dumps(
+            {
+                "type": self.__class__.__name__,
+                "module": self.__class__.__module__,
+                "metadata": self.metadata.export_all(),
+            }
+        )
         ext = os.path.splitext(filename)[1]
         if ext in [".tif", ".tiff"]:  # ensure extension is preserved in save
             pass

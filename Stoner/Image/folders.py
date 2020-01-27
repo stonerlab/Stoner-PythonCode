@@ -5,9 +5,12 @@ from .core import ImageArray
 from Stoner.Folders import DiskBasedFolder, baseFolder
 from Stoner.compat import string_types
 from Stoner.Image import ImageFile
+from Stoner.core.base import typeHintedDict
 
 from skimage.viewer import CollectionViewer
 import numpy as np
+from importlib import import_module
+from os import path
 
 
 def _load_ImageArray(f, **kargs):
@@ -234,6 +237,56 @@ class ImageFolderMixin(object):
         k = ImageStack(self)
         return k
 
+    @classmethod
+    def from_tiff(cls, filename, **kargs):
+        """Create a new ImageArray from a tiff file."""
+
+        from json import loads
+        from PIL import Image
+
+        self = cls(**kargs)
+        with Image.open(filename, "r") as img:
+            tags = img.tag_v2
+            if 270 in tags:
+                from json import loads
+
+                try:
+                    userdata = loads(tags[270])
+                    typ = userdata.get("type", cls.__name__)
+                    mod = userdata.get("module", cls.__module__)
+                    layout = userdata.get("layout", (0, {}))
+
+                    mod = import_module(mod)
+                    typ = getattr(mod, typ)
+                    if not issubclass(typ, ImageFolderMixin):
+                        raise TypeError(
+                            f"Bad type in Tiff file {typ.__name__} is not a subclass of Stoner.ImageFolder"
+                        )
+                    metadata = userdata.get("metadata", [])
+                except Exception:
+                    metadata = []
+            else:
+                raise TypeError(f"Cannot load as an ImageFolder due to lack of description tag")
+            imglist = []
+            for ix, md in enumerate(metadata):
+                img.seek(ix)
+                image = np.asarray(img)
+                if image.ndim == 3:
+                    if image.shape[2] < 4:  # Need to add a dummy alpha channel
+                        image = np.append(np.zeros_like(image[:, :, 0]), axis=2)
+                    image = image.view(dtype=np.uint32).reshape(image.shape[:-1])
+
+                if isinstance(self.type, np.ndarray):
+                    image = image.view(self.type)
+                else:
+                    image = self.type(image)
+                image.metadata.import_all(md)
+                imglist.append(image)
+
+            self._marshall(layout=layout, data=imglist)
+
+        return self
+
     def mean(self, _box=None):
         """Calculate the mean value of all the images in the stack.
 
@@ -258,6 +311,57 @@ class ImageFolderMixin(object):
         """Standard error in the stack average"""
         serr = self.stddev(weights=weights) / np.sqrt(len(self))
         return serr
+
+    def to_tiff(self, filename):
+        """Save the ImageArray as a tiff image with metadata.
+
+        Args:
+            filename (str):
+                Filename to save file as.
+
+        Note:
+            PIL can save in modes "L" (8bit unsigned int), "I" (32bit signed int),
+            or "F" (32bit signed float). In general max info is preserved for "F"
+            type so if forcetype is not specified then this is the default. For
+            boolean type data mode "L" will suffice and this is chosen in all cases.
+            The type name is added as a string to the metadata before saving.
+
+        """
+        from PIL.TiffImagePlugin import ImageFileDirectory_v2, Image
+        import json
+
+        metadata_export = []
+        imlist = []
+        for d in self._marshall():
+            dtype = np.dtype(d.dtype).name  # string representation of dtype we can save
+            d["ImageArray.dtype"] = dtype  # add the dtype to the metadata for saving.
+            metadata_export.append(d.metadata.export_all())
+            if d.dtype.kind == "b":  # boolean we're not going to lose data by saving as unsigned int
+                imlist.append(Image.fromarray(d.image, mode="L"))
+            else:
+                try:
+                    imlist.append(Image.fromarray(d.image))
+                except TypeError:
+                    imlist.append(Image.fromarray(d.image.astype("float32")))
+
+        ifd = ImageFileDirectory_v2()
+        ifd[270] = json.dumps(
+            {
+                "type": self.__class__.__name__,
+                "module": self.__class__.__module__,
+                "layout": self.layout,
+                "metadata": metadata_export,
+            }
+        )
+        ext = path.splitext(filename)[1]
+        if ext in [".tif", ".tiff"]:  # ensure extension is preserved in save
+            pass
+        else:  # default to tiff
+            ext = ".tiff"
+
+        tiffname = path.splitext(filename)[0] + ext
+        imlist[0].save(tiffname, save_all=True, append_images=imlist[1:], tiffinfo=ifd)
+        return self
 
     def view(self):
         """Create a matplotlib animated view of the contents.

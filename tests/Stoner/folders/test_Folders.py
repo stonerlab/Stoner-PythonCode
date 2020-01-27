@@ -230,7 +230,7 @@ class Folders_test(unittest.TestCase):
        'DataFile', 'DataFile', 'MokeFile', 'EasyPlotFile', 'DataFile',
        'DataFile', 'DataFile'],
           dtype='<U12')
-        fldr=SF.DataFolder(self.datadir, pattern='*.txt').sort()
+        fldr=SF.DataFolder(self.datadir, pattern='*.txt', recursive=False).sort()
         self.fldr=fldr
         test_sliced=fldr.slice_metadata("Loaded as")
         self.assertEqual(len(sliced),len(test_sliced),"Test slice not equal length - sample-data changed? {}".format(test_sliced))

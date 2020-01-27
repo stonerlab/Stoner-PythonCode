@@ -129,7 +129,7 @@ _options = {
     "short_folder_rrepr": True,
     "short_img_repr": True,
     "no_figs": True,
-    "multiprocessing": os.name != "nt",  # multiprocess doesn't run too well under Windows due to spawn()
+    "multiprocessing": False,  # Change default to not use multiprocessing for now
     "threading": False,
 }
 

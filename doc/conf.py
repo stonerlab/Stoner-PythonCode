@@ -118,10 +118,10 @@ inheritance_graph_attrs = dict(rankdir="TB", size='"6.0, 8.0"',
                                fontsize=14, ratio='compress')
 
 intersphinx_mapping = {
-   'python': ('http://docs.python.org/', None),
-    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
-    'matplotlib': ('http://matplotlib.org/', None),
+   'python': ('https://docs.python.org/3/', None),
+    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+    'matplotlib': ('https://matplotlib.org/', None),
     'astropy': ('http://docs.astropy.org/en/stable/', None),
     'h5py': ('http://docs.h5py.org/en/latest/', None),
     'lmfit': ('https://lmfit.github.io/lmfit-py/', None),
