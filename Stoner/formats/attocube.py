@@ -79,11 +79,13 @@ def _open_filename(filename):
 
 
 def parabola(X, cx, cy, a, b, c):
+    """A parabola in the X-Y plane for levelling an image."""
     x, y = X
     return a * (x - cx) ** 2 + b * (y - cy) ** 2 + c
 
 
 def plane(X, a, b, c):
+    """A plane equation for levelling an image."""
     x, y = X
     return a * x + b * y + c
 
@@ -325,7 +327,7 @@ class AttocubeScan(ImageStack):
         """Read a signal array and return a member of the image stack."""
         if "signal" not in g:
             _raise_error(g.parent, message=f"{g.name} does not have a signal dataset !")
-        tmp = self.type()
+        tmp = self.type()  # pylint: disable=E1102
         data = g["signal"]
         if product(array(data.shape)) > 0:
             tmp.image = data[...]
@@ -415,7 +417,7 @@ class AttocubeScan(ImageStack):
         Y = Y.ravel()
         Z = Z.ravel()
 
-        popt, pcov = curve_fit(method, (X, Y), Z)
+        popt = curve_fit(method, (X, Y), Z)[0]
 
         nZ = method((X, Y), *popt)
         Z -= nZ

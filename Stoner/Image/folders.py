@@ -5,12 +5,12 @@ from .core import ImageArray
 from Stoner.Folders import DiskBasedFolder, baseFolder
 from Stoner.compat import string_types
 from Stoner.Image import ImageFile
-from Stoner.core.base import typeHintedDict
 
 from skimage.viewer import CollectionViewer
 import numpy as np
 from importlib import import_module
 from os import path
+from json import loads
 
 
 def _load_ImageArray(f, **kargs):
@@ -241,14 +241,12 @@ class ImageFolderMixin(object):
     def from_tiff(cls, filename, **kargs):
         """Create a new ImageArray from a tiff file."""
 
-        from json import loads
         from PIL import Image
 
         self = cls(**kargs)
         with Image.open(filename, "r") as img:
             tags = img.tag_v2
             if 270 in tags:
-                from json import loads
 
                 try:
                     userdata = loads(tags[270])

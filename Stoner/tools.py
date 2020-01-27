@@ -27,7 +27,6 @@ __all__ = [
 from collections import Iterable, MutableSequence
 from .compat import string_types, bytes2str
 import re
-import os
 import inspect
 import copy
 from importlib import import_module

@@ -1025,8 +1025,7 @@ class baseFolder(MutableSequence):
         if len(data) < count:
             raise ValueError("Insufficient entries in the data argument given the layout supplied.")
         self.extend(data[:count])
-        for ix in range(count):
-            data.pop(0)
+        del data[:count]
         for grp in groups:
             self.add_group(grp)
             self.groups[grp]._marshall(layout=groups[grp], data=data)

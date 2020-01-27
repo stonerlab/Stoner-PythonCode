@@ -95,7 +95,7 @@ class PlotMixin(object):
     positional_fmt = [plt.plot, plt.semilogx, plt.semilogy, plt.loglog]
     no_fmt = [errorfill]
     _template = DefaultPlotStyle()
-    legend = True
+    _legend = True
     multiple = "common"
 
     def __init__(self, *args, **kargs):  # Do the import of plt here to speed module load
