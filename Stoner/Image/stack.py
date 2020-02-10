@@ -416,7 +416,7 @@ class ImageStackMixin(object):
                 cropped images
         """
         warnings.warn("crop_stack is depricated - sam effect can be achieved with crop(box)")
-        self.crop(box)
+        self.each.crop(box)
 
     def show(self):
         """Pass through to :py:meth:`Stoner.Image.ImageFolder.view`"""

@@ -7,7 +7,6 @@ import numpy as np
 import numpy.ma as ma
 
 from scipy.integrate import cumtrapz
-from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
 
 from Stoner.tools import isiterable, istuple, string_types
@@ -325,125 +324,6 @@ class AnalysisMixin(object):
                 self.add_column(data, index=t, replace=replace, header=header)
                 self.setas = setas
         return self
-
-    def peaks(self, **kargs):
-        """Locates peaks and/or troughs in a column of data by using SG-differentiation.
-
-        Args:
-            ycol (index):
-                the column name or index of the data in which to search for peaks
-            width (int or float):
-                the expected minium halalf-width of a peak in terms of the number of data points (int) or distance
-                in x (float). This is used in the differnetiation code to find local maxima. Bigger equals less
-                sensitive to experimental noise, smaller means better eable to see sharp peaks
-            poly (int):
-                the order of polynomial to use when differentiating the data to locate a peak. Must >=2, higher numbers
-                will find sharper peaks more accurately but at the risk of finding more false positives.
-
-        Keyword Arguments:
-            significance (float):
-                used to decide whether a local maxmima is a significant peak. Essentially just the curvature
-                of the data. Bigger means less sensistive, smaller means more likely to detect noise. Default is the
-                maximum curvature/(2*width)
-            xcol (index or None):
-                name or index of data column that p[rovides the x-coordinate (default None)
-            peaks (bool):
-                select whether to measure peaks in data (default True)
-            troughs (bool):
-                select whether to measure troughs in data (default False)
-            sort (bool):
-                Sor the results by significance of peak
-            modify (book):
-                If true, then the returned object is a copy of self with only the peaks/troughs left in the data.
-            full_data (bool):
-                If True (default) then all columns of the data at which peaks in the *ycol* column are found.
-                *modify* true implies *full_data* is also true. If *full_data* is False, then only the x-column
-                values of the peaks are returned.
-
-        Returns:
-            (various):
-                If *modify* is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs.
-                If *modify* is false (default), then the return value depends on *ycol* and *xcol*. If *ycol* is
-                not None and *xcol* is None, then returns conplete rows of data corresponding to the found
-                peaks/troughs. If *xcol* is not None, or *ycol* is None and *xcol* is None, then returns a 1D array
-                of the x positions of the peaks/troughs.
-
-        See Also:
-            User guide section :ref:`peak_finding`
-        """
-        width = kargs.pop("width", int(len(self) / 20))
-        peaks = kargs.pop("peaks", True)
-        troughs = kargs.pop("troughs", False)
-        poly = kargs.pop("poly", 2)
-        assertion(
-            poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or trough"
-        )
-
-        sort = kargs.pop("sort", False)
-        modify = kargs.pop("modify", False)
-        full_data = kargs.pop("full_data", True)
-        _ = self._col_args(scalar=False, xcol=kargs.pop("xcol", None), ycol=kargs.pop("ycol", None))
-        xcol, ycol = _.xcol, _.ycol
-        if isiterable(ycol):
-            ycol = ycol[0]
-        if isinstance(width, float):  # Convert a floating point width unto an integer.
-            xmin, xmax = self.span(xcol)
-            width = int(len(self) * width / (xmax - xmin))
-        width = max(width, poly + 1)
-        setas = self.setas.clone
-        self.setas = ""
-        d1 = self.SG_Filter(ycol, xcol=xcol, points=width, poly=poly, order=1).ravel()
-        d2 = self.SG_Filter(
-            ycol, xcol=xcol, points=2 * width, poly=poly, order=2
-        ).ravel()  # 2nd differential requires more smoothing
-
-        # We're going to ignore the start and end of the arrays
-        index_offset = int(width / 2)
-        d1 = d1[index_offset:-index_offset]
-        d2 = d2[index_offset:-index_offset]
-
-        # Pad the ends of d2 with the mean value
-        pad = np.mean(d2[index_offset:-index_offset])
-        d2[:index_offset] = pad
-        d2[-index_offset:] = pad
-
-        # Set the significance from the 2nd ifferential if not already set
-        significance = kargs.pop(
-            "significance", np.max(np.abs(d2)) / (2 * width)
-        )  # Base an apriori significance on max d2y/dx2 / 20
-        if isinstance(significance, int):  # integer significance is inverse to floating
-            significance = np.max(np.abs(d2)) / significance  # Base an apriori significance on max d2y/dx2 / 20
-
-        d2_interp = interp1d(np.arange(len(d2)), d2, kind="cubic")
-        # Ensure we have some X-data
-        if xcol is None:
-            xdata = np.arange(len(self))
-        else:
-            xdata = self.column(xcol)
-        xdata = interp1d(np.arange(len(self)), xdata, kind="cubic")
-
-        possible_peaks = np.array(_threshold(0, d1, rising=troughs, falling=peaks))
-        curvature = np.abs(d2_interp(possible_peaks))
-
-        # Filter just the significant peaks
-        possible_peaks = np.array([p for ix, p in enumerate(possible_peaks) if abs(curvature[ix]) > significance])
-        # Sort in order of significance
-        if sort:
-            possible_peaks = np.take(possible_peaks, np.argsort(np.abs(d2_interp(possible_peaks))))
-
-        xdat = xdata(possible_peaks + index_offset)
-
-        if modify:
-            self.data = self.interpolate(xdat, xcol=xcol, kind="cubic")
-            ret = self
-        elif full_data:
-            ret = self.interpolate(xdat, kind="cubic", xcol=False)
-        else:
-            ret = xdat
-        self.setas = setas
-        # Return - but remembering to add back on the offset that we took off due to differentials not working at
-        # start and end
-        return ret
 
     def stitch(self, other, xcol=None, ycol=None, overlap=None, min_overlap=0.0, mode="All", func=None, p0=None):
         r"""Apply a scaling to this data set to make it stich to another dataset.

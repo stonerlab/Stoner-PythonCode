@@ -9,6 +9,7 @@ from Stoner.Analysis import AnalysisMixin
 from Stoner.analysis.fitting.mixins import FittingMixin
 from Stoner.analysis.columns import ColumnOps
 from Stoner.analysis.filtering import FilteringOps
+from Stoner.analysis.features import FeatureOps
 from Stoner.plot import PlotMixin
 from Stoner.Core import DataFile
 
@@ -20,7 +21,7 @@ import Stoner.Zip  # pylint: disable=W0611
 from Stoner.tools import format_error
 
 
-class Data(AnalysisMixin, FittingMixin, ColumnOps, FilteringOps, PlotMixin, DataFile):
+class Data(AnalysisMixin, FittingMixin, ColumnOps, FilteringOps, FeatureOps, PlotMixin, DataFile):
 
     """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and
     :py:class:`Stoner.plot.PlotMixin`
