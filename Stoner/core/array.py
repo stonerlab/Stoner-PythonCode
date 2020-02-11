@@ -4,8 +4,8 @@
 
 __all__ = ["DataArray"]
 
-import numpy.ma as _ma_
-import numpy as _np_
+import numpy.ma as ma
+import numpy as np
 import copy
 
 from Stoner.compat import string_types, int_types
@@ -15,7 +15,7 @@ from .setas import setas as _setas
 from .exceptions import StonerSetasError
 
 
-class DataArray(_ma_.MaskedArray):
+class DataArray(ma.MaskedArray):
 
     r"""A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.
 
@@ -55,18 +55,18 @@ class DataArray(_ma_.MaskedArray):
         # Input array is an already formed ndarray instance
         # We first cast to be our class type
         setas = kargs.pop("setas", _setas())
-        if isinstance(input_array, _ma_.MaskedArray):
+        if isinstance(input_array, ma.MaskedArray):
             default_mask = input_array.mask
         else:
             default_mask = None
-        mask = _np_.copy(kargs.pop("mask", default_mask))
+        mask = np.copy(kargs.pop("mask", default_mask))
         column_headers = kargs.pop("column_headers", [])
         _row = kargs.pop("isrow", False)
         if isinstance(input_array, DataArray):
             i = input_array.i
         else:
             i = 0
-        obj = _ma_.asarray(input_array, *args, **kargs).view(cls)
+        obj = ma.asarray(input_array, *args, **kargs).view(cls)
         # add the new attribute to the created instance
         setas.shape = obj.shape
         obj._setas = setas
@@ -106,7 +106,7 @@ class DataArray(_ma_.MaskedArray):
 
     def __array_wrap__(self, out_arr, context=None):
         """Make sure ufuncs do the right thing with DataArrays"""
-        ret = _ma_.MaskedArray.__array_wrap__(self, out_arr, context)
+        ret = ma.MaskedArray.__array_wrap__(self, out_arr, context)
         return ret
 
     # ============================================================================================================================
@@ -116,7 +116,7 @@ class DataArray(_ma_.MaskedArray):
     @property
     def _(self):
         """Return the DataArray as a normal numpy array for those operations that need this"""
-        return _ma_.getdata(self)
+        return ma.getdata(self)
 
     @property
     def isrow(self):
@@ -135,11 +135,11 @@ class DataArray(_ma_.MaskedArray):
         m = [
             lambda d: None,
             lambda d: None,
-            lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2),
-            lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
-            lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
-            lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2),
-            lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2 + d.w ** 2),
+            lambda d: np.sqrt(d.x ** 2 + d.y ** 2),
+            lambda d: np.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
+            lambda d: np.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
+            lambda d: np.sqrt(d.u ** 2 + d.v ** 2),
+            lambda d: np.sqrt(d.u ** 2 + d.v ** 2 + d.w ** 2),
         ]
         ret = m[axes](self)
         if ret is None:
@@ -156,11 +156,11 @@ class DataArray(_ma_.MaskedArray):
         m = [
             lambda d: None,
             lambda d: None,
-            lambda d: _np_.arctan2(d.x, d.y),
-            lambda d: _np_.arctan2(d.x, d.y),
-            lambda d: _np_.arctan2(d.x, d.y),
-            lambda d: _np_.arctan2(d.u, d.v),
-            lambda d: _np_.arctan2(d.u, d.v),
+            lambda d: np.arctan2(d.x, d.y),
+            lambda d: np.arctan2(d.x, d.y),
+            lambda d: np.arctan2(d.x, d.y),
+            lambda d: np.arctan2(d.u, d.v),
+            lambda d: np.arctan2(d.u, d.v),
         ]
         ret = m[axes](self)
         if ret is None:
@@ -178,10 +178,10 @@ class DataArray(_ma_.MaskedArray):
             lambda d: None,
             lambda d: None,
             lambda d: None,
-            lambda d: _np_.arcsin(d.z),
-            lambda d: _np_.arsin(d.z),
-            lambda d: _np_.arcsin(d.w),
-            lambda d: _np_.arcsin(d.w),
+            lambda d: np.arcsin(d.z),
+            lambda d: np.arsin(d.z),
+            lambda d: np.arcsin(d.w),
+            lambda d: np.arcsin(d.w),
         ]
         ret = m[axes](self)
         if ret is None:
@@ -208,21 +208,21 @@ class DataArray(_ma_.MaskedArray):
             pass
         elif self.ndim == 1 and self.isrow:
             if isiterable(value) and value:
-                self._ibase = _np_.array([min(value)])
+                self._ibase = np.array([min(value)])
             else:
-                self._ibase = _np_.array([value])
+                self._ibase = np.array([value])
         elif self.ndim >= 1:
             r = self.shape[0]
             if isiterable(value) and len(value) == r:  # Iterable and the correct length - assing straight
-                self._ibase = _np_.array(value)
+                self._ibase = np.array(value)
             elif isiterable(value) and len(value) > 0:  # Iterable but not the correct length - count from min of value
-                self._ibase = _np_.arange(min(value), min(value) + r)
+                self._ibase = np.arange(min(value), min(value) + r)
             elif (
                 isiterable(value) and len(value) == 0
             ):  # Iterable but not the correct length - count from min of value
-                self._ibase = _np_.arange(0, r, r)
+                self._ibase = np.arange(0, r, r)
             else:  # No iterable
-                self._ibase = _np_.arange(value, value + r)
+                self._ibase = np.arange(value, value + r)
 
     @property
     def column_headers(self):
@@ -347,14 +347,14 @@ class DataArray(_ma_.MaskedArray):
             ix[-1] = self._setas.find_col(ix[-1])
             ix = tuple(ix)
         elif (
-            isinstance(ix, tuple) and ix and isinstance(ix[-1], _np_.ndarray) and self.ndim == 1
+            isinstance(ix, tuple) and ix and isinstance(ix[-1], np.ndarray) and self.ndim == 1
         ):  # Indexing with a numpy array
             if len(ix) == 1:
                 ix = ix[0]
         elif isinstance(ix, tuple) and ix and isiterable(ix[-1]):  # indexing with a list of columns
             ix = list(ix)
             if all_type(ix[-1], bool):
-                ix[-1] = _np_.arange(len(ix[-1]))[ix[-1]]
+                ix[-1] = np.arange(len(ix[-1]))[ix[-1]]
             ix[-1] = [self._setas.find_col(c) for c in ix[-1]]
             ix = tuple(ix)
         elif isinstance(ix, tuple) and ix and isinstance(ix[0], string_types):  # oops! backwards indexing
@@ -364,9 +364,9 @@ class DataArray(_ma_.MaskedArray):
             ix = tuple(ix)
             # Now can index with our constructed multidimesnional indexer
         ret = super(DataArray, self).__getitem__(ix)
-        if ret.ndim == 0 or isinstance(ret, _np_.ndarray) and ret.size == 1:
-            return ret.dtype.type(ret)
-        elif not isinstance(ret, _np_.ndarray):  # bugout for scalar resturns
+        if ret.ndim == 0 or isinstance(ret, np.ndarray) and ret.size == 1:
+            return ret.dtype.type(ma.filled(ret))
+        elif not isinstance(ret, np.ndarray):  # bugout for scalar resturns
             return ret
         elif ret.ndim >= 2:  # Potentially 2D array here
             if ix[-1] is None:  # Special case for increasing an array dimension
@@ -380,9 +380,9 @@ class DataArray(_ma_.MaskedArray):
                 ret.setas = self.setas.clone
                 ret.column_headers = copy.copy(self.column_headers)
                 if len(ix) > 0 and isiterable(ix[-1]):  # pylint: disable=len-as-condition
-                    ret.column_headers = list(_np_.array(ret.column_headers)[ix[-1]])
+                    ret.column_headers = list(np.array(ret.column_headers)[ix[-1]])
                 # Sort out whether we need an array of row labels
-                if isinstance(self.i, _np_.ndarray) and len(ix) > 0:  # pylint: disable=len-as-condition
+                if isinstance(self.i, np.ndarray) and len(ix) > 0:  # pylint: disable=len-as-condition
                     if isiterable(ix[0]) or isinstance(ix[0], int_types):
                         ret.i = self.i[ix[0]]
                     else:
@@ -392,15 +392,15 @@ class DataArray(_ma_.MaskedArray):
         elif ret.ndim == 1:  # Potentially a single row or single column
             ret.isrow = single_row
             if len(ix) == len(self.setas):
-                tmp = _np_.array(self.setas)[ix[-1]]
+                tmp = np.array(self.setas)[ix[-1]]
                 ret.setas(tmp)
-                tmpcol = _np_.array(self.column_headers)[ix[-1]]
+                tmpcol = np.array(self.column_headers)[ix[-1]]
                 ret.column_headers = tmpcol
             else:
                 ret.setas = self.setas.clone
                 ret.column_headers = copy.copy(self.column_headers)
             # Sort out whether we need an array of row labels
-            if single_row and isinstance(self.i, _np_.ndarray):
+            if single_row and isinstance(self.i, np.ndarray):
                 ret.i = self.i[ix[0]]
             else:  # This is a single element?
                 ret.i = self.i
@@ -474,7 +474,7 @@ class DataArray(_ma_.MaskedArray):
                     del ret[c]
                 continue
             elif c in ret and isinstance(ret[c], list):
-                if isinstance(cols[c], float) or (isinstance(cols[c], _np_.ndarray) and cols[c].size == len(self)):
+                if isinstance(cols[c], float) or (isinstance(cols[c], np.ndarray) and cols[c].size == len(self)):
                     continue
             elif isinstance(cols[c], float):
                 continue
