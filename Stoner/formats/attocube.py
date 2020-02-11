@@ -237,7 +237,7 @@ class AttocubeScan(ImageStack):
         ):  # IF the underlying type is an ImageArray, then return as a view with extra metadata
             tmp = self._stack[:r, :c, idx].view(type=self.type)
         else:  # Otherwise it must be something with a data attribute
-            tmp = self.type()
+            tmp = self.type()  # pylint: disable=E1102
             tmp.data = self._stack[:r, :c, idx]
         tmp.metadata = deepcopy(self._common_metadata)
         tmp.metadata.update(self._metadata[self.__names__()[idx]])

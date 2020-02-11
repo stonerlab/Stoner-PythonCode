@@ -6,18 +6,13 @@ Feature Finding functions for analysis code.
 
 __all__ = ["FeatureOps"]
 
-from copy import deepcopy as copy
 import numpy as np
-from numpy import ma
-from warnings import warn
-from scipy.interpolate import interp1d, UnivariateSpline
-from scipy.signal import get_window, convolve, savgol_filter, find_peaks
+from scipy.signal import find_peaks
+from scipy.interpolation import interp1d
 
-from Stoner.tools import isiterable, isNone, istuple
+from Stoner.tools import isiterable, istuple
 from Stoner.core.exceptions import assertion
-from Stoner.compat import int_types, string_types, get_func_params
-
-from .utils import threshold as _threshold, outlier as _outlier, _twoD_fit, GetAffineTransform
+from .utils import threshold
 
 
 class FeatureOps(object):
@@ -88,7 +83,7 @@ class FeatureOps(object):
             xmin, xmax = self.span(xcol)
             width = int(len(self) * width / (xmax - xmin))
         width = max(width, poly + 1)
-        setas = self.setas.clone
+        setas = self.setas.clone  # pylint: disable=E0203
         self.setas = ""
         d1 = self.SG_Filter(ycol, xcol=xcol, points=width, poly=poly, order=1).ravel()
         d2 = self.SG_Filter(
@@ -120,7 +115,7 @@ class FeatureOps(object):
             xdata = self.column(xcol)
         xdata = interp1d(np.arange(len(self)), xdata, kind="cubic")
 
-        possible_peaks = np.array(_threshold(0, d1, rising=troughs, falling=peaks))
+        possible_peaks = np.array(threshold(0, d1, rising=troughs, falling=peaks))
         curvature = np.abs(d2_interp(possible_peaks))
 
         # Filter just the significant peaks
