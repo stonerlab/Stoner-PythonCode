@@ -3,9 +3,12 @@ of the `Condensed Matter Group<http://www.stoner.leeds.ac.uk/>` at the `Universi
 """
 # pylint: disable=import-error
 __all__ = [
+    "core",
+    "analysis",
     "formats",
     "plot",
     "tools",
+    "Image",
     "Data",
     "DataFolder",
     "ImageFile",
@@ -18,7 +21,7 @@ __all__ = [
 # These fake the old namespace if you do an import Stoner
 from os import path as _path_
 
-from . import formats, plot, tools
+from . import core, analysis, formats, plot, tools, Image
 from .core.data import Data
 from .Folders import DataFolder
 from .Image import ImageFile, ImageFolder

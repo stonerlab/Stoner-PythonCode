@@ -1254,7 +1254,7 @@ class ImageFile(metadataObject):
     def __getattr__(self, n):
         """"Handles attriobute access."""
         try:
-            ret = super(ImageFile, self).__getattr__(n)
+            ret = getattr(super(ImageFile, self), n)
         except AttributeError:
             ret = getattr(self.image, n)
             if callable(ret):  # we have a method
