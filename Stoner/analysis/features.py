@@ -8,7 +8,7 @@ __all__ = ["FeatureOps"]
 
 import numpy as np
 from scipy.signal import find_peaks
-from scipy.interpolation import interp1d
+from scipy.interpolate import interp1d
 
 from Stoner.tools import isiterable, istuple
 from Stoner.core.exceptions import assertion
