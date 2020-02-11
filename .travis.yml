@@ -7,18 +7,21 @@ language: python
 dist: "bionic"
 sudo: true
 python:
-  - "3.6"
-  - "3.7"
+    - "3.6"
+    - "3.7"
+  
+virtualenv:
+  system_site_packages: true
 
 env:
   - NUMBA=1
   - NUMBA=0
 
-jobs:
-    excelude:
-      - python: 3.6
-      - env: NUMBA = 0
-# command to install dependencies
+# jobs:
+#     excelude:
+#       - python: 3.6
+#       - env: NUMBA = 0
+# # command to install dependencies
 
 services:
   - xvfb
