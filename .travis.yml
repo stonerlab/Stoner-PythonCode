@@ -39,7 +39,7 @@ before_install:
   - ./miniconda.sh -b
   - export PATH=/home/travis/miniconda3/bin:$PATH
   - conda init bash
-  - bash
+  - source ~/.bashrc
   - conda config --set always_yes yes --set changeps1 no
   - conda config --append channels phygbu
   - conda config --append channels conda-forge
