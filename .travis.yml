@@ -11,7 +11,7 @@ python:
     - "3.7"
   
 virtualenv:
-  system_site_packages: true
+  system_site_packages: false
 
 env:
   - NUMBA=1
@@ -28,25 +28,31 @@ services:
 
 
 # Setup anaconda
-install:
+
+before_install:
+
+  # Here we just install Miniconda, which you shouldn't have to change.
+
   - sudo apt-get install tesseract-ocr
-  # We do this conditionally because it saves us some downloading if the
-  # version is the same.
-  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - hash -r
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/miniconda/bin:$PATH
   - conda config --set always_yes yes --set changeps1 no
   - conda config --append channels phygbu
   - conda config --append channels conda-forge
   - conda config --set channel_priority strict
   - conda update -q conda
-  # Useful for debugging any issues with conda
   - conda info -a
+  
+install:
+  # We do this conditionally because it saves us some downloading if the
+  # version is the same.
+  # Useful for debugging any issues with conda
 
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION stoner pandas
-  - source activate test-environment
+  - conda activate test-environment
   # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
   # Hyperspy is now an optional dependency for 3.6 onwards
   - conda install hyperspy
