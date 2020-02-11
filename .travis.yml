@@ -4,7 +4,7 @@ notifications:
     on_failure: change # default: always
 
 language: python
-dist: "xenial"
+dist: "bionic"
 sudo: true
 python:
   - "3.6"
