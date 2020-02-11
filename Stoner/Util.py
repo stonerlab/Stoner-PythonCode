@@ -9,7 +9,7 @@ __all__ = ["split_up_down", "ordinal", "hysteresis_correct"]
 from .tools import format_error, make_Data
 from Stoner.Core import DataFile
 from . import DataFolder
-from .Fit import linear
+from .analysis.fitting.models.generic import linear
 import numpy as np
 from numpy import max, argmax, mean  # pylint: disable=redefined-builtin
 from scipy.stats import sem

@@ -397,7 +397,7 @@ def _prep_lmfit_model(model, kargs):
     if isinstance(model, Model):
         pass
     elif isclass(model) and issubclass(model, Model):
-        model = model()
+        model = model(nan_policy="propagate")
     elif callable(model):
         model = Model(model)
     else:
@@ -551,19 +551,19 @@ class FittingMixin(object):
         try:  # if the model has an attribute display params then use these as the parameter anmes
             for k, display_name, unit in zip(param_names, display_names, units):
                 if prefix:
-                    self["{}{} label".format(prefix, k)] = display_name
-                    self["{}{} units".format(prefix, k)] = unit
+                    self[f"{prefix}{k} label"] = display_name
+                    self[f"{prefix}{k} units"] = unit
 
                 else:
-                    self[k + " label"] = display_name
-                    self[k + " units"] = unit
+                    self[f"{k} label"] = display_name
+                    self[f"{k} units"] = unit
         except (AttributeError, KeyError):
             pass
 
-        text = "\n".join([self.format("{}{}".format(prefix, k), fmt="latex", mode=mode) for k in model.param_names])
+        text = "\n".join([self.format(f"{prefix}{k}", fmt="latex", mode=mode) for k in model.param_names])
         try:
-            self["{}chi^2 label".format(prefix)] = r"\chi^2"
-            text += "\n" + self.format("{}chi^2".format(prefix), fmt="latex", mode=mode)
+            self[f"{prefix}chi^2 label"] = r"\chi^2"
+            text += "\n" + self.format(f"{prefix}chi^2", fmt="latex", mode=mode)
         except KeyError:
             pass
 
@@ -1408,7 +1408,9 @@ class FittingMixin(object):
                 p0, single_fit = _prep_lmfit_p0(
                     model, data[1], data[0], pn_i, kargs
                 )  # model, data, params, prefix, columns, scale_covar,**kargs)
-                ret_val[i, :] = self.__lmfit_one(model, data, p0, prefix, _, scale_covar, output="row")
+                ret_val[i, :] = self.__lmfit_one(
+                    model, data, p0, prefix, _, scale_covar, nan_policy=nan_policy, output="row"
+                )
             if output == "data":  # Create a data object and seet column headers etc correctly
                 ret = self.clone
                 ret.data = ret_val

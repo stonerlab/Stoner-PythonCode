@@ -76,7 +76,7 @@ class Data(AnalysisMixin, FittingMixin, ColumnOps, FilteringOps, FeatureOps, Plo
                 "{} should be a floating point value of the metadata not a {}.".format(key, type(self[key]))
             )
         try:
-            error = float(self[key + " err"])
+            error = float(self[f"{key} err"])
         except (TypeError, KeyError):
             error = float_info.epsilon
         return format_error(value, error, fmt=fmt, mode=mode, units=units, prefix=prefix, scape=escape)

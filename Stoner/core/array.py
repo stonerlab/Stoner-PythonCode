@@ -79,6 +79,8 @@ class DataArray(ma.MaskedArray):
         obj.setas._row = _row and len(obj.shape) == 1
         # Set shared mask - stops some deprication warnings
         obj.unshare_mask()
+        if np.issubdtype(obj.dtype, np.floating):
+            obj.fill_value = np.nan
         obj.column_headers = column_headers
         return obj
 
@@ -90,6 +92,8 @@ class DataArray(ma.MaskedArray):
             self._setas = _setas()
             self.i = 0
             self.mask = False
+            if np.issubdtype(self.dtype, np.floating):
+                self.fill_value = np.nan
             self._setas._row = False
             self._setas.shape = (0,)
         else:
@@ -97,11 +101,14 @@ class DataArray(ma.MaskedArray):
             if isinstance(obj, DataArray):
                 self.i = obj.i
                 self.mask = obj.mask
+                self.fill_value = obj.fill_value
                 self._setas._row = getattr(obj._setas, "_row", False)
             else:
                 self.i = 0
                 self.mask = False
                 self._setas._row = False
+                if np.issubdtype(self.dtype, np.floating):
+                    self.fill_value = np.nan
             self._setas.shape = getattr(self, "shape", (0,))
 
     def __array_wrap__(self, out_arr, context=None):
@@ -365,7 +372,12 @@ class DataArray(ma.MaskedArray):
             # Now can index with our constructed multidimesnional indexer
         ret = super(DataArray, self).__getitem__(ix)
         if ret.ndim == 0 or isinstance(ret, np.ndarray) and ret.size == 1:
-            return ret.dtype.type(ma.filled(ret))
+            if isinstance(ret, ma.core.MaskedConstant):
+                if ret.mask:
+                    return self.fill_value
+            if isinstance(ret, ma.MaskedArray):
+                ret = ma.filled(ret)
+            return ret.dtype.type(ret)
         elif not isinstance(ret, np.ndarray):  # bugout for scalar resturns
             return ret
         elif ret.ndim >= 2:  # Potentially 2D array here

@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import warnings
 
 import Stoner
-Stoner.Options.multiprocessing = True
+Stoner.Options.multiprocessing = False
 
 #data arrays for testing - some useful small images for tests
 
@@ -100,8 +100,8 @@ class KerrArrayTest(unittest.TestCase):
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=KerrArrayTest()
-    test.setUp()
-    test.test_kerrstack()
+    #test.setUp()
+    #test.test_kerrstack()
     #test.test_kerr_ops()
     #test.test_tesseract_ocr()
-    #unittest.main()
+    unittest.main()

@@ -643,6 +643,9 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             if name.startswith("_") or name in ["debug"]:
                 if name == "_hardmask":
                     ret = False
+                else:  # Ugh
+                    ret = object.__getattribute__(self, name)
+
             elif name + "$" in self._funcs:
                 ret = self._funcs[name + "$"]
                 ret = self._func_generator(ret)

@@ -51,7 +51,7 @@ class folders_mixins_test(unittest.TestCase):
         self.assertEqual(len(self.ax),16,"Subplots check failed.")
 
         plt.close("all")
-        Options.multiprocessing=True
+        Options.multiprocessing=False
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
