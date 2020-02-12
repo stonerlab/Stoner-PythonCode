@@ -9,26 +9,13 @@ import inspect
 from importlib import import_module
 from functools import wraps
 from io import BytesIO as StreamIO
-from skimage import (
-    color,
-    exposure,
-    feature,
-    io,
-    measure,
-    filters,
-    graph,
-    util,
-    restoration,
-    morphology,
-    segmentation,
-    transform,
-    viewer,
-)
+
 from PIL import Image
 from PIL import PngImagePlugin  # for saving metadata
 import matplotlib.pyplot as plt
-from Stoner.Core import typeHintedDict, metadataObject, regexpDict, DataFile
-from Stoner.Image.util import convert
+from Stoner.core.base import typeHintedDict, metadataObject
+from ..Core import DataFile
+
 from Stoner.tools import istuple, fix_signature, islike_list, make_Data
 from Stoner.compat import (
     string_types,
@@ -36,6 +23,7 @@ from Stoner.compat import (
     int_types,
 )  # Some things to help with Python2 and Python3 compatibility
 from .attrs import DrawProxy, MaskProxy
+from .util import build_funcs_proxy
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 
@@ -222,7 +210,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     raise ValueError("No constructor for {}".format(type(arg)))
             if asfloat and ret.dtype.kind != "f":  # convert to float type in place
                 meta = ret.metadata  # preserve any metadata we may already have
-                ret = convert(ret, np.float64).view(ImageArray)
+                ret = ret.convert(np.float64)
                 ret.metadata.update(meta)
 
         # all constructors call array_finalise so metadata is now initialised
@@ -535,77 +523,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         takes a first argument that is an ndarray of image data, so with __getattrr__ and _func_generator we
         can make a bound method through duck typing."""
         if self._func_proxy is None:  # Buyild the cache
-            func_proxy = (
-                regexpDict()
-            )  # Cache is a regular expression dictionary - keys matched directly and then by regular expression
-
-            short_names = []
-
-            # Get the Stoner.Image.imagefuncs mopdule first
-            from Stoner.Image import imagefuncs
-
-            for d in dir(imagefuncs):
-                if not d.startswith("_"):
-                    func = getattr(imagefuncs, d)
-                    if callable(func) and func.__module__ == imagefuncs.__name__:
-                        name = "{}__{}".format(func.__module__, d).replace(".", "__")
-                        func_proxy[name] = func
-                        short_names.append((d, func))
-
-            # Get the Stoner.Image.util mopdule next
-            from Stoner.Image import util as SIutil
-
-            for d in dir(SIutil):
-                if not d.startswith("_"):
-                    func = getattr(SIutil, d)
-                    if callable(func) and func.__module__ == SIutil.__name__:
-                        name = "{}__{}".format(func.__module__, d).replace(".", "__")
-                        func_proxy[name] = func
-                        short_names.append((d, func))
-
-            # Add scipy.ndimage functions
-            import scipy.ndimage as ndi
-
-            _sp_mods = [ndi.interpolation, ndi.filters, ndi.measurements, ndi.morphology, ndi.fourier]
-            for mod in _sp_mods:
-                for d in dir(mod):
-                    if not d.startswith("_"):
-                        func = getattr(mod, d)
-                        if callable(func) and func.__module__ == mod.__name__:
-                            func.transpose = True
-                            name = "{}__{}".format(func.__module__, d).replace(".", "__")
-                            func_proxy[name] = func
-                            short_names.append((d, func))
-
-            # Add the scikit images modules
-            _ski_modules = [
-                color,
-                exposure,
-                feature,
-                io,
-                measure,
-                filters,
-                filters.rank,
-                graph,
-                util,
-                restoration,
-                morphology,
-                segmentation,
-                transform,
-                viewer,
-            ]
-            for mod in _ski_modules:
-                for d in dir(mod):
-                    if not d.startswith("_"):
-                        func = getattr(mod, d)
-                        if callable(func):
-                            name = "{}__{}".format(func.__module__, d).replace(".", "__")
-                            func_proxy[name] = func
-                            short_names.append((d, func))
-
-            for n, f in reversed(short_names):
-                func_proxy[n] = f
-            self._func_proxy = func_proxy  # Store the cache
+            self._func_proxy = build_funcs_proxy()
         return self._func_proxy
 
     # ==============================================================
@@ -845,8 +763,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         if self.dtype.kind == "f":
             ret = self
         else:
-            ret = convert(self, dtype=np.float64, normalise=normalise)  # preserve metadata
-            ret = ret.view(self.__class__)
+            ret = self.convert(dtype=np.float64, normalise=normalise).view(self.__class__)  # preserve metadata
             c = self.clone  # copy formatting and apply to new array
             for k, v in c._optinfo.items():
                 setattr(ret, k, v)
@@ -880,7 +797,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         """
         if self.dtype.kind == "f" and (np.max(self) > 1 or np.min(self) < -1):
             self = self.normalise()
-        ret = convert(self, dtype)
+        ret = self.convert(dtype)
         ret = ret.view(self.__class__)
         for k, v in self._optinfo.items():
             setattr(ret, k, v)

@@ -11,7 +11,6 @@ from .core import ImageArray, dtype_range, ImageFile
 from .folders import ImageFolder, ImageFolderMixin
 from Stoner.Core import regexpDict, typeHintedDict
 from Stoner.Folders import DiskBasedFolder, baseFolder
-from Stoner.Image.util import convert
 
 IM_SIZE = (512, 672)  # Standard Kerr image size
 AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped
@@ -345,6 +344,8 @@ class ImageStackMixin(object):
         if self.imarray.dtype.kind == "f":
             pass
         else:
+            from .imagefuncs import convert
+
             self._stack = convert(self._stack, dtype=np.float64, normalise=normalise)
         if "clip_neg" in kargs:
             warnings.warn(

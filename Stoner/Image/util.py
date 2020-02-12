@@ -3,11 +3,11 @@
 """
 from __future__ import division
 
-__all__ = ["convert"]
+__all__ = ["sign_loss", "prec_loss", "dtype_range", "_dtype", "_dtype2", "build_funcs_proxy"]
 
 import numpy as np
 from warnings import warn
-
+from ..core.base import regexpDict
 
 dtype_range = {
     np.bool_: (False, True),
@@ -134,161 +134,80 @@ def _scale(a, n, m, dtypeobj_in, dtypeobj, copy=True):
             return a
 
 
-def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
-    """
-    Convert an image to the requested data-type.
+def build_funcs_proxy():
+    """Build a dictionary of references to Image manipulation functions."""
+    # Delayed imports
+    from . import imagefuncs
 
-    Warnings are issued in case of precision loss, or when negative values
-    are clipped during conversion to unsigned integer types (sign loss).
+    from skimage import (
+        color,
+        exposure,
+        feature,
+        io,
+        measure,
+        filters,
+        graph,
+        util,
+        restoration,
+        morphology,
+        segmentation,
+        transform,
+        viewer,
+    )
+    import scipy.ndimage as ndi
 
-    Floating point values are expected to be normalized and will be clipped
-    to the range [0.0, 1.0] or [-1.0, 1.0] when converting to unsigned or
-    signed integers respectively.
+    # Cache is a regular expression dictionary - keys matched directly and then by regular expression
+    func_proxy = regexpDict()
+    short_names = []
 
-    Numbers are not shifted to the negative side when converting from
-    unsigned to signed integer types. Negative values will be clipped when
-    converting to unsigned integers.
+    # Get the Stoner.Image.imagefuncs mopdule first
+    for d in dir(imagefuncs):
+        if not d.startswith("_"):
+            func = getattr(imagefuncs, d)
+            if callable(func) and getattr(func, "__module__", "") == imagefuncs.__name__:
+                name = "{}__{}".format(func.__module__, d).replace(".", "__")
+                func_proxy[name] = func
+                short_names.append((d, func))
 
-    Parameters
-    ----------
-    image : ndarray
-        Input image.
-    dtype : dtype
-        Target data-type.
-    force_copy : bool
-        Force a copy of the data, irrespective of its current dtype.
-    uniform : bool
-        Uniformly quantize the floating point range to the integer range.
-        By default (uniform=False) floating point values are scaled and
-        rounded to the nearest integers, which minimizes back and forth
-        conversion errors.
-    normalise : bool
-        When converting from int types to float normalise the resulting array
-        by the maximum allowed value of the int type.
+    # Add scipy.ndimage functions
+    _sp_mods = [ndi.interpolation, ndi.filters, ndi.measurements, ndi.morphology, ndi.fourier]
+    for mod in _sp_mods:
+        for d in dir(mod):
+            if not d.startswith("_"):
+                func = getattr(mod, d)
+                if callable(func) and getattr(func, "__module__", "") == mod.__name__:
+                    func.transpose = True
+                    name = "{}__{}".format(func.__module__, d).replace(".", "__")
+                    func_proxy[name] = func
+                    short_names.append((d, func))
 
-    References
-    ----------
-    (1) DirectX data conversion rules.
-        http://msdn.microsoft.com/en-us/library/windows/desktop/dd607323%28v=vs.85%29.aspx
-    (2) Data Conversions.
-        In "OpenGL ES 2.0 Specification v2.0.25", pp 7-8. Khronos Group, 2010.
-    (3) Proper treatment of pixels as integers. A.W. Paeth.
-        In "Graphics Gems I", pp 249-256. Morgan Kaufmann, 1990.
-    (4) Dirty Pixels. J. Blinn.
-        In "Jim Blinn's corner: Dirty Pixels", pp 47-57. Morgan Kaufmann, 1998.
+    # Add the scikit images modules
+    _ski_modules = [
+        color,
+        exposure,
+        feature,
+        io,
+        measure,
+        filters,
+        filters.rank,
+        graph,
+        util,
+        restoration,
+        morphology,
+        segmentation,
+        transform,
+        viewer,
+    ]
+    for mod in _ski_modules:
+        for d in dir(mod):
+            if not d.startswith("_"):
+                func = getattr(mod, d)
+                if callable(func):
+                    name = f"{getattr(func,'__module__','')}__{d}".replace(".", "__")
+                    func_proxy[name] = func
+                    short_names.append((d, func))
 
-    """
-    image = np.asarray(image)
-    dtypeobj = np.dtype(dtype)
-    dtypeobj_in = image.dtype
-    dtype = dtypeobj.type
-    dtype_in = dtypeobj_in.type
+    for n, f in reversed(short_names):
+        func_proxy[n] = f
 
-    if dtype_in == dtype:
-        if force_copy:
-            image = image.copy()
-        return image
-
-    if not (dtype_in in _supported_types and dtype in _supported_types):
-        raise ValueError("can not convert %s to %s." % (dtypeobj_in, dtypeobj))
-
-    kind = dtypeobj.kind
-    kind_in = dtypeobj_in.kind
-    itemsize = dtypeobj.itemsize
-    itemsize_in = dtypeobj_in.itemsize
-
-    if kind == "b":
-        # to binary image
-        if kind_in in "fi":
-            sign_loss(dtype_in, dtypeobj)
-        prec_loss(dtypeobj_in, dtypeobj)
-        return image > dtype_in(dtype_range[dtype_in][1] / 2)
-
-    if kind_in == "b":
-        # from binary image, to float and to integer
-        result = image.astype(dtype)
-        if kind != "f":
-            result *= dtype(dtype_range[dtype][1])
-        return result
-
-    if kind in "ui":
-        imin = np.iinfo(dtype).min
-        imax = np.iinfo(dtype).max
-    if kind_in in "ui":
-        imin_in = np.iinfo(dtype_in).min
-        imax_in = np.iinfo(dtype_in).max
-
-    if kind_in == "f":
-        if np.min(image) < -1.0 or np.max(image) > 1.0:
-            raise ValueError("Images of type float must be between -1 and 1.")
-        if kind == "f":
-            # floating point -> floating point
-            if itemsize_in > itemsize:
-                prec_loss(dtypeobj_in, dtypeobj)
-            return image.astype(dtype)
-
-        # floating point -> integer
-        prec_loss(dtypeobj_in, dtypeobj)
-        # use float type that can represent output integer type
-        image = np.array(image, _dtype(itemsize, dtype_in, np.float32, np.float64))
-        if not uniform:
-            if kind == "u":
-                image *= imax
-            else:
-                image *= imax - imin
-                image -= 1.0
-                image /= 2.0
-            np.rint(image, out=image)
-            np.clip(image, imin, imax, out=image)
-        elif kind == "u":
-            image *= imax + 1
-            np.clip(image, 0, imax, out=image)
-        else:
-            image *= (imax - imin + 1.0) / 2.0
-            np.floor(image, out=image)
-            np.clip(image, imin, imax, out=image)
-        return image.astype(dtype)
-
-    if kind == "f":
-        # integer -> floating point
-        if itemsize_in >= itemsize:
-            prec_loss(dtypeobj_in, dtypeobj)
-        # use float type that can exactly represent input integers
-        image = np.array(image, _dtype(itemsize_in, dtype, np.float32, np.float64))
-        if normalise:  # normalise floats by maximum value of int type
-            if kind_in == "u":
-                image /= imax_in
-                # DirectX uses this conversion also for signed ints
-                # if imin_in:
-                #    np.maximum(image, -1.0, out=image)
-            else:
-                image *= 2.0
-                image += 1.0
-                image /= imax_in - imin_in
-        return image.astype(dtype)
-
-    if kind_in == "u":
-        if kind == "i":
-            # unsigned integer -> signed integer
-            image = _scale(image, 8 * itemsize_in, 8 * itemsize - 1, dtypeobj_in, dtypeobj)
-            return image.view(dtype)
-        else:
-            # unsigned integer -> unsigned integer
-            return _scale(image, 8 * itemsize_in, 8 * itemsize, dtypeobj_in, dtypeobj)
-
-    if kind == "u":
-        # signed integer -> unsigned integer
-        sign_loss(dtype_in, dtypeobj)
-        image = _scale(image, 8 * itemsize_in - 1, 8 * itemsize, dtypeobj_in, dtypeobj)
-        result = np.empty(image.shape, dtype)
-        np.maximum(image, 0, out=result, dtype=image.dtype, casting="unsafe")
-        return result
-
-    # signed integer -> signed integer
-    if itemsize_in > itemsize:
-        return _scale(image, 8 * itemsize_in - 1, 8 * itemsize - 1, dtypeobj_in, dtypeobj)
-    image = image.astype(_dtype2("i", itemsize * 8))
-    image -= imin_in
-    image = _scale(image, 8 * itemsize_in, 8 * itemsize, dtypeobj_in, dtypeobj, copy=False)
-    image += imin
-    return image.astype(dtype)
+    return func_proxy
