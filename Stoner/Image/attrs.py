@@ -38,7 +38,7 @@ class DrawProxy(object):
 
     def __dir__(self):
         """Pass through to the dir of skimage.draw."""
-        own = set(self.__class__.__dict__.keys())
+        own = set(dir(super(DrawProxy, self)))
         d = set(dir(draw))
         return list(own | d)
 
