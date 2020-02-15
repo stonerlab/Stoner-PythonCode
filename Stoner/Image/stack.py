@@ -22,42 +22,42 @@ def _load_ImageArray(f, **kargs):
     return ImageArray(f, **kargs)
 
 
-def _average_list(listob):
-    """Average a list of items picking an appropriate average given the type.
+# def _average_list(listob):
+#     """Average a list of items picking an appropriate average given the type.
 
-    If no appropriate average is found None will be returned.
-    if listob contains nested lists or dicts of numbers then try to average
-    individual items within the lists/keys.
-    """
-    if len(listob) == 0:
-        return None
-    if not all_type(listob, type(listob[0])):
-        return None  # all of the list isn't the same type
-    typex = listob[0]
-    if isinstance(typex, numbers.Number):
-        ret = sum(listob) / float(len(listob))
-    elif isinstance(typex, np.ndarray):
-        try:
-            ret = np.average(tuple(listob))
-        except Exception:  # probably incompatible array sizes
-            ret = None
-    elif isinstance(typex, (tuple, list)):  # recursively go through sub lists averaging values
-        nl = zip(*listob)
-        ret = [_average_list(list(i)) for i in nl]
-        if isinstance(typex, tuple):
-            ret = tuple(ret)
-    elif isinstance(typex, dict):  # recursively go through dictionary keys averaging values
-        ret = {}
-        for k in typex.keys():
-            ret[k] = _average_list([listob[i][k] for i in listob])
-    elif isinstance(typex, string_types):
-        if all(i == typex for i in listob):
-            ret = listob[0]  # all the same text return that string
-        else:
-            ret = None
-    else:
-        return None
-    return ret
+#     If no appropriate average is found None will be returned.
+#     if listob contains nested lists or dicts of numbers then try to average
+#     individual items within the lists/keys.
+#     """
+#     if len(listob) == 0:
+#         return None
+#     if not all_type(listob, type(listob[0])):
+#         return None  # all of the list isn't the same type
+#     typex = listob[0]
+#     if isinstance(typex, numbers.Number):
+#         ret = sum(listob) / float(len(listob))
+#     elif isinstance(typex, np.ndarray):
+#         try:
+#             ret = np.average(tuple(listob))
+#         except Exception:  # probably incompatible array sizes
+#             ret = None
+#     elif isinstance(typex, (tuple, list)):  # recursively go through sub lists averaging values
+#         nl = zip(*listob)
+#         ret = [_average_list(list(i)) for i in nl]
+#         if isinstance(typex, tuple):
+#             ret = tuple(ret)
+#     elif isinstance(typex, dict):  # recursively go through dictionary keys averaging values
+#         ret = {}
+#         for k in typex.keys():
+#             ret[k] = _average_list([listob[i][k] for i in listob])
+#     elif isinstance(typex, string_types):
+#         if all(i == typex for i in listob):
+#             ret = listob[0]  # all the same text return that string
+#         else:
+#             ret = None
+#     else:
+#         return None
+#     return ret
 
 
 class ImageStackMixin(object):
@@ -250,21 +250,6 @@ class ImageStackMixin(object):
         self._metadata = regexpDict()
         self._stack = np.atleast_3d(np.ma.MaskedArray([]))
 
-    #    def __clone__(self,other=None,attrs_only=False):
-    #        """Do whatever is necessary to copy attributes from self to other.
-    #
-    #        Note:
-    #            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
-    #        """
-    #        if other is None:
-    #            other=self.__class__()
-    ##        if not attrs_only:
-    ##            other._metadata=copy.deepcopy(self._metadata)
-    ##            other._stack=copy.deepcopy(self._stack)
-    ##            other._names=copy.deepcopy(self._names)
-    ##            other._sizes=np.copy(self._sizes)
-    #        return super(ImageStackMixin,self).__clone__(other=other,attrs_only=attrs_only)
-
     ###########################################################################
     ###################      Private methods     ##############################
 
@@ -366,25 +351,22 @@ class ImageStackMixin(object):
             (imin,imax) (tuple):
                 Lower and upper intensity limits.
         """
-        imin, imax = dtype_range[self._stack.dtype.type]
-        if clip_negative:
-            imin = 0
-        return imin, imax
+        return self[0].dtype_limits
 
     ###########################################################################
     ################### Depricated Compaibility methods #######################
 
-    @property
-    def allmeta(self):
-        """List of complete metadata for each image in ImageStack"""
-        warnings.warn("allmeta is depricated in favour of ImageStack.metadata.all")
-        return list(self.metadata.all)
+    # @property
+    # def allmeta(self):
+    #     """List of complete metadata for each image in ImageStack"""
+    #     warnings.warn("allmeta is depricated in favour of ImageStack.metadata.all")
+    #     return list(self.metadata.all)
 
-    @allmeta.setter
-    def allmeta(self, value):
-        """List of complete metadata for each image in ImageStack"""
-        warnings.warn("allmeta is depricated in favour of ImageStack.metadata.all")
-        self.metadata.all = value
+    # @allmeta.setter
+    # def allmeta(self, value):
+    #     """List of complete metadata for each image in ImageStack"""
+    #     warnings.warn("allmeta is depricated in favour of ImageStack.metadata.all")
+    #     self.metadata.all = value
 
     def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50, box=None):
         """Align images to correct for image drift.
