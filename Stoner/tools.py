@@ -361,6 +361,8 @@ def fix_signature(proxy_func, wrapped_func):
             proxy_func.__signature__ = inspect.signature(wrapped_func)
         except AttributeError:
             pass
+    if hasattr(wrapped_func, "changes_size"):
+        proxy_func.changes_size = wrapped_func.changes_size
     return proxy_func
 
 

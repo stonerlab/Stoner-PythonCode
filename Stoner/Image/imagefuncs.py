@@ -47,7 +47,9 @@ __all__ = [
 import warnings
 
 from scipy.interpolate import griddata
-from skimage import feature, measure, transform
+from scipy.ndimage import gaussian_filter
+from PIL import Image
+from skimage import feature, measure, transform, filters
 from matplotlib.colors import Normalize
 import matplotlib.cm as cm
 
@@ -128,7 +130,63 @@ def adjust_contrast(im, lims=(0.1, 0.9), percent=True):
     return im
 
 
-def align(im, ref, method=None, **kargs):
+def _align_scharr(im, ref, **kargs):
+    """Return the translation vector to shirt im to align to ref using the Scharr method."""
+    scale = np.ceil(np.max(im.shape) / 500.0)
+    ref1 = filters.edges.scharr(gaussian_filter(ref, sigma=scale, mode="wrap"))
+    im1 = filters.edges.scharr(gaussian_filter(im, sigma=scale, mode="wrap"))
+    return _align_imreg_dft(im1, ref1)
+
+
+def _align_chi2_shift(im, ref, **kargs):
+    """Return the translation vector to shirt im to align to ref using the chi^2 shift method."""
+    zeronmean = kargs.pop("zeromean", True)
+    results = np.array(chi2_shift(ref, im, **kargs))
+    return -results[1::-1], {}
+
+
+def _align_imreg_dft(im, ref, **kargs):
+    """Return the translation vector to shirt im to align to ref using the imreg_dft method."""
+    constraints = kargs.pop("constraints", {"angle": [0.0, 0.0], "scale": [1.0, 0.0]})
+    with warnings.catch_warnings():  # This causes a warning due to the masking
+        warnings.simplefilter("ignore")
+        result = imreg_dft.similarity(ref, im, constraints=constraints)
+    tvec = result["tvec"]
+    return np.array(tvec), result
+
+
+def _align_cv2(im, ref, **kargs):
+    """Return the translation vector to shirt im to align to ref using the cv2 method."""
+
+    im1_gray = ref.convert("uint8", force_copy=True)
+    im2_gray = im.convert("uint8", force_copy=True)
+
+    # Find size of image1
+    sz = im.shape
+
+    # Define the motion model
+    warp_mode = cv2.MOTION_TRANSLATION
+    warp_matrix = np.eye(2, 3, dtype=np.float32)
+
+    # Specify the number of iterations.
+    number_of_iterations = 5000
+
+    # Specify the threshold of the increment
+    # in the correlation coefficient between two iterations
+    termination_eps = 1e-10
+
+    # Define termination criteria
+    criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, number_of_iterations, termination_eps)
+
+    # Run the ECC algorithm. The results are stored in warp_matrix.
+    (_, warp_matrix) = cv2.findTransformECC(
+        im1_gray, im2_gray, warp_matrix, warp_mode, criteria, inputMask=None, gaussFiltSize=1
+    )
+
+    return -warp_matrix[1::-1, 2], {}
+
+
+def align(im, ref, method="scharr", **kargs):
     """Use one of a variety of algroithms to align two images.
 
     Args:
@@ -139,7 +197,12 @@ def align(im, ref, method=None, **kargs):
         method (str or None):
             If given specifies which module to try and use.
             Options: 'scharr', 'chi2_shift', 'imreg_dft', 'cv2'
+        box (integer, float, tuple of images or floats):
+            Used with ImageArray.crop to select a subset of the image to use for the aligning process.
+        oversample (int):
+            Rescale the image and reference image by constant factor before finding the translation vector.
         **kargs (various): All other keyword arguments are passed to the specific algorithm.
+
 
     Returns
         (ImageArray or ndarray) aligned image
@@ -156,66 +219,108 @@ def align(im, ref, method=None, **kargs):
               from: http://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
     """
     # To be consistent with x-y co-ordinate systems
-    if all([m is None for m in [imreg_dft, chi2_shift, cv2]]):
+    align_methods = {
+        "scharr": (_align_scharr, imreg_dft),
+        "chi2_shift": (_align_chi2_shift, chi2_shift),
+        "imreg_dft": (_align_imreg_dft, imreg_dft),
+        "cv2": (_align_cv2, cv2),
+    }
+    for meth in list(align_methods.keys()):
+        func, mod = align_methods[meth]
+        if mod is None:
+            del align_methods[meth]
+    method = method.lower()
+    if not len(align_methods):
         raise ImportError("align requires one of imreg_dft, chi2_shift or cv2 modules to be available.")
-    if method == "scharr" and imreg_dft is not None:
-        im = im.T
-        ref = ref.T
-        scale = np.ceil(np.max(im.shape) / 500.0)
-        ref1 = ref.gaussian_filter(sigma=scale, mode="wrap").scharr()
-        im1 = im.gaussian_filter(sigma=scale, mode="wrap").scharr()
-        im1 = im1.align(ref1, method="imreg_dft")
-        tvec = np.array(im1["tvec"])
-        prefilter = kargs.pop("prefilter", True)
-        new_im = im.shift(tvec, prefilter=prefilter)
-        new_im["tvec"] = tuple(-tvec)
-        new_im = new_im.T
-    elif (method is None and chi2_shift is not None) or method == "chi2_shift":
-        kargs["zeromean"] = kargs.get("zeromean", True)
-        result = np.array(chi2_shift(ref, im, **kargs))
-        new_im = im.__class__(fft_tools.shiftnd(im, -result[0:2]))
-        new_im.metadata.update(im.metadata)
-        new_im.metadata["chi2_shift"] = result
-    elif (method is None and imreg_dft is not None) or method == "imreg_dft":
-        constraints = kargs.pop("constraints", {"angle": [0.0, 0.0], "scale": [1.0, 0.0]})
-        cls = im.__class__
-        with warnings.catch_warnings():  # This causes a warning due to the masking
-            warnings.simplefilter("ignore")
-            result = imreg_dft.similarity(ref, im, constraints=constraints)
-        new_im = (result.pop("timg")).view(type=cls)
-        new_im = new_im.T
-        new_im.metadata.update(im.metadata)
-        new_im.metadata.update(result)
-    elif (method is None and cv2 is not None) or method == "cv2":
-        im1_gray = cv2.cvtColor(ref, cv2.COLOR_BGR2GRAY)
-        im2_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+    elif method not in align_methods:
+        raise ValueError(f"{method} is not available either because it is not recognised or there is a missing module")
 
-        # Find size of image1
-        sz = im.shape
+    if "box" in kargs:
+        box = kargs.pop("box")
+        if not isiterable(box):
+            box = [box]
+        working = im.crop(*box, copy=True)
+        if ref.shape != working.shape:
+            ref = ref.view(ImageArray).crop(*box, copy=True)
+    else:
+        working = im
 
-        # Define the motion model
-        warp_mode = cv2.MOTION_TRANSLATION
-        warp_matrix = np.eye(2, 3, dtype=np.float32)
+    scale = kargs.pop("scale", None)
 
-        # Specify the number of iterations.
-        number_of_iterations = 5000
+    if scale:
+        working = working.rescale(scale, order=3)
+        ref = transform.rescale(ref, scale, order=3)
 
-        # Specify the threshold of the increment
-        # in the correlation coefficient between two iterations
-        termination_eps = 1e-10
+    prefilter = kargs.pop("prefilter", True)
 
-        # Define termination criteria
-        criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, number_of_iterations, termination_eps)
+    tvec, data = align_methods[method][0](working, ref, **kargs)
 
-        # Run the ECC algorithm. The results are stored in warp_matrix.
-        (_, warp_matrix) = cv2.findTransformECC(im1_gray, im2_gray, warp_matrix, warp_mode, criteria)
+    if scale:
+        tvec /= scale
+    new_im = im.shift((tvec[1], tvec[0]), prefilter=prefilter)
+    for k, v in data.items():
+        new_im[k] = v
+    new_im["tvec"] = tuple(tvec)
+    return new_im
 
-        # Use warpAffine for Translation, Euclidean and Affine
-        new_im = cv2.warpAffine(im, warp_matrix, (sz[1], sz[0]), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
+    # if method == "scharr" and imreg_dft is not None:
+    #     im = im.T
+    #     ref = ref.T
+    #     scale = np.ceil(np.max(im.shape) / 500.0)
+    #     ref1 = ref.gaussian_filter(sigma=scale, mode="wrap").scharr()
+    #     im1 = im.gaussian_filter(sigma=scale, mode="wrap").scharr()
+    #     im1 = im1.align(ref1, method="imreg_dft")
+    #     tvec = np.array(im1["tvec"])
+    #     prefilter = kargs.pop("prefilter", True)
+    #     new_im = im.shift(tvec, prefilter=prefilter)
+    #     new_im["tvec"] = tuple(-tvec)
+    #     new_im = new_im.T
+    # elif (method is None and chi2_shift is not None) or method == "chi2_shift":
+    #     kargs["zeromean"] = kargs.get("zeromean", True)
+    #     result = np.array(chi2_shift(ref, im, **kargs))
+    #     new_im = im.__class__(fft_tools.shiftnd(im, -result[0:2]))
+    #     new_im.metadata.update(im.metadata)
+    #     new_im.metadata["chi2_shift"] = result
+    # elif (method is None and imreg_dft is not None) or method == "imreg_dft":
+    #     constraints = kargs.pop("constraints", {"angle": [0.0, 0.0], "scale": [1.0, 0.0]})
+    #     cls = im.__class__
+    #     with warnings.catch_warnings():  # This causes a warning due to the masking
+    #         warnings.simplefilter("ignore")
+    #         result = imreg_dft.similarity(ref, im, constraints=constraints)
+    #     new_im = (result.pop("timg")).view(type=cls)
+    #     new_im = new_im.T
+    #     new_im.metadata.update(im.metadata)
+    #     new_im.metadata.update(result)
+    # elif (method is None and cv2 is not None) or method == "cv2":
+    #     im1_gray = cv2.cvtColor(ref, cv2.COLOR_BGR2GRAY)
+    #     im2_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 
-    else:  # No cv2 available so don't do anything.
-        raise RuntimeError("Couldn't find an image alignment algorithm to use")
-    return new_im.T
+    #     # Find size of image1
+    #     sz = im.shape
+
+    #     # Define the motion model
+    #     warp_mode = cv2.MOTION_TRANSLATION
+    #     warp_matrix = np.eye(2, 3, dtype=np.float32)
+
+    #     # Specify the number of iterations.
+    #     number_of_iterations = 5000
+
+    #     # Specify the threshold of the increment
+    #     # in the correlation coefficient between two iterations
+    #     termination_eps = 1e-10
+
+    #     # Define termination criteria
+    #     criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, number_of_iterations, termination_eps)
+
+    #     # Run the ECC algorithm. The results are stored in warp_matrix.
+    #     (_, warp_matrix) = cv2.findTransformECC(im1_gray, im2_gray, warp_matrix, warp_mode, criteria)
+
+    #     # Use warpAffine for Translation, Euclidean and Affine
+    #     new_im = cv2.warpAffine(im, warp_matrix, (sz[1], sz[0]), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
+
+    # else:  # No cv2 available so don't do anything.
+    #     raise RuntimeError("Couldn't find an image alignment algorithm to use")
+    # return new_im.T
 
 
 def convert(image, dtype, force_copy=False, uniform=False, normalise=True):

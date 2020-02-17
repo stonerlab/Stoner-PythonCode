@@ -23,7 +23,7 @@ from Stoner.compat import (
     int_types,
 )  # Some things to help with Python2 and Python3 compatibility
 from .attrs import DrawProxy, MaskProxy
-from .util import build_funcs_proxy
+from .util import build_funcs_proxy, changes_size
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 
@@ -600,9 +600,9 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             """Wrapped magic proxy function call."""
             transpose = getattr(workingfunc, "transpose", False)
             if transpose:
-                change = self.clone.T
+                change = np.copy(self).T.view(type=self.__class__)
             else:
-                change = self.clone
+                change = np.copy(self).view(type=self.__class__)
             r = workingfunc(change, *args, **kwargs)  # send copy of self as the first arg
             if isinstance(r, make_Data(None)):
                 pass  # Data return is ok
@@ -691,6 +691,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     ############################################################################################################
     ############### Custom Methods for ImageArray###############################################################
 
+    @changes_size
     def crop(self, *args, **kargs):
         """Crop the image.
 
@@ -1325,9 +1326,8 @@ class ImageFile(metadataObject):
                 for ix, a in enumerate(args):
                     if isinstance(a, ImageFile):
                         args[ix] = a.image[self.image._box(box)]
-            if (
-                workingfunc.__name__ == "crop" and "_" not in kargs.keys()
-            ):  # special case for common function crop which will change the array shape
+            if getattr(workingfunc, "changes_size", False) and "_" not in kargs:
+                # special case for common function crop which will change the array shape
                 force = True
             else:
                 force = kargs.pop("_", False)
@@ -1346,14 +1346,16 @@ class ImageFile(metadataObject):
                 self.filename = filename
 
                 return self
-            elif force is None:
+            elif (force is None or not force) and isinstance(r, np.ndarray) and r.ndim == 2:
                 ret = self.clone
-                ret.metadata.update(r.metadata)
-                # Now swap the iamge in, but keep the metadata
-                r.metadata = ret.metadata
+                if hasattr(r, "metadata"):
+                    ret.metadata.update(r.metadata)
+                    # Now swap the iamge in, but keep the metadata
+                metadata = ret.metadata
                 filename = ret.filename
-                ret.image = r
+                ret.image = np.atleast_2d(r).view(ImageArray)
                 ret.filename = filename
+                ret.metadata = metadata
                 return ret
             else:
                 return r

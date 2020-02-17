@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """Implements a baseFolder type structure for working with collections of images."""
 __all__ = ["_generator", "ImageFolderMixin", "ImageFolder"]
+from warnings import warn
 from .core import ImageArray
 from Stoner.Folders import DiskBasedFolder, baseFolder
-from Stoner.compat import string_types
+from Stoner.compat import string_types, int_types
 from Stoner.Image import ImageFile
 
 from skimage.viewer import CollectionViewer
@@ -169,7 +170,7 @@ class ImageFolderMixin(object):
                 meth = getattr(f, item, None)
                 ret = meth(*args, **kargs)  # overwriting array is handled by ImageFile proxy function
                 retvals.append(ret)
-                if item == "crop":
+                if getattr(meth, "changes_size", False):
                     self[ix] = ret
                 if _return is not None:
                     if isinstance(_return, bool) and _return:
@@ -182,7 +183,56 @@ class ImageFolderMixin(object):
         _wrapper_.__name__ = meth.__name__
         return _wrapper_
 
-    def apply_all(self, *args, **kargs):
+    def align(self, *args, **kargs):
+        """Align each image in the folder to the reference image.
+
+        Args:
+            ref (str, int, ImageFile, ImageArray or 2D array):
+                The reference image to align to. If a string or an int, then this is used to lookup the corresponding
+                member of the ImageFolder which is then used. ImageFiles, ImageArrays and 2D arrays are used directly
+                as reference images.
+
+        Keyword Arguments:
+            method (str):
+                The mthod is passed to the :py:class:`Stone.Image.ImageArray.align` method to control how the image
+                alignment is done. By default the 'Scharr' method is used.
+            box (int, float, tuple of ints or floats):
+                Specifies a subset of the images to be used to calculate the alignment with.
+            scale (int):
+                Magnification factor to scale the image by before doing the alignment for better sub=pixel alignments.
+
+        Returns:
+            The aligned ImageFolder.
+        """
+        if len(args) and len(args) == 1:
+            ref = args[0]
+        elif not len(args):
+            ref = 0
+        else:
+            raise ValueError(
+                f"{self.__class__.__name__}.align only takes zero or one positional arguments not {len(args)}!"
+            )
+        # Get me reference data
+        if isinstance(ref, (string_types, int_types)):
+            ref_data = self.__getter__(ref, instantiate=True)
+            if isinstance(ref_data, ImageFile):
+                ref_data = ref_data.image
+        elif isinstance(ref, ImageFile):
+            ref_data = ref.image.view(ImageArray)
+        elif isinstance(ref, np.ndarray) and ref.ndim == 2:
+            ref_data = ref.view(ImageArray)
+        else:
+            try:
+                ref_data = np.array(ref).view(ImageArray)
+                if ref_data.ndim != 2:
+                    raise TypeError()
+            except Exception:
+                raise TypeError(f"Cannot interpret {type(ref)} as reference image data.")
+        # Call align on each object
+        self.each.align(ref_data, **kargs)
+        return self
+
+    def apply_all(self, func, *args, **kargs):
         """apply function to all images in the stack
 
         Args:
@@ -194,20 +244,8 @@ class ImageFolderMixin(object):
         Note:
             Further args, kargs are passed through to the function
         """
-        args = list(args)
-        func = args.pop(0)
-        quiet = kargs.pop("quiet", True)
-        if isinstance(func, string_types):
-            for i, im in enumerate(self):
-                f = getattr(im, func)
-                self[i] = f(*args, **kargs)
-                if not quiet:
-                    print(".")
-        elif hasattr(func, "__call__"):
-            for i, im in enumerate(self):
-                self[i] = func(im, *args, **kargs)
-            if not quiet:
-                print(".")
+        warn("apply_all is depricated and will be removed in a future version. Use ImageFolder.each() instead")
+        return self.each(func, *args, **kargs)
 
     def average(self, weights=None, _box=None):
         """Get an array of average pixel values for the stack.

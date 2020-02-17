@@ -73,7 +73,7 @@ class FuncsTest(unittest.TestCase):
         cd=np.array(self.c["correct_drift"])*10
         shift=np.array([25,30])
         d1=mag(cd-shift)
-        d2=mag(tv-shift)
+        d2=mag(tv-(-shift[::-1]))
         self.assertLess(d1,1.5,"Drift Correct off by more than 0.1 pxiels.")
         self.assertLess(d2,1.5,"Scharr Alignment off by more than 0.1 pxiels.")
 #        print("#"*80)

@@ -10,6 +10,7 @@ from functools import wraps, partial
 from traceback import format_exc
 from .utils import get_pool
 from Stoner.tools import isiterable
+from Stoner.compat import string_types
 
 
 def _worker(d, **kwargs):
@@ -142,7 +143,9 @@ class item(object):
         """Iterate over the baseFolder, calling func on each item.
 
         Args:
-            func (callable): A Callable object that must take a metadataObject type instance as it's first argument.
+            func (callable, str):
+                Either a callable object, or the name of a callable object (either method or global) that must take
+                a metadataObject type instance as it's first argument.
 
         Keyword Args:
             _return (None, bool or str): Controls how the return value from *func* is added to the DataFolder
@@ -157,6 +160,11 @@ class item(object):
             of the function. If *_result* is a string. then return result is stored in the corresponding name.
         """
         # Just call the iter generator but assemble into a list.
+        if isinstance(func, string_types) and "_byname" not in kargs:
+            if func in globals() and callable(globals()[func]):
+                func = globals()[func]
+            else:
+                func = getattr(self, func)
         return list(self.iter(func, *args, **kargs))
 
     def __dir__(self):
@@ -273,9 +281,7 @@ class item(object):
                 This relies on being defined inside the enclosure of the objectFolder method
                 so we have access to self and item
             """
-            kargs[
-                "_byname"
-            ] = True  # Tell the call that we're going to find the function by name as an instance method
+            kargs["_byname"] = True
             return self(item, *args, **kargs)  # Develove to self.__call__ where we have multiprocess magic
 
         # Ok that's the wrapper function, now return  it for the user to mess around with.

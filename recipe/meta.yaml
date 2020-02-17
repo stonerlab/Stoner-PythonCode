@@ -21,6 +21,7 @@ requirements:
     - cycler>=0.10.0
     - filemagic>=1.6
     - h5py>=2.7.0
+    - image-registration>=2.1.0
     - llvmlite>=0.18.0
     - lmfit>=0.9.7
     - matplotlib>=2.0
@@ -41,6 +42,7 @@ requirements:
     - cycler>=0.10.0
     - filemagic>=1.6
     - h5py>=2.7.0
+    - image-registration>=2.1.0
     - llvmlite>=0.18.0
     - lmfit>=0.9.7
     - memoization>=0.1.4

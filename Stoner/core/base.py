@@ -494,7 +494,7 @@ class typeHintedDict(regexpDict):
         for k in self.keys():
             t = self._typehints[k]
             ret._typehints[k] = t
-            super(typeHintedDict, ret).__setitem__(k, copy.deepcopy(self[k]))
+            super(typeHintedDict, ret).__setitem__(k, copy.copy(self[k]))
         return ret
 
     def filter(self, name):

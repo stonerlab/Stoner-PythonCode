@@ -3,7 +3,7 @@
 """
 from __future__ import division
 
-__all__ = ["sign_loss", "prec_loss", "dtype_range", "_dtype", "_dtype2", "build_funcs_proxy"]
+__all__ = ["sign_loss", "prec_loss", "dtype_range", "_dtype", "_dtype2", "build_funcs_proxy", "changes_size"]
 
 import numpy as np
 from warnings import warn
@@ -211,3 +211,9 @@ def build_funcs_proxy():
         func_proxy[n] = f
 
     return func_proxy
+
+
+def changes_size(func):
+    """Method decorator to mark a function as one that changes the size of the ImageArray."""
+    func.changes_size = True
+    return func
