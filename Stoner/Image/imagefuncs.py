@@ -48,13 +48,14 @@ import warnings
 
 from scipy.interpolate import griddata
 from scipy.ndimage import gaussian_filter
-from PIL import Image
 from skimage import feature, measure, transform, filters
 from matplotlib.colors import Normalize
 import matplotlib.cm as cm
 
 from Stoner.compat import string_types
-import numpy as np, matplotlib.pyplot as plt, os
+import numpy as np
+from matplotlib import pyplot as plt
+import os
 from Stoner.tools import istuple, isiterable, make_Data
 from .core import ImageArray
 from .util import sign_loss, _dtype2, _supported_types, prec_loss, dtype_range, _dtype, _scale as im_scale
@@ -71,7 +72,6 @@ except ImportError:
 
 try:  # image_registration module
     from image_registration import chi2_shift
-    from image_registration import fft_tools
 except ImportError:
     chi2_shift = None
 
@@ -140,7 +140,6 @@ def _align_scharr(im, ref, **kargs):
 
 def _align_chi2_shift(im, ref, **kargs):
     """Return the translation vector to shirt im to align to ref using the chi^2 shift method."""
-    zeronmean = kargs.pop("zeromean", True)
     results = np.array(chi2_shift(ref, im, **kargs))
     return -results[1::-1], {}
 
@@ -160,9 +159,6 @@ def _align_cv2(im, ref, **kargs):
 
     im1_gray = ref.convert("uint8", force_copy=True)
     im2_gray = im.convert("uint8", force_copy=True)
-
-    # Find size of image1
-    sz = im.shape
 
     # Define the motion model
     warp_mode = cv2.MOTION_TRANSLATION
@@ -226,7 +222,7 @@ def align(im, ref, method="scharr", **kargs):
         "cv2": (_align_cv2, cv2),
     }
     for meth in list(align_methods.keys()):
-        func, mod = align_methods[meth]
+        mod = align_methods[meth][1]
         if mod is None:
             del align_methods[meth]
     method = method.lower()
@@ -262,65 +258,6 @@ def align(im, ref, method="scharr", **kargs):
         new_im[k] = v
     new_im["tvec"] = tuple(tvec)
     return new_im
-
-    # if method == "scharr" and imreg_dft is not None:
-    #     im = im.T
-    #     ref = ref.T
-    #     scale = np.ceil(np.max(im.shape) / 500.0)
-    #     ref1 = ref.gaussian_filter(sigma=scale, mode="wrap").scharr()
-    #     im1 = im.gaussian_filter(sigma=scale, mode="wrap").scharr()
-    #     im1 = im1.align(ref1, method="imreg_dft")
-    #     tvec = np.array(im1["tvec"])
-    #     prefilter = kargs.pop("prefilter", True)
-    #     new_im = im.shift(tvec, prefilter=prefilter)
-    #     new_im["tvec"] = tuple(-tvec)
-    #     new_im = new_im.T
-    # elif (method is None and chi2_shift is not None) or method == "chi2_shift":
-    #     kargs["zeromean"] = kargs.get("zeromean", True)
-    #     result = np.array(chi2_shift(ref, im, **kargs))
-    #     new_im = im.__class__(fft_tools.shiftnd(im, -result[0:2]))
-    #     new_im.metadata.update(im.metadata)
-    #     new_im.metadata["chi2_shift"] = result
-    # elif (method is None and imreg_dft is not None) or method == "imreg_dft":
-    #     constraints = kargs.pop("constraints", {"angle": [0.0, 0.0], "scale": [1.0, 0.0]})
-    #     cls = im.__class__
-    #     with warnings.catch_warnings():  # This causes a warning due to the masking
-    #         warnings.simplefilter("ignore")
-    #         result = imreg_dft.similarity(ref, im, constraints=constraints)
-    #     new_im = (result.pop("timg")).view(type=cls)
-    #     new_im = new_im.T
-    #     new_im.metadata.update(im.metadata)
-    #     new_im.metadata.update(result)
-    # elif (method is None and cv2 is not None) or method == "cv2":
-    #     im1_gray = cv2.cvtColor(ref, cv2.COLOR_BGR2GRAY)
-    #     im2_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-
-    #     # Find size of image1
-    #     sz = im.shape
-
-    #     # Define the motion model
-    #     warp_mode = cv2.MOTION_TRANSLATION
-    #     warp_matrix = np.eye(2, 3, dtype=np.float32)
-
-    #     # Specify the number of iterations.
-    #     number_of_iterations = 5000
-
-    #     # Specify the threshold of the increment
-    #     # in the correlation coefficient between two iterations
-    #     termination_eps = 1e-10
-
-    #     # Define termination criteria
-    #     criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, number_of_iterations, termination_eps)
-
-    #     # Run the ECC algorithm. The results are stored in warp_matrix.
-    #     (_, warp_matrix) = cv2.findTransformECC(im1_gray, im2_gray, warp_matrix, warp_mode, criteria)
-
-    #     # Use warpAffine for Translation, Euclidean and Affine
-    #     new_im = cv2.warpAffine(im, warp_matrix, (sz[1], sz[0]), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
-
-    # else:  # No cv2 available so don't do anything.
-    #     raise RuntimeError("Couldn't find an image alignment algorithm to use")
-    # return new_im.T
 
 
 def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
@@ -570,21 +507,22 @@ def gridimage(im, points=None, xi=None, method="linear", fill_value=1.0, rescale
 
     Keyword Arguments:
         method ("linear","cubic","nearest"): how to interpolate, default is linear
-        fill_value (folat): What to put when the co-ordinates go out of range (default is 1.0). May be a callable in which
-            case the initial image is presented as the only argument
+        fill_value (folat): What to put when the co-ordinates go out of range (default is 1.0). May be a callable
+        in which case the initial image is presented as the only argument
         rescale (bool): If the x and y co-ordinates are very different in scale, set this to True.
 
     Returns:
-        A copy of the modified image. The image data is interpolated and metadata kets "actual_x","actual_y","sample_x","samp[le_y" are
-        set to give co-ordinates of new grid.
+        A copy of the modified image. The image data is interpolated and metadata kets "actual_x","actual_y","sample_
+        x","samp[le_y" are set to give co-ordinates of new grid.
 
     Notes:
-        If points and or xi are missed out then we try to construct them from the metadata. For points, the metadata keys
-        "actual-x" and "actual_y" are looked for and for xi, the metadata keys "sample_x" and "sample_y" are used. These are set
-        , for example, by the :py:class:`Stoner.HDF5.SXTMImage` loader if the interformeter stage data was found in the file.
+        If points and or xi are missed out then we try to construct them from the metadata. For points, the metadata
+        keys "actual-x" and "actual_y" are looked for and for xi, the metadata keys "sample_x" and "sample_y" are
+        used. These are set, for example, by the :py:class:`Stoner.HDF5.SXTMImage` loader if the interformeter stage
+        data was found in the file.
 
-        The metadata used in this case is then adjusted as well to ensure that repeated application of this method doesn't change the image
-        after it has been corrected once.
+        The metadata used in this case is then adjusted as well to ensure that repeated application of this method
+        doesn't change the image after it has been corrected once.
     """
     if points is None:
         points = np.column_stack((im["actual_x"].ravel(), im["actual_y"].ravel()))
@@ -616,11 +554,13 @@ def imshow(im, **kwargs):
     """quick plot of image
 
     Keyword Arguments:
-        figure (int, str or matplotlib.figure): if int then use figure number given,
-            if figure is 'new' then create a new figure, if None then use whatever default
-            figure is available
-        title (str,None,False): Title for plot - defaults to False (no title). None will take the title from the filename if present
-        cmap (str,matplotlib.cmap): Colour scheme for plot, defaults to gray
+        figure (int, str or matplotlib.figure):
+            if int then use figure number given, if figure is 'new' then create a new figure, if None then use
+            whatever default figure is available
+        title (str,None,False):
+            Title for plot - defaults to False (no title). None will take the title from the filename if present
+        cmap (str,matplotlib.cmap):
+            Colour scheme for plot, defaults to gray
 
     Any masked areas are set to NaN which stops them being plotted at all.
     """
@@ -741,9 +681,9 @@ def normalise(im, scale=None, sample=None, limits=(0.0, 1.0)):
         The *sample* keyword controls the area in which the range of input values is calculated, the actual scaling is
         done on the whole image.
 
-        The *limits* parameter is used to set the input scale being normalised from - if an image has a few outliers then
-        this setting can be used to clip the input range before normalising. The parameters in the limit are the values at
-        the *low* and *high* fractions of the cumulative distribution functions.
+        The *limits* parameter is used to set the input scale being normalised from - if an image has a few outliers
+        then this setting can be used to clip the input range before normalising. The parameters in the limit are the
+        values at the *low* and *high* fractions of the cumulative distribution functions.
     """
     mask = im.mask
     cls = im.__class__
@@ -974,13 +914,16 @@ def translate(im, translation, add_metadata=False, order=3, mode="wrap", cval=No
     'translation_limits'
 
     Args:
-        translate (2-tuple): translation (x,y)
+        translate (2-tuple):
+            translation (x,y)
 
     Keyword Arguments:
-        add_metadata (bool): Record the shift in the image metadata
-        order (int): Interpolation order (default, 3, bi-cubic)
-        mode (str): How to handle points outside the original image. See :py:func:`skimage.transform.warp`. Defaults to "wrap"
-        cval (float): The value to fill with if *mode* is constant. If not speficied or None, defaults to the mean pixcel value.
+        add_metadata (bool):
+            Record the shift in the image metadata order (int): Interpolation order (default, 3, bi-cubic)
+        mode (str):
+            How to handle points outside the original image. See :py:func:`skimage.transform.warp`.  Defaults to "wrap"
+        cval (float):
+            The value to fill with if *mode* is constant. If not speficied or None, defaults to the mean pixcel value.
 
     Returns:
         im (ImageArray): translated image

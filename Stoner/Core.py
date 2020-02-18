@@ -75,30 +75,33 @@ except ImportError:
 
 class DataFile(metadataObject):
 
-    """:py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata and column headers.
+    """:py:class:`Stoner.Core.DataFile` is the base class object that represents a matrix of data, associated metadata
+    and column headers.
 
     Attributes:
         column_headers (list):
             list of strings of the column names of the data.
         data (2D numpy masked array):
-            The attribute that stores the nuermical data for each DataFile. This is a :py:class:`DataArray` instance - which
-            is itself a subclass of :py:class:`numpy.ma.MaskedArray`.
+            The attribute that stores the nuermical data for each DataFile. This is a :py:class:`DataArray` instance -
+            which is itself a subclass of :py:class:`numpy.ma.MaskedArray`.
         title (string):
             The title of the measurement.
         filename (string):
-            The current filename of the data if loaded from or already saved to disc. This is the default filename used by
-            the :py:meth:`Stoner.Core.DataFile.load` and :py:meth:`Stoner.Core.DataFile.save`.
+            The current filename of the data if loaded from or already saved to disc. This is the default filename
+            used by the :py:meth:`Stoner.Core.DataFile.load` and :py:meth:`Stoner.Core.DataFile.save`.
         header (string):
             A readonly property that returns a pretty formatted string giving the header of tabular representation.
         mask (array of booleans):
             Returns the current mask applied to the numerical data equivalent to self.data.mask.
         mime_type (list of str):
-            The possible mime-types of data files represented by each matching filename pattern in :py:attr:`Datafile.pattern`.
+            The possible mime-types of data files represented by each matching filename pattern in
+            :py:attr:`Datafile.pattern`.
         patterns (list):
-            A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (*.txt and *.dat")
+            A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile
+            (*.txt and *.dat")
         priority (int):
-            Used to indicathe order in which subclasses of :py:class:`DataFile` are tried when loading data. A higher number means a lower
-            priority (!)
+            Used to indicathe order in which subclasses of :py:class:`DataFile` are tried when loading data. A higher
+            number means a lower priority (!)
         setas (:py:class:`_stas`):
             Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.
         shape (tuple of integers):
@@ -108,7 +111,8 @@ class DataFile(metadataObject):
         clone (DataFile):
             Creates a deep copy of the :py:class`DataFile` object.
         dict_records (array of dictionaries):
-            View the data as an array or dictionaries where each dictionary represnets one row with keys dervied from column headers.
+            View the data as an array or dictionaries where each dictionary represnets one row with keys dervied
+            from column headers.
         dims (int):
             When data columns are set as x,y,z etc. returns the number of dimensions implied in the data set
         dtype (numpoy dtype):
@@ -158,9 +162,9 @@ class DataFile(metadataObject):
 
     _subclasses = None
 
-    # ============================================================================================================================
-    ############################                       Object Construction                        ###############################
-    # ============================================================================================================================
+    # ====================================================================================
+    ############################     Object Construction   ###############################
+    # ====================================================================================
 
     def __new__(cls, *args, **kargs):
         """Prepare the basic DataFile instance before the mixins add their bits."""
@@ -359,9 +363,9 @@ class DataFile(metadataObject):
         else:
             self.data = _np_.column_stack(args)
 
-    # ============================================================================================================================
-    ############################                  Property Accessor Functions                     ###############################
-    # ============================================================================================================================
+    # =====================================================================================================
+    ############################       Property Accessor Functions          ###############################
+    # =====================================================================================================
 
     @property
     def _public_attrs(self):
@@ -528,7 +532,8 @@ class DataFile(metadataObject):
 
     @property
     def records(self):
-        """Returns the data as a _np_ structured data array. If columns names are duplicated then they are made unique."""
+        """Returns the data as a _np_ structured data array. If columns names are duplicated then they are
+        made unique."""
         ch = copy.copy(self.column_headers)  # renoved duplicated column headers for structured record
         ch_bak = copy.copy(ch)
         setas = self.setas.clone  # We'll need these later !
@@ -590,9 +595,9 @@ class DataFile(metadataObject):
         """Write directly to the transposed data."""
         self.data = value.T
 
-    # ============================================================================================================================
-    #####################################                   Operator Functions                         ##########################
-    # ============================================================================================================================
+    # ============================================================================================
+    #####################################      Operator Functions        ##########################
+    # ============================================================================================
 
     def __add__(self, other):
         """Implements a + operator to concatenate rows of data.
@@ -694,7 +699,8 @@ class DataFile(metadataObject):
         return __and_core__(other, newdata)
 
     def __lshift__(self, other):
-        """Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__read_iterable` function.
+        """Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__
+        read_iterable` function.
 
         Args:
             other (string or iterable object):
@@ -789,9 +795,9 @@ class DataFile(metadataObject):
         ret.setas = setas
         return ret  #
 
-    # ============================================================================================================================
-    ############################              Speical Methods                ####################################################
-    # ============================================================================================================================
+    # ============================================================================================
+    ############################   Speical Methods ###############################################
+    # ============================================================================================
 
     def __call__(self, *args, **kargs):
         """Clone the DataFile, but allowing additional arguments to modify the new clone.
@@ -869,7 +875,8 @@ class DataFile(metadataObject):
             self.del_rows(item)
 
     def __dir__(self):
-        """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle."""
+        """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes
+        that __getattr__ will handle."""
         attr = dir(type(self))
         col_check = {"xcol": "x", "xerr": "d", "ycol": "y", "yerr": "e", "zcol": "z", "zerr": "f"}
         for k in col_check:
@@ -917,7 +924,8 @@ class DataFile(metadataObject):
         return self.column(other)
 
     def __getattr__(self, name):
-        """Called for :py:class:`DataFile`.x to handle some special pseudo attributes and otherwise to act as a shortcut for :py:meth:`column`.
+        """Called for :py:class:`DataFile`.x to handle some special pseudo attributes and otherwise to act as a
+        shortcut for :py:meth:`column`.
 
         Args:
             name (string):
@@ -978,13 +986,16 @@ class DataFile(metadataObject):
         Returns:
             mixed: an item of metadata or row(s) of data.
 
-        - If name is an integer then the corresponding single row will be returned
-        - if name is a slice, then the corresponding rows of data will be returned.
-        - If name is a string then the metadata dictionary item             with the correspondoing key will be returned.
-        - If name is a numpy array then the corresponding rows of the data are returned.
-        - If a tuple is supplied as the arguement then there are a number of possible behaviours.
-            - If the first element of the tuple is a string, then it is assumed that it is the nth element of the named metadata is required.
-            - Otherwise itis assumed that it is a particular element within a column determined by the second part of the tuple that is required.
+        -   If name is an integer then the corresponding single row will be returned
+        -   if name is a slice, then the corresponding rows of data will be returned.
+        -   If name is a string then the metadata dictionary item             with the correspondoing key will be
+            returned.
+        -   If name is a numpy array then the corresponding rows of the data are returned.
+        -   If a tuple is supplied as the arguement then there are a number of possible behaviours.
+            -   If the first element of the tuple is a string, then it is assumed that it is the nth element of the
+                named metadata is required.
+            -   Otherwise itis assumed that it is a particular element within a column determined by the second
+                part of the tuple that is required.
 
         Examples:
             DataFile['Temp',5] would return the 6th element of the
@@ -1019,24 +1030,6 @@ class DataFile(metadataObject):
         else:
             ret = self.data[name]
         return ret
-
-    #    def __getstate__(self):
-    #        """Get ready for picking this object - used for deepcopy."""
-    #        attrs=OrderedDict([("data",DataArray),
-    #                          ("setas",list),
-    #                          ("column_headers",list),
-    #                          ("metadata",typeHintedDict),
-    #                          ("debug",bool),
-    #                          ("filename",None),
-    #                          ("mask",None)])
-    #        state=OrderedDict()
-    #        for k,process in attrs.items():
-    #            if process is None:
-    #                val=getattr(self,k,None)
-    #            else:
-    #                val=process(getattr(self,k,None))
-    #            state[k]=val
-    #        return state
 
     def __iter__(self):
         """Provide agenerator for iterating.
@@ -1084,10 +1077,10 @@ class DataFile(metadataObject):
 
         Args:
             name (string): Name of attribute to set. Details of possible attributes below:
-
-        - mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles the case where you pass a callable object
-            to nask where we pass each row to the function and use the return reult as the mask
-        - data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
+            -   mask Passes through to the mask attribute of self.data (which is a numpy masked array).
+                Also handles the case where you pass a callable object to nask where we pass each row to the
+                function and use the return reult as the mask
+            -   data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
         """
         if hasattr(type(self), name) and isinstance(getattr(type(self), name), property):
             super(DataFile, self).__setattr__(name, value)
@@ -1104,9 +1097,10 @@ class DataFile(metadataObject):
             value (any): The value to be written into the metadata or data/
 
         Notes:
-            If name is a string or already exists as key in metadata, this setitem will set metadata values, otherwise if name
-            is a tuple then if the first elem,ent in a string it checks to see if that is an existing metadata item that is iterable,
-            and if so, sets the metadta. In all other circumstances, it attempts to set an item in the main data array.
+            If name is a string or already exists as key in metadata, this setitem will set metadata values,
+            otherwise if name is a tuple then if the first elem,ent in a string it checks to see if that is an
+            existing metadata item that is iterable, and if so, sets the metadta. In all other circumstances,
+            it attempts to set an item in the main data array.
         """
         if isinstance(name, string_types) or str(name) in self.metadata:
             self.metadata[name] = value
@@ -1124,23 +1118,13 @@ class DataFile(metadataObject):
         else:
             self.data[name] = value
 
-    #    def __setstate__(self, state):
-    #        """Internal function for pickling."""
-    #        state["data"]=_np_.array(state["data"]) #Sanitise data
-    #        for attr in state:
-    #            if state[attr] is not None:
-    #                try:
-    #                    setattr(self,attr,state[attr])
-    #                except TypeError:
-    #                    pass
-
     def __str__(self):
         """Provides an implementation for str(DataFile) that does not shorten the output."""
         return self.__repr_core__(False)
 
-    # ============================================================================================================================
-    ############################              Private Methods                ####################################################
-    # ============================================================================================================================
+    # ============================================================================================
+    ############################ Private Methods #################################################
+    # ============================================================================================
 
     def _col_args(self, *args, **kargs):
         """Utility method that creates an object which has keys  based either on arguments or setas attribute."""
@@ -1261,8 +1245,8 @@ class DataFile(metadataObject):
 
         Note:
             The *_load* methods shouldbe overidden in each child class to handle the process of loading data from
-                disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
-                the loading class can try a different sub-class instead.
+            disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
+            the loading class can try a different sub-class instead.
         """
         if filename is None or not filename:
             self.get_filename("r")
@@ -1523,10 +1507,12 @@ class DataFile(metadataObject):
         """Attempts to either assign data columns if set up, or setas setting.
 
         Args:
-            name (length 1 string): Column type to work with (one of x,y,z,u,v,w,d,e or f)
-            value (nd array or column index): If an ndarray and the column type corresponding to *name* is set up,
-                then overwrite the column(s) of data with this new data. If an index type, then set the corresponding setas
-                assignment to these columns.
+            name (length 1 string):
+                Column type to work with (one of x,y,z,u,v,w,d,e or f)
+            value (nd array or column index):
+                If an ndarray and the column type corresponding to *name* is set up, then overwrite the column(s)
+                of data with this new data. If an index type, then set the corresponding setas assignment to
+                these columns.
         """
         if isinstance(value, _np_.ndarray):
             value = _np_.atleast_2d(value)
@@ -1545,9 +1531,12 @@ class DataFile(metadataObject):
         """Applies func to each row in self.data and uses the result to set the mask for the row.
 
         Args:
-            func (callable): A Callable object of the form lambda x:True where x is a row of data (numpy
-            invert (bool): Optionally invert te reult of the func test so that it unmasks data instead
-            cumulative (bool): if tru, then an unmask value doesn't unmask the data, it just leaves it as it is.
+            func (callable):
+                A Callable object of the form lambda x:True where x is a row of data (numpy
+            invert (bool):
+                Optionally invert te reult of the func test so that it unmasks data instead
+            cumulative (bool):
+                if tru, then an unmask value doesn't unmask the data, it just leaves it as it is.
         """
         i = -1
         args = len(_inspect_.getargs(func.__code__)[0])
@@ -1604,15 +1593,16 @@ class DataFile(metadataObject):
             typ = "a {}".format(type(self._public_attrs[k]))
         raise TypeError("{} should be {}".format(k, typ))
 
-    # ============================================================================================================================
-    ############################              Public Methods                ####################################################
-    # ============================================================================================================================
+    # ============================================================================================
+    ############################   Public Methods ################################################
+    # ============================================================================================
 
     def add_column(self, column_data, header=None, index=None, func_args=None, replace=False, setas=None):
         """Appends a column of data or inserts a column to a datafile instance.
 
         Args:
-            column_data (:py:class:`numpy.array` or list or callable): Data to append or insert or a callable function that will generate new data
+            column_data (:py:class:`numpy.array` or list or callable):
+                Data to append or insert or a callable function that will generate new data
 
         Keyword Arguments:
             header (string): The text to set the column header to,
@@ -1674,9 +1664,8 @@ class DataFile(metadataObject):
                     )
         else:
             raise TypeError(
-                "setas parameter should be a string or list of letter the same length as the number of columns being added in the set xyzdefuvw.-, not {}".format(
-                    setas
-                )
+                f"""setas parameter should be a string or list of letter the same length as the number of columns
+                being added in the set xyzdefuvw.-, not {setas}"""
             )
 
         # Make sure our current data is at least 2D and get its size
@@ -1766,7 +1755,9 @@ class DataFile(metadataObject):
         Returns:
             ndarray: A single row of data as a :py:class:`Stoner.Core.DataArray`.
 
-        Notes: To find which row it is that has been returned, use the :py:attr:`Stoner.Core.DataArray.i` index attribute.
+        Notes:
+            To find which row it is that has been returned, use the :py:attr:`Stoner.Core.DataArray.i`
+            index attribute.
         """
         _ = self._col_args(xcol=xcol)
         xdata = _np_.abs(self // _.xcol - value)
@@ -1774,13 +1765,16 @@ class DataFile(metadataObject):
         return self[i]
 
     def column(self, col):
-        """Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.
+        """Extracts one or more columns of data from the datafile by name, partial name, regular expression or
+        numeric index.
 
         Args:
-            col (int, string, list or re): is the column index as defined for :py:meth:`DataFile.find_col`
+            col (int, string, list or re): is the column index as defined for :py:meth:`
+            DataFile.find_col`
 
         Returns:
-            ndarray: One or more columns of data as a :py:class:`numpy.ndarray`.
+            (ndarray):
+                One or more columns of data as a :py:class:`numpy.ndarray`.
         """
         return self.data[:, self.find_col(col)]
 
@@ -2021,10 +2015,14 @@ class DataFile(metadataObject):
         """Sets the mask on rows of data by evaluating a function for each row.
 
         Args:
-            func (callable): is a callable object that should take a single list as a p[arameter representing one row.
-            cols (list): a list of column indices that are used to form the list of values passed to func.
-            reset (bool): determines whether the mask is reset before doing the filter (otherwise rows already masked out will be ignored
-                in the filter (so the filter is logically or'd)) The default value of None results in a complete row being passed into func.
+            func (callable):
+                is a callable object that should take a single list as a p[arameter representing one row.
+            cols (list):
+                a list of column indices that are used to form the list of values passed to func.
+            reset (bool):
+                determines whether the mask is reset before doing the filter (otherwise rows already
+                masked out will be ignored in the filter (so the filter is logically or'd)) The default value of
+                None results in a complete row being passed into func.
 
         Returns:
             self: The current :py:class:`DataFile` object with the mask set
@@ -2105,8 +2103,11 @@ class DataFile(metadataObject):
         """Insert new_data into the data array at position row. This is a wrapper for numpy.insert.
 
         Args:
-            row (int):  Data row to insert into
-            new_data (numpy array): An array with an equal number of columns as the main data array containing the new row(s) of data to insert
+            row (int):
+                Data row to insert into
+            new_data (numpy array):
+                An array with an equal number of columns as the main data array containing the new row(s) of
+                data to insert
 
         Returns:
             self: A copy of the modified :py:class:`DataFile` object
@@ -2126,26 +2127,32 @@ class DataFile(metadataObject):
         """Loads the :py:class:`DataFile` in from disc guessing a better subclass if necessary.
 
         Args:
-            filename (string or None): path to file to load
+            filename (string or None):
+                path to file to load
 
         Keyword Arguments:
-            auto_load (bool): If True (default) then the load routine tries all the subclasses of :py:class:`DataFile` in turn to load the file
-            filetype (:py:class:`DataFile`, str): If not none then tries using filetype as the loader.
+            auto_load (bool):
+                If True (default) then the load routine tries all the subclasses of :py:class:`DataFile` in turn to
+                load the file
+            filetype (:py:class:`DataFile`, str):
+                If not none then tries using filetype as the loader.
 
         Returns:
-            DataFile: A copy of the loaded :py:data:`DataFile` instance
+            (DataFile):
+                A copy of the loaded :py:data:`DataFile` instance
 
         Note:
-            Possible subclasses to try and load from are identified at run time using the speciall :py:attr:`DataFile.subclasses` attribute.
+            Possible subclasses to try and load from are identified at run time using the speciall
+            :py:attr:`DataFile.subclasses` attribute.
 
-            If *filetupe* is a string, then it is first tried as an exact match to a subclass name, otherwise it is used as a partial match
-            and the first class in priority order is that matches is used.
+            If *filetupe* is a string, then it is first tried as an exact match to a subclass name, otherwise it
+            is used as a partial match and the first class in priority order is that matches is used.
 
             Some subclasses can be found in the :py:mod:`Stoner.FileFormats` module.
 
-            Each subclass is scanned in turn for a class attribute priority which governs the order in which they are tried. Subclasses which can
-            make an early positive determination that a file has the correct format can have higher priority levels. Classes should return
-            a suitable expcetion if they fail to load the file.
+            Each subclass is scanned in turn for a class attribute priority which governs the order in which they
+            are tried. Subclasses which can make an early positive determination that a file has the correct format
+            can have higher priority levels. Classes should return a suitable expcetion if they fail to load the file.
 
             If not class can load a file successfully then a RunttimeError exception is raised.
         """
@@ -2328,7 +2335,8 @@ class DataFile(metadataObject):
                 raise ValueError("If excluding the centre of the window, this must be an odd number of rows.")
             elif window - exclude_centre < 2 or window < 3 or window % 2 == 0:
                 raise ValueError(
-                    "Window must be at least two bigger than the number of rows exluded from the centre, bigger than 3 and odd"
+                    """Window must be at least two bigger than the number of rows exluded from the centre, bigger than
+                    3 and odd"""
                 )
 
         hw = int((window - 1) / 2)
@@ -2457,8 +2465,10 @@ class DataFile(metadataObject):
             value (float, tuple, list or callable): Value to look for
 
         Keyword Arguments:
-            columns (index or array of indices or None (default)): columns of data to return - none represents all columns.
-            accuracy (float): Uncertainty to accept when testing equalities
+            columns (index or array of indices or None (default)):
+                columns of data to return - none represents all columns.
+            accuracy (float):
+                Uncertainty to accept when testing equalities
 
         Returns:
             ndarray: numpy array of matching rows or column values depending on the arguements.
@@ -2489,23 +2499,29 @@ class DataFile(metadataObject):
         """Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.
 
         Keyword Arguments:
-            x (float, tuple, list or callable): x values ,atch this condition are included inth e section
-            y (float, tuple, list  or callable): y values ,atch this condition are included inth e section
-            z (float, tuple,list  or callable): z values ,atch this condition are included inth e section
-            r (callable): a function that takes a tuple (x,y,z) and returns True if the line is to be incluided in section
+            x (float, tuple, list or callable):
+                x values ,atch this condition are included inth e section
+            y (float, tuple, list  or callable):
+                y values ,atch this condition are included inth e section
+            z (float, tuple,list  or callable):
+                z values ,atch this condition are included inth e section
+            r (callable): a
+            function that takes a tuple (x,y,z) and returns True if the line is to be incluided in section
 
         Returns:
-            DataFile: A :py:class:`DataFile` like object that includes only those lines from the original that match the section specification
+            (DataFile):
+                A :py:class:`DataFile` like object that includes only those lines from the original that match the
+                section specification
 
         Internally this function is calling :py:meth:`DataFile.search` to pull out matching sections of the data array.
-        To extract a 2D section of the parameter space orthogonal to one axis you just specify a condition on that axis. Specifying
-        conditions on two axes will return a line of points along the third axis. The final keyword parameter allows you to select
-        data points that lie in an arbitary plane or line. eg::
+        To extract a 2D section of the parameter space orthogonal to one axis you just specify a condition on that
+        axis. Specifying conditions on two axes will return a line of points along the third axis. The final
+        keyword parameter allows you to select data points that lie in an arbitary plane or line. eg::
 
             d.section(r=lambda x,y,z:abs(2+3*x-2*y)<0.1 and z==2)
 
-        would extract points along the line 2y=3x+2 (note the use of an < operator to avoid floating point rounding errors) where
-        the z-co-ordinate is 2.
+        would extract points along the line 2y=3x+2 (note the use of an < operator to avoid floating point rounding
+        errors) where the z-co-ordinate is 2.
         """
         cols = self.setas._get_cols()
         tmp = self.clone
@@ -2536,25 +2552,28 @@ class DataFile(metadataObject):
         """Produce a copy of the DataFile with only data rows that match a criteria.
 
         Args:
-            args (various): A single positional argument if present is interpreted as follows:
+            args (various):
+                A single positional argument if present is interpreted as follows:
 
-            * If a callable function is given, the entire row is presented to it.
-                If it evaluates True then that row is selected. This allows arbitary select operations
-            * If a dict is given, then it and the kargs dictionary are merged and used to select the rows
+                -   If a callable function is given, the entire row is presented to it. If it evaluates True then that
+                    row is selected. This allows arbitary select operations
+                -   If a dict is given, then it and the kargs dictionary are merged and used to select the rows
 
         Keyword Arguments:
-            kargs (various): Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+            kargs (various):
+                Arbitary keyword arguments are interpreted as requestion matches against the corresponding
                 columns. The keyword argument may have an additional *__operator** appended to it which is interpreted
                 as follows:
 
-                - *eq*  value equals argument value (this is the default test for scalar argument)
-                - *ne*  value doe not equal argument value
-                - *gt*  value doe greater than argument value
-                - *lt*  value doe less than argument value
-                - *ge*  value doe greater than or equal to argument value
-                - *le*  value doe less than or equal to argument value
-                - *between*  value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)
-                - *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values
+                -   *eq*  value equals argument value (this is the default test for scalar argument)
+                -   *ne*  value doe not equal argument value
+                -   *gt*  value doe greater than argument value
+                -   *lt*  value doe less than argument value
+                -   *ge*  value doe greater than or equal to argument value
+                -   *le*  value doe less than or equal to argument value
+                -   *between*  value lies beween the minimum and maximum values of the arguement (the default test
+                    for 2-length tuple arguments)
+                -   *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values
 
         Returns:
             (DatFile): a copy the DataFile instance that contains just the matching rows.
@@ -2567,11 +2586,12 @@ class DataFile(metadataObject):
 
                 d.select(temp__le=4.2,vti_temp__lt=4.2).select(field_gt=3.0)
 
-            will select rows that have either temp or vti_temp metadata values below 4.2 AND field metadata values greater than 3.
+            will select rows that have either temp or vti_temp metadata values below 4.2 AND field metadata values
+            greater than 3.
 
             If you need to select on a row value that ends in an operator word, then append
-            *__eq* in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
-            then pass them via the first positional dictionary value.
+            *__eq* in the keyword name to force the equality test. If the metadata keys to select on are not valid
+            python identifiers, then pass them via the first positional dictionary value.
 
             There is a "magic" column name "_i" which is interpreted as the row numbers of the data.
 
@@ -2610,21 +2630,28 @@ class DataFile(metadataObject):
         return result
 
     def sort(self, *order, **kargs):
-        """Sorts the data by column name. Sorts in place and returns a copy of the sorted data object for chaining methods.
+        """Sorts the data by column name. Sorts in place and returns a copy of the sorted data object for
+        chaining methods.
 
         Arguments:
-            *order (column index or list of indices or callable function): One or more sort order keys.
-                If the argument is a callable function then it should take a two tuple arguments and
-                return +1,0,-1 depending on whether the first argument is bigger, equal or smaller. Otherwise
-                if the argument is interpreted as a column index. If a single argument is supplied, then it may be
-                a list of column indices. If no sort orders are supplied then the data is sorted by the :py:attr:`DataFile.setas` attribute
-                or if that is not set, then order of the columns in the data.
+            \*order (column index or list of indices or callable function):
+                One or more sort order keys.
 
         Keyword Arguments:
-            reverse (boolean): If true, the sorted array isreversed.
+            reverse (boolean):
+                If true, the sorted array isreversed.
 
         Returns:
-            self: A copy of the :py:class:`DataFile` sorted object
+            (self):
+                A copy of the :py:class:`DataFile` sorted object
+
+        Notes:
+            If the argument is a callable function then it should take a two tuple arguments and
+            return +1,0,-1 depending on whether the first argument is bigger, equal or smaller. Otherwise
+            if the argument is interpreted as a column index. If a single argument is supplied, then it may be
+            a list of column indices. If no sort orders are supplied then the data is sorted by the
+            :py:attr:`DataFile.setas` attribute or if that is not set, then order of the columns in the data.
+
         """
         reverse = kargs.pop("reverse", False)
         order = list(order)
@@ -2661,7 +2688,9 @@ class DataFile(metadataObject):
         return self
 
     def split(self, *args, final="files"):
-        """Recursively splits the current :py:class:`DataFile` object into a :py:class:`Stoner.Forlders.DataFolder` objects where each one contains the rows from the original object which had the same value of a given column(s) or function.
+        """Recursively splits the current :py:class:`DataFile` object into a :py:class:`Stoner.Forlders.DataFolder`
+        objects where each one contains the rows from the original object which had the same value of a given
+        column(s) or function.
 
         Args:
             *args (column index or function):
@@ -2669,7 +2698,8 @@ class DataFile(metadataObject):
 
         Keyword Arguments:
             final (str):
-                Controls whether the final argument plaes the files in the DataFolder (default: "files") or in groups ("groups")
+                Controls whether the final argument plaes the files in the DataFolder (default: "files") or in
+                groups ("groups")
 
         Returns:
             Stoner.Folders.DataFolder:
@@ -2677,18 +2707,21 @@ class DataFile(metadataObject):
                 :py:class:`AnalysisMixin` objects
 
         Note:
-            On each iteration the first argument is called. If it is a column type then rows which amtch each unique value are collated
-            together and made into a separate file. If the argument is a callable, then it is called for each row, passing the row
-            as a single 1D array and the return result is used to group lines together. The return value should be hashable.
+            On each iteration the first argument is called. If it is a column type then rows which amtch each unique
+            value are collated together and made into a separate file. If the argument is a callable, then it is
+            called for each row, passing the row as a single 1D array and the return result is used to group lines
+            together. The return value should be hashable.
 
-            Once this is done and the :py:class:`Stoner.Folders.DataFolder` exists, if there are remaining argument, then the method is
-            called recusivelyt for each file and the resulting DataFolder added into the root DataFolder and the file is removed.
+            Once this is done and the :py:class:`Stoner.Folders.DataFolder` exists, if there are remaining argument,
+            then the method is called recusivelyt for each file and the resulting DataFolder added into the root
+            DataFolder and the file is removed.
 
             Thus, when all of the arguments are evaluated, the resulting DataFolder is a multi-level tree.
 
             .. warning::
 
-                There has been a change in the arguments for the split function  from version 0.8 of the Stoner Package.
+                There has been a change in the arguments for the split function  from version 0.8 of the Stoner
+                Package.
         """
         from Stoner import DataFolder
 
@@ -2794,54 +2827,54 @@ class DataFile(metadataObject):
         """
         return _np_.unique(self.column(col), return_index, return_inverse)
 
-    # ============================================================================================================================
-    ############################              Depricated  Methods                ################################################
-    # ============================================================================================================================
+    # =====================================================================================================
+    ############################ Depricated  Methods       ################################################
+    # =====================================================================================================
 
-    def __meta__(self, ky):
-        """Returns specific items of  metadata.
+    # def __meta__(self, ky):
+    #     """Returns specific items of  metadata.
 
-        This is equivalent to doing DataFile.metadata[key]
+    #     This is equivalent to doing DataFile.metadata[key]
 
-        Args:
-            ky (string): The name of the metadata item to be returned.
+    #     Args:
+    #         ky (string): The name of the metadata item to be returned.
 
-        Returns:
-            mixed or None: Returns the item of metadata.
+    #     Returns:
+    #         mixed or None: Returns the item of metadata.
 
-        Note:
-           If key is not an exact match for an item of metadata,
-            then a regular expression match is carried out.
-        """
-        if isinstance(ky, string_types):  # Ok we go at it with a string
-            if str(ky) in self.metadata:
-                ret = self.metadata[str(ky)]
-            else:
-                test = re.compile(ky)
-                ret = self.__regexp_meta__(test)
-        elif isinstance(ky, _pattern_type):
-            ret = self.__regexp_meta__(ky)
-        else:
-            raise TypeError("Only strings and regular expressions  are supported as search keys for metadata")
-        return ret
+    #     Note:
+    #        If key is not an exact match for an item of metadata,
+    #         then a regular expression match is carried out.
+    #     """
+    #     if isinstance(ky, string_types):  # Ok we go at it with a string
+    #         if str(ky) in self.metadata:
+    #             ret = self.metadata[str(ky)]
+    #         else:
+    #             test = re.compile(ky)
+    #             ret = self.__regexp_meta__(test)
+    #     elif isinstance(ky, _pattern_type):
+    #         ret = self.__regexp_meta__(ky)
+    #     else:
+    #         raise TypeError("Only strings and regular expressions  are supported as search keys for metadata")
+    #     return ret
 
-    def __regexp_meta__(self, test):
-        """Do a regular expression search for all meta data items.
+    # def __regexp_meta__(self, test):
+    #     """Do a regular expression search for all meta data items.
 
-        Args:
-            test (compiled regular expression): Regular expression to test against meta data key names
+    #     Args:
+    #         test (compiled regular expression): Regular expression to test against meta data key names
 
-        Returns:
-            Either a single metadata item or a dictionary of metadata items
-        """
-        possible = [x for x in self.metadata if test.search(x)]
-        if not possible:
-            raise KeyError("No metadata with keyname: {}".format(test))
-        elif len(possible) == 1:
-            ret = self.metadata[possible[0]]
-        else:
-            d = dict()
-            for p in possible:
-                d[p] = self.metadata[p]
-            ret = d
-        return ret
+    #     Returns:
+    #         Either a single metadata item or a dictionary of metadata items
+    #     """
+    #     possible = [x for x in self.metadata if test.search(x)]
+    #     if not possible:
+    #         raise KeyError("No metadata with keyname: {}".format(test))
+    #     elif len(possible) == 1:
+    #         ret = self.metadata[possible[0]]
+    #     else:
+    #         d = dict()
+    #         for p in possible:
+    #             d[p] = self.metadata[p]
+    #         ret = d
+    #     return ret
