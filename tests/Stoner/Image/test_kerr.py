@@ -46,7 +46,7 @@ class KerrArrayTest(unittest.TestCase):
         im = self.image3.clone
         self.assertTrue(isinstance(im.image,KerrArray),"KerrImageFile not blessing the image proeprty correctly")
         im1=im.float_and_croptext()
-        self.assertTrue(isinstance(im1,KerrArray),"Calling a crop routine without the _ argument returns a new KerrArray")
+        self.assertTrue(isinstance(im1.image,KerrArray),"Calling a crop routine without the _ argument returns a new KerrArray")
         im2=im.float_and_croptext(_=True)
         self.assertEqual(im2,im,"Calling crop method with _ argument changed the KerrImageFile")
         im=KerrImageFile(self.image2.clone)

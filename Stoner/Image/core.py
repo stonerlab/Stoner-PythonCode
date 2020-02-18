@@ -600,9 +600,9 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             """Wrapped magic proxy function call."""
             transpose = getattr(workingfunc, "transpose", False)
             if transpose:
-                change = np.copy(self).T.view(type=self.__class__)
+                change = self.clone.T
             else:
-                change = np.copy(self).view(type=self.__class__)
+                change = self.clone
             r = workingfunc(change, *args, **kwargs)  # send copy of self as the first arg
             if isinstance(r, make_Data(None)):
                 pass  # Data return is ok
@@ -1353,7 +1353,7 @@ class ImageFile(metadataObject):
                     # Now swap the iamge in, but keep the metadata
                 metadata = ret.metadata
                 filename = ret.filename
-                ret.image = np.atleast_2d(r).view(ImageArray)
+                ret.image = np.atleast_2d(r).view(self.image.__class__)
                 ret.filename = filename
                 ret.metadata = metadata
                 return ret

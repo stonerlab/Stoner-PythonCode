@@ -80,7 +80,7 @@ def _scale(a, n, m, dtypeobj_in, dtypeobj, copy=True):
     Numbers can be represented exactly only if m is a multiple of n
     Output array is of same kind as input."""
     kind = a.dtype.kind
-    if n > m and a.max() < 2 ** m:
+    if n > m and a.max() > 2 ** m:
         mnew = int(np.ceil(m / 2) * 2)
         if mnew > m:
             dtype = "int%s" % mnew

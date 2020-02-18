@@ -81,7 +81,7 @@ class ImageArrayTest(unittest.TestCase):
             ims[fmt].save_tiff(path.join(tmpdir,"kermit-forcetype{}.tiff".format(fmt)),forcetype=True)
             ims[fmt].save_npy(path.join(tmpdir,"kermit-{}.npy".format(fmt)))
             if fmt!="uint16":
-                im=Image.fromarray((ims[fmt].view(np.ndarray)),modes[fmt])
+                im=Image.fromarray((ims[fmt].image.view(np.ndarray)),mode=modes[fmt])
                 im.save(path.join(tmpdir,"kermit-nometadata-{}.tiff".format(fmt)))
             del ims[fmt]["Loaded from"]
         for fmt in fmts:

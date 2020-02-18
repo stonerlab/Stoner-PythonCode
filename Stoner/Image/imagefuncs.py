@@ -375,11 +375,11 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
 
     if dtype_in == dtype:
         if force_copy:
-            image = image.copy()
+            image = image.clone
         return image
 
     if not (dtype_in in _supported_types and dtype in _supported_types):
-        raise ValueError("can not convert %s to %s." % (dtypeobj_in, dtypeobj))
+        raise ValueError(f"can not convert {dtype_in} to {dtype}.")
 
     kind = dtypeobj.kind
     kind_in = dtypeobj_in.kind
@@ -395,9 +395,7 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
 
     if kind_in == "b":
         # from binary image, to float and to integer
-        result = image.astype(dtype)
-        if kind != "f":
-            result *= dtype(dtype_range[dtype][1])
+        result = np.where(~image, *dtype_range[dtype])
         return result
 
     if kind in "ui":

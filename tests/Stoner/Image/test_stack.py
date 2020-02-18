@@ -71,7 +71,7 @@ class ImageStackTest(unittest.TestCase):
         self.im1=self.istack2[0]
         self.im1.normalise()
         self.im1.convert(np.int32)
-        self.im2=self.im1.convert(np.float32)
+        self.im2=self.im1.convert(np.float32, force_copy=True)
         conv_err=(self.istack2[0].image-self.im2.image).max()
         self.assertTrue(conv_err<1E-7,"Problems double converting images:{}.".format(conv_err))
         self.im1=self.istack2[0].convert(np.int64)
@@ -168,7 +168,7 @@ if __name__=="__main__":
     test=ImageStackTest()
     test.setUp()
     #test.test_methods()
-    test.test_ImageStack()
+    #test.test_ImageStack()
     #test.test_mask()
-    #unittest.main()
+    unittest.main()
 
