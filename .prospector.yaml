@@ -34,7 +34,7 @@ pep8:
     single-line-if-stmt: false
 
 pylint:
-  run: true
+  run: false
   disable:
     - E0402
     - W0212
@@ -66,7 +66,7 @@ pyroma:
 mccabe:
   run: true
   options:
-    max-complexity: 10
+    max-complexity: 15
 
 dodgy:
   run: false

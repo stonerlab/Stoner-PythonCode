@@ -16,7 +16,7 @@ from Stoner.compat import string_types, bytes2str
 from Stoner.core.base import typeHintedDict
 from Stoner.core.exceptions import StonerLoadError
 from Stoner.Image import ImageStack, ImageFile, ImageArray
-from Stoner.HDF5 import confirm_hdf5
+from Stoner.HDF5 import confirm_hdf5, close_file
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
 SCAN_NO = re.compile(r"SC_(\d+)")
@@ -175,8 +175,7 @@ class AttocubeScan(ImageStack):
         """Get the list of channels saved in the scan."""
         if len(self) > 0:
             return self.metadata.slice("display", values_only=True)
-        else:
-            return []
+        return []
 
     def _load(self, filename, *args, **kargs):
         """Loads data from a hdf5 file.
@@ -482,15 +481,7 @@ class AttocubeScan(ImageStack):
                     parts = data.metadata.export(k).split("=")
                     metadata.attrs[k] = "=".join(parts[1:])
 
-        if isinstance(f, h5py.File):
-            self.filename = f.filename
-        elif isinstance(f, h5py.Group):
-            self.filename = f.file.filename
-        else:
-            self.filename = filename
-        if isinstance(filename, string_types):
-            f.file.close()
-
+        self.filename = close_file(f, filename)
         return self
 
     @classmethod

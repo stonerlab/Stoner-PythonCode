@@ -31,6 +31,19 @@ def _raise_error(f, message="Not a valid hdf5 file."):
         raise StonerLoadError(message)
 
 
+def close_file(f, filename):
+    """Ensure the HDF5 file is closed if we opened it."""
+    if isinstance(f, h5py.File):
+        ret = f.filename
+    elif isinstance(f, h5py.Group):
+        ret = f.file.filename
+    else:
+        ret = filename
+    if isinstance(filename, string_types):
+        f.file.close()
+    return ret
+
+
 def confirm_hdf5(filename):
     """Sniffs a file to look for the HDF5 signature.
 
@@ -309,15 +322,7 @@ class HDF5File(DataFile):
             if isinstance(filename, str):
                 f.file.close()
             raise e
-        if isinstance(f, h5py.File):
-            self.filename = f.filename
-        elif isinstance(f, h5py.Group):
-            self.filename = f.file.filename
-        else:
-            self.filename = filename
-        if isinstance(filename, string_types):
-            f.file.close()
-
+        self.filename = close_file(f, filename)
         return self
 
 

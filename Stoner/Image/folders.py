@@ -5,7 +5,7 @@ from warnings import warn
 from .core import ImageArray
 from ..Folders import DiskBasedFolder, baseFolder
 from ..compat import string_types, int_types
-from . import ImageFile, ImageStack
+from . import ImageFile
 
 
 from skimage.viewer import CollectionViewer
@@ -13,6 +13,7 @@ import numpy as np
 from importlib import import_module
 from os import path
 from json import loads, dumps
+from importlib import import_module
 from PIL.TiffImagePlugin import ImageFileDirectory_v2, Image
 
 
@@ -271,7 +272,8 @@ class ImageFolderMixin:
 
     def as_stack(self):
         """Return a ImageStack of the images in the current group."""
-        k = ImageStack(self)
+        stack = import_module("stack", ".")
+        k = stack.ImageStack(self)
         return k
 
     @classmethod
