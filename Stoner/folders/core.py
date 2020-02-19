@@ -393,7 +393,7 @@ class baseFolder(MutableSequence):
     @property
     def lsgrp(self):
         """Returns a list of the groups as a generator."""
-        for k in self.groups():
+        for k in self.groups:
             yield k
 
     @property
