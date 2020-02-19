@@ -16,9 +16,10 @@ from Stoner.compat import string_types, bytes2str
 from Stoner.core.base import typeHintedDict
 from Stoner.core.exceptions import StonerLoadError
 from Stoner.Image import ImageStack, ImageFile, ImageArray
+from Stoner.HDF5 import confirm_hdf5
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
-SCAN_NO = re.compile("SC_(\d+)")
+SCAN_NO = re.compile(r"SC_(\d+)")
 
 
 def _raise_error(f, message="Not a valid hdf5 file."):
@@ -51,21 +52,7 @@ def _open_filename(filename):
         else:
             path.join(filename, parts.pop(0))
 
-    with open(filename, "rb") as sniff:  # Some code to manaully look for the HDF5 format magic numbers
-        sniff.seek(0, 2)
-        size = sniff.tell()
-        sniff.seek(0)
-        blk = sniff.read(8)
-        if not blk == b"\x89HDF\r\n\x1a\n":
-            c = 0
-            while sniff.tell() < size and len(blk) == 8:
-                sniff.seek(512 * 2 ** c)
-                c += 1
-                blk = sniff.read(8)
-                if blk == b"\x89HDF\r\n\x1a\n":
-                    break
-            else:
-                raise StonerLoadError("Couldn't find the HD5 format singature block")
+    confirm_hdf5(filename)
     try:
         f = h5py.File(filename, "r+")
         for grp in group.split("/"):
@@ -111,12 +98,12 @@ class AttocubeScan(ImageStack):
     an HDF5 group which then has a *type* and *module* attribute that specifies the class and module pf the Python
     object that created the group - sof for an AttocubeScan, the type attribute is *AttocubeScan*.
 
-    There is a class method :py:meth:`AttocubeSca.read_HDF` to read the stack from the HDSF format and an instance method
-    :py:meth:`AttocubeScan.to_HDF` that will save to either a new or existing HDF file format.
+    There is a class method :py:meth:`AttocubeSca.read_HDF` to read the stack from the HDSF format and an instance
+    method :py:meth:`AttocubeScan.to_HDF` that will save to either a new or existing HDF file format.
 
     The class provides other methods to regrid and flatten images and may gain other capabilities in the future.
 
-    TODO:
+    Todo:
         Implement load and save to/from multipage TIFF files.
 
     Attrs:
@@ -130,17 +117,17 @@ class AttocubeScan(ImageStack):
     """
 
     def __init__(self, *args, **kargs):
-
+        """Construct the attocube subclass of ImageStack."""
         args = list(args)
 
-        if len(args) and isinstance(args[0], string_types):
+        if len(args) > 0 and isinstance(args[0], string_types):
             root_name = args.pop(0)
             scan = SCAN_NO.search(root_name)
             if scan:
                 scan = int(scan.groups()[0])
             else:
                 scan = -1
-        elif len(args) and isinstance(args[0], int):
+        elif len(args) > 0 and isinstance(args[0], int):
             scan = args.pop(0)
             root_name = f"SC_{scan:03d}"
         else:
@@ -176,6 +163,7 @@ class AttocubeScan(ImageStack):
         return other
 
     def __getitem__(self, name):
+        """Allow scans to be got by channel name as well as normal indexing."""
         if isinstance(name, string_types):
             for ix, ch in enumerate(self.channels):
                 if name in ch:
@@ -185,16 +173,17 @@ class AttocubeScan(ImageStack):
     @property
     def channels(self):
         """Get the list of channels saved in the scan."""
-        if len(self):
+        if len(self) > 0:
             return self.metadata.slice("display", values_only=True)
         else:
             return []
 
     def _load(self, filename, *args, **kargs):
-        """Loads data from a hdf5 file
+        """Loads data from a hdf5 file.
 
         Args:
-            h5file (string or h5py.Group): Either a string or an h5py Group object to load data from
+            h5file (string or h5py.Group):
+                Either a string or an h5py Group object to load data from
 
         Returns:
             itself after having loaded the data
@@ -250,9 +239,9 @@ class AttocubeScan(ImageStack):
         """Build the image stack from a stack of files.
 
         Args:
-            root_name(str):
+            root_name (str):
                 The scan prefix e.g. SC_###
-            regrid(bool):
+            regrid (bool):
                 Use the X and Y positions if available to regrid the data.
         """
 
@@ -281,7 +270,16 @@ class AttocubeScan(ImageStack):
         return self
 
     def _load_parameters(self, root_name):
+        """Load the scan parameters text file.
 
+        Args:
+            root_name (str):
+                The scan prefix e.g. SC_###
+
+        Returns:
+            self:
+                The modififed scan stack.
+        """
         filename = path.join(self.directory, f"{root_name}-Parameters.txt")
         with open(filename, "r") as parameters:
             if not parameters.readline().startswith("Daisy Parameter Snapshot"):
@@ -300,6 +298,7 @@ class AttocubeScan(ImageStack):
         return self
 
     def _load_asc(self, filename):
+        """Load a single scan file from ascii data."""
         with open(filename, "r") as data:
             if not data.readline().startswith("# Daisy frame view snapshot"):
                 raise ValueError(f"{filename} lacked the correct header line")
@@ -355,18 +354,17 @@ class AttocubeScan(ImageStack):
 
         Keyword Parameters:
             x_range, y_range (tuple of start, stop, points):
-                Range of x-y co-rdinates to regrid the data to. Used as an argument to :py:func:`np.linspace` to generate the co-ordinate
+                Range of x-y co-rdinates to regrid the data to. Used as an argument to :py:func:`np.linspace` to
+                generate the co-ordinate
                 vector.
             in_place (bool):
-                If True then replace the existing datasets with the regridded data, otherwise create a new copy of the scan object. Default
-                is False.
+                If True then replace the existing datasets with the regridded data, otherwise create a new copy
+                of the scan object. Default is False.
 
         Returns:
             (AttocubeScan):
                 Scan object with regridded data. May be the same as the source object if in_place is True.
-
         """
-
         if not kargs.get("in_place", False):
             new = self.clone
         else:
@@ -398,7 +396,8 @@ class AttocubeScan(ImageStack):
 
         Keyword Arguments:
             method (str or callable):
-                Eirther the name of a fitting function in the global scope, or a callable. *plane* and *parabola* are already defined.
+                Eirther the name of a fitting function in the global scope, or a callable. *plane* and *parabola*
+                are already defined.
             signal (str):
                 The name of the dataset to be flattened. Defaults to the Amplitude signal
 
@@ -426,7 +425,7 @@ class AttocubeScan(ImageStack):
         data.data = Z.reshape(xs, ys)
         return self
 
-    def to_HDF5(self, filename=None, **kargs):
+    def to_HDF5(self, filename=None):
         """Save the AttocubeScan to an hdf5 file."""
         if filename is None:
             filename = path.join(self.directory, f"SC_{self.scan_no:03d}.hdf5")
@@ -452,7 +451,8 @@ class AttocubeScan(ImageStack):
                 try:
                     typehints.attrs[k] = self._common_metadata._typehints[k]
                     metadata.attrs[k] = self._common_metadata[k]
-                except TypeError:  # We get this for trying to store a bad data type - fallback to metadata export to string
+                except TypeError:
+                    # We get this for trying to store a bad data type - fallback to metadata export to string
                     parts = self._common_metadata.export(k).split("=")
                     metadata.attrs[k] = "=".join(parts[1:])
 
@@ -477,7 +477,8 @@ class AttocubeScan(ImageStack):
                 try:
                     typehints.attrs[k] = data.metadata._typehints[k]
                     metadata.attrs[k] = data.metadata[k]
-                except TypeError:  # We get this for trying to store a bad data type - fallback to metadata export to string
+                except TypeError:
+                    # We get this for trying to store a bad data type - fallback to metadata export to string
                     parts = data.metadata.export(k).split("=")
                     metadata.attrs[k] = "=".join(parts[1:])
 
@@ -505,7 +506,7 @@ class AttocubeScan(ImageStack):
         if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
             f = _open_filename(filename)
             close_me = True
-        elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
+        elif isinstance(filename, (h5py.File, h5py.Group)):
             f = filename
         else:
             _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
@@ -528,8 +529,7 @@ class AttocubeScan(ImageStack):
             if "type" in f[grp].attrs:
                 self.groups[grp] = cls.read_HDF(f[grp], *args, **kargs)
                 continue
-            else:  # This is an actual image!
-                g = f[grp]
+            g = f[grp]
             self.append(self._read_signal(g))
         if close_me:
             f.close()

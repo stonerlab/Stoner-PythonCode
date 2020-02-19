@@ -31,6 +31,39 @@ def _raise_error(f, message="Not a valid hdf5 file."):
         raise StonerLoadError(message)
 
 
+def confirm_hdf5(filename):
+    """Sniffs a file to look for the HDF5 signature.
+
+     Args:
+         filename)str):
+            File to open.
+
+    Returns:
+        (bool):
+            True if this has the hdf5 magic bytes.
+
+    Raises:
+        StonerLoadError:
+            If the file does npt have the hdf5 magic bytes.
+    """
+    with open(filename, "rb") as sniff:  # Some code to manaully look for the HDF5 format magic numbers
+        sniff.seek(0, 2)
+        size = sniff.tell()
+        sniff.seek(0)
+        blk = sniff.read(8)
+        if not blk == b"\x89HDF\r\n\x1a\n":
+            c = 0
+            while sniff.tell() < size and len(blk) == 8:
+                sniff.seek(512 * 2 ** c)
+                c += 1
+                blk = sniff.read(8)
+                if blk == b"\x89HDF\r\n\x1a\n":
+                    break
+            else:
+                raise StonerLoadError("Couldn't find the HD5 format singature block")
+    return True
+
+
 def _open_filename(filename):
     """Examine a file to see if it is an HDF5 file and open it if so.
 
