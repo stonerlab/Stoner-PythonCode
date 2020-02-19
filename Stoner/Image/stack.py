@@ -2,12 +2,10 @@
 """Provide variants of :class:`Stoner.Image.ImageFolder` that store images efficiently in 3D numpy arrays."""
 __all__ = ["ImageStackMixin", "ImageStack", "ImageStack"]
 import numpy as np
-import numbers
 import warnings
 
 from Stoner.compat import string_types, int_types
-from Stoner.tools import all_type
-from .core import ImageArray, dtype_range, ImageFile
+from .core import ImageArray, ImageFile
 from .folders import ImageFolder, ImageFolderMixin
 from Stoner.Core import regexpDict, typeHintedDict
 from Stoner.Folders import DiskBasedFolder, baseFolder
@@ -20,44 +18,6 @@ def _load_ImageArray(f, **kargs):
     """Utility method to create and image array."""
     kargs.pop("Img_num", None)  # REemove img_num if it exists
     return ImageArray(f, **kargs)
-
-
-# def _average_list(listob):
-#     """Average a list of items picking an appropriate average given the type.
-
-#     If no appropriate average is found None will be returned.
-#     if listob contains nested lists or dicts of numbers then try to average
-#     individual items within the lists/keys.
-#     """
-#     if len(listob) == 0:
-#         return None
-#     if not all_type(listob, type(listob[0])):
-#         return None  # all of the list isn't the same type
-#     typex = listob[0]
-#     if isinstance(typex, numbers.Number):
-#         ret = sum(listob) / float(len(listob))
-#     elif isinstance(typex, np.ndarray):
-#         try:
-#             ret = np.average(tuple(listob))
-#         except Exception:  # probably incompatible array sizes
-#             ret = None
-#     elif isinstance(typex, (tuple, list)):  # recursively go through sub lists averaging values
-#         nl = zip(*listob)
-#         ret = [_average_list(list(i)) for i in nl]
-#         if isinstance(typex, tuple):
-#             ret = tuple(ret)
-#     elif isinstance(typex, dict):  # recursively go through dictionary keys averaging values
-#         ret = {}
-#         for k in typex.keys():
-#             ret[k] = _average_list([listob[i][k] for i in listob])
-#     elif isinstance(typex, string_types):
-#         if all(i == typex for i in listob):
-#             ret = listob[0]  # all the same text return that string
-#         else:
-#             ret = None
-#     else:
-#         return None
-#     return ret
 
 
 class ImageStackMixin(object):
@@ -90,7 +50,6 @@ class ImageStackMixin(object):
         ):  # Initialise with 3D numpy array, first coordinate is number of images
             super(ImageStackMixin, self).__init__(*args[1:], **kargs)
             self.imarray = other
-            _ = self.imarray.shape
             self._sizes = np.ones((other.shape[0], 2), dtype=int) * other.shape[1:]
             self._names = ["Untitled-{}".format(d) for d in range(other.shape[0])]
             for n in self._names:
@@ -98,7 +57,7 @@ class ImageStackMixin(object):
         elif isinstance(other, list):
             try:
                 other = [ImageFile(i) for i in other]
-            except:
+            except Exception:
                 raise ValueError("Failed to initialise ImageStack with list input")
             super(ImageStackMixin, self).__init__(*args[1:], **kargs)
             for ot in other:
@@ -122,7 +81,7 @@ class ImageStackMixin(object):
         """
         if isinstance(name, int_types):
             try:
-                _ = self._stack[:, :, name]
+                self._stack[:, :, name]
             except IndexError:
                 raise KeyError("{} is out of range for accessing the ImageStack.".format(name))
             return name
@@ -355,18 +314,6 @@ class ImageStackMixin(object):
 
     ###########################################################################
     ################### Depricated Compaibility methods #######################
-
-    # @property
-    # def allmeta(self):
-    #     """List of complete metadata for each image in ImageStack"""
-    #     warnings.warn("allmeta is depricated in favour of ImageStack.metadata.all")
-    #     return list(self.metadata.all)
-
-    # @allmeta.setter
-    # def allmeta(self, value):
-    #     """List of complete metadata for each image in ImageStack"""
-    #     warnings.warn("allmeta is depricated in favour of ImageStack.metadata.all")
-    #     self.metadata.all = value
 
     def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50, box=None):
         """Align images to correct for image drift.

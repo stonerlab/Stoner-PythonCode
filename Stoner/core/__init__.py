@@ -11,6 +11,7 @@ __all__ = [
     "array",
     "base",
     "setas",
+    "string_to_type",
     "exceptions",
     "utils",
     "Typing",

@@ -16,7 +16,6 @@ from collections import Mapping
 from configparser import ConfigParser as SafeConfigParser
 from functools import wraps
 from io import IOBase
-from importlib import import_module
 
 import numpy as np
 from lmfit import Model

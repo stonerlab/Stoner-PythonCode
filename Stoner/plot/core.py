@@ -43,9 +43,9 @@ if os.name == "posix" and platform.system() == "Darwin":
     matplotlib.use("MacOSX")
 
 try:  # Check we've got 3D plotting
-    from mpl_toolkits.mplot3d import Axes3D  # pylint: disable=unused-import
-    from mpl_toolkits.axes_grid1 import host_subplot, inset_locator  # pylint: disable=unused-import
-    import mpl_toolkits.axisartist as AA  # pylint: disable=unused-import
+    from mpl_toolkits.mplot3d import Axes3D  # NOQA pylint: disable=unused-import
+    from mpl_toolkits.axes_grid1 import host_subplot, inset_locator  # NOQA pylint: disable=unused-import
+    import mpl_toolkits.axisartist as AA  # NOQA pylint: disable=unused-import
 
     _3D = True
 except ImportError:

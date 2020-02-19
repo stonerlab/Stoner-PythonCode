@@ -25,7 +25,7 @@ from collections import OrderedDict
 from traceback import format_exc
 import csv
 import numpy as np
-from numpy import NaN  # pylint: disable=unused-import
+from numpy import NaN  # NOQA pylint: disable=unused-import
 from numpy import ma
 
 from .compat import string_types, int_types, index_types, get_filedialog, classproperty, str2bytes, _pattern_type

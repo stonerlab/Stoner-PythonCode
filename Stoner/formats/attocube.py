@@ -184,6 +184,7 @@ class AttocubeScan(ImageStack):
 
     @property
     def channels(self):
+        """Get the list of channels saved in the scan."""
         if len(self):
             return self.metadata.slice("display", values_only=True)
         else:

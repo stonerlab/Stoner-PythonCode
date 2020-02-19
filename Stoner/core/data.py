@@ -14,9 +14,9 @@ from Stoner.plot import PlotMixin
 from Stoner.Core import DataFile
 
 # Bring all the subclasses into memory (idnore unused imports warnings)
-import Stoner.formats  # pylint: disable=W0611
-import Stoner.HDF5  # pylint: disable=W0611
-import Stoner.Zip  # pylint: disable=W0611
+import Stoner.formats  # NOQA pylint: disable=W0611
+import Stoner.HDF5  # NOQA pylint: disable=W0611
+import Stoner.Zip  # NOQA pylint: disable=W0611
 
 from Stoner.tools import format_error
 
