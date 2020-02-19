@@ -121,7 +121,7 @@ class odr_Model(odrModel):
         return self.meta["param_names"]
 
 
-class MimizerAdaptor(object):
+class MimizerAdaptor:
     """A class that will work with an lmfit.Model or generic callable to use with scipy.optimize global minimization
     functions.
 
@@ -185,7 +185,7 @@ class MimizerAdaptor(object):
         self.minimize_func = wrapper
 
 
-class _curve_fit_result(object):
+class _curve_fit_result:
 
     """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit` as a class to make handling easier."""
 
@@ -466,7 +466,7 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
     return p0, single_fit
 
 
-class FittingMixin(object):
+class FittingMixin:
 
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional curve_fiotting
     methods."""

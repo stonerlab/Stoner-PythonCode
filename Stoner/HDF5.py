@@ -388,7 +388,7 @@ class HGXFile(DataFile):
             self.column_headers = [str(ix) for ix in self.column_headers]
 
 
-class HDF5FolderMixin(object):
+class HDF5FolderMixin:
 
     """A mixin class for :py:class:`Stoner.Folders.DataFolder` that provides a method to load and save data from a single HDF5 file with groups.
 

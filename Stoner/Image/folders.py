@@ -20,7 +20,7 @@ def _load_ImageArray(f, **kargs):
     return ImageArray(f, **kargs)
 
 
-class _generator(object):
+class _generator:
 
     """A helper class to iterator over ImageFolder yet remember it's own length."""
 
@@ -88,7 +88,7 @@ class _generator(object):
         return self.__next__()
 
 
-class ImageFolderMixin(object):
+class ImageFolderMixin:
 
     """Mixin to provide a folder object for images.
 

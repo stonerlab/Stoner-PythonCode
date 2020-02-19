@@ -19,7 +19,7 @@ from Stoner.compat import int_types, string_types, get_func_params
 from .utils import outlier as _outlier, _twoD_fit, GetAffineTransform
 
 
-class FilteringOps(object):
+class FilteringOps:
 
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional filtering snd
     smoothing methods."""

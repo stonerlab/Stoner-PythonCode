@@ -398,7 +398,7 @@ class KerrImageFile(ImageFile):
         self.filename = filename
 
 
-class KerrStackMixin(object):
+class KerrStackMixin:
 
     """A mixin for :py:class:`ImageStack` that adds some functionality particular to Kerr images.
 
@@ -587,7 +587,7 @@ class KerrStackMixin(object):
         return average.view(ImageArray)
 
 
-class MaskStackMixin(object):
+class MaskStackMixin:
 
     """A Mixin for :py:class:`Stoner.Image.ImageStack` but made for stacks of boolean or binary images"""
 

@@ -16,7 +16,7 @@ from .analysis.utils import threshold as _threshold, ApplyAffineTransform, GetAf
 # from matplotlib.pylab import * #Surely not?
 
 
-class AnalysisMixin(object):
+class AnalysisMixin:
 
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods."""
 

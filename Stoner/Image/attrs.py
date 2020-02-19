@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from Stoner.tools import fix_signature
 
 
-class DrawProxy(object):
+class DrawProxy:
 
     """Provides a wrapper around scikit-image.draw to allow easy drawing of objects onto images."""
 
@@ -128,7 +128,7 @@ class DrawProxy(object):
         return self.rectangle(r, c, w, w, angle=angle, shape=shape, value=value)
 
 
-class MaskProxy(object):
+class MaskProxy:
 
     """Provides a wrapper to support manipulating the image mask easily."""
 

@@ -445,7 +445,7 @@ def isiterable(value):
     """Chack to see if a value is iterable.
 
     Args:
-        value (object): Entitiy to check if it is iterable
+        value : Entitiy to check if it is iterable
 
     Returns:
         (bool): True if value is an instance of collections.Iterable.
@@ -729,7 +729,7 @@ class typedList(MutableSequence):
             self._store.insert(index, obj)
 
 
-class _Options(object):
+class _Options:
 
     """Dead simple class to allow access to package options."""
 

@@ -73,7 +73,7 @@ def __mpl3DQuiver(X, Y, Z, U, V, W, **kargs):
     return vector_field
 
 
-class PlotMixin(object):
+class PlotMixin:
 
     """A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.
 

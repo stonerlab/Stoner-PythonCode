@@ -55,7 +55,7 @@ def _loader(name, loader=None, typ=None, directory=None):
     return typ(loader(filename)), name
 
 
-class DiskBasedFolder(object):
+class DiskBasedFolder:
     """A Mixin class that implmenets reading metadataObjects from disc.
 
     Attributes:
@@ -436,7 +436,7 @@ class DiskBasedFolder(object):
         return self
 
 
-class DataMethodsMixin(object):
+class DataMethodsMixin:
 
     """A mixin class that provides a :py:class:`Stoner.folders.core.baseFolder` with methods for working with :py:class:`Stoner.Data` objects.
     """
@@ -596,7 +596,7 @@ class DataMethodsMixin(object):
         return self.walk_groups(_gatherer, group=True, replace_terminal=True, walker_args={"xcol": xcol, "ycol": ycol})
 
 
-class PlotMethodsMixin(object):
+class PlotMethodsMixin:
     """A Mixin for :py:class:`Stoner.folders.core.baseFolder` with extra methods for plotting lots of files.
 
     Example:

@@ -226,7 +226,7 @@ class ZippedFile(DataFile):
         return self
 
 
-class ZipFolderMixin(object):
+class ZipFolderMixin:
 
     """A sub class of :py:class:`Stoner.Folders.DataFolder` that provides a method to load and save data from a single Zip file.
 

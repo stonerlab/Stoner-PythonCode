@@ -202,7 +202,7 @@ class baseFolder(MutableSequence):
     )  # A Dictionary of default values that will be combined with other classes to make a global set of defaults
     _no_defaults = []  # A list of dewfaults to remove becayse they clash with subclass methods etc.
 
-    def __new__(cls, **kargs):
+    def __new__(cls, *args, **kargs):
         """The __new__ method is used to create the underlying storage attributes.
 
         We do this in __new__ so that the mixin classes can access baseFolders state storage before baseFolder does

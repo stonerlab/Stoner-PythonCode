@@ -12,7 +12,7 @@ from Stoner.tools import isiterable, all_type
 from Stoner.compat import index_types
 
 
-class ColumnOps(object):
+class ColumnOps:
 
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional stats methods."""
 

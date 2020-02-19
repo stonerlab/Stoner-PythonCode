@@ -15,7 +15,7 @@ from Stoner.core.exceptions import assertion
 from .utils import threshold
 
 
-class FeatureOps(object):
+class FeatureOps:
 
     """Mixin to provide additional functions to support finding features in a dataset."""
 
@@ -147,7 +147,7 @@ class FeatureOps(object):
 
         Keyword Arguments:
             xcol (index):
-                the column name or index of the x data that the peaks correspond to.      
+                the column name or index of the x data that the peaks correspond to.
             height : number or ndarray or sequence, optional
                 Required height of peaks. Either a number, ``None``, an array matching
                 `ycol` or a 2-element sequence of the former. The first element is

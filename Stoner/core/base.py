@@ -85,7 +85,7 @@ def string_to_type(value):
     return ret
 
 
-class _evaluatable(object):
+class _evaluatable:
 
     """Just a placeholder to indicate that special action needs to be taken to convert a string representation to a valid Python type."""
 

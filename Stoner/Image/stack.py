@@ -20,7 +20,7 @@ def _load_ImageArray(f, **kargs):
     return ImageArray(f, **kargs)
 
 
-class ImageStackMixin(object):
+class ImageStackMixin:
 
     """Implement an interface for a baseFolder to store images in a 3D numpy array for faster access."""
 
@@ -354,7 +354,7 @@ class ImageStackMixin(object):
         return self.view()
 
 
-class StackAnalysisMixin(object):
+class StackAnalysisMixin:
     """Add some analysis capability to ImageStack. These functions may override
        ImageFile functions but do them efficiently for a numpy stack of
        images.

@@ -140,7 +140,7 @@ def listdir_recursive(dirname, glob=None):
             yield ret
 
 
-class ClassPropertyDescriptor(object):
+class ClassPropertyDescriptor:
 
     """Supports adding class properties."""
 

@@ -110,7 +110,7 @@ class setas_wrapper(MutableSequence):
         return setas
 
 
-class item(object):
+class item:
 
     """Provides a proxy object for accessing methods on the inividual members of a Folder.
     8
