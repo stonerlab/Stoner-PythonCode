@@ -3,15 +3,17 @@
 __all__ = ["_generator", "ImageFolderMixin", "ImageFolder"]
 from warnings import warn
 from .core import ImageArray
-from Stoner.Folders import DiskBasedFolder, baseFolder
-from Stoner.compat import string_types, int_types
-from Stoner.Image import ImageFile
+from ..Folders import DiskBasedFolder, baseFolder
+from ..compat import string_types, int_types
+from . import ImageFile, ImageStack
+
 
 from skimage.viewer import CollectionViewer
 import numpy as np
 from importlib import import_module
 from os import path
-from json import loads
+from json import loads, dumps
+from PIL.TiffImagePlugin import ImageFileDirectory_v2, Image
 
 
 def _load_ImageArray(f, **kargs):
@@ -29,6 +31,7 @@ class _generator:
 
         Args:
             fldr (ImageFolder): The folder that we iterate over.
+
         Returns:
             None.
         """
@@ -36,7 +39,7 @@ class _generator:
         self.len = len(fldr)
 
     def __len__(self):
-        """Get the length of the iterator
+        """Get the length of the iterator.
 
         Returns:
             int: Length of the generator object.
@@ -66,11 +69,10 @@ class _generator:
             ret = self[self.ix]
             self.ix += 1
             return ret
-        else:
-            raise StopIteration("Finished iterating Folder.")
+        raise StopIteration("Finished iterating Folder.")
 
     def __getitem__(self, index):
-        """Item accessor method
+        """Item accessor method.
 
         Args:
             index (int): Image to return.
@@ -95,38 +97,35 @@ class ImageFolderMixin:
     ImageFolderMixin is designed to behave pretty much like DataFolder but with
     functions and loaders appropriate for image based files.
 
-        Attributes:
-        type (:py:class:`Stoner.Image.core.ImageArray`) the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Cire.Data`)
-
-        extra_args (dict): Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
-
-        pattern (str or regexp): A filename globbing pattern that matches the contents of the folder. If a regular expression is provided then
-            any named groups are used to construct additional metadata entryies from the filename. Default is *.* to match all files with an extension.
-
-        read_means (bool): IF true, additional metatdata keys are added that return the mean value of each column of the data. This can hep in
-            grouping files where one column of data contains a constant value for the experimental state. Default is False
-
-        recursive (bool): Specifies whether to search recurisvely in a whole directory tree. Default is True.
-
-        flatten (bool): Specify where to present subdirectories as spearate groups in the folder (False) or as a single group (True). Default is False.
-            The :py:meth:`DiskBasedFolder.flatten` method has the equivalent effect and :py:meth:`DiskBasedFolder.unflatten` reverses it.
-
-        directory (str): The root directory on disc for the folder - by default this is the current working directory.
-
-        multifile (boo): Whether to select individual files manually that are not (necessarily) in  a common directory structure.
-
-        readlist (bool): Whether to read the directory immediately on creation. Default is True
+    Attributes:
+        type (:py:class:`Stoner.Image.core.ImageArray`):
+            the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Cire.Data`)
+        extra_args (dict):
+            Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
+        pattern (str or regexp):
+            A filename globbing pattern that matches the contents of the folder. If a regular expression is
+            provided then any named groups are used to construct additional metadata entryies from the filename.
+            Default is *.* to match all files with an extension.
+        read_means (bool):
+            If true, additional metatdata keys are added that return the mean value of each column of the data.
+            This can hep in grouping files where one column of data contains a constant value for the
+            experimental state. Default is False
+        recursive (bool):
+            Specifies whether to search recurisvely in a whole directory tree. Default is True.
+        flatten (bool):
+            Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
+            (True). Default is False. The :py:meth:`DiskBasedFolder.flatten` method has the equivalent effect and
+            :py:meth:`DiskBasedFolder.unflatten` reverses it.
+        directory (str):
+            The root directory on disc for the folder - by default this is the current working directory.
+        multifile (boo):
+            Whether to select individual files manually that are not (necessarily) in  a common directory structure.
+        readlist (bool):
+            Whether to read the directory immediately on creation. Default is True
     """
 
     _defaults = {"type": ImageArray, "pattern": ["*.png", "*.tiff", "*.jpeg", "*.jpg", "*.tif"]}
     _no_defaults = ["flat"]
-
-    def __init__(self, *args, **kargs):
-        """nitialise the ImageFolder.
-
-        Mostly a pass through to the :py:class:`Stoner.Folders.baseFolder` class.
-        """
-        super(ImageFolderMixin, self).__init__(*args, **kargs)
 
     @property
     def size(self):
@@ -143,10 +142,11 @@ class ImageFolderMixin:
         return _generator(self)
 
     def _getattr_proxy(self, item):
-        """Override baseFolder proxy call to access a method of the ImageFile
+        """Override baseFolder proxy call to access a method of the ImageFile.
 
         Args:
-            item (string): Name of method of metadataObject class to be called
+            item (string):
+                Name of method of metadataObject class to be called
 
         Returns:
             Either a modifed copy of this objectFolder or a list of return values
@@ -158,7 +158,8 @@ class ImageFolderMixin:
             """Wraps a call to the metadataObject type for magic method calling.
 
             Keyword Arguments:
-                _return (index types or None): specify to store the return value in the individual object's metadata
+                _return (index types or None):
+                    specify to store the return value in the individual object's metadata
 
             Note:
                 This relies on being defined inside the enclosure of the objectFolder method
@@ -204,9 +205,9 @@ class ImageFolderMixin:
         Returns:
             The aligned ImageFolder.
         """
-        if len(args) and len(args) == 1:
+        if len(args) == 1:
             ref = args[0]
-        elif not len(args):
+        elif len(args) == 0:
             ref = 0
         else:
             raise ValueError(
@@ -233,7 +234,7 @@ class ImageFolderMixin:
         return self
 
     def apply_all(self, func, *args, **kargs):
-        """apply function to all images in the stack
+        """Apply function to all images in the stack
 
         Args:
             func(string or callable):
@@ -264,21 +265,18 @@ class ImageFolderMixin:
         return ImageFile(ret[ret._box(_box)])
 
     def loadgroup(self):
-        """Load all files from this group into memory"""
+        """Load all files from this group into memory."""
         for _ in self:
             pass
 
     def as_stack(self):
         """Return a ImageStack of the images in the current group."""
-        from Stoner.Image import ImageStack
-
         k = ImageStack(self)
         return k
 
     @classmethod
     def from_tiff(cls, filename, **kargs):
         """Create a new ImageArray from a tiff file."""
-
         from PIL import Image
 
         self = cls(**kargs)
@@ -331,7 +329,7 @@ class ImageFolderMixin:
         return self.average(_box=_box)
 
     def stddev(self, weights=None):
-        """Calculate weighted standard deviation for stack
+        """Calculate weighted standard deviation for stack.
 
         This is a biased standard deviation, may not be appropriate for small sample sizes
         """
@@ -344,7 +342,7 @@ class ImageFolderMixin:
         return sumsqdev.view(ImageArray)
 
     def stderr(self, weights=None):
-        """Standard error in the stack average"""
+        """Standard error in the stack average."""
         serr = self.stddev(weights=weights) / np.sqrt(len(self))
         return serr
 
@@ -363,9 +361,6 @@ class ImageFolderMixin:
             The type name is added as a string to the metadata before saving.
 
         """
-        from PIL.TiffImagePlugin import ImageFileDirectory_v2, Image
-        import json
-
         metadata_export = []
         imlist = []
         for d in self._marshall():
@@ -381,7 +376,7 @@ class ImageFolderMixin:
                     imlist.append(Image.fromarray(d.image.astype("float32")))
 
         ifd = ImageFileDirectory_v2()
-        ifd[270] = json.dumps(
+        ifd[270] = dumps(
             {
                 "type": self.__class__.__name__,
                 "module": self.__class__.__module__,
@@ -436,6 +431,40 @@ class ImageFolder(ImageFolderMixin, DiskBasedFolder, baseFolder):
         multifile (boo): Whether to select individual files manually that are not (necessarily) in  a common directory structure.
 
         readlist (bool): Whether to read the directory immediately on creation. Default is True
+    """
+
+    pass
+
+    """Mixin to provide a folder object for images.
+
+    ImageFolderMixin is designed to behave pretty much like DataFolder but with
+    functions and loaders appropriate for image based files.
+
+    Attributes:
+        type (:py:class:`Stoner.Image.core.ImageArray`):
+            the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Cire.Data`)
+        extra_args (dict):
+            Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
+        pattern (str or regexp):
+            A filename globbing pattern that matches the contents of the folder. If a regular expression is
+            provided then any named groups are used to construct additional metadata entryies from the filename.
+            Default is *.* to match all files with an extension.
+        read_means (bool):
+            If true, additional metatdata keys are added that return the mean value of each column of the data.
+            This can hep in grouping files where one column of data contains a constant value for the
+            experimental state. Default is False
+        recursive (bool):
+            Specifies whether to search recurisvely in a whole directory tree. Default is True.
+        flatten (bool):
+            Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
+            (True). Default is False. The :py:meth:`DiskBasedFolder.flatten` method has the equivalent effect and
+            :py:meth:`DiskBasedFolder.unflatten` reverses it.
+        directory (str):
+            The root directory on disc for the folder - by default this is the current working directory.
+        multifile (boo):
+            Whether to select individual files manually that are not (necessarily) in  a common directory structure.
+        readlist (bool):
+            Whether to read the directory immediately on creation. Default is True
     """
 
     pass
