@@ -137,6 +137,9 @@ class regexpDict(sorteddict):
                 nm = name
             if isinstance(nm, _pattern_type):
                 ret = [n for n in self.keys() if isinstance(n, string_types) and nm.match(n)]
+                if not ret:
+                    ret = [n for n in self.keys() if isinstance(n, string_types) and nm.search(n)]
+
         if ret is None or isiterable(ret) and not ret:
             raise KeyError("{} is not a match to any key.".format(name))
         else:

@@ -543,7 +543,7 @@ class DataFile(metadataObject):
             j = 0
             while ch[i] in ch[i + 1 :] or ch[i] in ch[0:i]:
                 j = j + 1
-                ch[i] = f"{header}_{i}"
+                ch[i] = f"{header}_{j}"
         dtype = [(str(x), self.dtype) for x in ch]
         self.setas = setas
         self.column_headers = ch_bak
@@ -1005,7 +1005,7 @@ class DataFile(metadataObject):
         """
         if isinstance(name, string_types + (_pattern_type,)):
             try:
-                ret = self.__meta__(name)
+                ret = self.metadata[name]
             except KeyError:
                 try:
                     ret = self.data[name]
@@ -1014,7 +1014,7 @@ class DataFile(metadataObject):
         elif isinstance(name, tuple) and isinstance(name[0], string_types):
             try:
                 rest = name[1:]
-                ret = self.__meta__(name[0])
+                ret = self.metadata[name[0]]
                 ret = ret.__getitem__(*rest)
             except KeyError:
                 try:
@@ -2788,7 +2788,7 @@ class DataFile(metadataObject):
             for key in np.unique(keys):
                 data[key] = self.clone
                 data[key].data = self.data[keys == key, :]
-                data[key].filename = f"{xcol.__name__}={key} {self.filemname}"
+                data[key].filename = f"{xcol.__name__}={key} {self.filename}"
                 data[key].setas = self.setas
         else:
             raise NotImplementedError(f"Unable to split a file with an argument of type {type(xcol)}")
