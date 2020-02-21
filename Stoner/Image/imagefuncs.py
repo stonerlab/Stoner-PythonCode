@@ -257,6 +257,7 @@ def align(im, ref, method="scharr", **kargs):
     for k, v in data.items():
         new_im[k] = v
     new_im["tvec"] = tuple(tvec)
+    new_im["translation_limits"] = new_im.translate_limits("tvec")
     return new_im
 
 
@@ -906,6 +907,11 @@ def rotate(im, angle, resize=False, center=None, order=1, mode="constant", cval=
     return ret
 
 
+def span(im):
+    """Return the minimum and maximum values in the image."""
+    return np.min(im), np.max(im)
+
+
 def translate(im, translation, add_metadata=False, order=3, mode="wrap", cval=None):
     """Translates the image.
 
@@ -954,16 +960,16 @@ def translate_limits(im, translation):
             (xmin,xmax,ymin,ymax) the maximum coordinates of the image with original
             information
     """
-    t = translation
-    s = im.shape
-    if t[0] <= 0:
-        xmin, xmax = 0, s[1] - t[0]
-    else:
-        xmin, xmax = t[0], s[1]
-    if t[1] <= 0:
-        ymin, ymax = 0, s[0] - t[1]
-    else:
-        ymin, ymax = t[1], s[0]
+    if isinstance(translation, string_types):
+        translation = im[translation]
+
+    shape = im.shape
+
+    xmin = max(0, translation[0])
+    xmax = min(shape[0], shape[0] + translation[0])
+    ymin = max(0, translation[1])
+    ymax = min(shape[1], shape[1] + translation[1])
+
     return (xmin, xmax, ymin, ymax)
 
 

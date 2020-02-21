@@ -232,6 +232,11 @@ class ImageFolderMixin:
                 raise TypeError(f"Cannot interpret {type(ref)} as reference image data.")
         # Call align on each object
         self.each.align(ref_data, **kargs)
+        limits = self.metadata.slice("translation_limits", output="array")
+        stack_limits = np.zeros(4)
+        stack_limits[::2] = limits.max(axis=0)[::2]
+        stack_limits[1::2] = limits.min(axis=0)[1::2]
+        self.metadata["translation_limits"] = tuple(stack_limits)
         return self
 
     def apply_all(self, func, *args, **kargs):

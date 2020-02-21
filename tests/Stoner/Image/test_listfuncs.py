@@ -76,6 +76,13 @@ class FuncsTest(unittest.TestCase):
         d2=mag(tv-(-shift[::-1]))
         self.assertLess(d1,1.5,"Drift Correct off by more than 0.1 pxiels.")
         self.assertLess(d2,1.5,"Scharr Alignment off by more than 0.1 pxiels.")
+        
+        a1=ImageFile(self.a1.clone)
+        a1.as_float()
+        a1.image=np.sqrt(a1.image)/2+0.25
+        a1.adjust_contrast()
+        self.assertEqual(a1.span(),(0.0,1.0),"Either adjust_contrast or span failed with an ImageFile")
+        
 #        print("#"*80)
 #        print(self.a.metadata)
 #        print(self.a1.metadata)

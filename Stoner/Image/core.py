@@ -433,11 +433,14 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 print("Select crop area")
                 box = self.draw_rectangle(box)
             elif islike_list(box) and len(box) == 4:  # Full box as a list
-                box = [x for x in box]
+                box = [int(round(x)) for x in box]
             elif box is None:  # Whole image
                 box = [0, self.shape[1], 0, self.shape[0]]
             elif isinstance(box, int):  # Take a border of n pixels out
                 box = [box, self.shape[1] - box, box, self.shape[0] - box]
+            elif isinstance(box, string_types):
+                box = self.metadata[box]
+                return self._box(*box)
             elif isinstance(box, float):  # Keep the central fraction of the image
                 box = [
                     round(self.shape[1] * box / 2),
@@ -451,11 +454,13 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         else:
             box = list(args)
         for i, item in enumerate(box):  # replace None with max extent
-            if isinstance(item, float):
+            if isinstance(item, float) and 0 <= item <= 1:
                 if i < 2:
                     box[i] = int(round(self.shape[1] * item))
                 else:
                     box[i] = int(round(self.shape[0] * item))
+            elif isinstance(item, float):
+                box[i] = int(round(item))
             elif isinstance(item, int_types):
                 pass
             elif item is None:
@@ -693,14 +698,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     @changes_size
     def crop(self, *args, **kargs):
-        """Crop the image.
-
-        This is essentially like taking a view onto the array
-        but uses image x,y coords (x,y --> col,row)
-        Returns a view according to the coords given. If box is None it will
-        allow the user to select a rectangle. If a tuple is given with None
-        included then max extent is used for that coord (analagous to slice).
-        If copy then return a copy of self with the cropped image.
+        """Crop the image according to a box.
 
         Args:
             box(tuple) or 4 separate args or None:
@@ -715,6 +713,32 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             (ImageArray):
                 view or copy of array asked for
 
+        Notes:
+            This is essentially like taking a view onto the array
+            but uses image x,y coords (x,y --> col,row)
+            Returns a view according to the coords given. If box is None it will
+            allow the user to select a rectangle. If a tuple is given with None
+            included then max extent is used for that coord (analagous to slice).
+            If copy then return a copy of self with the cropped image.
+
+            The box can be specified in a number of ways:
+                -   (int):
+                    A border around all sides of the given number pixels is ignored.
+                -   (float 0.0-1.0):
+                    A border of the given fraction of the images height and width is ignored
+                -   (string):
+                    A correspoinding item of metadata is located and used  to specify the box
+                -   (tuple of 4 ints or floats):
+                    For each item in the tuple it is interpreted as foloows:
+                        -   (int):
+                            A pixel co-ordinate in either the x or y direction
+                        -   (float 0.0-1.0):
+                            A fraction of the width or height in from the left, right, top, bottom sides
+                        -   (float > 1.0):
+                            Is rounded to the nearest integer and used a pixel cordinate.
+                        -   None:
+                            The extent of the image is used.
+                    
         Example:
             a=ImageFile(np.arange(12).reshape(3,4))
 

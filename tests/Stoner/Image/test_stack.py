@@ -34,15 +34,25 @@ class ImageStackTest(unittest.TestCase):
     def test_ImageStack(self):
         self.assertTrue(self.istack2.shape==(91,100,100),"ImageStack.shape wrong at {}".format(self.istack2.shape))
         i=ImageFile(np.zeros((100,100))).draw.circle(50,50,25)
-        self.m1=self.istack2.mean()
+        self.m1=self.istack2.mean().crop(10)
 
         istack2=self.istack2.clone
+        istack2.align(i,method="chi2_shift")
+        self.data=istack2.metadata.slice(["tvec"],output="Data")
+        self.assertTrue(self.data.shape==(91,2),"Slice metadata went a bit funny")
 
+        istack2=self.istack2.clone
         istack2.align(i,method="imreg_dft")
         self.data=istack2.metadata.slice(["tvec","angle","scale"],output="Data")
         self.assertTrue(self.data.shape==(91,4),"Slice metadata went a bit funny")
         self.assertTrue(sorted(self.data.column_headers)==['angle','scale','tvec[0]', 'tvec[1]'],"slice metadata column headers wrong at {}".format(self.data.column_headers))
+
+        istack2.each.crop("translation_limits")
         self.m2=istack2.mean()
+        
+        self.assertEqual(istack2.shape,(91,80,80),"Stack translation_limits and crop failed.")
+
+
 
         istack2=self.istack2.clone
 
@@ -168,7 +178,7 @@ if __name__=="__main__":
     test=ImageStackTest()
     test.setUp()
     #test.test_methods()
-    #test.test_ImageStack()
+    test.test_ImageStack()
     #test.test_mask()
-    unittest.main()
+    #unittest.main()
 
