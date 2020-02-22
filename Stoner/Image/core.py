@@ -433,7 +433,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 print("Select crop area")
                 box = self.draw_rectangle(box)
             elif islike_list(box) and len(box) == 4:  # Full box as a list
-                box = [int(round(x)) for x in box]
+                box = [x for x in box]
             elif box is None:  # Whole image
                 box = [0, self.shape[1], 0, self.shape[0]]
             elif isinstance(box, int):  # Take a border of n pixels out

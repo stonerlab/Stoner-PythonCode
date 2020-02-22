@@ -273,7 +273,7 @@ class ImageArrayTest(unittest.TestCase):
 
     def test_attrs(self):
         attrs=[x for x in dir(self.imarr) if not x.startswith("_")]
-        expected=879
+        expected=881
         self.assertEqual(len(attrs),expected,"Length of ImageArray dir failed. {}".format(len(attrs)))
 
 
@@ -320,9 +320,10 @@ class ImageFileTest(unittest.TestCase):
         image=ImageFile(path.join(datadir,"kermit.png"))
         i2=image.clone.box(5,_=True)
         self.assertEqual(i2.shape,(469, 349),"Failed to trim box by integer")
-        i2=image.clone.box(0.25,_=True)
+        i2=image.clone.crop(0.25,_=True)
         self.assertEqual(i2.shape,(269, 269),"Failed to trim box by float")
-        i2=image.clone.box([0.1,0.2,0.05,0.1],_=True)
+        i2=image.clone
+        i2.crop([0.1,0.2,0.05,0.1],_=True)
         self.assertEqual(i2.shape,(24, 36),"Failed to trim box by sequence of floats")
         self.assertAlmostEqual(image.aspect,0.7494780793,places=6,msg="Aspect ratio failed" )
         self.assertEqual(image.centre,(239.5, 179.5),"Failed to read image.centre")
@@ -339,7 +340,7 @@ class ImageFileTest(unittest.TestCase):
         else:
             self.AssertTrue(False,"Subtraction of string didn't raise not implemented")
         attrs=[x for x in dir(image) if not x.startswith("_")]
-        expected=889
+        expected=891
         self.assertEqual(len(attrs),expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs)))
         self.assertTrue(image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation")
 
