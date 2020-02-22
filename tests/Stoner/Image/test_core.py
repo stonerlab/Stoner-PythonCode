@@ -318,7 +318,7 @@ class ImageFileTest(unittest.TestCase):
         self.assertTrue(ifi.shape==(3,3)) #check crop is forced to overwrite ifi despite shape change
         datadir=path.join(__home__,"..","sample-data")
         image=ImageFile(path.join(datadir,"kermit.png"))
-        i2=image.clone.box(5,_=True)
+        i2=image.clone.crop(5,_=True)
         self.assertEqual(i2.shape,(469, 349),"Failed to trim box by integer")
         i2=image.clone.crop(0.25,_=True)
         self.assertEqual(i2.shape,(269, 269),"Failed to trim box by float")

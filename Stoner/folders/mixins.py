@@ -3,7 +3,7 @@
 """mixin calsses for :py:class:`Stoner.folders.core.baseFoler`."""
 from __future__ import division
 
-__all__ = ["DiskBasedFolder", "DataMethodsMixin", "PlotMethodsMixin"]
+__all__ = ["DiskBasedFolderMixin", "DataMethodsMixin", "PlotMethodsMixin"]
 
 import os
 import os.path as path
@@ -55,7 +55,7 @@ def _loader(name, loader=None, typ=None, directory=None):
     return typ(loader(filename)), name
 
 
-class DiskBasedFolder:
+class DiskBasedFolderMixin:
     """A Mixin class that implmenets reading metadataObjects from disc.
 
     Attributes:
@@ -75,7 +75,7 @@ class DiskBasedFolder:
         recursive (bool): Specifies whether to search recurisvely in a whole directory tree. Default is True.
 
         flatten (bool): Specify where to present subdirectories as spearate groups in the folder (False) or as a single group (True). Default is False.
-            The :py:meth:`DiskBasedFolder.flatten` method has the equivalent effect and :py:meth:`DiskBasedFolder.unflatten` reverses it.
+            The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect and :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
 
         discard_earlier (bool): IF there are several files with the same filename apart from !#### being appended just before the extension, then discard
             all except the one with the largest value of #### when collecting the list of files.
@@ -104,7 +104,7 @@ class DiskBasedFolder:
     }
 
     def __init__(self, *args, **kargs):
-        """Additional constructor for DiskbasedFolders"""
+        """Additional constructor for DiskBasedFolderMixins"""
 
         _ = self.defaults  # Force the default store to be populated.
         if "directory" in self._default_store and self._default_store["directory"] is None:
@@ -115,7 +115,7 @@ class DiskBasedFolder:
             self._default_store.pop("type")
         flat = kargs.pop("flat", self._default_store.get("flat", False))
         prefetch = kargs.pop("prefetch", self._default_store.get("prefetch", False))
-        super(DiskBasedFolder, self).__init__(*args, **kargs)  # initialise before __clone__ is called in getlist
+        super(DiskBasedFolderMixin, self).__init__(*args, **kargs)  # initialise before __clone__ is called in getlist
         if self.readlist and len(args) > 0 and isinstance(args[0], string_types):
             self.getlist(directory=args[0])
         if flat:
@@ -128,7 +128,7 @@ class DiskBasedFolder:
     @baseFolder.key.getter
     def key(self):
         """Override the parent class *key* to use the *directory* attribute."""
-        k = getattr(super(DiskBasedFolder, self), "key", None)
+        k = getattr(super(DiskBasedFolderMixin, self), "key", None)
         if k is None:
             self.key = self.directory
             return self._key
@@ -195,7 +195,7 @@ class DiskBasedFolder:
             if list(self.basenames).count(name) == 1:
                 return self.__names__()[list(self.basenames).index(name)]
 
-        return super(DiskBasedFolder, self).__lookup__(name)
+        return super(DiskBasedFolderMixin, self).__lookup__(name)
 
     def __getter__(self, name, instantiate=True):
         """Loads the specified name from a file on disk.
@@ -214,7 +214,7 @@ class DiskBasedFolder:
         """
         assertion(name is not None, "Cannot get an anonympus entry!")
         try:  # Try the parent methods first
-            return super(DiskBasedFolder, self).__getter__(name, instantiate=instantiate)
+            return super(DiskBasedFolderMixin, self).__getter__(name, instantiate=instantiate)
         except (AttributeError, IndexError, KeyError):
             pass
         # Find a filename and load
@@ -299,7 +299,7 @@ class DiskBasedFolder:
             )
 
     def fetch(self):
-        """Preload the contents of the DiskbasedFolder.
+        """Preload the contents of the DiskBasedFolderMixin.
 
         With multiprocess enabled this will parallel load the contents of the folder into memory.
         """
@@ -695,7 +695,7 @@ class PlotMethodsMixin:
         return ret
 
 
-class DataFolder(DataMethodsMixin, DiskBasedFolder, baseFolder):
+class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
 
     """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
 

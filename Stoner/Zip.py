@@ -15,7 +15,7 @@ import fnmatch
 
 from .compat import string_types, bytes2str, str2bytes, get_filedialog, _pattern_type
 from .Core import DataFile, StonerLoadError
-from .Folders import DiskBasedFolder
+from .Folders import DiskBasedFolderMixin
 from .folders.core import baseFolder
 from .folders.utils import pathjoin
 
@@ -498,7 +498,7 @@ class ZipFolderMixin:
         return f.filename
 
 
-class ZipFolder(ZipFolderMixin, DiskBasedFolder, baseFolder):
+class ZipFolder(ZipFolderMixin, DiskBasedFolderMixin, baseFolder):
 
     """A sub class of DataFile that sores itself in a zip file.
 

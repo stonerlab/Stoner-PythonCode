@@ -8,7 +8,7 @@ from Stoner.compat import string_types, int_types
 from .core import ImageArray, ImageFile
 from .folders import ImageFolder, ImageFolderMixin
 from Stoner.Core import regexpDict, typeHintedDict
-from Stoner.Folders import DiskBasedFolder, baseFolder
+from Stoner.Folders import DiskBasedFolderMixin, baseFolder
 
 IM_SIZE = (512, 672)  # Standard Kerr image size
 AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped
@@ -119,7 +119,7 @@ class ImageStackMixin:
         """
         try:
             idx = self.__lookup__(name)
-        except KeyError:  # If we don't seem to have the name then see if we can fall back to something else like a DiskBasedFolder
+        except KeyError:  # If we don't seem to have the name then see if we can fall back to something else like a DiskBasedFolderMixin
             return super(ImageStackMixin, self).__getter__(name, instantiate)
         if isinstance(instantiate, bool) and not instantiate:
             return self.__names__()[idx]
@@ -389,7 +389,7 @@ class StackAnalysisMixin:
             self.clip_intensity()
 
 
-class ImageStack(StackAnalysisMixin, ImageStackMixin, ImageFolderMixin, DiskBasedFolder, baseFolder):
+class ImageStack(StackAnalysisMixin, ImageStackMixin, ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
 
     """An alternative implementation of an image stack based on baseFolder."""
 

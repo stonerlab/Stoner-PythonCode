@@ -444,10 +444,10 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50, box=None, do_shi
     """
     if box is None:
         box = im.max_box
-    cim = im.crop_image(box=box)
+    cim = im.crop(box=box)
 
     refed = ImageArray(ref, get_metadata=False)
-    refed = refed.crop_image(box=box)
+    refed = refed.crop(box=box)
     refed = refed.filter_image(sigma=1)
     refed = refed > refed.threshold_otsu()
     refed = refed.corner_fast(threshold=threshold)
@@ -632,7 +632,7 @@ def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None, mode="clip")
     """
     if box is None:
         box = im.max_box
-    cim = im.crop_image(box=box)
+    cim = im.crop(box=box)
     (vertl, horizl) = cim.shape
     p_horiz = 0
     p_vert = 0
@@ -988,7 +988,7 @@ def threshold_minmax(im, threshmin=0.1, threshmax=0.9):
 
     (ie True if value is between threshmin and threshmax)
     """
-    im = im.convert_float()
+    im = im.convert(np.float)
     return np.logical_and(im > threshmin, im < threshmax)
 
 

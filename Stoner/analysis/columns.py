@@ -4,7 +4,7 @@
 Channel column operations functions for analysis code.
 """
 
-__all__ = ["ColumnOps"]
+__all__ = ["ColumnOpsMixin"]
 
 import numpy as np
 
@@ -12,7 +12,7 @@ from Stoner.tools import isiterable, all_type
 from Stoner.compat import index_types
 
 
-class ColumnOps:
+class ColumnOpsMixin:
 
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional stats methods."""
 

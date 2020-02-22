@@ -4,7 +4,7 @@
 Feature Finding functions for analysis code.
 """
 
-__all__ = ["FeatureOps"]
+__all__ = ["FeatureOpsMixin"]
 
 import numpy as np
 from scipy.signal import find_peaks
@@ -15,7 +15,7 @@ from Stoner.core.exceptions import assertion
 from .utils import threshold
 
 
-class FeatureOps:
+class FeatureOpsMixin:
 
     """Mixin to provide additional functions to support finding features in a dataset."""
 

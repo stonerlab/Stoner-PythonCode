@@ -4,7 +4,7 @@
 Filtering and smoothing functions for analysis code.
 """
 
-__all__ = ["FilteringOps"]
+__all__ = ["FilteringOpsMixin"]
 
 from copy import deepcopy as copy
 import numpy as np
@@ -19,7 +19,7 @@ from Stoner.compat import int_types, string_types, get_func_params
 from .utils import outlier as _outlier, _twoD_fit, GetAffineTransform
 
 
-class FilteringOps:
+class FilteringOpsMixin:
 
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional filtering snd
     smoothing methods."""

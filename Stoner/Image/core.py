@@ -738,7 +738,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                             Is rounded to the nearest integer and used a pixel cordinate.
                         -   None:
                             The extent of the image is used.
-                    
+
         Example:
             a=ImageFile(np.arange(12).reshape(3,4))
 
@@ -964,25 +964,25 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     ############################################################################################################
     ############## Depricated Methods ##########################################################################
 
-    def box(self, *args, **kargs):
-        """Alias for :py:meth:`ImageArray.crop`"""
-        warnings.warn("The box method was replaced by crop and will raise and error in future versions.")
-        return self.crop(*args, **kargs)
+    # def box(self, *args, **kargs):
+    #     """Alias for :py:meth:`ImageArray.crop`"""
+    #     warnings.warn("The box method was replaced by crop and will raise and error in future versions.")
+    #     return self.crop(*args, **kargs)
 
-    def crop_image(self, *args, **kargs):
-        """Back compatability alias for :py:meth:`ImageArray.crop`"""
-        warnings.warn("The crop_image method was replaced by crop and will raise and error in future versions.")
-        return self.crop(*args, **kargs)
+    # def crop_image(self, *args, **kargs):
+    #     """Back compatability alias for :py:meth:`ImageArray.crop`"""
+    #     warnings.warn("The crop_image method was replaced by crop and will raise and error in future versions.")
+    #     return self.crop(*args, **kargs)
 
-    def convert_float(self, clip_neg=True):
-        """Deproicated compatability. :py:meth:`ImageArray.asfloat` preferred"""
-        warnings.warn("The convert_float method was replaced by asfloat and will raise and error in future versions.")
-        return self.asfloat(normalise=False, clip_negative=clip_neg)
+    # def convert_float(self, clip_neg=True):
+    #     """Deproicated compatability. :py:meth:`ImageArray.asfloat` preferred"""
+    #     warnings.warn("The convert_float method was replaced by asfloat and will raise and error in future versions.")
+    #     return self.asfloat(normalise=False, clip_negative=clip_neg)
 
-    def convert_int(self):
-        """Depricated compatability meothd. :py:meth:`ImageArray.asint` preferred"""
-        warnings.warn("The convert_int method was replaced by asint and will raise and error in future versions.")
-        return self.asint()
+    # def convert_int(self):
+    #     """Depricated compatability meothd. :py:meth:`ImageArray.asint` preferred"""
+    #     warnings.warn("The convert_int method was replaced by asint and will raise and error in future versions.")
+    #     return self.asint()
 
 
 class ImageFile(metadataObject):

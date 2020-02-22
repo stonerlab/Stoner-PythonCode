@@ -6,10 +6,10 @@ __all__ = ["DataFolder", "PlotFolder"]
 
 from .folders.core import baseFolder
 from Stoner.tools import make_Data
-from .folders.mixins import DiskBasedFolder, DataMethodsMixin, PlotMethodsMixin
+from .folders.mixins import DiskBasedFolderMixin, DataMethodsMixin, PlotMethodsMixin
 
 
-class DataFolder(DataMethodsMixin, DiskBasedFolder, baseFolder):
+class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
 
     """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
 

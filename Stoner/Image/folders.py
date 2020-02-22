@@ -3,7 +3,7 @@
 __all__ = ["_generator", "ImageFolderMixin", "ImageFolder"]
 from warnings import warn
 from .core import ImageArray
-from ..Folders import DiskBasedFolder, baseFolder
+from ..Folders import DiskBasedFolderMixin, baseFolder
 from ..compat import string_types, int_types
 from . import ImageFile
 
@@ -115,8 +115,8 @@ class ImageFolderMixin:
             Specifies whether to search recurisvely in a whole directory tree. Default is True.
         flatten (bool):
             Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
-            (True). Default is False. The :py:meth:`DiskBasedFolder.flatten` method has the equivalent effect and
-            :py:meth:`DiskBasedFolder.unflatten` reverses it.
+            (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect and
+            :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
         directory (str):
             The root directory on disc for the folder - by default this is the current working directory.
         multifile (boo):
@@ -410,7 +410,7 @@ class ImageFolderMixin:
         return cv
 
 
-class ImageFolder(ImageFolderMixin, DiskBasedFolder, baseFolder):
+class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
 
     """Folder object for images.
 
@@ -431,7 +431,7 @@ class ImageFolder(ImageFolderMixin, DiskBasedFolder, baseFolder):
         recursive (bool): Specifies whether to search recurisvely in a whole directory tree. Default is True.
 
         flatten (bool): Specify where to present subdirectories as spearate groups in the folder (False) or as a single group (True). Default is False.
-            The :py:meth:`DiskBasedFolder.flatten` method has the equivalent effect and :py:meth:`DiskBasedFolder.unflatten` reverses it.
+            The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect and :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
 
         directory (str): The root directory on disc for the folder - by default this is the current working directory.
 
@@ -464,8 +464,8 @@ class ImageFolder(ImageFolderMixin, DiskBasedFolder, baseFolder):
             Specifies whether to search recurisvely in a whole directory tree. Default is True.
         flatten (bool):
             Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
-            (True). Default is False. The :py:meth:`DiskBasedFolder.flatten` method has the equivalent effect and
-            :py:meth:`DiskBasedFolder.unflatten` reverses it.
+            (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect and
+            :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
         directory (str):
             The root directory on disc for the folder - by default this is the current working directory.
         multifile (boo):

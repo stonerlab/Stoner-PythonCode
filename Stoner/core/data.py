@@ -7,9 +7,9 @@ The main Data Class definition
 from sys import float_info
 from Stoner.Analysis import AnalysisMixin
 from Stoner.analysis.fitting.mixins import FittingMixin
-from Stoner.analysis.columns import ColumnOps
-from Stoner.analysis.filtering import FilteringOps
-from Stoner.analysis.features import FeatureOps
+from Stoner.analysis.columns import ColumnOpsMixin
+from Stoner.analysis.filtering import FilteringOpsMixin
+from Stoner.analysis.features import FeatureOpsMixin
 from Stoner.plot import PlotMixin
 from Stoner.Core import DataFile
 
@@ -21,7 +21,7 @@ import Stoner.Zip  # NOQA pylint: disable=W0611
 from Stoner.tools import format_error
 
 
-class Data(AnalysisMixin, FittingMixin, ColumnOps, FilteringOps, FeatureOps, PlotMixin, DataFile):
+class Data(AnalysisMixin, FittingMixin, ColumnOpsMixin, FilteringOpsMixin, FeatureOpsMixin, PlotMixin, DataFile):
 
     """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and
     :py:class:`Stoner.plot.PlotMixin`

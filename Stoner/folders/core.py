@@ -680,7 +680,7 @@ class baseFolder(MutableSequence):
                 Then a new :py:class:`baseFolder` is constructed by cloning he current one, but without
                 any groups or files. The new :py:class:`baseFolder` is populated with entries
                 from the current folder according tot he usual slice definition. This has the advantage
-                of not loading the objects in the folder into memory if a :py:class:`DiskBasedFolder` is
+                of not loading the objects in the folder into memory if a :py:class:`DiskBasedFolderMixin` is
                 used.
         """
         if name in self.groups and not isinstance(name, int_types):
