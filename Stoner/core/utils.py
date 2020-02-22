@@ -19,6 +19,7 @@ import re
 from collections import Mapping
 import numpy as np
 from Stoner.compat import index_types, int_types
+from SAtoner.tools import all_type
 
 
 def add_core(other, newdata):

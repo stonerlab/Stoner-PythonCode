@@ -1,23 +1,19 @@
 # -*- coding: utf-8 -*-
 
 """
-
-Created on Wed Feb  7 16:53:40 2018
-
-
-
-@author: phygbu
+Simple code to fit critical temperatures in R(T) data.
 
 """
-
-
-from Stoner.Fit import linear
+from Stoner import Data
+from Stoner.analysis.fitting.models.generic import linear
 import numpy as np
 
-filename = "../sample-data/6221-Lockin-DAQ Temperature Control !0001.txt"
+filename = (
+    "../sample-data/6221-Lockin-DAQ Temperature Control -30.0Deg 0.004T.txt"
+)
 
 t_col = ": T2"  # Temperature column label
-r_cols = ("Sample 4::R", "Sample 7::R")  # Resistance Column Labels
+r_cols = ("Nb::R", "YIG-Nb-Co::R")  # Resistance Column Labels
 iterator = "iterator"  # Temperature ramp iteration column label
 threshold = 0.85  # Fraction of transition to fit to
 
@@ -31,11 +27,13 @@ fldr = data.split(iterator)
 
 result = Data()
 for data in fldr:  # For each iteration ramp in the Tc data
+    if len(data) == 0:
+        continue
     row = [data.mean(iterator)]
     data.figure(figsize=(8, 4))
     for i, r_col in enumerate(r_cols):
         data.setas(x=t_col, y=r_col)
-        data.del_rows(isnan(data.y))
+        data.del_rows(~np.isnan(data.y))
 
         # Normalise data on y axis between +/- 1
         data.normalise(base=(-1.0, 1.0), replace=True)
@@ -55,8 +53,8 @@ for data in fldr:  # For each iteration ramp in the Tc data
         data.setas[-1] = "y"
         data.subplot(1, len(r_cols), i + 1)
         data.plot(fmt=["k.", "r-"])
-        data.annotate_fit(linear, x=-1.0, y=7.3, fontsize="small")
-        data.title = "Ramp {}".format(data[iterator][0])
+        data.annotate_fit(linear, x=0.1, y=0.1, fontsize="small")
+        data.title = f"Ramp {row[0]}"
         row.extend([data["linear:intercept"], data["linear:intercept err"]])
     data.tight_layout()
     result += np.array(row)

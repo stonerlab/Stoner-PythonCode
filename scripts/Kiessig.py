@@ -9,6 +9,7 @@ from Stoner.Fit import Linear
 from Stoner.Util import format_error
 from lmfit.models import ExponentialModel
 import numpy as np
+import sys
 import matplotlib.pyplot as pyplot
 from copy import copy
 
