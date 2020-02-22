@@ -126,14 +126,19 @@ def _strijkers_core(V, omega, delta, P, Z):
 
 
 def strijkers(V, omega, delta, P, Z):
-    """strijkers Model for point-contact Andreev Reflection Spectroscopy.
+    """Strijkers Model for point-contact Andreev Reflection Spectroscopy.
 
     Args:
-        V (array): bias voltages
-        omega (float): Broadening
-        delta (float): SC energy Gap
-        P (float): Interface parameter
-        Z (float): Current spin polarization through contact
+        V (array):
+            bias voltages
+        omega (float):
+            Broadening
+        delta (float):
+            SC energy Gap
+        P (float):
+            Interface parameter
+        Z (float):
+            Current spin polarization through contact
 
     Return:
         Conductance vs bias data.
@@ -278,7 +283,6 @@ def icRN_Clean(d_f, IcRn0, E_x, v_f, d_0):
         Implements
 
         Lmath:`I_cR_N = I_cR_N^0\zfrac{\sin(2E_x (d_f-d_0)/hv_f)}{2E_x(d_f-d_0)/hv_f}`
-
     """
     h = physical_constants["Planck constant in eV s"]
     x = (d_f - d_0) * 1e-9
@@ -310,7 +314,6 @@ def ic_RN_Dirty(d_f, IcRn0, E_x, v_f, d_0, tau, delta, T):
     Notes:
         Implements Eq 18 from F.S. Bergeret, A.F. Volkov, and K.B. Efetov, Phys. Rev. B 64, 134506 (2001).
     """
-
     L = v_f * tau * 1e-9
     hbar = physical_constants["Planck constant over 2 pi"]
     kb = physical_constants["Boltzmann constant"]

@@ -201,11 +201,13 @@ class DiskBasedFolderMixin:
         """Loads the specified name from a file on disk.
 
         Parameters:
-            name (key type): The canonical mapping key to get the dataObject. By default
+            name (key type):
+                The canonical mapping key to get the dataObject. By default
                 the baseFolder class uses a :py:class:`regexpDict` to store objects in.
 
         Keyword Arguments:
-            instatiate (bool): IF True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
+            instatiate (bool):
+                If True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
                 :py:class:`Stoner.Core.Data` object.
 

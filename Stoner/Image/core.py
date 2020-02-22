@@ -501,7 +501,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     @property
     def max_box(self):
-        """return the coordinate extent (xmin,xmax,ymin,ymax)"""
+        """Return the coordinate extent (xmin,xmax,ymin,ymax)."""
         box = (0, self.shape[1], 0, self.shape[0])
         return box
 
@@ -797,7 +797,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return ret
 
     def clip_intensity(self, clip_negative=False, limits=None):
-        """Clip intensity outside the range -1,1 or 0,1
+        """Clip intensity outside the range -1,1 or 0,1.
 
         Keyword Arguments:
             clip_negative(bool):
@@ -1342,7 +1342,7 @@ class ImageFile(metadataObject):
 
         @wraps(workingfunc)
         def gen_func(*args, **kargs):
-            """This will wrap a called method."""
+            """Wrap a called method to capture the result back into the calling object."""
 
             box = kargs.pop("_box", None)
             if len(args) > 0:

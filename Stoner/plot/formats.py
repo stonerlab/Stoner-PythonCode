@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Plot Templates module - contains classes that style plots produced by :class:`.Data`
+"""Plot Templates module - contains classes that style plots produced by :class:`.Data`.
 """
 
 __all__ = [
@@ -112,7 +112,7 @@ class TexEngFormatter(EngFormatter):
     }
 
     def __call__(self, value, pos=None):
-        """Return the value ina  suitable texable format"""
+        """Return the value ina  suitable texable format."""
         if value is None or _np_.isnan(value):
             ret = ""
         elif value != 0.0:
@@ -311,6 +311,7 @@ class DefaultPlotStyle(MutableMapping):
                 raise KeyError("{} is not recognised as part of the template".format(name))
 
     def _allowed_attr(self, x, template=False):
+        """Private method to test if this is a template attribute we can set."""
         return (
             not x.startswith("_")
             and (not template) ^ x.startswith("template_")
@@ -472,7 +473,8 @@ class DefaultPlotStyle(MutableMapping):
         """This method is run when we have an axis to manipulate.
 
         Args:
-            ax (matplotlib axes): The axes to be modified by this function.
+            ax (matplotlib axes):
+                The axes to be modified by this function.
 
         Note:
             In the DefaultPlotStyle class this method is used to set SI units
@@ -502,9 +504,12 @@ class DefaultPlotStyle(MutableMapping):
         """Call all the routines necessary to annotate the axes etc.
 
         Args:
-            ix(integer): Index of current subplot
-            multiple (string): how to handle multiple subplots
-            plot (Stoner.plot.PlotMixin): The PlotMixin boject we're working with
+            ix(integer):
+                Index of current subplot
+            multiple (string):
+                how to handle multiple subplots
+            plot (Stoner.plot.PlotMixin):
+                The PlotMixin boject we're working with
         """
         if multiple in self.subplot_settings:
             if ix == 0:
@@ -538,12 +543,10 @@ class GBPlotStyle(DefaultPlotStyle):
     This is largely an experimental class for trying things out rather than
     for serious plotting.
 
-    Example
+    Example:
         .. plot:: samples/plotstyles/GBStyle.py
             :include-source:
             :outname: gbstyle
-
-
     """
 
     xformatter = TexEngFormatter
@@ -551,7 +554,7 @@ class GBPlotStyle(DefaultPlotStyle):
     stylename = "GBStyle"
 
     def customise_axes(self, ax, plot):
-        """Override the default axis configuration"""
+        """Override the default axis configuration."""
         super(GBPlotStyle, self).customise_axes(ax, plot)
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
@@ -566,11 +569,10 @@ class JTBPlotStyle(DefaultPlotStyle):
 
     """Template class for Joe's Plot settings.
 
-    Example
+    Example:
         .. plot:: samples/plotstyles/JTBStyle.py
             :include-source:
             :outname: jtbstyle
-
     """
 
     show_title = False
@@ -630,8 +632,6 @@ class SketchPlot(DefaultPlotStyle):
         .. plot:: samples/plotstyles/SketchStyle.py
             :include-source:
             :outname: sketchstyle
-
-
     """
 
     stylename = "sketch"
@@ -641,7 +641,7 @@ class SketchPlot(DefaultPlotStyle):
         plt.xkcd()
 
     def customise_axes(self, ax, plot):
-        """Override the default axis configuration"""
+        """Override the default axis configuration."""
         super(SketchPlot, self).customise_axes(ax, plot)
         ax.spines["top"].set_visible(False)
         if len(plot.axes) > 1 and plot.multiple == "y2":
@@ -669,11 +669,14 @@ if SEABORN:  # extra classes if we have seaborn available
         """A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.
 
         Attributes:
-            stylename (str): The seaborn plot stlye to use - darkgrid, whitegrid, dark, white, or ticks
-            context (str): The seaborn plot context for scaling elements - paper,notebook,talk, or poster
-            palette (str): A name of a predefined seaborn palette.
+            stylename (str):
+                The seaborn plot stlye to use - darkgrid, whitegrid, dark, white, or ticks
+            context (str):
+                The seaborn plot context for scaling elements - paper,notebook,talk, or poster
+            palette (str):
+                A name of a predefined seaborn palette.
 
-        Example
+        Example:
             .. plot:: samples/plotstyles/SeabornStyle.py
                 :include-source:
                 :outname: seabornstyle

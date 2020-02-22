@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Sample script for fitting BlochGrueneisen function to a data file
+"""Sample script for fitting BlochGrueneisen function to a data file.
 
 @author: phygbu
 """

@@ -131,8 +131,10 @@ class ImageStackMixin:
         """Stub to setting routine to store a metadataObject.
 
         Parameters:
-            name (string) the named object to write - may be an existing or new name
-            value (metadataObject) the value to store.
+            name (string):
+                the named object to write - may be an existing or new name
+            value (metadataObject):
+                the value to store.
 
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!

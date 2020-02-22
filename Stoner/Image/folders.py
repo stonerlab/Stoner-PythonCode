@@ -13,7 +13,6 @@ import numpy as np
 from importlib import import_module
 from os import path
 from json import loads, dumps
-from importlib import import_module
 from PIL.TiffImagePlugin import ImageFileDirectory_v2, Image
 
 
@@ -417,55 +416,25 @@ class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
     ImageFolder is designed to behave pretty much like DataFolder but with
     functions and loaders appropriate for image based files.
 
-        Attributes:
-        type (:py:class:`Stoner.Image.core.ImageArray`) the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Cire.Data`)
-
-        extra_args (dict): Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
-
-        pattern (str or regexp): A filename globbing pattern that matches the contents of the folder. If a regular expression is provided then
-            any named groups are used to construct additional metadata entryies from the filename. Default is *.* to match all files with an extension.
-
-        read_means (bool): IF true, additional metatdata keys are added that return the mean value of each column of the data. This can hep in
-            grouping files where one column of data contains a constant value for the experimental state. Default is False
-
-        recursive (bool): Specifies whether to search recurisvely in a whole directory tree. Default is True.
-
-        flatten (bool): Specify where to present subdirectories as spearate groups in the folder (False) or as a single group (True). Default is False.
-            The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect and :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
-
-        directory (str): The root directory on disc for the folder - by default this is the current working directory.
-
-        multifile (boo): Whether to select individual files manually that are not (necessarily) in  a common directory structure.
-
-        readlist (bool): Whether to read the directory immediately on creation. Default is True
-    """
-
-    pass
-
-    """Mixin to provide a folder object for images.
-
-    ImageFolderMixin is designed to behave pretty much like DataFolder but with
-    functions and loaders appropriate for image based files.
-
     Attributes:
         type (:py:class:`Stoner.Image.core.ImageArray`):
             the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Cire.Data`)
         extra_args (dict):
             Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
         pattern (str or regexp):
-            A filename globbing pattern that matches the contents of the folder. If a regular expression is
-            provided then any named groups are used to construct additional metadata entryies from the filename.
-            Default is *.* to match all files with an extension.
+            A filename globbing pattern that matches the contents of the folder. If a regular expression is provided
+            then any named groups are used to construct additional metadata entryies from the filename. Default is *.*
+            to match all files with an extension.
         read_means (bool):
             If true, additional metatdata keys are added that return the mean value of each column of the data.
-            This can hep in grouping files where one column of data contains a constant value for the
-            experimental state. Default is False
+            This can hep in grouping files where one column of data contains a constant value for the experimental
+            state. Default is False
         recursive (bool):
             Specifies whether to search recurisvely in a whole directory tree. Default is True.
         flatten (bool):
             Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
-            (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect and
-            :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
+            (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect
+            and :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
         directory (str):
             The root directory on disc for the folder - by default this is the current working directory.
         multifile (boo):

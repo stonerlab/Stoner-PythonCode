@@ -118,7 +118,7 @@ def fowlerNordheim(V, A, phi, d):
 
 
 def tersoffHammann(V, A):
-    """TersoffHamman model for tunnelling through STM tip.
+    """Tersoff-Hamman model for tunnelling through STM tip.
 
     Args:
         V (array): bias voltage
@@ -232,7 +232,7 @@ class FowlerNordheim(Model):
 
 class TersoffHammann(Model):
 
-    """TersoffHamman model for tunnelling through STM tip.
+    """Tersoff-Hamman model for tunnelling through STM tip.
 
     Args:
         V (array): bias voltage

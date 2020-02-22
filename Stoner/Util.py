@@ -100,7 +100,7 @@ def _up_down(data):
 
 
 def split_up_down(data, col=None, folder=None):
-    """Splits the DataFile data into several files where the column *col* is either rising or falling
+    """Splits the DataFile data into several files where the column *col* is either rising or falling.
 
     Args:
         data (:py:class:`Stoner.Core.DataFile`):

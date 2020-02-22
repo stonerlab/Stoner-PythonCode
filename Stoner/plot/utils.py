@@ -64,18 +64,28 @@ def errorfill(
     """Plot data with errors marked by a filled region.
 
     Args:
-        x, y (arrays): Coordinates of data.
-        yerr, xerr ([scalar | N, (N, 1), or (2, N) array]): Error for the input data.
-            - If scalar, then filled region spans `y +/- yerr` or `x +/- xerr`.
-        color (Matplotlib color): Color of line and fill region.
-        ls (Matplotlib line style): Style of the line
-        lw (Matplotlib line width, float): Width of the line in points
-        alpha (float): Opacity used for plotting.
-        alpha_fill (float): Opacity of filled region. Note: the actual opacity of the fill is
+        x, y (arrays):
+            Coordinates of data.
+        yerr, xerr ([scalar | N, (N, 1), or (2, N) array]):
+            Error for the input data:
+                -   If scalar, then filled region spans `y +/- yerr` or `x +/- xerr`.
+        color (Matplotlib color):
+            Color of line and fill region.
+        ls (Matplotlib line style):
+            Style of the line
+        lw (Matplotlib line width, float):
+            Width of the line in points
+        alpha (float):
+            Opacity used for plotting.
+        alpha_fill (float):
+            Opacity of filled region. Note: the actual opacity of the fill is
             `alpha * alpha_fill`.
-        label (str): Label for line.
-        label_fill (str): Label for filled region.
-        ax (Axis instance): The plot is drawn on axis `ax`. If `None` the current axis is used
+        label (str):
+            Label for line.
+        label_fill (str):
+            Label for filled region.
+        ax (Axis instance):
+            The plot is drawn on axis `ax`. If `None` the current axis is used
     """
     ax = ax if ax is not None else plt.gca()
 
@@ -164,9 +174,12 @@ def hsl2rgb(h, s, l):
     """Converts from hsl colourspace to rgb colour space with numpy arrays for speed.
 
     Args:
-        h (array): Hue value
-        s (array): Saturation value
-        l (array): Luminence value
+        h (array):
+            Hue value
+        s (array):
+            Saturation value
+        l (array):
+            Luminence value
 
     Returns:
         2D array (Mx3) of unsigned 8bit integers
@@ -215,7 +228,6 @@ def joy_division(x, y, z, **kargs):
         None
 
     Constructurs a mono-chromatic waterfall plot in the style of the Joy Division album cover of Pulsar signals.
-
     """
     ax = kargs.pop("ax", plt.gca())
     y_shift = kargs.pop("y_shift", (z.max() - z.min()) / np.unique(y).size)
