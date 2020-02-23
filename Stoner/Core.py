@@ -19,7 +19,6 @@ import copy
 import os.path as path
 import inspect as _inspect_
 from textwrap import TextWrapper
-from collections import OrderedDict
 from traceback import format_exc
 import csv
 
@@ -444,7 +443,7 @@ class DataFile(metadataObject):
     @property
     def dict_records(self):
         """Return the data as a dictionary of single columns with column headers for the keys."""
-        return np.array([OrderedDict(zip(self.column_headers, r)) for r in self.rows()])
+        return np.array([dict(zip(self.column_headers, r)) for r in self.rows()])
 
     @property
     def dims(self):
@@ -572,13 +571,13 @@ class DataFile(metadataObject):
         """Return a list of all in memory subclasses of this DataFile."""
         if cls._subclasses is None or cls._subclasses[0] != len(DataFile.__subclasses__()):
             subclasses = {x: (x.priority, x.__name__) for x in itersubclasses(DataFile)}
-            ret = OrderedDict()
+            ret = dict()
             ret["DataFile"] = DataFile
             for klass, _ in sorted(list(subclasses.items()), key=lambda c: c[1]):
                 ret[klass.__name__] = klass
             cls._subclasses = (len(DataFile.__subclasses__()), ret)
         else:
-            ret = cls._subclasses[1]
+            ret = dict(cls._subclasses[1])
         return ret
 
     @property
@@ -2776,7 +2775,7 @@ class DataFile(metadataObject):
         else:
             args = list(args)
             xcol = args.pop(0)
-        data = OrderedDict()
+        data = dict()
 
         if isinstance(xcol, index_types):
             for val in np.unique(self.column(xcol)):

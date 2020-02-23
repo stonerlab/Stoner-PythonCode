@@ -18,12 +18,12 @@ import os
 import re
 import string
 import fnmatch
+from collections import OrderedDict
 
 from numpy import array
 from multiprocessing.pool import ThreadPool
 import multiprocess as multiprocessing
 
-from collections import OrderedDict
 from Stoner.compat import string_types, _pattern_type
 from Stoner.tools import get_option
 

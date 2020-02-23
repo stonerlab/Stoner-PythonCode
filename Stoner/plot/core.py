@@ -7,6 +7,7 @@ Classes:
     PlotMixin:
         A class that uses matplotlib to plot data
 """
+# pylint: disable=C0413
 from __future__ import division
 
 __all__ = ["PlotMixin"]
