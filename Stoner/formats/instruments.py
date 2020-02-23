@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Implement DataFile like classes to represent Instrument Manufacturer's File Formats'
-"""
+"""Implement DataFile like classes to represent Instrument Manufacturer's File Formats'."""
 __all__ = ["LSTemperatureFile", "QDFile", "RigakuFile", "SPCFile", "XRDFile"]
 
 # Standard Library imports
@@ -82,13 +80,15 @@ class LSTemperatureFile(Core.DataFile):
         return self
 
     def save(self, filename=None, **kargs):
-        """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
+        """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output).
 
         Args:
-            filename (string): Filename to save as (using the same rules as for the load routines)
+            filename (string):
+                Filename to save as (using the same rules as for the load routines)
 
         Keyword Arguments:
-            deliminator (string): Record deliniminator (defaults to a comma)
+            deliminator (string):
+                Record deliniminator (defaults to a comma)
 
         Returns:
             A copy of itself.
@@ -148,7 +148,7 @@ class LSTemperatureFile(Core.DataFile):
 
 class QDFile(Core.DataFile):
 
-    """Extends Core.DataFile to load files from Quantum Design Systems - including PPMS, MPMS and SQUID-VSM"""
+    """Extends Core.DataFile to load files from Quantum Design Systems - including PPMS, MPMS and SQUID-VSM."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
@@ -163,8 +163,8 @@ class QDFile(Core.DataFile):
         """QD system file loader routine.
 
         Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
+            filename (string or bool):
+                File to load. If None then the existing filename is used, if False, then a file dialog will be used.
 
         Returns:
             A copy of the itself after loading the data.
@@ -240,7 +240,7 @@ class QDFile(Core.DataFile):
 
 class RigakuFile(Core.DataFile):
 
-    """Loads a .ras file as produced by Rigaku X-ray diffractormeters"""
+    """Loads a .ras file as produced by Rigaku X-ray diffractormeters."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
@@ -252,11 +252,11 @@ class RigakuFile(Core.DataFile):
     patterns = ["*.ras"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
-        """Reads an Rigaku ras file including handling the metadata nicely
+        """Reads an Rigaku ras file including handling the metadata nicely.
 
         Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
+            filename (string or bool):
+                File to load. If None then the existing filename is used, if False, then a file dialog will be used.
 
         Returns:
             A copy of the itself after loading the data.
@@ -383,7 +383,7 @@ class RigakuFile(Core.DataFile):
 
 class SPCFile(Core.DataFile):
 
-    """Extends Core.DataFile to load SPC files from Raman"""
+    """Extends Core.DataFile to load SPC files from Raman."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
@@ -480,11 +480,11 @@ class SPCFile(Core.DataFile):
                 self._header[key] = value
 
     def _load(self, filename=None, *args, **kargs):
-        """Reads a .scf file produced by the Renishaw Raman system (amongs others)
+        """Reads a .scf file produced by the Renishaw Raman system (amongs others).
 
         Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
+            filename (string or bool):
+                File to load. If None then the existing filename is used, if False, then a file dialog will be used.
 
         Returns:
             A copy of the itself after loading the data.
@@ -635,7 +635,8 @@ class SPCFile(Core.DataFile):
                     self._read_loginfo(f)
             # Ok now build the Stoner.Core.DataFile instance to return
             self.data = data
-            # The next bit generates the metadata. We don't just copy the metadata because we need to figure out the typehints first - hence the loop
+            # The next bit generates the metadata. We don't just copy the metadata because we need to figure out
+            # the typehints first - hence the loop
             # here to call Core.DataFile.__setitem()
             for x in self._header:
                 self[x] = self._header[x]
@@ -647,7 +648,7 @@ class SPCFile(Core.DataFile):
 
 class VSMFile(Core.DataFile):
 
-    """Extends Core.DataFile to open VSM Files"""
+    """Extends Core.DataFile to open VSM Files."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
@@ -659,13 +660,16 @@ class VSMFile(Core.DataFile):
     patterns = ["*.fld"]  # Recognised filename patterns
 
     def __parse_VSM(self, header_line=3, data_line=3, header_delim=","):
-        """An intrernal function for parsing deliminated data without a leading column of metadata.copy
+        """An intrernal function for parsing deliminated data without a leading column of metadata.copy.
 
         Keyword Arguments:
-            header_line (int): The line in the file that contains the column headers.
-                If None, then column headers are auotmatically generated.
-            data_line (int): The line on which the data starts
-            header_delim (strong): The delimiter used for separating header values
+            header_line (int):
+                The line in the file that contains the column headers. If None, then column headers are auotmatically
+                generated.
+            data_line (int):
+                The line on which the data starts
+            header_delim (strong):
+                The delimiter used for separating header values
 
         Returns:
             Nothing, but modifies the current object.
@@ -677,8 +681,9 @@ class VSMFile(Core.DataFile):
             with io.open(self.filename, errors="ignore", encoding="utf-8") as f:
                 for i, line in enumerate(f):
                     if i == 0:
-                        self["Timestamp"] = line.strip()
-                        check = datetime.strptime(self["Timestamp"], "%a %b %d %H:%M:%S %Y")
+                        first = line.strip()
+                        self["Timestamp"] = first
+                        check = datetime.strptime(first, "%a %b %d %H:%M:%S %Y")
                         if check is None:
                             raise Core.StonerLoadError("Not a VSM file ?")
                     elif i == 1:
@@ -714,8 +719,8 @@ class VSMFile(Core.DataFile):
         """VSM file loader routine.
 
         Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
+            filename (string or bool):
+                File to load. If None then the existing filename is used, if False, then a file dialog will be used.
 
         Returns:
             A copy of the itself after loading the data.
@@ -730,7 +735,7 @@ class VSMFile(Core.DataFile):
 
 class XRDFile(Core.DataFile):
 
-    """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer"""
+    """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
@@ -747,11 +752,11 @@ class XRDFile(Core.DataFile):
         self._public_attrs = {"four_bounce": bool}
 
     def _load(self, filename=None, *args, **kargs):
-        """Reads an XRD Core.DataFile as produced by the Brucker diffractometer
+        """Reads an XRD Core.DataFile as produced by the Brucker diffractometer.
 
         Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
+            filename (string or bool):
+                File to load. If None then the existing filename is used, if False, then a file dialog will be used.
 
         Returns:
             A copy of the itself after loading the data.
@@ -779,9 +784,9 @@ class XRDFile(Core.DataFile):
                     elif section == "Data":  # Data section contains the business but has a redundant first line
                         f.readline()
                     for line in f:  # Now start reading lines in this section...
-                        if (
-                            line.strip() == ""
-                        ):  # A blank line marks the end of the section, so go back to the outer loop which will handle a new section
+                        if line.strip() == "":
+                            # A blank line marks the end of the section, so go back to the outer loop which will
+                            # handle a new section
                             break
                         elif section == "Data":  # In the Data section read lines of data value,vale
                             parts = line.split(",")
@@ -793,7 +798,8 @@ class XRDFile(Core.DataFile):
                             parts = line.split("=")
                             key = parts[0].strip()
                             data = parts[1].strip()
-                            # Keynames in main metadata are section:key - use theCore.DataFile magic to do type determination
+                            # Keynames in main metadata are section:key - use theCore.DataFile magic to do type
+                            # determination
                             self[section + ":" + key] = string_to_type(data)
             column_headers = ["Angle", "Counts"]  # Assume the columns were Angles and Counts
 
@@ -806,7 +812,7 @@ class XRDFile(Core.DataFile):
         return self
 
     def to_Q(self, l=1.540593):
-        """Adds an additional function to covert an angualr scale to momentum transfer
+        """Adds an additional function to covert an angualr scale to momentum transfer.
 
         returns a copy of itself.
         """

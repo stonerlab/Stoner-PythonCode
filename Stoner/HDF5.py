@@ -98,21 +98,7 @@ def _open_filename(filename):
         else:
             path.join(filename, parts.pop(0))
 
-    with open(filename, "rb") as sniff:  # Some code to manaully look for the HDF5 format magic numbers
-        sniff.seek(0, 2)
-        size = sniff.tell()
-        sniff.seek(0)
-        blk = sniff.read(8)
-        if not blk == b"\x89HDF\r\n\x1a\n":
-            c = 0
-            while sniff.tell() < size and len(blk) == 8:
-                sniff.seek(512 * 2 ** c)
-                c += 1
-                blk = sniff.read(8)
-                if blk == b"\x89HDF\r\n\x1a\n":
-                    break
-            else:
-                raise StonerLoadError("Couldn't find the HD5 format singature block")
+    confirm_hdf5(filename)
     try:
         f = h5py.File(filename, "r+")
         for grp in group.split("/"):
@@ -130,8 +116,10 @@ class HDF5File(DataFile):
     """A sub class of DataFile that sores itself in a HDF5File or group.
 
     Args:
-        args (tuple): Supplied arguments, only recognises one though !
-        kargs (dict): Dictionary of keyword arguments
+        args (tuple):
+            Supplied arguments, only recognises one though !
+        kargs (dict):
+            Dictionary of keyword arguments
 
     If the first non-keyword arguement is not an h5py File or Group then
     initialises with a blank parent constructor and then loads data, otherwise,
@@ -168,10 +156,12 @@ class HDF5File(DataFile):
         """Loads data from a hdf5 file
 
         Args:
-            h5file (string or h5py.Group): Either a string or an h5py Group object to load data from
+            h5file (string or h5py.Group):
+                Either a string or an h5py Group object to load data from
 
         Returns:
-            itself after having loaded the data
+            self:
+                This object after having loaded the data
         """
         if filename is None or not filename:
             self.get_filename("r")
@@ -262,12 +252,14 @@ class HDF5File(DataFile):
         return self
 
     def save(self, filename=None, **kargs):
-        """Writes the current object into  an hdf5 file or group within a file in afashion that is compatible with being loaded in again.
+        """Writes the current object into  an hdf5 file or group within a file.
+
+        The data is written in afashion that is compatible with being loaded in again.
 
         Args:
-            filename (string or h5py.Group): Either a string, of h5py.File or h5py.Group object into which
-                to save the file. If this is a string, the corresponding file is opened for
-                writing, written to and save again.
+            filename (string or h5py.Group):
+                Either a string, of h5py.File or h5py.Group object into which to save the file. If this is a string,
+                the corresponding file is opened for writing, written to and save again.
 
         Returns
             A copy of the object
@@ -275,12 +267,14 @@ class HDF5File(DataFile):
         return self.to_HDF(filename, **kargs)  # Just a pass through to our own to_HDF method
 
     def to_HDF(self, filename=None, **kargs):
-        """Writes the current object into  an hdf5 file or group within a file in afashion that is compatible with being loaded in again.
+        """Writes the current object into  an hdf5 file or group within a file.
+
+        Writes the data in afashion that is compatible with being loaded in again.
 
         Args:
-            filename (string or h5py.Group): Either a string, of h5py.File or h5py.Group object into which
-                to save the file. If this is a string, the corresponding file is opened for
-                writing, written to and save again.
+            filename (string or h5py.Group):
+                Either a string, of h5py.File or h5py.Group object into which to save the file. If this is a string,
+                the corresponding file is opened for writing, written to and save again.
 
         Returns
             A copy of the object
@@ -341,8 +335,8 @@ class HGXFile(DataFile):
         """GenX HDF file loader routine.
 
         Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
+            filename (string or bool):
+                File to load. If None then the existing filename is used, if False, then a file dialog will be used.
 
         Returns:
             A copy of the itself after loading the data.
@@ -427,12 +421,12 @@ class HGXFile(DataFile):
 
 class HDF5FolderMixin:
 
-    """A mixin class for :py:class:`Stoner.Folders.DataFolder` that provides a method to load and save data from a single HDF5 file with groups.
+    """Provides a method to load and save data from a single HDF5 file with groups.
 
     See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.
 
-    Datalayout consistns of sub-groups that are either instances of HDF5Files (i.e. have a type attribute that contains 'HDF5File')
-    or are themsleves HDF5Folder instances (with a type attribute that reads 'HDF5Folder').
+    Datalayout consistns of sub-groups that are either instances of HDF5Files (i.e. have a type attribute that
+    contains 'HDF5File') or are themsleves HDF5Folder instances (with a type attribute that reads 'HDF5Folder').
     """
 
     def __init__(self, *args, **kargs):
@@ -488,11 +482,13 @@ class HDF5FolderMixin:
         return tmp
 
     def _dialog(self, message="Select Folder", new_directory=True, mode="r+"):
-        """Creates a file dialog box for working with
+        """Creates a file dialog box for working with.
 
         Args:
-            message (string): Message to display in dialog
-            new_file (bool): True if allowed to create new directory
+            message (string):
+                Message to display in dialog
+            new_file (bool):
+                True if allowed to create new directory
 
         Returns:
             A directory to be used for the file operation.
@@ -536,7 +532,7 @@ class HDF5FolderMixin:
             raise IOError("HDF5 File not open!")
 
     def getlist(self, recursive=None, directory=None, flatten=False):
-        """Reads the HDF5 File to construct a list of file HDF5File objects"""
+        """Reads the HDF5 File to construct a list of file HDF5File objects."""
         if recursive is None:
             recursive = self.recursive
         self.files = []
@@ -575,7 +571,8 @@ class HDF5FolderMixin:
         """Saves a load of files to a single HDF5 file, creating groups as it goes.
 
         Keyword Arguments:
-            root (string): The name of the HDF5 file to save to if set to None, will prompt for a filename.
+            root (string):
+                The name of the HDF5 file to save to if set to None, will prompt for a filename.
 
         Return:
             A list of group paths in the HDF5 file
@@ -621,7 +618,7 @@ class HDF5FolderMixin:
 
 class HDF5Folder(HDF5FolderMixin, DataFolder):
 
-    """Just enforces the loader attriobute to be an HDF5File!"""
+    """Just enforces the loader attriobute to be an HDF5File."""
 
     def __init__(self, *args, **kargs):
         self.loader = HDF5File
@@ -630,7 +627,7 @@ class HDF5Folder(HDF5FolderMixin, DataFolder):
 
 class SLS_STXMFile(DataFile):
 
-    """Load images from the Swiss Light Source Pollux beamline"""
+    """Load images from the Swiss Light Source Pollux beamline."""
 
     priority = 16
     compression = "gzip"
@@ -639,10 +636,11 @@ class SLS_STXMFile(DataFile):
     mime_type = ["application/x-hdf"]
 
     def _load(self, filename, *args, **kargs):
-        """Loads data from a hdf5 file
+        """Loads data from a hdf5 file.
 
         Args:
-            h5file (string or h5py.Group): Either a string or an h5py Group object to load data from
+            h5file (string or h5py.Group):
+                Either a string or an h5py Group object to load data from
 
         Returns:
             itself after having loaded the data
@@ -719,7 +717,7 @@ class SLS_STXMFile(DataFile):
 
 class STXMImage(ImageFile):
 
-    """An instance of KerrArray that will load itself from a Swiss Light Source STXM image"""
+    """An instance of KerrArray that will load itself from a Swiss Light Source STXM image."""
 
     _reduce_metadata = False
 
@@ -727,7 +725,9 @@ class STXMImage(ImageFile):
         """Construct a STXMImage file.
 
         Keyword Args:
-            regrid (bool): If set True, the gridimage() method is automatically called to re-grid the image to known co-ordinates."""
+            regrid (bool):
+                If set True, the gridimage() method is automatically called to re-grid the image to known co-ordinates.
+        """
         regrid = kargs.pop("regrid", False)
         if len(args) > 0 and isinstance(args[0], string_types):
             d = SLS_STXMFile(args[0])
@@ -747,6 +747,7 @@ class STXMImage(ImageFile):
             self.gridimage()
 
     def __floordiv__(self, other):
+        """Implements a // operator to do XMCD calculations on a whole image."""
         if isinstance(other, metadataObject):
             if self["collection.polarization.value"] > 0 and other["collection.polarization.value"] < 0:
                 plus, minus = self, other

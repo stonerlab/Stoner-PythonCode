@@ -24,13 +24,17 @@ def test_is_zip(filename, member=""):
     """Recursively searches for a zipfile in the tree.
 
     Args:
-        filename (str): Path to test whether it is a zip file or not.
+        filename (str):
+            Path to test whether it is a zip file or not.
 
     Keyword Arguments:
-        member (str): Used in recursive calls to identify the path within the zip file
+        member (str):
+            Used in recursive calls to identify the path within the zip file
 
     Returns:
-        False or (filename,member): Returns False if not a zip file, otherwise the actual filename of the zip file and the nanme of the member within that
+        False or (filename,member):
+            Returns False if not a zip file, otherwise the actual filename of the zip file and the nanme of the
+            member within that
         zipfile.
     """
     if not filename or filename == "":
@@ -100,8 +104,10 @@ class ZippedFile(DataFile):
         """Responsible for actually reading the zip file archive.
 
         Args:
-            archive (zipfile.ZipFile): An open zip archive
-            member (string): The name of one member of the zip file
+            archive (zipfile.ZipFile):
+                An open zip archive
+            member (string):
+                The name of one member of the zip file
 
         Return:
             A datafile like instance
@@ -163,10 +169,11 @@ class ZippedFile(DataFile):
         return self
 
     def save(self, filename=None, **kargs):
-        """Overrides the save method to allow ZippedFile to be written out to disc (as a mininmalist output)
+        """Overrides the save method to allow ZippedFile to be written out to disc (as a mininmalist output).
 
         Args:
-            filename (string or zipfile.ZipFile instance): Filename to save as (using the same rules as for the load routines)
+            filename (string or zipfile.ZipFile instance):
+                Filename to save as (using the same rules as for the load routines)
 
         Returns:
             A copy of itself.
@@ -228,7 +235,7 @@ class ZippedFile(DataFile):
 
 class ZipFolderMixin:
 
-    """A sub class of :py:class:`Stoner.Folders.DataFolder` that provides a method to load and save data from a single Zip file.
+    """Provides methods to load and save data from a single Zip file.
 
     See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.
 
@@ -268,11 +275,13 @@ class ZipFolderMixin:
         self.path = pathjoin(self.directory, value)
 
     def _dialog(self, message="Select Folder", new_directory=True, mode="r"):
-        """Creates a file dialog box for working with
+        """Creates a file dialog box for working with.
 
         Args:
-            message (string): Message to display in dialog
-            new_file (bool): True if allowed to create new directory
+            message (string):
+                Message to display in dialog
+            new_file (bool):
+                True if allowed to create new directory
 
         Returns:
             A directory to be used for the file operation.
@@ -294,7 +303,7 @@ class ZipFolderMixin:
             return None
 
     def getlist(self, recursive=None, directory=None, flatten=None):
-        "Reads the Zip File to construct a list of ZipFile objects"
+        "Reads the Zip File to construct a list of ZipFile objects."
         if recursive is None:
             recursive = self.recursive
         self.files = []
@@ -386,15 +395,18 @@ class ZipFolderMixin:
         """Loads the specified name from a compressed archive.
 
         Parameters:
-            name (key type): The canonical mapping key to construct the path from.
+            name (key type):
+                The canonical mapping key to construct the path from.
 
         Keyword Arguments:
-            instatiate (bool): IF True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
+            instatiate (bool):
+                IF True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
                 :py:class:`Stoner.Core.Data` object.
 
         Returns:
-            (metadataObject): The metadataObject
+            (metadataObject):
+                The metadataObject
         """
         try:
             return super(ZipFolderMixin, self).__getter__(name, instantiate=instantiate)
@@ -418,7 +430,8 @@ class ZipFolderMixin:
         """Look for a given name in the ZipFolder namelist.
 
         Parameters:
-            name(str): Name of an object
+            name(str):
+                Name of an object
 
         Returns:
             A canonical key name for that file
@@ -449,7 +462,8 @@ class ZipFolderMixin:
         """Saves a load of files to a single Zip file, creating members as it goes.
 
         Keyword Arguments:
-            root (string): The name of the Zip file to save to if set to None, will prompt for a filename.
+            root (string):
+                The name of the Zip file to save to if set to None, will prompt for a filename.
 
         Return:
             A list of group paths in the Zip file
@@ -470,8 +484,10 @@ class ZipFolderMixin:
         """Create a virtual path of groups in the Zip file and save data.
 
         Args:
-            f(DataFile):  A DataFile instance to save
-            trail (list): The trail of groups
+            f(DataFile):
+                A DataFile instance to save
+            trail (list):
+                The trail of groups
 
         Returns:
             The new filename of the saved DataFile.

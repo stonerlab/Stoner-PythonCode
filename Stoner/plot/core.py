@@ -1,10 +1,11 @@
-"""Stoner.plot Subpackage
-======================
+"""Stoner.plot Subpackage.
+==========================
 
 Provides the a class to facilitate easier plotting of Stoner Data:
 
 Classes:
-    PlotMixin - A class that uses matplotlib to plot data
+    PlotMixin:
+        A class that uses matplotlib to plot data
 """
 from __future__ import division
 
@@ -56,12 +57,18 @@ def __mpl3DQuiver(X, Y, Z, U, V, W, **kargs):
     """Helper function to plot vector fields using mpltoolkit.quiver.
 
     Args:
-        X (array): X data co-ordinates
-        Y (array): Y data co-ordinates
-        Z (array): Z data co-ordinates
-        U (array): U data vector field component
-        V (array): V data vector field component
-        W (array): W data vector field component
+        X (array):
+            X data co-ordinates
+        Y (array):
+            Y data co-ordinates
+        Z (array):
+            Z data co-ordinates
+        U (array):
+            U data vector field component
+        V (array):
+            V data vector field component
+        W (array):
+            W data vector field component
 
     Return:
         matpltolib.pyplot.figure with a quiver plot."""
@@ -78,18 +85,30 @@ class PlotMixin:
     """A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.
 
         Args:
-            args(tuple): Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`
-            kargs (dict):  keyword arguments to pass to \b DataFile.__init__
+            args(tuple):
+                Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`
+            kargs (dict):
+                keyword arguments to pass to \b DataFile.__init__
 
         Attributes:
-            ax (matplotlib.Axes): The current axes on the current figure.
-            axes (list of matplotlib.Axes): A list of all the axes on the current figure
-            fig (matplotlib.figure): The current figure object being worked with
-            fignum (int): The current figure's number.
-            labels (list of string): List of axis labels as aternates to the column_headers
-            showfig (bool or None): Controls whether plot functions return a copy of the figure (True), the DataFile (False) or Nothing (None)
-            subplots (list of matplotlib.Axes) - essentially the same as :py:attr:`PlotMixin.axes` but ensures that the list of subplots is synchronised to the number fo Axes.
-            template (:py:class:`Sonter.plot.formats.DefaultPlotStyle` or instance): A plot style template subclass or object that determines the format and appearance of plots.
+            ax (matplotlib.Axes):
+                The current axes on the current figure.
+            axes (list of matplotlib.Axes):
+                A list of all the axes on the current figure
+            fig (matplotlib.figure):
+                The current figure object being worked with
+            fignum (int):
+                The current figure's number.
+            labels (list of string):
+                List of axis labels as aternates to the column_headers
+            showfig (bool or None):
+                Controls whether plot functions return a copy of the figure (True), the DataFile (False) or
+                Nothing (None)
+            subplots (list of matplotlib.Axes):
+                essentially the same as :py:attr:`PlotMixin.axes` but ensures that the list of subplots is
+                synchronised to the number fo Axes.
+            template (:py:class:`Sonter.plot.formats.DefaultPlotStyle` or instance):
+                A plot style template subclass or object that determines the format and appearance of plots.
     """
 
     positional_fmt = [plt.plot, plt.semilogx, plt.semilogy, plt.loglog]
@@ -182,7 +201,7 @@ class PlotMixin:
 
     @property
     def labels(self):
-        """Return the labels for the plot columns"""
+        """Return the labels for the plot columns."""
         if len(self._labels) == 0:
             return self.column_headers
         if len(self._labels) < len(self.column_headers):
@@ -201,7 +220,9 @@ class PlotMixin:
 
     @property
     def showfig(self):
-        """Returns either the current figure or self or None, depeding on whether the attribute is True or False or None."""
+        """Returns either the current figure or self or None.
+
+        The return value depeds on whether the attribute is True or False or None."""
         if self._showfig is None or get_option("no_figs"):
             return None
         if self._showfig:
@@ -242,26 +263,22 @@ class PlotMixin:
             raise ValueError(f"Template is not of the right class:{type(value)}")
         self._template.apply()
 
-    # @property
-    # def title(self):
-    #     """Unmask the underlying attribute so we can fiddle plots."""
-    #     return self.ax_title
-
-    # @title.setter
-    # def title(self, value):
-    #     """Set the plot title as well as setting the parent title value."""
-    #     self.ax_title = value
-
     def _Plot(self, ix, iy, fmt, plotter, figure, **kwords):
         """Private method for plotting a single plot to a figure.
 
         Args:
-            ix (int): COlumn index of x data
-            iy (int): Column index of y data
-            fmt (str): Format of this plot
-            plotter (callable): Routine used to plot this data
-            figure (matplotlib.figure): Figure to plot data
-            **kwords (dict): Other keyword arguments to pass through
+            ix (int):
+                COlumn index of x data
+            iy (int):
+                Column index of y data
+            fmt (str):
+                Format of this plot
+            plotter (callable):
+                Routine used to plot this data
+            figure (matplotlib.figure):
+                Figure to plot data
+            **kwords (dict):
+                Other keyword arguments to pass through
 
         """
         kwords = copy.copy(kwords)  # Make sure we don;t mutate kwords by accident
@@ -290,10 +307,14 @@ class PlotMixin:
         """Utility private function to plot a 3D color mapped surface.
 
         Args:
-            X data
-            Y Y data
-            Z data
-            kargs (dict): Other keywords to pass through
+            X (array):
+                X-data
+            Y (array):
+                Y-data
+            Z (arrau):
+                Z-data
+            kargs (dict):
+                Other keywords to pass through
 
         ReturnsL
             A matplotib Figure
@@ -339,12 +360,18 @@ class PlotMixin:
         """Helper function to plot vector fields using mayavi.mlab.
 
         Args:
-            X (array): X data co-ordinates
-            Y (array): Y data co-ordinates
-            Z (array): Z data co-ordinates
-            U (array): U data vector field component
-            V (array): V data vector field component
-            W (array): W data vector field component
+            X (array):
+                X data co-ordinates
+            Y (array):
+                Y data co-ordinates
+            Z (array):
+                Z data co-ordinates
+            U (array):
+                U data vector field component
+            V (array):
+                V data vector field component
+            W (array):
+                W data vector field component
 
         Returns:
             An mlab figure reference.
@@ -373,7 +400,8 @@ class PlotMixin:
         """Look up a column and see if it exists in self._lables, otherwise get from self.column_headers.
 
         Args:
-            index (column index type): Column to return label for
+            index (column index type):
+                Column to return label for
 
         Returns:
             String type representing the column label.
@@ -489,13 +517,14 @@ class PlotMixin:
         """Attribute accessor.
 
         Args:
-            name (string):  Name of attribute the following attributes are supported:
-                * fig - the current plt figure reference
-                * axes - the plt axes object for the current plot
-                * xlim - the X axis limits
-                * ylim - the Y axis limits
+            name (string):
+                Name of attribute the following attributes are supported:
+                    -   fig - the current plt figure reference
+                    -   axes - the plt axes object for the current plot
+                    -   xlim - the X axis limits
+                    -   ylim - the Y axis limits
 
-                All other attrbiutes are passed over to the parent class
+                    All other attrbiutes are passed over to the parent class
                 """
         func = None
         o_name = name
@@ -551,6 +580,7 @@ class PlotMixin:
         return ret
 
     def _pyplot_proxy(self, name, what):
+        """Proxy for accessing :py:module:`matplotlib.pyplot` functions."""
         if what not in ["axes", "figure", "pyplot"]:
             raise SyntaxError("pyplot proxy can't figure out what to get proxy from.")
         if what == "pyplot":
@@ -579,17 +609,18 @@ class PlotMixin:
         """Sets the specified attribute.
 
         Args:
-            name (string): The name of the attribute to set. The cuirrent attributes are supported:
-                * fig - set the plt figure isntance to use
-                * xlabel - set the X axis label text
-                * ylabel - set the Y axis label text
-                * title - set the plot title
-                * subtitle - set the plot subtitle
-                * xlim - set the x-axis limits
-                * ylim - set the y-axis limits
+            name (string):
+                The name of the attribute to set. The cuirrent attributes are supported:
+                    -   fig - set the plt figure isntance to use
+                    -   xlabel - set the X axis label text
+                    -   ylabel - set the Y axis label text
+                    -   title - set the plot title
+                    -   subtitle - set the plot subtitle
+                    -   xlim - set the x-axis limits
+                    -   ylim - set the y-axis limits
 
-            Only "fig" is supported in this class - everything else drops through to the parent class
-            value (any): The value of the attribute to set.
+                Only "fig" is supported in this class - everything else drops through to the parent class
+                value (any): The value of the attribute to set.
         """
         if plt.get_fignums():
             tfig = plt.gcf()
@@ -641,16 +672,21 @@ class PlotMixin:
         """Appends a column of data or inserts a column to a datafile instance.
 
         Args:
-            column_data (:py:class:`numpy.array` or list or callable): Data to append or insert or a callable function that will generate new data
+            column_data (:py:class:`numpy.array` or list or callable):
+                Data to append or insert or a callable function that will generate new data
 
         Keyword Arguments:
-            column_header (string): The text to set the column header to,
-                if not supplied then defaults to 'col#'
-            index (int or string): The  index (numeric or string) to insert (or replace) the data
-            func_args (dict): If column_data is a callable object, then this argument
-                can be used to supply a dictionary of function arguments to the callable object.
-            replace (bool): Replace the data or insert the data (default)
-            setas (str): Set the type of column (x,y,z data etc - see :py:attr:`Stoner.Core.DataFile.setas`)
+            column_header (string):
+                The text to set the column header to, if not supplied then defaults to 'col#'
+            index (int or string):
+                The  index (numeric or string) to insert (or replace) the data
+            func_args (dict):
+                If column_data is a callable object, then this argument can be used to supply a dictionary of function
+                arguments to the callable object.
+            replace (bool):
+                Replace the data or insert the data (default)
+            setas (str):
+                Set the type of column (x,y,z data etc - see :py:attr:`Stoner.Core.DataFile.setas`)
 
 
         Returns:
@@ -679,20 +715,33 @@ class PlotMixin:
         """An xyz plot that forces the use of plt.contour.
 
         Args:
-            xcol (index): Xcolumn index or label
-            ycol (index): Y column index or label
-            zcol (index): Z column index or label
+            xcol (index):
+                Xcolumn index or label
+            ycol (index):
+                Y column index or label
+            zcol (index):
+                Z column index or label
 
         Keyword Arguments:
-            shape (two-tuple): Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
-            xlim (tuple): The xlimits, defaults to automatically determined from data
-            ylim (tuple): The ylimits, defaults to automatically determined from data
-            plotter (function): Function to use to plot data. Defaults to plt.contour
-            colorbar (bool): Draw the z-scale color bar beside the plot (True by default)
-            show_plot (bool): Turn on interfactive plotting and show plot when drawn
-            save_filename (string or None): If set to a string, save the plot with this filename
-            figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
-            **kargs (dict): Other arguments are passed on to the plotter.
+            shape (two-tuple):
+                Number of points along x and y in the grid - defaults to a square of sidelength = square root of the
+                length of the data.
+            xlim (tuple):
+                The xlimits, defaults to automatically determined from data
+            ylim (tuple):
+                The ylimits, defaults to automatically determined from data
+            plotter (function):
+                Function to use to plot data. Defaults to plt.contour
+            colorbar (bool):
+                Draw the z-scale color bar beside the plot (True by default)
+            show_plot (bool):
+                Turn on interfactive plotting and show plot when drawn
+            save_filename (string or None):
+                If set to a string, save the plot with this filename
+            figure (integer or matplotlib.figure or boolean):
+                Controls which figure is used for the plot, or if a new figure is opened.
+            **kargs (dict):
+                Other arguments are passed on to the plotter.
 
         Returns:
             A matplotlib figure
@@ -712,20 +761,32 @@ class PlotMixin:
     def contour_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, plotter=None, **kargs):
         """An xyz plot that forces the use of plt.contour.
 
-        Args:
-            xcol (index): Xcolumn index or label
-            ycol (index): Y column index or label
-            zcol (index): Z column index or label
+         Args:
+            xcol (index):
+                Xcolumn index or label
+            ycol (index):
+                Y column index or label
+            zcol (index):
+                Z column index or label
 
         Keyword Arguments:
-            shape (two-tuple): Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
-            xlim (tuple): The xlimits, defaults to automatically determined from data
-            ylim (tuple): The ylimits, defaults to automatically determined from data
-            plotter (function): Function to use to plot data. Defaults to plt.contour
-            show_plot (bool): Turn on interfactive plotting and show plot when drawn
-            save_filename (string or None): If set to a string, save the plot with this filename
-            figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
-            **kargs (dict): Other arguments are passed on to the plotter.
+            shape (two-tuple):
+                Number of points along x and y in the grid - defaults to a square of sidelength = square root of the
+                length of the data.
+            xlim (tuple):
+                The xlimits, defaults to automatically determined from data
+            ylim (tuple):
+                The ylimits, defaults to automatically determined from data
+            plotter (function):
+                Function to use to plot data. Defaults to plt.contour
+            show_plot (bool):
+                Turn on interfactive plotting and show plot when drawn
+            save_filename (string or None):
+                If set to a string, save the plot with this filename
+            figure (integer or matplotlib.figure or boolean):
+                Controls which figure is used for the plot, or if a new figure is opened.
+            **kargs (dict):
+                Other arguments are passed on to the plotter.
 
         Returns:
             A matplotlib figure
@@ -739,7 +800,8 @@ class PlotMixin:
         """Set the figure used by :py:class:`Stoner.plot.PlotMixin`.
 
         Args:
-            figure A matplotlib figure or figure number
+            figure (matplotlib.Figure or int):
+                Figure to switch to
 
         Returns:
             The current \b Stoner.plot.PlotMixin instance
@@ -756,16 +818,24 @@ class PlotMixin:
     def griddata(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, method="linear", **kargs):
         """Function to convert xyz data onto a regular grid.
 
-            Args:
-            xcol (index): Column to be used for the X-Data
-            ycol (index): column to be used for Y-Data - default value is column to the right of the x-data column
-            zcol (index): column to be used for the Z-data - default value is the column to the right of the y-data column
+        Args:
+            xcol (index):
+                Xcolumn index or label
+            ycol (index):
+                Y column index or label
+            zcol (index):
+                Z column index or label
 
-            Keyword Arguments:
-                shape (two-tuple): Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
-                xlim (tuple): The xlimits
-                ylim (tuple) The ylimits
-                method (string): Type of interploation to use, default is linear
+        Keyword Arguments:
+            shape (two-tuple):
+                Number of points along x and y in the grid - defaults to a square of sidelength = square root of
+                the length of the data.
+            xlim (tuple):
+                The xlimits
+            ylim (tuple):
+                The ylimits
+            method (string):
+                Type of interploation to use, default is linear
 
             ReturnsL
                 X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data
@@ -825,22 +895,37 @@ class PlotMixin:
         """Grid up the three columns of data and plot.
 
         Args:
-            xcol (index): Column to be used for the X-Data
-            ycol (index): column to be used for Y-Data - default value is column to the right of the x-data column
-            zcol (index): column to be used for the Z-data - default value is the column to the right of the y-data column
+            xcol (index):
+                Xcolumn index or label
+            ycol (index):
+                Y column index or label
+            zcol (index):
+                Z column index or label
 
         Keyword Arguments:
-            shape (two-tuple): Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
-            xlim (tuple): The xlimits, defaults to automatically determined from data
-            ylim (tuple): The ylimits, defaults to automatically determined from data
-            xlabel (string) X axes label. Deafult is None - guess from xvals or metadata
-            ylabel (string): Y axes label, Default is None - guess from metadata
-            zlabel (string): Z axis label, Default is None - guess from metadata
-            plotter (function): Function to use to plot data. Defaults to plt.contour
-            show_plot (bool): Turn on interfactive plotting and show plot when drawn
-            save_filename (string or None): If set to a string, save the plot with this filename
-            figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
-            **kargs (dict): Other arguments are passed on to the plotter.
+            shape (two-tuple):
+                Number of points along x and y in the grid - defaults to a square of sidelength = square root of the
+                length of the data.
+            xlim (tuple):
+                The xlimits, defaults to automatically determined from data
+            ylim (tuple):
+                The ylimits, defaults to automatically determined from data
+            xlabel (string):
+                X axes label. Deafult is None - guess from xvals or metadata
+            ylabel (string):
+                Y axes label, Default is None - guess from metadata
+            zlabel (string):
+                Z axis label, Default is None - guess from metadata
+            plotter (function):
+                Function to use to plot data. Defaults to plt.contour
+            show_plot (bool):
+                Turn on interfactive plotting and show plot when drawn
+            save_filename (string or None):
+                If set to a string, save the plot with this filename
+            figure (integer or matplotlib.figure or boolean):
+                Controls which figure is used for the plot, or if a new figure is opened.
+            **kargs (dict):
+                Other arguments are passed on to the plotter.
 
         Returns:
             A matplotlib figure
@@ -883,10 +968,15 @@ class PlotMixin:
         """Add a new set of axes as an inset to the current plot.
 
         Keyword Arguments:
-            parent (matplotlib axes): Which set of axes to add inset to, defaults to the current set
-            loc (int or string): Inset location - can be a string like *top right* or *upper right* or a number.
-            width,height (int,float or string) the dimensions of the inset specified as a integer %, or floating point fraction of the parent axes, or as a string measurement.
-            kargs (dictionary): all other keywords are passed through to inset_locator.inset_axes
+            parent (matplotlib axes):
+                Which set of axes to add inset to, defaults to the current set
+            loc (int or string):
+                Inset location - can be a string like *top right* or *upper right* or a number.
+            width,height (int,float or string):
+                the dimensions of the inset specified as a integer %, or floating point fraction of the parent axes,
+                or as a string measurement.
+            kargs (dictionary):
+                all other keywords are passed through to inset_locator.inset_axes
 
         Returns:
             A new set of axes
@@ -986,23 +1076,39 @@ class PlotMixin:
     ):
         """Plots a surface plot by assuming that the current dataset represents a regular matrix of points.
 
-            Args:
-                xvals (index, list or numpy.array): Either a column index or name or a list or numpytarray of column values. The default (None) uses the first column of data
-                yvals (int or list): Either a row index or a list or numpy array of row values. The default (None) uses the column_headings interpreted as floats
-                rectang (tuple):  a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin, number of rows, number of
-                    columns) of data to be used for the z0data matrix
+        Args:
+            xvals (index, list or numpy.array):
+                Either a column index or name or a list or numpytarray of column values. The default (None) uses
+                the first column of data
+            yvals (int or list):
+                Either a row index or a list or numpy array of row values. The default (None) uses the column_
+                headings interpreted as floats
+            rectang (tuple):
+                a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin,
+                number of rows, number of columns) of data to be used for the z0data matrix
 
-            Keyword Arguments:
-                cmap (matplotlib colour map): Surface colour map - defaults to the jet colour map
-                show_plot (bool): True Turns on interactive plot control
-                title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
-                xlabel (string) X axes label. Deafult is None - guess from xvals or metadata
-                ylabel (string): Y axes label, Default is None - guess from metadata
-                zlabel (string): Z axis label, Default is None - guess from metadata
-                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is
-                    always used, otherwise it will default to using the last figure used by this DataFile object.
-                plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx
-                kwords (dict): A dictionary of other keyword arguments to pass into the plot function.
+        Keyword Arguments:
+            cmap (matplotlib colour map):
+                Surface colour map - defaults to the jet colour map
+            show_plot (bool):
+                True Turns on interactive plot control
+            title (string):
+                Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+            xlabel (string):
+                X axes label. Deafult is None - guess from xvals or metadata
+            ylabel (string):
+                Y axes label, Default is None - guess from metadata
+            zlabel (string):
+                Z axis label, Default is None - guess from metadata
+            figure (matplotlib figure):
+                Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If
+                False then a new figure is always used, otherwise it will default to using the last figure used
+                by this DataFile object.
+            plotter (callable):
+                Optional arguement that passes a plotting function into the routine. Sensible choices might be
+                plt.plot (default), py.semilogy, plt.semilogx
+            kwords (dict):
+                A dictionary of other keyword arguments to pass into the plot function.
 
             Returns:
                 The matplotib figure with the data plotted
@@ -1119,28 +1225,39 @@ class PlotMixin:
         """Makes a simple X-Y plot of the specified data.
 
         Args:
-            xcol (index): Column to be used for the X-Data
-            ycol (index): column to be used for Y-Data - default value is column to the right of the x-data column
+            xcol (index):
+                Xcolumn index or label
+            ycol (index):
+                Y column index or label
 
         Keyword Arguments:
-            fmt (strong or sequence of strings): Specifies the format for the plot - see matplotlib documentation for details
-            xerr,yerr (index): Columns of data to get x and y errorbars from. Setting these turns the default plotter to plt.errorbar
-            xlabel (string) X axes label. Deafult is None - guess from xvals or metadata
-            ylabel (string): Y axes label, Default is None - guess from metadata
-            zlabel (string): Z axis label, Default is None - guess from metadata
-            title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
-            plotter (function): Function to use to plot data. Defaults to plt.plot unless error bars are set
-            show_plot (bool): Turn on interfactive plotting and show plot when drawn
-            save_filename (string or None): If set to a string, save the plot with this filename
-            figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
-            multiple (string): how to handle multiple y-axes with a common x axis. Options are:
+            fmt (strong or sequence of strings):
+                Specifies the format for the plot - see matplotlib documentation for details
+            xerr,yerr (index): C
+            olumns of data to get x and y errorbars from. Setting these turns the default plotter to plt.errorbar
+            xlabel (string):
+                X axes label. Deafult is None - guess from xvals or metadata
+            ylabel (string):
+                Y axes label, Default is None - guess from metadata
+            title (string):
+                Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+            plotter (function):
+                Function to use to plot data. Defaults to plt.plot unless error bars are set
+            show_plot (bool):
+                Turn on interfactive plotting and show plot when drawn
+            save_filename (string or None):
+                If set to a string, save the plot with this filename
+            figure (integer or matplotlib.figure or boolean):
+                Controls which figure is used for the plot, or if a new figure is opened.
+            multiple (string):
+                how to handle multiple y-axes with a common x axis. Options are:
+                    -  *common* single y-axis (default)
+                    -  *panels* panels sharing common x axis
+                    -  *sub plots* sub plots
+                    -  *y2* single axes with 2 y scales
 
-                - *common* single y-axis (default)
-                - *panels* panels sharing common x axis
-                - *sub plots* sub plots
-                - *y2* single axes with 2 y scales
-
-            **kargs (dict): Other arguments are passed on to the plotter.
+            **kargs (dict):
+                Other arguments are passed on to the plotter.
 
         Returns:
             A matplotlib.figure isntance
@@ -1359,28 +1476,45 @@ class PlotMixin:
     def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, projection="3d", **kargs):
         """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().
 
-            Args:
-                xcol (index): Xcolumn index or label
-                ycol (index): Y column index or label
-                zcol (index): Z column index or label
+        Args:
+            xcol (index):
+                Xcolumn index or label
+            ycol (index):
+                Y column index or label
+            zcol (index):
+                Z column index or label
 
-            Keyword Arguments:
-                shape (tuple): Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate
-                    these from the data provided
-                xlim (tuple): Defines the x-axis limits and grid of the data to be plotted
-                ylim (tuple) Defines the Y-axis limits and grid of the data data to be plotted
-                cmap (matplotlib colour map): Surface colour map - defaults to the jet colour map
-                show_plot (bool): True Turns on interactive plot control
-                title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
-                save_filename (string): Filename used to save the plot
-                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is
-                    always used, otherwise it will default to using the last figure used by this DataFile object.
-                plotter (callable): Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.
-                projection (string or None): Whether to use a 3D projection or regular 2D axes (deault is 3D)
-                **kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
+        Keyword Arguments:
+            shape (tuple):
+                Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then
+                the routine will attempt to calculate
+                these from the data provided
+            xlim (tuple):
+                Defines the x-axis limits and grid of the data to be plotted
+            ylim (tuple):
+                Defines the Y-axis limits and grid of the data data to be plotted
+            cmap (matplotlib colour map):
+                Surface colour map - defaults to the jet colour map
+            show_plot (bool):
+                True Turns on interactive plot control
+            title (string):
+                Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+            save_filename (string):
+                Filename used to save the plot
+            figure (matplotlib figure):
+                Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If
+                False then a new figure is always used, otherwise it will default to using the last figure used
+                by this DataFile object.
+            plotter (callable):
+                Optional arguement that passes a plotting function into the routine. Default is a 3d surface
+                plotter, but contour plot and pcolormesh also work.
+            projection (string or None):
+                Whether to use a 3D projection or regular 2D axes (deault is 3D)
+            **kargs (dict):
+                A dictionary of other keyword arguments to pass into the plot function.
 
-            Returns:
-                A matplotlib.figure isntance
+        Returns:
+            A matplotlib.figure isntance
         """
         if not _3D:
             raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
@@ -1448,22 +1582,36 @@ class PlotMixin:
     def plot_xyuv(self, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, **kargs):
         """Makes an overlaid image and quiver plot.
 
-            Args:
-                xcol (index): Xcolumn index or label
-                ycol (index): Y column index or label
-                zcol (index): Z column index or label
-                ucol (index): U column index or label
-                vcol (index): V column index or label
-                wcol (index): W column index or label
+        Args:
+            xcol (index):
+                Xcolumn index or label
+            ycol (index):
+                Y column index or label
+            zcol (index):
+                Z column index or label
+            ucol (index):
+                U column index or label
+            vcol (index):
+                V column index or label
+            wcol (index):
+                W column index or label
 
-            Keyword Arguments:
-                show_plot (bool): True Turns on interactive plot control
-                title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
-                save_filename (string): Filename used to save the plot
-                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is
-                    always used, otherwise it will default to using the last figure used by this DataFile object.
-                plotter (callable): Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.
-                **kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
+        Keyword Arguments:
+            show_plot (bool):
+                True Turns on interactive plot control
+            title (string):
+                Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+            save_filename (string):
+                Filename used to save the plot
+            figure (matplotlib figure):
+                Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False
+                then a new figure is always used, otherwise it will default to using the last figure used by this
+                DataFile object.
+            plotter (callable):
+                Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter,
+                but contour plot and pcolormesh also work.
+            **kargs (dict):
+                A dictionary of other keyword arguments to pass into the plot function.
         """
         c = self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
         Z = self._vector_color(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol)
@@ -1487,26 +1635,41 @@ class PlotMixin:
     def plot_xyzuvw(self, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None, wcol=None, **kargs):
         """Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.
 
-            Args:
-                xcol (index): Xcolumn index or label
-                ycol (index): Y column index or label
-                zcol (index): Z column index or label
-                ucol (index): U column index or label
-                vcol (index): V column index or label
-                wcol (index): W column index or label
+        Args:
+            xcol (index):
+                Xcolumn index or label
+            ycol (index):
+                Y column index or label
+            zcol (index):
+                Z column index or label
+            ucol (index):
+                U column index or label
+            vcol (index):
+                V column i
+                ndex or label
+            wcol (index): W column index or label
 
-            Keyword Arguments:
-                colormap (string): Vector field colour map - defaults to the jet colour map
-                colors (column index or numpy array): Values used to map the colors of the resultant file.
-                mode (string): glyph type, default is "cone"
-                scale_factor(float): Scale-size of glyphs.
-                figure (mlab figure): Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new figure is always used,
-                    otherwise it will default to using the last figure used by this DataFile object.
-                plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx
-                kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
+        Keyword Arguments:
+            colormap (string):
+                Vector field colour map - defaults to the jet colour map
+            colors (column index or numpy array):
+                Values used to map the colors of the resultant file.
+            mode (string):
+                glyph type, default is "cone"
+            scale_factor(float):
+                Scale-size of glyphs.
+            figure (mlab figure):
+                Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new
+                figure is always used,
+                otherwise it will default to using the last figure used by this DataFile object.
+            plotter (callable):
+                Optional arguement that passes a plotting function into the routine. Sensible choices might be
+                plt.plot (default), py.semilogy, plt.semilogx
+            kargs (dict):
+                A dictionary of other keyword arguments to pass into the plot function.
 
-            Returns:
-                A mayavi scene instance
+        Returns:
+            A mayavi scene instance
         """
         try:
             from mayavi import mlab, core
@@ -1628,23 +1791,38 @@ class PlotMixin:
         """Make a 2D Quiver plot from the data.
 
         Args:
-            xcol (index): Xcolumn index or label
-            ycol (index): Y column index or label
-            zcol (index): Z column index or label
-            ucol (index): U column index or label
-            vcol (index): V column index or label
+            xcol (index):
+                Xcolumn index or label
+            ycol (index):
+                Y column index or label
+            zcol (index):
+                Z column index or label
+            ucol (index):
+                U column index or label
+            vcol (index):
+                V column i
+                ndex or label
             wcol (index): W column index or label
 
         Keyword Arguments:
-            xlabel (string) X axes label. Deafult is None - guess from xvals or metadata
-            ylabel (string): Y axes label, Default is None - guess from metadata
-            zlabel (string): Z axis label, Default is None - guess from metadata
-            plotter (function): Function to use to plot data. Defaults to plt.contour
-            headlength,headwidth,headaxislength (float): Controls the size of the quiver heads
-            show_plot (bool): Turn on interfactive plotting and show plot when drawn
-            save_filename (string or None): If set to a string, save the plot with this filename
-            figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
-            **kargs (dict): Other arguments are passed on to the plotter.
+            xlabel (string):
+                X axes label. Deafult is None - guess from xvals or metadata
+            ylabel (string):
+                Y axes label, Default is None - guess from metadata
+            zlabel (string):
+                Z axis label, Default is None - guess from metadata
+            plotter (function):
+                Function to use to plot data. Defaults to plt.contour
+            headlength,headwidth,headaxislength (float):
+                Controls the size of the quiver heads
+            show_plot (bool):
+                Turn on interfactive plotting and show plot when drawn
+            save_filename (string or None):
+                If set to a string, save the plot with this filename
+            figure (integer or matplotlib.figure or boolean):
+                Controls which figure is used for the plot, or if a new figure is opened.
+            **kargs (dict):
+                Other arguments are passed on to the plotter.
 
 
         Returns:
@@ -1703,11 +1881,14 @@ class PlotMixin:
         """Pass throuygh for plt.subplot().
 
         Args:
-            rows (int): If this is the only argument, then a three digit number representing
+            rows (int):
+                If this is the only argument, then a three digit number representing
                 the rows,columns,index arguments. If seperate rows, column and index are provided,
                 then this is the number of rows of sub-plots in one figure.
-            columns (int): The number of columns of sub-plots in one figure.
-            index (int): Index (1 based) of the current sub-plot.
+            columns (int):
+                The number of columns of sub-plots in one figure.
+            index (int):
+                Index (1 based) of the current sub-plot.
 
         Returns:
             A matplotlib.Axes instance representing the current sub-plot

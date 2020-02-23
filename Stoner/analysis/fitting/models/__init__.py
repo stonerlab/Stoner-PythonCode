@@ -31,21 +31,20 @@ def _get_model_(model):
     """Utility meothd to manage creating an lmfit.Model.
 
     Args:
-        model (str, callable, Model): The model to be setup.
+        model (str, callable, Model):
+            The model to be setup.
 
     Returns:
         An llmfit.Model instance
 
     model can be of several different types that determine what to do:
-
-    -   A string. In which ase it should be a fully qualified name of a function or class to be imported.
-        The part after the final period will be assumed to be the name and the remainder the module to be
-        imported.
-    -   A callable object. In this case the callable will be passed to the constructor of Model and a fresh
-        Model instance is constructed
-    -   A subclass of lmfit.Model - in whcih case it is instantiated.
-    -   A Model instance - in which case no further action is necessary.
-
+        -   A string. In which ase it should be a fully qualified name of a function or class to be imported.
+            The part after the final period will be assumed to be the name and the remainder the module to be
+            imported.
+        -   A callable object. In this case the callable will be passed to the constructor of Model and a fresh
+            Model instance is constructed
+        -   A subclass of lmfit.Model - in whcih case it is instantiated.
+        -   A Model instance - in which case no further action is necessary.
     """
     if isinstance(model, string_types):  # model is a string, so we;ll try importing it now
         parts = model.split(".")
@@ -66,6 +65,10 @@ def _get_model_(model):
 def make_model(model_func):
     """A decorator that turns a function into an lmfit model.
 
+    Args:
+        model_func (functrion):
+            The function to be wrapped in an lmfit.Model object
+
     Notes:
         The function being wrapped into the model should have the form::
 
@@ -81,8 +84,9 @@ def make_model(model_func):
             def guesser_function(y_data,x=x_data,**kargs):
                 return (param_1,param_2,....,pram_n)
 
-        Similarly, the class provides a :py:meth:`_ModelDecorator.hinter` decorator which can be used to mark a function
-        as something that can generate prameter hints for the model. In this case the function should take the form::
+        Similarly, the class provides a :py:meth:`_ModelDecorator.hinter` decorator which can be used to mark a
+        function as something that can generate prameter hints for the model. In this case the function should
+        take the form::
 
             def hinter(**kwargs):
                 return {"param_1":{"max":max_val,"min":min_value,"value":start_value},"param_2":{.....}}
@@ -102,7 +106,9 @@ def make_model(model_func):
             self.__name__ = self.func.__name__
 
         def guess(self, y, x=None):
-            """A default parameter guess method that just guesses 1.0 for everything like :py:func:`scipy.optimize.curve_fit` does."""
+            """A default parameter guess method.
+
+            Just guesses 1.0 for everything like :py:func:`scipy.optimize.curve_fit` does."""
             return np.ones(len(self.param_names))
 
         @classmethod
@@ -110,15 +116,18 @@ def make_model(model_func):
             """Use the given function to determine the parameter hints.
 
             Args:
-                func (callable): A fimction that rturns a dictionary of dictionaries
+                func (callable):
+                    A fimction that rturns a dictionary of dictionaries
 
             Returns:
                 The wrapped hinter function.
 
             Notes:
-                This decorator will modify the instance attributes so that the instance has a method to generate parameter hints.
+                This decorator will modify the instance attributes so that the instance has a method to generate
+                parameter hints.
 
-                func should only take keyword arguments as by default it will be called with no arguments during model initialisation.
+                func should only take keyword arguments as by default it will be called with no arguments during
+                model initialisation.
             """
 
             @wraps(func)
@@ -139,7 +148,8 @@ def make_model(model_func):
             """Use the given function as the guess method.
 
             Args:
-                func (callable): A function that guesses the parameter values
+                func (callable):
+                    A function that guesses the parameter values
 
             Returns:
                 The wrapped guess function.
@@ -148,7 +158,8 @@ def make_model(model_func):
                 This decorator will modify the instance attributes so that the instance has a working guess method.
 
                 func should take at least one positional argument, being the y-data values used to guess parameters.
-                It should return a list, tuple of guesses parameter values with one entry for each parameter in the model.
+                It should return a list, tuple of guesses parameter values with one entry for each parameter in
+                the model.
             """
 
             @wraps(func)
@@ -169,22 +180,24 @@ def cfg_data_from_ini(inifile, filename=None, **kargs):
     """Read an inifile and load and configure a DataFile from it.
 
     Args:
-        inifile (str or file): Path to the ini file to be read.
+        inifile (str or file):
+            Path to the ini file to be read.
 
     Keyword Arguments:
-        filename (strig,boolean or None): File to load that contains the data.
-        **kargs: All other keywords are passed to the Data constructor
+        filename (strig,boolean or None):
+            File to load that contains the data.
+        **kargs:
+            All other keywords are passed to the Data constructor
 
     Returns:
         An instance of :py:class:`Stoner.Core.Data` with data loaded and columns configured.
 
     The inifile should contain a [Data] section that contains the following keys:
-
-    -  **type (str):** optional name of DataFile subclass to import.
-    -  **filename (str or boolean):** optionally used if *filename* parameter is None.
-    - **xcol (column index):** defines the x-column data for fitting.
-    - **ycol (column index):** defines the y-column data for fitting.
-    - **yerr (column index):** Optional column with uncertainity values for the data
+        -  **type (str):** optional name of DataFile subclass to import.
+        -  **filename (str or boolean):** optionally used if *filename* parameter is None.
+        - **xcol (column index):** defines the x-column data for fitting.
+        - **ycol (column index):** defines the y-column data for fitting.
+        - **yerr (column index):** Optional column with uncertainity values for the data
     """
     if SafeConfigParser is None:
         raise RuntimeError("Need to have ConfigParser module installed for this to work.")
@@ -234,24 +247,26 @@ def cfg_model_from_ini(inifile, model=None, data=None):
     r"""Utility function to configure an lmfit Model from an inifile.
 
     Args:
-        inifile (str or file): Path to the ini file to be read.
+        inifile (str or file):
+            Path to the ini file to be read.
 
     Keyword Arguments:
-        model (str, callable, lmfit.Model instance or sub-class or None): What to use as a model function.
-        data (DataFile): if supplied, the details of the parameter hints and labels and units are included in the data's metadata.
+        model (str, callable, lmfit.Model instance or sub-class or None):
+            What to use as a model function.
+        data (DataFile):
+            If supplied, the details of the parameter hints and labels and units are included in the data's metadata.
 
     Returns:
         An llmfit.Model,, a 2D array of starting values for each parameter
 
     model can be of several different types that determine what to do:
-
-    -   A string. In which ase it should be a fully qualified name of a function or class to be imported.
-        The part after the final period will be assumed to be the name and the remainder the module to be
-        imported.
-    -   A callable object. In this case the callable will be passed to the constructor of Model and a fresh
-        Model instance is constructed
-    -   A subclass of lmfit.Model - in whcih case it is instantiated.
-    -   A Model instance - in which case no further action is necessary.
+        -   A string. In which ase it should be a fully qualified name of a function or class to be imported.
+            The part after the final period will be assumed to be the name and the remainder the module to be
+            imported.
+        -   A callable object. In this case the callable will be passed to the constructor of Model and a fresh
+            Model instance is constructed
+        -   A subclass of lmfit.Model - in whcih case it is instantiated.
+        -   A Model instance - in which case no further action is necessary.
 
     The returned model is configured with parameter hints for fitting with. The second return value is
     a 2D array which lists the starting values for one or more fits. If the inifile describes mapping out

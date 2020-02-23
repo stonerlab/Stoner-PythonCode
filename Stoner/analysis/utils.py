@@ -16,12 +16,16 @@ def outlier(row, window, metric, ycol=None):
     at the number of standard deviations away from the average of the window it is.
 
     Args:
-        row (array): Single row of the dataset.
-        window (array): Section of data surrounding the row being examined.
-        metric (float): distance the current row is from the local mean.
+        row (array):
+            Single row of the dataset.
+        window (array):
+            Section of data surrounding the row being examined.
+        metric (float):
+            distance the current row is from the local mean.
 
     Keyword Arguments:
-        ycol (column index or None): If set, specifies the column containing the data to check.
+        ycol (column index or None):
+            If set, specifies the column containing the data to check.
 
     Returns:
         (bool):
@@ -72,7 +76,7 @@ def poly_outlier(row, window, metric=3.0, ycol=None, xcol=None, order=1, yerr=No
 
 
 def threshold(threshold, data, rising=True, falling=False):
-    """Internal function that implements the threshold method - also used in peak-finder
+    """Internal function that implements the threshold method - also used in peak-finder.
 
     Args:
         threshold (float):
@@ -136,15 +140,17 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
     Returns:
         (tuple of opt_trans,trans_err,mapping func)
 
-    The most general case is an affine transform which includes rotation, scale, translation and skew. This is represented as a 2 x 3 matrix
-    of coordinates. The *xmode* and *ymode* parameters control the possible operations to align the data in x and y directions, in addition
-    to which the *xmode* parameter can take the value 'affine' which allows a full affine transformation. The returned values are the
-    affine transformation matrix, the uncertainities in this and a function to map co-ordinates with the optimal affine transformation.
+    The most general case is an affine transform which includes rotation, scale, translation and skew. This is
+    represented as a 2 x 3 matrix  of coordinates. The *xmode* and *ymode* parameters control the possible operations
+    to align the data in x and y directions, in addition to which the *xmode* parameter can take the value 'affine'
+    which allows a full affine transformation. The returned values are the affine transformation matrix, the
+    uncertainities in this and a function to map co-ordinates with the optimal affine transformation.
 
     Note:
-        *m0* combines both giving an initial value and fixed values for the transformation. If *m0* is set, then it is used to provide initial
-        balues of the free parameters. Which elelemnts of *m0* that are free parameters and which are fixed is determined by the *xmode*
-        and *ymode* parameters. IF *xmode* and *ymode* are both fixed, however, no scaling is done at all.
+        *m0* combines both giving an initial value and fixed values for the transformation. If *m0* is set, then it
+        is used to provide initial balues of the free parameters. Which elelemnts of *m0* that are free parameters
+        and which are fixed is determined by the *xmode* and *ymode* parameters. IF *xmode* and *ymode* are both
+        fixed, however, no scaling is done at all.
     """
     if xy1.shape != xy2.shape or xy1.shape[1] != 2:
         raise RuntimeError(

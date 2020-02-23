@@ -1,5 +1,7 @@
-"""The Stoner Python package provides utility classes for writing simple data analysis scripts more easily.  It has been developed by members
-of the `Condensed Matter Group<http://www.stoner.leeds.ac.uk/>` at the `University of Leeds<http://www.leeds.ac.uk>`.
+"""Provides utility classes for writing simple data analysis scripts more easily.
+
+It has been developed by members of the `Condensed Matter Group<http://www.stoner.leeds.ac.uk/>` at the
+`University  of Leeds<http://www.leeds.ac.uk>`.
 """
 # pylint: disable=import-error
 __all__ = [

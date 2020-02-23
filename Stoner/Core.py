@@ -1424,7 +1424,11 @@ class DataFile(metadataObject):
         return self._repr_table_("html")
 
     def _repr_short_(self):
-        return f"{self.filename}({type(self)}) of shape {self.shape} ({''.join(self.setas)}) and {len(self.metadata)} items of metadata"
+        ret = (
+            f"{self.filename}({type(self)}) of shape {self.shape} ({''.join(self.setas)})"
+            + f" and {len(self.metadata)} items of metadata"
+        )
+        return ret
 
     def _repr_table_(self, fmt="rst"):
         """Convert the DataFile to a 2D array and then feed to tabulate."""
@@ -1931,8 +1935,8 @@ class DataFile(metadataObject):
                     -   None - in which case the *col* argument is used to identify rows to be deleted,
                     -   a float in which case rows whose columncol = val are deleted
                     -   or a function - in which case rows where the function evaluates to be true are deleted.
-                    -   a tuple, in which case rows where column col takes value between the minium and maximum of the tuple
-                        are deleted.
+                    -   a tuple, in which case rows where column col takes value between the minium and maximum of
+                        the tuple are deleted.
 
         Keyword Arguments:
             invert (bool):
@@ -2259,7 +2263,8 @@ class DataFile(metadataObject):
                     continue
             else:
                 raise StonerUnrecognisedFormat(
-                    f"Ran out of subclasses to try and load {filename} as. Recognised filetype are:{list(self.subclasses.keys())}"
+                    f"Ran out of subclasses to try and load {filename} as."
+                    + f" Recognised filetype are:{list(self.subclasses.keys())}"
                 )
         else:
             if filetype is None:
@@ -2459,7 +2464,8 @@ class DataFile(metadataObject):
                 cls = self.subclasses[as_loaded]  # pylint: disable=unsubscriptable-object
             else:
                 raise ValueError(
-                    f"{as_loaded} cannot be interpreted as a valid sub class of {type(self)} so cannot be used to save this data"
+                    f"{as_loaded} cannot be interpreted as a valid sub class of {type(self)}"
+                    + f" so cannot be used to save this data"
                 )
             ret = cls(self).save(filename)
             self.filename = ret.filename
@@ -2874,55 +2880,3 @@ class DataFile(metadataObject):
                 Array of unique values from the column.
         """
         return np.unique(self.column(col), return_index, return_inverse)
-
-    # =====================================================================================================
-    ############################ Depricated  Methods       ################################################
-    # =====================================================================================================
-
-    # def __meta__(self, ky):
-    #     """Returns specific items of  metadata.
-
-    #     This is equivalent to doing DataFile.metadata[key]
-
-    #     Args:
-    #         ky (string): The name of the metadata item to be returned.
-
-    #     Returns:
-    #         mixed or None: Returns the item of metadata.
-
-    #     Note:
-    #        If key is not an exact match for an item of metadata,
-    #         then a regular expression match is carried out.
-    #     """
-    #     if isinstance(ky, string_types):  # Ok we go at it with a string
-    #         if str(ky) in self.metadata:
-    #             ret = self.metadata[str(ky)]
-    #         else:
-    #             test = re.compile(ky)
-    #             ret = self.__regexp_meta__(test)
-    #     elif isinstance(ky, _pattern_type):
-    #         ret = self.__regexp_meta__(ky)
-    #     else:
-    #         raise TypeError("Only strings and regular expressions  are supported as search keys for metadata")
-    #     return ret
-
-    # def __regexp_meta__(self, test):
-    #     """Do a regular expression search for all meta data items.
-
-    #     Args:
-    #         test (compiled regular expression): Regular expression to test against meta data key names
-
-    #     Returns:
-    #         Either a single metadata item or a dictionary of metadata items
-    #     """
-    #     possible = [x for x in self.metadata if test.search(x)]
-    #     if not possible:
-    #         raise KeyError("No metadata with keyname: {}".format(test))
-    #     elif len(possible) == 1:
-    #         ret = self.metadata[possible[0]]
-    #     else:
-    #         d = dict()
-    #         for p in possible:
-    #             d[p] = self.metadata[p]
-    #         ret = d
-    #     return ret

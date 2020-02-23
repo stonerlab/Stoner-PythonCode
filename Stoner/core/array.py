@@ -20,23 +20,28 @@ class DataArray(ma.MaskedArray):
     r"""A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.
 
     Attributes:
-        column_headers (list): of strings of the column names of the data.
-        i (array of integers): When read, returns the row  umbers of the data. When written to, sets the
-            base row index. The base row index is preserved when a DataArray is indexed.
-        x,y,z (1D DataArray): When a column is declared to contain *x*, *y*, or *z* data, then these attributes access
-            the corresponding columns. When written to, the attributes overwrite the existing column's data.
-        d,e,f (1D DataArray): Where a column is identified as containing uncertainities for *x*, *y* or *z* data, then these
-            attributes provide a quick access to them. When written to, the attributes overwrite the existing column's data.
-        u,v,w (1D DataArray): Columns may be identieid as containing vectgor field information. These attributes provide quick
+        column_headers (list):
+            of strings of the column names of the data.
+        i (array of integers):
+            When read, returns the row  umbers of the data. When written to, sets the base row index. The base row
+            index is preserved when a DataArray is indexed.
+        x,y,z (1D DataArray):
+            When a column is declared to contain *x*, *y*, or *z* data, then these attributes access the corresponding
+            columns. When written to, the attributes overwrite the existing column's data.
+        d,e,f (1D DataArray):
+            Where a column is identified as containing uncertainities for *x*, *y* or *z* data, then these attributes
+            provide a quick access to them. When written to, the attributes overwrite the existing column's data.
+        u,v,w (1D DataArray):
+            Columns may be identieid as containing vectgor field information. These attributes provide quick
             access to them, assuming that they are defined as cartesian co-ordinates. When written to, the attributes
             overwrite the existing column's data.
-        p,q,r (1D DataArray): These attributes access calculated columns that convert :math:`(x,y,z)` data or :math:`(u,v,w)`
+        p,q,r (1D DataArray):
+            These attributes access calculated columns that convert :math:`(x,y,z)` data or :math:`(u,v,w)`
             into :math:`(\phi,\theta,r)` polar co-ordinates. If on *x* and *y* columns are defined, then 2D polar
             co-ordinates are returned for *q* and *r*.
-        setas (list or string): Actually a proxy to a magic class that handles the assignment of columns to different axes and
+        setas (list or string):
+            Actually a proxy to a magic class that handles the assignment of columns to different axes and
             also tracks the names of columns (so that columns may be accessed as named items).
-
-
 
     This array type is used to represent numeric data in the Stoner Package - primarily as a 2D
     matrix in :py:class:`Stoner.Core.DataFile` but also when a 1D row is required. In con trast to
@@ -46,9 +51,9 @@ class DataArray(ma.MaskedArray):
     more attractive.
     """
 
-    # ============================================================================================================================
-    ############################                       Object Construction                        ###############################
-    # ============================================================================================================================
+    # ==============================================================================================================
+    ############################           Object Construction                       ###############################
+    # ==============================================================================================================
 
     def __new__(cls, input_array, *args, **kargs):
         """Create the new instance of the DataArray."""
@@ -116,9 +121,9 @@ class DataArray(ma.MaskedArray):
         ret = ma.MaskedArray.__array_wrap__(self, out_arr, context)
         return ret
 
-    # ============================================================================================================================
-    ############################                  Property Accessor Functions                     ###############################
-    # ============================================================================================================================
+    # ==============================================================================================================
+    ############################          Property Accessor Functions                ###############################
+    # ==============================================================================================================
 
     @property
     def _(self):
@@ -257,9 +262,9 @@ class DataArray(ma.MaskedArray):
         setas = self.setas
         setas(value)
 
-    # ============================================================================================================================
-    ############################              Speical Methods                ####################################################
-    # ============================================================================================================================
+    # ==============================================================================================================
+    ############################        Speical Methods         ####################################################
+    # ==============================================================================================================
 
     def __reduce__(self):
         # Get the parent's __reduce__ tuple
@@ -322,7 +327,8 @@ class DataArray(ma.MaskedArray):
         """Indexing function for DataArray.
 
         Args:
-            ix (various): Index to find.
+            ix (various):
+                Index to find.
 
         Returns:
             An indexed part of the DataArray object with extra attributes.
@@ -439,9 +445,9 @@ class DataArray(ma.MaskedArray):
 
         super(DataArray, self).__setitem__(ix, val)
 
-    # ============================================================================================================================
-    ############################              Private Methods                ####################################################
-    # ============================================================================================================================
+    # ==============================================================================================================
+    ############################              Private Methods                #######################################
+    # ==============================================================================================================
 
     def _col_args(
         self,
@@ -512,9 +518,9 @@ class DataArray(ma.MaskedArray):
 
         return ret
 
-    # ============================================================================================================================
-    ############################              Public Methods                ####################################################
-    # ============================================================================================================================
+    # ==============================================================================================================
+    ############################              Public Methods                ########################################
+    # ==============================================================================================================
 
     def keys(self):
         """Return a list of column headers."""
@@ -526,15 +532,16 @@ class DataArray(ma.MaskedArray):
         Useful for reordering data for idiot programs that expect columns in a fixed order.
 
         Args:
-            swp  (tuple of list of tuples of two elements): Each
-                element will be iused as a column index (using the normal rules
+            swp  (tuple of list of tuples of two elements):
+                Each element will be iused as a column index (using the normal rules
                 for matching columns).  The two elements represent the two
                 columns that are to be swapped.
-            headers_too (bool): Indicates the column headers
-                are swapped as well
+            headers_too (bool):
+                Indicates the column headers are swapped as well
 
         Returns:
-            self: A copy of the modified :py:class:`DataFile` objects
+            self:
+                A copy of the modified :py:class:`DataFile` objects
 
         Note:
             If swp is a list, then the function is called recursively on each

@@ -59,32 +59,37 @@ class DiskBasedFolderMixin:
     """A Mixin class that implmenets reading metadataObjects from disc.
 
     Attributes:
-        type (:py:class:`Stoner.Core.metadataObject`) the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Core.Data`)
-
-        extra_args (dict): Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
-
-        pattern (str or regexp): A filename globbing pattern that matches the contents of the folder. If a regular expression is provided then
-            any named groups are used to construct additional metadata entryies from the filename. Default is *.* to match all files with an extension.
-
-        exclude (str or regexp): A filename globbing pattern that matches files to exclude from the folder.  Default is *.tdms_index to exclude all
-            tdms index files.
-
-        read_means (bool): IF true, additional metatdata keys are added that return the mean value of each column of the data. This can hep in
-            grouping files where one column of data contains a constant value for the experimental state. Default is False
-
-        recursive (bool): Specifies whether to search recurisvely in a whole directory tree. Default is True.
-
-        flatten (bool): Specify where to present subdirectories as spearate groups in the folder (False) or as a single group (True). Default is False.
-            The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect and :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
-
-        discard_earlier (bool): IF there are several files with the same filename apart from !#### being appended just before the extension, then discard
-            all except the one with the largest value of #### when collecting the list of files.
-
-        directory (str): The root directory on disc for the folder - by default this is the current working directory.
-
-        multifile (boo): Whether to select individual files manually that are not (necessarily) in  a common directory structure.
-
-        readlist (bool): Whether to read the directory immediately on creation. Default is True
+        type (:py:class:`Stoner.Core.metadataObject`):
+            the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Core.Data`)
+        extra_args (dict):
+            Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
+        pattern (str or regexp):
+            A filename globbing pattern that matches the contents of the folder. If a regular expression is provided
+            then any named groups are used to construct additional metadata entryies from the filename. Default
+            is *.* to match all files with an extension.
+        exclude (str or regexp):
+            A filename globbing pattern that matches files to exclude from the folder.  Default is *.tdms_index to
+            exclude all tdms index files.
+        read_means (bool):
+            If true, additional metatdata keys are added that return the mean value of each column of the data.
+            This can hep in grouping files where one column of data contains a constant value for the experimental
+            state. Default is False
+        recursive (bool):
+            Specifies whether to search recurisvely in a whole directory tree. Default is True.
+        flatten (bool):
+            Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
+            (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect
+            and :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
+        discard_earlier (bool):
+            If there are several files with the same filename apart from !#### being appended just before the
+            extension, then discard all except the one with the largest value of #### when collecting the list of
+            files.
+        directory (str):
+            The root directory on disc for the folder - by default this is the current working directory.
+        multifile (boo):
+            Whether to select individual files manually that are not (necessarily) in  a common directory structure.
+        readlist (bool):
+            Whether to read the directory immediately on creation. Default is True
     """
 
     _defaults = {
@@ -104,7 +109,7 @@ class DiskBasedFolderMixin:
     }
 
     def __init__(self, *args, **kargs):
-        """Additional constructor for DiskBasedFolderMixins"""
+        """Additional constructor for DiskBasedFolderMixins."""
 
         _ = self.defaults  # Force the default store to be populated.
         if "directory" in self._default_store and self._default_store["directory"] is None:
@@ -136,11 +141,13 @@ class DiskBasedFolderMixin:
             return k
 
     def _dialog(self, message="Select Folder", new_directory=True):
-        """Creates a directory dialog box for working with
+        """Creates a directory dialog box for working with.
 
         Keyword Arguments:
-            message (string): Message to display in dialog
-            new_directory (bool): True if allowed to create new directory
+            message (string):
+                Message to display in dialog
+            new_directory (bool):
+                True if allowed to create new directory
 
         Returns:
             A directory to be used for the file operation.
@@ -170,9 +177,10 @@ class DiskBasedFolderMixin:
         called from the public save() method. The trail of group keys is used to create a directory tree.
 
         Args:
-            grp (:py:class:`objectFolder` or :py:calss:`Stoner.metadataObject`): A group or file to save
-            trail (list of strings): the trail of paths used to get here
-            root (string or None): a replacement root directory
+            grp (:py:class:`objectFolder` or :py:calss:`Stoner.metadataObject`):
+                A group or file to save trail (list of strings): the trail of paths used to get here
+            root (string or None):
+                a replacement root directory
 
         Returns:
             Saved Path
@@ -318,20 +326,24 @@ class DiskBasedFolderMixin:
         return self
 
     def getlist(self, **kargs):
-        """Scans the current directory, optionally recursively to build a list of filenames
+        """Scans the current directory, optionally recursively to build a list of filenames.
 
         Keyword Arguments:
-            recursive (bool): Do a walk through all the directories for files
-            directory (string or False): Either a string path to a new directory or False to open a dialog box or not set in which case existing
+            recursive (bool):
+                Do a walk through all the directories for files
+            directory (string or False):
+                Either a string path to a new directory or False to open a dialog box or not set in which case existing
                 directory is used.
-            flatten (bool): After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of
-            :py:meth:`objectFolder.getlist()`)
+            flatten (bool):
+                After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the
+                previous behaviour of :py:meth:`objectFolder.getlist()`)
 
         Returns:
             A copy of the current DataFoder directory with the files stored in the files attribute
 
-        getlist() scans a directory tree finding files that match the pattern. By default it will recurse through the entire
-        directory tree finding sub directories and creating groups in the data folder for each sub directory.
+        getlist() scans a directory tree finding files that match the pattern. By default it will recurse through
+        the entire directory tree finding sub directories and creating groups in the data folder for each sub
+        directory.
         """
         self.__clear__()
         recursive = kargs.pop("recursive", self.recursive)
@@ -370,10 +382,11 @@ class DiskBasedFolderMixin:
     def keep_latest(self):
         """Filter out earlier revisions of files with the same name.
 
-        The CM group LabVIEW software will avoid overwirting files when measuring by inserting !#### where #### is an integer revision number just before the
-        filename extension. This method will look for instances of several files which differ in name only by the presence of the revision number and will
-        kepp only the highest revision number. This is useful if several measurements of the same experiment have been carried out, but only the last file is
-        the correct one.
+        The CM group LabVIEW software will avoid overwirting files when measuring by inserting !#### where #### is an
+        integer revision number just before the filename extension. This method will look for instances of several
+        files which differ in name only by the presence of the revision number and will kepp only the highest revision
+        number. This is useful if several measurements of the same experiment have been carried out, but only the
+        last file is the correct one.
 
         Returns:
             A copy of the DataFolder.
@@ -409,12 +422,15 @@ class DiskBasedFolderMixin:
         return tmp
 
     def save(self, root=None):
-        """Save the entire data folder out to disc using the groups as a directory tree,
-        calling the save method for each file in turn.
+        """Save the entire data folder out to disc using the groups as a directory tree.
+
+        Calls the save method for each file in turn.
 
         Args:
-            root (string): The root directory to start creating files and subdirectories under. If set to None or not specified, the current folder's
-                diretory attribute will be used.
+            root (string):
+                The root directory to start creating files and subdirectories under. If set to None or not specified,
+                the current folder's diretory attribute will be used.
+
         Returns:
             A list of the saved files
         """
@@ -424,7 +440,8 @@ class DiskBasedFolderMixin:
         """Removes the instance from memory without losing the name in the Folder.
 
         Args:
-            name(string,int or None): Specifies the entry to unload from memeory. If set to None all loaded entries are unloaded.
+            name(string,int or None):
+                Specifies the entry to unload from memeory. If set to None all loaded entries are unloaded.
 
         Returns:
             (DataFolder): returns a copy of itself.
@@ -440,17 +457,19 @@ class DiskBasedFolderMixin:
 
 class DataMethodsMixin:
 
-    """A mixin class that provides a :py:class:`Stoner.folders.core.baseFolder` with methods for working with :py:class:`Stoner.Data` objects.
+    """Methods for wokring with :py:class:`Stner.Data` in py:class:`Stoner.DataFolder`s.
     """
 
     def concatenate(self, sort=None, reverse=False):
         """Concatentates all the files in a objectFolder into a single metadataObject like object.
 
         Keyword Arguments:
-            sort (column index, None or bool, or clallable function): Sort the resultant metadataObject by this column (if a column index),
-                or by the *x* column if None or True, or not at all if False. *sort* is passed directly to the eponymous method as the
+            sort (column index, None or bool, or clallable function):
+                Sort the resultant metadataObject by this column (if a column index), or by the *x* column if None
+                or True, or not at all if False. *sort* is passed directly to the eponymous method as the
                 *order* paramter.
-            reverse (bool): Reverse the order of the sort (defaults to False)
+            reverse (bool):
+                Reverse the order of the sort (defaults to False)
 
         Returns:
             The current objectFolder with only one metadataObject item containing all the data.
@@ -467,13 +486,18 @@ class DataMethodsMixin:
         return self
 
     def extract(self, *metadata, **kargs):
-        """Walks through the terminal group and gets the listed metadata from each file and constructsa replacement metadataObject.
+        """Extracts metadata from each of the files in the terminal group.
+
+        Walks through the terminal group and gets the listed metadata from each file and constructsa replacement
+        metadataObject.
 
         Args:
-            *metadata (str): One or more metadata indices that should be used to construct the new data file.
+            *metadata (str):
+                One or more metadata indices that should be used to construct the new data file.
 
         Ketyword Arguments:
-            copy (bool): Take a copy of the :py:class:`DataFolder` before starting the extract (default is True)
+            copy (bool):
+                Take a copy of the :py:class:`DataFolder` before starting the extract (default is True)
 
         Returns:
             An instance of a metadataObject like object.
@@ -527,14 +551,19 @@ class DataMethodsMixin:
         return ret.walk_groups(_extractor, group=True, replace_terminal=True, walker_args={"metadata": metadata})
 
     def gather(self, xcol=None, ycol=None):
-        """Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a :py:class:`Stoner.Core.metadataObject`
+        """Collects xy and y columns from the subfiles in the final group in the tree
+
+        Builds the collected data into a :py:class:`Stoner.Core.metadataObject`
 
         Keyword Arguments:
-            xcol (index or None): Column in each file that has x data. if None, then the setas settings are used
-            ycol (index or None): Column(s) in each filwe that contain the y data. If none, then the setas settings are used.
+            xcol (index or None):
+                Column in each file that has x data. if None, then the setas settings are used
+            ycol (index or None):
+                Column(s) in each filwe that contain the y data. If none, then the setas settings are used.
 
         Notes:
-            This is a wrapper around walk_groups that assembles the data into a single file for further analysis/plotting.
+            This is a wrapper around walk_groups that assembles the data into a single file for
+            further analysis or plotting.
 
         """
 
@@ -629,21 +658,30 @@ class PlotMethodsMixin:
             kargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
 
         Keyword Arguments:
-            extra (callable(i,j,d)): A callable that can carry out additional processing per plot after the plot is done
-            figsize(tuple(x,y)): Size of the figure to create
-            dpi(float): dots per inch on the figure
-            edgecolor,facecolor(matplotlib colour): figure edge and frame colours.
-            frameon (bool): Turns figure frames on or off
-            FigureClass(class): Passed to matplotlib figure call.
-            plots_per_page(int): maximum number of plots per figure.
-            tight_layout(dict or False): If not False, arguments to pass to a call of :py:func:`matplotlib.pyplot.tight_layout`. Defaults to {}
+            extra (callable(i,j,d)):
+                A callable that can carry out additional processing per plot after the plot is done
+            figsize(tuple(x,y)):
+                Size of the figure to create
+            dpi(float):
+                dots per inch on the figure
+            edgecolor,facecolor(matplotlib colour):
+                figure edge and frame colours.
+            frameon (bool):
+                Turns figure frames on or off
+            FigureClass(class):
+                Passed to matplotlib figure call.
+            plots_per_page(int):
+                maximum number of plots per figure.
+            tight_layout(dict or False):
+                If not False, arguments to pass to a call of :py:func:`matplotlib.pyplot.tight_layout`. Defaults to {}
 
         Returns:
             A list of :py:class:`matplotlib.pyplot.Axes` instances.
 
         Notes:
-            If the underlying type of the :py:class:`Stoner.Core.metadataObject` instances in the :py:class:`PlotFolder`
-            lacks a **plot** method, then the instances are converted to :py:class:`Stoner.Core.Data`.
+            If the underlying type of the :py:class:`Stoner.Core.metadataObject` instances in the
+            :py:class:`PlotFolder` lacks a **plot** method, then the instances are converted to
+            :py:class:`Stoner.Core.Data`.
 
             Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
             from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.

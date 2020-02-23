@@ -166,22 +166,32 @@ def all_size(iterator, size=None):
 
 
 def format_error(value, error=None, **kargs):
-    r"""Handles the printing out of the answer with the uncertaintly to 1sf and the value to no more sf's than the uncertainty.
+    r"""Formats answer with the uncertaintly to 1sf and the value to no more sf's than the uncertainty.
 
     Args:
-        value (float): The value to be formated
-        error (float): The uncertainty in the value
-        fmt (str): Specify the output format, opyions are:
-            *  "text" - plain text output
-            * "latex" - latex output
-            * "html" - html entities
-        escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)
-        mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
-            to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
-            i.e. mantissa and exponent format is used.
-        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
+        value (float):
+            The value to be formated
+        error (float):
+            The uncertainty in the value
+
+    Keyword Arguments:
+        fmt (str):
+            Specify the output format, opyions are:
+                -  "text" - plain text output
+                - "latex" - latex output
+                - "html" - html entities
+        escape (bool):
+            Specifies whether to escape the prefix and units for unprintable characters in non text formats (default
+            False)
+        mode (string):
+            If "float" (default) the number is formatted as is, if "eng" the value and error is converted
+            to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a
+            scientifc, i.e. mantissa and exponent format is used.
+        units (string):
+            A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
             prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm
-        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
+        prefix (string):
+            A prefix string that should be included before the value and error string. in LaTeX mode this is
             inside the math-mode markers, but not embedded in \mathrm.
 
     Returns:
@@ -270,23 +280,30 @@ def format_error(value, error=None, **kargs):
 
 
 def format_val(value, **kargs):
-    r"""Format a number as an SI quantity
+    r"""Format a number as an SI quantity.
 
     Args:
-        value(float): Value to format
+        value(float):
+            Value to format
 
     Keyword Arguments:
-        fmt (str): Specify the output format, opyions are:
-            *  "text" - plain text output
-            * "latex" - latex output
-            * "html" - html entities
-        escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)
-        mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
-            to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
-            i.e. mantissa and exponent format is used.
-        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
+        fmt (str):
+            Specify the output format, opyions are:
+                -  "text" - plain text output
+                - "latex" - latex output
+                - "html" - html entities
+        escape (bool):
+            Specifies whether to escape the prefix and units for unprintable characters in non text formats (default
+            False)
+        mode (string):
+            If "float" (default) the number is formatted as is, if "eng" the value and error is converted
+            to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a
+            scientifc, i.e. mantissa and exponent format is used.
+        units (string):
+            A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
             prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm
-        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
+        prefix (string):
+            A prefix string that should be included before the value and error string. in LaTeX mode this is
             inside the math-mode markers, but not embedded in \mathrm.
 
     Returns:
@@ -388,8 +405,10 @@ def all_type(iterator, typ):
     """Determines if an interable omnly contains a common type.
 
     Arguments:
-        iterator (Iterable): The object to check if it is all iterable
-        typ (class): The type to check for.
+        iterator (Iterable):
+            The object to check if it is all iterable
+        typ (class):
+            The type to check for.
 
     Returns:
         True if all elements are of the type typ, or False if not.
@@ -425,7 +444,8 @@ def isComparable(v1, v2):
     """Returns true if v1 and v2 can be compared sensibly
 
     Args:
-        v1,v2 (any): Two values to compare
+        v1,v2 (any):
+            Two values to compare
 
     Returns:
         False if both v1 and v2 are numerical and both nan, otherwise True.
@@ -445,10 +465,12 @@ def isiterable(value):
     """Chack to see if a value is iterable.
 
     Args:
-        value : Entitiy to check if it is iterable
+        value :
+            Entitiy to check if it is iterable
 
     Returns:
-        (bool): True if value is an instance of collections.Iterable.
+        (bool):
+            True if value is an instance of collections.Iterable.
     """
     return isinstance(value, Iterable)
 
@@ -492,11 +514,14 @@ def isproperty(obj, name):
     """Check whether an attribute of an object or class is a property.
 
     Args:
-        obj (instance or class): Thing that has the attribute to check
-        name (str): Name of the attrbiute that might be a property
+        obj (instance or class):
+            Thing that has the attribute to check
+        name (str):
+            Name of the attrbiute that might be a property
 
     Returns:
-        (bool): Whether the name is a property or not.
+        (bool):
+            Whether the name is a property or not.
     """
     if isinstance(obj, object):
         obj = obj.__class__
@@ -511,14 +536,18 @@ def istuple(obj, *args, **kargs):
     """Determine if obj is a tuple of a certain signature.
 
     Args:
-        obj(object): The object to check
-        *args(type): Each of the suceeding arguments are used to determine the expected type of each element.
+        obj(object):
+            The object to check
+        *args(type):
+            Each of the suceeding arguments are used to determine the expected type of each element.
 
     Keywoprd Arguments:
-        strict(bool): Whether the elements of the tuple have to be exactly the type specified or just castable as the type
+        strict(bool):
+            Whether the elements of the tuple have to be exactly the type specified or just castable as the type
 
     Returns:
-        (bool): True if obj is a matching tuple.
+        (bool):
+            True if obj is a matching tuple.
     """
     strict = kargs.pop("strict", True)
     if not isinstance(obj, tuple):
@@ -545,8 +574,10 @@ def quantize(number, quantum):
     """Round a number to the nearest multiple of a quantum.
 
     Args:
-        number (float,array): Number(s) to be rounded to the nearest qyuantum
-        quantum (float): Quantum to round to
+        number (float,array):
+            Number(s) to be rounded to the nearest qyuantum
+        quantum (float):
+            Quantum to round to
     Returns:
         number rounded to qunatum
     """
@@ -556,10 +587,19 @@ def quantize(number, quantum):
 def set_option(name, value):
     """Set a global package option.
 
-    - short_repr (bool): Instead of using a rich representation, use a short description for DataFile and Imagefile.
-    - short_data_repr (bool): Just use short representation for DataFiles
-    - short_img_repr (bool): Just use a short representation for image file
-    - no_figs (bool): Do not return figures from plotting functions, just plot them.
+    Args:
+        name (str):
+            Option Name, one of:
+                - short_repr (bool):
+                    Instead of using a rich representation, use a short description for DataFile and Imagefile.
+                - short_data_repr (bool):
+                    Just use short representation for DataFiles
+                - short_img_repr (bool):
+                    Just use a short representation for image file
+                - no_figs (bool):
+                    Do not return figures from plotting functions, just plot them.
+        value (depends on name):
+            The value to set (see *name*)
     """
     if name not in _options.keys():
         raise IndexError("{} is not a valid package option".format(name))
@@ -572,7 +612,8 @@ def tex_escape(text):
     """Escapes spacecial text charcters in a string.
 
     Parameters:
-        text (str): a plain text message
+        text (str):
+            a plain text message
 
     Returns:
         the message escaped to appear correctly in LaTeX

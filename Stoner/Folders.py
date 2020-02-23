@@ -13,8 +13,8 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
 
     """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
 
-    By default, the members of the DataFolder are isntances of :class:`Stoner.Data`. The DataFolder emplys a lazy open strategy, so that
-    files are only read in from disc when actually needed.
+    By default, the members of the DataFolder are isntances of :class:`Stoner.Data`. The DataFolder emplys a lazy
+    open strategy, so that files are only read in from disc when actually needed.
 
     .. inheritance-diagram:: DataFolder
 

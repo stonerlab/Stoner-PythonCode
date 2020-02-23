@@ -122,6 +122,6 @@ class FileFormats_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=FileFormats_test("test_loaders")
     test.setUp()
-    test.test_attocube_scan()
-    #unittest.main()
+    #test.test_attocube_scan()
+    unittest.main()
     #test.test_csvfile()

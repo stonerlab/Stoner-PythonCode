@@ -449,7 +449,7 @@ class DefaultPlotStyle(MutableMapping):
         return ret, ax
 
     def apply(self):
-        """Scan for all attributes that start template_ and build them into a dictionary to update matplotlib settings with."""
+        """Update matplotlib rc parameters from any attributes starting template_."""
         plt.style.use(self.stylesheet)
         for attr in dir(self):
             v = getattr(self, attr)

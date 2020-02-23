@@ -83,7 +83,7 @@ def __sub_core__(result, other):
 
 class ImageArray(np.ma.MaskedArray, metadataObject):
 
-    """:py:class:`Stoner.Image.core.ImageArray` is a numpy array like class with a metadata parameter and pass through to skimage methods.
+    """A numpy array like class with a metadata parameter and pass through to skimage methods.
 
     ImageArray is for manipulating images stored as a 2d numpy array.
     It is built to be almost identical to a numpy array except for one extra
@@ -222,7 +222,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return ret
 
     def __array_finalize__(self, obj):
-        """__array_finalize__ and __array_wrap__ are necessary functions when subclassing numpy.ndarray to fix some behaviours.
+        """__array_finalize__ is a  necessary functions when subclassing numpy.ndarray to fix some behaviours.
 
         See http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html for
         more info and examples

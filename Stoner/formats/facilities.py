@@ -18,10 +18,9 @@ from Stoner.core.base import string_to_type
 
 class BNLFile(Core.DataFile):
 
-    """
-    Creates BNLFile a subclass of Core.DataFile that caters for files in the SPEC format given by BNL (specifically u4b beamline but hopefully generalisable).
+    """Reader of files in the SPEC format given by BNL (specifically u4b beamline but hopefully generalisable).
 
-    Author Rowan 12/2011
+    Author RCT 12/2011
 
     The file from BNL must be split into seperate scan files before Stoner can use
     them, a separate python script has been written for this and should be found
@@ -106,11 +105,11 @@ class BNLFile(Core.DataFile):
         self.column_headers = column_headers
 
     def _load(self, filename, *args, **kargs):  # fileType omitted, implicit in class call
-        """BNLFile.load(filename)
+        """Load the file from disc.
 
         Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
+            filename (string or bool):
+                File to load. If None then the existing filename is used, if False, then a file dialog will be used.
 
         Returns:
             A copy of the itself after loading the data.
@@ -133,13 +132,7 @@ class MDAASCIIFile(Core.DataFile):
 
     """Reads files generated from the APS."""
 
-    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
-    #   .. note::
-    #      Subclasses with priority<=32 should make some positive identification that they have the right
-    #      file type before attempting to read data.
     priority = 16
-    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
-    # the file load/save dialog boxes.
     patterns = ["*.txt"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
@@ -223,15 +216,9 @@ class MDAASCIIFile(Core.DataFile):
 
 class OpenGDAFile(Core.DataFile):
 
-    """Extends Core.DataFile to load files from RASOR"""
+    """Extends Core.DataFile to load files from RASOR."""
 
-    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
-    #   .. note::
-    #      Subclasses with priority<=32 should make some positive identification that they have the right
-    #      file type before attempting to read data.
     priority = 16  # Makes a positive ID of it's file type so give priority
-    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
-    # the file load/save dialog boxes.
     patterns = ["*.dat"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
@@ -277,7 +264,7 @@ class RasorFile(OpenGDAFile):
 
 class SNSFile(Core.DataFile):
 
-    """Reads the ASCII exported Poalrised Neutron Rfeflectivity reduced files from BL-4A line at the Spallation Neutron Source at Oak Ridge National Lab.
+    """Reads the ASCII exported PNR reduced files from BL-4A line at the SSNS at Oak Ridge National Lab.
 
     File has a large header marked up with # prefixes which include several section is []
     Each section seems to have a slightly different format

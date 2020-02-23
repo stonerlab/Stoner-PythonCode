@@ -10,6 +10,8 @@ import copy
 import numpy as np
 from numpy import NaN
 import asteval
+import datetime
+from dateutil import parser
 
 from ..compat import string_types, int_types, _pattern_type
 from ..tools import isiterable, isComparable
@@ -39,7 +41,9 @@ def literal_eval(string):
     """
     global _asteval_interp  # Ugly!
     if _asteval_interp is None:
-        _asteval_interp = asteval.Interpreter(usersyms={"np": np, "re": re, "NaN": NaN, "nan": NaN, "None": None})
+        _asteval_interp = asteval.Interpreter(
+            usersyms={"np": np, "re": re, "NaN": NaN, "nan": NaN, "None": None, "datetime": datetime}
+        )
     try:
         return _asteval_interp(string, show_errors=False)
     except (SyntaxError, ValueError, NameError, IndexError, TypeError):
@@ -55,7 +59,8 @@ def string_to_type(value):
     Fianlly it interpretation as an int, float or string is tried.
 
     Args:
-        value (string): string representation of he value
+        value (string):
+            string representation of he value
     Returns:
         A python object of the natural type for value
     """
@@ -72,11 +77,11 @@ def string_to_type(value):
             if value.lower() in ["true", "yes", "on", "false", "no", "off"]:
                 ret = value.lower() in ["true", "yes", "on"]  # Boolean
             else:
-                for trial in [int, float, str]:
+                for trial in [int, float, parser.parse, str]:
                     try:
                         ret = trial(value)
                         break
-                    except ValueError:
+                    except (ValueError, OverflowError):
                         continue
                 else:
                     ret = None
@@ -87,7 +92,8 @@ def string_to_type(value):
 
 class _evaluatable:
 
-    """Just a placeholder to indicate that special action needs to be taken to convert a string representation to a valid Python type."""
+    """Just a placeholder to indicate that special action needs to be taken to convert a string representation to
+    a valid Python type."""
 
     pass
 
@@ -102,10 +108,12 @@ class regexpDict(sorteddict):
         """Lookup name and find a matching key or raise KeyError.
 
         Parameters:
-            name (str, _pattern_type): The name to be searched for
+            name (str, _pattern_type):
+                The name to be searched for
 
         Keyword Arguments:
-            multiple (bool): Return a singl entry ()default, False) or multiple entries
+            multiple (bool):
+                Return a singl entry ()default, False) or multiple entries
 
         Returns:
             Canonical key matching the specified name.
@@ -224,20 +232,31 @@ class typeHintedDict(regexpDict):
     strongly typed languages (sch as LabVIEW).
 
     Attributes:
-        _typehints (dict): The backing store for the type hint information
-        __regexGetType (re): Used to extract the type hint from a string
-        __regexSignedInt (re): matches type hint strings for signed intergers
-        __regexUnsignedInt (re): matches the type hint string for unsigned integers
-        __regexFloat (re): matches the type hint strings for floats
-        __regexBoolean (re): matches the type hint string for a boolean
-        __regexStrng (re): matches the type hint string for a string variable
-        __regexEvaluatable (re): matches the type hint string for a compoind data type
-        __types (dict): mapping of type hinted types to actual Python types
-        __tests (dict): mapping of the regex patterns to actual python types
+        _typehints (dict):
+            The backing store for the type hint information
+        __regexGetType (re):
+            Used to extract the type hint from a string
+        __regexSignedInt (re):
+            matches type hint strings for signed intergers
+        __regexUnsignedInt (re):
+            matches the type hint string for unsigned integers
+        __regexFloat (re):
+            matches the type hint strings for floats
+        __regexBoolean (re):
+            matches the type hint string for a boolean
+        __regexStrng (re):
+            matches the type hint string for a string variable
+        __regexEvaluatable (re):
+            matches the type hint string for a compoind data type
+        __types (dict):
+            mapping of type hinted types to actual Python types
+        __tests (dict):
+            mapping of the regex patterns to actual python types
 
     Notes:
-        Rather than subclassing a plain dict, this is a subclass of a :py:class:`blist.sorteddict` which stores the entries in a binary list structure.
-        This makes accessing the keys much faster and also ensures that keys are always returned in alphabetical order.
+        Rather than subclassing a plain dict, this is a subclass of a :py:class:`blist.sorteddict` which stores the
+        entries in a binary list structure. This makes accessing the keys much faster and also ensures that keys are
+        always returned in alphabetical order.
     """
 
     allowed_keys = string_types
@@ -253,6 +272,7 @@ class typeHintedDict(regexpDict):
     # Match floating point types
     __regexBoolean = re.compile(r"^Boolean")
     __regexString = re.compile(r"^(String|Path|Enum)")
+    __regexTimestamp = re.compile(r"Timestamp")
     __regexEvaluatable = re.compile(r"^(Cluster||\d+D Array|List)")
 
     __types = OrderedDict(
@@ -264,6 +284,7 @@ class typeHintedDict(regexpDict):
             ("AnonCluster", tuple),
             ("Array", np.ndarray),
             ("List", list),
+            ("Timestamp", datetime.datetime),
             ("String", str),
         ]
     )
@@ -275,6 +296,7 @@ class typeHintedDict(regexpDict):
         (__regexUnsignedInt, int),
         (__regexFloat, float),
         (__regexBoolean, bool),
+        (__regexTimestamp, datetime.datetime),
         (__regexString, str),
         (__regexEvaluatable, _evaluatable()),
     ]
@@ -286,7 +308,8 @@ class typeHintedDict(regexpDict):
         """Construct the typeHintedDict.
 
         Args:
-            *args, **kargs: Pass any parameters through to the dict() constructor.
+            *args, **kargs:
+                Pass any parameters through to the dict() constructor.
 
 
         Calls the dict() constructor, then runs through the keys of the
@@ -313,7 +336,8 @@ class typeHintedDict(regexpDict):
         """Determines the correct string type to return for common python classes.
 
         Args:
-            value (any): The data value to determine the type hint for.
+            value (any):
+                The data value to determine the type hint for.
 
         Returns:
             A type hint string
@@ -350,9 +374,10 @@ class typeHintedDict(regexpDict):
         """Based on a string type t, return value cast to an appropriate python class.
 
         Args:
-            t (string): is a string representing the type
-            value (any): is the data value to be munged into the
-                        correct class
+            t (string):
+                is a string representing the type
+            value (any):
+                is the data value to be munged into the correct class
         Returns:
             Returns the munged data value
 
@@ -380,30 +405,44 @@ class typeHintedDict(regexpDict):
                     except SyntaxError:
                         ret = ""
                     break
+                elif issubclass(valuetype, datetime.datetime):
+                    ret = literal_eval(value)
+                    if isinstance(ret, string_types):
+                        try:
+                            ret = parser.parse(ret)
+                        except (ValueError, OverflowError):
+                            pass
+                    break
                 else:
                     ret = valuetype(value)
                     break
         else:
             ret = str(value)
+            try:
+                ret = parser.parse(ret)
+            except (ValueError, OverflowError):
+                pass
         return ret
 
-    def __deepcopy__(self, memo):
-        """Implements a deepcopy method for typeHintedDict to work around something that gives a hang in newer Python 2.7.x"""
-        cls = self.__class__
-        result = cls()
-        memo[id(self)] = result
-        for k in self:
-            result[k] = copy.deepcopy(self[k])
-            result.types[k] = self.types[k]
-        return result
+    # def __deepcopy__(self, memo):
+    #     """Implements a deepcopy method for typeHintedDict to work around something that gives a hang in newer Python 2.7.x"""
+    #     cls = self.__class__
+    #     result = cls()
+    #     memo[id(self)] = result
+    #     for k in self:
+    #         result[k] = copy.deepcopy(self[k])
+    #         result.types[k] = self.types[k]
+    #     return result
 
     def _get_name_(self, name):
         """Checks a string name for an embedded type hint and strips it out.
 
         Args:
-            name(string): String containing the name with possible type hint embedeed
+            name(string):
+                String containing the name with possible type hint embedeed
         Returns:
-            (name,typehint) (tuple): A tuple containing just the name of the mateadata and (if found
+            (name,typehint) (tuple):
+                A tuple containing just the name of the mateadata and (if found
                 the type hint string),
         """
         search = str(name)
@@ -416,10 +455,11 @@ class typeHintedDict(regexpDict):
             return name, None
 
     def __getitem__(self, name):
-        """Provides a get item method that checks whether its been given a typehint in the item name and deals with it appropriately.
+        """Checks whether its been given a typehint in the item name and deals with it appropriately.
 
         Args:
-            name (string): metadata key to retrieve
+            name (string):
+                metadata key to retrieve
 
         Returns:
             metadata value
@@ -438,11 +478,13 @@ class typeHintedDict(regexpDict):
             return {k: v for k, v in zip(name, value)}
 
     def __setitem__(self, name, value):
-        """Provides a method to set an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
+        """Sets an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
 
         Args:
-            name (string): The metadata keyname
-            value (any): The value to store in the metadata string
+            name (string):
+                The metadata keyname
+            value (any):
+                The value to store in the metadata string
 
         Note:
             If you provide an embedded type string it is your responsibility
@@ -501,7 +543,7 @@ class typeHintedDict(regexpDict):
         return ret
 
     def filter(self, name):
-        """Filter the dictionary keys by name
+        """Filter the dictionary keys by name.
 
         Reduce the metadata dictionary leaving only keys satisfied by name.
 
@@ -529,8 +571,9 @@ class typeHintedDict(regexpDict):
         This simply looks up the type hinting dictionary for each key it is given.
 
         Args:
-            key (string or sequence of strings): Either a single string key or a iterable type containing
-                keys
+            key (string or sequence of strings):
+                Either a single string key or a iterable type containing keys
+
         Returns:
             The string type hint (or a list of string type hints)
         """
@@ -550,7 +593,9 @@ class typeHintedDict(regexpDict):
         with format keyname{typhint}=string_value.
 
         Args:
-            key (string): The metadata key to export
+            key (string):
+                The metadata key to export
+
         Returns:
             A string of the format : key{type hint} = value
         """
@@ -575,7 +620,8 @@ class typeHintedDict(regexpDict):
         """Reads multiple lines of strings and tries to import keys from them.
 
         Args:
-            lines(list of str): The lines of metadata values to import.
+            lines(list of str):
+                The lines of metadata values to import.
         """
         for line in lines:
             self.import_key(line)
@@ -586,8 +632,8 @@ class typeHintedDict(regexpDict):
         This is the inverse of the :py:meth:`typeHintedDict.export` method.
 
         Args:
-            line(str): The string line to be interpreted as a key-value pair.
-
+            line(str):
+                he string line to be interpreted as a key-value pair.
         """
         parts = line.split("=")
         k = parts[0]
@@ -597,11 +643,12 @@ class typeHintedDict(regexpDict):
 
 class metadataObject(MutableMapping):
 
-    """Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.
+    """Represents some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.
 
     Attributes:
-        metadata (typeHintedDict): of key-value metadata pairs. The dictionary tries to retain information about the type of data so as to aid import and
-            export from CM group LabVIEW code.
+        metadata (typeHintedDict):
+            Dictionary of key-value metadata pairs. The dictionary tries to retain information about the type of data
+            so as to aid import and export from CM group LabVIEW code.
    """
 
     def __init__(self, *args, **kargs):
@@ -667,7 +714,7 @@ class metadataObject(MutableMapping):
             yield k
 
     def items(self):
-        """Make sure we implement an items that doesn't just iterate over self!"""
+        """Make sure we implement an items that doesn't just iterate over self."""
         for k, v in self.metadata.items():
             yield k, v
 

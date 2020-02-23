@@ -204,12 +204,15 @@ def hysteresis_correct(data, **kargs):
             fully saturated. If an integer is given it will use that many data points at the end of the loop.
         h_sat_method (str):
             The method used to determine thwe saturation field. Options are -
-            -   "linear_intercept" (default): Fit a straight line to the central region of each branch of the loop and look at the
+            -   "linear_intercept" (default): Fit a straight line to the central region of each branch of the loop
+                and look at the
                 intercept with the relevant saturation moment.
             -   "delta_M": Look for a field where the moment has changed by *h_sat_fraction* times the error in M_s.
-            -   "susceptibility" - Calcualte H_sat from where the susceptibility changes by 1% of the average susceptibility
+            -   "susceptibility" - Calcualte H_sat from where the susceptibility changes by 1% of the average
+                susceptibility
         h_sat_fraction (float):
-            The central fraction of the saturation moment that is used for calculating the saturation field. Defaults to 0.5
+            The central fraction of the saturation moment that is used for calculating the saturation field. Defaults
+            to 0.5
         xcol (column index):
             Column with the x data in it
         ycol (column_index):
@@ -219,8 +222,8 @@ def hysteresis_correct(data, **kargs):
 
     Returns:
         (:py:class:`Stoner.Data`):
-            The original loop with the x and y columns replaced with corrected data and extra metadata added to give the
-            background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.
+            The original loop with the x and y columns replaced with corrected data and extra metadata added to give
+            the background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.
     """
     if isinstance(data, DataFile):
         cls = data.__class__

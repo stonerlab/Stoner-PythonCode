@@ -9,7 +9,7 @@ sudo: true
 python:
     - "3.6"
     - "3.7"
-  
+
 virtualenv:
   system_site_packages: false
 
@@ -46,14 +46,14 @@ before_install:
   - conda config --set channel_priority strict
   - conda update -q conda
   - conda info -a
-  
+
 install:
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
   # Useful for debugging any issues with conda
 
   # Replace dep1 dep2 ... with your dependencies
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION stoner pandas image-registration
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION stoner pandas image-registration python-dateutil
   - conda activate test-environment
   # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
   # Hyperspy is now an optional dependency for 3.6 onwards

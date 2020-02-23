@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-:py:mod:`Stoner.folders.each` provides the classes and support functions for the :py:attr:`Stoner.DataFolder.each`
-magic attribute.
+Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic attribute.
 """
 __all__ = ["item"]
 import numpy as np
@@ -154,10 +153,11 @@ class item:
             A list of the results of evaluating *func* for each item in the folder.
 
         Notes:
-            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is storing, then
-            the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the :py:class:`baseFolder`.
-            If *_result* is True the return value is added to the :py:class:`Stoner.Core.metadataObject`'s metadata under the name
-            of the function. If *_result* is a string. then return result is stored in the corresponding name.
+            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is
+            storing, then the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the
+            :py:class:`baseFolder`. If *_result* is True the return value is added to the
+            :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
+            string. then return result is stored in the corresponding name.
         """
         # Just call the iter generator but assemble into a list.
         if isinstance(func, string_types) and "_byname" not in kargs:
@@ -179,7 +179,7 @@ class item:
         return list(res)
 
     def __getattr__(self, name):
-        """Handles some special case attributes that provide alternative views of the objectFolder
+        """Handles some special case attributes that provide alternative views of the objectFolder.
 
         Args:
             item (string): The attribute name being requested
@@ -326,10 +326,11 @@ class item:
             A list of the results of evaluating *func* for each item in the folder.
 
         Notes:
-            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is storing, then
-            the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the :py:class:`baseFolder`.
-            If *_result* is True the return value is added to the :py:class:`Stoner.Core.metadataObject`'s metadata under the name
-            of the function. If *_result* is a string. then return result is stored in the corresponding name.
+            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is
+            storing, then the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the
+            :py:class:`baseFolder`. If *_result* is True the return value is added to the
+            :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
+            string. then return result is stored in the corresponding name.
         """
         _return = kargs.pop("_return", None)
         _byname = kargs.pop("_byname", False)

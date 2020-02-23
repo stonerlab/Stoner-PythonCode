@@ -892,57 +892,6 @@ class baseFolder(MutableSequence):
         result = __sub_core__(result, other)
         return result
 
-    # def __getattr__(self, item):
-    #     """Handles some special case attributes that provide alternative views of the objectFolder
-
-    #     Args:
-    #         item (string): The attribute name being requested
-
-    #     Returns:
-    #         Depends on the attribute
-
-    #     """
-    #     try:
-    #         ret = super(baseFolder, self).__getattribute__(item)
-    #     except AttributeError:
-    #         if item.startswith("_"):
-    #             raise AttributeError("{} is not an Attribute of {}".format(item, self.__class__))
-
-    #         try:
-    #             instance = super(baseFolder, self).__getattribute__("instance")
-    #             if callable(getattr(instance, item, None)):  # It's a method
-    #                 ret = self._getattr_proxy(
-    #                     item
-    #                 )  # make it a single underscore name that can be overwritten in mixin classes
-    #             else:  # It's a static attribute
-    #                 if item in self._object_attrs:
-    #                     ret = self._object_attrs[item]
-    #                 elif len(self) > 0:
-    #                     ret = getattr(instance, item, None)
-    #                 else:
-    #                     ret = None
-    #                 if ret is None:
-    #                     raise AttributeError
-    #         except AttributeError:  # Ok, pass back
-    #             raise AttributeError("{} is not an Attribute of {} or {}".format(item, type(self), type(instance)))
-    #     return ret
-
-    # def _getattr_proxy(self, item):
-    #     """Make a proxy call to access a method of the metadataObject like types.
-
-    #     Args:
-    #         item (string): Name of method of metadataObject class to be called
-
-    #     Returns:
-    #         Either a modifed copy of this objectFolder or a list of return values
-    #         from evaluating the method for each file in the Folder.
-
-    #     Notes:
-    #         This is now simply a proxy into getting the attribute on the baseFolder.each instead. This then
-    #           makes use of multiprocess Pools to speed things up.
-    #     """
-    #     return getattr(self.each, item)
-
     def __deepcopy__(self, memo):
         """Provides support for copy.deepcopy to work."""
         cls = self.__class__
@@ -1629,7 +1578,7 @@ class baseFolder(MutableSequence):
         return self[k]
 
     def slice_metadata(self, key, output="smart"):
-        """Return an array of the metadata values for each item/file in the top level group
+        """Return an array of the metadata values for each item/file in the top level group.
 
         Args:
             key(str, regexp or list of str): the meta data key(s) to return
@@ -1650,7 +1599,7 @@ class baseFolder(MutableSequence):
                 matching keys. If key is a list ir other iterable, then return a 2D array where each column
                 corresponds to one of the keys.
 
-        TODO:
+        Todo:
             Add options to recurse through all groups? Put back RCT's values only functionality?
         """
         return self.metadata.slice(key, output=output)
