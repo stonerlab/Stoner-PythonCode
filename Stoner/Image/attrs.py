@@ -6,11 +6,11 @@ Defines the magic attriobutes that :py:class:`Stoner.Image.ImageFolder` uses.
 __all__ = ["DrawProxy", "MaskProxy"]
 
 from functools import wraps
+from io import BytesIO as StreamIO
+
 import numpy as np
 from skimage import draw
-from io import BytesIO as StreamIO
 import matplotlib.pyplot as plt
-
 
 from Stoner.tools import fix_signature
 

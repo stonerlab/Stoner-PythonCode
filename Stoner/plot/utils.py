@@ -36,12 +36,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 __all__ = ["errorfill", "extrema_from_error_input", "fill_between", "fill_between_x", "hsl2rgb", "joy_division"]
 import warnings
+from distutils.version import LooseVersion
+from colorsys import hls_to_rgb
 
 import numpy as np
 import matplotlib.pyplot as plt
+
 from Stoner.compat import mpl_version
-from distutils.version import LooseVersion
-from colorsys import hls_to_rgb
 
 __all__ = ["errorfill"]
 

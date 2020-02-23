@@ -1,12 +1,14 @@
 """Test Weak-localisation fitting."""
+from copy import deepcopy
+
+from numpy import linspace, ones_like
+from numpy.random import normal
+
 from Stoner import Data
 from Stoner.analysis.fitting.models.e_transport import (
     blochGrueneisen,
     BlochGrueneisen,
 )
-from numpy import linspace, ones_like
-from numpy.random import normal
-from copy import deepcopy
 
 T = linspace(4.2, 300, 101)
 params = [265, 65, 1.0, 5]

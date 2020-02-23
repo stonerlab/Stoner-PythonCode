@@ -1,18 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Sun Mar  3 16:44:56 2019
-
-@author: phygbu
-"""
+"""Fitting Functions and classes to mixin for :py:class:`Stoner.Data`."""
 __all__ = ["odr_Model", "FittingMixin"]
+
 from inspect import isclass
 from collections import Mapping, OrderedDict
-import numpy as np
-import numpy.ma as ma
 from distutils.version import LooseVersion
 
-import scipy as _sp_
+import numpy as np
+import numpy.ma as ma
+import scipy as sp
 from scipy.odr import Model as odrModel
 from scipy.optimize import curve_fit, differential_evolution
 
@@ -776,7 +773,7 @@ class FittingMixin:
         elif isclass(func) and issubclass(func, lmfit.Model):
             f_name = func.__name__
             func = func.func
-        elif isinstance(func, (_sp_.odr.Model)):
+        elif isinstance(func, (sp.odr.Model)):
             f_name = func.meta["name"]
             func = func.func
         else:
@@ -796,14 +793,14 @@ class FittingMixin:
             perr = [fit.params[x].stderr for x in args]
             nfev = fit.nfev
             chisq = fit.redchi
-        elif isinstance(fit, _sp_.odr.Output):
+        elif isinstance(fit, sp.odr.Output):
             popt = fit.beta
             perr = fit.sd_beta
             delta, eps = fit.delta, fit.eps
             nfree = len(delta) - len(popt)
             chisq = np.sum((delta ** 2 + eps ** 2)) / nfree
             nfev = None
-        elif isinstance(fit, _sp_.optimize.OptimizeResult):
+        elif isinstance(fit, sp.optimize.OptimizeResult):
             popt = fit.popt
             perr = fit.perr
             nfev = fit.nfev
@@ -904,7 +901,7 @@ class FittingMixin:
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
 
-        fit = _sp_.odr.ODR(data, model, beta0=model.estimate)
+        fit = sp.odr.ODR(data, model, beta0=model.estimate)
         try:
             fit_result = fit.run()
             fit_result.redchi = fit_result.sum_square / (len(fit_result.y) - len(fit_result.beta))
@@ -924,10 +921,10 @@ class FittingMixin:
             )
             fit_result.fit_report = lambda: tmp
 
-        except _sp_.odr.OdrError as err:
+        except sp.odr.OdrError as err:
             print(err)
             return None
-        except _sp_.odr.OdrStop as err:
+        except sp.odr.OdrStop as err:
             print(err)
             return None
         self._record_curve_fit_result(
@@ -1071,9 +1068,9 @@ class FittingMixin:
         xdat, ydata, sigma = self._get_curve_fit_data(xcol, ycol, bounds, sigma)
 
         # Support any of our alternatives for the fitting function
-        if isinstance(func, type) and issubclass(func, (Model, _sp_.odr.Model)):
+        if isinstance(func, type) and issubclass(func, (Model, sp.odr.Model)):
             func = func()
-        if isinstance(func, _sp_.odr.Model):  # scipy othrothogonal model hack
+        if isinstance(func, sp.odr.Model):  # scipy othrothogonal model hack
 
             def _func(x, *beta):
                 return func.fcn(beta, x)
@@ -1595,9 +1592,9 @@ class FittingMixin:
         kargs["p0"] = p0
         model = odr_Model(model, p0=p0)
         if not absolute_sigma:
-            data = _sp_.odr.Data(data[0], data[1], wd=1 / data[3] ** 2, we=1 / data[2] ** 2)
+            data = sp.odr.Data(data[0], data[1], wd=1 / data[3] ** 2, we=1 / data[2] ** 2)
         else:
-            data = _sp_.odr.RealData(data[0], data[1], sx=data[3], sy=data[2])
+            data = sp.odr.RealData(data[0], data[1], sx=data[3], sy=data[2])
 
         if single_fit:
             ret_val = self._odr_one(data, model, prefix, _, **kargs)

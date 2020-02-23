@@ -15,13 +15,13 @@ v2 corrections: less automation saving time
                 shift algorithm is different to make for better zeroing
 
 """
-from __future__ import print_function
-import Stoner
-import numpy as np
-import matplotlib.pyplot as plot
 import string
 import os
 
+import numpy as np
+import matplotlib.pyplot as plot
+
+import Stoner
 
 plot.ion()  # put the plotting in interactive mode
 raw_input = input

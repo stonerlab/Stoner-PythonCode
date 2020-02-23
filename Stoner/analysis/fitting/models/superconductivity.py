@@ -1,17 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-:py:class:`lmfit.Model` model classes and functions for various superconductivity related models.
-
-"""
+""":py:class:`lmfit.Model` model classes and functions for various superconductivity related models."""
 
 # This module can be used with Stoner v.0.9.0 asa standalone module
+from functools import partial
 
 import numpy as np
 from scipy.special import jv
 from scipy.constants import physical_constants
 from scipy.integrate import quad
-from functools import partial
 
 __all__ = [
     "RSJ_Noiseless",

@@ -5,12 +5,14 @@ Gavin Burnell 28/12/2010
 TODO: Implement an error bar on the uncertainity by understanding the significance of the covariance terms
 """
 import sys
+from copy import copy
+
 import numpy as np
 import matplotlib.pyplot as pyplot
-from copy import copy
 from lmfit.models import ExponentialModel
+
 from Stoner import Data
-from Stoner.Fit import Linear
+from Stoner.analysis.fitting.models.generic import Linear
 from Stoner.Util import format_error
 
 filename = False

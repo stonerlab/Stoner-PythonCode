@@ -1,8 +1,9 @@
 """Example customising a plot using default style."""
-from Stoner import Data, __home__
-from Stoner.plot.formats import DefaultPlotStyle
 import os.path as path
 from cycler import cycler
+
+from Stoner import Data, __home__
+from Stoner.plot.formats import DefaultPlotStyle
 
 filename = path.realpath(
     path.join(__home__, "..", "doc", "samples", "sample.txt")

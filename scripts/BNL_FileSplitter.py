@@ -4,22 +4,19 @@ R.C.Temple
 
 Will overwrite any files already split but that should be ok for an update.
 """
-from __future__ import print_function
-
 import os
-import Stoner
-
-raw_input = input
 import numpy as np
+
+import Stoner
 
 # Get file open ###############
 while True:
     try:
-        directory = raw_input(
+        directory = input(
             "Enter the directory path where your data is stored:\n"
         )
         os.chdir(directory)
-        filename = raw_input(
+        filename = input(
             "Enter the filename (including extension) for your file\r\n"
         )
         mainFP = open(filename, "r")

@@ -788,7 +788,7 @@ class XRDFile(Core.DataFile):
                             # A blank line marks the end of the section, so go back to the outer loop which will
                             # handle a new section
                             break
-                        elif section == "Data":  # In the Data section read lines of data value,vale
+                        if section == "Data":  # In the Data section read lines of data value,vale
                             parts = line.split(",")
                             angle = parts[0].strip()
                             counts = parts[1].strip()

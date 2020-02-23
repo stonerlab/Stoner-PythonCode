@@ -8,14 +8,14 @@ __all__ = ["DiskBasedFolderMixin", "DataMethodsMixin", "PlotMethodsMixin"]
 import os
 import os.path as path
 from functools import partial
+from copy import deepcopy
+
 from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
 from matplotlib.pyplot import figure, Figure, subplot, tight_layout
-from copy import deepcopy
 
 from Stoner.compat import string_types, get_filedialog, _pattern_type, makedirs
 from Stoner.tools import isiterable, make_Data
-
 from Stoner.core.base import metadataObject, string_to_type
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder, __add_core__ as _base__add_core__, __sub_core__ as _base__sub_core__
@@ -110,7 +110,6 @@ class DiskBasedFolderMixin:
 
     def __init__(self, *args, **kargs):
         """Additional constructor for DiskBasedFolderMixins."""
-
         _ = self.defaults  # Force the default store to be populated.
         if "directory" in self._default_store and self._default_store["directory"] is None:
             self._default_store["directory"] = os.getcwd()
@@ -457,8 +456,7 @@ class DiskBasedFolderMixin:
 
 class DataMethodsMixin:
 
-    """Methods for wokring with :py:class:`Stner.Data` in py:class:`Stoner.DataFolder`s.
-    """
+    """Methods for wokring with :py:class:`Stner.Data` in py:class:`Stoner.DataFolder`s."""
 
     def concatenate(self, sort=None, reverse=False):
         """Concatentates all the files in a objectFolder into a single metadataObject like object.
@@ -551,7 +549,7 @@ class DataMethodsMixin:
         return ret.walk_groups(_extractor, group=True, replace_terminal=True, walker_args={"metadata": metadata})
 
     def gather(self, xcol=None, ycol=None):
-        """Collects xy and y columns from the subfiles in the final group in the tree
+        """Collects xy and y columns from the subfiles in the final group in the tree.
 
         Builds the collected data into a :py:class:`Stoner.Core.metadataObject`
 

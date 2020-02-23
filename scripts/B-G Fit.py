@@ -3,15 +3,13 @@
 
 @author: phygbu
 """
-from __future__ import print_function
+import re
+
+import numpy as np
+from matplotlib.pyplot import text
 
 from Stoner.Core import Data, format_error
 from Stoner.Fit import blochGrueneisen
-import numpy as np
-from matplotlib.pyplot import text
-import re
-
-raw_input = input
 
 
 def bg_wrapper(T, tD, r0, A):
@@ -26,7 +24,7 @@ def select_col(data, message):
         print("{} : {}".format(i, col))
     while True:
         try:
-            return int(raw_input(message))
+            return int(input(message))
         except ValueError:
             print("Please select a column number")
             continue

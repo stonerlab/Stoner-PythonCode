@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
 """Implements core image handling classes for the :mod:`Stoner.Image` package."""
 __all__ = ["ImageArray", "ImageFile"]
-import numpy as np
 import os
-import warnings
 from copy import copy, deepcopy
 import inspect
 from importlib import import_module
 from functools import wraps
 from io import BytesIO as StreamIO
 
-from PIL import Image
-from PIL import PngImagePlugin  # for saving metadata
+import numpy as np
+from PIL import Image, PngImagePlugin
 import matplotlib.pyplot as plt
+
 from Stoner.core.base import typeHintedDict, metadataObject
 from ..Core import DataFile
-
 from Stoner.tools import istuple, fix_signature, islike_list, make_Data
 from Stoner.compat import (
     string_types,

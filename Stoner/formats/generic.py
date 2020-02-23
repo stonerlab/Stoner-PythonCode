@@ -7,11 +7,11 @@ __all__ = ["CSVFile", "HyperSpyFile", "KermitPNGFile", "TDMSFile"]
 import csv
 import io
 import linecache
-import PIL
 import re
 from copy import copy
 from collections import Mapping
 
+import PIL
 import numpy as np
 
 import Stoner.Core as Core

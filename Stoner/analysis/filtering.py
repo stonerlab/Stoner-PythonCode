@@ -7,9 +7,10 @@ Filtering and smoothing functions for analysis code.
 __all__ = ["FilteringOpsMixin"]
 
 from copy import deepcopy as copy
+from warnings import warn
+
 import numpy as np
 from numpy import ma
-from warnings import warn
 from scipy.interpolate import interp1d, UnivariateSpline
 from scipy.signal import get_window, convolve, savgol_filter
 

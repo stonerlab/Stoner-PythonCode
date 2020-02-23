@@ -7,18 +7,15 @@ Created on Tue Jan 14 19:53:11 2014
 
 @author: Gavin Burnell
 """
-from __future__ import print_function, absolute_import, division, unicode_literals
 from sys import version_info as __vi__
-from matplotlib import __version__ as mpl_version
-from os import walk
-from os.path import join
+from os import walk, makedirs
+from os.path import join, commonpath
 import fnmatch
-import numpy as np
-from os.path import commonpath
-from inspect import signature
-from os import makedirs
-from inspect import getfullargspec
+from inspect import signature, getfullargspec
 from shutil import which
+
+import numpy as np
+from matplotlib import __version__ as mpl_version
 
 try:
     from lmfit import Model  # pylint: disable=unused-import
@@ -27,7 +24,6 @@ try:
 except ImportError:
     Model = object
     _lmfit = False
-
 
 __all__ = [
     "str2bytes",

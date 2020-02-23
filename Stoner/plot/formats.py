@@ -13,13 +13,15 @@ __all__ = [
     "SketchPlot",
     "SeabornPlotStyle",
 ]
+from os.path import join, dirname, realpath, exists
+from inspect import getfile
+from collections import MutableMapping, Mapping
+
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter, Formatter
 from matplotlib.ticker import AutoLocator
-from os.path import join, dirname, realpath, exists
+import numpy as np
 from numpy.random import normal
-from inspect import getfile
-from collections import MutableMapping, Mapping
 
 try:
     import seaborn as sns
@@ -28,14 +30,12 @@ try:
 except ImportError:
     SEABORN = False
 
-import numpy as _np_
-
 
 def _round(value, offset=2):
     """Provate method to round numbers for the TexFormatters to avoid crazy numbers of decimal places"""
     for i in range(5):
-        vt = _np_.round(value, i)
-        if _np_.abs(value - vt) < 10 ** (-i - offset):
+        vt = np.round(value, i)
+        if np.abs(value - vt) < 10 ** (-i - offset):
             value = vt
             break
     return value
@@ -59,11 +59,11 @@ class TexFormatter(Formatter):
 
     def __call__(self, value, pos=None):
         """Return the value ina  suitable texable format"""
-        if value is None or _np_.isnan(value):
+        if value is None or np.isnan(value):
             ret = ""
         elif value != 0.0:
-            power = _np_.floor(_np_.log10(_np_.abs(value)))
-            if _np_.abs(power) < 4:
+            power = np.floor(np.log10(np.abs(value)))
+            if np.abs(power) < 4:
                 ret = "${}$".format(_round(value))
             else:
                 v = _round(value / (10 ** power))
@@ -113,20 +113,20 @@ class TexEngFormatter(EngFormatter):
 
     def __call__(self, value, pos=None):
         """Return the value ina  suitable texable format."""
-        if value is None or _np_.isnan(value):
+        if value is None or np.isnan(value):
             ret = ""
         elif value != 0.0:
-            power = _np_.floor(_np_.log10(_np_.abs(value)))
-            pre = _np_.ceil(power / 3.0) * 3
+            power = np.floor(np.log10(np.abs(value)))
+            pre = np.ceil(power / 3.0) * 3
             if -1 <= power <= 3 or pre == 0:
                 ret = "${}\\,\\mathrm{{{}}}$".format(_round(value, 4), self.unit)
             else:
                 power = power % 3
                 v = _round(value / (10 ** pre), 4)
-                if _np_.abs(v) < 0.1:
+                if np.abs(v) < 0.1:
                     v *= 1000
                     pre -= 3
-                elif _np_.abs(v) > 1000.0:
+                elif np.abs(v) > 1000.0:
                     v /= 1000
                     pre += 3.0
 
@@ -175,7 +175,7 @@ class DefaultPlotStyle(MutableMapping):
     # Internal class attributes.
     _inches_per_pt = 1.0 / 72.27  # Convert pt to inch
     _mm_per_inch = 25.4
-    _golden_mean = (_np_.sqrt(5) - 1.0) / 2.0  # Aesthetic ratio
+    _golden_mean = (np.sqrt(5) - 1.0) / 2.0  # Aesthetic ratio
 
     # Settings for this figure type. All instance attributes which start template_
     # will be used. Once the leading template_ is stripped, all _ characters are replaced

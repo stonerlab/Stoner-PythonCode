@@ -1,6 +1,4 @@
 """Stoner.Core provides the core classes for the Stoner package."""
-from __future__ import print_function
-
 __all__ = [
     "StonerLoadError",
     "StonerSetasError",
@@ -24,6 +22,7 @@ from textwrap import TextWrapper
 from collections import OrderedDict
 from traceback import format_exc
 import csv
+
 import numpy as np
 from numpy import NaN  # NOQA pylint: disable=unused-import
 from numpy import ma
@@ -519,8 +518,8 @@ class DataFile(metadataObject):
     def patterns(self):
         """Return the possible filename patterns for use in dialog boxes."""
         patterns = self._patterns
-        for cls in self.subclasses:  # pylint: disable=not-an-iterable
-            klass = self.subclasses[cls]  # pylint: disable=unsubscriptable-object
+        for cls in DataFile.subclasses:  # pylint: disable=not-an-iterable
+            klass = DataFile.subclasses[cls]  # pylint: disable=unsubscriptable-object
             if klass is DataFile or "patterns" not in klass.__dict__:
                 continue
             patterns.extend([p for p in klass.patterns if p not in patterns])
@@ -1146,12 +1145,14 @@ class DataFile(metadataObject):
         patterns = self.patterns
         for p in patterns:  # pylint: disable=not-an-iterable
             descs[p] = self.__class__.__name__ + " file"
-        for c in self.subclasses:  # pylint: disable=not-an-iterable
-            for p in self.subclasses[c].patterns:  # pylint: disable=unsubscriptable-object
+        for c in DataFile.subclasses:
+            for p in DataFile.subclasses[c].patterns:  # pylint: disable=unsubscriptable-object
                 if p in descs:
-                    descs[p] += ", " + self.subclasses[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
+                    descs[p] += (
+                        ", " + DataFile.subclasses[c].__name__ + " file"
+                    )  # pylint: disable=unsubscriptable-object
                 else:
-                    descs[p] = self.subclasses[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
+                    descs[p] = DataFile.subclasses[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
 
         patterns = [(descs[p], p) for p in sorted(descs.keys())]
         patterns.insert(0, ("All File", "*.*"))
@@ -1470,8 +1471,8 @@ class DataFile(metadataObject):
         for md in self.metadata.export_all():
             md = md.replace("=", "= ")
             for line in wrapper.wrap(md):
-                if i >= outp.shape[0]:
-                    outp = np.append(outp, [[""] * outp.shape[1]], axis=0)
+                if i >= outp.shape[0]:  # pylint: disable=E1136
+                    outp = np.append(outp, [[""] * outp.shape[1]], axis=0)  # pylint: disable=E1136
                 outp[i, 0] = line
                 i += 1
         for ic, c in enumerate(interesting):
@@ -1588,8 +1589,8 @@ class DataFile(metadataObject):
             Nothing
         """
         self.mask = False
-        self.mask = self._masks.pop()
-        if not self._masks:
+        self.mask = self._masks.pop()  # pylint: disable=E0203
+        if not self._masks:  # pylint: disable=E0203
             self._masks = [False]
 
     def _raise_type_error(self, k):
@@ -2195,7 +2196,7 @@ class DataFile(metadataObject):
 
         if isinstance(filetype, string_types):  # We can specify filetype as part of name
             try:
-                filetype = DataFile.subclasses[filetype]
+                filetype = DataFile.subclasses[filetype]  # pylint: disable=E1136
             except KeyError:
                 for k, cls in DataFile.subclasses.items():
                     if filetype in k:
@@ -2220,7 +2221,7 @@ class DataFile(metadataObject):
         cls = self.__class__
         failed = True
         if auto_load:  # We're going to try every subclass we canA
-            for cls in self.subclasses.values():
+            for cls in DataFile.subclasses.values():
                 if self.debug:
                     print(cls.__name__)
                 try:
@@ -2264,7 +2265,7 @@ class DataFile(metadataObject):
             else:
                 raise StonerUnrecognisedFormat(
                     f"Ran out of subclasses to try and load {filename} as."
-                    + f" Recognised filetype are:{list(self.subclasses.keys())}"
+                    + f" Recognised filetype are:{list(DataFile.subclasses.keys())}"
                 )
         else:
             if filetype is None:
@@ -2457,11 +2458,11 @@ class DataFile(metadataObject):
             if (
                 isinstance(as_loaded, bool) and "Loaded as" in self
             ):  # Use the Loaded as key to find a different save routine
-                cls = self.subclasses[self["Loaded as"]]  # pylint: disable=unsubscriptable-object
+                cls = DataFile.subclasses[self["Loaded as"]]  # pylint: disable=unsubscriptable-object
             elif (
-                isinstance(as_loaded, string_types) and as_loaded in self.subclasses
+                isinstance(as_loaded, string_types) and as_loaded in DataFile.subclasses
             ):  # pylint: disable=unsupported-membership-test
-                cls = self.subclasses[as_loaded]  # pylint: disable=unsubscriptable-object
+                cls = DataFile.subclasses[as_loaded]  # pylint: disable=unsubscriptable-object
             else:
                 raise ValueError(
                     f"{as_loaded} cannot be interpreted as a valid sub class of {type(self)}"

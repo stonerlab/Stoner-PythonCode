@@ -4,9 +4,10 @@
 
 __all__ = ["DataArray"]
 
+import copy
+
 import numpy.ma as ma
 import numpy as np
-import copy
 
 from Stoner.compat import string_types, int_types
 from Stoner.tools import isiterable, all_type, isNone, _attribute_store, all_size

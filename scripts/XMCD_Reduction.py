@@ -1,14 +1,12 @@
 """Simple XMCD Data reduction example."""
-from __future__ import print_function
-
-# Normaliser with Stoner module
-import Stoner.Folders as SF
-from Stoner import Data
 
 
 import re
 import numpy as np
 import scipy
+
+# Normaliser with Stoner module
+from Stoner import Data, DataFolder
 
 
 def helicity(f):
@@ -149,7 +147,7 @@ rfit = (660, 670)
 lfit = (615, 630)
 
 # Read the directory of data files and sort by run number
-fldr = SF.DataFolder(directory, pattern=pattern, read_means=True)
+fldr = DataFolder(directory, pattern=pattern, read_means=True)
 fldr.sort("run")
 # Remove files outside of the run number range
 fldr.filterout(lambda f: f["run"] > endrun or f["run"] < startrun)

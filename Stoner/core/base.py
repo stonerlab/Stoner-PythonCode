@@ -7,11 +7,11 @@ __all__ = ["_evaluatable", "regexpDict", "string_to_type", "typeHintedDict", "me
 from collections import OrderedDict, MutableMapping, Mapping
 import re
 import copy
+import datetime
+from dateutil import parser
 import numpy as np
 from numpy import NaN
 import asteval
-import datetime
-from dateutil import parser
 
 from ..compat import string_types, int_types, _pattern_type
 from ..tools import isiterable, isComparable
@@ -92,8 +92,7 @@ def string_to_type(value):
 
 class _evaluatable:
 
-    """Just a placeholder to indicate that special action needs to be taken to convert a string representation to
-    a valid Python type."""
+    """Placeholder to indicate that special action needed to convert a string representation to valid Python type."""
 
     pass
 
@@ -424,16 +423,6 @@ class typeHintedDict(regexpDict):
                 pass
         return ret
 
-    # def __deepcopy__(self, memo):
-    #     """Implements a deepcopy method for typeHintedDict to work around something that gives a hang in newer Python 2.7.x"""
-    #     cls = self.__class__
-    #     result = cls()
-    #     memo[id(self)] = result
-    #     for k in self:
-    #         result[k] = copy.deepcopy(self[k])
-    #         result.types[k] = self.types[k]
-    #     return result
-
     def _get_name_(self, name):
         """Checks a string name for an embedded type hint and strips it out.
 
@@ -480,7 +469,7 @@ class typeHintedDict(regexpDict):
     def __setitem__(self, name, value):
         """Sets an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
 
-        Args:
+        Arguments:
             name (string):
                 The metadata keyname
             value (any):
@@ -645,11 +634,11 @@ class metadataObject(MutableMapping):
 
     """Represents some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.
 
-    Attributes:
+     Attributes:
         metadata (typeHintedDict):
             Dictionary of key-value metadata pairs. The dictionary tries to retain information about the type of data
             so as to aid import and export from CM group LabVIEW code.
-   """
+     """
 
     def __init__(self, *args, **kargs):
         """Initialises the current metadata attribute."""

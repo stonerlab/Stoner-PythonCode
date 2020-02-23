@@ -1,7 +1,8 @@
 """Example plot using experimental GBStyle"""
+import os.path as path
+
 from Stoner import Data, __home__
 from Stoner.plot.formats import GBPlotStyle
-import os.path as path
 
 filename = path.realpath(
     path.join(__home__, "..", "doc", "samples", "sample.txt")

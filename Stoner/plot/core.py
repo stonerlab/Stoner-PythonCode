@@ -10,6 +10,23 @@ Classes:
 from __future__ import division
 
 __all__ = ["PlotMixin"]
+import os
+from collections import Mapping, OrderedDict
+from functools import wraps
+import platform
+import copy
+
+import numpy as np
+from scipy.interpolate import griddata
+
+if os.name == "posix" and platform.system() == "Darwin":
+    import matplotlib
+
+    matplotlib.use("MacOSX")
+from matplotlib import pyplot as plt
+from matplotlib import figure as mplfig
+from matplotlib import cm
+
 from Stoner.compat import string_types, index_types, int_types, getargspec
 from Stoner.tools import (
     _attribute_store,
@@ -23,25 +40,8 @@ from Stoner.tools import (
 )
 from .formats import DefaultPlotStyle
 from .utils import errorfill
-
-import numpy as np
-from scipy.interpolate import griddata
-import os
-from collections import Mapping, OrderedDict
-from functools import wraps
-from matplotlib import pyplot as plt
-from matplotlib import figure as mplfig
-from matplotlib import cm
-
-import platform
-import copy
-
 from .utils import hsl2rgb
 
-if os.name == "posix" and platform.system() == "Darwin":
-    import matplotlib
-
-    matplotlib.use("MacOSX")
 
 try:  # Check we've got 3D plotting
     from mpl_toolkits.mplot3d import Axes3D  # NOQA pylint: disable=unused-import

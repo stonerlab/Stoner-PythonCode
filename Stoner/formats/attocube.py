@@ -6,10 +6,10 @@ from copy import deepcopy
 from glob import glob
 import re
 import importlib
+
 from numpy import genfromtxt, linspace, meshgrid, array, product
 from scipy.interpolate import griddata
 from scipy.optimize import curve_fit
-
 import h5py
 
 from Stoner.compat import string_types, bytes2str

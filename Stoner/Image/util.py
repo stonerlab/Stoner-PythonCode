@@ -4,9 +4,10 @@
 from __future__ import division
 
 __all__ = ["sign_loss", "prec_loss", "dtype_range", "_dtype", "_dtype2", "build_funcs_proxy", "changes_size"]
+from warnings import warn
 
 import numpy as np
-from warnings import warn
+
 from ..core.base import regexpDict
 
 dtype_range = {

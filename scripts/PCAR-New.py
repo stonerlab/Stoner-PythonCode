@@ -2,15 +2,12 @@
 
 Gavin Burnell g.burnell@leeds.ac.uk
 """
-from __future__ import print_function
-
 # Import packages
+import configparser as ConfigParser
 
 import numpy as np
 from Stoner import Data
 from Stoner.Fit import cfg_data_from_ini, cfg_model_from_ini, quadratic
-
-import configparser as ConfigParser
 
 
 class working(Data):

@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Dec  1 17:37:39 2017
+"""Demonstrate PlotFolder Class."""
+from os.path import join
 
-@author: phygbu
-"""
 from numpy import where, append, atleast_2d
 from scipy.constants import mu_0
 from scipy.stats import gmean
-from os.path import join
 
 from Stoner import Data, __home__
 from Stoner.analysis.fitting.models.magnetism import FMR_Power, Inverse_Kittel

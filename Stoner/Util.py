@@ -6,14 +6,15 @@ Created on Tue Oct 08 20:14:34 2013
 @author: phygbu
 """
 __all__ = ["split_up_down", "ordinal", "hysteresis_correct"]
-from .tools import format_error, make_Data
-from Stoner.Core import DataFile
-from . import DataFolder
-from .analysis.fitting.models.generic import linear
 import numpy as np
 from numpy import max, argmax, mean  # pylint: disable=redefined-builtin
 from scipy.stats import sem
 from scipy.optimize import fsolve
+
+from .tools import format_error, make_Data
+from Stoner.Core import DataFile
+from . import DataFolder
+from .analysis.fitting.models.generic import linear
 
 
 def _step(x, m, c, h):

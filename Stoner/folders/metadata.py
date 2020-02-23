@@ -5,14 +5,15 @@ magic attribute.
 """
 __all__ = ["proxy"]
 import fnmatch
+from collections import MutableMapping
+
+from lmfit import Model
+import numpy as np
+
+from Stoner.core import typeHintedDict
 from Stoner.compat import string_types
 from Stoner.tools import islike_list, isiterable, make_Data
 from Stoner.Core import DataFile
-from lmfit import Model
-
-import numpy as np
-from collections import MutableMapping
-from Stoner.core import typeHintedDict
 
 
 def _slice_keys(args, possible=None):

@@ -8,6 +8,7 @@ Implements classes to load file formats from various simulation packages
 __all__ = ["GenXFile", "OVFFile"]
 import re
 import io
+
 import numpy as np
 
 from Stoner.Core import DataFile

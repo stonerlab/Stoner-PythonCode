@@ -4,9 +4,11 @@
 Simple code to fit critical temperatures in R(T) data.
 
 """
+import numpy as np
+
 from Stoner import Data
 from Stoner.analysis.fitting.models.generic import linear
-import numpy as np
+
 
 filename = (
     "../sample-data/6221-Lockin-DAQ Temperature Control -30.0Deg 0.004T.txt"

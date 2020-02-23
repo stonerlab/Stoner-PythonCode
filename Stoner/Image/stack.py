@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """Provide variants of :class:`Stoner.Image.ImageFolder` that store images efficiently in 3D numpy arrays."""
 __all__ = ["ImageStackMixin", "ImageStack", "ImageStack"]
-import numpy as np
 import warnings
+
+import numpy as np
 
 from Stoner.compat import string_types, int_types
 from .core import ImageArray, ImageFile

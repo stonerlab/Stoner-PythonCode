@@ -45,17 +45,17 @@ __all__ = [
     "denoise",
 ]
 import warnings
+import os
 
+import numpy as np
 from scipy.interpolate import griddata
 from scipy.ndimage import gaussian_filter
-from skimage import feature, measure, transform, filters
 from matplotlib.colors import Normalize
 import matplotlib.cm as cm
+from matplotlib import pyplot as plt
+from skimage import feature, measure, transform, filters
 
 from Stoner.compat import string_types
-import numpy as np
-from matplotlib import pyplot as plt
-import os
 from Stoner.tools import istuple, isiterable, make_Data
 from .core import ImageArray
 from .util import sign_loss, _dtype2, _supported_types, prec_loss, dtype_range, _dtype, _scale as im_scale

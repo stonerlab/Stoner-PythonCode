@@ -1,10 +1,11 @@
 """Use curve_fit to fit a plane to some data."""
-from __future__ import print_function
-from Stoner import Data
+
 from numpy.random import normal
 from numpy import linspace, meshgrid, column_stack
 import matplotlib.cm as cmap
 import matplotlib.pyplot as plt
+
+from Stoner import Data
 
 
 def plane(coord, a, b, c):

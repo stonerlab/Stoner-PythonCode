@@ -2,18 +2,18 @@
 """Implements a baseFolder type structure for working with collections of images."""
 __all__ = ["_generator", "ImageFolderMixin", "ImageFolder"]
 from warnings import warn
+from importlib import import_module
+from os import path
+from json import loads, dumps
+
+from skimage.viewer import CollectionViewer
+import numpy as np
+from PIL.TiffImagePlugin import ImageFileDirectory_v2, Image
+
 from .core import ImageArray
 from ..Folders import DiskBasedFolderMixin, baseFolder
 from ..compat import string_types, int_types
 from . import ImageFile
-
-
-from skimage.viewer import CollectionViewer
-import numpy as np
-from importlib import import_module
-from os import path
-from json import loads, dumps
-from PIL.TiffImagePlugin import ImageFileDirectory_v2, Image
 
 
 def _load_ImageArray(f, **kargs):

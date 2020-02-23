@@ -8,16 +8,18 @@ Derivatives of ImageArray and ImageStack specific to processing Kerr images.
 """
 __all__ = ["KerrArray", "KerrStack", "MaskStack"]
 
+import os
+import subprocess
+import tempfile
+
+import numpy as np
+from skimage import exposure, io, transform
+
 from Stoner.Core import typeHintedDict
 from Stoner.Image import ImageArray, ImageStack, ImageFile
 from Stoner.core.exceptions import assertion, StonerAssertionError
 from Stoner.compat import which
 from Stoner.tools import make_Data
-import numpy as np
-import os
-import subprocess
-import tempfile
-from skimage import exposure, io, transform
 
 try:
     import pytesseract  # pylint: disable=unused-import
