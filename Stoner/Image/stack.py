@@ -167,7 +167,11 @@ class ImageStackMixin:
         row, col = value.shape
         pag = len(self._sizes)
         new_size = self.max_size + (pag,)
-        self._resize_stack(new_size)
+        if new_size[2] == 1:
+            dtype = value.dtype
+        else:
+            dtype = None
+        self._resize_stack(new_size, dtype=dtype)
         self._stack[:row, :col, idx] = value
 
     def __inserter__(self, ix, name, value):
@@ -180,7 +184,11 @@ class ImageStackMixin:
         self._metadata[name] = value.metadata
         self._sizes = np.insert(self._sizes, ix, value.shape, axis=0)
         new_size = self.max_size + (len(self._names),)
-        self._resize_stack(new_size)
+        if new_size[2] == 1:
+            dtype = value.dtype
+        else:
+            dtype = None
+        self._resize_stack(new_size, dtype=dtype)
         self._stack = np.insert(self._stack, ix, np.zeros(self.max_size), axis=2)
         row, col = value.shape
         self._stack[:row, :col, ix] = value.data
@@ -213,6 +221,27 @@ class ImageStackMixin:
         self._stack = np.atleast_3d(np.ma.MaskedArray([]))
 
     ###########################################################################
+    ###################      Special methods     ##############################
+
+    def __floordiv__(self, other):
+        """Calculate and XMCD ratio on the images."""
+        if not isinstance(other, ImageStackMixin):
+            return NotImplemented
+        if self._stack.dtype != other._stack.dtype:
+            raise ValueError(
+                f"Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio."
+                + "Mimatch is {self._stack.dtype} vs {other._stack.dtype}"
+            )
+        if self._stack.dtype.kind != "f":
+            ret = self.clone.convert(float)
+            other = other.clone.convert(float)
+        else:
+            ret = self.clone
+        ret._stack = (ret._stack - other._stack) / (ret._stack + other._stack)
+
+        return ret
+
+    ###########################################################################
     ###################      Private methods     ##############################
 
     def _instantiate(self, idx):
@@ -229,14 +258,16 @@ class ImageStackMixin:
         tmp._fromstack = True
         return tmp
 
-    def _resize_stack(self, new_size):
+    def _resize_stack(self, new_size, dtype=None):
         """Create a new stack with a new size."""
         old_size = self._stack.shape
         if old_size == new_size:
             return new_size
+        if dtype is None:
+            dtype = self._stack.dtype
         row, col, pag = tuple([min(o, n) for o, n in zip(old_size, new_size)])
 
-        new = np.ma.zeros(new_size)
+        new = np.ma.zeros(new_size, dtype=dtype)
         new[:row, :col, :pag] = self._stack[:row, :col, :pag]
         self._stack = new
         return row, col, pag
@@ -271,6 +302,56 @@ class ImageStackMixin:
     ###########################################################################
     ###################         Public  methods         #######################
 
+    def convert(self, dtype, force_copy=False, uniform=False, normalise=True):
+        """
+        Convert an image to the requested data-type.
+        
+        Warnings are issued in case of precision loss, or when negative values
+        are clipped during conversion to unsigned integer types (sign loss).
+        
+        Floating point values are expected to be normalized and will be clipped
+        to the range [0.0, 1.0] or [-1.0, 1.0] when converting to unsigned or
+        signed integers respectively.
+        
+        Numbers are not shifted to the negative side when converting from
+        unsigned to signed integer types. Negative values will be clipped when
+        converting to unsigned integers.
+        
+        Parameters
+        ----------
+        image : ndarray
+        Input image.
+        dtype : dtype
+        Target data-type.
+        force_copy : bool
+        Force a copy of the data, irrespective of its current dtype.
+        uniform : bool
+        Uniformly quantize the floating point range to the integer range.
+        By default (uniform=False) floating point values are scaled and
+        rounded to the nearest integers, which minimizes back and forth
+        conversion errors.
+        normalise : bool
+        When converting from int types to float normalise the resulting array
+        by the maximum allowed value of the int type.
+        
+        References
+        ----------
+        (1) DirectX data conversion rules.
+        http://msdn.microsoft.com/en-us/library/windows/desktop/dd607323%28v=vs.85%29.aspx
+        (2) Data Conversions.
+        In "OpenGL ES 2.0 Specification v2.0.25", pp 7-8. Khronos Group, 2010.
+        (3) Proper treatment of pixels as integers. A.W. Paeth.
+        In "Graphics Gems I", pp 249-256. Morgan Kaufmann, 1990.
+        (4) Dirty Pixels. J. Blinn.
+        In "Jim Blinn's corner: Dirty Pixels", pp 47-57. Morgan Kaufmann, 1998.
+        
+        """
+        from .imagefuncs import convert
+
+        # Aactually this is just a pass through for the imagefuncs.convert routine
+        self._stack = convert(self._stack, dtype, force_copy=force_copy, uniform=uniform, normalise=normalise)
+        return self
+
     def asfloat(self, normalise=True, clip=False, clip_negative=False, **kargs):
         """Convert stack to floating point type.
         Analagous behaviour to ImageFile.asfloat()
@@ -291,9 +372,7 @@ class ImageStackMixin:
         if self.imarray.dtype.kind == "f":
             pass
         else:
-            from .imagefuncs import convert
-
-            self._stack = convert(self._stack, dtype=np.float64, normalise=normalise)
+            self.convert(dtype=np.float64, normalise=normalise)
         if "clip_neg" in kargs:
             warnings.warn(
                 "clip_neg argument renamed to clip_negative in ImageStack. This will cause an error in future versions of the Stoner Package."
@@ -301,6 +380,7 @@ class ImageStackMixin:
             clip_negative = kargs.pop("clip_neg")
         if clip or clip_negative:
             self.each.clip_intensity(clip_negative=clip_negative)
+        return self
 
     def dtype_limits(self, clip_negative=True):
         """Return intensity limits, i.e. (min, max) tuple, of imarray dtype.

@@ -139,7 +139,7 @@ class ImageStackTest(unittest.TestCase):
         self.assertTrue(issubclass(ist2.imarray.dtype.type, np.integer),"Unexpected dtype in image stack2 got {} not int32".format(ist2.imarray.dtype))
         t1 = ImageStack(np.arange(60).reshape(4,3,5))
         t1.asfloat(normalise=False, clip_negative=False)
-        self.assertTrue(t1.imarray.dtype==np.float64)
+        self.assertTrue(t1.imarray.dtype==np.float64,f"Type Failure {t1.imarray.dtype}")
         self.assertTrue(np.max(t1.imarray)==59.0)
         t2 = ImageStack(np.arange(60).reshape(4,3,5))
         t2.asfloat(normalise=True, clip_negative=True)
@@ -178,7 +178,7 @@ if __name__=="__main__":
     test=ImageStackTest()
     test.setUp()
     #test.test_methods()
-    test.test_ImageStack()
+    #test.test_ImageStack()
     #test.test_mask()
-    #unittest.main()
+    unittest.main()
 

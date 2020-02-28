@@ -1270,8 +1270,17 @@ class ImageFile(metadataObject):
         """Calculate and XMCD ratio on the images."""
         if not isinstance(other, ImageFile):
             return NotImplemented
-        ret = self.clone
-        ret.image = (self.image - other.image) / (self.image + other.image)
+        if self.image.dtype != other.image.dtype:
+            raise ValueError(
+                f"Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio."
+                + "Mimatch is {self.image.dtype} vs {other.image.dtype}"
+            )
+        if self.image.dtype.kind != "f":
+            ret = self.clone.convert(float)
+            other = other.clone.convert(float)
+        else:
+            ret = self.clone
+        ret.image = (ret.image - other.image) / (ret.image + other.image)
         return ret
 
     def __eq__(self, other):

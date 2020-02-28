@@ -226,6 +226,7 @@ def align(im, ref, method="scharr", **kargs):
         if mod is None:
             del align_methods[meth]
     method = method.lower()
+    new_type = im.dtype
     if not len(align_methods):
         raise ImportError("align requires one of imreg_dft, chi2_shift or cv2 modules to be available.")
     elif method not in align_methods:
@@ -253,7 +254,7 @@ def align(im, ref, method="scharr", **kargs):
 
     if scale:
         tvec /= scale
-    new_im = im.shift((tvec[1], tvec[0]), prefilter=prefilter)
+    new_im = im.shift((tvec[1], tvec[0]), prefilter=prefilter).astype(new_type)
     for k, v in data.items():
         new_im[k] = v
     new_im["tvec"] = tuple(tvec)
