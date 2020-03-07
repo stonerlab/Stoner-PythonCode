@@ -228,9 +228,7 @@ while True:
                 )
                 break
             except ValueError:
-                timeout += (
-                    1
-                )  # if get 5 files unreadable in a row then finish the program
+                timeout += 1  # if get 5 files unreadable in a row then finish the program
                 print("Could not read file ", path)
                 if timeout <= 5:
                     break

@@ -99,6 +99,11 @@ class FileFormats_test(unittest.TestCase):
         self.s3=scan2
 
         self.assertTrue(os.path.exists(pth),f"Failed to save scan as {pth}")
+        if scan1!=scan2:
+            print("A"*80)
+            print(scan1.layout,scan2.layout)
+            for grp in scan1.groups:
+                print(scan1[grp].metadata.all_by_keys^scan3[grp].metadata.all_by_keys)
         self.assertEqual(scan1,scan2,"Roundtripping scan through hdf5 failed")
         os.remove(pth)
 
@@ -122,6 +127,6 @@ class FileFormats_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=FileFormats_test("test_loaders")
     test.setUp()
-    #test.test_attocube_scan()
-    unittest.main()
+    test.test_attocube_scan()
+    #unittest.main()
     #test.test_csvfile()

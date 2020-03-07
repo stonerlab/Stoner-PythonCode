@@ -130,7 +130,10 @@ class ImageFolderMixin:
     @property
     def size(self):
         """Return the size of an individual image or False if not all images are the same size."""
-        shape = self.images[0].shape
+        if len(self.images) > 0:
+            shape = self.images[0].shape
+        else:
+            shape = tuple()
         for i in self.images:
             if i.shape != shape:
                 return False

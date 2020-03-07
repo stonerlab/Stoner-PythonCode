@@ -10,10 +10,69 @@ from collections import MutableMapping
 from lmfit import Model
 import numpy as np
 
-from Stoner.core import typeHintedDict
+from Stoner.core import typeHintedDict, metadataObject
 from Stoner.compat import string_types
 from Stoner.tools import islike_list, isiterable, make_Data
 from Stoner.Core import DataFile
+
+
+def _fmt_as_list(results):
+    """Convert the results list of slicing to a simple list."""
+    keys = set()
+    for r in results:
+        keys |= set(r.keys())
+    keys = list(keys)
+    if len(keys) == 1:
+        ret = [r.get(keys[0], None) for r in results]
+    else:
+        ret = []
+        for r in results:
+            ret.append(tuple(r.get(k, None) for k in keys))
+
+    return ret
+
+
+def _fmt_as_dict(results):
+    """Non-opt, results is already adictionary!"""
+    return results
+
+
+def _fmt_as_dataframe(results):
+    """Format the return results as a DataFrame."""
+    from pandas import DataFrame
+
+    frame = DataFrame(results)
+    return frame
+
+
+def _fmt_as_Data(results):
+    """Format the results as a Data() object."""
+    ret = make_Data(_fmt_as_dataframe(results))
+    mask = np.zeros(ret.shape, dtype=bool)
+    for ix, col in enumerate(ret.data.T):
+        try:
+            mask[:, ix] = np.isnan(col)
+        except TypeError:
+            pass
+    ret.mask = mask
+    return ret
+
+
+def _fmt_as_array(results):
+    """Format the results as an array."""
+    ret = _fmt_as_Data(results)
+    if ret.data.shape[1] != 1:
+        ret = ret.data
+    else:
+        ret = ret.data[:, 0]
+    return ret
+
+
+def _fmt_as_smart(results):
+    """Decide what formatting of results to do."""
+    if np.all([len(r) == 1 and list(r.keys())[0] == list(results[0].keys())[0] for r in results]):
+        return _fmt_as_list(results)
+    return _fmt_as_dict(results)
 
 
 def _slice_keys(args, possible=None):
@@ -79,6 +138,20 @@ class proxy(MutableMapping):
                 item.metadata.update(new)
 
     @property
+    def all_by_keys(self):
+        """Return the set of metadata keys common to all objects int he Folder."""
+        if len(self._folder) > 0:
+            keys = set(self._folder[0].metadata.keys())
+            for d in self._folder:
+                keys &= set(d.metadata.keys())
+        else:
+            keys = set()
+        ret = typeHintedDict()
+        for k in sorted(list(keys)):
+            ret[k] = self[k].view(np.ndarray)
+        return ret
+
+    @property
     def common_keys(self):
         """Return the set of metadata keys common to all objects int he Folder."""
         if len(self._folder) > 0:
@@ -93,9 +166,8 @@ class proxy(MutableMapping):
     def common_metadata(self):
         """Return a dictionary of the common_keys that have common values."""
         output = typeHintedDict()
-        for key in self.common_keys:
-            val = self._folder[0][key]
-            if np.all(self[key] == val):
+        for key, val in self.all_by_keys.items():
+            if np.all(val == val[0]):
                 output[key] = val
         return output
 
@@ -138,8 +210,28 @@ class proxy(MutableMapping):
         return ret
 
     def __setitem__(self, key, value):
+        """Proxy to set an item on all the entries in the folder."""
         for d in self._folder:
             d[key] = value
+
+    def __xor__(self, other):
+        """Implement an XOR operator that gives differences between metadata dictionaries."""
+        if isinstance(other, self._folder.__class__):
+            other = other.metadata
+        if isinstance(other, proxy):
+            other = other.all_by_keys
+        elif isinstance(other, metadataObject):
+            other = other.metadata
+        else:
+            return NotImplemented
+        return self.all_by_keys ^ other
+
+    def __eq__(self, other):
+        """An Equality test operator."""
+        ret = self ^ other
+        if not isinstance(ret, dict):
+            return NotImplemented
+        return len(ret) == 0
 
     def all_keys(self):
         """Return the union of all the metadata keyus for all objects int he Folder."""
@@ -231,19 +323,21 @@ class proxy(MutableMapping):
             output = "dict" if not values_only else "smart"
         if isinstance(output, string_types):
             output = output.lower()
-        if output not in [
-            "dict",
-            "list",
-            "array",
-            "data",
-            "frame",
-            "smart",
-            dict,
-            list,
-            np.ndarray,
-            DataFile,
-        ]:  # Check for good output value
+        outputs = {
+            "list": _fmt_as_list,
+            list: _fmt_as_list,
+            "dict": _fmt_as_dict,
+            dict: _fmt_as_dict,
+            "frame": _fmt_as_dataframe,
+            "data": _fmt_as_Data,
+            DataFile: _fmt_as_Data,
+            "array": _fmt_as_array,
+            np.ndarray: _fmt_as_array,
+            "smart": _fmt_as_smart,
+        }
+        if output not in outputs:  # Check for good output value
             raise SyntaxError("output of slice metadata must be either dict, list, or array not {}".format(output))
+        formatter = outputs[output]
         possible = list(self.all_keys()) if mask_missing else self.common_keys
         keys = _slice_keys(args, possible)
         results = []
@@ -257,34 +351,4 @@ class proxy(MutableMapping):
                     del r[k]
                     r.update({"{}[{}]".format(k, i): vi for i, vi in enumerate(v)})
 
-        if output == "smart":
-            if np.all([len(r) == 1 and list(r.keys())[0] == list(results[0].keys())[0] for r in results]):
-                output = "list"
-            else:
-                output = "dict"
-        if output in ["list", list]:
-            keys = set()
-            for r in results:
-                keys |= set(r.keys())
-            keys = list(keys)
-            if len(keys) == 1:
-                ret = [r.get(keys[0], None) for r in results]
-            else:
-                ret = []
-                for r in results:
-                    ret.append(tuple(r.get(k, None) for k in keys))
-        elif output == "dict":
-            ret = results
-        else:
-            from pandas import DataFrame
-
-            frame = DataFrame(results)
-            mask = frame.isna()
-            if output == "frame":
-                ret = frame
-            else:
-                ret = make_Data(frame)
-                ret.mask = mask
-                if output in ["array", np.ndarray]:
-                    ret = ret.data
-        return ret
+        return formatter(results)

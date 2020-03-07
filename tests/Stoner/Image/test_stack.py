@@ -49,7 +49,7 @@ class ImageStackTest(unittest.TestCase):
 
         istack2.each.crop("translation_limits")
         self.m2=istack2.mean()
-        
+
         self.assertEqual(istack2.shape,(91,80,80),"Stack translation_limits and crop failed.")
 
 

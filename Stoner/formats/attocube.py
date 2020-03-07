@@ -440,6 +440,8 @@ class AttocubeScan(ImageStack):
         f.attrs["type"] = self.__class__.__name__
         f.attrs["module"] = self.__class__.__module__
         f.attrs["scan_no"] = self.scan_no
+        f.attrs["groups"] = [x for x in self.groups.keys()]
+        f.attrs["channels"] = [x for x in self.channels]
         if "common_metadata" in f.parent and "common_metadata" not in f:
             f["common_metadata"] = h5py.SoftLink(f.parent["common_metadata"].name)
             f["common_typehints"] = h5py.SoftLink(f.parent["common_typehints"].name)
@@ -502,6 +504,14 @@ class AttocubeScan(ImageStack):
         else:
             _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
         self.scan_no = f.attrs["scan_no"]
+        if "groups" in f.attrs:
+            sub_grps = f.attrs["groups"]
+        else:
+            sub_grps = None
+        if "channels" in f.attrs:
+            channels = f.attrs["channels"]
+        else:
+            channels = []
         grps = list(f.keys())
         if "common_metadata" not in grps or "common_typehints" not in grps:
             _raise_error(f, message="Couldn;t find common metadata groups, something is not right here!")
@@ -516,12 +526,18 @@ class AttocubeScan(ImageStack):
                 self._common_metadata[i] = metadata[i]
         grps.remove("common_metadata")
         grps.remove("common_typehints")
-        for grp in grps:
+        if sub_grps is None:
+            sub_grps = grps
+        for grp in sub_grps:
             if "type" in f[grp].attrs:
                 self.groups[grp] = cls.read_HDF(f[grp], *args, **kargs)
                 continue
             g = f[grp]
             self.append(self._read_signal(g))
+        for grp in channels:
+            g = f[grp]
+            self.append(self._read_signal(g))
+
         if close_me:
             f.close()
         return self

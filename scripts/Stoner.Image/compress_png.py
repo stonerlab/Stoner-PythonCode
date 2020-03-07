@@ -56,8 +56,8 @@ def pngsave(im, filename):
 
 
 get_sizes = (
-    True
-)  # calculate size of folder before and after (may slow things down)
+    True  # calculate size of folder before and after (may slow things down)
+)
 
 df = DataFolder(folder, pattern="*.png")
 df.flatten()

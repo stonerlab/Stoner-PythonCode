@@ -96,7 +96,7 @@ def stretchedExp(x, A, beta, x_0):
 
     The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.
     """
-    return A * np.exp(-(x / x_0) ** beta)
+    return A * np.exp(-((x / x_0) ** beta))
 
 
 def lorentzian_diff(x, A, sigma, mu):

@@ -66,7 +66,7 @@ class folders_metadata_test(unittest.TestCase):
                     ret=ret[list(ret.keys())[0]]
                 except (IndexError,TypeError):
                     pass
-        for k,typ in zip(['Info.Sample_Holder',('Info.Sample_Holder',"Datatype,Comment")],[(np.ndarray,np.ndarray,np.str),(np.ndarray,np.ndarray)]):
+        for k,typ in zip(['Info.Sample_Holder',('Info.Sample_Holder',"Datatype,Comment")],[(np.ndarray,np.str),(np.ndarray,np.ndarray)]):
             ret=fldr6.metadata[k]
             for ix,t in enumerate(typ):
                 self.assertTrue(isinstance(ret,t),"Indexing metadata for key={} and dimension {} had type {} and not {}".format(k,ix,type(ret),t))
