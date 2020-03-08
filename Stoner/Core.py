@@ -569,7 +569,7 @@ class DataFile(metadataObject):
     @classproperty
     def subclasses(cls):  # pylint: disable=no-self-argument
         """Return a list of all in memory subclasses of this DataFile."""
-        if cls._subclasses is None or cls._subclasses[0] != len(DataFile.__subclasses__()):
+        if cls._subclasses is None or cls._subclasses[0] != len(DataFile.__subclasses__()):  # pylint: disable=E1136
             subclasses = {x: (x.priority, x.__name__) for x in itersubclasses(DataFile)}
             ret = dict()
             ret["DataFile"] = DataFile
@@ -1144,11 +1144,11 @@ class DataFile(metadataObject):
         patterns = self.patterns
         for p in patterns:  # pylint: disable=not-an-iterable
             descs[p] = self.__class__.__name__ + " file"
-        for c in DataFile.subclasses:
+        for c in DataFile.subclasses:  # pylint: disable=E1136
             for p in DataFile.subclasses[c].patterns:  # pylint: disable=unsubscriptable-object
                 if p in descs:
                     descs[p] += (
-                        ", " + DataFile.subclasses[c].__name__ + " file"
+                        ", " + DataFile.subclasses[c].__name__ + " file"  # pylint: disable=E1136
                     )  # pylint: disable=unsubscriptable-object
                 else:
                     descs[p] = DataFile.subclasses[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
@@ -2197,7 +2197,7 @@ class DataFile(metadataObject):
             try:
                 filetype = DataFile.subclasses[filetype]  # pylint: disable=E1136
             except KeyError:
-                for k, cls in DataFile.subclasses.items():
+                for k, cls in DataFile.subclasses.items():  # pylint: disable=E1136
                     if filetype in k:
                         filetype = cls
                         break
@@ -2220,7 +2220,7 @@ class DataFile(metadataObject):
         cls = self.__class__
         failed = True
         if auto_load:  # We're going to try every subclass we canA
-            for cls in DataFile.subclasses.values():
+            for cls in DataFile.subclasses.values():  # pylint: disable=E1136
                 if self.debug:
                     print(cls.__name__)
                 try:
@@ -2458,9 +2458,7 @@ class DataFile(metadataObject):
                 isinstance(as_loaded, bool) and "Loaded as" in self
             ):  # Use the Loaded as key to find a different save routine
                 cls = DataFile.subclasses[self["Loaded as"]]  # pylint: disable=unsubscriptable-object
-            elif (
-                isinstance(as_loaded, string_types) and as_loaded in DataFile.subclasses
-            ):  # pylint: disable=unsupported-membership-test
+            elif isinstance(as_loaded, string_types) and as_loaded in DataFile.subclasses:  # pylint: disable=E1136
                 cls = DataFile.subclasses[as_loaded]  # pylint: disable=unsubscriptable-object
             else:
                 raise ValueError(

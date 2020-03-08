@@ -36,13 +36,13 @@ class ColumnOpsMixin:
 
             elif error_type == "absolute":
 
-                def error_calc(adata, bdata):
+                def error_calc(adata, bdata):  # pylint: disable=function-redefined, unused-argument
                     """Sum absolute errors."""
                     return np.sqrt(e1data ** 2 + e2data ** 2)
 
             elif error_type == "diffsum":
 
-                def error_calc(adata, bdata):
+                def error_calc(adata, bdata):  # pylint: disable=function-redefined
                     """Calculate error for difference over sum."""
                     return np.sqrt(
                         (1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e1data ** 2
