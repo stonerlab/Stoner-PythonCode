@@ -1,4 +1,5 @@
 """Test Weak-localisation fitting."""
+# pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.analysis.fitting.models.e_transport import WLfit, wlfit
 from numpy import linspace, ones_like

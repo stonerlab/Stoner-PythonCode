@@ -1,4 +1,5 @@
 """Plot 3D data on a contour plot."""
+# pylint: disable=invalid-name
 from Stoner import Data
 import numpy as np
 

@@ -1,4 +1,5 @@
 """Example of nDimArrhenius Fit."""
+# pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.analysis.fitting.models.tunnelling import (
     fowlerNordheim,

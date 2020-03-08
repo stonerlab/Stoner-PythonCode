@@ -1,4 +1,5 @@
 """Example plot using experimental GBStyle"""
+# pylint: disable=invalid-name
 import os.path as path
 
 from Stoner import Data, __home__

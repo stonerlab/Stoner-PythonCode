@@ -1,4 +1,5 @@
 """Example of Quadratic Fit."""
+# pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.analysis.fitting.models.generic import quadratic, Quadratic
 from numpy import linspace

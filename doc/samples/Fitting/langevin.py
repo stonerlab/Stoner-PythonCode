@@ -1,4 +1,5 @@
 """Test langevin fitting."""
+# pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.analysis.fitting.models.magnetism import langevin, Langevin
 from numpy import linspace, ones_like

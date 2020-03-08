@@ -1,5 +1,6 @@
 """Smoothing Data methods example."""
 # pylint: disable=not-callable
+# pylint: disable=invalid-name
 from Stoner import Data
 import matplotlib.pyplot as plt
 

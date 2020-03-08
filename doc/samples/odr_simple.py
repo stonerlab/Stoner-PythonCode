@@ -1,4 +1,5 @@
 """Simple use of lmfit to fit data."""
+# pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.plot.utils import errorfill
 from numpy import linspace, exp, random

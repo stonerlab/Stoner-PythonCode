@@ -1,4 +1,5 @@
 """USe curve_fit to fit a straight line."""
+# pylint: disable=invalid-name
 from Stoner import Data
 
 

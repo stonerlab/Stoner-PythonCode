@@ -1,4 +1,5 @@
 """Simple use of lmfit to fit data."""
+# pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.analysis.fitting.models.generic import PowerLaw
 from Stoner.analysis.fitting import odr_Model

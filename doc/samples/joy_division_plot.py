@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=invalid-name
 """
 Created on Wed Sep 18 15:01:49 2019
 

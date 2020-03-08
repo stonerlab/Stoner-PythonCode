@@ -3,7 +3,7 @@
 """
 Fit IV data to various RSJ models
 """
-
+# pylint: disable=invalid-name
 from Stoner import Data, __home__
 from Stoner.analysis.fitting.models.superconductivity import (
     RSJ_Noiseless,

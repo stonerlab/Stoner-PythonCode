@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Demonstrate PlotFolder Class."""
+# pylint: disable=invalid-name
 from os.path import join
 
 from numpy import where, append, atleast_2d

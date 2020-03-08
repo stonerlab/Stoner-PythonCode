@@ -1,4 +1,5 @@
 """Decompose Example"""
+# pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.tools import format_val
 from numpy import linspace, reshape, array

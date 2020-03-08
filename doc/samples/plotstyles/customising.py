@@ -1,4 +1,5 @@
 """Example customising a plot using default style."""
+# pylint: disable=invalid-name
 import os.path as path
 from cycler import cycler
 

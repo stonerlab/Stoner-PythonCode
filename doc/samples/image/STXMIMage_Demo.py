@@ -1,4 +1,5 @@
 """Demonstrate STXM Image Processing - G.Burnell Nov. 2017"""
+# pylint: disable=invalid-name
 from Stoner.Image import ImageFolder
 from Stoner.HDF5 import STXMImage
 from os.path import join, dirname

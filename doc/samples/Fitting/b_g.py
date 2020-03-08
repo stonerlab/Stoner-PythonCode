@@ -1,4 +1,5 @@
 """Test Weak-localisation fitting."""
+# pylint: disable=invalid-name
 from copy import deepcopy
 
 from numpy import linspace, ones_like

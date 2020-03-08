@@ -3,7 +3,7 @@
 """
 Fit Ic(B) to Airy function.
 """
-
+# pylint: disable=invalid-name
 from Stoner import Data, __home__
 from Stoner.analysis.fitting.models.superconductivity import Ic_B_Airy
 
