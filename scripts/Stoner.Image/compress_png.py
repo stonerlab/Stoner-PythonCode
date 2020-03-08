@@ -8,7 +8,7 @@ images will be exactly the same.
 
 CHANGE THE FOLDER NAME BEFORE RUNNING
 """
-
+# pylint: disable=invalid-name
 from PIL import Image
 import os
 from Stoner import DataFolder

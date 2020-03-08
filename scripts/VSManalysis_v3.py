@@ -5,7 +5,7 @@ Created on Sat Aug 24 20:18:05 2013
 
 @author: Gavin Burnell
 """
-
+# pylint: disable=invalid-name
 import numpy
 
 from Stoner import Data

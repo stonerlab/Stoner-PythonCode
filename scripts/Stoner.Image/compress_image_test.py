@@ -6,7 +6,7 @@ Created on Thu Oct 13 12:21:36 2016
 
 Proof that the compression is lossless
 """
-
+# pylint: disable=invalid-name
 from PIL import Image
 import os
 import numpy as np

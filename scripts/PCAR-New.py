@@ -2,7 +2,7 @@
 
 Gavin Burnell g.burnell@leeds.ac.uk
 """
-# Import packages
+# pylint: disable=invalid-name
 import configparser as ConfigParser
 
 import numpy as np

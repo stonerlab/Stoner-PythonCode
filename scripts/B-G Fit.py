@@ -3,6 +3,7 @@
 
 @author: phygbu
 """
+# pylint: disable=invalid-name
 import re
 
 import numpy as np

@@ -6,7 +6,7 @@ Script to produce plots from GenX output
 
 @author: phygbu based on Sean Langridge's matlab code'
 """
-
+# pylint: disable=invalid-name
 import numpy as np
 import matplotlib.pyplot as plt
 from Stoner import DataFolder, Data

@@ -15,6 +15,7 @@ v2 corrections: less automation saving time
                 shift algorithm is different to make for better zeroing
 
 """
+# pylint: disable=invalid-name
 import string
 import os
 

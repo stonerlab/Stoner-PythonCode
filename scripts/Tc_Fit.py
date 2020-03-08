@@ -4,6 +4,7 @@
 Simple code to fit critical temperatures in R(T) data.
 
 """
+# pylint: disable=invalid-name
 import numpy as np
 
 from Stoner import Data
