@@ -20,4 +20,5 @@ exclude_paths:
     - 'Stoner.egginfo/**'
     - 'tests/**'
     - 'setup.py'
+    - '**/conf.py'
 

@@ -115,6 +115,7 @@ class ColumnOpsMixin:
                 Replace the col_a column with the new data
             index (column index or None):
                 Column to insert new data at.
+
         Returns:
             (:py:class:`Stoner.Data`):
                 The newly modified Data object.
@@ -146,7 +147,7 @@ class ColumnOpsMixin:
         if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
-            header = "({}-{})/({}+{})".format(aname, bname, aname, bname)
+            header = f"({aname}-{bname})/({aname}+{bname})"
         if err_calc is not None and err_header is None:
             err_header = "Error in " + header
         if err_calc is not None:
@@ -173,6 +174,7 @@ class ColumnOpsMixin:
                 Replace the col_a column with the new data
             index (column index or None):
                 Column to insert new data at.
+
         Returns:
             (:py:class:`Stoner.Data`):
                 The newly modified Data object.
@@ -386,8 +388,7 @@ class ColumnOpsMixin:
         return self
 
     def span(self, column=None, bounds=None):
-        """Returns col_a tuple of the maximum and minumum values within the given column and bounds by calling into
-        :py:meth:`AnalysisMixin.max` and :py:meth:`AnalysisMixin.min`.
+        """Returns a tuple of the maximum and minumum values within the given column and bounds.
 
         Args:
             column (index):
@@ -403,6 +404,8 @@ class ColumnOpsMixin:
                 col_a tuple of (min value, max value)
 
         Note:
+            This works by calling into :py:meth:`Data.max` and :py:meth:`Data.min`.
+
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
             assignments are used.
 

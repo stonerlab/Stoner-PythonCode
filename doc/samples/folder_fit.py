@@ -1,5 +1,4 @@
-"""Demo of Fitting a directory of files
-"""
+"""Demo of Fitting a directory of files."""
 # pylint: disable=invalid-name
 from os.path import join
 from matplotlib.pyplot import figure
@@ -43,8 +42,8 @@ result.plot(fmt="k.", capsize=2)
 # Have the amended results replace the existing data files
 fldr.each.odr(Quadratic, output="data", result=True, header="fit", _serial=True)
 fig = figure()
-fldr.setas(Current="x", Voltage="y")
-fldr.setas[3] = "y"
+fldr.each.setas(Current="x", Voltage="y")
+fldr.each.setas[3] = "y"
 
 
 fldr.each.plot(fmt=["+", "-"], label="Field = {y}mT", figure=fig, _serial=True)
