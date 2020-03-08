@@ -14,6 +14,48 @@ class ColumnOpsMixin:
 
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional stats methods."""
 
+    def _do_error_calc(self, col_a, col_b, error_type="relative"):
+        """Do an error calculation."""
+        col_a = self.find_col(col_a)
+        error_calc = None
+        if (
+            isinstance(col_a, (list, tuple))
+            and isinstance(col_b, (list, tuple))
+            and len(col_a) == 2
+            and len(col_b) == 2
+        ):  # Error columns on
+            (col_a, e1) = col_a
+            (col_b, e2) = col_b
+            e1data = self.__get_math_val(e1)[0]
+            e2data = self.__get_math_val(e2)[0]
+            if error_type == "relative":
+
+                def error_calc(adata, bdata):
+                    """Relative error summation."""
+                    return np.sqrt((e1data / adata) ** 2 + (e2data / bdata) ** 2)
+
+            elif error_type == "absolute":
+
+                def error_calc(adata, bdata):
+                    """Sum absolute errors."""
+                    return np.sqrt(e1data ** 2 + e2data ** 2)
+
+            elif error_type == "diffsum":
+
+                def error_calc(adata, bdata):
+                    """Calculate error for difference over sum."""
+                    return np.sqrt(
+                        (1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e1data ** 2
+                        + (-1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e2data ** 2
+                    )
+
+            else:
+                raise ValueError(f"Unknown error caclulation mode {error_type}")
+
+        adata, aname = self.__get_math_val(col_a)
+        bdata, bname = self.__get_math_val(col_b)
+        return adata, bdata, error_calc, aname, bname
+
     def __get_math_val(self, col):
         """Utility routine to interpret col as either col_a column index or value or an array of values.
 
@@ -68,32 +110,17 @@ class ColumnOpsMixin:
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        col_a = self.find_col(col_a)
-        if (
-            isinstance(col_a, (tuple, list))
-            and isinstance(col_b, (tuple, list))
-            and len(col_a) == 2
-            and len(col_b) == 2
-        ):  # Error columns on
-            (col_a, e1) = col_a
-            (col_b, e2) = col_b
-            e1data = self.__get_math_val(e1)[0]
-            e2data = self.__get_math_val(e2)[0]
-            err_header = None
-            err_calc = lambda adata, bdata, e1data, e2data: np.sqrt(e1data ** 2 + e2data ** 2)
-        else:
-            err_calc = None
-        adata, aname = self.__get_math_val(col_a)
-        bdata, bname = self.__get_math_val(col_b)
+        adata, bdata, err_calc, aname, bname = self._do_error_calc(col_a, col_b, error_type="absolute")
+        err_header = None
         if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
-            header = "{}+{}".format(aname, bname)
+            header = f"{aname}+{bname}"
         if err_calc is not None and err_header is None:
             err_header = "Error in " + header
         index = self.shape[1] if index is None else self.find_col(index)
         if err_calc is not None:
-            err_data = err_calc(adata, bdata, e1data, e2data)
+            err_data = err_calc(adata, bdata)
         self.add_column((adata + bdata), header=header, index=index, replace=replace)
         if err_calc is not None:
             self.add_column(err_data, header=err_header, index=index + 1, replace=False)
@@ -124,26 +151,8 @@ class ColumnOpsMixin:
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        col_a = self.find_col(col_a)
-        if (
-            isinstance(col_a, (list, tuple))
-            and isinstance(col_b, (list, tuple))
-            and len(col_a) == 2
-            and len(col_b) == 2
-        ):  # Error columns on
-            (col_a, e1) = col_a
-            (col_b, e2) = col_b
-            e1data = self.__get_math_val(e1)[0]
-            e2data = self.__get_math_val(e2)[0]
-            err_header = None
-            err_calc = lambda adata, bdata, e1data, e2data: np.sqrt(
-                (1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e1data ** 2
-                + (-1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e2data ** 2
-            )
-        else:
-            err_calc = None
-        adata, aname = self.__get_math_val(col_a)
-        bdata, bname = self.__get_math_val(col_b)
+        adata, bdata, err_calc, aname, bname = self._do_error_calc(col_a, col_b, error_type="diffsum")
+        err_header = None
         if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
@@ -151,7 +160,7 @@ class ColumnOpsMixin:
         if err_calc is not None and err_header is None:
             err_header = "Error in " + header
         if err_calc is not None:
-            err_data = err_calc(adata, bdata, e1data, e2data)
+            err_data = err_calc(adata, bdata)
         index = self.shape[1] if index is None else self.find_col(index)
         self.add_column((adata - bdata) / (adata + bdata), header=header, index=index, replace=replace)
         if err_calc is not None:
@@ -183,36 +192,18 @@ class ColumnOpsMixin:
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        col_a = self.find_col(col_a)
-        if (
-            isinstance(col_a, (list, tuple))
-            and isinstance(col_b, (list, tuple))
-            and len(col_a) == 2
-            and len(col_b) == 2
-        ):  # Error columns on
-            (col_a, e1) = col_a
-            (col_b, e2) = col_b
-            e1data = self.__get_math_val(e1)[0]
-            e2data = self.__get_math_val(e2)[0]
-            err_header = None
-            err_calc = lambda adata, bdata, e1data, e2data: np.sqrt(
-                (e1data / adata) ** 2 + (e2data / bdata) ** 2
-            ) * np.abs(adata / bdata)
-        else:
-            err_calc = None
-        adata, aname = self.__get_math_val(col_a)
-        bdata, bname = self.__get_math_val(col_b)
+        adata, bdata, err_calc, aname, bname = self._do_error_calc(col_a, col_b, error_type="relative")
+        err_header = None
         if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
-            header = "{}/{}".format(aname, bname)
+            header = f"{aname}/{bname}"
         if err_calc is not None and err_header is None:
             err_header = "Error in " + header
         index = self.shape[1] if index is None else self.find_col(index)
-        if err_calc is not None:
-            err_data = err_calc(adata, bdata, e1data, e2data)
         self.add_column((adata / bdata), header=header, index=index, replace=replace)
         if err_calc is not None:
+            err_data = err_calc(adata, bdata) * np.abs(adata / bdata)
             self.add_column(err_data, header=err_header, index=index + 1, replace=False)
         return self
 
@@ -354,34 +345,17 @@ class ColumnOpsMixin:
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        col_a = self.find_col(col_a)
-        if (
-            isinstance(col_a, (list, tuple))
-            and isinstance(col_b, (list, tuple))
-            and len(col_a) == 2
-            and len(col_b) == 2
-        ):  # Error columns on
-            (col_a, e1) = col_a
-            (col_b, e2) = col_b
-            e1data = self.__get_math_val(e1)[0]
-            e2data = self.__get_math_val(e2)[0]
-            err_header = None
-            err_calc = lambda adata, bdata, e1data, e2data: np.sqrt(
-                (e1data / adata) ** 2 + (e2data / bdata) ** 2
-            ) * np.abs(adata * bdata)
-        else:
-            err_calc = None
-        adata, aname = self.__get_math_val(col_a)
-        bdata, bname = self.__get_math_val(col_b)
+        adata, bdata, err_calc, aname, bname = self._do_error_calc(col_a, col_b, error_type="relative")
+        err_header = None
         if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
-            header = "{}*{}".format(aname, bname)
+            header = f"{aname}*{bname}"
         if err_calc is not None and err_header is None:
             err_header = "Error in " + header
         index = self.shape[1] if index is None else self.find_col(index)
         if err_calc is not None:
-            err_data = err_calc(adata, bdata, e1data, e2data)
+            err_data = err_calc(adata, bdata) * np.abs(adata * bdata)
         self.add_column((adata * bdata), header=header, index=index, replace=replace)
         if err_calc is not None:
             self.add_column(err_data, header=err_header, index=index + 1, replace=False)
@@ -488,32 +462,17 @@ class ColumnOpsMixin:
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        col_a = self.find_col(col_a)
-        if (
-            isinstance(col_a, (list, tuple))
-            and isinstance(col_b, (list, tuple))
-            and len(col_a) == 2
-            and len(col_b) == 2
-        ):  # Error columns on
-            (col_a, e1) = col_a
-            (col_b, e2) = col_b
-            e1data = self.__get_math_val(e1)[0]
-            e2data = self.__get_math_val(e2)[0]
-            err_header = None
-            err_calc = lambda adata, bdata, e1data, e2data: np.sqrt(e1data ** 2 + e2data ** 2)
-        else:
-            err_calc = None
-        adata, aname = self.__get_math_val(col_a)
-        bdata, bname = self.__get_math_val(col_b)
+        adata, bdata, err_calc, aname, bname = self._do_error_calc(col_a, col_b, error_type="absolute")
+        err_header = None
         if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
-            header = "{}-{}".format(aname, bname)
+            header = f"{aname}-{bname}"
         if err_calc is not None and err_header is None:
             err_header = "Error in " + header
         index = self.shape[1] if index is None else self.find_col(index)
         if err_calc is not None:
-            err_data = err_calc(adata, bdata, e1data, e2data)
+            err_data = err_calc(adata, bdata)
         self.add_column((adata - bdata), header=header, index=index, replace=replace)
         if err_calc is not None:
             col_a = self.find_col(col_a)

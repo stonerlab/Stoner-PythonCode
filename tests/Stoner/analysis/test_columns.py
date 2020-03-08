@@ -66,7 +66,7 @@ class ColumnOps_test(unittest.TestCase):
         self.assertTrue(np.all((self.data//"Divide") == ((self.data//"Signal 1") / (self.data//"Signal 2"))),"Failed to add column correctly")
         self.data.divide((1,2),(3,4),header="Divide",index="Divide",replace=True)
         d_man=np.sqrt(2)*0.01*np.abs(self.data//-2)
-        self.assertTrue(np.allclose(self.data//-1,d_man),"Failed to calculate error in add")
+        self.assertTrue(np.allclose(self.data//-1,d_man),"Failed to calculate error in diffsum")
         self.data.divide(1,3.0,index="Divide",replace=True)
         self.assertTrue(np.all(self.data//5==(self.data//1)/3),"Failed to add with a constant")
         self.data.divide(1,2*np.ones(10),index=5,replace=True)
