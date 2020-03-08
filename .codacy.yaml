@@ -1,0 +1,23 @@
+engines:
+    duplication:
+        enabled: true
+        exclude_paths:
+         - doc/**
+    bandit:
+        enabled: true
+    propspector:
+        enabled: true
+    pylint:
+        enabled: true
+
+
+
+exclude_paths:
+    - 'build/**'
+    - 'dist/**'
+    - 'recipe/**'
+    - 'sample-data/**'
+    - 'Stoner.egginfo/**'
+    - 'tests/**'
+    - 'setup.py'
+
