@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-:py:class:`lmfit.Model` model classes and functions for various magnetism and magnetic materials models.
-
-"""
-
+""":py:class:`lmfit.Model` model classes and functions for various magnetism and magnetic materials models."""
+# pylint: disable=invalid-name
 __all__ = [
     "BlochLaw",
     "FMR_Power",

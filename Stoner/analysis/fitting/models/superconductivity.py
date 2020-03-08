@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """:py:class:`lmfit.Model` model classes and functions for various superconductivity related models."""
-
+# pylint: disable=invalid-name
 # This module can be used with Stoner v.0.9.0 asa standalone module
 from functools import partial
 

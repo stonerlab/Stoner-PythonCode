@@ -56,6 +56,7 @@ pep257:
     - D203
     - D212
     - D404
+    - D405
   disable:
     - D211
     - D213
@@ -63,6 +64,7 @@ pep257:
     - D406
     - D407
     - D413
+    - D417
   run: true
 
 pyroma:

@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Channel column operations functions for analysis code.
-"""
+"""Channel column operations functions for analysis code."""
 
 __all__ = ["ColumnOpsMixin"]
 
@@ -17,13 +15,13 @@ class ColumnOpsMixin:
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional stats methods."""
 
     def __get_math_val(self, col):
-        """Utility routine to interpret col as either a column index or value or an array of values.
+        """Utility routine to interpret col as either col_a column index or value or an array of values.
 
         Args:
             col (various):
-                If col can be interpreted as a column index then return the first matching column.
-                If col is a 1D array of the same length as the data then just return the data. If col is a
-                float then just return it as a float.
+                If col can be interpreted as col_a column index then return the first matching column.
+                If col is col_a 1D array of the same length as the data then just return the data. If col is col_a
+                float then just return it as col_a float.
 
         Returns:
             (tuple of (:py:class:`Stoner.cpre.DataArray`,str)):
@@ -45,20 +43,20 @@ class ColumnOpsMixin:
             raise RuntimeError("Bad column index: {}".format(col))
         return data, name
 
-    def add(self, a, b, replace=False, header=None, index=None):
-        """Add one column, number or array (b) to another column (a).
+    def add(self, col_a, col_b, replace=False, header=None, index=None):
+        """Add one column, number or array (col_b) to another column (col_a).
 
         Args:
-            a (index):
+            col_a (index):
                 First column to work with
-            b (index, float or 1D array):
+            col_b (index, float or 1D array):
                 Second column to work with.
 
         Keyword Arguments:
             header (string or None):
                 new column header  (defaults to a-b
             replace (bool):
-                Replace the a column with the new data
+                Replace the col_a column with the new data
             index (column index or None):
                 Column to insert new data at.
 
@@ -66,24 +64,27 @@ class ColumnOpsMixin:
             (:py:class:`Stoner.Data`):
                 The newly modified Data object.
 
-        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        a = self.find_col(a)
+        col_a = self.find_col(col_a)
         if (
-            isinstance(a, (tuple, list)) and isinstance(b, (tuple, list)) and len(a) == 2 and len(b) == 2
+            isinstance(col_a, (tuple, list))
+            and isinstance(col_b, (tuple, list))
+            and len(col_a) == 2
+            and len(col_b) == 2
         ):  # Error columns on
-            (a, e1) = a
-            (b, e2) = b
+            (col_a, e1) = col_a
+            (col_b, e2) = col_b
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
             err_calc = lambda adata, bdata, e1data, e2data: np.sqrt(e1data ** 2 + e2data ** 2)
         else:
             err_calc = None
-        adata, aname = self.__get_math_val(a)
-        bdata, bname = self.__get_math_val(b)
+        adata, aname = self.__get_math_val(col_a)
+        bdata, bname = self.__get_math_val(col_b)
         if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
@@ -98,36 +99,39 @@ class ColumnOpsMixin:
             self.add_column(err_data, header=err_header, index=index + 1, replace=False)
         return self
 
-    def diffsum(self, a, b, replace=False, header=None, index=None):
+    def diffsum(self, col_a, col_b, replace=False, header=None, index=None):
         r"""Calculate :math:`\frac{a-b}{a+b}` for the two columns *a* and *b*.
 
         Args:
-            a (index):
+            col_a (index):
                 First column to work with
-            b (index, float or 1D array):
+            col_b (index, float or 1D array):
                 Second column to work with.
 
         Keyword Arguments:
             header (string or None):
                 new column header  (defaults to a-b
             replace (bool):
-                Replace the a column with the new data
+                Replace the col_a column with the new data
             index (column index or None):
                 Column to insert new data at.
         Returns:
             (:py:class:`Stoner.Data`):
                 The newly modified Data object.
 
-        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        a = self.find_col(a)
+        col_a = self.find_col(col_a)
         if (
-            isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)) and len(a) == 2 and len(b) == 2
+            isinstance(col_a, (list, tuple))
+            and isinstance(col_b, (list, tuple))
+            and len(col_a) == 2
+            and len(col_b) == 2
         ):  # Error columns on
-            (a, e1) = a
-            (b, e2) = b
+            (col_a, e1) = col_a
+            (col_b, e2) = col_b
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
@@ -137,8 +141,8 @@ class ColumnOpsMixin:
             )
         else:
             err_calc = None
-        adata, aname = self.__get_math_val(a)
-        bdata, bname = self.__get_math_val(b)
+        adata, aname = self.__get_math_val(col_a)
+        bdata, bname = self.__get_math_val(col_b)
         if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
@@ -153,36 +157,39 @@ class ColumnOpsMixin:
             self.add_column(err_data, header=err_header, index=index + 1, replace=False)
         return self
 
-    def divide(self, a, b, replace=False, header=None, index=None):
-        """Divide one column (a) by  another column, number or array (b).
+    def divide(self, col_a, col_b, replace=False, header=None, index=None):
+        """Divide one column (col_a) by  another column, number or array (col_b).
 
         Args:
-            a (index):
+            col_a (index):
                 First column to work with
-            b (index, float or 1D array):
+            col_b (index, float or 1D array):
                 Second column to work with.
 
         Keyword Arguments:
             header (string or None):
                 new column header  (defaults to a-b
             replace (bool):
-                Replace the a column with the new data
+                Replace the col_a column with the new data
             index (column index or None):
                 Column to insert new data at.
         Returns:
             (:py:class:`Stoner.Data`):
                 The newly modified Data object.
 
-        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        a = self.find_col(a)
+        col_a = self.find_col(col_a)
         if (
-            isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)) and len(a) == 2 and len(b) == 2
+            isinstance(col_a, (list, tuple))
+            and isinstance(col_b, (list, tuple))
+            and len(col_a) == 2
+            and len(col_b) == 2
         ):  # Error columns on
-            (a, e1) = a
-            (b, e2) = b
+            (col_a, e1) = col_a
+            (col_b, e2) = col_b
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
@@ -191,8 +198,8 @@ class ColumnOpsMixin:
             ) * np.abs(adata / bdata)
         else:
             err_calc = None
-        adata, aname = self.__get_math_val(a)
-        bdata, bname = self.__get_math_val(b)
+        adata, aname = self.__get_math_val(col_a)
+        bdata, bname = self.__get_math_val(col_b)
         if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
@@ -208,7 +215,7 @@ class ColumnOpsMixin:
         return self
 
     def max(self, column=None, bounds=None):
-        """Find maximum value and index in a column of data.
+        """Find maximum value and index in col_a column of data.
 
         Args:
             column (index):
@@ -216,7 +223,7 @@ class ColumnOpsMixin:
 
         Keyword Arguments:
             bounds (callable):
-                A callable function that takes a single argument list of
+                col_a callable function that takes col_a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
@@ -240,7 +247,7 @@ class ColumnOpsMixin:
         return result
 
     def mean(self, column=None, sigma=None, bounds=None):
-        """Find mean value of a data column.
+        """Find mean value of col_a data column.
 
         Args:
             column (index):
@@ -250,7 +257,7 @@ class ColumnOpsMixin:
             sigma (column index or array):
                 The uncertainity noted for each value in the mean
             bounds (callable):
-                A callable function that takes a single argument list of
+                col_a callable function that takes col_a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
@@ -289,7 +296,7 @@ class ColumnOpsMixin:
         return result
 
     def min(self, column=None, bounds=None):
-        """Find minimum value and index in a column of data.
+        """Find minimum value and index in col_a column of data.
 
         Args:
             column (index):
@@ -297,7 +304,7 @@ class ColumnOpsMixin:
 
         Keyword Arguments:
             bounds (callable):
-                A callable function that takes a single argument list of
+                col_a callable function that takes col_a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
@@ -320,20 +327,20 @@ class ColumnOpsMixin:
             self._pop_mask()
         return result
 
-    def multiply(self, a, b, replace=False, header=None, index=None):
-        """Multiply one column (a) by  another column, number or array (b).
+    def multiply(self, col_a, col_b, replace=False, header=None, index=None):
+        """Multiply one column (col_a) by  another column, number or array (col_b).
 
         Args:
-            a (index):
+            col_a (index):
                 First column to work with
-            b (index, float or 1D array):
+            col_b (index, float or 1D array):
                 Second column to work with.
 
         Keyword Arguments:
             header (string or None):
                 new column header  (defaults to a-b
             replace (bool):
-                Replace the a column with the new data
+                Replace the col_a column with the new data
             index (column index or None):
                 Column to insert new data at.
 
@@ -341,16 +348,19 @@ class ColumnOpsMixin:
             (:py:class:`Stoner.Data`):
                 The newly modified Data object.
 
-        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        a = self.find_col(a)
+        col_a = self.find_col(col_a)
         if (
-            isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)) and len(a) == 2 and len(b) == 2
+            isinstance(col_a, (list, tuple))
+            and isinstance(col_b, (list, tuple))
+            and len(col_a) == 2
+            and len(col_b) == 2
         ):  # Error columns on
-            (a, e1) = a
-            (b, e2) = b
+            (col_a, e1) = col_a
+            (col_b, e2) = col_b
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
@@ -359,8 +369,8 @@ class ColumnOpsMixin:
             ) * np.abs(adata * bdata)
         else:
             err_calc = None
-        adata, aname = self.__get_math_val(a)
-        bdata, bname = self.__get_math_val(b)
+        adata, aname = self.__get_math_val(col_a)
+        bdata, bname = self.__get_math_val(col_b)
         if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
@@ -376,7 +386,7 @@ class ColumnOpsMixin:
         return self
 
     def span(self, column=None, bounds=None):
-        """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into
+        """Returns col_a tuple of the maximum and minumum values within the given column and bounds by calling into
         :py:meth:`AnalysisMixin.max` and :py:meth:`AnalysisMixin.min`.
 
         Args:
@@ -385,12 +395,12 @@ class ColumnOpsMixin:
 
         Keyword Arguments:
             bounds (callable):
-                A callable function that takes a single argument list of
+                col_a callable function that takes col_a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
             (float,float):
-                A tuple of (min value, max value)
+                col_a tuple of (min value, max value)
 
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -400,7 +410,7 @@ class ColumnOpsMixin:
         return (self.min(column, bounds)[0], self.max(column, bounds)[0])
 
     def std(self, column=None, sigma=None, bounds=None):
-        """Find standard deviation value of a data column.
+        """Find standard deviation value of col_a data column.
 
         Args:
             column (index):
@@ -410,7 +420,7 @@ class ColumnOpsMixin:
             sigma (column index or array):
                 The uncertainity noted for each value in the mean
             bounds (callable):
-                A callable function that takes a single argument list of
+                col_a callable function that takes col_a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
@@ -450,20 +460,20 @@ class ColumnOpsMixin:
             self._pop_mask()
         return result
 
-    def subtract(self, a, b, replace=False, header=None, index=None):
-        """Subtract one column, number or array (b) from another column (a).
+    def subtract(self, col_a, col_b, replace=False, header=None, index=None):
+        """Subtract one column, number or array (col_b) from another column (col_a).
 
         Args:
-            a (index):
+            col_a (index):
                 First column to work with
-            b (index, float or 1D array):
+            col_b (index, float or 1D array):
                 Second column to work with.
 
         Keyword Arguments:
             header (string or None):
                 new column header  (defaults to a-b
             replace (bool):
-                Replace the a column with the new data
+                Replace the col_a column with the new data
             index (column index or None):
                 Column to insert new data at.
 
@@ -471,24 +481,27 @@ class ColumnOpsMixin:
             (:py:class:`Stoner.Data`):
                 The newly modified Data object.
 
-        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data.
         """
-        a = self.find_col(a)
+        col_a = self.find_col(col_a)
         if (
-            isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)) and len(a) == 2 and len(b) == 2
+            isinstance(col_a, (list, tuple))
+            and isinstance(col_b, (list, tuple))
+            and len(col_a) == 2
+            and len(col_b) == 2
         ):  # Error columns on
-            (a, e1) = a
-            (b, e2) = b
+            (col_a, e1) = col_a
+            (col_b, e2) = col_b
             e1data = self.__get_math_val(e1)[0]
             e2data = self.__get_math_val(e2)[0]
             err_header = None
             err_calc = lambda adata, bdata, e1data, e2data: np.sqrt(e1data ** 2 + e2data ** 2)
         else:
             err_calc = None
-        adata, aname = self.__get_math_val(a)
-        bdata, bname = self.__get_math_val(b)
+        adata, aname = self.__get_math_val(col_a)
+        bdata, bname = self.__get_math_val(col_b)
         if isinstance(header, tuple) and len(header) == 2:
             header, err_header = header
         if header is None:
@@ -500,6 +513,6 @@ class ColumnOpsMixin:
             err_data = err_calc(adata, bdata, e1data, e2data)
         self.add_column((adata - bdata), header=header, index=index, replace=replace)
         if err_calc is not None:
-            a = self.find_col(a)
+            col_a = self.find_col(col_a)
             self.add_column(err_data, header=err_header, index=index + 1, replace=False)
         return self

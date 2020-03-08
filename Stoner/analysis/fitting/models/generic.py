@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-:py:class:`lmfit.Model` model classes and functions for various generic models.
-"""
-
+""":py:class:`lmfit.Model` model classes and functions for various generic models."""
+# pylint: disable=invalid-name
 __all__ = [
     "Linear",
     "Lorentzian_diff",

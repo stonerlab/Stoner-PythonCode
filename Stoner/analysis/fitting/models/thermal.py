@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-:py:class:`lmfit.Model` model classes and functions for various thermal physics models.
-"""
-
+""":py:class:`lmfit.Model` model classes and functions for various thermal physics models."""
+# pylint: disable=invalid-name
 __all__ = [
     "Arrhenius",
     "ModArrhenius",

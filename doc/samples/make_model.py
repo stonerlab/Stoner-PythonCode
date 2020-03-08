@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Demo of the make_model decorator"""
-# pylint: disable=invalid-name
+"""Demo of the make_model decorator."""
+# pylint: disable=invalid-name, redefined-outer-name
 from numpy import linspace
 from numpy.random import normal
 from Stoner import Data
@@ -10,7 +10,7 @@ from Stoner.analysis.fitting.models import make_model
 # Make our model
 @make_model
 def simple_model(x, m, c):
-    """A straight line"""
+    """A straight line."""
     return x * m + c
 
 

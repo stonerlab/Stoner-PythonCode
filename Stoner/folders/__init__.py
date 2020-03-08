@@ -1,5 +1,4 @@
-""":py:mod:`Stoner.folders` package - core support for wokring with collections of files in the
-:py:class:`Stoner.DataFolder`."""
+"""Core support for wokring with collections of files in the :py:class:`Stoner.DataFolder`."""
 
 __all__ = ["core", "each", "groups", "metadata", "mixins", "utils", "DataFolder", "PlotFolder"]
 

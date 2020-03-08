@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-:py:class:`lmfit.Model` model classes and functions for various models of electron tunnelling.
-
-"""
-
+""":py:class:`lmfit.Model` model classes and functions for various models of electron tunnelling."""
+# pylint: disable=invalid-name
 __all__ = [
     "BDR",
     "FowlerNordheim",

@@ -1,5 +1,5 @@
 """Fit a sphere with curve_fit."""
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name, redefined-outer-name
 from Stoner import Data
 from numpy import (
     sin,
