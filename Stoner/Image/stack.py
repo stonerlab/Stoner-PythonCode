@@ -155,12 +155,10 @@ class ImageStackMixin:
             if isinstance(value, string_types):  # Append with a filename, call __getter__
                 value = self.__getter__(value, instantiate=True)  # self.__getter__ will also insert if necessary
                 return None
-            else:  # Append with real value
-                idx = len(self)
-                return self.__inserter__(idx, name, value)
-        else:
-            value = self.type(value)  # ensure type if a bare numpy array was given
-            self._sizes[idx] = value.shape
+            idx = len(self)
+            return self.__inserter__(idx, name, value)
+        value = self.type(value)  # ensure type if a bare numpy array was given
+        self._sizes[idx] = value.shape
         self._metadata[name] = value.metadata
         if hasattr(value, "image"):
             value = value.image
@@ -305,18 +303,18 @@ class ImageStackMixin:
     def convert(self, dtype, force_copy=False, uniform=False, normalise=True):
         """
         Convert an image to the requested data-type.
-        
+
         Warnings are issued in case of precision loss, or when negative values
         are clipped during conversion to unsigned integer types (sign loss).
-        
+
         Floating point values are expected to be normalized and will be clipped
         to the range [0.0, 1.0] or [-1.0, 1.0] when converting to unsigned or
         signed integers respectively.
-        
+
         Numbers are not shifted to the negative side when converting from
         unsigned to signed integer types. Negative values will be clipped when
         converting to unsigned integers.
-        
+
         Parameters
         ----------
         image : ndarray
@@ -333,7 +331,7 @@ class ImageStackMixin:
         normalise : bool
         When converting from int types to float normalise the resulting array
         by the maximum allowed value of the int type.
-        
+
         References
         ----------
         (1) DirectX data conversion rules.
@@ -344,7 +342,7 @@ class ImageStackMixin:
         In "Graphics Gems I", pp 249-256. Morgan Kaufmann, 1990.
         (4) Dirty Pixels. J. Blinn.
         In "Jim Blinn's corner: Dirty Pixels", pp 47-57. Morgan Kaufmann, 1998.
-        
+
         """
         from .imagefuncs import convert
 

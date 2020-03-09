@@ -136,8 +136,7 @@ class DiskBasedFolderMixin:
         if k is None:
             self.key = self.directory
             return self._key
-        else:
-            return k
+        return k
 
     def _dialog(self, message="Select Folder", new_directory=True):
         """Creates a directory dialog box for working with.

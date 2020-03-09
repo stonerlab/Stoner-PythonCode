@@ -697,8 +697,7 @@ class baseFolder(MutableSequence):
         if isinstance(name, int_types):
             if -len(self) < name < len(self):
                 return self.__getter__(self.__lookup__(name), instantiate=True)
-            else:
-                raise IndexError("{} is out of range.".format(name))
+            raise IndexError("{} is out of range.".format(name))
         if isinstance(name, slice):  # Possibly ought to return another Folder?
             other = self.__clone__(attrs_only=True)
             for iname in islice(self.__names__(), name.start, name.stop, name.step):
@@ -733,10 +732,9 @@ class baseFolder(MutableSequence):
                     if self.debug:
                         print(name)
                     raise e
-            else:  # Continuing to index into the tree of groups
-                raise KeyError("Can't index the baseFolder with {}".format(name))
-        else:
             raise KeyError("Can't index the baseFolder with {}".format(name))
+
+        raise KeyError("Can't index the baseFolder with {}".format(name))
 
     def __setitem__(self, name, value):
         """Attempts to store a value in either the groups or objects.

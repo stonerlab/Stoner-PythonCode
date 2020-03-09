@@ -371,8 +371,9 @@ def _curve_fit_p0_list(p0, model):
         for x in _get_model_parnames(model):
             ret.append(p_new.get(x, None))
         return ret
-    elif isiterable(p0):
+    if isiterable(p0):
         return [float(x) for x in p0]
+    raise RuntimeError("Shouldn't have returned None from _curve_fit_p0_list!")
 
 
 def _prep_lmfit_model(model, kargs):

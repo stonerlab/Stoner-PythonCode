@@ -398,9 +398,8 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
             # unsigned integer -> signed integer
             image = im_scale(image, 8 * itemsize_in, 8 * itemsize - 1, dtypeobj_in, dtypeobj)
             return image.view(dtype)
-        else:
-            # unsigned integer -> unsigned integer
-            return im_scale(image, 8 * itemsize_in, 8 * itemsize, dtypeobj_in, dtypeobj)
+        # unsigned integer -> unsigned integer
+        return im_scale(image, 8 * itemsize_in, 8 * itemsize, dtypeobj_in, dtypeobj)
 
     if kind == "u":
         # signed integer -> unsigned integer

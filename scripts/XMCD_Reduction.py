@@ -25,8 +25,7 @@ def position(f):
             return "Perp"
         else:
             return "Para"
-    else:
-        return "None"
+    return "None"
 
 
 def temp(f):
@@ -41,8 +40,7 @@ def cycle(f):
     """If run >=100 then we're on the second cycle"""
     if f["run"] >= 49100:
         return "cycle2"
-    else:
-        return "cycle1"
+    return "cycle1"
 
 
 def alt_norm(f, _, **kargs):
