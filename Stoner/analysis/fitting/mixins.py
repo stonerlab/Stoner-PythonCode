@@ -4,7 +4,7 @@
 __all__ = ["odr_Model", "FittingMixin"]
 
 from inspect import isclass
-from collections import Mapping, OrderedDict
+from collections.abc import Mapping
 from distutils.version import LooseVersion
 
 import numpy as np
@@ -207,6 +207,7 @@ class _curve_fit_result:
         self.perr = np.sqrt(np.diag(pcov))
         self.mesg = mesg
         self.ier = ier
+        self.nfev = None
         self.infodict = infodict
         for k in infodict:
             setattr(self, k, infodict[k])
@@ -359,7 +360,7 @@ def _curve_fit_p0_list(p0, model):
         return p0
 
     if isinstance(p0, Mapping):
-        p_new = OrderedDict()
+        p_new = dict()
         for x, v in p0.items():
             p_new[x] = getattr(v, "value", float(v))
         ret = []

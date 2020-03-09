@@ -22,7 +22,8 @@ for fname in [
     imgs += img
 
 # Align the two images
-imgs[1].align(imgs[0], method="scharr")
+imgs.align(imgs[0], method="scharr", scale=4)
+imgs.each.crop(2)
 
 # Calculate the XMCD image and normalise it
 xmcd = imgs[0] // imgs[1]
@@ -34,7 +35,7 @@ strctural = (imgs[0] + imgs[1]) / 2
 
 imgs += strctural
 # Mask out the background, using the structural image
-xmcd.mask = imgs[0].image > 25e3
+xmcd.mask = imgs[0].image > 20e3
 
 # Create a profile and plot it
 profile = xmcd.profile_line((0, 0), (100, 100))

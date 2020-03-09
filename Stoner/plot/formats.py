@@ -15,7 +15,7 @@ __all__ = [
 ]
 from os.path import join, dirname, realpath, exists
 from inspect import getfile
-from collections import MutableMapping, Mapping
+from collections.abc import MutableMapping, Mapping
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter, Formatter

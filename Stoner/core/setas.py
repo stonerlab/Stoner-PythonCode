@@ -12,7 +12,7 @@ from ..compat import string_types, int_types, index_types, _pattern_type
 from ..tools import _attribute_store, isiterable, typedList, islike_list
 from .utils import decode_string
 
-from collections import MutableMapping, Mapping
+from collections.abc import MutableMapping, Mapping
 
 
 class setas(MutableMapping):

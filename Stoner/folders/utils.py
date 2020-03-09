@@ -18,7 +18,6 @@ import os
 import re
 import string
 import fnmatch
-from collections import OrderedDict
 
 from numpy import array
 from multiprocessing.pool import ThreadPool
@@ -61,7 +60,7 @@ def scan_dir(root):
 def discard_earlier(files):
     """Helper function to discard files where a similar named file with !#### exists."""
     search = re.compile(r"^(?P<basename>.*)\!(?P<rev>\d+)(?P<ext>\.[^\.]*)$")
-    dups = OrderedDict()
+    dups = dict()
     ret = []
     for f in files:
         match = search.match(f)

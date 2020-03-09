@@ -5,7 +5,7 @@ magic attribute.
 """
 __all__ = ["proxy"]
 import fnmatch
-from collections import MutableMapping
+from collections.abc import MutableMapping
 
 from lmfit import Model
 import numpy as np

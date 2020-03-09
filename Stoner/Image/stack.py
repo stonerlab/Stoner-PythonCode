@@ -433,7 +433,7 @@ class ImageStackMixin:
 
     def show(self):
         """Pass through to :py:meth:`Stoner.Image.ImageFolder.view`"""
-        warnings.weanr("show() is depricated in favour of ImageFolder.view()")
+        warnings.warn("show() is depricated in favour of ImageFolder.view()")
         return self.view()
 
 

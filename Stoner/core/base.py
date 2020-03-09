@@ -4,7 +4,7 @@
 Base classes for the Stoner package
 """
 __all__ = ["_evaluatable", "regexpDict", "string_to_type", "typeHintedDict", "metadataObject"]
-from collections import OrderedDict, MutableMapping, Mapping
+from collections.abc import MutableMapping, Mapping
 import re
 import copy
 import datetime
@@ -20,6 +20,8 @@ from .exceptions import StonerAssertionError
 try:
     from blist import sorteddict
 except (StonerAssertionError, ImportError):  # Fail if blist not present or Python 3
+    from collections import OrderedDict
+
     sorteddict = OrderedDict
 
 _asteval_interp = None
@@ -135,7 +137,7 @@ class regexpDict(sorteddict):
                     nm = re.compile(name)
                 except re.error:
                     pass
-            elif isinstance(name, int_types):  # We can do this because we're an OrderedDict!
+            elif isinstance(name, int_types):  # We can do this because we're a dict!
                 try:
                     ret = sorted(self.keys())[name]
                 except IndexError:
@@ -206,7 +208,7 @@ class regexpDict(sorteddict):
         if mk != ok:  # Keys differ
             return mk ^ ok
         # Do values differ?
-        ret = OrderedDict()
+        ret = dict()
         for (mk, mv), (ok, ov) in zip(sorted(self.items()), sorted(other.items())):
             if np.any(mv != ov) and isComparable(mv, ov):
                 ret[mk] = (mv, ov)
@@ -274,7 +276,7 @@ class typeHintedDict(regexpDict):
     __regexTimestamp = re.compile(r"Timestamp")
     __regexEvaluatable = re.compile(r"^(Cluster||\d+D Array|List)")
 
-    __types = OrderedDict(
+    __types = dict(
         [  # Key order does matter here!
             ("Boolean", bool),
             ("I32", int),

@@ -4,7 +4,7 @@ __all__ = ["baseFolder"]
 
 from itertools import islice
 from copy import copy, deepcopy
-from collections import Iterable, MutableSequence
+from collections.abc import Iterable, MutableSequence
 from inspect import isclass
 
 import numpy as np

@@ -12,7 +12,7 @@ from __future__ import division
 
 __all__ = ["PlotMixin"]
 import os
-from collections import Mapping, OrderedDict
+from collections.abc import Mapping
 from functools import wraps
 import platform
 import copy
@@ -529,7 +529,7 @@ class PlotMixin:
                 """
         func = None
         o_name = name
-        mapping = OrderedDict(
+        mapping = dict(
             [
                 ("plt_", (plt, "pyplot")),  # Need to be explicit in 2.7!
                 ("ax_", (plt.Axes, "axes")),

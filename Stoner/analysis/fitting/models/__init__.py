@@ -12,7 +12,7 @@ __all__ = [
     "cfg_model_from_ini",
 ]
 
-from collections import Mapping
+from collections.abc import Mapping
 from configparser import ConfigParser as SafeConfigParser
 from functools import wraps
 from io import IOBase

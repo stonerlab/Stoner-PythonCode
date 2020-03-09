@@ -24,7 +24,7 @@ __all__ = [
     "get_option",
     "set_option",
 ]
-from collections import Iterable, MutableSequence
+from collections.abc import Iterable, MutableSequence
 from .compat import string_types, bytes2str
 import re
 import inspect

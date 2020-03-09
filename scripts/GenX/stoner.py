@@ -36,11 +36,7 @@ class Plugin(Template):
         except Exception as e:
             ShowWarningDialog(
                 self.parent,
-                "Could not load the file: "
-                + filename
-                + " \nPlease check the format.\n\n Stoner.Data"
-                + " gave the following error:\n"
-                + str(e),
+                f"Could not load the file: {filename}\nPlease check the format.\n\n Stoner.Data gave the following error:\n{e}",
             )
         else:
             # For the freak case of only one data point
@@ -61,9 +57,7 @@ class Plugin(Template):
             except Exception as e:
                 ShowWarningDialog(
                     self.parent,
-                    "The data file does not contain"
-                    + "all the columns specified in the opions\n"
-                    + e.message,
+                    f"The data file does not contain all the columns specified in the opions\n{e}",
                 )
                 # Okay now we have showed a dialog lets bail out ...
                 return

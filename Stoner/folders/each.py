@@ -4,7 +4,7 @@ Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic at
 """
 __all__ = ["item"]
 import numpy as np
-from collections import MutableSequence
+from collections.abc import MutableSequence
 from functools import wraps, partial
 from traceback import format_exc
 from .utils import get_pool

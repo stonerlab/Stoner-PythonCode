@@ -16,7 +16,7 @@ __all__ = [
 import copy
 import csv
 import re
-from collections import Mapping
+from collections.abc import Mapping
 import numpy as np
 from Stoner.compat import index_types, int_types
 from Stoner.tools import all_type

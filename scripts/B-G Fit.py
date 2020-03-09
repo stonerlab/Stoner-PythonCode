@@ -9,7 +9,8 @@ import re
 import numpy as np
 from matplotlib.pyplot import text
 
-from Stoner.Core import Data, format_error
+from Stoner import Data
+from Stoner.Util import format_error
 from Stoner.Fit import blochGrueneisen
 
 

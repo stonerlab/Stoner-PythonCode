@@ -9,7 +9,7 @@ import io
 import linecache
 import re
 from copy import copy
-from collections import Mapping
+from collections.abc import Mapping
 
 import PIL
 import numpy as np

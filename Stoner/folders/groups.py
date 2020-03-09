@@ -4,7 +4,7 @@
 """
 __all__ = ["GroupsDict"]
 
-from collections import Iterable
+from collections.abc import Iterable
 import fnmatch
 from os import path
 
