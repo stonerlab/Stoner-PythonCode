@@ -6,9 +6,10 @@ Created on Sat Aug 24 20:18:05 2013
 @author: Gavin Burnell
 """
 # pylint: disable=invalid-name
-import numpy
+import numpy as np
 
 from Stoner import Data
+from Stoner.analysis.fitting.models.generic import Linear
 
 
 class VSMAnalysis(Data):
@@ -18,13 +19,13 @@ class VSMAnalysis(Data):
     def true_m(self):
         """Calculates correct m from lockin X and Y components."""
         # Get some constants that scale betweent he columns
-        s_vol = numpy.mean(self.column("Mvol") / self.column("m (emu)"))
-        s_mass = numpy.mean(self.column("Mmass") / self.column("m (emu)"))
-        l_ratio = numpy.mean(self.column("m (emu)") / self.column("X"))
+        s_vol = np.mean(self.column("Mvol") / self.column("m (emu)"))
+        s_mass = np.mean(self.column("Mmass") / self.column("m (emu)"))
+        l_ratio = np.mean(self.column("m (emu)") / self.column("X"))
 
         # Now calculate new column values and put them into self.data
         self.data[:, self.find_col("m (emu)")] = (
-            numpy.sqrt(self.column("X") ** 2 + self.column("Y") ** 2) * l_ratio
+            np.sqrt(self.column("X") ** 2 + self.column("Y") ** 2) * l_ratio
         )
         self.data[:, self.column("Mvol")] = self.column("m (emu)") * s_vol
         self.data[:, self.column("Mmass")] = self.column("m (emu)") * s_mass
@@ -42,7 +43,6 @@ class VSMAnalysis(Data):
         Returns:
             the current object with a new corrected moment.
         """
-        from Stoner.analysis.fitting.models.generic import Linear
 
         H_max = max(self.column("H_vsm"))
         for m in self.find_col(
@@ -73,8 +73,6 @@ class VSMAnalysis(Data):
         ReturnsL
             a copy of self with the corrections applied
         """
-        from Stoner.FittingFuncs import Linear
-
         H_max = max(self.column("H_vsm"))
         H_min = min(self.columns("H_vsm"))
         for m in self.find_col(["m (emu)", "Mvol", "Mmass", "X", "Y"]):
@@ -99,7 +97,7 @@ class VSMAnalysis(Data):
         """Uses thresholding and interpolation to find fields for zero crossing moments."""
         h_m = int(self.peaks(ycol="H_vsm", wiodth=15)[0])
         mask = self.mask
-        self.mask = numpy.zeros(self.shape)
+        self.mask = np.zeros(self.shape)
         self.mask[1:h_m, :] = True
         hc_p = self.threshold(0.0, col="m (emu)", xcol="H_vsm")
         hc_m = self.threshold(
@@ -112,7 +110,7 @@ class VSMAnalysis(Data):
         """Uses thresholding and interpolation to find moments for zero crossing fields."""
         h_m = int(self.peaks(ycol="H_vsm", width=15)[0])
         mask = self.mask
-        self.mask = numpy.zeros(self.shape)
+        self.mask = np.zeros(self.shape)
         self.mask[1:h_m, :] = True
         br_p = self.threshold(0.0, col="H_vsm", xcol="m (emu)")
         br_m = self.threshold(

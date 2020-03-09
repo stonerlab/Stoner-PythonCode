@@ -220,7 +220,7 @@ while True:
     fw.close()
     while True:  # open the file
         try:
-            Data = Stoner.data("EditedFiles/" + pathsplit[0] + "_edit.txt")
+            Data = Stoner.Data("EditedFiles/" + pathsplit[0] + "_edit.txt")
             break
         except ValueError:
             try:
