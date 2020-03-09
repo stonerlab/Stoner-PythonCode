@@ -56,17 +56,6 @@ except ImportError:
 
 try:
     import pandas as pd
-
-    @pd.api.extensions.register_dataframe_accessor("metadata")
-    class PandasMetadata(typeHintedDict):
-
-        """Add a typehintedDict to PandasDataFrames."""
-
-        def __init__(self, pandas_obj):
-            super(PandasMetadata, self).__init__()
-            self._obj = pandas_obj
-
-
 except ImportError:
     pd = None
 
@@ -1144,7 +1133,7 @@ class DataFile(metadataObject):
         patterns = self.patterns
         for p in patterns:  # pylint: disable=not-an-iterable
             descs[p] = self.__class__.__name__ + " file"
-        for c in DataFile.subclasses:  # pylint: disable=E1136
+        for c in DataFile.subclasses:  # pylint: disable=E1136, E1133
             for p in DataFile.subclasses[c].patterns:  # pylint: disable=unsubscriptable-object
                 if p in descs:
                     descs[p] += (
@@ -2197,7 +2186,7 @@ class DataFile(metadataObject):
             try:
                 filetype = DataFile.subclasses[filetype]  # pylint: disable=E1136
             except KeyError:
-                for k, cls in DataFile.subclasses.items():  # pylint: disable=E1136
+                for k, cls in DataFile.subclasses.items():  # pylint: disable=E1136, E1101
                     if filetype in k:
                         filetype = cls
                         break
@@ -2220,7 +2209,7 @@ class DataFile(metadataObject):
         cls = self.__class__
         failed = True
         if auto_load:  # We're going to try every subclass we canA
-            for cls in DataFile.subclasses.values():  # pylint: disable=E1136
+            for cls in DataFile.subclasses.values():  # pylint: disable=E1136, E1101
                 if self.debug:
                     print(cls.__name__)
                 try:
@@ -2264,7 +2253,7 @@ class DataFile(metadataObject):
             else:
                 raise StonerUnrecognisedFormat(
                     f"Ran out of subclasses to try and load {filename} as."
-                    + f" Recognised filetype are:{list(DataFile.subclasses.keys())}"
+                    + f" Recognised filetype are:{list(DataFile.subclasses.keys())}"  # pylint: disa ble=E1101
                 )
         else:
             if filetype is None:
@@ -2458,7 +2447,9 @@ class DataFile(metadataObject):
                 isinstance(as_loaded, bool) and "Loaded as" in self
             ):  # Use the Loaded as key to find a different save routine
                 cls = DataFile.subclasses[self["Loaded as"]]  # pylint: disable=unsubscriptable-object
-            elif isinstance(as_loaded, string_types) and as_loaded in DataFile.subclasses:  # pylint: disable=E1136
+            elif (
+                isinstance(as_loaded, string_types) and as_loaded in DataFile.subclasses
+            ):  # pylint: disable=E1136, E1135
                 cls = DataFile.subclasses[as_loaded]  # pylint: disable=unsubscriptable-object
             else:
                 raise ValueError(

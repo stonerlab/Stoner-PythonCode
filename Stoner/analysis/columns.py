@@ -30,7 +30,7 @@ class ColumnOpsMixin:
             e2data = self.__get_math_val(e2)[0]
             if error_type == "relative":
 
-                def error_calc(adata, bdata):
+                def error_calc(adata, bdata):  # pylint: disable=function-redefined
                     """Relative error summation."""
                     return np.sqrt((e1data / adata) ** 2 + (e2data / bdata) ** 2)
 

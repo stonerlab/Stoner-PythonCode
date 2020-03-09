@@ -208,6 +208,10 @@ class _curve_fit_result:
         self.mesg = mesg
         self.ier = ier
         self.nfev = None
+        self.fvec = None
+        self.fjac = None
+        self.ipvt = None
+        self.qtf = None
         self.infodict = infodict
         for k in infodict:
             setattr(self, k, infodict[k])

@@ -13,6 +13,11 @@ import numpy as np
 from numpy import NaN
 import asteval
 
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
 from ..compat import string_types, int_types, _pattern_type
 from ..tools import isiterable, isComparable
 from .exceptions import StonerAssertionError
@@ -721,3 +726,15 @@ class metadataObject(MutableMapping):
     def _load(self, filename, *args, **kargs):
         """Stub method for a load function."""
         raise NotImplementedError("Save is not implemented in the base class.")
+
+
+if pd is not None:
+
+    @pd.api.extensions.register_dataframe_accessor("metadata")
+    class PandasMetadata(typeHintedDict):
+
+        """Add a typehintedDict to PandasDataFrames."""
+
+        def __init__(self, pandas_obj):
+            super(PandasMetadata, self).__init__()
+            self._obj = pandas_obj

@@ -55,9 +55,9 @@ except ImportError:
 
 
 if __vi__[1] < 7:
-    from re import _pattern_type
+    from re import _pattern_type  # pylint: disable = E0611
 else:
-    from re import Pattern as _pattern_type
+    from re import Pattern as _pattern_type  # pylint: disable = E0611
 
 cmp = None
 

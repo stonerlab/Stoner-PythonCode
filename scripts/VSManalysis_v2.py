@@ -35,10 +35,10 @@ def deleteCorruptLines(data):
     """function takes data array and returns data with lines with 6:0 or --- in them deleted"""
     delCount = 0
     for line in data:
-        if string.find(line, "6:0") != -1:
+        if line.find("6:0") != -1:
             data.pop(data.index(line))
             delCount += 1
-        if string.find(line, "---") != -1:
+        if line.find("---") != -1:
             data.pop(data.index(line))
             delCount += 1
     if delCount > 6:
@@ -220,13 +220,11 @@ while True:
     fw.close()
     while True:  # open the file
         try:
-            Data = Stoner.VSMFile("EditedFiles/" + pathsplit[0] + "_edit.txt")
+            Data = Stoner.data("EditedFiles/" + pathsplit[0] + "_edit.txt")
             break
         except ValueError:
             try:
-                Data = Stoner.TDIFile(
-                    "EditedFiles/" + pathsplit[0] + "_edit.txt"
-                )
+                Data = Stoner.Data("EditedFiles/" + pathsplit[0] + "_edit.txt")
                 break
             except ValueError:
                 timeout += (

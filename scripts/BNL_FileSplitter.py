@@ -53,7 +53,7 @@ filelist.pop(0)
 print("Testing files with Stoner:")
 for filename in filelist:
     if filename.split(".")[-1] == "bnl":
-        d = Stoner.BNLFile(
+        d = Stoner.formats.facilities.BNLFile(
             filename
         )  # will throw suitable errors if there are problems
         if len(np.shape(d.data)) == 1:
