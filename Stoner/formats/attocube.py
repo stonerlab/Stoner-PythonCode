@@ -548,5 +548,3 @@ class AttocubeScan(AttocubeScanMixin, ImageStack):
             The lelbel of compression to use (depends on compression algorithm)
 
     """
-
-    pass
