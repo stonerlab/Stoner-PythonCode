@@ -197,6 +197,8 @@ class baseFolder(MutableSequence):
         - __clone__ create a new copy of the mixin's state kinformation
     """
 
+    # pylint: disable=no-member
+
     _defaults = (
         {}
     )  # A Dictionary of default values that will be combined with other classes to make a global set of defaults
