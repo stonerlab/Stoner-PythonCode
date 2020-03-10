@@ -37,6 +37,7 @@ class _generator:
         """
         self.fldr = fldr
         self.len = len(fldr)
+        self.ix = 0
 
     def __len__(self):
         """Get the length of the iterator.

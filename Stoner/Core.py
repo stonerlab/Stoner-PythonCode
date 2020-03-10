@@ -162,6 +162,7 @@ class DataFile(metadataObject):
         self._public_attrs_real = {}
         object.__setattr__(self, "_data", DataArray([]))
         self._baseclass = DataFile
+        self._kargs = None
         return self
 
     def __init__(self, *args, **kargs):

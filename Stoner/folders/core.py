@@ -223,6 +223,8 @@ class baseFolder(MutableSequence):
         self._loader = None
         self._instance_attrs = set()
         self._root = "."
+        self._default_store = None
+        self.directory = None
         return self
 
     def __init__(self, *args, **kargs):
@@ -266,7 +268,7 @@ class baseFolder(MutableSequence):
     @property
     def defaults(self):
         """Build a single list of all of our defaults by iterating over the __mro__, caching the result."""
-        if not hasattr(self, "_default_store"):
+        if self._default_store is None:
             self._default_store = dict()
             for cls in reversed(self.__class__.__mro__):
                 if hasattr(cls, "_defaults"):

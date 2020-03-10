@@ -94,6 +94,11 @@ class OVFFile(DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.ovf"]  # Recognised filename patterns
 
+    def __init__(self, *args, **kargs):
+        """Set some instance attributes."""
+        super(OVFFile, self).__init__(*args, **kargs)
+        self._ptr = None
+
     def _read_uvwdata(self, filename, fmt, lineno):
         """Read the numerical data taking account of the format."""
         if fmt == "Text":

@@ -250,7 +250,7 @@ class DataArray(ma.MaskedArray):
     @property
     def setas(self):
         """Returns an object for setting column assignments."""
-        if "_setas" not in self.__dict__:
+        if self._setas is None:
             self._setas = _setas()
         if self._setas.shape != self.shape:
             self._setas.shape = self.shape

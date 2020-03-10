@@ -224,6 +224,9 @@ class DefaultPlotStyle(MutableMapping):
         which will be used to upodate the rcParams first.
         """
         self._stylesheet = None
+        self.fig_width = None
+        self.fig_height = None
+
         self.update(**kargs)
 
     def __call__(self, **kargs):
@@ -404,7 +407,7 @@ class DefaultPlotStyle(MutableMapping):
             self.fig_width = self.fig_width_pt * self._inches_per_pt
         if "fig_height_pt" in dir(self):
             self.fig_height = self.fig_width * self._golden_mean  # height in inches
-        if "fig_ratio" in dir(self) and "fig_width" in dir(self):
+        if "fig_ratio" in dir(self) and "fig_width" in dir(self):  # pylint: disable=attribute-defined-outside-init
             self.fig_height = self.fig_width / self.fig_ratio
         if "fig_width" and "fig_height" in self.__dict__:
             self.template_figure__figsize = (self.fig_width, self.fig_height)
@@ -416,7 +419,7 @@ class DefaultPlotStyle(MutableMapping):
                     params[attrname] = value
         plt.rcParams.update(params)  # Apply these parameters
         projection = kargs.pop("projection", "rectilinear")
-        self.template_figure__figsize = kargs.pop("figsize", self.template_figure__figsize)
+        self.template_figure__figsize = kargs.pop("figsize", self.template_figure__figsize)  # pylint: disable=W0201
         if "ax" in kargs:  # Giving an axis instance in kargs means we can use that as out figure
             ax = kargs.get("ax")
             plt.sca(ax)

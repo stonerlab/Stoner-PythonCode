@@ -212,6 +212,11 @@ class _curve_fit_result:
         self.fjac = None
         self.ipvt = None
         self.qtf = None
+        self.func = None
+        self.p0 = None
+        self.residual_vals = None
+        self.chisq = None
+        self.nfree = None
         self.infodict = infodict
         for k in infodict:
             setattr(self, k, infodict[k])
