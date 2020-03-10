@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Defines type hint types for various common types in the package
-"""
+"""Defines type hint types for various common types in the package."""
+# pylint: disable-all
 import typing
 
 from Stoner.core.setas import setas

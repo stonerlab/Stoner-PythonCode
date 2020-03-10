@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Stoner Package specific exceptions
-"""
+"""Stoner Package specific exceptions."""
 
 
 class StonerLoadError(Exception):
@@ -15,8 +13,6 @@ class StonerLoadError(Exception):
     and thus another subclass should have a go instead.
     """
 
-    pass
-
 
 class StonerUnrecognisedFormat(IOError):
 
@@ -25,21 +21,15 @@ class StonerUnrecognisedFormat(IOError):
     This special exception is thrown when none of the subclasses was able to load the specified file.
     """
 
-    pass
-
 
 class StonerSetasError(AttributeError):
 
     """An exception tjrown when we try to access a column in data without setas being set."""
 
-    pass
-
 
 class StonerAssertionError(RuntimeError):
 
     """An exception raised when the library thinks an assertion has failed."""
-
-    pass
 
 
 def assertion(condition, message="Library Assertion Error set"):

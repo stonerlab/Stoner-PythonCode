@@ -17,6 +17,8 @@ __all__ = [
 
 import numpy as np
 import scipy.constants as cnst
+from scipy.constants import k, mu_0, e, electron_mass, hbar
+from scipy.signal import savgol_filter
 
 try:
     from lmfit import Model
@@ -52,7 +54,7 @@ def blochLaw(T, Ms, Tc):
 
 
 def langevin(H, M_s, m, T):
-    r""""The Langevin function for paramagnetic M-H loops/
+    r""""The Langevin function for paramagnetic M-H loops.
 
     Args:
         H (array): The applied magnetic field
@@ -71,7 +73,6 @@ def langevin(H, M_s, m, T):
             :include-source:
             :outname: langevin
     """
-    from scipy.constants import k, mu_0
 
     x = mu_0 * H * m / (k * T)
     n = M_s / m
@@ -103,7 +104,7 @@ def kittelEquation(H, g, M_s, H_k):
 
 
 def inverse_kittel(f, g, M_s, H_k):
-    r"""Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency
+    r"""Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency.
 
     Args:
         f (array): Resonance Frequency in Hz
@@ -116,11 +117,14 @@ def inverse_kittel(f, g, M_s, H_k):
 
     Notes:
         In practice one often measures FMR by sweepign field for constant frequency and then locates the
-        peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a :math:`H_{res}\pm \Delta H_{res}`
-        In order to make use of this data with :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit` or :py:meth:`Stoner.Analysis.AnalysisMixin.curve_fit`
+        peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a
+        :math:`H_{res}\pm \Delta H_{res}`
+        In order to make use of this data with :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit` or
+        :py:meth:`Stoner.Analysis.AnalysisMixin.curve_fit`
         it makes more sense to fit the Kittel Equation written in terms of H than frequency.
 
-       :math:`H_{res}=- H_{k} - \frac{M_{s}}{2} + \frac{1}{2 \gamma \mu_{0}} \sqrt{M_{s}^{2} \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}`
+       :math:`H_{res}=- H_{k} - \frac{M_{s}}{2} + \frac{1}{2 \gamma \mu_{0}} \sqrt{M_{s}^{2}
+       \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}`
     """
     gamma = g * cnst.e / (2 * cnst.m_e)
     return (
@@ -142,7 +146,9 @@ def fmr_power(H, H_res, Delta_H, K_1, K_2):
     Returns:
         Array of model absorption values.
 
-    :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
+    :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}
+    \right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{
+    \left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
     """
     return (
         4 * Delta_H * K_1 * (H - H_res) / (Delta_H ** 2 + 4 * (H - H_res) ** 2) ** 2
@@ -183,7 +189,6 @@ class BlochLaw(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Guess some starting values."""
-
         Ms = data.max() * 1.001
         if x is not None:
             y = np.log(1 - data / Ms)
@@ -198,7 +203,7 @@ class BlochLaw(Model):
 
 class Langevin(Model):
 
-    r""""The Langevin function for paramagnetic M-H loops/
+    r""""The Langevin function for paramagnetic M-H loops.
 
     Args:
         H (array): The applied magnetic field
@@ -227,9 +232,6 @@ class Langevin(Model):
 
         M_s is taken as half the difference of the range of thew M data,
         we can find m/T from the susceptibility chi= M_s \mu_o m / kT,"""
-        from scipy.signal import savgol_filter
-        from scipy.constants import k, mu_0, e, electron_mass, hbar
-
         M_s = (np.max(data) - np.min(data)) / 2.0
         if x is not None:
             d = np.sort(np.row_stack((x, data)))
@@ -344,7 +346,9 @@ class FMR_Power(Model):
     Returns:
         Array of model absorption values.
 
-    :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
+    :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}
+    \right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(
+    \Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
     """
     display_names = ["H_{res}", r"\Delta_H", "K_1", "K_2"]
 
@@ -354,7 +358,6 @@ class FMR_Power(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
-
         if x is None:
             x = np.linspace(1, len(data), len(data) + 1)
 
