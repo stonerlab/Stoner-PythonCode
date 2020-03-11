@@ -203,7 +203,7 @@ class BlochLaw(Model):
 
 class Langevin(Model):
 
-    r""""The Langevin function for paramagnetic M-H loops.
+    r"""The Langevin function for paramagnetic M-H loops.
 
     Args:
         H (array): The applied magnetic field
