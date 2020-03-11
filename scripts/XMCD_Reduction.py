@@ -18,7 +18,7 @@ def helicity(f):
 
 
 def position(f):
-    """"Look for meta data named magj1yins and us this rounded to 1dp as a key."""
+    """Look for meta data named magj1yins and us this rounded to 1dp as a key."""
     if "magj1yins" in f:
         if f["magj1yins"] == -8.5:
             return "Perp"

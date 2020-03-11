@@ -31,7 +31,7 @@ print("Please wait while program loads...\n")
 
 
 def deleteCorruptLines(data):
-    """function takes data array and returns data with lines with 6:0 or --- in them deleted."""
+    """Take data array and returns data with lines with 6:0 or --- in them deleted."""
     delCount = 0
     for line in data:
         if line.find("6:0") != -1:
@@ -77,7 +77,7 @@ def driftEliminator(data, N):
 
 
 def shift(data, N):
-    """function y translates curve so that halfway between the saturated fieldsis zero.
+    """Translates curve in y so that halfway between the saturated fieldsis zero.
 
     (uses the average y value of all the saturated points given to determine upper and lower bounds of curve"""
     maxHarg = int(
@@ -158,7 +158,7 @@ def splitFileName(myFileName):
 
 
 def editData(Data, operations):
-    """takes stoner type Data file and an operations list and performs the operations listed."""
+    """Takes stoner type Data file and an operations list and performs the operations listed."""
     if 0 in operations:
         return Data
     N = int(input("Input the number of saturated data points on each arm:   "))

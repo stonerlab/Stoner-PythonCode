@@ -22,7 +22,7 @@ folder = r"C:\Users\phyrct\KermitData\test2"
 
 
 def get_size(start_path="."):
-    """Get directory size"""
+    """Get directory size."""
     total_size = 0
     for dirpath, _, filenames in os.walk(start_path):
         for f in filenames:
