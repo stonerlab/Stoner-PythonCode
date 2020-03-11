@@ -54,7 +54,7 @@ def blochLaw(T, Ms, Tc):
 
 
 def langevin(H, M_s, m, T):
-    r""""The Langevin function for paramagnetic M-H loops.
+    r"""The Langevin function for paramagnetic M-H loops.
 
     Args:
         H (array): The applied magnetic field
@@ -228,10 +228,10 @@ class Langevin(Model):
         super(Langevin, self).__init__(langevin, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
-        """Guess some starting values.
+        r"""Guess some starting values.
 
         M_s is taken as half the difference of the range of thew M data,
-        we can find m/T from the susceptibility chi= M_s \mu_o m / kT,"""
+        we can find m/T from the susceptibility :math:`chi= M_s \mu_o m / kT`,"""
         M_s = (np.max(data) - np.min(data)) / 2.0
         if x is not None:
             d = np.sort(np.row_stack((x, data)))
@@ -335,6 +335,7 @@ class Inverse_Kittel(Model):
 
 
 class FMR_Power(Model):
+
     r"""A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
 
     Args:
@@ -357,7 +358,7 @@ class FMR_Power(Model):
         super(FMR_Power, self).__init__(fmr_power, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
-        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+        r"""Guess parameters as :math:`\gamma=2, H_k=0, M_s~(\pi f)^2/\mu_0^2.H)-H`."""
         if x is None:
             x = np.linspace(1, len(data), len(data) + 1)
 

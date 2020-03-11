@@ -1,5 +1,5 @@
 """Simple XMCD Data reduction example."""
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name, redefined-outer-name
 import re
 import numpy as np
 import scipy
@@ -12,39 +12,36 @@ def helicity(f):
     """Look for either pos or neg in the first column header."""
     if "pos" in f.column_headers[0]:
         return "Pos"
-    elif "neg" in f.column_headers[0]:
+    if "neg" in f.column_headers[0]:
         return "Neg"
-    else:
-        return "Neither"
+    return "Neither"
 
 
 def position(f):
-    """"Look for meta data named magj1yins and us this rounded to 1dp as a key"""
+    """"Look for meta data named magj1yins and us this rounded to 1dp as a key."""
     if "magj1yins" in f:
         if f["magj1yins"] == -8.5:
             return "Perp"
-        else:
-            return "Para"
+        return "Para"
     return "None"
 
 
 def temp(f):
-    """Get the temperature data in bins"""
+    """Get the temperature data in bins."""
     if "sensor_temp" in f:
         return str(np.round(f["itc2"])) + "K"
-    else:
-        return "None"
+    return "None"
 
 
 def cycle(f):
-    """If run >=100 then we're on the second cycle"""
+    """If run >=100 then we're on the second cycle."""
     if f["run"] >= 49100:
         return "cycle2"
     return "cycle1"
 
 
 def alt_norm(f, _, **kargs):
-    """Just do the normalisation per file and report run number and normalisation constants"""
+    """Just do the normalisation per file and report run number and normalisation constants."""
     run = f["run"]
     signal = kargs["signal"]
     lfit = kargs["lfit"]
@@ -63,7 +60,7 @@ def alt_norm(f, _, **kargs):
 
 
 def norm_group(pos, _, **kargs):
-    """Takes the drain current for each file in group and builds an analysis file and works out the mean drain"""
+    """Takes the drain current for each file in group and builds an analysis file and works out the mean drain."""
     if "signal" in kargs:
         signal = kargs["signal"]
     else:
@@ -136,9 +133,9 @@ endrun = 52000
 # Which column are we analysing ?
 signal = "fluo"
 # A filename pattern that will grab the run number from the filename
-pattern = re.compile("i10-(?P<run>\d*)\.dat")
+pattern = re.compile(r"i10-(?P<run>\d*)\.dat")
 # The Data spool directory
-directory = "C:\Data\data"
+directory = r"C:\Data\data"
 # Set the limits used on the normalisation
 rfit = (660, 670)
 lfit = (615, 630)

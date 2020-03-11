@@ -1,15 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Oct 13 12:21:36 2016
-
-@author: phyrct
-
-Proof that the compression is lossless
-"""
+"""Proof that the compression is lossless."""
 # pylint: disable=invalid-name
-from PIL import Image
 import os
 import numpy as np
+from PIL import Image
 
 os.chdir(r"C:\Users\phyrct\KermitData")
 i = Image.open("test.png")

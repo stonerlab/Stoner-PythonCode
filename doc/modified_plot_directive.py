@@ -145,7 +145,7 @@ The plot directive has the following configuration options:
         directory are copied back from into the build directory prior to the
         build beginning.
 """
-# pylint: disable=invalid-name
+# pylint: disable-all
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys
@@ -158,12 +158,12 @@ from os.path import relpath
 import traceback
 import warnings
 import glob
-import sphinx
-import jinja2  # Sphinx dependency.
 import matplotlib
 import matplotlib.cbook as cbook
 from matplotlib import _pylab_helpers
 import six
+import sphinx
+import jinja2  # Sphinx dependency.
 
 from docutils.parsers.rst import directives
 from docutils.parsers.rst.directives.images import Image
