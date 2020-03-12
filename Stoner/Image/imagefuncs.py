@@ -164,7 +164,8 @@ def align(im, ref, method=None, **kargs):
         im1 = im.gaussian_filter(sigma=scale, mode="wrap").scharr()
         im1 = im1.align(ref1, method="imreg_dft")
         tvec = np.array(im1["tvec"])
-        new_im = im.shift(tvec)
+        prefilter = kargs.pop("prefilter", True)
+        new_im = im.shift(tvec, prefilter=prefilter)
         new_im["tvec"] = tuple(-tvec)
         new_im = new_im.T
     elif (method is None and chi2_shift is not None) or method == "chi2_shift":
@@ -180,6 +181,7 @@ def align(im, ref, method=None, **kargs):
             warnings.simplefilter("ignore")
             result = imreg_dft.similarity(ref, im, constraints=constraints)
         new_im = (result.pop("timg")).view(type=cls)
+        new_im = new_im.T
         new_im.metadata.update(im.metadata)
         new_im.metadata.update(result)
     elif (method is None and cv2 is not None) or method == "cv2":
