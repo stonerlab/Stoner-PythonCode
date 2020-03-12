@@ -25,8 +25,19 @@ class working(Data):
         """Setup the fitting code."""
         super(working, self).__init__(*args, **kargs)
         inifile = __file__.replace(".py", ".ini")
+        if python_v3:
+            config = ConfigParser.ConfigParser()
+        else:
+            config = ConfigParser.SafeConfigParser()
+        config.read(inifile)
+        self.config = config
 
-        tmp = cfg_data_from_ini(inifile, filename=False)
+        try:
+            filename = self.config.get("Data", "filename")
+        except ConfigParser.NoOptionError:
+            filename = False
+
+        tmp = cfg_data_from_ini(inifile, filename=filename)
         self._setas = tmp.setas.clone
         self.column_headers = tmp.column_headers
         self.metadata = tmp.metadata
