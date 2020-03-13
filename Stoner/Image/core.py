@@ -597,7 +597,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     if not d.startswith("_"):
                         func = getattr(mod, d)
                         if callable(func):
-                            name = "{}__{}".format(func.__module__, d).replace(".", "__")
+                            name = f"{getattr(func,'__module__','')}__{d}".replace(".", "__")
                             func_proxy[name] = func
                             short_names.append((d, func))
 

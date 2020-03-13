@@ -886,7 +886,7 @@ class AnalysisMixin(object):
         elif isinstance(bins, float):  # Given a bin with as a flot
             if mode.lower().startswith("lin"):
                 bin_width = bins
-                bins = _np_.ceil(abs(float(xmax - xmin) / bins))
+                bins = int(_np_.ceil(abs(float(xmax - xmin) / bins)))
                 bin_start = _np_.linspace(xmin, xmax - bin_width, bins)
                 bin_stop = _np_.linspace(xmin + bin_width, xmax, bins)
                 bin_centres = (bin_start + bin_stop) / 2.0
