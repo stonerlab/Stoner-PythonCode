@@ -779,7 +779,7 @@ class PlotMixin(object):
                 if len(cols["zcol"]) > 0:
                     zcol = cols["zcol"][0]
         if shape is None or not (isinstance(shape, tuple) and len(shape) == 2):
-            shape = (_np_.floor(_np_.sqrt(len(self))), _np_.floor(_np_.sqrt(len(self))))
+            shape = (int(_np_.floor(_np_.sqrt(len(self)))), int(_np_.floor(_np_.sqrt(len(self)))))
         if xlim is None:
             xlim = self._span_slice(xcol, shape[0])
         elif isinstance(xlim, tuple) and len(xlim) == 2:

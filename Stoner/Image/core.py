@@ -52,9 +52,9 @@ dtype_range = {
     np.uint16: (0, 65535),
     np.int8: (-128, 127),
     np.int16: (-32768, 32767),
-    np.int64: (-2 ** 63, 2 ** 63 - 1),
+    np.int64: (-(2 ** 63), 2 ** 63 - 1),
     np.uint64: (0, 2 ** 64 - 1),
-    np.int32: (-2 ** 31, 2 ** 31 - 1),
+    np.int32: (-(2 ** 31), 2 ** 31 - 1),
     np.uint32: (0, 2 ** 32 - 1),
     np.float16: (-1, 1),
     np.float32: (-1, 1),
@@ -597,7 +597,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     if not d.startswith("_"):
                         func = getattr(mod, d)
                         if callable(func):
-                            name = "{}__{}".format(func.__module__, d).replace(".", "__")
+                            name = "{}__{}".format(getattr(func, "__module__", ""), d).replace(".", "__")
                             func_proxy[name] = func
                             short_names.append((d, func))
 

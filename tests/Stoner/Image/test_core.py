@@ -279,7 +279,7 @@ class ImageArrayTest(unittest.TestCase):
     def test_attrs(self):
         attrs=[x for x in dir(self.imarr) if not x.startswith("_")]
         counts={(2,7):803,(3,5):846}
-        expected=counts.get(version_info[0:2],871)
+        expected=counts.get(version_info[0:2],883)
         self.assertEqual(len(attrs),expected,"Length of ImageArray dir failed. {}".format(len(attrs)))
 
 
@@ -346,7 +346,7 @@ class ImageFileTest(unittest.TestCase):
             self.AssertTrue(False,"Subtraction of string didn't raise not implemented")
         attrs=[x for x in dir(image) if not x.startswith("_")]
         counts={(2,7):803,(3,5):846}
-        expected=counts.get(version_info[0:2],871)
+        expected=counts.get(version_info[0:2],883)
         self.assertEqual(len(attrs),expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs)))
         self.assertTrue(image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation")
 
@@ -406,7 +406,7 @@ class ImageFileTest(unittest.TestCase):
         i=ImageFile(np.zeros((200,200)))
         attrs=[x for x in dir(i.draw) if not x.startswith("_")]
         counts={(2,7):19,(3,5):19}
-        expected=counts.get(version_info[0:2],20)
+        expected=counts.get(version_info[0:2],23)
         self.assertEqual(len(attrs),expected,"Directory of DrawProxy failed")
 
     def test_operators(self):
