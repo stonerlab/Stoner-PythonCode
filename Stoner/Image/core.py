@@ -1079,10 +1079,10 @@ class ImageFile(metadataObject):
         elif len(args) > 0 and isinstance(args[0], ImageFile):  # Fixing type
             self._image = args[0].image
         elif len(args) > 0 and isinstance(args[0], np.ndarray):  # Fixing type
-            if isinstance(args[0],ImageArray): #Special handling for ImageArray
-                self._image=args[0]
-                self.filename=self._image.filename
-                self.metadata=self._image.metadata
+            if isinstance(args[0], ImageArray):  # Special handling for ImageArray
+                self._image = args[0]
+                self.filename = self._image.filename
+                self.metadata = self._image.metadata
             else:
                 self._image = ImageArray(*args, **kargs)
         elif len(args) > 0 and isinstance(

@@ -1170,7 +1170,7 @@ class DataFile(metadataObject):
         """
         # Wildcard pattern to be used in file dialogs.
 
-        descs = {}
+        descs = {"*.*": "All Files"}
         patterns = self.patterns
         for p in patterns:  # pylint: disable=not-an-iterable
             descs[p] = self.__class__.__name__ + " file"
@@ -1180,9 +1180,6 @@ class DataFile(metadataObject):
                     descs[p] += ", " + self.subclasses[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
                 else:
                     descs[p] = self.subclasses[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
-
-        patterns = [(descs[p], p) for p in sorted(descs.keys())]
-        patterns.insert(0, ("All File", "*.*"))
 
         if self.filename is not None:
             filename = os.path.basename(self.filename)
@@ -1196,7 +1193,7 @@ class DataFile(metadataObject):
             mode = "save"
         else:
             mode = "directory"
-        dlg = get_filedialog(what=mode, initialdir=dirname, initialfile=filename, filetypes=patterns)
+        dlg = get_filedialog(what=mode, start=dirname, patterns=descs)
         if dlg:
             self.filename = dlg
             return self.filename

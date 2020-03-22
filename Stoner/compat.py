@@ -92,21 +92,13 @@ if __vi__[0] == 2:
         Returns:
             A file name or directory or list of files.
         """
-        from Tkinter import Tk
-        import tkFileDialog as filedialog
+        from .widgets import fileDialog
 
-        r = Tk()
-        r.withdraw()
-        funcs = {
-            "file": filedialog.askopenfilename,
-            "directory": filedialog.askdirectory,
-            "files": filedialog.askopenfilenames,
-            "save": filedialog.asksaveasfilename,
-        }
+        funcs = {"file": "OpenFile", "directory": "SelectDirectory", "files": "OpenFiles", "save": "SaveFile"}
         if what not in funcs:
             raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
         else:
-            return funcs[what](**opts)
+            return fileDialog.openDialog(mode=funcs[what], **opts)
 
     def commonpath(paths):
         """Given a sequence of path names, returns the longest common sub-path."""
@@ -263,20 +255,13 @@ elif __vi__[0] == 3:
         Returns:
             A file name or directory or list of files.
         """
-        from tkinter import Tk, filedialog
+        from .widgets import fileDialog
 
-        r = Tk()
-        r.withdraw()
-        funcs = {
-            "file": filedialog.askopenfilename,
-            "directory": filedialog.askdirectory,
-            "files": filedialog.askopenfilenames,
-            "save": filedialog.asksaveasfilename,
-        }
+        funcs = {"file": "OpenFile", "directory": "SelectDirectory", "files": "OpenFiles", "save": "SaveFile"}
         if what not in funcs:
             raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
         else:
-            return funcs[what](**opts)
+            return fileDialog.openDialog(mode=funcs[what], **opts)
 
     from shutil import which
 
