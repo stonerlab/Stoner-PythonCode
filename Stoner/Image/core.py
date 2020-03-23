@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 from Stoner.core.base import typeHintedDict, metadataObject
 from ..Core import DataFile
-from Stoner.tools import istuple, fix_signature, islike_list, make_Data
+from Stoner.tools import isTuple, fix_signature, isLikeList, make_Data
 from Stoner.compat import (
     string_types,
     get_filedialog,
@@ -430,7 +430,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             if isinstance(box, bool) and not box:  # experimental
                 print("Select crop area")
                 box = self.draw_rectangle(box)
-            elif islike_list(box) and len(box) == 4:  # Full box as a list
+            elif isLikeList(box) and len(box) == 4:  # Full box as a list
                 box = [x for x in box]
             elif box is None:  # Whole image
                 box = [0, self.shape[1], 0, self.shape[0]]
@@ -1319,7 +1319,7 @@ class ImageFile(metadataObject):
         data.setas(x=_.xcol, y=_.ycol, z=_.zcol)  # pylint: disable=not-callable
         if isinstance(shape, string_types) and shape == "unique":
             shape = (len(np.unique(data.x)), len(np.unique(data.y)))
-        elif istuple(shape, int_types, int_types):
+        elif isTuple(shape, int_types, int_types):
             pass
         else:
             shape = None

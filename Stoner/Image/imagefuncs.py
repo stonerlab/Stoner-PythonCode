@@ -56,7 +56,7 @@ from matplotlib import pyplot as plt
 from skimage import feature, measure, transform, filters
 
 from Stoner.compat import string_types
-from Stoner.tools import istuple, isiterable, make_Data
+from Stoner.tools import isTuple, isIterable, make_Data
 from .core import ImageArray
 from .util import sign_loss, _dtype2, _supported_types, prec_loss, dtype_range, _dtype, _scale as im_scale
 
@@ -95,7 +95,7 @@ def _scale(coord, scale=1.0, to_pixel=True):
     elif isinstance(coord, float):
         if to_pixel:
             coord = int(round(coord / scale))
-    elif isiterable(coord):
+    elif isIterable(coord):
         coord = tuple([_scale(c, scale, to_pixel) for c in coord])
     else:
         raise ValueError("coord should be an integer or a float or an iterable of integers and floats")
@@ -234,7 +234,7 @@ def align(im, ref, method="scharr", **kargs):
 
     if "box" in kargs:
         box = kargs.pop("box")
-        if not isiterable(box):
+        if not isIterable(box):
             box = [box]
         working = im.crop(*box, copy=True)
         if ref.shape != working.shape:
@@ -705,7 +705,7 @@ def normalise(im, scale=None, sample=None, limits=(0.0, 1.0)):
         high = section.max()
         low = section.min()
 
-    if not istuple(scale, float, float, strict=False):
+    if not isTuple(scale, float, float, strict=False):
         raise ValueError("scale should be a 2-tuple of floats.")
     scaled = (im.data - low) / (high - low)
     delta = scale[1] - scale[0]
@@ -758,9 +758,9 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
         dst = (dst, dst)
     dst = _scale(dst, scale)
     src = _scale(src, scale)
-    if not istuple(src, int, int):
+    if not isTuple(src, int, int):
         raise ValueError("src co-ordinates are not a 2-tuple of ints.")
-    if not istuple(dst, int, int):
+    if not isTuple(dst, int, int):
         raise ValueError("dst co-ordinates are not a 2-tuple of ints.")
 
     if constrain:

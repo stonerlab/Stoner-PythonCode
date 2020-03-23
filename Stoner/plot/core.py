@@ -29,16 +29,7 @@ from matplotlib import figure as mplfig
 from matplotlib import cm
 
 from Stoner.compat import string_types, index_types, int_types, getargspec
-from Stoner.tools import (
-    _attribute_store,
-    isNone,
-    isAnyNone,
-    all_type,
-    isiterable,
-    typedList,
-    get_option,
-    fix_signature,
-)
+from Stoner.tools import AttributeStore, isNone, isAnyNone, all_type, isIterable, typedList, get_option, fix_signature
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 from .utils import hsl2rgb
@@ -214,7 +205,7 @@ class PlotMixin:
         """Set the labels for the plot columns."""
         if value is None:
             self._labels = typedList(string_types, self.column_headers)
-        elif isiterable(value) and all_type(value, string_types):
+        elif isIterable(value) and all_type(value, string_types):
             self._labels = typedList(string_types, value)
         else:
             raise TypeError(f"labels should be iterable and all strings, or None, not {type(value)}")
@@ -435,7 +426,7 @@ class PlotMixin:
             if k in kargs and kargs[k] is None:
                 kargs[k] = c[k]
         for k in ["ycol", "zcol", "ucol", "vcol", "wcol", "yerr", "zerr"]:
-            if k in kargs and kargs[k] is None and isiterable(c[k]) and len(c[k]) > 0:
+            if k in kargs and kargs[k] is None and isIterable(c[k]) and len(c[k]) > 0:
                 if kargs.get("multi_y", not scalar):
                     kargs[k] = c[k]
                 else:
@@ -445,7 +436,7 @@ class PlotMixin:
         for k in list(kargs.keys()):
             if k not in ["xcol", "ycol", "zcol", "ucol", "vcol", "wcol", "xerr", "yerr", "zerr"]:
                 del kargs[k]
-        return _attribute_store(kargs)
+        return AttributeStore(kargs)
 
     def _fix_fig(self, figure, **kargs):
         """Sorts out the matplotlib figure handling."""
@@ -659,7 +650,7 @@ class PlotMixin:
         if isinstance(value, string_types) and "$" not in value:
             value = value.format(**self)
 
-        if not isiterable(value) or isinstance(value, string_types):
+        if not isIterable(value) or isinstance(value, string_types):
             value = (value,)
         if isinstance(value, Mapping):
             func(**value)
@@ -1400,7 +1391,7 @@ class PlotMixin:
 
             elif isinstance(kargs[err], index_types):
                 kargs[err] = self.column(kargs[err])
-            elif isiterable(kargs[err]) and isinstance(c.ycol, list) and len(kargs[err]) <= len(c.ycol):
+            elif isIterable(kargs[err]) and isinstance(c.ycol, list) and len(kargs[err]) <= len(c.ycol):
                 # Ok, so it's a list, so redo the check for each  item.
                 kargs[err].extend([None] * (len(c.ycol) - len(kargs[err])))
                 for i in range(len(kargs[err])):
@@ -1408,7 +1399,7 @@ class PlotMixin:
                         kargs[err][i] = self.column(kargs[err][i])
                     else:
                         kargs[err][i] = np.zeros(len(self))
-            elif isiterable(kargs[err]) and len(kargs[err]) == len(self):
+            elif isIterable(kargs[err]) and len(kargs[err]) == len(self):
                 kargs[err] = np.array(kargs[err])
             elif isinstance(kargs[err], float):
                 kargs[err] = np.ones(len(self)) * kargs[err]

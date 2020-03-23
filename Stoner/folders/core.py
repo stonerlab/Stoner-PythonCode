@@ -13,7 +13,7 @@ import fnmatch
 import re
 
 from Stoner.compat import int_types, string_types, commonpath, _pattern_type
-from Stoner.tools import operator, isiterable, all_type, get_option
+from Stoner.tools import operator, isIterable, all_type, get_option
 from Stoner.core.base import regexpDict
 from Stoner.core.base import metadataObject
 from .utils import pathjoin
@@ -316,7 +316,7 @@ class baseFolder(MutableSequence):
     @files.setter
     def files(self, value):
         """Just a wrapper to clear and then set the objects."""
-        if isiterable(value):
+        if isIterable(value):
             self.__clear__()
             for i, v in enumerate(value):
                 self.insert(i, v)
@@ -1555,7 +1555,7 @@ class baseFolder(MutableSequence):
                     else:
                         if isinstance(kargs[arg], tuple) and len(kargs[arg] == 2):
                             op = "between"  # Assume two length tuples are testing for range
-                        elif not isinstance(kargs[arg], string_types) and isiterable(kargs[arg]):
+                        elif not isinstance(kargs[arg], string_types) and isIterable(kargs[arg]):
                             op = "in"  # Assume other iterables are testing for memebership
                         else:  # Everything else is exact matches
                             op = "eq"

@@ -27,7 +27,7 @@ from numpy import NaN  # NOQA pylint: disable=unused-import
 from numpy import ma
 
 from .compat import string_types, int_types, index_types, get_filedialog, classproperty, str2bytes, _pattern_type
-from .tools import all_type, operator, isiterable, islike_list, get_option
+from .tools import all_type, operator, isIterable, isLikeList, get_option
 
 from .core.exceptions import StonerLoadError, StonerSetasError, StonerUnrecognisedFormat
 from .core import _setas, regexpDict, typeHintedDict, metadataObject
@@ -298,7 +298,7 @@ class DataFile(metadataObject):
             for ix, col in enumerate(arg):
                 if isinstance(col, string_types):
                     ch.append(col)
-                elif isiterable(ch):
+                elif isIterable(ch):
                     for ch_i in col:
                         if isinstance(ch_i, string_types):
                             ch.append(ch_i)
@@ -315,9 +315,9 @@ class DataFile(metadataObject):
                         break
                 else:
                     self.setas = list(arg.columns.get_level_values(1))
-        elif isiterable(arg) and all_type(arg, string_types):
+        elif isIterable(arg) and all_type(arg, string_types):
             self.column_headers = list(arg)
-        elif isiterable(arg) and all_type(arg, np.ndarray):
+        elif isIterable(arg) and all_type(arg, np.ndarray):
             self._init_many(*arg, **kargs)
         else:
             raise SyntaxError(f"No constructor for {type(arg)}")
@@ -326,7 +326,7 @@ class DataFile(metadataObject):
     def _init_double(self, *args, **kargs):
         """Two argument constructors handled here. Called form __init__."""
         (arg0, arg1) = args
-        if isinstance(arg1, dict) or (isiterable(arg1) and all_type(arg1, string_types)):
+        if isinstance(arg1, dict) or (isIterable(arg1) and all_type(arg1, string_types)):
             self._init_single(arg0, **kargs)
             self._init_single(arg1, **kargs)
         elif (
@@ -705,7 +705,7 @@ class DataFile(metadataObject):
         if isinstance(other, string_types):
             lines = map(lambda x: x, other.splitlines())
             newdata.__read_iterable(lines)
-        elif isiterable(other):
+        elif isIterable(other):
             newdata.__read_iterable(other)
         return self.__class__(newdata)
 
@@ -1091,7 +1091,7 @@ class DataFile(metadataObject):
         if isinstance(name, string_types) or str(name) in self.metadata:
             self.metadata[name] = value
         elif isinstance(name, tuple):
-            if isinstance(name[0], string_types) and name[0] in self.metadata and isiterable(self.metadata[name[0]]):
+            if isinstance(name[0], string_types) and name[0] in self.metadata and isIterable(self.metadata[name[0]]):
                 if len(name) == 2:
                     key = name[0]
                     name = name[1]
@@ -1325,7 +1325,7 @@ class DataFile(metadataObject):
 
     def __read_iterable(self, reader):
         """Internal method to read a string representation of py:class:`DataFile` in line by line."""
-        if isiterable(reader):
+        if isIterable(reader):
             reader = iter(reader)
         if "next" in dir(reader):  # Python v2 iterator
             readline = reader.next
@@ -1656,7 +1656,7 @@ class DataFile(metadataObject):
         # Make setas
         setas = "." * cw if setas is None else setas
 
-        if isiterable(setas) and len(setas) == cw:
+        if isIterable(setas) and len(setas) == cw:
             for s in setas:
                 if s not in ".-xyzuvwdefpqr":
                     raise TypeError(
@@ -1859,7 +1859,7 @@ class DataFile(metadataObject):
                 self.data = self.data[:, self.setas.set]
                 self.setas = setas
                 self.column_headers = ch
-            elif isiterable(col) and all_type(col, bool):  # If col is an iterable of booleans then we index by that
+            elif isIterable(col) and all_type(col, bool):  # If col is an iterable of booleans then we index by that
                 col = ~np.array(col)
                 new_setas = np.array(self.setas)[col]
                 new_column_headers = np.array(self.column_headers)[col]
@@ -1899,7 +1899,7 @@ class DataFile(metadataObject):
 
         if col is None:  # If col is still None, use all columsn that are set to any value in self.setas
             col = [ix for ix, col in enumerate(self.setas) if col != "."]
-        if not islike_list(col):  # If col isn't a list, make it one now
+        if not isLikeList(col):  # If col isn't a list, make it one now
             col = [col]
         col = [ret.find_col(c) for c in col]  # Normalise col to be a list of integers
         dels = np.zeros(len(ret)).astype(bool)
@@ -1958,12 +1958,12 @@ class DataFile(metadataObject):
                 col = list(range(*indices))
             elif callable(col) and val is None:  # Delete rows usinga callalble taking the whole row
                 col = [r.i for r in self.rows() if col(r)]
-            elif isiterable(col) and all_type(col, bool):  # Delete rows by a list of booleans
+            elif isIterable(col) and all_type(col, bool):  # Delete rows by a list of booleans
                 if len(col) < len(self):
                     col.extend([False] * (len(self) - len(col)))
                 self.data = self.data[col]
                 return self
-            if isiterable(col) and all_type(col, int_types) and val is None and not invert:
+            if isIterable(col) and all_type(col, int_types) and val is None and not invert:
                 col.sort(reverse=True)
                 for c in col:
                     self.del_rows(c)
@@ -1988,7 +1988,7 @@ class DataFile(metadataObject):
                     )[0]
                 elif isinstance(val, float):
                     rows = np.nonzero([bool(x == val) != invert for x in d])[0]
-                elif isiterable(val) and len(val) == 2:
+                elif isIterable(val) and len(val) == 2:
                     (upper, lower) = (max(list(val)), min(list(val)))
                     rows = np.nonzero([bool(lower <= x <= upper) != invert for x in d])[0]
                 else:
@@ -2707,7 +2707,7 @@ class DataFile(metadataObject):
         elif isinstance(order, index_types):
             order = [recs.dtype.names[self.find_col(order)]]
             d = np.sort(recs, order=order)
-        elif isiterable(order):
+        elif isIterable(order):
             order = [recs.dtype.names[self.find_col(x)] for x in order]
             d = np.sort(recs, order=order)
         else:
@@ -2775,7 +2775,7 @@ class DataFile(metadataObject):
         elif callable(xcol):
             try:  # Try to call function with all data in one go
                 keys = xcol(self.data)
-                if not isiterable(keys) or len(keys) != len(self):
+                if not isIterable(keys) or len(keys) != len(self):
                     raise RuntimeError("Not returning an index of keys")
             except Exception:  # Ok try instead to do it row by row
                 keys = [xcol(r) for r in self]

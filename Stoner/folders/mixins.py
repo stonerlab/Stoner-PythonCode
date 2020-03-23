@@ -15,7 +15,7 @@ from numpy.ma import masked_invalid
 from matplotlib.pyplot import figure, Figure, subplot, tight_layout
 
 from Stoner.compat import string_types, get_filedialog, _pattern_type, makedirs
-from Stoner.tools import isiterable, make_Data
+from Stoner.tools import isIterable, make_Data
 from Stoner.core.base import metadataObject, string_to_type
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder, __add_core__ as _base__add_core__, __sub_core__ as _base__sub_core__
@@ -300,7 +300,7 @@ class DiskBasedFolderMixin:
             self._pattern = (value,)
         elif isinstance(value, _pattern_type):
             self._pattern = (value,)
-        elif isiterable(value):
+        elif isIterable(value):
             self._pattern = [x for x in value]
         else:
             raise ValueError(
@@ -506,7 +506,7 @@ class DataMethodsMixin:
         for m in metadata:
             if isinstance(m, string_types):
                 args.append(m)
-            elif isiterable(m):
+            elif isIterable(m):
                 args.extend(m)
             else:
                 raise TypeError("Metadata values should be strings, or lists of strings, not {}".format(type(m)))
@@ -522,7 +522,7 @@ class DataMethodsMixin:
             for m in metadata:  # Sanity check the metadata to include
                 try:
                     test = results[m]
-                    if not isiterable(test) or isinstance(test, string_types):
+                    if not isIterable(test) or isinstance(test, string_types):
                         test = array([test])
                     else:
                         test = array(test)

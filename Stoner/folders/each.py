@@ -8,7 +8,7 @@ from collections.abc import MutableSequence
 from functools import wraps, partial
 from traceback import format_exc
 from .utils import get_pool
-from Stoner.tools import isiterable
+from Stoner.tools import isIterable
 from Stoner.compat import string_types
 
 
@@ -245,7 +245,7 @@ class item:
         elif name in dir(self._folder.instance) or (
             len(self._folder) and hasattr(self._folder[0], name)
         ):  # This is an instance attribute
-            if isiterable(value) and len(value) == len(self._folder):
+            if isIterable(value) and len(value) == len(self._folder):
                 force_load = True
             else:
                 force_load = False

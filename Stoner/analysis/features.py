@@ -10,7 +10,7 @@ import numpy as np
 from scipy.signal import find_peaks
 from scipy.interpolate import interp1d
 
-from Stoner.tools import isiterable, istuple
+from Stoner.tools import isIterable, isTuple
 from Stoner.core.exceptions import assertion
 from .utils import threshold
 
@@ -77,7 +77,7 @@ class FeatureOpsMixin:
         full_data = kargs.pop("full_data", True)
         _ = self._col_args(scalar=False, xcol=kargs.pop("xcol", None), ycol=kargs.pop("ycol", None))
         xcol, ycol = _.xcol, _.ycol
-        if isiterable(ycol):
+        if isIterable(ycol):
             ycol = ycol[0]
         if isinstance(width, float):  # Convert a floating point width unto an integer.
             xmin, xmax = self.span(xcol)
@@ -222,13 +222,13 @@ class FeatureOpsMixin:
         full_data = kargs.pop("full_data", True)
         _ = self._col_args(scalar=False, xcol=kargs.pop("xcol", None), ycol=kargs.pop("ycol", None))
         xcol, ycol = _.xcol, _.ycol
-        if isiterable(ycol):
+        if isIterable(ycol):
             ycol = ycol[0]
 
         if isinstance(width, float):  # Convert a floating point width unto an integer.
             xmin, xmax = self.span(xcol)
             width = int(len(self) * width / (xmax - xmin))
-        elif istuple(width, float, float):
+        elif isTuple(width, float, float):
             xmin, xmax = self.span(xcol)
             width = int(len(self) * width[0] / (xmax - xmin)), int(len(self) * width[1] / (xmax - xmin))
         if width is not None:
@@ -243,7 +243,7 @@ class FeatureOpsMixin:
         if isinstance(plateau_size, float):  # Convert a floating point plateau_size unto an integer.
             xmin, xmax = self.span(xcol)
             plateau_size = int(len(self) * plateau_size / (xmax - xmin))
-        elif istuple(plateau_size, float, float):
+        elif isTuple(plateau_size, float, float):
             xmin, xmax = self.span(xcol)
             plateau_size = (
                 int(len(self) * plateau_size[0] / (xmax - xmin)),

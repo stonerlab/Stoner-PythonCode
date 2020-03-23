@@ -18,7 +18,7 @@ pth=path.realpath(path.join(pth,"../../../"))
 sys.path.insert(0,pth)
 
 from Stoner import Data,__home__
-from Stoner.tools import isiterable
+from Stoner.tools import isIterable
 from Stoner.Core import typeHintedDict
 
 class SetasTest(unittest.TestCase):

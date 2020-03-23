@@ -19,7 +19,7 @@ except ImportError:
     pd = None
 
 from ..compat import string_types, int_types, _pattern_type
-from ..tools import isiterable, isComparable
+from ..tools import isIterable, isComparable
 from .exceptions import StonerAssertionError
 
 try:
@@ -154,7 +154,7 @@ class regexpDict(sorteddict):
                 if not ret:
                     ret = [n for n in self.keys() if isinstance(n, string_types) and nm.search(n)]
 
-        if ret is None or isiterable(ret) and not ret:
+        if ret is None or isIterable(ret) and not ret:
             raise KeyError("{} is not a match to any key.".format(name))
         else:
             if multiple:  # sort out returing multiple entries or not
@@ -666,7 +666,7 @@ class metadataObject(MutableMapping):
     @metadata.setter
     def metadata(self, value):
         """Update the metadata object with type checking."""
-        if not isinstance(value, typeHintedDict) and isiterable(value):
+        if not isinstance(value, typeHintedDict) and isIterable(value):
             self._metadata = typeHintedDict(value)
         elif isinstance(value, typeHintedDict):
             self._metadata = value

@@ -14,7 +14,7 @@ from scipy.odr import Model as odrModel
 from scipy.optimize import curve_fit, differential_evolution
 
 from Stoner.compat import string_types, index_types, get_func_params
-from Stoner.tools import isNone, isiterable, islike_list, _attribute_store
+from Stoner.tools import isNone, isIterable, isLikeList, AttributeStore
 
 try:  # Allow lmfit to be optional
     import lmfit
@@ -94,7 +94,7 @@ class odr_Model(odrModel):
                 )
             )
         if not isinstance(p0, lmfit.Parameters):  # This can happen if we are creating an odr_Model in advance.
-            tmp_model = _attribute_store(meta)
+            tmp_model = AttributeStore(meta)
             p0 = _prep_lmfit_p0(tmp_model, None, None, p0, kargs)[0]
         p_new = list()
         meta["params"] = copy(p0)
@@ -371,7 +371,7 @@ def _curve_fit_p0_list(p0, model):
         for x in _get_model_parnames(model):
             ret.append(p_new.get(x, None))
         return ret
-    elif isiterable(p0):
+    elif isIterable(p0):
         return [float(x) for x in p0]
 
 
@@ -598,7 +598,7 @@ class FittingMixin:
             sigma = None
         if isinstance(xcol, string_types):
             xdat = working[:, self.find_col(xcol)]
-        elif isiterable(xcol):
+        elif isIterable(xcol):
             xdat = ()
             for c in xcol:
                 xdat = xdat + (working[:, self.find_col(c)],)
@@ -834,14 +834,14 @@ class FittingMixin:
             tmp_mask = np.column_stack((tmp_mask, col_mask))
         else:  # Inserting data
             tmp_mask = np.column_stack((tmp_mask[:, 0:result], col_mask, tmp_mask[:, result:]))
-        if islike_list(xcol):
+        if isLikeList(xcol):
             new_col = func(self[:, xcol].T, *popt)
         else:
             new_col = func(self.column(xcol), *popt)
         if result:
             self.add_column(new_col, index=result, replace=replace, header=header)
         if residuals and result:
-            if not islike_list(ycol):
+            if not isLikeList(ycol):
                 ycol = [ycol]
             for yc in ycol:
                 residual_vals = self.column(yc) - new_col
@@ -1493,7 +1493,7 @@ class FittingMixin:
         _ = self._col_args(xcol=xcol, ycol=ycol, scalar=False)
 
         working = self.search(_.xcol, bounds)
-        if not isiterable(_.ycol):
+        if not isIterable(_.ycol):
             _.ycol = [_.ycol]
         p = np.zeros((len(_.ycol), polynomial_order + 1))
         if isinstance(result, bool) and result:

@@ -10,7 +10,7 @@ import numpy.ma as ma
 import numpy as np
 
 from Stoner.compat import string_types, int_types
-from Stoner.tools import isiterable, all_type, isNone, _attribute_store, all_size
+from Stoner.tools import isIterable, all_type, isNone, AttributeStore, all_size
 
 from .setas import setas as _setas
 from .exceptions import StonerSetasError
@@ -220,18 +220,18 @@ class DataArray(ma.MaskedArray):
         if self.ndim == 0:
             pass
         elif self.ndim == 1 and self.isrow:
-            if isiterable(value) and value:
+            if isIterable(value) and value:
                 self._ibase = np.array([min(value)])
             else:
                 self._ibase = np.array([value])
         elif self.ndim >= 1:
             r = self.shape[0]
-            if isiterable(value) and len(value) == r:  # Iterable and the correct length - assing straight
+            if isIterable(value) and len(value) == r:  # Iterable and the correct length - assing straight
                 self._ibase = np.array(value)
-            elif isiterable(value) and len(value) > 0:  # Iterable but not the correct length - count from min of value
+            elif isIterable(value) and len(value) > 0:  # Iterable but not the correct length - count from min of value
                 self._ibase = np.arange(min(value), min(value) + r)
             elif (
-                isiterable(value) and len(value) == 0
+                isIterable(value) and len(value) == 0
             ):  # Iterable but not the correct length - count from min of value
                 self._ibase = np.arange(0, r, r)
             else:  # No iterable
@@ -310,9 +310,9 @@ class DataArray(ma.MaskedArray):
             else:
                 ret = None
         else:
-            if isiterable(self._setas.cols[col]) and len(self._setas.cols[col]) > 0:
+            if isIterable(self._setas.cols[col]) and len(self._setas.cols[col]) > 0:
                 indexer[-1] = self._setas.cols[col][0]
-            elif isiterable(self._setas.cols[col]):
+            elif isIterable(self._setas.cols[col]):
                 indexer[-1] = self._setas.cols[col]
             else:
                 return None
@@ -365,7 +365,7 @@ class DataArray(ma.MaskedArray):
         ):  # Indexing with a numpy array
             if len(ix) == 1:
                 ix = ix[0]
-        elif isinstance(ix, tuple) and ix and isiterable(ix[-1]):  # indexing with a list of columns
+        elif isinstance(ix, tuple) and ix and isIterable(ix[-1]):  # indexing with a list of columns
             ix = list(ix)
             if all_type(ix[-1], bool):
                 ix[-1] = np.arange(len(ix[-1]))[ix[-1]]
@@ -398,11 +398,11 @@ class DataArray(ma.MaskedArray):
                 ret.isrow = single_row
                 ret.setas = self.setas.clone
                 ret.column_headers = copy.copy(self.column_headers)
-                if len(ix) > 0 and isiterable(ix[-1]):  # pylint: disable=len-as-condition
+                if len(ix) > 0 and isIterable(ix[-1]):  # pylint: disable=len-as-condition
                     ret.column_headers = list(np.array(ret.column_headers)[ix[-1]])
                 # Sort out whether we need an array of row labels
                 if isinstance(self.i, np.ndarray) and len(ix) > 0:  # pylint: disable=len-as-condition
-                    if isiterable(ix[0]) or isinstance(ix[0], int_types):
+                    if isIterable(ix[0]) or isinstance(ix[0], int_types):
                         ret.i = self.i[ix[0]]
                     else:
                         ret.i = 0
@@ -482,7 +482,7 @@ class DataArray(ma.MaskedArray):
                 break
         else:  # User didn't set any values, setas will win
             no_guess = False
-        ret = _attribute_store(self.setas._get_cols(no_guess=no_guess))
+        ret = AttributeStore(self.setas._get_cols(no_guess=no_guess))
         for c in list(cols.keys()):
             if isNone(cols[c]):  # Not defined, fallback on setas
                 del cols[c]
@@ -510,7 +510,7 @@ class DataArray(ma.MaskedArray):
             for c in ret:
                 if c.startswith("x") or c.startswith("has_"):
                     continue
-                if not isiterable(ret[c]) and ret[c] is not None:
+                if not isIterable(ret[c]) and ret[c] is not None:
                     ret[c] = list([ret[c]])
                 elif ret[c] is None:
                     ret[c] = []

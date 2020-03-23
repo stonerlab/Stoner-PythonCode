@@ -9,7 +9,7 @@ import copy
 import numpy as _np_
 
 from ..compat import string_types, int_types, index_types, _pattern_type
-from ..tools import _attribute_store, isiterable, typedList, islike_list
+from ..tools import AttributeStore, isIterable, typedList, isLikeList
 from .utils import decode_string
 
 from collections.abc import MutableMapping, Mapping
@@ -50,7 +50,7 @@ class setas(MutableMapping):
             initial_val (string or list or dict): Initial values to set
         """
         self._row = row
-        self._cols = _attribute_store()
+        self._cols = AttributeStore()
         self._shape = tuple()
         self._setas = list()
         self._column_headers = typedList(string_types)
@@ -280,7 +280,7 @@ class setas(MutableMapping):
         if len(args) == 1 and isinstance(args[0], setas):
             args = list(args)
             args[0] = args[0].to_list()
-        if len(args) == 1 and not (isinstance(args[0], string_types + (setas,)) or isiterable(args[0])):
+        if len(args) == 1 and not (isinstance(args[0], string_types + (setas,)) or isIterable(args[0])):
             raise SyntaxError(
                 "setas should be called with eother a string, iterable object or setas object, not a {}".format(
                     type(args[0])
@@ -307,7 +307,7 @@ class setas(MutableMapping):
                     raise IndexError(
                         "Unable to workout what do with {}:{} when setting the setas attribute.".format(k, v)
                     )
-        elif isiterable(value):
+        elif isIterable(value):
             if len(value) > self._size:
                 value = value[: self._size]
             elif len(value) < self._size:
@@ -349,7 +349,7 @@ class setas(MutableMapping):
         if isinstance(other, string_types):  # Expand strings and convert to list
             other = [c for c in decode_string(other)]
         if not isinstance(other, setas):  # Ok, need to check whether items match
-            if isiterable(other) and len(other) <= self._size:
+            if isIterable(other) and len(other) <= self._size:
                 for m in self.setas[len(other) :]:  # Check that if other is short we don't have assignments there
                     if m != ".":
                         return False
@@ -403,7 +403,7 @@ class setas(MutableMapping):
             indices = name.indices(len(self.setas))
             name = range(*indices)
             ret = [self[x] for x in name]
-        elif isiterable(name):
+        elif isIterable(name):
             ret = [self[x] for x in name]
         else:
             raise IndexError("{} was not found in the setas attribute.".format(name))
@@ -433,8 +433,8 @@ class setas(MutableMapping):
                 a single letter string in the set above.
             value (integer or column index): See above.
         """
-        if islike_list(name):  # Sipport indexing with a list like object
-            if islike_list(value) and len(value) == len(name):
+        if isLikeList(name):  # Sipport indexing with a list like object
+            if isLikeList(value) and len(value) == len(name):
                 for n, v in zip(name, value):
                     self._setas[n] = v
             else:
@@ -539,7 +539,7 @@ class setas(MutableMapping):
             new.clear()
             new(me)
             return new
-        elif isiterable(other):
+        elif isIterable(other):
             for o in other:
                 new = self.__sub_core__(new, o)
                 if new is NotImplemented:
@@ -618,7 +618,7 @@ class setas(MutableMapping):
             indices = col.indices(self.shape[1])
             col = range(*indices)
             col = self.find_col(col)
-        elif isiterable(col):
+        elif isIterable(col):
             col = [self.find_col(x) for x in col]
         else:
             raise TypeError("Column index must be an integer, string, list or slice, not a {}".format(type(col)))
@@ -824,7 +824,7 @@ class setas(MutableMapping):
             elif len(columns["u"]) * len(columns["v"]) > 0:
                 axes = 5
 
-        ret = _attribute_store()
+        ret = AttributeStore()
         ret.update({"axes": axes, "xcol": xcol, "xerr": xerr})
 
         for ck, rk in {

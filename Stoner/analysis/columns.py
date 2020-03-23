@@ -6,7 +6,7 @@ __all__ = ["ColumnOpsMixin"]
 
 import numpy as np
 
-from Stoner.tools import isiterable, all_type
+from Stoner.tools import isIterable, all_type
 from Stoner.compat import index_types
 
 
@@ -270,7 +270,7 @@ class ColumnOpsMixin:
             self._push_mask()
             self._set_mask(bounds, True, _.ycol)
 
-        if isiterable(sigma) and len(sigma) == len(self) and all_type(sigma, float):
+        if isIterable(sigma) and len(sigma) == len(self) and all_type(sigma, float):
             sigma = np.array(sigma)
             _["has_yerr"] = True
         elif _.has_yerr:
@@ -417,7 +417,7 @@ class ColumnOpsMixin:
             self._push_mask()
             self._set_mask(bounds, True, _.ycol)
 
-        if isiterable(sigma) and len(sigma) == len(self) and all_type(sigma, float):
+        if isIterable(sigma) and len(sigma) == len(self) and all_type(sigma, float):
             sigma = np.array(sigma)
         elif _.yerr:
             sigma = self.data[:, _.yerr]

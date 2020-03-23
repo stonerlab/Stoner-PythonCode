@@ -12,7 +12,7 @@ import numpy as np
 
 from Stoner.core import typeHintedDict, metadataObject
 from Stoner.compat import string_types
-from Stoner.tools import islike_list, isiterable, make_Data
+from Stoner.tools import isLikeList, isIterable, make_Data
 from Stoner.Core import DataFile
 
 
@@ -102,7 +102,7 @@ def _slice_keys(args, possible=None):
                     if sub_k not in possible:
                         raise KeyError(f"No matching keys for {sub_k} in metadata")
                     keys.append(sub_k)
-        elif isiterable(k):
+        elif isIterable(k):
             keys.extend(_slice_keys(k, possible))
         else:
             raise KeyError("{} cannot be used as a key name or set of key names".format(type(k)))
@@ -346,7 +346,7 @@ class proxy(MutableMapping):
 
         for r in results:  # Expand the results where a result contains a list
             for k in keys:
-                if k in r and islike_list(r[k]) and len(r[k]) > 0:
+                if k in r and isLikeList(r[k]) and len(r[k]) > 0:
                     v = r[k]
                     del r[k]
                     r.update({"{}[{}]".format(k, i): vi for i, vi in enumerate(v)})

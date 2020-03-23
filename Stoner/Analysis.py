@@ -9,7 +9,7 @@ import numpy.ma as ma
 from scipy.integrate import cumtrapz
 from scipy.optimize import curve_fit
 
-from Stoner.tools import isiterable, istuple, string_types
+from Stoner.tools import isIterable, isTuple, string_types
 from .core.exceptions import assertion
 from .analysis.utils import threshold as _threshold, ApplyAffineTransform, GetAffineTransform
 
@@ -73,14 +73,14 @@ class AnalysisMixin:
             next(self.rows(reset=True))
         except (RuntimeError, StopIteration):
             pass
-        if isiterable(ret):
+        if isIterable(ret):
             nc = np.zeros((len(self), len(ret)))
         else:
             nc = np.zeros(len(self))
         # Evaluate the data row by row
         for ix, r in enumerate(self.rows()):
             ret = func(r, **kargs)
-            if isiterable(ret) and not isinstance(ret, np.ndarray):
+            if isIterable(ret) and not isinstance(ret, np.ndarray):
                 ret = np.ma.MaskedArray(ret)
             nc[ix] = ret
         # Work out how to handle the result
@@ -298,14 +298,14 @@ class AnalysisMixin:
                 header = self.column_headers[self.find_col(t)] + "(norm)"
             else:
                 header = str(header)
-            if not istuple(base, float, float) and base is not None:
+            if not isTuple(base, float, float) and base is not None:
                 self.divide(t, base, header=header, replace=replace)
             else:
-                if istuple(base, float, float):
+                if isTuple(base, float, float):
                     scale = base
                 elif scale is None:
                     scale = (-1.0, 1.0)
-                if not istuple(scale, float, float):
+                if not isTuple(scale, float, float):
                     raise ValueError("limit parameter is either None, or limit or base is a tuple of two floats.")
                 data = self.column(t).ravel()
                 data = np.sort(data[~np.isnan(data)])
@@ -434,7 +434,7 @@ class AnalysisMixin:
         else:
             assertion(callable(func), "Keyword func should be callable if given")
             args = getfullargspec(func)[0]  # pylint: disable=W1505
-            assertion(isiterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given")
+            assertion(isIterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given")
             assertion(
                 len(p0) == len(args) - 2, "Keyword p0 should be the same length as the optional arguments to func"
             )
@@ -514,7 +514,7 @@ class AnalysisMixin:
         current = self.column(col)
 
         # Recursively call if we've got an iterable threshold
-        if isiterable(threshold):
+        if isIterable(threshold):
             if isinstance(xcol, bool) and not xcol:
                 ret = np.zeros((len(threshold), self.shape[1]))
             else:
