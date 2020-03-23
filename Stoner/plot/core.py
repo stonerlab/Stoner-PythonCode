@@ -37,11 +37,6 @@ import copy
 from colorsys import hls_to_rgb
 from warnings import warn
 
-if os.name == "posix" and platform.system() == "Darwin":
-    import matplotlib
-
-    matplotlib.use("MacOSX")
-
 try:  # Check we've got 3D plotting
     from mpl_toolkits.mplot3d import Axes3D  # pylint: disable=unused-import
     from mpl_toolkits.axes_grid1 import host_subplot, inset_locator  # pylint: disable=unused-import
