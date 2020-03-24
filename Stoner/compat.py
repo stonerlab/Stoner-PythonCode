@@ -96,28 +96,19 @@ def bytes2str(b):
 
 def get_filedialog(what="file", **opts):
     """Wrapper around Tk file dialog to mange creating file dialogs in a cross platform way.
-
     Args:
         what (str): What sort of a dialog to create - options are 'file','directory','save','files'
         **opts (dict): Arguments to pass through to the underlying dialog function.
-
     Returns:
         A file name or directory or list of files.
     """
-    from tkinter import Tk, filedialog
+    from .tools.widgets import fileDialog
 
-    r = Tk()
-    r.withdraw()
-    funcs = {
-        "file": filedialog.askopenfilename,
-        "directory": filedialog.askdirectory,
-        "files": filedialog.askopenfilenames,
-        "save": filedialog.asksaveasfilename,
-    }
+    funcs = {"file": "OpenFile", "directory": "SelectDirectory", "files": "OpenFiles", "save": "SaveFile"}
     if what not in funcs:
         raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
     else:
-        return funcs[what](**opts)
+        return fileDialog.openDialog(mode=funcs[what], **opts)
 
 
 int_types += (np.int, np.int0, np.int8, np.int16, np.int32, np.int64)
