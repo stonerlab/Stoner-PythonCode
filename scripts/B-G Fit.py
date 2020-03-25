@@ -11,7 +11,7 @@ from matplotlib.pyplot import text
 
 from Stoner import Data
 from Stoner.Util import format_error
-from Stoner.Fit import blochGrueneisen
+from Stoner.analysis.fitting.models.e_transport import blochGrueneisen
 
 
 def bg_wrapper(T, tD, r0, A):

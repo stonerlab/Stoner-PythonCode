@@ -7,7 +7,8 @@ import configparser as ConfigParser
 
 import numpy as np
 from Stoner import Data
-from Stoner.Fit import cfg_data_from_ini, cfg_model_from_ini, quadratic
+from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
+from Stoner.analysis.fitting.models.generic import quadratic
 
 
 class working(Data):

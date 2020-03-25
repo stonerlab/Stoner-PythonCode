@@ -73,7 +73,7 @@ class VSMAnalysis(Data):
         ReturnsL
             a copy of self with the corrections applied
         """
-        from Stoner.FittingFuncs import Linear
+        from Stoner.analysis.fitting.models.generic import Linear
 
         H_max = max(self.column("H_vsm"))
         H_min = min(self.columns("H_vsm"))
