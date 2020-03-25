@@ -846,7 +846,6 @@ class FilteringOpsMixin:
         if not (result is None or (isinstance(result, bool) and not result)):
             self.add_column(new_y, header, index=result, replace=replace)
             return self
-        elif result is None:
+        if result is None:
             return new_y
-        else:
-            return spline
+        return spline

@@ -1,4 +1,4 @@
-"""Example plot using experimental GBStyle"""
+"""Example plot using experimental GBStyle."""
 # pylint: disable=invalid-name
 import os.path as path
 

@@ -197,6 +197,8 @@ class baseFolder(MutableSequence):
         - __clone__ create a new copy of the mixin's state kinformation
     """
 
+    # pylint: disable=no-member
+
     _defaults = (
         {}
     )  # A Dictionary of default values that will be combined with other classes to make a global set of defaults
@@ -221,6 +223,8 @@ class baseFolder(MutableSequence):
         self._loader = None
         self._instance_attrs = set()
         self._root = "."
+        self._default_store = None
+        self.directory = None
         return self
 
     def __init__(self, *args, **kargs):
@@ -264,7 +268,7 @@ class baseFolder(MutableSequence):
     @property
     def defaults(self):
         """Build a single list of all of our defaults by iterating over the __mro__, caching the result."""
-        if not hasattr(self, "_default_store"):
+        if self._default_store is None:
             self._default_store = dict()
             for cls in reversed(self.__class__.__mro__):
                 if hasattr(cls, "_defaults"):
@@ -695,8 +699,7 @@ class baseFolder(MutableSequence):
         if isinstance(name, int_types):
             if -len(self) < name < len(self):
                 return self.__getter__(self.__lookup__(name), instantiate=True)
-            else:
-                raise IndexError("{} is out of range.".format(name))
+            raise IndexError("{} is out of range.".format(name))
         if isinstance(name, slice):  # Possibly ought to return another Folder?
             other = self.__clone__(attrs_only=True)
             for iname in islice(self.__names__(), name.start, name.stop, name.step):
@@ -731,10 +734,9 @@ class baseFolder(MutableSequence):
                     if self.debug:
                         print(name)
                     raise e
-            else:  # Continuing to index into the tree of groups
-                raise KeyError("Can't index the baseFolder with {}".format(name))
-        else:
             raise KeyError("Can't index the baseFolder with {}".format(name))
+
+        raise KeyError("Can't index the baseFolder with {}".format(name))
 
     def __setitem__(self, name, value):
         """Attempts to store a value in either the groups or objects.

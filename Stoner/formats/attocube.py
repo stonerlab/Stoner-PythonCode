@@ -77,44 +77,11 @@ def plane(X, a, b, c):
     return a * x + b * y + c
 
 
-class AttocubeScan(ImageStack):
+class AttocubeScanMixin:
 
-    """ An ImageStack subclass that can load scans from the AttocubeScan SPM System.
+    """Provides the specialist methods for dealing with Attocube SPM scan files.
 
-    AttocubeScan represents a scan from an Attocube SPM system as a 3D stack of scan data with
-    associated metadata. Indexing the AttocubeScan with either an integer or a partial match to one the
-    signals saved in the scan will pull out that particular scan as a :py:class:`Stoner.Image.ImageFile`.
-
-    If the scan was a dual pass scan with forwards and backwards data, then the root AttocubeScan will
-    contain the common metadata derived from the Scan parameters and then two sub-stacks that represent
-    the forwards ('fwd') and backwards ('bwd') scans.
-
-    The AttocubeScan constructor will with take a *rrot name* of the scan - e.g. "SC_099" or alternatively
-    a scan number integer. It will then look in the stack's directory for matching files and builds the scan stack
-    from them. Currently, it uses the scan parameters.txt file and any ASCII stream files .asc files. 2D linescans
-    are not currently supported or imported.
-
-    The native file format for an AttocubeScan is an HDF5 file with a particilar structure. The stack is saved into
-    an HDF5 group which then has a *type* and *module* attribute that specifies the class and module pf the Python
-    object that created the group - sof for an AttocubeScan, the type attribute is *AttocubeScan*.
-
-    There is a class method :py:meth:`AttocubeSca.read_HDF` to read the stack from the HDSF format and an instance
-    method :py:meth:`AttocubeScan.to_HDF` that will save to either a new or existing HDF file format.
-
-    The class provides other methods to regrid and flatten images and may gain other capabilities in the future.
-
-    Todo:
-        Implement load and save to/from multipage TIFF files.
-
-    Attrs:
-        scan_no (int):
-            The scan number as defined in the Attocube software.
-        compression (str):
-            The HDF5 compression algorithm to use when writing files
-        compression_opts (int):
-            The lelbel of compression to use (depends on compression algorithm)
-
-    """
+    See :py:class:`AttocubeScan` for details."""
 
     def __init__(self, *args, **kargs):
         """Construct the attocube subclass of ImageStack."""
@@ -136,7 +103,7 @@ class AttocubeScan(ImageStack):
 
         regrid = kargs.pop("regrid", False)
 
-        super(AttocubeScan, self).__init__(*args, **kargs)
+        super(AttocubeScanMixin, self).__init__(*args, **kargs)
 
         self._common_metadata = typeHintedDict()
 
@@ -158,7 +125,7 @@ class AttocubeScan(ImageStack):
 
 
         """
-        other = super(AttocubeScan, self).__clone__(other, attrs_only)
+        other = super(AttocubeScanMixin, self).__clone__(other, attrs_only)
         other._common_metadata = deepcopy(self._common_metadata)
         return other
 
@@ -168,7 +135,7 @@ class AttocubeScan(ImageStack):
             for ix, ch in enumerate(self.channels):
                 if name in ch:
                     return self[ix]
-        return super(AttocubeScan, self).__getitem__(name)
+        return super(AttocubeScanMixin, self).__getitem__(name)
 
     @property
     def channels(self):
@@ -208,7 +175,7 @@ class AttocubeScan(ImageStack):
             )
         loader = None
         if typ == self.__class__.__name__:
-            loader = getattr(self.__clas__, "read_HDF")
+            loader = getattr(self.__class__, "read_HDF")
         else:
             mod = importlib.import_module(bytes2str(f.attrs["module"]))
             cls = getattr(mod, typ)
@@ -541,3 +508,43 @@ class AttocubeScan(ImageStack):
         if close_me:
             f.close()
         return self
+
+
+class AttocubeScan(AttocubeScanMixin, ImageStack):
+
+    """ An ImageStack subclass that can load scans from the AttocubeScan SPM System.
+
+    AttocubeScan represents a scan from an Attocube SPM system as a 3D stack of scan data with
+    associated metadata. Indexing the AttocubeScan with either an integer or a partial match to one the
+    signals saved in the scan will pull out that particular scan as a :py:class:`Stoner.Image.ImageFile`.
+
+    If the scan was a dual pass scan with forwards and backwards data, then the root AttocubeScan will
+    contain the common metadata derived from the Scan parameters and then two sub-stacks that represent
+    the forwards ('fwd') and backwards ('bwd') scans.
+
+    The AttocubeScan constructor will with take a *rrot name* of the scan - e.g. "SC_099" or alternatively
+    a scan number integer. It will then look in the stack's directory for matching files and builds the scan stack
+    from them. Currently, it uses the scan parameters.txt file and any ASCII stream files .asc files. 2D linescans
+    are not currently supported or imported.
+
+    The native file format for an AttocubeScan is an HDF5 file with a particilar structure. The stack is saved into
+    an HDF5 group which then has a *type* and *module* attribute that specifies the class and module pf the Python
+    object that created the group - sof for an AttocubeScan, the type attribute is *AttocubeScan*.
+
+    There is a class method :py:meth:`AttocubeSca.read_HDF` to read the stack from the HDSF format and an instance
+    method :py:meth:`AttocubeScan.to_HDF` that will save to either a new or existing HDF file format.
+
+    The class provides other methods to regrid and flatten images and may gain other capabilities in the future.
+
+    Todo:
+        Implement load and save to/from multipage TIFF files.
+
+    Attrs:
+        scan_no (int):
+            The scan number as defined in the Attocube software.
+        compression (str):
+            The HDF5 compression algorithm to use when writing files
+        compression_opts (int):
+            The lelbel of compression to use (depends on compression algorithm)
+
+    """

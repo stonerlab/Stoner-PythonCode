@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jun 02 22:37:42 2014
-
-A copy of mpltools.special.errorfill with a few hacks to make it place nice
+"""A copy of mpltools.special.errorfill with a few hacks to make it place nice.
 
 This software is licensed under the Modified BSD License.
 
@@ -171,7 +168,7 @@ def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
     ax.add_patch(plt.Rectangle((0, 0), 0, 0, **kwargs))
 
 
-def hsl2rgb(h, s, l):
+def hsl2rgb(hue, sat, lum):
     """Converts from hsl colourspace to rgb colour space with numpy arrays for speed.
 
     Args:
@@ -185,19 +182,16 @@ def hsl2rgb(h, s, l):
     Returns:
         2D array (Mx3) of unsigned 8bit integers
     """
-    if isinstance(h, float):
-        h = np.array([h])
-    if isinstance(s, float):
-        s = np.array([s])
-    if isinstance(l, float):
-        l = np.array([l])
+    hue = np.atleast_1d(hue)
+    sat = np.atleast_1d(sat)
+    lum = np.atleast_1d(lum)
 
-    if h.shape != l.shape or h.shape != s.shape:
+    if hue.shape != lum.shape or hue.shape != sat.shape:
         raise RuntimeError("Must have equal shaped arrays for h, s and l")
 
-    rgb = np.zeros((len(h), 3))
-    hls = np.column_stack([h, l, s])
-    for i in range(len(h)):
+    rgb = np.zeros((hue.size, 3))
+    hls = np.column_stack([hue, lum, sat])
+    for i in range(hue.size):
         rgb[i, :] = np.array(hls_to_rgb(*hls[i]))
     return (255 * rgb).astype("u1")
 

@@ -445,10 +445,9 @@ class typeHintedDict(regexpDict):
         m = self.__regexGetType.search(search)
         if m is not None:
             return m.group(1), m.group(2)
-        elif not isinstance(name, string_types + int_types):
+        if not isinstance(name, string_types + int_types):
             return search, None
-        else:
-            return name, None
+        return name, None
 
     def __getitem__(self, name):
         """Checks whether its been given a typehint in the item name and deals with it appropriately.

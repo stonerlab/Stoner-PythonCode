@@ -396,6 +396,15 @@ class SPCFile(Core.DataFile):
 
     mime_type = ["application/octet-stream"]
 
+    def __init__(self, *args, **kargs):
+        """Create a few local attributes."""
+        super(SPCFile, self).__init__(*args, **kargs)
+        self._pts = None
+        self._header = None
+        self._filesize = None
+        self._xvars = None
+        self._yvars = None
+
     def _read_xdata(self, f):
         """Read the xdata from the spc file."""
         self._pts = self._header["fnpts"]

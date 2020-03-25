@@ -379,8 +379,7 @@ class HGXFile(DataFile):
         """Recursively list HDF5 Groups."""
         if pth in self.seen:
             return None
-        else:
-            self.seen.append(pth)
+        self.seen.append(pth)
         if not isinstance(grp, h5py.Group):
             return None
         if self.debug:
@@ -511,8 +510,7 @@ class HDF5FolderMixin:
             self.File = h5py.File(self.directory, mode)
             self.File.close()
             return self.directory
-        else:
-            return None
+        return None
 
     def _visit_func(self, name, obj):
         """Walker of the HDF5 tree."""

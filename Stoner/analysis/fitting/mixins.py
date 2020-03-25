@@ -212,6 +212,11 @@ class _curve_fit_result:
         self.fjac = None
         self.ipvt = None
         self.qtf = None
+        self.func = None
+        self.p0 = None
+        self.residual_vals = None
+        self.chisq = None
+        self.nfree = None
         self.infodict = infodict
         for k in infodict:
             setattr(self, k, infodict[k])
@@ -371,8 +376,9 @@ def _curve_fit_p0_list(p0, model):
         for x in _get_model_parnames(model):
             ret.append(p_new.get(x, None))
         return ret
-    elif isIterable(p0):
+    if isIterable(p0):
         return [float(x) for x in p0]
+    raise RuntimeError("Shouldn't have returned None from _curve_fit_p0_list!")
 
 
 def _prep_lmfit_model(model, kargs):

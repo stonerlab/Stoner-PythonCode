@@ -1,4 +1,4 @@
-"""VSM Analysis Code example v2
+"""VSM Analysis Code example v2.
 
 Author: Rowan Temple.     Date:11/2011
 
@@ -15,8 +15,7 @@ v2 corrections: less automation saving time
                 shift algorithm is different to make for better zeroing
 
 """
-# pylint: disable=invalid-name
-import string
+# pylint: disable=invalid-name, redefined-outer-name
 import os
 
 import numpy as np
@@ -32,7 +31,7 @@ print("Please wait while program loads...\n")
 
 
 def deleteCorruptLines(data):
-    """function takes data array and returns data with lines with 6:0 or --- in them deleted"""
+    """Take data array and returns data with lines with 6:0 or --- in them deleted."""
     delCount = 0
     for line in data:
         if line.find("6:0") != -1:
@@ -42,7 +41,7 @@ def deleteCorruptLines(data):
             data.pop(data.index(line))
             delCount += 1
     if delCount > 6:
-        raw_input(
+        input(
             "I've detected a lot of bad data in your file you should check it"
         )
     return data
@@ -78,8 +77,9 @@ def driftEliminator(data, N):
 
 
 def shift(data, N):
-    """function y translates curve so that halfway between the saturated fields
-    is zero (uses the average y value of all the saturated points given to determine upper and lower bounds of curve"""
+    """Translates curve in y so that halfway between the saturated fieldsis zero.
+
+    (uses the average y value of all the saturated points given to determine upper and lower bounds of curve"""
     maxHarg = int(
         np.argmax(data[: len(data[:, 0]) / 2, 1])
     )  # gives the data index of maximum field (in the first half of the data
@@ -92,7 +92,7 @@ def shift(data, N):
 
 
 def diamagBackgroundRem(data, N):
-    """Removes a diamagnetic background using a linear fit to the N data points surrounding the max and min field values"""
+    """Removes a diamagnetic background using a linear fit to the N data points surrounding the max and min field."""
     maxHarg = int(np.argmax(data[: len(data[:, 0]) / 2, 1]))
     minHarg = int(np.argmin(data[:, 1]))
 
@@ -115,7 +115,7 @@ def diamagBackgroundRem(data, N):
 
 
 def invert(Data):
-    """flips data in y axis"""
+    """flips data in y axis."""
     for i in range(len(Data.data[:, "0"])):
         Data.data[i, Data.find_col("m (emu)")] = -Data.data[
             i, Data.find_col("m (emu)")
@@ -124,7 +124,7 @@ def invert(Data):
 
 
 def makeTruem(Data):
-    """VSM takes m from lock in X, this takes m from lock in R, useful if theta!=0"""
+    """VSM takes m from lock in X, this takes m from lock in R, useful if theta!=0."""
     VSMcalibration = (
         Data.data[5, Data.find_col("m (emu)")]
         / Data.data[5, Data.find_col("X (V)")]
@@ -136,15 +136,8 @@ def makeTruem(Data):
     return Data
 
 
-def findCoercivity(Data):
-    """Find min H in first half of data, find min H in second part of data, do a linear fit
-    about those points and get coercivities """
-    #    zeroH1=index(min(abs(Data[search1low:search1high,'H (T)']))
-    pass
-
-
 def plotmH(Data):
-    """Takes a stoner type data source"""
+    """Takes a stoner type data source."""
     plot.clf()
     plot.xlabel("H(T)")
     plot.ylabel("m(1e-5 emu)")
@@ -153,8 +146,9 @@ def plotmH(Data):
 
 
 def splitFileName(myFileName):
-    """Splits a file name into its name and its extension part (returns two
-    part list ['name','ext'] or ['name',''] if no extension"""
+    """Splits a file name into its name and its extension part.
+
+    (returns two part list ['name','ext'] or ['name',''] if no extension"""
     for i in range(len(myFileName) - 1, -1, -1):
         if myFileName[i] == ".":
             fileName = myFileName[:i]
@@ -164,12 +158,10 @@ def splitFileName(myFileName):
 
 
 def editData(Data, operations):
-    """takes stoner type Data file and an operations list and performs the operations listed"""
+    """Takes stoner type Data file and an operations list and performs the operations listed."""
     if 0 in operations:
         return Data
-    N = int(
-        raw_input("Input the number of saturated data points on each arm:   ")
-    )
+    N = int(input("Input the number of saturated data points on each arm:   "))
     if 1 in operations:
         Data = makeTruem(Data)
     if 2 in operations:
@@ -184,9 +176,7 @@ def editData(Data, operations):
 
 
 # Set up a directory and determine files to be processed
-directoryName = raw_input(
-    "Enter path to directory in which files are stored:   "
-)
+directoryName = input("Enter path to directory in which files are stored:   ")
 os.chdir(directoryName)
 filenames = os.listdir(directoryName)
 i = 0
@@ -194,7 +184,7 @@ for item in filenames:
     print(i, ". ", item)
     i += 1
 fCounter = int(
-    raw_input(
+    input(
         "Enter the number of the file you wish to start at (program will cycle through files from that point.):\n"
     )
 )
@@ -220,16 +210,14 @@ while True:
     fw.close()
     while True:  # open the file
         try:
-            Data = Stoner.data("EditedFiles/" + pathsplit[0] + "_edit.txt")
+            Data = Stoner.Data("EditedFiles/" + pathsplit[0] + "_edit.txt")
             break
         except ValueError:
             try:
                 Data = Stoner.Data("EditedFiles/" + pathsplit[0] + "_edit.txt")
                 break
             except ValueError:
-                timeout += (
-                    1
-                )  # if get 5 files unreadable in a row then finish the program
+                timeout += 1  # if get 5 files unreadable in a row then finish the program
                 print("Could not read file ", path)
                 if timeout <= 5:
                     break
@@ -251,14 +239,14 @@ while True:
             "5.  Reflect graph in y axis \n",
         )
 
-        strOp = raw_input("")
+        strOp = input("")
         operations = []  # array of options selected
         for i in range(len(strOp.strip())):
             operations.append(int(strOp[i]))
         t = Data.clone  # edit a copied array.
         t = editData(t, operations)
         plotmH(t)
-        whatNext = raw_input(
+        whatNext = input(
             "Press enter to save changes, r to restart or q to quit the program:  "
         )
         if whatNext == "r":
@@ -273,7 +261,7 @@ while True:
             break
     if (
         whatNext == "q"
-        or raw_input(
+        or input(
             "Press enter to do file {} or q to quit:".format(
                 filenames[fCounter]
             )

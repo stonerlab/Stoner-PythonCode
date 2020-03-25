@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Script for compressing png images using PIL optimize.
+"""Script for compressing png images using PIL optimize.
 
 Given the folder it will compress all files in all the subfolders. This
 compression is lossless. The images will not lose any definition and loaded
@@ -8,9 +7,11 @@ images will be exactly the same.
 
 CHANGE THE FOLDER NAME BEFORE RUNNING
 """
-# pylint: disable=invalid-name
-from PIL import Image
+# pylint: disable=invalid-name,redefined-outer-name
 import os
+
+from PIL import Image
+from PIL import PngImagePlugin
 from Stoner import DataFolder
 
 raw_input = input
@@ -21,7 +22,7 @@ folder = r"C:\Users\phyrct\KermitData\test2"
 
 
 def get_size(start_path="."):
-    """get directory size"""
+    """Get directory size."""
     total_size = 0
     for dirpath, _, filenames in os.walk(start_path):
         for f in filenames:
@@ -31,7 +32,7 @@ def get_size(start_path="."):
 
 
 def pngsave(im, filename):
-    """save a PNG with PIL preserving metadata.
+    """Save a PNG with PIL preserving metadata.
 
     Thanks to blog http://blog.client9.com/2007/08/28/python-pil-and-png-metadata-take-2.html
     for code
@@ -41,8 +42,6 @@ def pngsave(im, filename):
     reserved = ("interlace", "gamma", "dpi", "transparency", "aspect")
 
     # undocumented class
-    from PIL import PngImagePlugin
-
     meta = PngImagePlugin.PngInfo()
 
     # copy metadata into new object
@@ -71,16 +70,16 @@ print("found files for compression:")
 print("folder: {}".format(folder))
 print("no. of files: {}".format(dflen))
 print("size before: {}".format(sizebefore))
-raw_input("Enter to continue")
+input("Enter to continue")
 
 for i, fname in enumerate(df.ls):
     print("{}% complete".format(i / float(dflen) * 100))
     try:
         im = Image.open(fname)
         pngsave(im, fname)
-    except Exception:
+    except (IOError, ValueError, TypeError):
         print("Could not compress file {}".format(fname))
-        q = raw_input("Would you like to continue (y/n)?")
+        q = input("Would you like to continue (y/n)?")
         if q != "y":
             raise RuntimeError("Could not compress file {}".format(fname))
 

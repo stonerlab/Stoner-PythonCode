@@ -1377,7 +1377,7 @@ class ImageFile(metadataObject):
                 self.filename = filename
 
                 return self
-            elif (force is None or not force) and isinstance(r, np.ndarray) and r.ndim == 2:
+            if (force is None or not force) and isinstance(r, np.ndarray) and r.ndim == 2:
                 ret = self.clone
                 if hasattr(r, "metadata"):
                     ret.metadata.update(r.metadata)
@@ -1388,8 +1388,7 @@ class ImageFile(metadataObject):
                 ret.filename = filename
                 ret.metadata = metadata
                 return ret
-            else:
-                return r
+            return r
 
         return fix_signature(gen_func, workingfunc)
 

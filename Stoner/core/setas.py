@@ -324,10 +324,9 @@ class setas(MutableMapping):
         self.cols.update(self._get_cols())
         if return_self is None:
             return None
-        elif return_self:
+        if return_self:
             return self
-        else:
-            return self._object
+        return self._object
 
     def __contains__(self, item):
         """Use getitem to test for membership. Either column assignments or column index types are tested."""
@@ -539,7 +538,7 @@ class setas(MutableMapping):
             new.clear()
             new(me)
             return new
-        elif isIterable(other):
+        if isIterable(other):
             for o in other:
                 new = self.__sub_core__(new, o)
                 if new is NotImplemented:
@@ -668,8 +667,7 @@ class setas(MutableMapping):
         except (IndexError, KeyError):
             if default is not None:
                 return default
-            else:
-                raise KeyError("{} is not in setas and no default was given.".format(name))
+            raise KeyError("{} is not in setas and no default was given.".format(name))
 
     def popitem(self):
         for c in "xdyezfuvw":

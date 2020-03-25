@@ -219,8 +219,7 @@ class PlotMixin:
             return None
         if self._showfig:
             return self.__figure
-        else:
-            return self
+        return self
 
     @showfig.setter
     def showfig(self, value):
@@ -404,8 +403,7 @@ class PlotMixin:
                 return ",".join([self._col_label(i) for i in ix])
             else:
                 return [self._col_label(i) for i in ix]
-        else:
-            return self.labels[ix]
+        return self.labels[ix]
 
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones."""
