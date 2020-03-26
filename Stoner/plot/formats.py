@@ -262,12 +262,10 @@ class DefaultPlotStyle(MutableMapping):
             attrname = _add_dots(name[9:])
             if attrname in plt.rcParams:
                 return plt.rcParams[attrname]
-            else:
-                raise AttributeError("template attribute not in rcParams")
-        elif name == "showlegend":
+            raise AttributeError("template attribute not in rcParams")
+        if name == "showlegend":
             return self.show_legend and len(plt.gca().get_legend_handles_labels()[1]) > 1
-        else:
-            return super(DefaultPlotStyle, self).__getattribute__(name)
+        return super(DefaultPlotStyle, self).__getattribute__(name)
 
     def __getitem__(self, name):
         """Try to match *name* to a style setting."""
@@ -277,8 +275,7 @@ class DefaultPlotStyle(MutableMapping):
             pass
         if name in plt.rcParams:
             return plt.rcParams[name]
-        else:
-            raise KeyError("{} is not recognised as part of the template".format(name))
+        raise KeyError("{} is not recognised as part of the template".format(name))
 
     def __iter__(self):
         """Iterate over stylesjeet settings."""

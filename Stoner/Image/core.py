@@ -672,8 +672,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             index = index.image
         if isinstance(index, string_types):
             return self.metadata[index]
-        else:
-            return super(ImageArray, self).__getitem__(index)
+        return super(ImageArray, self).__getitem__(index)
 
     def __setitem__(self, index, value):
         """Patch string index through to metadata."""
@@ -1117,8 +1116,7 @@ class ImageFile(metadataObject):
         """Pass through to image attribute."""
         if self._image is not None:
             return self.image.filename
-        else:
-            return ""
+        return ""
 
     @filename.setter
     def filename(self, value):

@@ -253,8 +253,7 @@ class AnalysisMixin:
         self[result_name] = final
         if output.lower() == "result":
             return final
-        else:
-            return self
+        return self
 
     def normalise(self, target=None, base=None, replace=True, header=None, scale=None, limits=(0.0, 1.0)):
         """Normalise data columns by dividing through by a base column value.
@@ -538,10 +537,9 @@ class AnalysisMixin:
                     ret.column_headers = ["Index"]
                     ret.isrow = False
             return ret
-        else:
-            ret = _threshold(threshold, current, rising=rising, falling=falling)
-            if not all_vals:
-                ret = [ret[0]] if np.any(ret) else []
+        ret = _threshold(threshold, current, rising=rising, falling=falling)
+        if not all_vals:
+            ret = [ret[0]] if np.any(ret) else []
 
         if isinstance(xcol, bool) and not xcol:
             retval = self.interpolate(ret, xcol=False)

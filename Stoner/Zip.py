@@ -39,19 +39,18 @@ def test_is_zip(filename, member=""):
     """
     if not filename or filename == "":
         return False
-    elif zf.is_zipfile(filename):
+    if zf.is_zipfile(filename):
         return filename, member
+    part = path.basename(filename)
+    newfile = path.dirname(filename)
+    if newfile == filename:  # reached the end of the line
+        part = filename
+        newfile = ""
+    if member != "":
+        newmember = path.join(part, member)
     else:
-        part = path.basename(filename)
-        newfile = path.dirname(filename)
-        if newfile == filename:  # reached the end of the line
-            part = filename
-            newfile = ""
-        if member != "":
-            newmember = path.join(part, member)
-        else:
-            newmember = part
-        return test_is_zip(newfile, newmember)
+        newmember = part
+    return test_is_zip(newfile, newmember)
 
 
 class ZippedFile(DataFile):
@@ -299,8 +298,7 @@ class ZipFolderMixin:
             self.File = zf.ZipFile(self.directory, mode)
             self.File.close()
             return self.directory
-        else:
-            return None
+        return None
 
     def getlist(self, recursive=None, directory=None, flatten=None):
         "Reads the Zip File to construct a list of ZipFile objects."

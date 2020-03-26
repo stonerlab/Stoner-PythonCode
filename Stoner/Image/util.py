@@ -96,43 +96,39 @@ def _scale(a, n, m, dtypeobj_in, dtypeobj, copy=True):
         )
         warn(msg)
         return a.astype(_dtype2(kind, m))
-    elif n == m:
+    if n == m:
         return a.copy() if copy else a
-    elif n > m:
+    if n > m:
         # downscale with precision loss
         prec_loss(dtypeobj_in, dtypeobj)
         if copy:
             b = np.empty(a.shape, _dtype2(kind, m))
             np.floor_divide(a, 2 ** (n - m), out=b, dtype=a.dtype, casting="unsafe")
             return b
-        else:
-            a //= 2 ** (n - m)
-            return a
-    elif m % n == 0:
+        a //= 2 ** (n - m)
+        return a
+    if m % n == 0:
         # exact upscale to a multiple of n bits
         if copy:
             b = np.empty(a.shape, _dtype2(kind, m))
             np.multiply(a, (2 ** m - 1) // (2 ** n - 1), out=b, dtype=b.dtype)
             return b
-        else:
-            a = np.array(a, _dtype2(kind, m, a.dtype.itemsize), copy=False)
-            a *= (2 ** m - 1) // (2 ** n - 1)
-            return a
-    else:
-        # upscale to a multiple of n bits,
-        # then downscale with precision loss
-        prec_loss(dtypeobj_in, dtypeobj)
-        o = (m // n + 1) * n
-        if copy:
-            b = np.empty(a.shape, _dtype2(kind, o))
-            np.multiply(a, (2 ** o - 1) // (2 ** n - 1), out=b, dtype=b.dtype)
-            b //= 2 ** (o - m)
-            return b
-        else:
-            a = np.array(a, _dtype2(kind, o, a.dtype.itemsize), copy=False)
-            a *= (2 ** o - 1) // (2 ** n - 1)
-            a //= 2 ** (o - m)
-            return a
+        a = np.array(a, _dtype2(kind, m, a.dtype.itemsize), copy=False)
+        a *= (2 ** m - 1) // (2 ** n - 1)
+        return a
+    # upscale to a multiple of n bits,
+    # then downscale with precision loss
+    prec_loss(dtypeobj_in, dtypeobj)
+    o = (m // n + 1) * n
+    if copy:
+        b = np.empty(a.shape, _dtype2(kind, o))
+        np.multiply(a, (2 ** o - 1) // (2 ** n - 1), out=b, dtype=b.dtype)
+        b //= 2 ** (o - m)
+        return b
+    a = np.array(a, _dtype2(kind, o, a.dtype.itemsize), copy=False)
+    a *= (2 ** o - 1) // (2 ** n - 1)
+    a //= 2 ** (o - m)
+    return a
 
 
 def build_funcs_proxy():

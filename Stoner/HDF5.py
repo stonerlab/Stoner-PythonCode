@@ -758,5 +758,4 @@ class STXMImage(ImageFile):
             ret = self.clone
             ret.image = (plus.image - minus.image) / (plus.image + minus.image)
             return ret
-        else:
-            raise TypeError("Can only do XMCD calculation with another STXMFile")
+        raise TypeError("Can only do XMCD calculation with another STXMFile")

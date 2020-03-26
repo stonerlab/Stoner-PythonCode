@@ -118,8 +118,7 @@ class FilteringOpsMixin:
             for column, head in zip(iterdata, header):
                 self.add_column(column.ravel(), header=head, index=result, replace=replace)
             return self
-        else:
-            return r
+        return r
 
     def bin(self, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, **kargs):
         """Bin x-y data into new values of x with an error bar.

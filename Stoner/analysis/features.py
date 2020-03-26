@@ -282,5 +282,4 @@ class FeatureOpsMixin:
             return self
         if full_data:
             return peak_data, data
-        else:
-            return peak_data[_.xcol], peak_data[_.yxol], data
+        return peak_data[_.xcol], peak_data[_.yxol], data

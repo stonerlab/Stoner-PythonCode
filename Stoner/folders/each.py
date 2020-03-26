@@ -55,8 +55,7 @@ class setas_wrapper(MutableSequence):
         lengths = np.array([len(data.setas) for data in self._folder])
         if len(np.unique(lengths)) == 1:
             return lengths[0]
-        else:
-            return lengths.tolist()
+        return lengths.tolist()
 
     def __getitem__(self, index):
         """Get the corresponding item from all the setas items in the folder."""

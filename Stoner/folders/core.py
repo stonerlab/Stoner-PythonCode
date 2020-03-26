@@ -64,8 +64,7 @@ def __div_core__(result, other):
             result.groups["Group {}".format(group)].__setter__(result.__lookup__(ix), d)
         result.__clear__()
         return result
-    else:
-        return NotImplemented
+    return NotImplemented
 
 
 def __sub_core__(result, other):
@@ -552,10 +551,9 @@ class baseFolder(MutableSequence):
             return self.objects[name]
         if not instantiate:
             return name
-        else:
-            name = self.objects[name]
-            if not isinstance(name, self._type):
-                raise KeyError("{} is not a valid {}".format(name, self._type))
+        name = self.objects[name]
+        if not isinstance(name, self._type):
+            raise KeyError("{} is not a valid {}".format(name, self._type))
         return self._update_from_object_attrs(name)
 
     def __setter__(self, name, value, force_insert=False):
@@ -693,9 +691,8 @@ class baseFolder(MutableSequence):
             if name in self.objects:
                 name = self.__lookup__(name)
                 return self.__getter__(name)
-            else:
-                name = self.__lookup__(name)
-                return self.__getter__(name)
+            name = self.__lookup__(name)
+            return self.__getter__(name)
         if isinstance(name, int_types):
             if -len(self) < name < len(self):
                 return self.__getter__(self.__lookup__(name), instantiate=True)
@@ -1380,10 +1377,8 @@ class baseFolder(MutableSequence):
                 m = fnmatch.filter(search, name)
                 if len(m) > 0:
                     return search.index(m[0] + start)
-                else:
-                    raise ValueError("{} is not a name of a metadataObject in this baseFolder.".format(name))
-            else:
-                return search.index(self.__lookup__(name)) + start
+                raise ValueError("{} is not a name of a metadataObject in this baseFolder.".format(name))
+            return search.index(self.__lookup__(name)) + start
         if isinstance(name, _pattern_type):
             for i, n in enumerate(search):
                 if name.match(n):
@@ -1435,14 +1430,13 @@ class baseFolder(MutableSequence):
                     self._last_name += 1
                     name = "Untitled-{}".format(self._last_name)
             return name
-        elif isinstance(value, string_types):
+        if isinstance(value, string_types):
             return value
-        else:
+        name = "Untitled-{}".format(self._last_name)
+        while name in self:
+            self._last_name += 1
             name = "Untitled-{}".format(self._last_name)
-            while name in self:
-                self._last_name += 1
-                name = "Untitled-{}".format(self._last_name)
-            return name
+        return name
 
     def pop(self, name=-1, default=None):  # pylint: disable=arguments-differ
         """Return and remove either a subgroup or named object from this folder."""

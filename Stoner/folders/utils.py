@@ -32,10 +32,9 @@ def pathsplit(pth):
     dpart, fpart = path.split(pth)
     if dpart == "":
         return [fpart]
-    else:
-        rest = pathsplit(dpart)
-        rest.append(fpart)
-        return rest
+    rest = pathsplit(dpart)
+    rest.append(fpart)
+    return rest
 
 
 def pathjoin(*args):

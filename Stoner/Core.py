@@ -1846,38 +1846,37 @@ class DataFile(metadataObject):
                     except ValueError:
                         break
             return self.del_column(dups, duplicates=False)
-        else:
-            if col is None or (isinstance(col, bool) and not col):  # Without defining col we just compress by the mask
-                self.data = ma.mask_cols(self.data)
-                t = DataArray(self.column_headers)
-                t.mask = self.mask[0]
-                self.column_headers = list(ma.compressed(t))
-                self.data = ma.compress_cols(self.data)
-            elif isinstance(col, bool) and col:  # Without defining col we just compress by the mask
-                ch = [self.column_headers[ix] for ix, v in enumerate(self.setas.set) if v]
-                setas = [self.setas[ix] for ix, v in enumerate(self.setas.set) if v]
-                self.data = self.data[:, self.setas.set]
-                self.setas = setas
-                self.column_headers = ch
-            elif isIterable(col) and all_type(col, bool):  # If col is an iterable of booleans then we index by that
-                col = ~np.array(col)
-                new_setas = np.array(self.setas)[col]
-                new_column_headers = np.array(self.column_headers)[col]
-                self.data = self.data[:, col]
-                self.setas = new_setas
-                self.column_headers = new_column_headers
-            else:  # Otherwise find individual columns
-                c = self.find_col(col)
-                ch = self.column_headers
-                self.data = DataArray(np.delete(self.data, c, 1), mask=np.delete(self.data.mask, c, 1))
-                if isinstance(c, list):
-                    c.sort(reverse=True)
-                else:
-                    c = [c]
-                for cl in c:
-                    del ch[cl]
-                self.column_headers = ch
-            return self
+        if col is None or (isinstance(col, bool) and not col):  # Without defining col we just compress by the mask
+            self.data = ma.mask_cols(self.data)
+            t = DataArray(self.column_headers)
+            t.mask = self.mask[0]
+            self.column_headers = list(ma.compressed(t))
+            self.data = ma.compress_cols(self.data)
+        elif isinstance(col, bool) and col:  # Without defining col we just compress by the mask
+            ch = [self.column_headers[ix] for ix, v in enumerate(self.setas.set) if v]
+            setas = [self.setas[ix] for ix, v in enumerate(self.setas.set) if v]
+            self.data = self.data[:, self.setas.set]
+            self.setas = setas
+            self.column_headers = ch
+        elif isIterable(col) and all_type(col, bool):  # If col is an iterable of booleans then we index by that
+            col = ~np.array(col)
+            new_setas = np.array(self.setas)[col]
+            new_column_headers = np.array(self.column_headers)[col]
+            self.data = self.data[:, col]
+            self.setas = new_setas
+            self.column_headers = new_column_headers
+        else:  # Otherwise find individual columns
+            c = self.find_col(col)
+            ch = self.column_headers
+            self.data = DataArray(np.delete(self.data, c, 1), mask=np.delete(self.data.mask, c, 1))
+            if isinstance(c, list):
+                c.sort(reverse=True)
+            else:
+                c = [c]
+            for cl in c:
+                del ch[cl]
+            self.column_headers = ch
+        return self
 
     def del_nan(self, col=None, clone=False):
         """Remove rows that have nan in them.
@@ -2015,13 +2014,12 @@ class DataFile(metadataObject):
         """
         if pattern is None:
             return list(self.metadata.keys())
+        if isinstance(pattern, _pattern_type):
+            test = pattern
         else:
-            if isinstance(pattern, _pattern_type):
-                test = pattern
-            else:
-                test = re.compile(pattern)
-            possible = [x for x in self.metadata.keys() if test.search(x)]
-            return possible
+            test = re.compile(pattern)
+        possible = [x for x in self.metadata.keys() if test.search(x)]
+        return possible
 
     def filter(self, func=None, cols=None, reset=True):
         """Sets the mask on rows of data by evaluating a function for each row.

@@ -344,8 +344,7 @@ def _get_model_parnames(model):
     if isinstance(model, odrModel):
         if "param_names" in model.meta:
             return model.meta["param_names"]
-        else:
-            model = model.fcn
+        model = model.fcn
     if not callable(model):
         raise ValueError(
             "Unrecognised type for model! - should be lmfit.Model, scipy.odr.Model or callable, not {}",

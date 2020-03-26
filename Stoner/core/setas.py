@@ -356,9 +356,8 @@ class setas(MutableMapping):
                     if o != m:  # Look for mis-matched assignments
                         return False
                 return True
-            else:  # If other is longer then we can't matchj
-                return False
-        elif id(self) == id(other):
+            return False
+        if id(self) == id(other):
             ret = True
         else:
             ret = self.column_headers == other.column_headers and self.setas == other.setas
@@ -510,7 +509,7 @@ class setas(MutableMapping):
                 except ValueError:
                     break
             return new
-        elif isinstance(other, index_types):
+        if isinstance(other, index_types):
             try:
                 new._setas[new.find_col(other)] = "."
                 return new
@@ -640,8 +639,7 @@ class setas(MutableMapping):
         except (IndexError, KeyError):
             if default is not None:
                 return default
-            else:
-                raise KeyError("{} is not in setas and no default was given.".format(name))
+            raise KeyError("{} is not in setas and no default was given.".format(name))
 
     def keys(self):
         """Mapping keys are the same as iterating over the unique headers"""

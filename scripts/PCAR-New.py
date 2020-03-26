@@ -167,19 +167,18 @@ class working(Data):
             if self.report:
                 print(fit.fit_report())
             return fit
-        else:  # chi^2 mapping mode
-            d = Data(self)
-            fit = d.lmfit(
-                self.model, p0=self.p0, result=True, header="Fit", output="data"
-            )
+        d = Data(self)
+        fit = d.lmfit(
+            self.model, p0=self.p0, result=True, header="Fit", output="data"
+        )
 
-            if self.show_plot:
-                fit.plot(multiple="panels", capsize=3)
-                fit.yscale = "log"  # Adjust y scale for chi^2
-                fit.tight_layout()
-            if self.save_fit:
-                fit.filename = None
-                fit.save(False)
+        if self.show_plot:
+            fit.plot(multiple="panels", capsize=3)
+            fit.yscale = "log"  # Adjust y scale for chi^2
+            fit.tight_layout()
+        if self.save_fit:
+            fit.filename = None
+            fit.save(False)
 
 
 if __name__ == "__main__":

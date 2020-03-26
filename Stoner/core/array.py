@@ -385,29 +385,28 @@ class DataArray(ma.MaskedArray):
             if isinstance(ret, ma.MaskedArray):
                 ret = ma.filled(ret)
             return ret.dtype.type(ret)
-        elif not isinstance(ret, np.ndarray):  # bugout for scalar resturns
+        if not isinstance(ret, np.ndarray):  # bugout for scalar resturns
             return ret
-        elif ret.ndim >= 2:  # Potentially 2D array here
+        if ret.ndim >= 2:  # Potentially 2D array here
             if ix[-1] is None:  # Special case for increasing an array dimension
                 if self.ndim == 1:  # Going from 1 D to 2D
                     ret.setas = self.setas.clone
                     ret.i = self.i
                     ret.name = getattr(self, "name", "Column")
                 return ret
-            else:  # A regular 2D array
-                ret.isrow = single_row
-                ret.setas = self.setas.clone
-                ret.column_headers = copy.copy(self.column_headers)
-                if len(ix) > 0 and isIterable(ix[-1]):  # pylint: disable=len-as-condition
-                    ret.column_headers = list(np.array(ret.column_headers)[ix[-1]])
-                # Sort out whether we need an array of row labels
-                if isinstance(self.i, np.ndarray) and len(ix) > 0:  # pylint: disable=len-as-condition
-                    if isIterable(ix[0]) or isinstance(ix[0], int_types):
-                        ret.i = self.i[ix[0]]
-                    else:
-                        ret.i = 0
+            ret.isrow = single_row
+            ret.setas = self.setas.clone
+            ret.column_headers = copy.copy(self.column_headers)
+            if len(ix) > 0 and isIterable(ix[-1]):  # pylint: disable=len-as-condition
+                ret.column_headers = list(np.array(ret.column_headers)[ix[-1]])
+            # Sort out whether we need an array of row labels
+            if isinstance(self.i, np.ndarray) and len(ix) > 0:  # pylint: disable=len-as-condition
+                if isIterable(ix[0]) or isinstance(ix[0], int_types):
+                    ret.i = self.i[ix[0]]
                 else:
-                    ret.i = self.i
+                    ret.i = 0
+            else:
+                ret.i = self.i
         elif ret.ndim == 1:  # Potentially a single row or single column
             ret.isrow = single_row
             if len(ix) == len(self.setas):

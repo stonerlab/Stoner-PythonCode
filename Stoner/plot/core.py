@@ -401,8 +401,7 @@ class PlotMixin:
         if isinstance(ix, list):
             if join:
                 return ",".join([self._col_label(i) for i in ix])
-            else:
-                return [self._col_label(i) for i in ix]
+            return [self._col_label(i) for i in ix]
         return self.labels[ix]
 
     def __dir__(self):

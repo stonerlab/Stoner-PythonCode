@@ -86,7 +86,7 @@ class ImageStackMixin:
             except IndexError:
                 raise KeyError("{} is out of range for accessing the ImageStack.".format(name))
             return name
-        elif name not in self.__names__():
+        if name not in self.__names__():
             name = self._metadata.__lookup__(name)
         return list(self._metadata.keys()).index(name)  # return the matching index of the name
 
@@ -124,9 +124,8 @@ class ImageStackMixin:
             return super(ImageStackMixin, self).__getter__(name, instantiate)
         if isinstance(instantiate, bool) and not instantiate:
             return self.__names__()[idx]
-        else:
-            instance = self._instantiate(idx)
-            return self._update_from_object_attrs(instance)
+        instance = self._instantiate(idx)
+        return self._update_from_object_attrs(instance)
 
     def __setter__(self, name, value, force_insert=False):
         """Stub to setting routine to store a metadataObject.

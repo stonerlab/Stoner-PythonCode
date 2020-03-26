@@ -574,11 +574,10 @@ class typeHintedDict(regexpDict):
         """
         if isinstance(key, string_types):
             return self._typehints[key]
-        else:
-            try:
-                return [self._typehints[x] for x in key]
-            except TypeError:
-                return self._typehints[key]
+        try:
+            return [self._typehints[x] for x in key]
+        except TypeError:
+            return self._typehints[key]
 
     def export(self, key):
         """Exports a single metadata value to a string representation with type hint.

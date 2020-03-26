@@ -149,7 +149,7 @@ class KerrArray(ImageArray):
         """
         if self.shape == IM_SIZE:
             return self
-        elif self.shape != AN_IM_SIZE:
+        if self.shape != AN_IM_SIZE:
             raise ValueError(
                 "Need a full sized Kerr image to crop. Current size is {}".format(self.shape)
             )  # check it's a normal image
