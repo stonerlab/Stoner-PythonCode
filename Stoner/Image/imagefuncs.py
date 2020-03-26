@@ -229,7 +229,7 @@ def align(im, ref, method="scharr", **kargs):
     new_type = im.dtype
     if not len(align_methods):
         raise ImportError("align requires one of imreg_dft, chi2_shift or cv2 modules to be available.")
-    elif method not in align_methods:
+    if method not in align_methods:
         raise ValueError(f"{method} is not available either because it is not recognised or there is a missing module")
 
     if "box" in kargs:

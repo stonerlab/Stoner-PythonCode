@@ -1308,8 +1308,7 @@ class FittingMixin:
         }
         if output not in retval:
             raise RuntimeError("Failed to recognise output format:{}".format(output))
-        else:
-            return retval[output]
+        return retval[output]
 
     def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None, **kargs):
         r"""Wrapper around lmfit module fitting.

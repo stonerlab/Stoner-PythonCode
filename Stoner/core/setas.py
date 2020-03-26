@@ -610,8 +610,7 @@ class setas(MutableMapping):
             possible = [x for x in self.column_headers if test.search(x)]
             if not possible:
                 raise KeyError("Unable to find any possible column matches for {}".format(col.pattern))
-            else:
-                col = self.find_col(possible)
+            col = self.find_col(possible)
         elif isinstance(col, slice):
             indices = col.indices(self.shape[1])
             col = range(*indices)

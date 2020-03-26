@@ -321,8 +321,7 @@ class DataArray(ma.MaskedArray):
                 ret.column_headers = self.column_headers[indexer[-1]]
         if ret is None:
             raise StonerSetasError("Tried accessing a {} column, but setas is not defined.".format(name))
-        else:
-            return ret
+        return ret
 
     def __getitem__(self, ix):
         """Indexing function for DataArray.

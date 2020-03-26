@@ -375,8 +375,7 @@ class DataFile(metadataObject):
         """
         if get_option("short_repr") or get_option("short_data_repr"):
             raise AttributeError("Rich html output suppressed")
-        else:
-            return self._repr_html_private
+        return self._repr_html_private
 
     @property
     def basename(self):
@@ -2359,7 +2358,7 @@ class DataFile(metadataObject):
         if isinstance(exclude_centre, int_types) and not isinstance(exclude_centre, bool):
             if exclude_centre % 2 == 0:
                 raise ValueError("If excluding the centre of the window, this must be an odd number of rows.")
-            elif window - exclude_centre < 2 or window < 3 or window % 2 == 0:
+            if window - exclude_centre < 2 or window < 3 or window % 2 == 0:
                 raise ValueError(
                     """Window must be at least two bigger than the number of rows exluded from the centre, bigger than
                     3 and odd"""

@@ -227,8 +227,7 @@ class EasyPlotFile(Core.DataFile):
         with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as data:
             if "******** EasyPlot save file ********" not in data.read(1024):
                 raise Core.StonerLoadError("Not an EasyPlot Save file?")
-            else:
-                data.seek(0)
+            data.seek(0)
             for i, line in enumerate(data):
                 line = line.strip()
                 if line == "":

@@ -226,8 +226,7 @@ class PlotMixin:
         """Force a figure to be displayed."""
         if not (value is None or isinstance(value, bool)):
             raise AttributeError(f"showfig should be a boolean value not a {type(value)}")
-        else:
-            self._showfig = value
+        self._showfig = value
 
     @property
     def subplots(self):

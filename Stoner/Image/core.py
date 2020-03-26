@@ -188,8 +188,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 arg = get_filedialog(what="r", filetypes=patterns)
                 if len(arg) == 0:
                     raise ValueError("No file given")
-                else:
-                    loadfromfile = True
+                loadfromfile = True
             elif isinstance(arg, string_types) or loadfromfile:
                 # Filename- load datafile
                 if not os.path.exists(arg):

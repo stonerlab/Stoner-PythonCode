@@ -107,8 +107,7 @@ def get_filedialog(what="file", **opts):
     funcs = {"file": "OpenFile", "directory": "SelectDirectory", "files": "OpenFiles", "save": "SaveFile"}
     if what not in funcs:
         raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
-    else:
-        return fileDialog.openDialog(mode=funcs[what], **opts)
+    return fileDialog.openDialog(mode=funcs[what], **opts)
 
 
 int_types += (np.int, np.int0, np.int8, np.int16, np.int32, np.int64)

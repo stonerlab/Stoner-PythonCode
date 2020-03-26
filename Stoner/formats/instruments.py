@@ -55,9 +55,8 @@ class LSTemperatureFile(Core.DataFile):
                 parts = [p.strip() for p in line.split(":")]
                 if len(parts) != 2:
                     raise Core.StonerLoadError("Header doesn't contain two parts at {}".format(line.strip()))
-                else:
-                    keys.append(parts[0])
-                    vals.append(parts[1])
+                keys.append(parts[0])
+                vals.append(parts[1])
             else:
                 raise Core.StonerLoadError("Overan the end of the file")
             if keys != [
@@ -180,11 +179,11 @@ class QDFile(Core.DataFile):
                 line = line.strip()
                 if i == 0 and line != "[Header]":
                     raise Core.StonerLoadError("Not a Quantum Design File !")
-                elif line == "[Header]" or line.startswith(";") or line == "":
+                if line == "[Header]" or line.startswith(";") or line == "":
                     continue
-                elif "[Data]" in line:
+                if "[Data]" in line:
                     break
-                elif "," not in line:
+                if "," not in line:
                     raise Core.StonerLoadError("No data in file!")
                 parts = [x.strip() for x in line.split(",")]
                 if parts[1].split(":")[0] == "SEQUENCE FILE":
@@ -631,17 +630,16 @@ class SPCFile(Core.DataFile):
                 raise Core.StonerLoadError(
                     "Filetype not implemented yet ! ftflgs={ftflgs}, fversn={fversn}".format(**self._header)
                 )
-            else:  # A single XY curve in the file.
-                # Read the xdata and add it to the file.
-                xdata = self._read_xdata(f)
-                data = np.zeros((self._pts, (n + 1)))  # initialise the data soace
-                data[:, 0] = xdata  # Put in the X-Data
-                column_headers = [self._xvars[self._header["fxtype"]]]  # And label the X column correctly
+            # Read the xdata and add it to the file.
+            xdata = self._read_xdata(f)
+            data = np.zeros((self._pts, (n + 1)))  # initialise the data soace
+            data[:, 0] = xdata  # Put in the X-Data
+            column_headers = [self._xvars[self._header["fxtype"]]]  # And label the X column correctly
 
-                # Now we're going to read the Y-data
-                data = self._read_ydata(f, data, column_headers)
-                if self._header["flogoff"] != 0:  # Ok, we've got a log, so read the log header and merge into metadata
-                    self._read_loginfo(f)
+            # Now we're going to read the Y-data
+            data = self._read_ydata(f, data, column_headers)
+            if self._header["flogoff"] != 0:  # Ok, we've got a log, so read the log header and merge into metadata
+                self._read_loginfo(f)
             # Ok now build the Stoner.Core.DataFile instance to return
             self.data = data
             # The next bit generates the metadata. We don't just copy the metadata because we need to figure out

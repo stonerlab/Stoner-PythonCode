@@ -64,12 +64,11 @@ class typedList(MutableSequence):
         else:
             if len(args) > 1:
                 raise SyntaxError("List should be constructed with at most two arguments, a type and an iterable")
-            else:
-                raise TypeError(
-                    "List should be initialised with elements that are all of type {} not {}".format(
-                        self._type, args[0].dtype
-                    )
+            raise TypeError(
+                "List should be initialised with elements that are all of type {} not {}".format(
+                    self._type, args[0].dtype
                 )
+            )
 
     def __add__(self, other):
         """Add operator works like ordinary lists."""
@@ -129,8 +128,7 @@ class typedList(MutableSequence):
         """Extending a list also requires some type checking."""
         if not isIterable(other) or not all_type(other, self._type):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
-        else:
-            self._store.extend(other)
+        self._store.extend(other)
 
     def index(self, search, start=0, end=None):  # pylint:  disable=arguments-differ
         """Index works like a list except we support Python 3 optional parameters everywhere."""
@@ -142,8 +140,7 @@ class typedList(MutableSequence):
         """Inserting an element also requires some type checking."""
         if not isinstance(obj, self._type):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
-        else:
-            self._store.insert(index, obj)
+        self._store.insert(index, obj)
 
 
 def get_option(name):

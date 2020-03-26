@@ -467,10 +467,9 @@ class typeHintedDict(regexpDict):
             value = [self.__mungevalue(typehint, v) for v in value]
         if len(value) == 0:  # pylint: disable=len-as-condition
             raise KeyError("{} is not a valid key even when interpreted as a sregular expression!".format(key))
-        elif len(value) == 1:
+        if len(value) == 1:
             return value[0]
-        else:
-            return {k: v for k, v in zip(name, value)}
+        return {k: v for k, v in zip(name, value)}
 
     def __setitem__(self, name, value):
         """Sets an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
