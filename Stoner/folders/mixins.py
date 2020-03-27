@@ -129,7 +129,7 @@ class DiskBasedFolderMixin:
         if self.pruned:
             self.prune()
 
-    @baseFolder.key.getter
+    @baseFolder.key.getter  # pylint: disable=no-member
     def key(self):
         """Override the parent class *key* to use the *directory* attribute."""
         k = getattr(super(DiskBasedFolderMixin, self), "key", None)

@@ -179,7 +179,7 @@ class Options:
     """Dead simple class to allow access to package options."""
 
     def __init__(self):
-        self._defaults = copy.copy(Options)
+        self._defaults = copy.copy(_options)
 
     def __setattr__(self, name, value):
         if name.startswith("_"):
@@ -187,7 +187,7 @@ class Options:
         if name not in _options:
             raise AttributeError("{} is not a recognised option.".format(name))
         if not isinstance(value, type(_options[name])):
-            raise ValueError("{} takes a {} not a {}".format(name, type(Options[name]), type(value)))
+            raise ValueError("{} takes a {} not a {}".format(name, type(_options[name]), type(value)))
         set_option(name, value)
 
     def __getattr__(self, name):
@@ -196,12 +196,12 @@ class Options:
         return get_option(name)
 
     def __delattr__(self, name):
-        if name not in Options:
+        if name not in _options:
             raise AttributeError("{} is not a recognised option.".format(name))
         set_option(name, self.defaults[name])
 
     def __dir__(self):
-        return list(Options.keys())
+        return list(_options.keys())
 
     def __repr__(self):
         s = "Stoner Package Options\n"

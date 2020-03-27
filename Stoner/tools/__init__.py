@@ -46,7 +46,7 @@ except ImportError:
 from ..compat import string_types, bytes2str
 from .classes import attributeStore as AttributeStore, typedList, Options as _Options, get_option, set_option
 from .tests import all_size, all_type, isAnyNone, isComparable, isIterable, isLikeList, isNone, isProperty, isTuple
-from .formatting import format_error, format_val, quantize
+from .formatting import format_error, format_val, quantize, html_escape, tex_escape
 
 operator = {
     "eq": lambda k, v: k == v,

@@ -6,6 +6,7 @@ __all__ = ["format_error", "format_val", "quantize", "tex_escape"]
 import re
 from cgi import escape as html_escape
 from numpy import log10, floor, abs, isnan, round  # pylint: disable=redefined-builtin
+from ..compat import bytes2str
 
 prefs = {
     "text": {
