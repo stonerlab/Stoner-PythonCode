@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Fitting Functions and classes to mixin for :py:class:`Stoner.Data`."""
+
 __all__ = ["odr_Model", "FittingMixin"]
 
 from inspect import isclass
@@ -119,8 +120,8 @@ class odr_Model(odrModel):
 
 
 class MimizerAdaptor:
-    """A class that will work with an lmfit.Model or generic callable to use with scipy.optimize global minimization
-    functions.
+
+    """Work with an lmfit.Model or generic callable to use with scipy.optimize global minimization functions.
 
     The :pymod:`scipy.optimize` module's minimizers generally expect functions  which take an array like parameter
     space variable and then other arguments. This class will produce a suitable wrapper function and bounds
@@ -187,8 +188,7 @@ class _curve_fit_result:
     """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit` as a class to make handling easier."""
 
     def __init__(self, popt, pcov, infodict, mesg, ier):
-        """
-        Store the results of the curve fit full_output fit.
+        """Store the results of the curve fit full_output fit.
 
         Args:
             popt (1D array):
@@ -1051,7 +1051,6 @@ class FittingMixin:
             *   :py:meth:`Stoner.Data.differential_evolution`
             *   User guide section :ref:`curve_fit_guide`
         """
-
         _ = self._col_args(scalar=False, xcol=xcol, ycol=ycol, yerr=sigma)
         xcol, ycol, sigma = _.xcol, _.ycol, _.yerr
 

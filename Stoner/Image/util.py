@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Code adapted from skimage module
-"""
+"""Code adapted from skimage module."""
+
 from __future__ import division
 
 __all__ = ["sign_loss", "prec_loss", "dtype_range", "_dtype", "_dtype2", "build_funcs_proxy", "changes_size"]
@@ -76,7 +76,7 @@ def _dtype2(kind, bits, itemsize=1):
 
 
 def _scale(a, n, m, dtypeobj_in, dtypeobj, copy=True):
-    """cale unsigned/positive integers from n to m bits
+    """cale unsigned/positive integers from n to m bits.
 
     Numbers can be represented exactly only if m is a multiple of n
     Output array is of same kind as input."""

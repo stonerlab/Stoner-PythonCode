@@ -1,4 +1,4 @@
-"""Experimental Stonerlab DataFile
+"""Experimental Stonerlab DataFile.
 
 Hacked up version of the default data loader plugin that uses the Stoner package classes to
 read in data files. Supports loading from the Brucker D8
@@ -25,10 +25,7 @@ class Plugin(Template):
         self.e_col = "Counts"
 
     def LoadData(self, data_item_number, filename):
-        """LoadData(self, data_item_number, filename) --> none
-
-        Loads the data from filename into the data_item_number.
-        """
+        """Loads the data from filename into the data_item_number."""
         try:
             datafile = Data(
                 str(filename), debug=True

@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Implement DataFile like classes for Various experimental rigs
-"""
+"""Implement DataFile like classes for Various experimental rigs."""
+
 __all__ = ["BigBlueFile", "BirgeIVFile", "MokeFile", "FmokeFile", "EasyPlotFile", "PinkLibFile"]
 import io
 import re
@@ -18,7 +17,7 @@ from Stoner.core.base import string_to_type
 
 class BigBlueFile(CSVFile):
 
-    """Extends CSVFile to load files from Nick Porter's old BigBlue code"""
+    """Extends CSVFile to load files from Nick Porter's old BigBlue code."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
@@ -30,7 +29,7 @@ class BigBlueFile(CSVFile):
     patterns = ["*.dat", "*.iv", "*.rvt"]  # Recognised filename patterns
 
     def _load(self, filename, *args, **kargs):
-        """Just call the parent class but with the right parameters set
+        """Just call the parent class but with the right parameters set.
 
         Args:
             filename (string or bool): File to load. If None then the existing filename is used,
@@ -159,7 +158,7 @@ class MokeFile(Core.DataFile):
 
 class FmokeFile(Core.DataFile):
 
-    """Extends Core.DataFile to open Fmoke Files"""
+    """Extends Core.DataFile to open Fmoke Files."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::

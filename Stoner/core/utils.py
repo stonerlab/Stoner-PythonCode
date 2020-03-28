@@ -242,7 +242,7 @@ class tab_delimited(csv.Dialect):
 
 
 def itersubclasses(cls, _seen=None):
-    """Iterate over subclasses of a given class
+    """Iterate over subclasses of a given class.
 
     Generator over all subclasses of a given class, in depth first order.
 

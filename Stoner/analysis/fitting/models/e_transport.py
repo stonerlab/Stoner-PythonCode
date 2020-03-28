@@ -22,8 +22,7 @@ def _bgintegrand(x, n):
 
 
 def wlfit(B, s0, DS, B1, B2):
-    """
-    Weak localisation
+    """    Weak localisation fitting function.
 
     Args:
         B (array): mag. field
@@ -32,11 +31,10 @@ def wlfit(B, s0, DS, B1, B2):
         B1 (float): elastic characteristic field (B1)
         B2 (float): inelastic characteristic field (B2)
 
-    Return:
+    Returns:
         Conductance vs Field for a weak localisation system
 
-    .. note::
-
+    Notes:
        2D WL model as per Wu et al  PRL 98, 136801 (2007), Porter et al PRB 86, 064423 (2012)
 
     Example:
@@ -129,8 +127,7 @@ def blochGrueneisen(T, thetaD, rho0, A, n):
 
 class WLfit(Model):
 
-    """
-    Weak localisation
+    """Weak localisation model class.
 
     Args:
         B (array): mag. field
@@ -139,17 +136,16 @@ class WLfit(Model):
         B1 (float): elastic characteristic field (B1)
         B2 (float): inelastic characteristic field (B2)
 
-    Return:
+    Returns:
         Conductance vs Field for a weak localisation system
 
-    .. note::
-
+    Notes:
        2D WL model as per Wu et al  PRL 98, 136801 (2007), Porter et al PRB 86, 064423 (2012)
 
     Example:
         .. plot:: samples/Fitting/weak_localisation.py
             :include-source:
-            :outname: wlfit-class
+            :outname: wlfit
     """
 
     display_names = [r"\sigma_0", "D_S", "B_1", "B_2"]

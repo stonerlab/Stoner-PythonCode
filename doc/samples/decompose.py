@@ -1,4 +1,4 @@
-"""Decompose Example"""
+"""Decompose Into symmetric and antisymmetric parts example."""
 # pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.tools import format_val

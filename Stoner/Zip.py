@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Stoner.Zip module - sipport reading DataFile like objects into and outof standard zip files.
+"""Support reading DataFile like objects into and outof standard zip files.
 
 Classes Include
 
@@ -119,7 +118,7 @@ class ZippedFile(DataFile):
         return self
 
     def _load(self, filename=None, *args, **kargs):
-        "Load a file from the zip file, openining it as necessary."
+        """Load a file from the zip file, openining it as necessary."""
         if filename is None or not filename:
             self.get_filename("r")
         else:

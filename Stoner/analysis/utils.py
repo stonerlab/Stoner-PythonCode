@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-Functions used by the AnalysisMixin class.
-"""
+"""Functions used by the AnalysisMixin class."""
+
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit, newton

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic attribute.
-"""
+"""Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic attribute."""
 __all__ = ["item"]
 import numpy as np
 from collections.abc import MutableSequence
@@ -111,7 +109,7 @@ class setas_wrapper(MutableSequence):
 class item:
 
     """Provides a proxy object for accessing methods on the inividual members of a Folder.
-    8
+
     Notes:
         The pupose of this class is to allow it to be explicit that we're calling methods
         on the members of the folder rather than a collective method. This allows us to work

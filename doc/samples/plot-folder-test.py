@@ -23,13 +23,13 @@ template.yformatter = TexEngFormatter
 
 
 def field_sign(r):
-    """Custom function for split"""
+    """Custom function for split."""
     pos = r["Field"] >= 0
     return where(pos, "pos", "neg")
 
 
 def extra(i, j, d):
-    """Function for customising each individual plot"""
+    """Function for customising each individual plot."""
     d.axvline(x=d["cut"], ls="--")
     d.title = r"$\nu={:.1f}\,$GHz".format(d.mean("Frequency") / 1e9)
     d.xlabel = r"Field $\mu_0H\,$"

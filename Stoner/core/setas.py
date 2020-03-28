@@ -197,7 +197,7 @@ class setas(MutableMapping):
 
     @property
     def z(self):
-        """Quick access to the z column numbers list"""
+        """Quick access to the z column numbers list."""
         return self.cols["zcol"]
 
     @property
@@ -624,7 +624,7 @@ class setas(MutableMapping):
         return col
 
     def clear(self):
-        """"Clear the current setas attrbute.
+        """Clear the current setas attrbute.
 
         Notes:
             Equivalent to doing :py:meth:`setas.unset` with no argument.

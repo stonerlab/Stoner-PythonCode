@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Base classes for the Stoner package
-"""
+"""Base classes for the Stoner package."""
+
 __all__ = ["_evaluatable", "regexpDict", "string_to_type", "typeHintedDict", "metadataObject"]
 from collections.abc import MutableMapping, Mapping
 import re
@@ -180,7 +179,7 @@ class regexpDict(sorteddict):
         super(regexpDict, self).__setitem__(key, value)
 
     def __delitem__(self, name):
-        """Deletes keys that match by regular expression as well as exact matches"""
+        """Deletes keys that match by regular expression as well as exact matches."""
         super(regexpDict, self).__delitem__(self.__lookup__(name))
 
     def __contains__(self, name):
@@ -220,7 +219,7 @@ class regexpDict(sorteddict):
         return ret
 
     def has_key(self, name):
-        """Key is definitely in dictionary as literal"""
+        """Key is definitely in dictionary as literal."""
         return super(regexpDict, self).__contains__(name)
 
 

@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Implements DataFile like classes for various large scale facilities
-"""
+"""Implements DataFile like classes for various large scale facilities."""
+
 __all__ = ["BNLFile", "MDAASCIIFile", "OpenGDAFile", "RasorFile", "SNSFile"]
 # Standard Library imports
 import io

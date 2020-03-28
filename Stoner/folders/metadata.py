@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-:py:mod:`Stoner.folders.metadata` provides classes and functions to support the :py:attr:`Stoner.DataFolder.metadata`
-magic attribute.
-"""
+"""Provides classes and functions to support the :py:attr:`Stoner.DataFolder.metadata` magic attribute."""
+
 __all__ = ["proxy"]
 import fnmatch
 from collections.abc import MutableMapping
@@ -114,6 +112,7 @@ class proxy(MutableMapping):
     """Provide methods to interact with a whole collection of metadataObjects' metadata."""
 
     def __init__(self, folder):
+        """Note our parent folder object."""
 
         self._folder = folder
 

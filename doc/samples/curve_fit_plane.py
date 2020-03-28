@@ -9,7 +9,7 @@ from Stoner import Data
 
 
 def plane(coord, a, b, c):
-    """Function to define a plane"""
+    """Function to define a plane."""
     return c - (coord[0] * a + coord[1] * b)
 
 

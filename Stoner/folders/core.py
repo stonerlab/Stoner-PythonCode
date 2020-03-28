@@ -1308,8 +1308,7 @@ class baseFolder(MutableSequence):
         return ret
 
     def group(self, key):
-        """Take the files and sort them into a series of separate objectFolder objects according to the value
-        of the key
+        """Sort Files into a series of objectFolders according to the value of the key.
 
         Args:
             key (string or callable or list):
@@ -1727,7 +1726,7 @@ class baseFolder(MutableSequence):
         )
 
     def zip_groups(self, groups):
-        """Return a list of tuples of metadataObjects drawn from the specified groups
+        """Return a list of tuples of metadataObjects drawn from the specified groups.
 
         Args:
             groups(list of strings):

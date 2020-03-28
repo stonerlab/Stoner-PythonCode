@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Defines the magic attriobutes that :py:class:`Stoner.Image.ImageFolder` uses.
-"""
+"""Defines the magic attriobutes that :py:class:`Stoner.Image.ImageFolder` uses."""
+
 __all__ = ["DrawProxy", "MaskProxy"]
 
 from functools import wraps

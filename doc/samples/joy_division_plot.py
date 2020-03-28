@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=invalid-name
-"""
-Created on Wed Sep 18 15:01:49 2019
-
-Demonstrate a waterfall plot styled after the famous album cover from Joy Division
-
-@author: phygbu
-"""
+"""Demonstrate a waterfall plot styled after the famous album cover from Joy Division."""
 
 from Stoner import Data, DataFolder
 from Stoner.formats.instruments import RigakuFile

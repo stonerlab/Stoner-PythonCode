@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Nov 30 17:02:06 2018
-
-@author: phygbu
-"""
+"""Utility functions to support :py:class:`Stoner.folders.core.objectFolder` operations."""
 __all__ = [
     "pathsplit",
     "pathjoin",

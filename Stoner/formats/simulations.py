@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Implements classes to load file formats from various simulation packages
-
-"""
+"""Implements classes to load file formats from various simulation packages."""
 
 __all__ = ["GenXFile", "OVFFile"]
 import re

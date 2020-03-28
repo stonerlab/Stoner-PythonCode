@@ -1,4 +1,4 @@
-"""Python  script for Analysing PCAR data using Stoner classes and lmfit
+"""Python  script for Analysing PCAR data using Stoner classes and lmfit.
 
 Gavin Burnell g.burnell@leeds.ac.uk
 """
@@ -13,7 +13,7 @@ from Stoner.analysis.fitting.models.generic import quadratic
 
 class working(Data):
 
-    """Utility class to manipulate data and plot it"""
+    """Utility class to manipulate data and plot it."""
 
     def __init__(self, *args, **kargs):
         """Setup the fitting code."""

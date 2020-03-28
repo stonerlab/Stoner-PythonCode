@@ -41,6 +41,7 @@ except ImportError:
         return func
 
     class _dummy:
+
         """A class that does nothing so that float64 can be an instance of it safely."""
 
         def __call__(self, *args):

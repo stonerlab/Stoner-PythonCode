@@ -362,9 +362,7 @@ def split_code_at_show(text):
 
 
 def remove_coding(text):
-    r"""
-    Remove the coding comment, which six.exec\_ doesn't like.
-    """
+    r"""Remove the coding comment, which six.exec\_ doesn't like."""
     sub_re = re.compile("^#\s*-\*-\s*coding:\s*.*-\*-$", flags=re.MULTILINE)
     return sub_re.sub("", text)
 
@@ -453,15 +451,21 @@ plot_context = dict()
 
 
 class ImageFile(object):
+
+    """Represent an image file produced from the plot."""
+
     def __init__(self, basename, dirname):
+        """Create ImageFile for given base directory and filename."""
         self.basename = basename
         self.dirname = dirname
         self.formats = []
 
     def filename(self, format):
+        """Create a filename in the required format."""
         return os.path.join(self.dirname, "%s.%s" % (self.basename, format))
 
     def filenames(self):
+        """Return a list of filenames for each format."""
         return [self.filename(fmt) for fmt in self.formats]
 
 
@@ -601,8 +605,7 @@ def render_figures(
     close_figs=False,
     outname="",
 ):
-    """
-    Run a pyplot script and save the images in *output_dir*.
+    """Run a pyplot script and save the images in *output_dir*.
 
     Save the images under *output_dir* with file names derived from
     *output_base*

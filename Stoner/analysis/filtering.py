@@ -22,8 +22,7 @@ from .utils import outlier as _outlier, _twoD_fit, GetAffineTransform
 
 class FilteringOpsMixin:
 
-    """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional filtering snd
-    smoothing methods."""
+    """Provide additional filtering sndsmoothing methods to :py:class:`Stoner.Data`."""
 
     def SG_Filter(
         self, col=None, xcol=None, points=15, poly=1, order=0, pad=True, result=None, replace=False, header=None
