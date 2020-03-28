@@ -22,7 +22,7 @@ def _bgintegrand(x, n):
 
 
 def wlfit(B, s0, DS, B1, B2):
-    """    Weak localisation fitting function.
+    """Weak localisation fitting function.
 
     Args:
         B (array): mag. field

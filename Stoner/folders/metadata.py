@@ -113,7 +113,6 @@ class proxy(MutableMapping):
 
     def __init__(self, folder):
         """Note our parent folder object."""
-
         self._folder = folder
 
     @property

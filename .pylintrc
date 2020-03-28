@@ -116,10 +116,10 @@ function-rgx=[a-z_][a-z0-9_]{2,15}$
 function-name-hint=[a-z_][a-z0-9_]{2,15}$
 
 # Regular expression matching correct variable names
-variable-rgx=[A-Za-z_][a-z0-9_][A-Za-z0-9_]{0,15}$
+variable-rgx=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,15})?$
 
 # Naming hint for variable names
-variable-name-hint=[A-Za-z_][a-z0-9_][A-Za-z0-9_]{0,15}$
+variable-name-hint=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,15})?$
 
 # Regular expression matching correct constant names
 const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
