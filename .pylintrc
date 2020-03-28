@@ -93,7 +93,7 @@ evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / stateme
 [BASIC]
 
 # Good variable names which should always be accepted, separated by a comma
-good-names=i,j,k,d,f,g,x,y,z,im,ax
+good-names=i,j,k,d,f,g,x,y,z,im,ax,p0
 
 # Bad variable names which should always be refused, separated by a comma
 bad-names=foo,bar,baz,toto,tutu,tata
@@ -116,10 +116,10 @@ function-rgx=[a-z_][a-z0-9_]{2,15}$
 function-name-hint=[a-z_][a-z0-9_]{2,15}$
 
 # Regular expression matching correct variable names
-variable-rgx=[A-Za-z_][a-z0-9_]{0,15}$
+variable-rgx=[A-Za-z_][a-z0-9_][A-Za-z0-9_]{0,15}$
 
 # Naming hint for variable names
-variable-name-hint=[A-Za-z_][a-z0-9_]{2,15}$
+variable-name-hint=[A-Za-z_][a-z0-9_][A-Za-z0-9_]{0,15}$
 
 # Regular expression matching correct constant names
 const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
