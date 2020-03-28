@@ -579,7 +579,8 @@ class PlotMixin:
             obj = self.__figure.gca()
         else:
             raise AttributeError(
-                "Attempting to manipulate the methods on a figure or axes before a figure has been created for this Data."
+                "Attempting to manipulate the methods on a figure or axes before a"
+                + " figure has been created for this Data."
             )
         func = getattr(obj, name)
 
@@ -1181,7 +1182,7 @@ class PlotMixin:
         else:
             figure, _ = self.template.new_figure(None, projection="3d")
         self.__figure = figure
-        if show_plot == True:
+        if show_plot:
             plt.ion()
         if plotter is None:
             plotter = self.__SurfPlotter

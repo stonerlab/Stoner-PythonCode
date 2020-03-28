@@ -22,7 +22,8 @@ class setas(MutableMapping):
     Implements a MutableMapping bsed on the column_headers as the keys (with a few tweaks!).
 
     Note:
-        Iterating over setas will return the column assignments rather than the standard mapping behaviour of iterating over the keys. Otherwise
+        Iterating over setas will return the column assignments rather than the standard mapping behaviour of
+        iterating over the keys. Otherwise
         the interface is essentially as a Mapping class.
 
     Calling an existing setas instance and the constructor share the same signatgure:
@@ -271,8 +272,8 @@ class setas(MutableMapping):
                 If True, make the call return a copy of the setas object, if False, return _object attribute, if None,
                 return None
             reset (bool):
-                If False then preserve the existing set columns and simply add the new ones. Otherwise, clear all column
-                assignments before setting new ones (default).
+                If False then preserve the existing set columns and simply add the new ones. Otherwise, clear
+                all column assignments before setting new ones (default).
         """
         return_self = kargs.pop("_self", None)
         if not (args or kargs):  # New - bare call to setas will return the current value.
@@ -412,7 +413,8 @@ class setas(MutableMapping):
 
         .. warn::
 
-            This class does not follow standard Mapping semantics - iterating iterates over the values and not the items.
+            This class does not follow standard Mapping semantics - iterating iterates over the values and not
+            the items.
         """
         _ = self.setas  # Force setas to fix size
         for c in self._setas:
@@ -754,7 +756,9 @@ class setas(MutableMapping):
         return list(self)
 
     def to_string(self, encode=False):
-        """"Return the setas attribute encoded as a string, optionally replacing runs of 3 or more identical characters with a precediung digit."""
+        """"Return the setas attribute encoded as a string.
+
+        Optionally replaces runs of 3 or more identical characters with a precediung digit."""
         expanded = "".join(self)
         if encode:
             pat = re.compile(r"((.)\2{2,9})")

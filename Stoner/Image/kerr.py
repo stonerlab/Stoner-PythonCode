@@ -9,7 +9,7 @@ Derivatives of ImageArray and ImageStack specific to processing Kerr images.
 __all__ = ["KerrArray", "KerrStack", "MaskStack"]
 
 import os
-import subprocess
+import subprocess  # nosec
 import tempfile
 
 import numpy as np
@@ -206,7 +206,7 @@ class KerrArray(ImageArray):
         if self.tesseractable:
             tesseract = which("tesseract")
             with open(stdoutfile, "w") as stdout:
-                subprocess.call(
+                subprocess.call(  # nosec
                     [tesseract, imagefile, textfile[:-4]], stdout=stdout, stderr=subprocess.STDOUT
                 )  # adds '.txt' extension itself
             os.unlink(stdoutfile)
@@ -239,7 +239,7 @@ class KerrArray(ImageArray):
 
     def float_and_croptext(self):
         """Convert image to float and crop_text.
-        
+
         Just to group typical functions together
         """
         ret = self.asfloat()
@@ -248,17 +248,17 @@ class KerrArray(ImageArray):
 
     def ocr_metadata(self, field_only=False):
         """Use image recognition to try to pull the metadata numbers off the image.
-        
-        Requirements: 
+
+        Requirements:
             This function uses tesseract to recognise the image, therefore
             tesseract file1 file2 must be valid on your command line.
             Install tesseract from
             https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar
-        
+
         KeywordArguments:
             field_only(bool):
                 only try to return a field value
-        
+
         Returns:
             metadata: dict
                 updated metadata dictionary

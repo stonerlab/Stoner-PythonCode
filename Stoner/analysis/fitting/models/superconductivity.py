@@ -240,7 +240,8 @@ def ic_B_airy(B, Ic0, B_offset, A):
 
     Notes:
         Represents the critical current as:
-            :math:`I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}{\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|`
+            :math:`I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}{\Phi_0}}
+                    {\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|`
         where :math:`J_1` is a first order Bessel function.
 
         For small ($<1^{-5}$)values of the Bessel function argument, this will return Ic0 to
@@ -491,7 +492,8 @@ class Ic_B_Airy(Model):
 
     Notes:
         Represents the critical current as:
-            :math:`I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}{\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|`
+            :math:`I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}
+                        {\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|`
         where `J_1` is a first order Bessel function.
 
     Example:

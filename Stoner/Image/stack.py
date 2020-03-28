@@ -108,7 +108,8 @@ class ImageStackMixin:
         Keyword Arguments:
             instatiate (bool): If True (default) then always return a metadataObject. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
-                metadataObject. If None, then will return whatever is helf in the object cache, either instance or name.
+                metadataObject. If None, then will return whatever is helf in the object cache, either
+                instance or name.
 
         Returns:
             (metadataObject): The metadataObject
@@ -120,7 +121,9 @@ class ImageStackMixin:
         """
         try:
             idx = self.__lookup__(name)
-        except KeyError:  # If we don't seem to have the name then see if we can fall back to something else like a DiskBasedFolderMixin
+        except KeyError:
+            # If we don't seem to have the name then see if we can fall back to something else like a
+            #  DiskBasedFolderMixin
             return super(ImageStackMixin, self).__getter__(name, instantiate)
         if isinstance(instantiate, bool) and not instantiate:
             return self.__names__()[idx]
@@ -174,7 +177,8 @@ class ImageStackMixin:
     def __inserter__(self, ix, name, value):
         """Provide an efficient insert into the stack.
 
-        The default implementation is rather slow about inserting since it has to clear the data folder and then rebuild it entry by entry. This does
+        The default implementation is rather slow about inserting since it has to clear the data folder and then
+        rebuild it entry by entry. This does
         a simple insert."""
         value = ImageFile(value)  # ensure we have some metadata
         self._names.insert(ix, name)
@@ -368,7 +372,8 @@ class ImageStackMixin:
             self.convert(dtype=np.float64, normalise=normalise)
         if "clip_neg" in kargs:
             warnings.warn(
-                "clip_neg argument renamed to clip_negative in ImageStack. This will cause an error in future versions of the Stoner Package."
+                "clip_neg argument renamed to clip_negative in ImageStack. This will cause an error in future"
+                + "versions of the Stoner Package."
             )
             clip_negative = kargs.pop("clip_neg")
         if clip or clip_negative:
@@ -432,9 +437,9 @@ class ImageStackMixin:
 
 class StackAnalysisMixin:
 
-    """Add some analysis capability to ImageStack. 
-    
-    These functions may override :py:class:`Stoner,Image.ImageFile` functions but do them efficiently for a numpy 
+    """Add some analysis capability to ImageStack.
+
+    These functions may override :py:class:`Stoner,Image.ImageFile` functions but do them efficiently for a numpy
     stack of images.
     """
 

@@ -90,8 +90,11 @@ class odr_Model(odrModel):
             meta["__name__"] = meta["name"]
         else:
             raise ValueError(
-                "Cannot construct a model instance from a {} - need a callable, lmfit.Model or scipy.odr.Model".format(
-                    type(model)
+                "".join(
+                    [
+                        f"Cannot construct a model instance from a {model} - ",
+                        f"need a callable, lmfit.Model or scipy.odr.Model",
+                    ]
                 )
             )
         if not isinstance(p0, lmfit.Parameters):  # This can happen if we are creating an odr_Model in advance.

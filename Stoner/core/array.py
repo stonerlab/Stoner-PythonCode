@@ -476,7 +476,7 @@ class DataArray(ma.MaskedArray):
         }
         no_guess = True
         for i in cols.values():
-            if not i is None:  # User specification wins out
+            if i is not None:  # User specification wins out
                 break
         else:  # User didn't set any values, setas will win
             no_guess = False

@@ -306,7 +306,8 @@ class HDF5File(DataFile):
                 try:
                     typehints.attrs[k] = self.metadata._typehints[k]
                     metadata.attrs[k] = self[k]
-                except TypeError:  # We get this for trying to store a bad data type - fallback to metadata export to string
+                except TypeError:
+                    # We get this for trying to store a bad data type - fallback to metadata export to string
                     parts = self.metadata.export(k).split("=")
                     metadata.attrs[k] = "=".join(parts[1:])
             f.attrs["column_headers"] = [x.encode("utf8") for x in self.column_headers]

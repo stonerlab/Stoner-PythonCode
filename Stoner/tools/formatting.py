@@ -294,7 +294,8 @@ def tex_escape(text):
     Returns:
         the message escaped to appear correctly in LaTeX
 
-    From `Stackoverflow <http://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates>`
+    From `Stackoverflow <http://stackoverflow.com/questions/16259923/
+    how-can-i-escape-latex-special-characters-inside-django-templates>`
     """
     conv = {
         "&": r"\&",

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Creat File dialog boxes using the PyQt5 module.
+"""Creat File dialog boxes using the PyQt5 module.
 
 Code based on the PyQt5 Tutorial code,
 """
@@ -50,14 +49,15 @@ class App(QWidget):
 
     def openDialog(self, title=None, start="", patterns=None, mode="OpenFile"):
         """Create a dialog box for selecting filenames or directories.
-        
+
         Keyword Arguments:
             title (str, None):
                 Label of the dialog box, default None will select something depending on the mode.
             start (str):
                 The starting directory for the dialog box.
             patterns (dict):
-                Filename patterns - the keys of the dictionary are glob patterns, the values the corresponding explanation of the file
+                Filename patterns - the keys of the dictionary are glob patterns, the values the corresponding
+                explanation of the file
                 type.
             mode (str):
                 Determines the type of filedialog box used. Values are:
@@ -65,10 +65,11 @@ class App(QWidget):
                     -   "OpenFiles" - get one or more existing files
                     -   "SaveFile" - get an existing or new file - warns about overwriting files
                     -   "SelectDirectory" - gets the name of an existing (possibly newly created) directory.
-                    
+
         Returns:
             (str, None):
-                Either a string containing the absolute path to the file or directory, or None if the dialog was cancelled.
+                Either a string containing the absolute path to the file or directory, or None if the dialog
+                was cancelled.
         """
 
         if mode not in self.modes:

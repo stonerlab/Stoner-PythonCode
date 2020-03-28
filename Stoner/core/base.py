@@ -548,7 +548,7 @@ class typeHintedDict(regexpDict):
         rem = []
         for k in self.keys():
             if isinstance(name, string_types):
-                if not name in k:
+                if name not in k:
                     rem.append(k)
             elif hasattr(name, "__call__"):
                 if not name(k):

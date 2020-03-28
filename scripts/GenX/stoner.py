@@ -33,7 +33,9 @@ class Plugin(Template):
         except Exception as e:
             ShowWarningDialog(
                 self.parent,
-                f"Could not load the file: {filename}\nPlease check the format.\n\n Stoner.Data gave the following error:\n{e}",
+                f"""Could not load the file: {filename}\nPlease check the format.
+
+                Stoner.Data gave the following error:\n{e}""",
             )
         else:
             # For the freak case of only one data point

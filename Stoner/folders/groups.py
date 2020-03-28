@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-:py:mod:`Stoner.folders.groups` provides the classes and support functions for the :py:attr:`Stoner.DataFolder.grups` magic attribute.
-"""
+"""Provides the classes and support functions for the :py:attr:`Stoner.DataFolder.grups` magic attribute."""
+
 __all__ = ["GroupsDict"]
 
 from collections.abc import Iterable
@@ -13,7 +12,7 @@ from Stoner.core.base import regexpDict
 
 class GroupsDict(regexpDict):
 
-    """A :py:class:`Stoner.core.base.regexpDict` that manages collections of :py:class:`Stoner.folders.core.baseFolder` objects."""
+    """A typeHinted dictionary to manages collections of :py:class:`Stoner.folders.core.baseFolder` objects."""
 
     def __init__(self, *args, **kargs):
         """Capture a *base* keyuword that sets the parent :py:class:`Stoner.DataFolder` instance."""
