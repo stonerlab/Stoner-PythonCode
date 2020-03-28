@@ -929,9 +929,9 @@ class FittingMixin:
                 )
                 for r in fit_result.stopreason:
                     tmp += "  %s\n" % r
-            tmp += "Sum of orthogonal distance (~chi^2):{}\nReduced Sum of Orthogonal distances (~reduced chi^2): {}\n".format(
-                fit_result.chisqr, fit_result.redchi
-            )
+            tmp += f""""Sum of orthogonal distance (~chi^2):{fit_result.chisqr}
+            Reduced Sum of Orthogonal distances (~reduced chi^2): {fit_result.redchi}"""
+
             fit_result.fit_report = lambda: tmp
 
         except sp.odr.OdrError as err:
@@ -1112,8 +1112,11 @@ class FittingMixin:
             p0 = kargs.pop("p0", None)
         else:
             raise TypeError(
-                "curve_fit parameter 1 must be either a Model class from lmfit or scipy.odr, or a callable, not a {}".format(
-                    type(func)
+                "".koin(
+                    [
+                        f"curve_fit parameter 1 must be either a Model class from",
+                        f" lmfit or scipy.odr, or a callable, not a {type(func)}",
+                    ]
                 )
             )
 

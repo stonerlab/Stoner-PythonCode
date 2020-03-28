@@ -1506,7 +1506,8 @@ class baseFolder(MutableSequence):
 
                 d.select(temp__le=4.2,vti_temp__lt=4.2).select(field_gt=3.0)
 
-            will select metadata objects that have either temp or vti_temp metadata values below 4.2 AND field metadata values greater than 3.
+            will select metadata objects that have either temp or vti_temp metadata values below 4.2 AND field
+            metadata values greater than 3.
 
             There are a few cases where special treatment is needed:
 

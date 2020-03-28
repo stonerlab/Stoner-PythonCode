@@ -756,7 +756,7 @@ class setas(MutableMapping):
         return list(self)
 
     def to_string(self, encode=False):
-        """"Return the setas attribute encoded as a string.
+        """Return the setas attribute encoded as a string.
 
         Optionally replaces runs of 3 or more identical characters with a precediung digit."""
         expanded = "".join(self)

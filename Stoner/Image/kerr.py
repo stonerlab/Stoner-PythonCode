@@ -604,7 +604,10 @@ class MaskStackMixin:
         self._stack = self._stack.astype(bool)
 
     def switch_index(self, saturation_end=True, saturation_value=True):
-        """Given a stack of boolean masks representing a hystersis loop find the stack index of the saturation field for each pixel.
+        """Construct a map of switching points in a hysteresis stack.
+
+        Given a stack of boolean masks representing a hystersis loop find the stack index of the saturation
+        field for each pixel.
 
         Take the final mask as all switched (or the first mask if saturation_end
         is False). Work back through the masks taking the first time a pixel

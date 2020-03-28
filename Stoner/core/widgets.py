@@ -56,7 +56,8 @@ class App(QWidget):
             start (str):
                 The starting directory for the dialog box.
             patterns (dict):
-                Filename patterns - the keys of the dictionary are glob patterns, the values the corresponding explanation of the file
+                Filename patterns - the keys of the dictionary are glob patterns, the values the corresponding
+                explanation of the file
                 type.
             mode (str):
                 Determines the type of filedialog box used. Values are:
@@ -67,7 +68,8 @@ class App(QWidget):
 
         Returns:
             (str, None):
-                Either a string containing the absolute path to the file or directory, or None if the dialog was cancelled.
+                Either a string containing the absolute path to the file or directory, or None if the dialog
+                was cancelled.
         """
 
         if mode not in self.modes:
