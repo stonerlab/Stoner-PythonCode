@@ -300,8 +300,7 @@ class ImageStackMixin:
     ###################         Public  methods         #######################
 
     def convert(self, dtype, force_copy=False, uniform=False, normalise=True):
-        """
-        Convert an image to the requested data-type.
+        """Convert an image to the requested data-type.
 
         Warnings are issued in case of precision loss, or when negative values
         are clipped during conversion to unsigned integer types (sign loss).
@@ -314,34 +313,31 @@ class ImageStackMixin:
         unsigned to signed integer types. Negative values will be clipped when
         converting to unsigned integers.
 
-        Parameters
-        ----------
-        image : ndarray
-        Input image.
-        dtype : dtype
-        Target data-type.
-        force_copy : bool
-        Force a copy of the data, irrespective of its current dtype.
-        uniform : bool
-        Uniformly quantize the floating point range to the integer range.
-        By default (uniform=False) floating point values are scaled and
-        rounded to the nearest integers, which minimizes back and forth
-        conversion errors.
-        normalise : bool
-        When converting from int types to float normalise the resulting array
-        by the maximum allowed value of the int type.
+        Parameters:
+            image (ndarray):
+                    Input image.
+            dtype (dtype)
+                Target data-type.
+            force_copy (bool):
+                Force a copy of the data, irrespective of its current dtype.
+            uniform (bool):
+                Uniformly quantize the floating point range to the integer range.
+                By default (uniform=False) floating point values are scaled and
+                rounded to the nearest integers, which minimizes back and forth
+                conversion errors.
+            normalise (bool):
+                When converting from int types to float normalise the resulting array
+                by the maximum allowed value of the int type.
 
-        References
-        ----------
-        (1) DirectX data conversion rules.
-        http://msdn.microsoft.com/en-us/library/windows/desktop/dd607323%28v=vs.85%29.aspx
-        (2) Data Conversions.
-        In "OpenGL ES 2.0 Specification v2.0.25", pp 7-8. Khronos Group, 2010.
-        (3) Proper treatment of pixels as integers. A.W. Paeth.
-        In "Graphics Gems I", pp 249-256. Morgan Kaufmann, 1990.
-        (4) Dirty Pixels. J. Blinn.
-        In "Jim Blinn's corner: Dirty Pixels", pp 47-57. Morgan Kaufmann, 1998.
-
+        References:
+            1.  DirectX data conversion rules.
+                http://msdn.microsoft.com/en-us/library/windows/desktop/dd607323%28v=vs.85%29.aspx
+            2,  Data Conversions.
+                In "OpenGL ES 2.0 Specification v2.0.25", pp 7-8. Khronos Group, 2010.
+            3,  Proper treatment of pixels as integers. A.W. Paeth.
+                In "Graphics Gems I", pp 249-256. Morgan Kaufmann, 1990.
+            4,  Dirty Pixels. J. Blinn.
+                In "Jim Blinn's corner: Dirty Pixels", pp 47-57. Morgan Kaufmann, 1998.
         """
         from .imagefuncs import convert
 
@@ -429,16 +425,18 @@ class ImageStackMixin:
         self.each.crop(box)
 
     def show(self):
-        """Pass through to :py:meth:`Stoner.Image.ImageFolder.view`"""
+        """Pass through to :py:meth:`Stoner.Image.ImageFolder.view.`"""
         warnings.warn("show() is depricated in favour of ImageFolder.view()")
         return self.view()
 
 
 class StackAnalysisMixin:
-    """Add some analysis capability to ImageStack. These functions may override
-       ImageFile functions but do them efficiently for a numpy stack of
-       images.
-       """
+
+    """Add some analysis capability to ImageStack. 
+    
+    These functions may override :py:class:`Stoner,Image.ImageFile` functions but do them efficiently for a numpy 
+    stack of images.
+    """
 
     def subtract(self, background, contrast=16, clip_intensity=True):
         """Subtract a background image (or index) from all images in the stack.
@@ -451,6 +449,7 @@ class StackAnalysisMixin:
             background(int or np.ndarray or ImageFile):
                 the background image to subtract. If int is given this is used
                 as an index on the stack.
+
         Keyword Arguments:
             contrast(float):
                 Determines contrast of resulting image

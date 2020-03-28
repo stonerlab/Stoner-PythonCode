@@ -238,7 +238,8 @@ class KerrArray(ImageArray):
         return lim[1] - lim[0]
 
     def float_and_croptext(self):
-        """convert image to float and crop_text
+        """Convert image to float and crop_text.
+        
         Just to group typical functions together
         """
         ret = self.asfloat()
@@ -246,14 +247,18 @@ class KerrArray(ImageArray):
         return ret
 
     def ocr_metadata(self, field_only=False):
-        """Use image recognition to try to pull the metadata numbers off the image
-        Requirements: This function uses tesseract to recognise the image, therefore
-        tesseract file1 file2 must be valid on your command line.
-        Install tesseract from
-        https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar
+        """Use image recognition to try to pull the metadata numbers off the image.
+        
+        Requirements: 
+            This function uses tesseract to recognise the image, therefore
+            tesseract file1 file2 must be valid on your command line.
+            Install tesseract from
+            https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar
+        
         KeywordArguments:
             field_only(bool):
                 only try to return a field value
+        
         Returns:
             metadata: dict
                 updated metadata dictionary

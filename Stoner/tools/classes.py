@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Useful Utility classes"""
+"""Useful Utility classes."""
 
 __all__ = ["attributeStore", "typedList", "Options", "get_option", "set_option"]
 
@@ -144,7 +144,7 @@ class typedList(MutableSequence):
 
 
 def get_option(name):
-    """Return the option value"""
+    """Return the option value."""
     if name not in _options.keys():
         raise IndexError("{} is not a valid package option".format(name))
     return _options[name]
@@ -179,9 +179,11 @@ class Options:
     """Dead simple class to allow access to package options."""
 
     def __init__(self):
+        """Options class wraps the get/set_option calls into an object orientated interface."""
         self._defaults = copy.copy(_options)
 
     def __setattr__(self, name, value):
+        """Set an option value."""
         if name.startswith("_"):
             return super(Options, self).__setattr__(name, value)
         if name not in _options:
@@ -191,19 +193,23 @@ class Options:
         set_option(name, value)
 
     def __getattr__(self, name):
+        """Lookup an option value."""
         if name not in _options:
             raise AttributeError("{} is not a recognised option.".format(name))
         return get_option(name)
 
     def __delattr__(self, name):
+        """Clear and Option value back to defaults."""
         if name not in _options:
             raise AttributeError("{} is not a recognised option.".format(name))
         set_option(name, self.defaults[name])
 
     def __dir__(self):
+        """Return a list of the aviailable options."""
         return list(_options.keys())
 
     def __repr__(self):
+        """Standard text representation of Options class."""
         s = "Stoner Package Options\n"
         s += "~~~~~~~~~~~~~~~~~~~~~~\n"
         for k in dir(self):

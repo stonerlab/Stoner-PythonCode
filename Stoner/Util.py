@@ -18,17 +18,21 @@ from .analysis.fitting.models.generic import linear
 
 
 def _step(x, m, c, h):
-    """
-    Simple sloping step function for fitting to the extrema of a hysteresis loop.
+    """Simple sloping step function for fitting to the extrema of a hysteresis loop.
 
     Args:
-        x (array-like): Field (x) data of loop.
-        m (float): susceptibility(slopee) of loop.
-        c (float): vertical offset of loop.
-        h (float): Saturatted moement (height) of loop.
+        x (array-like): 
+            Field (x) data of loop.
+        m (float): 
+            susceptibility(slopee) of loop.
+        c (float): 
+            vertical offset of loop.
+        h (float): 
+            Saturatted moement (height) of loop.
 
     Returns:
-        y (Tarray-like): Calculated moment of loop.
+        y (Tarray-like): 
+            Calculated moment of loop.
     """
 
     mid = (x.max() + x.min()) / 2.0
@@ -49,10 +53,12 @@ def _up_down(data):
     rather than the read-back value.
 
     Args:
-        data (Data): DataFile like object with x and y columns set
+        data (Data): 
+            DataFile like object with x and y columns set
 
     Returns:
-        (Data, Data): Tuple of two DataFile like instances for the rising and falling data.
+        (Data, Data): 
+            Tuple of two DataFile like instances for the rising and falling data.
     """
     # Calculate x span and mid-point for working out limits to search for maxima.
     lx, hx = data.span(data.setas.xcol)
@@ -113,7 +119,8 @@ def split_up_down(data, col=None, folder=None):
             rising and falling files to groups of this DataFolder, otherwise create a new one
 
     Returns:
-        (:py:class:`Sonter.Folder.DataFolder`): with two groups, rising and falling
+        (:py:class:`Sonter.Folder.DataFolder`): 
+            with two groups, rising and falling
     """
     a = make_Data(data)
     if col is None:
@@ -171,7 +178,8 @@ def ordinal(value):
             Number to be written as an ordinal string
 
     Return:
-        (str): Ordinal String such as '1st','2nd' etc.
+        (str): 
+            Ordinal String such as '1st','2nd' etc.
     """
     if not isinstance(value, int):
         raise ValueError

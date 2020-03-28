@@ -40,7 +40,7 @@ def __add_core__(result, other):
 
 
 def __sub_core__(result, other):
-    """Additional logic to check for match to basenames,"""
+    """Additional logic to check for match to basenames."""
     if isinstance(other, string_types):
         if other in list(result.basenames) and path.join(result.directory, other) in list(result.ls):
             other = path.join(result.directory, other)
@@ -56,6 +56,7 @@ def _loader(name, loader=None, typ=None, directory=None):
 
 
 class DiskBasedFolderMixin:
+
     """A Mixin class that implmenets reading metadataObjects from disc.
 
     Attributes:
@@ -625,10 +626,10 @@ class DataMethodsMixin:
 
 
 class PlotMethodsMixin:
+
     """A Mixin for :py:class:`Stoner.folders.core.baseFolder` with extra methods for plotting lots of files.
 
     Example:
-
         .. plot:: samples/plot-folder-test.py
             :include-source:
             :outname:  plotfolder

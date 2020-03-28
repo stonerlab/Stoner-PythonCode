@@ -82,19 +82,19 @@ def __sub_core__(result, other):
 class ImageArray(np.ma.MaskedArray, metadataObject):
 
     """A numpy array like class with a metadata parameter and pass through to skimage methods.
-
+    
     ImageArray is for manipulating images stored as a 2d numpy array.
     It is built to be almost identical to a numpy array except for one extra
     parameter which is the metadata. This stores information about the image
     in a dictionary object for later retrieval.
     All standard numpy functions should work as normal and casting two types
     together should yield a ImageArray type (ie. ImageArray+np.ndarray=ImageArray)
-
+    
     In addition any function from skimage should work and return a ImageArray.
     They can be called as eg. im=im.gaussian(sigma=2). Don't include the module
     name, just the function name (ie not filters.gaussian). Also omit the first
     image argument required by skimage.
-
+    
     Attributes:
         metadata (dict):
             dictionary of metadata for the image
@@ -102,33 +102,32 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             copy of self
         max_box (tuple):
             coordinate extent (xmin,xmax,ymin,ymax)
-
-
+    
+    
     For clarity it should be noted that any function will not alter the current
     instance, it will clone it first then return the clone after performing the
     function on it.
-
-   Note:
-
-        For arrays the indexing is (row, column). However the normal way to index
-        an image would be to do (horizontal, vert), which is the opposite.
-        In ImageArray the coordinate system is chosen similar to skimage. y points
-        down x points right and the origin is in the top left corner of the image.
-        When indexing the array therefore you need to give it (y,x) coordinates
-        for (row, column).::
-
-             ----> x (column)
-            |
-            |
-            v
-            y (row)
-
-        eg I want the 4th pixel in the horizontal direction and the 10th pixel down
-        from the top I would ask for ImageArray[10,4]
-
-        but if I want to translate the image 4 in the x direction and 10 in the y
-        I would call im=im.translate((4,10))
-
+    
+    Note:
+    
+         For arrays the indexing is (row, column). However the normal way to index
+         an image would be to do (horizontal, vert), which is the opposite.
+         In ImageArray the coordinate system is chosen similar to skimage. y points
+         down x points right and the origin is in the top left corner of the image.
+         When indexing the array therefore you need to give it (y,x) coordinates
+         for (row, column).::
+    
+              ----> x (column)
+             |
+             |
+             v
+             y (row)
+    
+         eg I want the 4th pixel in the horizontal direction and the 10th pixel down
+         from the top I would ask for ImageArray[10,4]
+    
+         but if I want to translate the image 4 in the x direction and 10 in the y
+         I would call im=im.translate((4,10))
     """
 
     # Proxy attributess for storing imported functions. Only do the import when needed
@@ -532,7 +531,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     # function generator
     # ==============================================================
     def __dir__(self):
-        """Implement code for dir()"""
+        """Implement code for dir() to include proxy functions."""
         proxy = set(list(self._funcs.keys()))
         parent = set(dir(super(ImageArray, self)))
         return sorted(list(proxy | parent))
@@ -550,7 +549,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         The callable is then passed to self._func_generator for wrapping into a
         'on the fly' method of this class.
 
-        TODO:
+        Todo:
             An alternative nested attribute system could be something like
             http://stackoverflow.com/questions/31174295/getattr-and-setattr-on-nested-objects
             might be cool sometime.
@@ -641,7 +640,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return {"numpy": ret, "ImageArray": {"metadata": self.metadata}}
 
     def __setstate__(self, state):
-        """Help with pickling ImageArrays"""
+        """Help with pickling ImageArrays."""
         original = state.pop("numpy", tuple())
         local = state.pop("ImageArray", {})
         metadata = local.pop("metadata", {})
@@ -812,7 +811,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return self
 
     def asint(self, dtype=np.uint16):
-        """convert the image to unsigned integer format.
+        """Convert the image to unsigned integer format.
 
         May raise warnings about loss of precision.
         """
@@ -906,6 +905,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         Args:
             filename (str):
                 Filename to save file as.
+        
         Keyword Args:
             forcetype(bool):
                 (depricated) if forcetype then preserve data type as best as possible on save.
@@ -1067,7 +1067,7 @@ class ImageFile(metadataObject):
 
     @property
     def data(self):
-        """alias for image[:]. Equivalence to Stoner.data behaviour"""
+        """Alias for image[:]. Equivalence to Stoner.data behaviour."""
         return self.image
 
     @data.setter
@@ -1145,6 +1145,7 @@ class ImageFile(metadataObject):
 
     @metadata.setter
     def metadata(self, value):
+        """Set the metadata attribute."""
         self.image.metadata = value
 
     ###################################################################################################################
@@ -1192,7 +1193,7 @@ class ImageFile(metadataObject):
             self.metadata.__delitem__(n)
 
     def __getattr__(self, n):
-        """"Handles attriobute access."""
+        """Handles attriobute access."""
         try:
             ret = getattr(super(ImageFile, self), n)
         except AttributeError:
@@ -1209,37 +1210,37 @@ class ImageFile(metadataObject):
             super(ImageFile, self).__setattr__(n, v)
 
     def __add__(self, other):
-        """Implement the subtract operator"""
+        """Implement the subtract operator."""
         result = self.clone
         result = __add_core__(result, other)
         return result
 
     def __iadd__(self, other):
-        """Implement the inplace subtract operator"""
+        """Implement the inplace subtract operator."""
         result = self
         result = __add_core__(result, other)
         return result
 
     def __truediv__(self, other):
-        """Implement the divide operator"""
+        """Implement the divide operator."""
         result = self.clone
         result = __div_core__(result, other)
         return result
 
     def __itruediv__(self, other):
-        """Implement the inplace divide operator"""
+        """Implement the inplace divide operator."""
         result = self
         result = __div_core__(result, other)
         return result
 
     def __sub__(self, other):
-        """Implement the subtract operator"""
+        """Implement the subtract operator."""
         result = self.clone
         result = __sub_core__(result, other)
         return result
 
     def __isub__(self, other):
-        """Implement the inplace subtract operator"""
+        """Implement the inplace subtract operator."""
         result = self
         result = __sub_core__(result, other)
         return result
@@ -1260,7 +1261,7 @@ class ImageFile(metadataObject):
         return ret
 
     def __invert__(self):
-        """Equivalent to clockwise rotation"""
+        """Equivalent to clockwise rotation."""
         return self.CW
 
     def __floordiv__(self, other):
@@ -1327,9 +1328,9 @@ class ImageFile(metadataObject):
         self["y_vector"] = np.unique(Y)
 
     def _func_generator(self, workingfunc):
-        """ImageFile generator.
+        """Factory to make wrappers for ImageFile functions.
 
-        Note:
+        Notes:
             The wrapped functions take additional keyword arguments that are stripped off from the call.
 
         Keyword Arguments:
@@ -1347,7 +1348,6 @@ class ImageFile(metadataObject):
         @wraps(workingfunc)
         def gen_func(*args, **kargs):
             """Wrap a called method to capture the result back into the calling object."""
-
             box = kargs.pop("_box", None)
             if len(args) > 0:
                 args = list(args)
@@ -1390,6 +1390,7 @@ class ImageFile(metadataObject):
         return fix_signature(gen_func, workingfunc)
 
     def __repr__(self):
+        """Implements standard representation for text based consoles."""
         return "{}({}) of shape {} ({}) and {} items of metadata".format(
             self.filename, type(self), self.shape, self.image.dtype, len(self.metadata)
         )
@@ -1419,7 +1420,7 @@ class ImageFile(metadataObject):
                 format to save data as. 'tif', 'png' or 'npy' or a list of them. If not included will guess from
                 filename.
 
-        notes:
+        Notes:
             Metadata will be preserved in .png and .tif format.
 
             fmt can be 'png', 'npy', 'tif', 'tiff'  or a list of more than one of those.

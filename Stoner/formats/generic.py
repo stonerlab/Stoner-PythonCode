@@ -133,7 +133,7 @@ class JustNumbersFile(CSVFile):
 
 class KermitPNGFile(Core.DataFile):
 
-    """Loads PNG files with additional metadata embedded in them and extracts as metadata"""
+    """Loads PNG files with additional metadata embedded in them and extracts as metadata."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::

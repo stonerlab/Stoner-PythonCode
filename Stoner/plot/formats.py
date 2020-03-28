@@ -58,7 +58,7 @@ class TexFormatter(Formatter):
     rather than using E notation."""
 
     def __call__(self, value, pos=None):
-        """Return the value ina  suitable texable format"""
+        """Return the value ina  suitable texable format."""
         if value is None or np.isnan(value):
             ret = ""
         elif value != 0.0:

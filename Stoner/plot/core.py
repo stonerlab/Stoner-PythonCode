@@ -1866,7 +1866,7 @@ class PlotMixin:
         return fig
 
     def subplot(self, *args, **kargs):
-        """Pass throuygh for plt.subplot().
+        """Pass throuygh for :py:func:`matplotlib.pyplot.subplot`.
 
         Args:
             rows (int):

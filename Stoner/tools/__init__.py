@@ -77,7 +77,7 @@ operator = {
 
 @cached
 def make_Data(*args, **kargs):
-    """Return an instance of Stoner.Data passig through constructor arguments
+    """Return an instance of Stoner.Data passig through constructor arguments.
 
     Calling make_Data(None) is a speical case to return the Data class ratther than an instance
     """

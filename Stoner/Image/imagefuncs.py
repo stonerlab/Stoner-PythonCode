@@ -465,7 +465,7 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50, box=None, do_shi
 
 
 def subtract_image(im, background, contrast=16, clip=True, offset=0.5):
-    """subtract a background image from the ImageArray
+    """Subtract a background image from the ImageArray.
 
     Multiply the contrast by the contrast parameter.
     If clip is on then clip the intensity after for the maximum allowed data range.
@@ -974,7 +974,7 @@ def translate_limits(im, translation):
 
 
 def plot_histogram(im, bins=256):
-    """plot the histogram and cumulative distribution for the image"""
+    """Plot the histogram and cumulative distribution for the image."""
     hist, bins = np.histogram(im, bins)
     cum, bins = im.cumulative_distribution(nbins=bins)
     cum = cum * np.max(hist) / np.max(cum)
