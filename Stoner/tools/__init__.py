@@ -26,13 +26,11 @@ __all__ = [
     "set_option",
 ]
 from collections.abc import Iterable, MutableSequence
-import re
 import inspect
 from copy import deepcopy
-import copy
 from importlib import import_module
 
-from numpy import log10, floor, abs, logical_and, isnan, round, ndarray, dtype  # pylint: disable=redefined-builtin
+from numpy import log10, floor, logical_and, isnan, round, ndarray, dtype  # pylint: disable=redefined-builtin
 
 try:
     from memoization import cached
@@ -43,8 +41,8 @@ except ImportError:
         return func
 
 
-from ..compat import string_types, bytes2str
-from .classes import attributeStore as AttributeStore, typedList, Options as _Options, get_option, set_option
+from ..compat import bytes2str
+from .classes import attributeStore as AttributeStore, typedList, Options, get_option, set_option
 from .tests import all_size, all_type, isAnyNone, isComparable, isIterable, isLikeList, isNone, isProperty, isTuple
 from .formatting import format_error, format_val, quantize, html_escape, tex_escape
 

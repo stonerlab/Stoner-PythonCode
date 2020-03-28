@@ -140,10 +140,10 @@ argument-rgx=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,15})?$
 argument-name-hint=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,15})?$
 
 # Regular expression matching correct class attribute names
-class-attribute-rgx=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,20})?|(__.*__))$
+class-attribute-rgx=([A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,20})?|(__.*__))$
 
 # Naming hint for class attribute names
-class-attribute-name-hint=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,20})?|(__.*__))$
+class-attribute-name-hint=([A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,20})?|(__.*__))$
 
 # Regular expression matching correct inline iteration names
 inlinevar-rgx=[A-Za-z_][A-Za-z0-9_]*$
