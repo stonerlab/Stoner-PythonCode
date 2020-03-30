@@ -2250,7 +2250,7 @@ class DataFile(metadataObject):
             else:
                 raise StonerUnrecognisedFormat(
                     f"Ran out of subclasses to try and load {filename} as."
-                    + f" Recognised filetype are:{list(DataFile.subclasses.keys())}"  # pylint: disa ble=E1101
+                    + f" Recognised filetype are:{list(DataFile.subclasses.keys())}"  # pylint: disable=E1101
                 )
         else:
             if filetype is None:

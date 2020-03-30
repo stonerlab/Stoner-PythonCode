@@ -45,7 +45,7 @@ def literal_eval(string):
     On the first call this will create a new asteval.Interpreter() instance and
     preload some key modules into the symbol table.
     """
-    global _asteval_interp  # Ugly!
+    global _asteval_interp  # pylint: disable=W0603 Ugly!
     if _asteval_interp is None:
         _asteval_interp = asteval.Interpreter(
             usersyms={"np": np, "re": re, "NaN": NaN, "nan": NaN, "None": None, "datetime": datetime}

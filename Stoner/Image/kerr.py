@@ -294,7 +294,7 @@ class KerrArray(ImageArray):
                 )
 
             metadata = {}  # now go through and process all keys
-            for key in text_areas.keys():
+            for key in text_areas:
                 im = self.crop(box=text_areas[key], copy=True)
                 metadata[key] = self._tesseract_image(im, key)
             metadata["ocr_scalebar_length_pixels"] = sb_length

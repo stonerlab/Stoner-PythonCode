@@ -205,7 +205,7 @@ def cfg_data_from_ini(inifile, filename=None, **kargs):
     if isinstance(inifile, string_types):
         config.read(inifile)
     elif isinstance(inifile, IOBase):
-        config.readfp(inifile)
+        config.read_file(inifile)
     if not config.has_section("Data"):
         raise RuntimeError("Configuration file lacks a [Data] section to describe data.")
 
@@ -276,7 +276,7 @@ def cfg_model_from_ini(inifile, model=None, data=None):
     if isinstance(inifile, string_types):
         config.read(inifile)
     elif isinstance(inifile, IOBase):
-        config.readfp(inifile)
+        config.read_file(inifile)
 
     if model is None:  # Check to see if config file specified a model
         try:

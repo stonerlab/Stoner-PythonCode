@@ -28,7 +28,7 @@ from .core.data import Data
 from .Folders import DataFolder
 from .Image import ImageFile, ImageFolder
 
-from .tools import set_option, get_option, _Options
+from .tools import set_option, get_option, Options as _Options
 
 Options = _Options()
 
