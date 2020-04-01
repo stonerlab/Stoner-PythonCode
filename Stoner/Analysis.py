@@ -9,7 +9,8 @@ import numpy.ma as ma
 from scipy.integrate import cumtrapz
 from scipy.optimize import curve_fit
 
-from Stoner.tools import isIterable, isTuple, string_types
+from .tools import isIterable, isTuple
+from .compat import string_types
 from .core.exceptions import assertion
 from .analysis.utils import threshold as _threshold, ApplyAffineTransform, GetAffineTransform
 
