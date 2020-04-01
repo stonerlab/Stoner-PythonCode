@@ -15,7 +15,7 @@ import PIL
 import numpy as np
 
 import Stoner.Core as Core
-from Stoner.compat import str2bytes, hyperspy_ok
+from Stoner.compat import str2bytes, Hyperspy_ok
 from Stoner.core.base import string_to_type
 
 
@@ -284,7 +284,7 @@ try:  # Optional tdms support
 except ImportError:
     TDMSFile = Core.DataFile
 
-if hyperspy_ok:
+if Hyperspy_ok:
     import hyperspy.api as hs
 
     class HyperSpyFile(Core.DataFile):

@@ -76,7 +76,7 @@ def _dtype2(kind, bits, itemsize=1):
 
 
 def _scale(a, n, m, dtypeobj_in, dtypeobj, copy=True):
-    """cale unsigned/positive integers from n to m bits.
+    """Scaleunsigned/positive integers from n to m bits.
 
     Numbers can be represented exactly only if m is a multiple of n
     Output array is of same kind as input."""
@@ -211,6 +211,6 @@ def build_funcs_proxy():
 
 
 def changes_size(func):
-    """Method decorator to mark a function as one that changes the size of the ImageArray."""
+    """Mark a function as one that changes the size of the ImageArray."""
     func.changes_size = True
     return func

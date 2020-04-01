@@ -144,12 +144,12 @@ class MaskProxy:
 
     @property
     def data(self):
-        """Get the underlying data as an array - compatibility accessor"""
+        """Get the underlying data as an array - compatibility accessor."""
         return self[:]
 
     @property
     def image(self):
-        """Get the underlying data as an array - compatibility accessor"""
+        """Get the underlying data as an array - compatibility accessor."""
         return self[:]
 
     @property
@@ -174,7 +174,7 @@ class MaskProxy:
         self._IA.mask.__delitem__(index)
 
     def __getattr__(self, name):
-        """Checks name against self._IA._funcs and constructs a method to edit the mask as an image."""
+        """Check name against self._IA._funcs and constructs a method to edit the mask as an image."""
         if hasattr(self._IA.mask, name):
             return getattr(self._IA.mask, name)
         if not ".*__{}$".format(name) in self._IA._funcs:

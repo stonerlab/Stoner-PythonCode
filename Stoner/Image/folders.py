@@ -17,7 +17,7 @@ from . import ImageFile
 
 
 def _load_ImageArray(f, **kargs):
-    """Simple meothd to load an image array."""
+    """Load an image array."""
     kargs.pop("img_num", None)
     return ImageArray(f, **kargs)
 
@@ -58,7 +58,7 @@ class _generator:
         return self
 
     def __next__(self):
-        """Iterator accessor.
+        """Iterate over folder.
 
         Raises:
             StopIteration: Done iterating through the folder.
@@ -142,7 +142,7 @@ class ImageFolderMixin:
 
     @property
     def images(self):
-        """A generator that iterates over just the images in the Folder."""
+        """Iterate over just the images in the Folder."""
         return _generator(self)
 
     def _getattr_proxy(self, item):
@@ -159,7 +159,7 @@ class ImageFolderMixin:
         meth = getattr(self.instance, item, None)
 
         def _wrapper_(*args, **kargs):
-            """Wraps a call to the metadataObject type for magic method calling.
+            """Wrap a call to the metadataObject type for magic method calling.
 
             Keyword Arguments:
                 _return (index types or None):
@@ -243,7 +243,7 @@ class ImageFolderMixin:
         return self
 
     def apply_all(self, func, *args, **kargs):
-        """Apply function to all images in the stack
+        """Apply function to all images in the stack.
 
         Args:
             func(string or callable):
@@ -352,7 +352,7 @@ class ImageFolderMixin:
         return sumsqdev.view(ImageArray)
 
     def stderr(self, weights=None):
-        """Standard error in the stack average."""
+        """Calculate standard error in the stack average."""
         serr = self.stddev(weights=weights) / np.sqrt(len(self))
         return serr
 
@@ -405,9 +405,7 @@ class ImageFolderMixin:
         return self
 
     def view(self):
-        """Create a matplotlib animated view of the contents.
-
-        """
+        """Create a matplotlib animated view of the contents."""
         cv = CollectionViewer(self.images)
         cv.show()
         return cv

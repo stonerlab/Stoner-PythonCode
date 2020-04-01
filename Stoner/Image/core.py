@@ -82,19 +82,19 @@ def __sub_core__(result, other):
 class ImageArray(np.ma.MaskedArray, metadataObject):
 
     """A numpy array like class with a metadata parameter and pass through to skimage methods.
-    
+
     ImageArray is for manipulating images stored as a 2d numpy array.
     It is built to be almost identical to a numpy array except for one extra
     parameter which is the metadata. This stores information about the image
     in a dictionary object for later retrieval.
     All standard numpy functions should work as normal and casting two types
     together should yield a ImageArray type (ie. ImageArray+np.ndarray=ImageArray)
-    
+
     In addition any function from skimage should work and return a ImageArray.
     They can be called as eg. im=im.gaussian(sigma=2). Don't include the module
     name, just the function name (ie not filters.gaussian). Also omit the first
     image argument required by skimage.
-    
+
     Attributes:
         metadata (dict):
             dictionary of metadata for the image
@@ -102,30 +102,29 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             copy of self
         max_box (tuple):
             coordinate extent (xmin,xmax,ymin,ymax)
-    
-    
+
+
     For clarity it should be noted that any function will not alter the current
     instance, it will clone it first then return the clone after performing the
     function on it.
-    
+
     Note:
-    
          For arrays the indexing is (row, column). However the normal way to index
          an image would be to do (horizontal, vert), which is the opposite.
          In ImageArray the coordinate system is chosen similar to skimage. y points
          down x points right and the origin is in the top left corner of the image.
          When indexing the array therefore you need to give it (y,x) coordinates
          for (row, column).::
-    
+
               ----> x (column)
              |
              |
              v
              y (row)
-    
+
          eg I want the 4th pixel in the horizontal direction and the 10th pixel down
          from the top I would ask for ImageArray[10,4]
-    
+
          but if I want to translate the image 4 in the x direction and 10 in the y
          I would call im=im.translate((4,10))
     """
@@ -149,7 +148,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         We're using __new__ rather than __init__ to imitate a numpy array as
         close as possible.
         """
-
         if len(args) not in [0, 1]:
             raise ValueError("ImageArray expects 0 or 1 arguments, {} given".format(len(args)))
 
@@ -254,7 +252,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return ret
 
     def __init__(self, *args, **kwargs):
-        """Constructor method for :py:class:`ImageArray`.
+        """Initialise the ImageArray.
 
         various forms are recognised
 
@@ -480,7 +478,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     @property
     def clone(self):
-        """return a copy of the instance"""
+        """Return a copy of the instance."""
         ret = ImageArray(np.copy(self))
         self._optinfo["mask"] = self.mask  # Make sure we've updated our mask record
         for k, v in self._optinfo.items():
@@ -576,7 +574,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return ret
 
     def _func_generator(self, workingfunc):
-        """Used by __getattr__ to wrap an arbitary callbable to make it a bound method of this class.
+        """Wrap an arbitary callbable to make it a bound method of this class.
 
         Args:
             workingfunc (callable):
@@ -598,7 +596,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
         @wraps(workingfunc)
         def gen_func(*args, **kwargs):
-            """Wrapped magic proxy function call."""
+            """Wrap magic proxy function call."""
             transpose = getattr(workingfunc, "transpose", False)
             if transpose:
                 change = self.clone.T
@@ -626,7 +624,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     @property
     def draw(self):
-        """DrawProxy is an opbject for accessing the skimage draw sub module."""
+        """Access the DrawProxy opbject for accessing the skimage draw sub module."""
         return DrawProxy(self)
 
     # ==============================================================================
@@ -634,7 +632,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     # ==============================================================================
 
     def __getstate__(self):
-        """Help with pickling ImageArrays"""
+        """Help with pickling ImageArrays."""
         ret = super(ImageArray, self).__getstate__()
 
         return {"numpy": ret, "ImageArray": {"metadata": self.metadata}}
@@ -824,27 +822,28 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return ret
 
     def save(self, filename=None, **kargs):
-        """Saves the image into the file 'filename'.
-
-        Metadata will be preserved in .png and .tif format.
-
-        fmt can be 'png', 'npy', 'tif', 'tiff'  or a list of more than one of those.
-        tif is recommended since metadata is lost in .npy format but data is
-        converted to integer format for png so that definition cannot be
-        saved.
+        """Save the image into the file 'filename'.
 
         Args:
             filename (string, bool or None):
                 Filename to save data as, if this is None then the current filename for the object is used
                 If this is not set, then then a file dialog is used. If filename is False then a file dialog is forced.
 
-        Keyword args:
+        Keyword Args:
             fmt (string or list):
                 format to save data as. 'tif', 'png' or 'npy' or a list of them. If not included will guess from
                 filename.
             forcetype (bool):
                 integer data will be converted to np.float32 type for saving. if forcetype then preserve and save as
                 int type (will be unsigned).
+
+        Notes:
+            Metadata will be preserved in .png and .tif format.
+
+            fmt can be 'png', 'npy', 'tif', 'tiff'  or a list of more than one of those.
+            tif is recommended since metadata is lost in .npy format but data is
+            converted to integer format for png so that definition cannot be
+            saved.
 
         Since Stoner.Image is meant to be a general 2d array often with negative
         and floating point data this poses a problem for saving images. Images
@@ -882,6 +881,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     def save_png(self, filename):
         """Save the ImageArray with metadata in a png file.
+
         This can only save as 8bit unsigned integer so there is likely
         to be a loss of precision on floating point data"""
         pngname = os.path.splitext(filename)[0] + ".png"
@@ -905,7 +905,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         Args:
             filename (str):
                 Filename to save file as.
-        
+
         Keyword Args:
             forcetype(bool):
                 (depricated) if forcetype then preserve data type as best as possible on save.
@@ -959,26 +959,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     ############################################################################################################
     ############## Depricated Methods ##########################################################################
-
-    # def box(self, *args, **kargs):
-    #     """Alias for :py:meth:`ImageArray.crop`"""
-    #     warnings.warn("The box method was replaced by crop and will raise and error in future versions.")
-    #     return self.crop(*args, **kargs)
-
-    # def crop_image(self, *args, **kargs):
-    #     """Back compatability alias for :py:meth:`ImageArray.crop`"""
-    #     warnings.warn("The crop_image method was replaced by crop and will raise and error in future versions.")
-    #     return self.crop(*args, **kargs)
-
-    # def convert_float(self, clip_neg=True):
-    #     """Deproicated compatability. :py:meth:`ImageArray.asfloat` preferred"""
-    #     warnings.warn("The convert_float method was replaced by asfloat and will raise and error in future versions.")
-    #     return self.asfloat(normalise=False, clip_negative=clip_neg)
-
-    # def convert_int(self):
-    #     """Depricated compatability meothd. :py:meth:`ImageArray.asint` preferred"""
-    #     warnings.warn("The convert_int method was replaced by asint and will raise and error in future versions.")
-    #     return self.asint()
 
 
 class ImageFile(metadataObject):
@@ -1072,7 +1052,7 @@ class ImageFile(metadataObject):
 
     @data.setter
     def data(self, value):
-        """Simple minded pass through."""
+        """Access the image data by data attribute."""
         self.image = value
 
     @property
@@ -1150,8 +1130,9 @@ class ImageFile(metadataObject):
 
     ###################################################################################################################
     ############################# Special methods #####################################################################
+
     def __getitem__(self, n):
-        """A pass through to ImageArray."""
+        """Pass through to ImageArray."""
         try:
             return self.image.__getitem__(n)
         except KeyError:
@@ -1160,7 +1141,7 @@ class ImageFile(metadataObject):
             return self.metadata.__getitem__(n)
 
     def __setitem__(self, n, v):
-        """A Pass through to ImageArray."""
+        """Pass through to ImageArray."""
         if isinstance(n, string_types):
             self.metadata.__setitem__(n, v)
         else:
@@ -1174,26 +1155,26 @@ class ImageFile(metadataObject):
         return list(parent | this | image)
 
     def __getstate__(self):
-        """Helper for pickling ImageFiles."""
+        """Record state for pickling ImageFiles."""
         ret = copy(self.__dict__)
         ret.update({"metadata": self.metadata})
         return ret
 
     def __setstate__(self, state):
-        """Helper for pickling ImageFiles."""
+        """Write state for unpickling ImageFiles."""
         metadata = state.pop("metadata", {})
         self.__dict__.update(state)
         self.metadata.update(metadata)
 
     def __delitem__(self, n):
-        """A Pass through to ImageArray."""
+        """Pass through to ImageArray."""
         try:
             self.image.__delitem__(n)
         except KeyError:
             self.metadata.__delitem__(n)
 
     def __getattr__(self, n):
-        """Handles attriobute access."""
+        """Handle attriobute access."""
         try:
             ret = getattr(super(ImageFile, self), n)
         except AttributeError:
@@ -1203,7 +1184,7 @@ class ImageFile(metadataObject):
         return ret
 
     def __setattr__(self, n, v):
-        """Handles setting attributes."""
+        """Handle setting attributes."""
         if not hasattr(self, n) and n not in getattr(self.image.__class__, "_protected_attrs", []):
             setattr(self._image, n, v)
         else:
@@ -1328,7 +1309,7 @@ class ImageFile(metadataObject):
         self["y_vector"] = np.unique(Y)
 
     def _func_generator(self, workingfunc):
-        """Factory to make wrappers for ImageFile functions.
+        """Make wrappers for ImageFile functions.
 
         Notes:
             The wrapped functions take additional keyword arguments that are stripped off from the call.
@@ -1390,7 +1371,7 @@ class ImageFile(metadataObject):
         return fix_signature(gen_func, workingfunc)
 
     def __repr__(self):
-        """Implements standard representation for text based consoles."""
+        """Implement standard representation for text based consoles."""
         return "{}({}) of shape {} ({}) and {} items of metadata".format(
             self.filename, type(self), self.shape, self.image.dtype, len(self.metadata)
         )
@@ -1408,14 +1389,14 @@ class ImageFile(metadataObject):
         return ret
 
     def save(self, filename=None, **kargs):
-        """Saves the image into the file 'filename'.
+        """Save the image into the file 'filename'.
 
         Args:
             filename (string, bool or None):
                 Filename to save data as, if this is None then the current filename for the object is used
                 If this is not set, then then a file dialog is used. If filename is False then a file dialog is forced.
 
-        Keyword args:
+        Keyword Args:
             fmt (string or list):
                 format to save data as. 'tif', 'png' or 'npy' or a list of them. If not included will guess from
                 filename.
@@ -1427,7 +1408,6 @@ class ImageFile(metadataObject):
             tif is recommended since metadata is lost in .npy format but data is
             converted to integer format for png so that definition cannot be
             saved.
-
         """
         # catch before metadataObject tries to take over.
         self.image.save(filename, **kargs)

@@ -37,9 +37,7 @@ pattern_file = os.path.join(os.path.dirname(__file__), "kerr_patterns.txt")
 
 
 def _parse_text(text, key=None):
-    """Attempt to parse text which has been recognised from an image
-    if key is given specific hints may be applied
-    """
+    """Parse text which has been recognised from an image if key is given specific hints may be applied."""
     # strip any internal white space
     text = [t.strip() for t in text.split()]
     text = "".join(text)
@@ -94,9 +92,10 @@ class KerrArray(ImageArray):
     _test_keys = ["X-B-2d", "field: units"]  # minimum keys in data to assert that it is a standard file output
 
     def __init__(self, *args, **kargs):
-        """Constructor for KerrArray which subclasses ImageArray.
+        """Initialise KerrArray as a subclasses ImageArray.
 
         Extra keyword arguments accepted are given below.
+
         Keyword Arguments:
             reduce_metadata(bool):
                 if True reduce the metadata to useful bits and do some processing on it
@@ -137,7 +136,7 @@ class KerrArray(ImageArray):
         return _tesseractable
 
     def crop_text(self, copy=False):
-        """Crop the bottom text area from a standard Kermit image
+        """Crop the bottom text area from a standard Kermit image.
 
         KeywordArguments:
             copy(bool):
@@ -180,7 +179,8 @@ class KerrArray(ImageArray):
         return self.metadata
 
     def _tesseract_image(self, im, key):
-        """ocr image with tesseract tool.
+        """Ocr image with tesseract tool.
+
         im is the cropped image containing just a bit of text
         key is the metadata key we're trying to find, it may give a
         hint for parsing the text generated.
@@ -225,7 +225,7 @@ class KerrArray(ImageArray):
         return data
 
     def _get_scalebar(self):
-        """Get the length in pixels of the image scale bar"""
+        """Get the length in pixels of the image scale bar."""
         box = (0, 419, 519, 520)  # row where scalebar exists
         im = self.crop(box=box, copy=True)
         im = im.astype(float)
@@ -308,31 +308,28 @@ class KerrArray(ImageArray):
         return self.metadata
 
     def defect_mask(self, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=False):
-        """Tries to create a boolean array which is a mask for typical defects found in Image images.
+        """Try to create a boolean array which is a mask for typical defects found in Image images.
 
         Best for unprocessed raw images. (for subtract images
         see defect_mask_subtract_image)
         Looks for big bright things by thresholding and small and dark defects using
         skimage's corner_fast algorithm
 
-        Parameters
-        ----------
-        thresh float
+        Parameters:
+        thresh (float):
             brighter stuff than this gets removed (after image levelling)
-        corner_thresh float
-            see corner_fast skimage
-        radius:
+        corner_thresh (float):
+            see corner_fast (skimage):
+        radius (float):
             radius of pixels around corners that are added to mask
-
-        return_extra dict
+        return_extra (bool):
             this returns a dictionary with some of the intermediate steps of the
             calculation
 
-        Returns
-        -------
-        totmask ndarray of bool
-            mask
-        info (optional) dict
+        Returns:
+            totmask (ndarray of bool):
+                mask
+        info (*optional* dict):
             dictionary of intermediate calculation steps
         """
         im = self.asfloat()
@@ -360,17 +357,16 @@ class KerrArray(ImageArray):
         return totmask
 
     def defect_mask_subtract_image(self, threshmin=0.25, threshmax=0.9, denoise_weight=0.1, return_extra=False):
-        """Create a mask array for a typical subtract Image image
+        """Create a mask array for a typical subtract Image image.
+
         Uses a denoise algorithm followed by simple thresholding.
 
-        Returns
-        -------
-        totmask: ndarray of bool
-            the created mask
-        info (optional) dict:
-            the intermediate denoised image
+        Returns:
+            totmask (ndarray of bool):
+                the created mask
+            info (*optional* dict):
+                the intermediate denoised image
         """
-
         p = self.denoise_tv_chambolle(weight=denoise_weight)
         submask = p.threshold_minmax(threshmin, threshmax)
         if return_extra:
@@ -420,7 +416,7 @@ class KerrStackMixin:
 
     @property
     def fields(self):
-        """Produces an array of field values from the metadata."""
+        """Produce an array of field values from the metadata."""
         if not hasattr(self, "_field"):
             if "field" not in self.metadata:
                 self._field = np.arange(len(self))
@@ -429,7 +425,7 @@ class KerrStackMixin:
         return self._field
 
     def hysteresis(self, mask=None):
-        """Make a hysteresis loop of the average intensity in the given images
+        """Make a hysteresis loop of the average intensity in the given images.
 
         Keyword Argument:
             mask(ndarray or list):
@@ -457,16 +453,17 @@ class KerrStackMixin:
         return d
 
     def index_to_field(self, index_map):
-        """Convert an image of index values into an image of field values"""
+        """Convert an image of index values into an image of field values."""
         fieldvals = np.take(self.fields, index_map)
         return ImageArray(fieldvals)
 
     def denoise_thresh(self, denoise_weight=0.1, thresh=0.5, invert=False):
-        """apply denoise then threshold images.
+        """Apply denoise then threshold images.
 
-        Return a new MaskStack.
-        True for values greater than thresh, False otherwise
-        else return True for values between thresh and 1
+        Return:
+            (ndarray) MaskStack:
+                True for values greater than thresh, False otherwise
+                else return True for values between thresh and 1
         """
         masks = self.clone
         masks.apply_all("denoise", weight=0.1)
@@ -505,7 +502,7 @@ class KerrStackMixin:
         return mask
 
     def crop_text(self, copy=False):
-        """Crop the bottom text area from a standard Kermit image stack
+        """Crop the bottom text area from a standard Kermit image stack.
 
         Returns:
             (self):
@@ -527,7 +524,7 @@ class KerrStackMixin:
         saturation_white=True,
         extra_info=False,
     ):
-        """produce a map of the switching field at every pixel in the stack.
+        """Produce a map of the switching field at every pixel in the stack.
 
         It needs the stack to start saturated one way and end saturated the other way.
 
@@ -575,7 +572,7 @@ class KerrStackMixin:
 
         Return average of pixel values in the stack.
 
-        Keyword arguments:
+        Keyword Arguments:
             ignore zeros(bool):
                 Weight zero values in an image as 0 in the averaging.
 
@@ -596,10 +593,10 @@ class KerrStackMixin:
 
 class MaskStackMixin:
 
-    """A Mixin for :py:class:`Stoner.Image.ImageStack` but made for stacks of boolean or binary images"""
+    """A Mixin for :py:class:`Stoner.Image.ImageStack` but made for stacks of boolean or binary images."""
 
     def __init__(self, *args, **kargs):
-        """Constructor ensures the data is boolean."""
+        """Ensure the data is boolean."""
         super(MaskStackMixin, self).__init__(*args, **kargs)
         self._stack = self._stack.astype(bool)
 
@@ -662,12 +659,10 @@ class MaskStackMixin:
 
 
 class KerrStack(KerrStackMixin, ImageStack):
-    """Represents a stack of Kerr images."""
 
-    pass
+    """Represent a stack of Kerr images."""
 
 
 class MaskStack(MaskStackMixin, KerrStackMixin, ImageStack):
-    """A set of masks for Kerr images."""
 
-    pass
+    """Represent a set of masks for Kerr images."""

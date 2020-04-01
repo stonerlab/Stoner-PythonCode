@@ -16,7 +16,7 @@ import tempfile
 from Stoner.compat import *
 
 from Stoner import Data,__home__
-from Stoner.compat import hyperspy_ok
+from Stoner.compat import Hyperspy_ok
 from Stoner.Core  import DataFile
 import Stoner.HDF5 as SH
 import Stoner.Zip as SZ
@@ -48,7 +48,7 @@ class FileFormats_test(unittest.TestCase):
         print("Data files {}".format(self.datadir))
         incfiles=[x for x in os.listdir(self.datadir) if os.path.isfile(os.path.join(self.datadir,x)) and not x.endswith("tdms_index")]
 
-        if not hyperspy_ok:
+        if not Hyperspy_ok:
             print("hyperspy too old, skupping emd file for test")
             incfiles.remove("1449 37.0 kx.emd")
 

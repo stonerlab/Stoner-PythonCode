@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Functions for manipulating Kerr (or any other) images
+"""Functions for manipulating Kerr (or any other) images.
 
 All of these functions are accessible through the :class:`ImageArray` attributes e.g.:
 
@@ -103,7 +103,7 @@ def _scale(coord, scale=1.0, to_pixel=True):
 
 
 def adjust_contrast(im, lims=(0.1, 0.9), percent=True):
-    """rescale the intensity of the image.
+    """Rescale the intensity of the image.
 
     Mostly a call through to skimage.exposure.rescale_intensity. The absolute limits of contrast are
     added to the metadata as 'adjust_contrast'
@@ -156,7 +156,6 @@ def _align_imreg_dft(im, ref, **kargs):
 
 def _align_cv2(im, ref, **kargs):
     """Return the translation vector to shirt im to align to ref using the cv2 method."""
-
     im1_gray = ref.convert("uint8", force_copy=True)
     im2_gray = im.convert("uint8", force_copy=True)
 
@@ -263,8 +262,7 @@ def align(im, ref, method="scharr", **kargs):
 
 
 def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
-    """
-    Convert an image to the requested data-type.
+    """Convert an image to the requested data-type.
 
     Warnings are issued in case of precision loss, or when negative values
     are clipped during conversion to unsigned integer types (sign loss).
@@ -495,7 +493,7 @@ def fft(im, shift=True, phase=False):
 
 
 def filter_image(im, sigma=2):
-    """Alias for skimage.filters.gaussian"""
+    """Alias for skimage.filters.gaussian."""
     return im.gaussian(sigma=sigma)
 
 
@@ -552,7 +550,7 @@ def hist(im, *args, **kargs):
 
 
 def imshow(im, **kwargs):
-    """quick plot of image
+    """Quickly plot of image.
 
     Keyword Arguments:
         figure (int, str or matplotlib.figure):
@@ -606,7 +604,7 @@ def imshow(im, **kwargs):
 
 
 def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None, mode="clip"):
-    """Subtract a polynomial background from image
+    """Subtract a polynomial background from image.
 
     Keword Arguments:
         poly_vert (int): fit a polynomial in the vertical direction for the image of order
@@ -726,7 +724,7 @@ def clip_neg(im):
 
 
 def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant", cval=0.0, constrain=True, **kargs):
-    """Wrapper for sckit-image method of the same name to get a line_profile.
+    """Wrap sckit-image method of the same name to get a line_profile.
 
     Parameters:
         img(ImageArray): Image data to take line section of
@@ -783,7 +781,7 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
 
 
 def quantize(im, output, levels=None):
-    """Quantise the image data into fixed levels given by a mapping
+    """Quantise the image data into fixed levels given by a mapping.
 
     Args:
         output (list,array,tuple): Output levels to return.
@@ -845,15 +843,13 @@ def remove_outliers(im, percentiles=(0.01, 0.99), replace=None):
 
 
 def rotate(im, angle, resize=False, center=None, order=1, mode="constant", cval=0, clip=True, preserve_range=False):
-    """Rotate image by a certain angle around its center (pass through to the skimage.transform.warps.rotate function)
+    """Rotate image by a certain angle around its center.
 
     Parameters:
-
         angle  (float):
             Rotation angle in **radians** in clockwise direction.
 
     Keyword Parameters:
-
         resize (bool):
             Determine whether the shape of the output image will be automatically
             calculated, so the complete rotated image exactly fits. Default is
@@ -884,6 +880,8 @@ def rotate(im, angle, resize=False, center=None, order=1, mode="constant", cval=
         (ImageFile/ImageArray):
             Rotated image
 
+    Notes:
+        (pass through to the skimage.transform.warps.rotate function)
     """
     ang = np.rad2deg(-angle)
     data = transform.rotate(
@@ -913,7 +911,7 @@ def span(im):
 
 
 def translate(im, translation, add_metadata=False, order=3, mode="wrap", cval=None):
-    """Translates the image.
+    """Translate the image.
 
     Areas lost by move are cropped, and areas gained are made black (0)
     The area not lost or cropped is added as a metadata parameter
@@ -946,7 +944,7 @@ def translate(im, translation, add_metadata=False, order=3, mode="wrap", cval=No
 
 
 def translate_limits(im, translation):
-    """Find the limits of an image after a translation
+    """Find the limits of an image after a translation.
 
     After using ImageArray.translate some areas will be black,
     this finds the max area that still has original pixels in
@@ -984,7 +982,7 @@ def plot_histogram(im, bins=256):
 
 
 def threshold_minmax(im, threshmin=0.1, threshmax=0.9):
-    """returns a boolean array which is thresholded between threshmin and  threshmax.
+    """Return a boolean array which is thresholded between threshmin and  threshmax.
 
     (ie True if value is between threshmin and threshmax)
     """
@@ -993,10 +991,10 @@ def threshold_minmax(im, threshmin=0.1, threshmax=0.9):
 
 
 def denoise(im, weight=0.1):
-    """just a rename of the skimage restore function"""
+    """Rename the skimage restore function."""
     return im.denoise_tv_chambolle(weight=weight)
 
 
 def do_nothing(self):
-    """Nulop function for testing."""
+    """Nulop function for testing the integration into ImageArray."""
     return self

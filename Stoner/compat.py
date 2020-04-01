@@ -38,7 +38,7 @@ __all__ = [
     "_lmfit",
     "makedirs",
     "cmp",
-    "hyperspy_ok",
+    "Hyperspy_ok",
     "which",
     "commonpath",
 ]
@@ -46,12 +46,12 @@ __all__ = [
 try:
     import hyperspy as hs
 
-    hsv = [int(x) for x in hs.__version__.split(".")]
-    if hsv[0] <= 1 and hsv[1] <= 3:
+    HuperSpyVersion = [int(x) for x in hs.__version__.split(".")]
+    if HuperSpyVersion[0] <= 1 and HuperSpyVersion[1] <= 3:
         raise ImportError("Hyperspy should be version 1.4 or above. Actual version is {}".format(hs.__version__))
-    hyperspy_ok = True
+    Hyperspy_ok = True
 except ImportError:
-    hyperspy_ok = False
+    Hyperspy_ok = False
 
 
 if __vi__[1] < 7:

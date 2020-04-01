@@ -102,6 +102,17 @@ bad-names=foo,bar,baz,toto,tutu,tata
 # the name regexes allow several styles.
 name-group=
 
+module-naming-style=any
+const-naming-style=any
+class-naming-style=any
+function-naming-style=any
+method-naming-style=any
+attr-naming-style=any
+argument-naming-style=any
+variable-naming-style=any
+class-attribute-naming-style=any
+inlinevar-naming-style=any
+
 # Include a hint for the correct naming format with invalid-name
 include-naming-hint=yes
 

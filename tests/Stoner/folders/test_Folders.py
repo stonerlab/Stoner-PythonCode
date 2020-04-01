@@ -47,7 +47,7 @@ class Folders_test(unittest.TestCase):
         skip=1
         datfiles=fnmatch.filter(os.listdir(self.datadir),"*.dat")
         length = len([i for i in os.listdir(self.datadir) if path.isfile(os.path.join(self.datadir,i))])-skip # don't coiunt TDMS index
-        self.assertEqual(length,fl,"Failed to initialise DataFolder from sample data {} {} {} {}".format(fl,length,skip,hyperspy_ok))
+        self.assertEqual(length,fl,"Failed to initialise DataFolder from sample data {} {} {} {}".format(fl,length,skip,Hyperspy_ok))
         self.assertEqual(fldr.index(path.basename(fldr[-1].filename)),fl-1,"Failed to index back on filename")
         self.assertEqual(fldr.count(path.basename(fldr[-1].filename)),1,"Failed to count filename with string")
         self.assertEqual(fldr.count("*.dat"),len(datfiles),"Count with a glob pattern failed")
@@ -199,7 +199,7 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(fldr.mindepth,0,"Minimum depth of flat group n ot equal to zero.")
         fldr/="Loaded as"
         grps=list(fldr.lsgrp)
-        skip=0 if hyperspy_ok else 1
+        skip=0 if Hyperspy_ok else 1
         self.assertEqual(len(grps),26-skip,"Length of lsgrp not as expected: {} not 25".format(len(grps)))
         fldr.debug=True
         self.fldr=fldr
@@ -211,7 +211,7 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(fldr.depth,2,"depth attribute failed.")
         fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
         fldr+=Data()
-        skip=1 if hyperspy_ok else 2
+        skip=1 if Hyperspy_ok else 2
         self.assertEqual(len(list(fldr.loaded)),1,"loaded attribute failed {}".format(len(list(fldr.loaded))))
         self.assertEqual(len(list(fldr.not_empty)),len(fldr)-skip,"not_empty attribute failed.")
         fldr-="Untitled"

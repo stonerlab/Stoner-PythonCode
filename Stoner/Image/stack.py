@@ -16,7 +16,7 @@ AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped
 
 
 def _load_ImageArray(f, **kargs):
-    """Utility method to create and image array."""
+    """Create and image array."""
     kargs.pop("Img_num", None)  # REemove img_num if it exists
     return ImageArray(f, **kargs)
 
@@ -195,7 +195,7 @@ class ImageStackMixin:
         self._stack[:row, :col, ix] = value.data
 
     def __deleter__(self, ix):
-        """Deletes an object from the baseFolder.
+        """Delete an object from the baseFolder.
 
         Parameters:
             ix(str): Index to delete, should be within +- the lengthe length of the folder.
@@ -212,7 +212,7 @@ class ImageStackMixin:
         self._sizes = np.delete(self._sizes, ix, axis=0)
 
     def __clear__(self):
-        """"Clears all stored :py:class:`Stoner.Core.metadataObject` instances stored.
+        """Clear all stored :py:class:`Stoner.Core.metadataObject` instances stored.
 
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
@@ -278,12 +278,12 @@ class ImageStackMixin:
 
     @property
     def imarray(self):
-        """"Produce the 3D stack of images - as [image,x,y]"""
+        """Produce the 3D stack of images - as [image,x,y]."""
         return np.transpose(self._stack, (2, 0, 1))
 
     @imarray.setter
     def imarray(self, value):
-        """"Set the 3D stack of images - as [image,x,y]"""
+        """Set the 3D stack of images - as [image,x,y]."""
         value = np.ma.MaskedArray(np.atleast_3d(value))
         self._stack = np.transpose(value, (1, 2, 0))
 
@@ -351,12 +351,6 @@ class ImageStackMixin:
 
     def asfloat(self, normalise=True, clip=False, clip_negative=False, **kargs):
         """Convert stack to floating point type.
-        Analagous behaviour to ImageFile.asfloat()
-
-        If currently an int type and normalise then floats will be normalised
-        to the maximum allowed value of the int type.
-        If currently a float type then no change occurs.
-        If clip_negative then clip values outside the range 0,1
 
         Keyword Arguments:
             normalise(bool):
@@ -365,6 +359,15 @@ class ImageStackMixin:
                 clip resulting range to values between -1 and 1
             clip_negative(bool):
                 clip range further to 0,1
+
+        Notes:
+            Analagous behaviour to ImageFile.asfloat()
+
+            If currently an int type and normalise then floats will be normalised
+            to the maximum allowed value of the int type.
+            If currently a float type then no change occurs.
+            If clip_negative then clip values outside the range 0,1
+
         """
         if self.imarray.dtype.kind == "f":
             pass
@@ -415,8 +418,7 @@ class ImageStackMixin:
         self.apply_all("correct_drift", ref, threshold=threshold, upsample_factor=upsample_factor, box=box)
 
     def crop_stack(self, box):
-        """Crop the imagestack.
-        Crops to the box given
+        """Crop the imagestack to a box.
 
         Args:
             box(array or list of type int):
@@ -430,7 +432,7 @@ class ImageStackMixin:
         self.each.crop(box)
 
     def show(self):
-        """Pass through to :py:meth:`Stoner.Image.ImageFolder.view.`"""
+        """Pass through to :py:meth:`Stoner.Image.ImageFolder.view`."""
         warnings.warn("show() is depricated in favour of ImageFolder.view()")
         return self.view()
 
