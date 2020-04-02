@@ -26,7 +26,7 @@ regexp_type = (_pattern_type,)
 
 
 def __add_core__(result, other):
-    """Implements the core logic of the addition operator.
+    """Implement the core logic of the addition operator.
 
     Note:
         We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
@@ -51,7 +51,7 @@ def __add_core__(result, other):
 
 
 def __div_core__(result, other):
-    """Implements the divide operator as a grouping function."""
+    """Implement the divide operator as a grouping function."""
     if isinstance(other, string_types + (list, tuple)):
         result.group(other)
         return result
@@ -68,7 +68,7 @@ def __div_core__(result, other):
 
 
 def __sub_core__(result, other):
-    """Implemenets the core logic of the subtraction operator.
+    """Implemenet the core logic of the subtraction operator.
 
     Note:
         We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
@@ -99,7 +99,7 @@ def __sub_core_int__(result, other):
 
 
 def __sub_core_string__(result, other):
-    """Removed named file."""
+    """Remove named file."""
     if other in result.__names__():
         result.__deleter__(other)
     else:
@@ -204,7 +204,7 @@ class baseFolder(MutableSequence):
     _no_defaults = []  # A list of dewfaults to remove becayse they clash with subclass methods etc.
 
     def __new__(cls, *args, **kargs):
-        """The __new__ method is used to create the underlying storage attributes.
+        """Create the underlying storage attributes.
 
         We do this in __new__ so that the mixin classes can access baseFolders state storage before baseFolder does
         further __init__() work.
@@ -295,7 +295,7 @@ class baseFolder(MutableSequence):
 
     @property
     def depth(self):
-        """Gives the maximum number of levels of group below the current objectFolder."""
+        """Give the maximum number of levels of group below the current objectFolder."""
         if len(self.groups) == 0:
             r = 0
         else:
@@ -332,7 +332,7 @@ class baseFolder(MutableSequence):
 
     @groups.setter
     def groups(self, value):
-        """Ensure groups gets set as a :py:class:`regexpDict.`"""
+        """Ensure groups gets set as a :py:class:`regexpDict`."""
         if not isinstance(value, GroupsDict):
             self._groups = GroupsDict(deepcopy(value), base=self)
         else:
@@ -341,7 +341,7 @@ class baseFolder(MutableSequence):
 
     @property
     def instance(self):
-        """A default instance of the type of object in the folder."""
+        """Return a default instance of the type of object in the folder."""
         if self._instance is None:
             self._instance = self._type()
         return self._instance
@@ -368,7 +368,7 @@ class baseFolder(MutableSequence):
 
     @property
     def loaded(self):
-        """Iterates only over those members of the folder in memory."""
+        """Iterate only over those members of the folder in memory."""
         for f in self.__names__():
             val = self.__getter__(f, instantiate=None)
             if isinstance(val, self.type):
@@ -395,20 +395,20 @@ class baseFolder(MutableSequence):
 
     @property
     def lsgrp(self):
-        """Returns a list of the groups as a generator."""
+        """Return a list of the groups as a generator."""
         for k in self.groups:
             yield k
 
     @property
     def metadata(self):
-        """Returns a :py:class:`Stoner.folders.metadata.combined_metadata_pryx` object.
+        """Return a :py:class:`Stoner.folders.metadata.combined_metadata_pryx` object.
 
         This allows for operations on combined metadata."""
         return combined_metadata_proxy(self)
 
     @property
     def mindepth(self):
-        """Gives the minimum number of levels of group below the current objectFolder."""
+        """Give the minimum number of levels of group below the current objectFolder."""
         if len(self.groups) == 0:
             r = 0
         else:
@@ -419,7 +419,7 @@ class baseFolder(MutableSequence):
 
     @property
     def not_empty(self):
-        """An iterator for objectFolder that checks whether the loaded metadataObject objects have any data.
+        """Iterate over the objectFolder that checks whether the loaded metadataObject objects have any data.
 
         Returns the next non-empty DatFile member of the objectFolder.
 
@@ -434,7 +434,7 @@ class baseFolder(MutableSequence):
 
     @property
     def objects(self):
-        """The objects in the folder are stored in a :py:class:`regexpDict`."""
+        """Return the objects in the folder are stored in a :py:class:`regexpDict`."""
         return self._objects
 
     @objects.setter
@@ -473,19 +473,19 @@ class baseFolder(MutableSequence):
 
     @property
     def trunkdepth(self):
-        """The number of levels of group before a group with files is found."""
+        """Return the number of levels of group before a group with files is found."""
         if self.files:
             return 0
         return min([self.groups[g].trunkdepth for g in self.groups]) + 1
 
     @property
     def type(self):
-        """Defines the (sub)class of the :py:class:`Stoner.Core.metadataObject` instances."""
+        """Return the (sub)class of the :py:class:`Stoner.Core.metadataObject` instances."""
         return self._type
 
     @type.setter
     def type(self, value):
-        """Ensures that type is a subclass of metadataObject."""
+        """Ensure that type is a subclass of metadataObject."""
         if isclass(value) and issubclass(value, metadataObject):
             self._type = value
         elif isinstance(value, metadataObject):
@@ -602,7 +602,7 @@ class baseFolder(MutableSequence):
             self.__setter__(n, v)
 
     def __deleter__(self, ix):
-        """Deletes an object from the baseFolder.
+        """Delete an object from the baseFolder.
 
         Parameters:
             ix(str):
@@ -615,7 +615,7 @@ class baseFolder(MutableSequence):
         del self.objects[ix]
 
     def __clear__(self):
-        """Clears all stored :py:class:`Stoner.Core.metadataObject` instances stored.
+        """Clear all stored :py:class:`Stoner.Core.metadataObject` instances stored.
 
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
@@ -736,7 +736,7 @@ class baseFolder(MutableSequence):
         raise KeyError("Can't index the baseFolder with {}".format(name))
 
     def __setitem__(self, name, value):
-        """Attempts to store a value in either the groups or objects.
+        """Attempt to store a value in either the groups or objects.
 
         Parameters:
             name(str or int):
@@ -810,12 +810,12 @@ class baseFolder(MutableSequence):
         return result
 
     def __truediv__(self, other):
-        """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+        """Implement the divide operator as a grouping function for a :py:class:`baseFolder`."""
         result = deepcopy(self)
         return __div_core__(result, other)
 
     def __itruediv__(self, other):
-        """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+        """Implement the divide operator as an in-place a grouping function for a :py:class:`baseFolder`."""
         result = self
         return __div_core__(result, other)
 
@@ -892,7 +892,7 @@ class baseFolder(MutableSequence):
         return result
 
     def __deepcopy__(self, memo):
-        """Provides support for copy.deepcopy to work."""
+        """Provide support for copy.deepcopy to work."""
         cls = self.__class__
         result = cls.__new__(cls)
         memo[id(self)] = result
@@ -904,7 +904,7 @@ class baseFolder(MutableSequence):
         return result
 
     def __repr__(self):
-        """Prints a summary of the objectFolder structure.
+        """Print a summary of the objectFolder structure.
 
         Returns:
             A string representation of the current objectFolder object
@@ -934,7 +934,7 @@ class baseFolder(MutableSequence):
             yield member
 
     def __delattr__(self, name):
-        """Handles removing an attribute from the folder, including proxied attributes."""
+        """Handle removing an attribute from the folder, including proxied attributes."""
         if name.startswith("_") or name in [
             "debug",
             "groups",
@@ -997,7 +997,7 @@ class baseFolder(MutableSequence):
         return self
 
     def _update_from_object_attrs(self, obj):
-        """Updates an object from object_attrs store."""
+        """Update an object from object_attrs store."""
         for k in self.kargs:  # Set from keyword arguments
             if hasattr(obj, k):
                 setattr(obj, k, self.kargs[k])
@@ -1010,7 +1010,7 @@ class baseFolder(MutableSequence):
         return obj
 
     def __walk_groups(self, walker, **kargs):
-        """"Actually implements the walk_groups method with vreadcrumb trail.
+        """Implement the walk_groups method with vreadcrumb trail.
 
         Args:
             walker (callable):
@@ -1092,7 +1092,7 @@ class baseFolder(MutableSequence):
         return self
 
     def all(self):
-        """Iterates over all the files in the Folder and all it's sub Folders recursively.
+        """Iterate over all the files in the Folder and all it's sub Folders recursively.
 
         Yields:
             (path/filename,file)
@@ -1201,7 +1201,7 @@ class baseFolder(MutableSequence):
         return tmp
 
     def filter(self, filter=None, invert=False, copy=False):  # pylint: disable=redefined-builtin
-        """Filter the current set of files by some criterion.
+        r"""Filter the current set of files by some criterion.
 
         Args:
             filter (string or callable):
@@ -1391,7 +1391,7 @@ class baseFolder(MutableSequence):
         raise TypeError(f"Could not use name of type {type(name)} for index.")
 
     def insert(self, ix, value):  # pylint:  disable=arguments-differ
-        """Implements the insert method with the option to append as well."""
+        """Implement the insert method with the option to append as well."""
         name = self.make_name(value)
         names = self.__names__()
         i = 1
@@ -1408,7 +1408,7 @@ class baseFolder(MutableSequence):
             self.__setter__(name, value, force_insert=True)
 
     def append(self, value):
-        """Append an item to the folder object"""
+        """Append an item to the folder object."""
         self.insert(len(self), value)
 
     def items(self):
@@ -1601,7 +1601,7 @@ class baseFolder(MutableSequence):
         return self.metadata.slice(key, output=output)
 
     def sort(self, key=None, reverse=False, recursive=True):
-        """Sort the files by some key
+        """Sort the files by some key.
 
         Keyword Arguments:
             key (string, callable or None):
@@ -1646,7 +1646,7 @@ class baseFolder(MutableSequence):
         return self
 
     def unflatten(self):
-        """Takes a file list an unflattens them according to the file paths.
+        """Take the file list an unflattens them according to the file paths.
 
         Returns:
             A copy of the objectFolder
@@ -1685,7 +1685,7 @@ class baseFolder(MutableSequence):
         return self.groups.values()
 
     def walk_groups(self, walker, **kargs):
-        """Walks through a heirarchy of groups and calls walker for each file.
+        """Walk through a heirarchy of groups and calls walker for each file.
 
         Args:
             walker (callable):

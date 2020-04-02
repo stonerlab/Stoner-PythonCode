@@ -140,7 +140,7 @@ class DiskBasedFolderMixin:
         return k
 
     def _dialog(self, message="Select Folder", new_directory=True):
-        """Creates a directory dialog box for working with.
+        """Create a directory dialog box for working with.
 
         Keyword Arguments:
             message (string):
@@ -205,7 +205,7 @@ class DiskBasedFolderMixin:
         return super(DiskBasedFolderMixin, self).__lookup__(name)
 
     def __getter__(self, name, instantiate=True):
-        """Loads the specified name from a file on disk.
+        """Load the specified name from a file on disk.
 
         Parameters:
             name (key type):
@@ -267,7 +267,7 @@ class DiskBasedFolderMixin:
 
     @property
     def basenames(self):
-        """Returns a list of just the filename parts of the objectFolder."""
+        """Return a list of just the filename parts of the objectFolder."""
         for x in self.__names__():
             yield path.basename(x)
 
@@ -295,7 +295,7 @@ class DiskBasedFolderMixin:
 
     @pattern.setter
     def pattern(self, value):
-        """Sets the filename searching pattern[s] for the :py:class:`Stoner.Core.metadataObject`s."""
+        """Set the filename searching pattern[s] for the :py:class:`Stoner.Core.metadataObject`s."""
         if isinstance(value, string_types):
             self._pattern = (value,)
         elif isinstance(value, _pattern_type):
@@ -325,7 +325,7 @@ class DiskBasedFolderMixin:
         return self
 
     def getlist(self, **kargs):
-        """Scans the current directory, optionally recursively to build a list of filenames.
+        """Scan the current directory, optionally recursively to build a list of filenames.
 
         Keyword Arguments:
             recursive (bool):
@@ -436,7 +436,7 @@ class DiskBasedFolderMixin:
         return self.walk_groups(self._save, walker_args={"root": root})
 
     def unload(self, name=None):
-        """Removes the instance from memory without losing the name in the Folder.
+        """Remove the instance from memory without losing the name in the Folder.
 
         Args:
             name(string,int or None):
@@ -484,7 +484,7 @@ class DataMethodsMixin:
         return self
 
     def extract(self, *metadata, **kargs):
-        """Extracts metadata from each of the files in the terminal group.
+        """Extract metadata from each of the files in the terminal group.
 
         Walks through the terminal group and gets the listed metadata from each file and constructsa replacement
         metadataObject.
@@ -549,7 +549,7 @@ class DataMethodsMixin:
         return ret.walk_groups(_extractor, group=True, replace_terminal=True, walker_args={"metadata": metadata})
 
     def gather(self, xcol=None, ycol=None):
-        """Collects xy and y columns from the subfiles in the final group in the tree.
+        """Collect xy and y columns from the subfiles in the final group in the tree.
 
         Builds the collected data into a :py:class:`Stoner.Core.metadataObject`
 

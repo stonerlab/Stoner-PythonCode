@@ -35,7 +35,7 @@ def _worker(d, **kwargs):
 
 class setas_wrapper(MutableSequence):
 
-    """This class manages wrapping each member of the folder's setas attribute."""
+    """Manages wrapping each member of the folder's setas attribute."""
 
     def __init__(self, parent):
         """Note a reference to the parent item class instance and folder."""
@@ -43,13 +43,13 @@ class setas_wrapper(MutableSequence):
         self._folder = parent._folder
 
     def __call__(self, *args, **kargs):
-        """Simple pass through the calls the setas method of each item in our folder."""
+        """Pass through the calls the setas method of each item in our folder."""
         for obj in self._folder:
             obj.setas(*args, **kargs)
         return self._folder
 
     def __len__(self):
-        """Return the lengths of all the setas elements in the folder (or a sclar if all the same)"""
+        """Return the lengths of all the setas elements in the folder (or a sclar if all the same)."""
         lengths = np.array([len(data.setas) for data in self._folder])
         if len(np.unique(lengths)) == 1:
             return lengths[0]
@@ -119,7 +119,9 @@ class item:
     _folder = None
 
     def __init__(self, folder):
+        """Create the each proxy object.
 
+        Notes the partent folder that created us."""
         self._folder = folder
 
     @property
@@ -176,7 +178,7 @@ class item:
         return list(res)
 
     def __getattr__(self, name):
-        """Handles some special case attributes that provide alternative views of the objectFolder.
+        """Handle some special case attributes that provide alternative views of the objectFolder.
 
         Args:
             item (string): The attribute name being requested
@@ -223,7 +225,9 @@ class item:
         return ret
 
     def __setattr__(self, name, value):
-        """Setting the attrbute on .each sets it on all instantiated objects and in _object_attrs.
+        """Proxy call to set an attribute.
+
+        Setting the attrbute on .each sets it on all instantiated objects and in _object_attrs.
 
         Args:
             name(str): Attribute to set
@@ -269,7 +273,7 @@ class item:
 
         @wraps(meth)
         def _wrapper_(*args, **kargs):
-            """Wraps a call to the metadataObject type for magic method calling.
+            """Wrap a call to the metadataObject type for magic method calling.
 
             Keyword Arguments:
                 _return (index types or None): specify to store the return value in the individual object's metadata
@@ -295,7 +299,7 @@ class item:
 
         @wraps(other)
         def _wrapper_(*args, **kargs):
-            """Wraps a call to the metadataObject type for magic method calling.
+            """Wrap a call to the metadataObject type for magic method calling.
 
             Keyword Arguments:
                 _return (index types or None): specify to store the return value in the individual object's metadata

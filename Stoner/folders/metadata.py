@@ -31,7 +31,7 @@ def _fmt_as_list(results):
 
 
 def _fmt_as_dict(results):
-    """Non-opt, results is already adictionary!"""
+    """Non-opt, results is already adictionary."""
     return results
 
 
@@ -117,7 +117,7 @@ class proxy(MutableMapping):
 
     @property
     def all(self):
-        """A l,ist of all the metadata dictionaries in the Folder."""
+        """List all the metadata dictionaries in the Folder."""
         if hasattr(self._folder, "_metadata"):  # Extra logic for Folders like Stack
             for item in self._folder._metadata.items():
                 yield item
@@ -127,7 +127,7 @@ class proxy(MutableMapping):
 
     @all.setter
     def all(self, value):
-        """A l,ist of all the metadata dictionaries in the Folder."""
+        """List all the metadata dictionaries in the Folder."""
         if hasattr(self._folder, "_metadata"):  # Direct support for metadata dictionary
             for new, old in zip(value, self._folder._metadata):
                 old.update(new)
@@ -225,7 +225,7 @@ class proxy(MutableMapping):
         return self.all_by_keys ^ other
 
     def __eq__(self, other):
-        """An Equality test operator."""
+        """Equality test operator."""
         ret = self ^ other
         if not isinstance(ret, dict):
             return NotImplemented
@@ -283,7 +283,7 @@ class proxy(MutableMapping):
         return self
 
     def slice(self, *args, **kwargs):  # pylint: disable=arguments-differ
-        """Return a list of the metadata dictionaries for each item/file in the top level group
+        """Return a list of the metadata dictionaries for each item/file in the top level group.
 
         Keyword Arguments:
             *args (string, lmfit.Model class or instance  or iterable of string, lmfit Models):

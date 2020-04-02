@@ -41,7 +41,7 @@ def pathjoin(*args):
 
 
 def scan_dir(root):
-    """Helper function to gather a list of files and directories."""
+    """Gather a list of files and directories."""
     dirs = []
     files = []
     for f in os.listdir(root):
@@ -53,7 +53,7 @@ def scan_dir(root):
 
 
 def discard_earlier(files):
-    """Helper function to discard files where a similar named file with !#### exists."""
+    """Discard files where a similar named file with !#### exists."""
     search = re.compile(r"^(?P<basename>.*)\!(?P<rev>\d+)(?P<ext>\.[^\.]*)$")
     dups = dict()
     ret = []
@@ -76,7 +76,7 @@ def discard_earlier(files):
 
 
 def filter_files(files, patterns, keep=True):
-    """Helper to filter a list of files against include/exclusion patterns.
+    """Filter a list of files against include/exclusion patterns.
 
     Args:
         files (list of str): Filename to filter
@@ -106,7 +106,7 @@ def filter_files(files, patterns, keep=True):
 
 
 def get_pool(_serial=False):
-    """Utility method to get a Pool and map implementation depending on options.
+    """Get a Pool and map implementation depending on options.
 
     Returns:
         Pool(),map: Pool object if possible and map implementation.
@@ -129,7 +129,7 @@ def get_pool(_serial=False):
 
 
 def removeDisallowedFilenameChars(filename):
-    """Utility method to clean characters in filenames
+    """Clean characters in filenames.
 
     Args:
         filename (string): filename to cleanse
