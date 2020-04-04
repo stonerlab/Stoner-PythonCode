@@ -132,11 +132,10 @@ class MimizerAdaptor:
     """
 
     def __init__(self, model, *args, **kargs):
-        """
-        Setup the wrapper from the minimuzer.
+        """Prepare the wrapper from the minimuzer.
 
         Args:
-            model (lmfit):
+            modelower (lmfit):
                 The model that has been fitted.
             *args (tuple):
                 Positional parameters to initialise class.
@@ -151,7 +150,6 @@ class MimizerAdaptor:
             RuntimeError:
                 Fails if a *params* Parameter does not supply a fitted value.
         """
-
         self.func = model.func
         hints = kargs.pop("params")
         p0 = list()
@@ -165,15 +163,15 @@ class MimizerAdaptor:
             v = hint.value
             p0.append(v)
             limits = [v * 10, v * 0.1]
-            u = getattr(hint, "max", max(limits))
-            l = getattr(hint, "min", min(limits))
-            upper.append(u if not np.isinf(u) else max(limits))
-            lower.append(l if not np.isinf(l) else min(limits))
+            upper = getattr(hint, "max", max(limits))
+            lower = getattr(hint, "min", min(limits))
+            upper.append(upper if not np.isinf(upper) else max(limits))
+            lower.append(lower if not np.isinf(lower) else min(limits))
         self.p0 = p0
         self.bounds = [ix for ix in zip(upper, lower)]
 
         def wrapper(beta, x, y, sigma, *args):
-            """Function that calculates a least-squares goodness from the model functiuon."""
+            """Calculate a least-squares goodness from the model functiuon."""
             beta = tuple(beta) + tuple(args)
             if sigma is None:
                 sigma = np.ones_like(x)
@@ -245,7 +243,7 @@ class _curve_fit_result:
 
     @property
     def full(self):
-        """The same as :py:attr:`_curve_fit_result.row`"""
+        """Return the same as :py:attr:`_curve_fit_result.row`."""
         return self, self.row
 
     @property
@@ -263,13 +261,13 @@ class _curve_fit_result:
 
     @property
     def data(self):
-        """The data that was fitted."""
+        """Return the data that was fitted."""
         self._data = getattr(self, "_data", np.array([]))
         return self._data
 
     @data.setter
     def data(self, data):
-        """The data that was fitted."""
+        """Return the data that was fitted."""
         self._data = data
 
     @property
@@ -279,12 +277,12 @@ class _curve_fit_result:
 
     @property
     def N(self):
-        """Number of data points in dataset."""
+        """Return th number of data points in dataset."""
         return len(self.data)
 
     @property
     def n_p(self):
-        """Number of parameters in model."""
+        """Return the number of parameters in model."""
         return len(self.popt)
 
     @property
@@ -299,21 +297,21 @@ class _curve_fit_result:
 
     @property
     def aic(self):
-        """Akaike Information Criterion statistic"""
+        """Return the Akaike Information Criterion statistic."""
         return self.N * np.log(self.chisqr / self.N) + 2 * self.n_p
 
     @property
     def bic(self):
-        """Bayesian Information Criterion statistic"""
+        """Return the Bayesian Information Criterion statistic."""
         return self.N * np.log(self.chisqr / self.N) + np.log(self.N) * self.n_p
 
     @property
     def params(self):
-        """A list of parameter class objects."""
+        """List the parameter class objects."""
         return get_func_params(self.func)
 
     def fit_report(self):
-        """A Fit report like lmfit does."""
+        """Create a Fit report like lmfit does."""
         template = """[[ Model ]]
     {}
 [[ Fit Statistics ]]
@@ -338,7 +336,7 @@ class _curve_fit_result:
 
 
 def _get_model_parnames(model):
-    """get a list of the model parameter names."""
+    """Get a list of the model parameter names."""
     if isinstance(model, type) and (issubclass(model, Model) or issubclass(model, odrModel)):
         model = Model()
 
@@ -358,7 +356,7 @@ def _get_model_parnames(model):
 
 
 def _curve_fit_p0_list(p0, model):
-    """Takes something containing an initial vector and turns it into a list for curve_fit.
+    """Take something containing an initial vector and turns it into a list for curve_fit.
 
     Args:
         model (callable, lmfit/Model, odr.Model): miodel object for parameter names
@@ -478,8 +476,7 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
 
 class FittingMixin:
 
-    """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional curve_fiotting
-    methods."""
+    """A mixin calss for :py:class:`Stoner.Core.DataFile` to provide additional curve_fiotting methods."""
 
     def annotate_fit(self, model, x=None, y=None, z=None, text_only=False, **kargs):
         """Annotate a plot with some information about a fit.
@@ -1316,7 +1313,7 @@ class FittingMixin:
         return retval[output]
 
     def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None, **kargs):
-        r"""Wrapper around lmfit module fitting.
+        r"""Wrap the lmfit module fitting.
 
         Args:
             model (lmfit.Model):
@@ -1468,35 +1465,35 @@ class FittingMixin:
         replace=False,
         header=None,
     ):
-        """ Pass through to numpy.polyfit.
+        """Pass through to numpy.polyfit.
 
-            Args:
-                xcol (index):
-                    Index to the column in the data with the X data in it
-                ycol (index):
-                    Index to the column int he data with the Y data in it
-                polynomial_order (int):
-                    Order of polynomial to fit (default 2)
-                bounds (callable):
-                    A function that evaluates True if the current row should be included in the fit
-                result (index or None):
-                    Add the fitted data to the current data object in a new column (default don't add)
-                replace (bool):
-                    Overwrite or insert new data if result is not None (default False)
-                header (string or None):
-                    Name of column_header of replacement data. Default is construct a string from the y column
-                    headser and polynomial order.
+        Args:
+            xcol (index):
+                Index to the column in the data with the X data in it
+            ycol (index):
+                Index to the column int he data with the Y data in it
+            polynomial_order (int):
+                Order of polynomial to fit (default 2)
+            bounds (callable):
+                A function that evaluates True if the current row should be included in the fit
+            result (index or None):
+                Add the fitted data to the current data object in a new column (default don't add)
+            replace (bool):
+                Overwrite or insert new data if result is not None (default False)
+            header (string or None):
+                Name of column_header of replacement data. Default is construct a string from the y column
+                headser and polynomial order.
 
-            Returns:
-                (numpy.poly):
-                    The best fit polynomial as a numpy.poly object.
+        Returns:
+            (numpy.poly):
+                The best fit polynomial as a numpy.poly object.
 
-            Note:
-                If the x or y columns are not specified (or are None) the the setas attribute is used instead.
+        Note:
+            If the x or y columns are not specified (or are None) the the setas attribute is used instead.
 
-                This method is depricated and may be removed in a future version in favour of the more general
+            This method is depricated and may be removed in a future version in favour of the more general
                 curve_fit
-            """
+        """
         from Stoner.Util import ordinal
 
         _ = self._col_args(xcol=xcol, ycol=ycol, scalar=False)
@@ -1523,7 +1520,7 @@ class FittingMixin:
         return p
 
     def odr(self, model, xcol=None, ycol=None, **kargs):
-        """Wrapper around scipy.odr orthogonal distance regression fitting.
+        """Wrap the scipy.odr orthogonal distance regression fitting.
 
         Args:
             model (scipy.odr.Model, lmfit.models.Model or callable):

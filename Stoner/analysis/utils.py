@@ -9,7 +9,7 @@ __all__ = ["outlier", "threshold", "_twoD_fit", "ApplyAffineTransform", "GetAffi
 
 
 def outlier(row, window, metric, ycol=None):
-    """Internal function for outlier detector.
+    """Outlier detector function.
 
     Calculates if the current row is an outlier from the surrounding data by looking
     at the number of standard deviations away from the average of the window it is.
@@ -75,7 +75,7 @@ def poly_outlier(row, window, metric=3.0, ycol=None, xcol=None, order=1, yerr=No
 
 
 def threshold(threshold, data, rising=True, falling=False):
-    """Internal function that implements the threshold method - also used in peak-finder.
+    """Implement the threshold method - also used in peak-finder.
 
     Args:
         threshold (float):
@@ -226,7 +226,6 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
 
 def ApplyAffineTransform(xy, transform):
     """Apply a given afffine transform to a set of xy data points.
-
 
     Args:
         xy (n by 2 array):

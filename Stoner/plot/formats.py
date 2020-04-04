@@ -32,7 +32,7 @@ except ImportError:
 
 
 def _round(value, offset=2):
-    """Provate method to round numbers for the TexFormatters to avoid crazy numbers of decimal places"""
+    """Round numbers for the TexFormatters to avoid crazy numbers of decimal places."""
     for i in range(5):
         vt = np.round(value, i)
         if np.abs(value - vt) < 10 ** (-i - offset):
@@ -42,7 +42,7 @@ def _round(value, offset=2):
 
 
 def _add_dots(key):
-    """replace __ with . in key."""
+    """Replace __ with . in key."""
     return key.replace("__", ".").replace("..", "__")
 
 
@@ -52,9 +52,9 @@ def _remove_dots(key):
 
 class TexFormatter(Formatter):
 
-    """An axis tick label formatter that emits Tex formula mode code.
+    r"""An axis tick label formatter that emits Tex formula mode code.
 
-    Formating is set so that large numbers are registered as \\times 10^{power}
+    Formating is set so that large numbers are registered as :math`\times 10^{power}`
     rather than using E notation."""
 
     def __call__(self, value, pos=None):
@@ -73,7 +73,7 @@ class TexFormatter(Formatter):
         return ret
 
     def format_data(self, value):
-        """Returns the full string representation of the value with the position unspecified."""
+        """Return the full string representation of the value with the position unspecified."""
         return self.__call__(value)
 
     def format_data_short(self, value):  # pylint: disable=r0201
@@ -136,7 +136,7 @@ class TexEngFormatter(EngFormatter):
         return ret
 
     def format_data(self, value):
-        """Returns the full string representation of the value with the position unspecified."""
+        """Return the full string representation of the value with the position unspecified."""
         return self.__call__(value)
 
     def format_data_short(self, value):  # pylint: disable=r0201
@@ -232,7 +232,7 @@ class DefaultPlotStyle(MutableMapping):
         self.update(**kargs)
 
     def __call__(self, **kargs):
-        """Calling the template object can manipulate the rcParams that will be set."""
+        """Call the template object can manipulate the rcParams that will be set."""
         for k, v in kargs.items():
             if k.startswith("template_"):
                 nk = _add_dots(k[:9])
@@ -367,7 +367,7 @@ class DefaultPlotStyle(MutableMapping):
         raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
 
     def clear(self):
-        """Custom clear method that resets everything back o defaults."""
+        """Reset everything back o defaults."""
         attrs = [x for x in dir(self) if self._allowed_attr(x)]
         defaults = self.__class__()
         for attr in attrs:
@@ -398,7 +398,9 @@ class DefaultPlotStyle(MutableMapping):
                 self.__setattr__("template_" + k, kargs[k])
 
     def new_figure(self, figure=False, **kargs):
-        """This is called by PlotMixin to setup a new figure before we do anything."""
+        """Create a new figure.
+
+        This is called by PlotMixin to setup a new figure before we do anything."""
         plt.rcdefaults()  # Start by resetting to our default settings
         params = dict()
         self.apply()
@@ -464,7 +466,7 @@ class DefaultPlotStyle(MutableMapping):
         self.customise()
 
     def customise(self):
-        """Hook to customise plot.
+        """Implement hook to customise plot.
 
         This method is supplied for sub classes to override to provide additional
         plot customisation after the rc paramaters are updated from the class and
@@ -472,7 +474,7 @@ class DefaultPlotStyle(MutableMapping):
         pass
 
     def customise_axes(self, ax, plot):
-        """This method is run when we have an axis to manipulate.
+        """Implement hook for for when we have an axis to manipulate.
 
         Args:
             ax (matplotlib axes):
@@ -581,7 +583,7 @@ class JTBPlotStyle(DefaultPlotStyle):
     stylename = "JTB"
 
     def customise_axes(self, ax, plot):
-        """Override the default axis configuration (or not)"""
+        """Override the default axis configuration (or not)."""
         pass
 
 
@@ -593,7 +595,7 @@ class JTBinsetStyle(DefaultPlotStyle):
     stylename = "JTBinset"
 
     def customise_axes(self, ax, plot):
-        """Override the default axis configuration (or not)"""
+        """Override the default axis configuration (or not)."""
         pass
 
 

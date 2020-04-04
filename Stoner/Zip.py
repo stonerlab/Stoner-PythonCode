@@ -68,7 +68,7 @@ class ZippedFile(DataFile):
     mime_type = ["application/zip"]
 
     def __init__(self, *args, **kargs):
-        "Constructor to catch initialising with an open zf.ZipFile"
+        """Catch initialising with an open zf.ZipFile."""
         if len(args) > 0:
             other = args[0]
             if isinstance(other, zf.ZipFile):
@@ -167,7 +167,7 @@ class ZippedFile(DataFile):
         return self
 
     def save(self, filename=None, **kargs):
-        """Overrides the save method to allow ZippedFile to be written out to disc (as a mininmalist output).
+        """Override the save method to allow ZippedFile to be written out to disc (as a mininmalist output).
 
         Args:
             filename (string or zipfile.ZipFile instance):
@@ -253,7 +253,7 @@ class ZipFolderMixin:
     }
 
     def __init__(self, *args, **kargs):
-        "Constructor for the ZipFolderMixin Class."
+        """Initialise the file attribute."""
         self.File = None
         super(ZipFolderMixin, self).__init__(*args, **kargs)
 
@@ -273,7 +273,7 @@ class ZipFolderMixin:
         self.path = pathjoin(self.directory, value)
 
     def _dialog(self, message="Select Folder", new_directory=True, mode="r"):
-        """Creates a file dialog box for working with.
+        """Create a file dialog box for working with.
 
         Args:
             message (string):
@@ -300,7 +300,7 @@ class ZipFolderMixin:
         return None
 
     def getlist(self, recursive=None, directory=None, flatten=None):
-        "Reads the Zip File to construct a list of ZipFile objects."
+        """Read the Zip File to construct a list of ZipFile objects."""
         if recursive is None:
             recursive = self.recursive
         self.files = []
@@ -389,7 +389,7 @@ class ZipFolderMixin:
         return super(ZipFolderMixin, self).__clone__(other=other, attrs_only=attrs_only)
 
     def __getter__(self, name, instantiate=True):
-        """Loads the specified name from a compressed archive.
+        """Load the specified name from a compressed archive.
 
         Parameters:
             name (key type):
@@ -456,7 +456,7 @@ class ZipFolderMixin:
         return super(ZipFolderMixin, self).__lookup__(name)
 
     def save(self, root=None):
-        """Saves a load of files to a single Zip file, creating members as it goes.
+        """Save a load of files to a single Zip file, creating members as it goes.
 
         Keyword Arguments:
             root (string):
@@ -520,7 +520,3 @@ class ZipFolder(ZipFolderMixin, DiskBasedFolderMixin, baseFolder):
     calls parent constructor.
 
     """
-
-    def __init__(self, *args, **kargs):
-        "Constructor for the ZipFolderMixin Class."
-        super(ZipFolder, self).__init__(*args, **kargs)

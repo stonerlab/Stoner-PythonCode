@@ -1,7 +1,4 @@
-"""Stoner.plot Subpackage.
-==========================
-
-Provides the a class to facilitate easier plotting of Stoner Data:
+"""Provides the a class to facilitate easier plotting of Stoner Data.
 
 Classes:
     PlotMixin:
@@ -14,16 +11,11 @@ __all__ = ["PlotMixin"]
 import os
 from collections.abc import Mapping
 from functools import wraps
-import platform
 import copy
 
 import numpy as np
 from scipy.interpolate import griddata
 
-if os.name == "posix" and platform.system() == "Darwin":
-    import matplotlib
-
-    matplotlib.use("MacOSX")
 from matplotlib import pyplot as plt
 from matplotlib import figure as mplfig
 from matplotlib import cm
@@ -46,7 +38,7 @@ except ImportError:
 
 
 def __mpl3DQuiver(X, Y, Z, U, V, W, **kargs):
-    """Helper function to plot vector fields using mpltoolkit.quiver.
+    """P}lot vector fields using mpltoolkit.quiver.
 
     Args:
         X (array):
@@ -63,7 +55,8 @@ def __mpl3DQuiver(X, Y, Z, U, V, W, **kargs):
             W data vector field component
 
     Return:
-        matpltolib.pyplot.figure with a quiver plot."""
+        matpltolib.pyplot.figure with a quiver plot.
+    """
     if not _3D:
         raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
     ax = kargs.pop("ax", plt.gca(projection="3d"))
@@ -74,33 +67,33 @@ def __mpl3DQuiver(X, Y, Z, U, V, W, **kargs):
 
 class PlotMixin:
 
-    """A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.
+    r"""A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.
 
-        Args:
-            args(tuple):
-                Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`
-            kargs (dict):
-                keyword arguments to pass to \b DataFile.__init__
+    Args:
+        args(tuple):
+            Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`
+        kargs (dict):
+            keyword arguments to pass to \b DataFile.__init__
 
-        Attributes:
-            ax (matplotlib.Axes):
-                The current axes on the current figure.
-            axes (list of matplotlib.Axes):
-                A list of all the axes on the current figure
-            fig (matplotlib.figure):
-                The current figure object being worked with
-            fignum (int):
-                The current figure's number.
-            labels (list of string):
-                List of axis labels as aternates to the column_headers
-            showfig (bool or None):
-                Controls whether plot functions return a copy of the figure (True), the DataFile (False) or
-                Nothing (None)
-            subplots (list of matplotlib.Axes):
-                essentially the same as :py:attr:`PlotMixin.axes` but ensures that the list of subplots is
-                synchronised to the number fo Axes.
-            template (:py:class:`Sonter.plot.formats.DefaultPlotStyle` or instance):
-                A plot style template subclass or object that determines the format and appearance of plots.
+    Attributes:
+        ax (matplotlib.Axes):
+            The current axes on the current figure.
+        axes (list of matplotlib.Axes):
+            A list of all the axes on the current figure
+        fig (matplotlib.figure):
+            The current figure object being worked with
+        fignum (int):
+            The current figure's number.
+        labels (list of string):
+            List of axis labels as aternates to the column_headers
+        showfig (bool or None):
+            Controls whether plot functions return a copy of the figure (True), the DataFile (False) or
+            Nothing (None)
+        subplots (list of matplotlib.Axes):
+            essentially the same as :py:attr:`PlotMixin.axes` but ensures that the list of subplots is
+            synchronised to the number fo Axes.
+        template (:py:class:`Sonter.plot.formats.DefaultPlotStyle` or instance):
+            A plot style template subclass or object that determines the format and appearance of plots.
     """
 
     positional_fmt = [plt.plot, plt.semilogx, plt.semilogy, plt.loglog]
@@ -110,9 +103,7 @@ class PlotMixin:
     multiple = "common"
 
     def __init__(self, *args, **kargs):  # Do the import of plt here to speed module load
-        """Constructor of \b PlotMixin class. Imports plt and then calls the parent constructor.
-
-        """
+        """Import plt and then calls the parent constructor."""
         self.__figure = None
         self._showfig = kargs.pop("showfig", True)  # Retains previous behaviour
         self._subplots = []
@@ -212,7 +203,7 @@ class PlotMixin:
 
     @property
     def showfig(self):
-        """Returns either the current figure or self or None.
+        """Return either the current figure or self or None.
 
         The return value depeds on whether the attribute is True or False or None."""
         if self._showfig is None or get_option("no_figs"):
@@ -294,7 +285,7 @@ class PlotMixin:
             self.template.customise_axes(ax, self)
 
     def __SurfPlotter(self, X, Y, Z, **kargs):
-        """Utility private function to plot a 3D color mapped surface.
+        """Plot a 3D color mapped surface.
 
         Args:
             X (array):
@@ -347,7 +338,7 @@ class PlotMixin:
         return slice(v1, v2, delta)
 
     def _VectorFieldPlot(self, X, Y, Z, U, V, W, **kargs):
-        """Helper function to plot vector fields using mayavi.mlab.
+        """Plot vector fields using mayavi.mlab.
 
         Args:
             X (array):
@@ -365,7 +356,7 @@ class PlotMixin:
 
         Returns:
             An mlab figure reference.
-            """
+        """
         try:
             from mayavi import mlab  # might not work !
         except ImportError:
@@ -404,7 +395,7 @@ class PlotMixin:
         return self.labels[ix]
 
     def __dir__(self):
-        """Handles the local attributes as well as the inherited ones."""
+        """Handle the local attributes as well as the inherited ones."""
         attr = dir(type(self))
         attr.extend(super(PlotMixin, self).__dir__())
         attr.extend(list(self.__dict__.keys()))
@@ -454,7 +445,8 @@ class PlotMixin:
         """Fix parameters to the plotting function to provide defaults and no extransous arguments.
 
         Returns:
-            dictionary of correct arguments, dictionary of all arguments,dictionary of keyword arguments"""
+            dictionary of correct arguments, dictionary of all arguments,dictionary of keyword arguments
+        """
         if defaults is None:
             defaults = dict()
         defaults.update(kargs)
@@ -492,7 +484,7 @@ class PlotMixin:
         return defaults, nonkargs, pass_fig_kargs
 
     def _fix_titles(self, ix, multiple, **kargs):
-        """Does the titling and labelling for a matplotlib plot."""
+        """Do the titling and labelling for a matplotlib plot."""
         self.template.annotate(ix, multiple, self, **kargs)
         if "show_plot" in kargs and kargs["show_plot"]:
             plt.ion()
@@ -502,7 +494,7 @@ class PlotMixin:
             plt.savefig(str(kargs["save_filename"]))
 
     def __getattr__(self, name):
-        """Attribute accessor.
+        """Wrap attribute access with extra renaming logic.
 
         Args:
             name (string):
@@ -513,7 +505,7 @@ class PlotMixin:
                     -   ylim - the Y axis limits
 
                     All other attrbiutes are passed over to the parent class
-                """
+        """
         func = None
         o_name = name
         mapping = dict(
@@ -595,7 +587,7 @@ class PlotMixin:
         return fix_signature(_proxy, func)
 
     def __setattr__(self, name, value):
-        """Sets the specified attribute.
+        """Set the specified attribute.
 
         Args:
             name (string):
@@ -658,7 +650,7 @@ class PlotMixin:
             plt.sca(tax)
 
     def add_column(self, column_data, header=None, index=None, **kargs):
-        """Appends a column of data or inserts a column to a datafile instance.
+        """Append a column of data or inserts a column to a datafile instance.
 
         Args:
             column_data (:py:class:`numpy.array` or list or callable):
@@ -676,7 +668,6 @@ class PlotMixin:
                 Replace the data or insert the data (default)
             setas (str):
                 Set the type of column (x,y,z data etc - see :py:attr:`Stoner.Core.DataFile.setas`)
-
 
         Returns:
             A :py:class:`DataFile` instance with the additonal column inserted.
@@ -701,7 +692,7 @@ class PlotMixin:
         return self
 
     def colormap_xyz(self, xcol=None, ycol=None, zcol=None, **kargs):
-        """An xyz plot that forces the use of plt.contour.
+        """Make a xyz plot that forces the use of plt.contour.
 
         Args:
             xcol (index):
@@ -734,7 +725,7 @@ class PlotMixin:
 
         Returns:
             A matplotlib figure
-         """
+        """
         kargs["plotter"] = kargs.get("plotter", plt.pcolor)
         kargs["projection"] = kargs.get("projection", "rectilinear")
         xlim = kargs.pop("xlim", None)
@@ -748,7 +739,7 @@ class PlotMixin:
         return ax
 
     def contour_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, plotter=None, **kargs):
-        """An xyz plot that forces the use of plt.contour.
+        """Make a xyz plot that forces the use of plt.contour.
 
          Args:
             xcol (index):
@@ -779,7 +770,7 @@ class PlotMixin:
 
         Returns:
             A matplotlib figure
-         """
+        """
         if plotter is None:
             plotter = plt.contour
         kargs["plotter"] = plotter
@@ -793,7 +784,7 @@ class PlotMixin:
                 Figure to switch to
 
         Returns:
-            The current \b Stoner.plot.PlotMixin instance
+            The current Stoner.plot.PlotMixin instance
         """
         if figure is None:
             figure = self.template.new_figure(None, projection=projection, **kargs)[0]
@@ -805,7 +796,7 @@ class PlotMixin:
         return self
 
     def griddata(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, method="linear", **kargs):
-        """Function to convert xyz data onto a regular grid.
+        """Convert xyz data onto a regular grid.
 
         Args:
             xcol (index):
@@ -918,7 +909,7 @@ class PlotMixin:
 
         Returns:
             A matplotlib figure
-         """
+        """
         locals().update(self._fix_cols(xcol=xcol, ycol=ycol, **kargs))
 
         X, Y, Z = self.griddata(xcol, ycol, zcol, shape, xlim, ylim)
@@ -1063,7 +1054,7 @@ class PlotMixin:
         plotter=None,
         **kwords,
     ):
-        """Plots a surface plot by assuming that the current dataset represents a regular matrix of points.
+        """Plot a surface plot by assuming that the current dataset represents a regular matrix of points.
 
         Args:
             xvals (index, list or numpy.array):
@@ -1103,7 +1094,7 @@ class PlotMixin:
                 The matplotib figure with the data plotted
         """
         # Sortout yvals values
-        if isinstance(yvals, int):  #  Int means we're sepcifying a data row
+        if isinstance(yvals, int):  # Int means we're sepcifying a data row
             if rectang is None:  # we need to intitialise the rectang
                 rectang = (yvals + 1, 0)  # We'll sort the column origin later
             elif (
@@ -1211,7 +1202,7 @@ class PlotMixin:
         return self.showfig
 
     def plot_xy(self, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **kargs):
-        """Makes a simple X-Y plot of the specified data.
+        """Makesa simple X-Y plot of the specified data.
 
         Args:
             xcol (index):
@@ -1463,7 +1454,7 @@ class PlotMixin:
         return self.showfig
 
     def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, projection="3d", **kargs):
-        """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().
+        """Plot a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().
 
         Args:
             xcol (index):
@@ -1569,7 +1560,7 @@ class PlotMixin:
         return self.showfig
 
     def plot_xyuv(self, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, **kargs):
-        """Makes an overlaid image and quiver plot.
+        """Make an overlaid image and quiver plot.
 
         Args:
             xcol (index):
@@ -1622,7 +1613,7 @@ class PlotMixin:
     plot_xyuvw = plot_xyuv
 
     def plot_xyzuvw(self, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None, wcol=None, **kargs):
-        """Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.
+        """Plot a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.
 
         Args:
             xcol (index):
@@ -1901,8 +1892,7 @@ class PlotMixin:
         return sp
 
     def subplot2grid(self, *args, **kargs):
-        """Pass through to :py:func:`matplotlib.pyplot.subplot2grid`."""
-
+        """Provide a pass through to :py:func:`matplotlib.pyplot.subplot2grid`."""
         if self.__figure is None:
             self.figure()
 

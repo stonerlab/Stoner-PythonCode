@@ -115,7 +115,7 @@ def errorfill(
 
 
 def extrema_from_error_input(z, zerr):
-    """Utility method to work out where to draw limits."""
+    """Work out where to draw limits."""
     if np.isscalar(zerr) or len(zerr) == len(z):
         zmin = z - zerr
         zmax = z + zerr
@@ -129,7 +129,7 @@ def extrema_from_error_input(z, zerr):
 
 
 def fill_between(x, y1, y2=0, ax=None, **kwargs):
-    """Utility method to draw shading around line."""
+    """Draw shading around line."""
     ax = ax if ax is not None else plt.gca()
     ym = (y1 + y2) / 2.0
     yd = (y1 - y2) / 3.0
@@ -152,7 +152,7 @@ def fill_between(x, y1, y2=0, ax=None, **kwargs):
 
 
 def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
-    """Utility method to draw shading around line."""
+    """Draw shading around line."""
     ax = ax if ax is not None else plt.gca()
     ym = (y1 + y2) / 2.0
     yd = (y1 - y2) / 3.0
@@ -169,7 +169,7 @@ def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
 
 
 def hsl2rgb(hue, sat, lum):
-    """Converts from hsl colourspace to rgb colour space with numpy arrays for speed.
+    """Convert from hsl colourspace to rgb colour space with numpy arrays for speed.
 
     Args:
         h (array):

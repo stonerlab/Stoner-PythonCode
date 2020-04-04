@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Implement DataFile classes for soem generic file formats
-"""
+"""Implement DataFile classes for soem generic file formats."""
 __all__ = ["CSVFile", "HyperSpyFile", "KermitPNGFile", "TDMSFile"]
 import csv
 import io
@@ -35,7 +33,7 @@ class CSVFile(Core.DataFile):
     _defaults = {"header_line": 0, "data_line": 1, "header_delim": ",", "data_delim": ","}
 
     def _load(self, filename, *args, **kargs):
-        """Generic deliminated file loader routine.
+        """Load generic deliminated files.
 
         Args:
             filename (string or bool): File to load. If None then the existing filename is used,
@@ -92,7 +90,7 @@ class CSVFile(Core.DataFile):
         return self
 
     def save(self, filename=None, **kargs):
-        """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
+        """Override the save method to allow CSVFiles to be written out to disc (as a mininmalist output).
 
         Args:
             filename (string): Fielname to save as (using the same rules as for the load routines)
@@ -188,7 +186,7 @@ class KermitPNGFile(Core.DataFile):
         return self
 
     def save(self, filename=None, **kargs):
-        """Overrides the save method to allow KermitPNGFiles to be written out to disc
+        """Override the save method to allow KermitPNGFiles to be written out to disc.
 
         Args:
             filename (string): Filename to save as (using the same rules as for the load routines)
@@ -221,7 +219,7 @@ try:  # Optional tdms support
 
     class TDMSFile(Core.DataFile):
 
-        """A first stab at writing a file that will import TDMS files"""
+        """First stab at writing a file that will import TDMS files."""
 
         #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
         #   .. note::
@@ -288,7 +286,8 @@ if Hyperspy_ok:
     import hyperspy.api as hs
 
     class HyperSpyFile(Core.DataFile):
-        """Elementary wrapper around HyperSpy to map to DataFile."""
+
+        """Wrap the HyperSpy file to map to DataFile."""
 
         priority = 64  # Makes an ID check but is quite generic
 
@@ -316,7 +315,7 @@ if Hyperspy_ok:
                     self.metadata["{}.{}".format(ax.name, k)] = getattr(ax, k)
 
         def _load(self, filename=None, *args, **kargs):
-            """HyperSpy Loader file loader routine.
+            """Load HyperSpy file loader routine.
 
             Args:
                 filename (string or bool): File to load. If None then the existing filename is used,

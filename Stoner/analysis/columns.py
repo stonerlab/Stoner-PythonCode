@@ -57,7 +57,7 @@ class ColumnOpsMixin:
         return adata, bdata, error_calc, aname, bname
 
     def __get_math_val(self, col):
-        """Utility routine to interpret col as either col_a column index or value or an array of values.
+        """Interpret col as either col_a column index or value or an array of values.
 
         Args:
             col (various):
@@ -362,7 +362,7 @@ class ColumnOpsMixin:
         return self
 
     def span(self, column=None, bounds=None):
-        """Returns a tuple of the maximum and minumum values within the given column and bounds.
+        """Return a tuple of the maximum and minumum values within the given column and bounds.
 
         Args:
             column (index):

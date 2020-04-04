@@ -77,11 +77,11 @@ class BirgeIVFile(Core.DataFile):
                 raise Core.StonerLoadError("Not a BirgeIVFile as no date on first line")
             data = f.readlines()
             expected = ["Vo(-))", "Vo(+))", "Ic(+)", "Ic(-)"]
-            for l, m in zip(data[-4:], expected):
-                if not l.startswith(m):
+            for length, m in zip(data[-4:], expected):
+                if not length.startswith(m):
                     raise Core.StonerLoadError("Not a BirgeIVFile as wrong footer line")
-                key = l[: len(m)]
-                val = l[len(m) :]
+                key = length[: len(m)]
+                val = length[len(m) :]
                 if "STDEV" in val:
                     ix2 = val.index("STDEV")
                     key2 = val[ix2 : ix2 + 4 + len(key)]
@@ -269,11 +269,11 @@ class EasyPlotFile(Core.DataFile):
     def _extend_columns(self, i):
         """Ensure the column headers are at least i long."""
         if len(self.column_headers) < i:
-            l = len(self.column_headers)
+            length = len(self.column_headers)
             self.data = np.append(
-                self.data, np.zeros((self.shape[0], i - l)), axis=1
+                self.data, np.zeros((self.shape[0], i - length)), axis=1
             )  # Need to expand the array first
-            self.column_headers.extend(["Column {}".format(x) for x in range(l, i)])
+            self.column_headers.extend(["Column {}".format(x) for x in range(length, i)])
 
     def _et_cmd(self, parts):
         """Handle axis labellling command."""
@@ -290,7 +290,7 @@ class EasyPlotFile(Core.DataFile):
         self.setas = parts[0]
 
     def _sa_cmd(self, parts):
-        """The sa (set-axis?) command."""
+        """Implement the sa (set-axis?) command."""
         if parts[0] == "l":  # Legend
             col = int(parts[2])
             self._extend_columns(col + 1)

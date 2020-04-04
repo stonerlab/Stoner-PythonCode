@@ -66,13 +66,13 @@ def _open_filename(filename):
 
 
 def parabola(X, cx, cy, a, b, c):
-    """A parabola in the X-Y plane for levelling an image."""
+    """Parabola in the X-Y plane for levelling an image."""
     x, y = X
     return a * (x - cx) ** 2 + b * (y - cy) ** 2 + c
 
 
 def plane(X, a, b, c):
-    """A plane equation for levelling an image."""
+    """Plane equation for levelling an image."""
     x, y = X
     return a * x + b * y + c
 
@@ -145,7 +145,7 @@ class AttocubeScanMixin:
         return []
 
     def _load(self, filename, *args, **kargs):
-        """Loads data from a hdf5 file.
+        """Load data from a hdf5 file.
 
         Args:
             h5file (string or h5py.Group):
@@ -210,7 +210,6 @@ class AttocubeScanMixin:
             regrid (bool):
                 Use the X and Y positions if available to regrid the data.
         """
-
         if not path.exists(path.join(self.directory, f"{root_name}-Parameters.txt")):
             return False
         self._load_parameters(root_name)
@@ -512,7 +511,7 @@ class AttocubeScanMixin:
 
 class AttocubeScan(AttocubeScanMixin, ImageStack):
 
-    """ An ImageStack subclass that can load scans from the AttocubeScan SPM System.
+    """An ImageStack subclass that can load scans from the AttocubeScan SPM System.
 
     AttocubeScan represents a scan from an Attocube SPM system as a 3D stack of scan data with
     associated metadata. Indexing the AttocubeScan with either an integer or a partial match to one the
@@ -546,5 +545,4 @@ class AttocubeScan(AttocubeScanMixin, ImageStack):
             The HDF5 compression algorithm to use when writing files
         compression_opts (int):
             The lelbel of compression to use (depends on compression algorithm)
-
     """

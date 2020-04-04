@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Feature Finding functions for analysis code.
-"""
+"""Feature Finding functions for analysis code."""
 
 __all__ = ["FeatureOpsMixin"]
 
@@ -190,8 +188,8 @@ class FeatureOpsMixin:
                 if supplied as the maximal required plateau size. If this is a *float* and *xcol* is set, then
                 the units are in terms of the x-data, otherwise in rwo indices.
             prefix (str):
-                If et, then the metadata keys that return information about the peaks is returned with the given prefix.
-                Default is None - no prefix.
+                If et, then the metadata keys that return information about the peaks is returned with the given
+                prefix. Default is None - no prefix.
             sort (bool):
                 Sor the results by prominence of peak
             modify (book):

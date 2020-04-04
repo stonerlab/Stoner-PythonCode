@@ -36,7 +36,7 @@ class BNLFile(Core.DataFile):
     patterns = ["*.txt"]  # Recognised filename patterns
 
     def __init__(self, *params):
-        """Constructor modification.
+        """Note line numbers.
 
         Do a normal initiation using the parent class 'self' followed by adding an extra attribute line_numbers,
         line_numbers is a list of important line numbers in the file.
@@ -46,7 +46,7 @@ class BNLFile(Core.DataFile):
         self.line_numbers = []
 
     def __find_lines(self):
-        """Returns an array of ints [header_line,data_line,scan_line,date_line,motor_line]."""
+        """Return an array of ints [header_line,data_line,scan_line,date_line,motor_line]."""
         with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as fp:
             self.line_numbers = [0, 0, 0, 0, 0]
             counter = 0
@@ -84,7 +84,7 @@ class BNLFile(Core.DataFile):
         self.__setitem__("Smotor", motorLine.split()[3])
 
     def __parse_BNL_data(self):
-        """Internal function for parsing BNL data.
+        """Parse BNL data.
 
          The meta data is labelled by #L type tags
         so easy to find but #L must be excluded from the result.
@@ -256,7 +256,7 @@ class OpenGDAFile(Core.DataFile):
 
 class RasorFile(OpenGDAFile):
 
-    """Just an alias for OpenGDAFile"""
+    """Just an alias for OpenGDAFile."""
 
     pass
 

@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Filtering and smoothing functions for analysis code.
-"""
+"""Filtering and smoothing functions for analysis code."""
 
 __all__ = ["FilteringOpsMixin"]
 
@@ -27,7 +25,7 @@ class FilteringOpsMixin:
     def SG_Filter(
         self, col=None, xcol=None, points=15, poly=1, order=0, pad=True, result=None, replace=False, header=None
     ):
-        """Implements Savitsky-Golay filtering of data for smoothing and differentiating data.
+        """Implement a Savitsky-Golay filtering of data for smoothing and differentiating data.
 
         Args:
             col (column index):
@@ -384,7 +382,7 @@ class FilteringOpsMixin:
         if newX is None:  # Ok, we're going to return an interpolation function
 
             def wrapper(newX):
-                """Wrapper for interpolation function."""
+                """Wrap the interpolation function."""
                 if isinstance(newX, ma.MaskedArray):
                     newX = newX.compressed()
                 else:
@@ -405,7 +403,7 @@ class FilteringOpsMixin:
         return ret
 
     def make_bins(self, xcol, bins, mode="lin", **kargs):
-        """Utility method to generate bin boundaries and centres along an axis.
+        """Generate bin boundaries and centres along an axis.
 
         Args:
             xcol (index):
@@ -493,7 +491,7 @@ class FilteringOpsMixin:
         return bin_start, bin_stop, bin_centres
 
     def outlier_detection(self, column=None, window=7, certainty=3.0, action="mask", width=1, func=None, **kargs):
-        """Function to detect outliers in a column of data.
+        """Detect outliers in a column of data.
 
         Args:
             column(column index):

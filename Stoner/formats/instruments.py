@@ -39,7 +39,7 @@ class LSTemperatureFile(Core.DataFile):
     patterns = ["*.340"]
 
     def _load(self, filename=None, *args, **kargs):
-        """Data loader function for 340 files."""
+        """Load data for 340 files."""
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -79,7 +79,7 @@ class LSTemperatureFile(Core.DataFile):
         return self
 
     def save(self, filename=None, **kargs):
-        """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output).
+        """Override the save method to allow CSVFiles to be written out to disc (as a mininmalist output).
 
         Args:
             filename (string):
@@ -251,7 +251,7 @@ class RigakuFile(Core.DataFile):
     patterns = ["*.ras"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
-        """Reads an Rigaku ras file including handling the metadata nicely.
+        """Read a Rigaku ras file including handling the metadata nicely.
 
         Args:
             filename (string or bool):
@@ -371,13 +371,15 @@ class RigakuFile(Core.DataFile):
             self["_endpos"] = endpos
         return self
 
-    def to_Q(self, l=1.540593):
-        """Adds an additional function to covert an angualr scale to momentum transfer.
+    def to_Q(self, wavelength=1.540593):
+        """Add an additional function to covert an angualr scale to momentum transfer.
 
         Returns:
             a copy of itself.
         """
-        self.add_column((4 * np.pi / l) * np.sin(np.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA$)")
+        self.add_column(
+            (4 * np.pi / wavelength) * np.sin(np.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA$)"
+        )
 
 
 class SPCFile(Core.DataFile):
@@ -488,7 +490,7 @@ class SPCFile(Core.DataFile):
                 self._header[key] = value
 
     def _load(self, filename=None, *args, **kargs):
-        """Reads a .scf file produced by the Renishaw Raman system (amongs others).
+        """Read a .scf file produced by the Renishaw Raman system (amongs others).
 
         Args:
             filename (string or bool):
@@ -667,7 +669,7 @@ class VSMFile(Core.DataFile):
     patterns = ["*.fld"]  # Recognised filename patterns
 
     def __parse_VSM(self, header_line=3, data_line=3, header_delim=","):
-        """An intrernal function for parsing deliminated data without a leading column of metadata.copy.
+        """Parsing deliminated data without a leading column of metadata.copy.
 
         Keyword Arguments:
             header_line (int):
@@ -759,7 +761,7 @@ class XRDFile(Core.DataFile):
         self._public_attrs = {"four_bounce": bool}
 
     def _load(self, filename=None, *args, **kargs):
-        """Reads an XRD Core.DataFile as produced by the Brucker diffractometer.
+        """Read an XRD Core.DataFile as produced by the Brucker diffractometer.
 
         Args:
             filename (string or bool):
@@ -819,7 +821,7 @@ class XRDFile(Core.DataFile):
         return self
 
     def to_Q(self, l=1.540593):
-        """Adds an additional function to covert an angualr scale to momentum transfer.
+        """Add an additional function to covert an angualr scale to momentum transfer.
 
         returns a copy of itself.
         """
