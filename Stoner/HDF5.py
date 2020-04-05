@@ -144,7 +144,7 @@ class HDF5File(DataFile):
     mime_type = ["application/x-hdf"]
 
     def __init__(self, *args, **kargs):
-        """Constructor to catch initialising with an h5py.File or h5py.Group"""
+        """Initialise with an h5py.File or h5py.Group."""
         if args and isinstance(args[0], (h5py.File, h5py.Group)):
             args = list(args)
             grp = args.pop(0)
@@ -155,7 +155,7 @@ class HDF5File(DataFile):
             self._load(grp, **kargs)
 
     def _load(self, filename, *args, **kargs):
-        """Loads data from a hdf5 file
+        """Load data from a hdf5 file.
 
         Args:
             h5file (string or h5py.Group):
@@ -199,8 +199,7 @@ class HDF5File(DataFile):
 
     @classmethod
     def read_HDF(cls, filename, *args, **kargs):
-        """Class method to create a new HDF5File from an actual HDF file."""
-
+        """Create a new HDF5File from an actual HDF file."""
         self = kargs.pop("instance", cls())
         if filename is None or not filename:
             self.get_filename("r")
@@ -254,7 +253,7 @@ class HDF5File(DataFile):
         return self
 
     def save(self, filename=None, **kargs):
-        """Writes the current object into  an hdf5 file or group within a file.
+        """Write the current object into  an hdf5 file or group within a file.
 
         The data is written in afashion that is compatible with being loaded in again.
 
@@ -269,7 +268,7 @@ class HDF5File(DataFile):
         return self.to_HDF(filename, **kargs)  # Just a pass through to our own to_HDF method
 
     def to_HDF(self, filename=None, **kargs):
-        """Writes the current object into  an hdf5 file or group within a file.
+        """Write the current object into  an hdf5 file or group within a file.
 
         Writes the data in afashion that is compatible with being loaded in again.
 
@@ -335,7 +334,7 @@ class HGXFile(DataFile):
     mime_type = ["application/x-hdf"]
 
     def _load(self, filename, *args, **kargs):
-        """GenX HDF file loader routine.
+        """Load a GenX HDF file.
 
         Args:
             filename (string or bool):
@@ -365,7 +364,7 @@ class HGXFile(DataFile):
                     raise StonerLoadError("Couldn't find the HD5 format singature block")
 
         try:
-            with h5py.File(filename) as f:
+            with h5py.File(filename, "r") as f:
                 if "current" in f and "config" in f["current"]:
                     pass
                 else:
@@ -432,12 +431,12 @@ class HDF5FolderMixin:
     """
 
     def __init__(self, *args, **kargs):
-        """Constructor for the HDF5Folder Class."""
+        """Initialise the File aatribute."""
         self.File = None
         super(HDF5FolderMixin, self).__init__(*args, **kargs)
 
     def __getter__(self, name, instantiate=True):
-        """Loads the specified name from a file on disk.
+        """Load the specified name from a file on disk.
 
         Parameters:
             name (key type):
@@ -484,7 +483,7 @@ class HDF5FolderMixin:
         return tmp
 
     def _dialog(self, message="Select Folder", new_directory=True, mode="r+"):
-        """Creates a file dialog box for working with.
+        """Create a file dialog box for working with.
 
         Args:
             message (string):
@@ -533,7 +532,7 @@ class HDF5FolderMixin:
             raise IOError("HDF5 File not open!")
 
     def getlist(self, recursive=None, directory=None, flatten=False):
-        """Reads the HDF5 File to construct a list of file HDF5File objects."""
+        """Read the HDF5 File to construct a list of file HDF5File objects."""
         if recursive is None:
             recursive = self.recursive
         self.files = []
@@ -569,7 +568,7 @@ class HDF5FolderMixin:
         return self
 
     def save(self, root=None):
-        """Saves a load of files to a single HDF5 file, creating groups as it goes.
+        """Save a load of files to a single HDF5 file, creating groups as it goes.
 
         Keyword Arguments:
             root (string):
@@ -582,13 +581,13 @@ class HDF5FolderMixin:
         if root is None and isinstance(self.File, h5py.File):
             root = self.File
         elif root is None and not isinstance(self.File, h5py.File):
-            root = h5py.File(self.directory)
+            root = h5py.File(self.directory, mode="w")
             self.File = root
             closeme = True
         if root is None or (isinstance(root, bool) and not root):
             # now go and ask for one
             root = self._dialog()
-            root = h5py.File(root)
+            root = h5py.File(root, mode="a")
             self.File = root
             closeme = True
         if isinstance(root, string_types):
@@ -622,6 +621,7 @@ class HDF5Folder(HDF5FolderMixin, DataFolder):
     """Just enforces the loader attriobute to be an HDF5File."""
 
     def __init__(self, *args, **kargs):
+        """Ensure the loader routine is set for HDF5Files."""
         self.loader = HDF5File
         super(HDF5Folder, self).__init__(*args, **kargs)
 
@@ -637,7 +637,7 @@ class SLS_STXMFile(DataFile):
     mime_type = ["application/x-hdf"]
 
     def _load(self, filename, *args, **kargs):
-        """Loads data from a hdf5 file.
+        """Load data from the hdf5 file produced by Pollux.
 
         Args:
             h5file (string or h5py.Group):
@@ -723,7 +723,7 @@ class STXMImage(ImageFile):
     _reduce_metadata = False
 
     def __init__(self, *args, **kargs):
-        """Construct a STXMImage file.
+        """Initialise and load a STXM image produced by Pollux.
 
         Keyword Args:
             regrid (bool):
@@ -748,7 +748,7 @@ class STXMImage(ImageFile):
             self.gridimage()
 
     def __floordiv__(self, other):
-        """Implements a // operator to do XMCD calculations on a whole image."""
+        """Implement a // operator to do XMCD calculations on a whole image."""
         if isinstance(other, metadataObject):
             if self["collection.polarization.value"] > 0 and other["collection.polarization.value"] < 0:
                 plus, minus = self, other

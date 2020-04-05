@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Stoner.Utils - a module of some slightly experimental routines that use the Stoner classes
-
-Created on Tue Oct 08 20:14:34 2013
-
-@author: phygbu
-"""
+"""Stoner.Utils - a module of some slightly experimental routines that use the Stoner classes."""
 __all__ = ["split_up_down", "ordinal", "hysteresis_correct"]
 import numpy as np
 from numpy import max, argmax, mean  # pylint: disable=redefined-builtin
 from scipy.stats import sem
 from scipy.optimize import fsolve
 
-from Stoner.Core import DataFile
+from .Core import DataFile
 
 from .tools import format_error, make_Data
 from . import DataFolder
@@ -19,7 +14,7 @@ from .analysis.fitting.models.generic import linear
 
 
 def _step(x, m, c, h):
-    """Simple sloping step function for fitting to the extrema of a hysteresis loop.
+    """Provide a sloping step function for fitting to the extrema of a hysteresis loop.
 
     Args:
         x (array-like):
@@ -35,7 +30,6 @@ def _step(x, m, c, h):
         y (Tarray-like):
             Calculated moment of loop.
     """
-
     mid = (x.max() + x.min()) / 2.0
 
     X = x - mid
@@ -108,7 +102,7 @@ def _up_down(data):
 
 
 def split_up_down(data, col=None, folder=None):
-    """Splits the DataFile data into several files where the column *col* is either rising or falling.
+    """Split the DataFile data into several files where the column *col* is either rising or falling.
 
     Args:
         data (:py:class:`Stoner.Core.DataFile`):
