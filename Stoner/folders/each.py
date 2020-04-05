@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 """Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic attribute."""
 __all__ = ["item"]
-import numpy as np
 from collections.abc import MutableSequence
 from functools import wraps, partial
 from traceback import format_exc
+
+import numpy as np
+
+from ..tools import isIterable
+from ..compat import string_types
 from .utils import get_pool
-from Stoner.tools import isIterable
-from Stoner.compat import string_types
 
 
 def _worker(d, **kwargs):

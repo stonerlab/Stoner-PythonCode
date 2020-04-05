@@ -2,22 +2,22 @@
 """:py:mod:`Stoner.folders.core` provides the base class and functions for the :py:class:`Stoner.DataFolder` class."""
 __all__ = ["baseFolder"]
 
-from itertools import islice
-from copy import copy, deepcopy
 from collections.abc import Iterable, MutableSequence
-from inspect import isclass
-
-import numpy as np
-import os.path as path
 import fnmatch
 import re
+from itertools import islice
+from copy import copy, deepcopy
+from inspect import isclass
+import os.path as path
 
-from Stoner.compat import int_types, string_types, commonpath, _pattern_type
-from Stoner.tools import operator, isIterable, all_type, get_option
-from Stoner.core.base import regexpDict
-from Stoner.core.base import metadataObject
+import numpy as np
+
+from ..compat import int_types, string_types, commonpath, _pattern_type
+from ..tools import operator, isIterable, all_type, get_option
+from ..core.base import regexpDict
+from ..core.base import metadataObject
+
 from .utils import pathjoin
-
 from .each import item as each_item
 from .metadata import proxy as combined_metadata_proxy
 from .groups import GroupsDict

@@ -4,7 +4,8 @@
 
 __all__ = ["odr_Model", "FittingMixin"]
 
-from inspect import isclass
+from copy import deepcopy as copy
+from inspect import isclass, getfullargspec
 from collections.abc import Mapping
 from distutils.version import LooseVersion
 
@@ -14,8 +15,8 @@ import scipy as sp
 from scipy.odr import Model as odrModel
 from scipy.optimize import curve_fit, differential_evolution
 
-from Stoner.compat import string_types, index_types, get_func_params
-from Stoner.tools import isNone, isIterable, isLikeList, AttributeStore
+from ...compat import string_types, index_types, get_func_params
+from ...tools import isNone, isIterable, isLikeList, AttributeStore
 
 try:  # Allow lmfit to be optional
     import lmfit
@@ -29,10 +30,6 @@ except ImportError:
     Model = None
     Parameters = None
     _lmfit = False
-from copy import deepcopy as copy
-
-# from matplotlib.pylab import * #Surely not?
-from inspect import getfullargspec
 
 
 class odr_Model(odrModel):
@@ -163,10 +160,10 @@ class MimizerAdaptor:
             v = hint.value
             p0.append(v)
             limits = [v * 10, v * 0.1]
-            upper = getattr(hint, "max", max(limits))
-            lower = getattr(hint, "min", min(limits))
-            upper.append(upper if not np.isinf(upper) else max(limits))
-            lower.append(lower if not np.isinf(lower) else min(limits))
+            hint_upper = getattr(hint, "max", max(limits))
+            hint_lower = getattr(hint, "min", min(limits))
+            upper.append(hint_upper if not np.isinf(hint_upper) else max(limits))
+            lower.append(hint_lower if not np.isinf(hint_lower) else min(limits))
         self.p0 = p0
         self.bounds = [ix for ix in zip(upper, lower)]
 

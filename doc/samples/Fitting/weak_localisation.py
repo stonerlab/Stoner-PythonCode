@@ -1,10 +1,12 @@
 """Test Weak-localisation fitting."""
 # pylint: disable=invalid-name
-from Stoner import Data
-from Stoner.analysis.fitting.models.e_transport import WLfit, wlfit
+from copy import copy
+
 from numpy import linspace, ones_like
 from numpy.random import normal
-from copy import copy
+
+from Stoner import Data
+from Stoner.analysis.fitting.models.e_transport import WLfit, wlfit
 
 B = linspace(-8, 8, 201)
 params = [1e-3, 2.0, 0.25, 1.4]

@@ -11,8 +11,9 @@ from numpy import max, argmax, mean  # pylint: disable=redefined-builtin
 from scipy.stats import sem
 from scipy.optimize import fsolve
 
-from .tools import format_error, make_Data
 from Stoner.Core import DataFile
+
+from .tools import format_error, make_Data
 from . import DataFolder
 from .analysis.fitting.models.generic import linear
 
@@ -21,17 +22,17 @@ def _step(x, m, c, h):
     """Simple sloping step function for fitting to the extrema of a hysteresis loop.
 
     Args:
-        x (array-like): 
+        x (array-like):
             Field (x) data of loop.
-        m (float): 
+        m (float):
             susceptibility(slopee) of loop.
-        c (float): 
+        c (float):
             vertical offset of loop.
-        h (float): 
+        h (float):
             Saturatted moement (height) of loop.
 
     Returns:
-        y (Tarray-like): 
+        y (Tarray-like):
             Calculated moment of loop.
     """
 
@@ -53,11 +54,11 @@ def _up_down(data):
     rather than the read-back value.
 
     Args:
-        data (Data): 
+        data (Data):
             DataFile like object with x and y columns set
 
     Returns:
-        (Data, Data): 
+        (Data, Data):
             Tuple of two DataFile like instances for the rising and falling data.
     """
     # Calculate x span and mid-point for working out limits to search for maxima.
@@ -119,7 +120,7 @@ def split_up_down(data, col=None, folder=None):
             rising and falling files to groups of this DataFolder, otherwise create a new one
 
     Returns:
-        (:py:class:`Sonter.Folder.DataFolder`): 
+        (:py:class:`Sonter.Folder.DataFolder`):
             with two groups, rising and falling
     """
     a = make_Data(data)
@@ -178,7 +179,7 @@ def ordinal(value):
             Number to be written as an ordinal string
 
     Return:
-        (str): 
+        (str):
             Ordinal String such as '1st','2nd' etc.
     """
     if not isinstance(value, int):

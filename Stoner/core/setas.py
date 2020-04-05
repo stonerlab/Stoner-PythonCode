@@ -6,13 +6,13 @@ setas module provides the setas class for DataFile and friends
 __all__ = ["setas"]
 import re
 import copy
-import numpy as _np_
+from collections.abc import MutableMapping, Mapping
+
+import numpy as np
 
 from ..compat import string_types, int_types, index_types, _pattern_type
 from ..tools import AttributeStore, isIterable, typedList, isLikeList
 from .utils import decode_string
-
-from collections.abc import MutableMapping, Mapping
 
 
 class setas(MutableMapping):
@@ -213,7 +213,7 @@ class setas(MutableMapping):
     @column_headers.setter
     def column_headers(self, value):
         """Set the colum headers."""
-        if isinstance(value, _np_.ndarray):  # Convert ndarray to list of strings
+        if isinstance(value, np.ndarray):  # Convert ndarray to list of strings
             value = value.astype(str).tolist()
         elif isinstance(value, string_types):  # Bare strings get turned into lists
             value = [value]
@@ -222,7 +222,7 @@ class setas(MutableMapping):
     @property
     def not_set(self):
         """Return a boolean array if not set."""
-        return _np_.array([x == "." for x in self._setas])
+        return np.array([x == "." for x in self._setas])
 
     @property
     def set(self):

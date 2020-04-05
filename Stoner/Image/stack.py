@@ -5,11 +5,12 @@ import warnings
 
 import numpy as np
 
-from Stoner.compat import string_types, int_types
+from ..compat import string_types, int_types
+from ..Core import regexpDict, typeHintedDict
+from ..Folders import DiskBasedFolderMixin, baseFolder
+
 from .core import ImageArray, ImageFile
 from .folders import ImageFolder, ImageFolderMixin
-from Stoner.Core import regexpDict, typeHintedDict
-from Stoner.Folders import DiskBasedFolderMixin, baseFolder
 
 IM_SIZE = (512, 672)  # Standard Kerr image size
 AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped

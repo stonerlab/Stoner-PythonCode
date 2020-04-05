@@ -12,10 +12,10 @@ import numpy as np
 from PIL import Image, PngImagePlugin
 import matplotlib.pyplot as plt
 
-from Stoner.core.base import typeHintedDict, metadataObject
+from ..core.base import typeHintedDict, metadataObject
 from ..Core import DataFile
-from Stoner.tools import isTuple, fix_signature, isLikeList, make_Data
-from Stoner.compat import (
+from ..tools import isTuple, fix_signature, isLikeList, make_Data
+from ..compat import (
     string_types,
     get_filedialog,
     int_types,
