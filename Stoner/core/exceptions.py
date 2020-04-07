@@ -33,6 +33,8 @@ class StonerAssertionError(RuntimeError):
 
 
 def assertion(condition, message="Library Assertion Error set"):
-    """A utility functiuon to be used when assert might have been."""
+    """Raise an error when condition is false.
+
+    A utility functiuon to be used when assert might have been."""
     if not condition:
         raise StonerAssertionError(message)

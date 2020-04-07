@@ -269,12 +269,12 @@ class setas(MutableMapping):
         Keyword Arguments:
             _self (bool):
                 If True, make the call return a copy of the setas object, if False, return _object attribute, if None,
-                return None
+                return None. Default - **False**
             reset (bool):
                 If False then preserve the existing set columns and simply add the new ones. Otherwise, clear
                 all column assignments before setting new ones (default).
         """
-        return_self = kargs.pop("_self", None)
+        return_self = kargs.pop("_self", False)
         if not (args or kargs):  # New - bare call to setas will return the current value.
             return self.setas
         if len(args) == 1 and isinstance(args[0], setas):

@@ -23,12 +23,18 @@ from Stoner.tools import format_error
 
 class Data(AnalysisMixin, FittingMixin, ColumnOpsMixin, FilteringOpsMixin, FeatureOpsMixin, PlotMixin, DataFile):
 
-    """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and
-    :py:class:`Stoner.plot.PlotMixin`
+    """The principal class for representing a data file.
 
-    Also has the :py:mod:`Stoner.FielFormats` loaded redy for use.
-    This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
-    analysis on data files.
+    This merges:
+        -   :py:class:`Stoner.Core.DataFile`,
+        -   :py:class:`Stoner.Analysis.AnalysisMixin`,
+        -   :py:class:`Stoner.analysis.fitting.FittingMixin`,
+        -   :py:class:`Stoner.analysis.columns.ColumnOpsMixin`,
+        -   :py:class:`Stoner.analysis.filtering.FilteringOpsMixin`,
+        -   :py:class:`Stoner.analysis.features.FeatureOpsMixin`,
+        -   :py:class:`Stoner.plot.PlotMixin`
+
+    Also has the :py:mod:`Stoner.formats` loaded redy for use.
     """
 
     def format(self, key, **kargs):
