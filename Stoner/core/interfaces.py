@@ -5,7 +5,7 @@ __all__ = ["DataFileInterfacesMixin"]
 
 import numpy as np
 
-from ..compat import string_types, int_types, _pattern_type
+from ..compat import string_types, _pattern_type
 from ..tools import isIterable
 
 
@@ -145,10 +145,31 @@ class DataFileInterfacesMixin:
         else:
             self.data[name] = value
 
-    def keys(self):
-        """Alias for :py:meth:`DataFile.dir(None)`.
+    def count(self, value=None, axis=0, col=None):
+        """Count the number of un-masked elements in the :py:class:`DataFile`.
+
+        Keywords:
+            valiue (float):
+                Value to count for
+            axis (int):
+                Which axis to count the unmasked elements along.
+            col (index, None):
+                Restrict to counting in a specific column. If left None, then the current 'y' column is used.
 
         Returns:
-            a list of all the keys in the metadata dictionary
+            (int):
+                Number of unmasked elements.
         """
-        return self.dir(None)
+        _ = self._col_args(ycol=col)
+        if _.ycol is not None:
+            tmp = self.column(_.ycol)
+        else:
+            tmp = self.data
+        if value is not None:
+            args = np.argwhere(tmp == value)
+            return args.size
+        return tmp.count(axis)
+
+    def insert(self, index, obj):
+        """Implement the insert method."""
+        self.data = np.insert(self.data, index, obj, axis=0).view(self.data.__class__)

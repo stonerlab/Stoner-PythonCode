@@ -236,7 +236,7 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
                       '__le__', '__lt__', '__reversed__', '__slots__',"_abc_negative_cache","_abc_registry",
                       "_abc_negative_cache_version","_abc_cache","_abc_impl"])
         self.attrs=set(dir(self.d))-bad_keys
-        self.assertEqual(len(self.attrs),227,"DataFile.__dir__ failed.")
+        self.assertEqual(len(self.attrs),232,"DataFile.__dir__ failed.")
 
     def test_filter(self):
         self.d._push_mask()
