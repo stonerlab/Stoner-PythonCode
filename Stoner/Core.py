@@ -435,20 +435,20 @@ class DataFile(DataFileOperatorsMixin, DataFilePropertyMixin, metadataObject):
     def __getattr__(self, name):
         """Handle some special pseudo attributes that map to the setas columns.
 
-         Args:
-             name (string):
-                 The name of the attribute to be returned.
+        Args:
+            name (string):
+                The name of the attribute to be returned.
 
-         Returns:
-             Various:
-                 the DataFile object in various forms
+        Returns:
+            Various:
+                the DataFile object in various forms
 
-         Supported attributes:
-             - records:
-                 return the DataFile data as a numpy structured
-                 array - i.e. rows of elements whose keys are column headings
-                 - clone:
-                     returns a deep copy of the current DataFile instance
+        Supported attributes:
+            - records:
+                return the DataFile data as a numpy structured
+                array - i.e. rows of elements whose keys are column headings
+                - clone:
+                    returns a deep copy of the current DataFile instance
 
         Otherwise the name parameter is tried as an argument to :py:meth:`DataFile.column` and the resultant column
         is returned. If DataFile.column raises a KeyError this is remapped as an AttributeError.

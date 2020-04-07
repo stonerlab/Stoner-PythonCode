@@ -92,7 +92,7 @@ class DataFilePropertyMixin:
         elif len(nv.shape) == 1:  # nv is a vector - make it a 2D array
             nv = ma.atleast_2d(nv).T
         elif len(nv.shape) > 2:  # nv has more than 2D - raise an error # TODO 0.9? Support 3D arrays in DataFile?
-            raise ValueError("DataFile.data should be no more than 2 dimensional not shape {}", format(nv.shape))
+            raise ValueError(f"DataFile.data should be no more than 2 dimensional not shape {nv.shape}")
         if not isinstance(
             nv, DataArray
         ):  # nv isn't a DataArray, so preserve setas (does this preserve column_headers too?)
@@ -181,7 +181,7 @@ class DataFilePropertyMixin:
             self.data.mask = value
 
     @classproperty
-    def patterns(cls):
+    def patterns(cls):  # pylint: disable=no-self-argument
         """Return the possible filename patterns for use in dialog boxes."""
         patterns = cls._patterns
         for cls_name, klass in DataFilePropertyMixin.subclasses.items():  # pylint: disable=not-an-iterable
@@ -235,7 +235,7 @@ class DataFilePropertyMixin:
     @classproperty
     def subclasses(cls):  # pylint: disable=no-self-argument
         """Return a list of all in memory subclasses of this DataFile."""
-        from ..Core import DataFile
+        from ..Core import DataFile  # pylint: disable=import-outside-toplevel
 
         tmp = [x for x in itersubclasses(DataFile)]
         if cls._subclasses is None or cls._subclasses[0] != len(tmp):  # pylint: disable=E1136
