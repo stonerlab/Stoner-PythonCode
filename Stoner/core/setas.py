@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-setas module provides the setas class for DataFile and friends
-"""
+"""setas module provides the setas class for DataFile and friends."""
 __all__ = ["setas"]
 import re
 import copy
@@ -42,7 +40,7 @@ class setas(MutableMapping):
     """
 
     def __init__(self, row=False, bless=None):
-        """Constructs the setas instance and sets an initial value.
+        """Construct the setas instance and sets an initial value.
 
         Args:
             ref (DataFile): Contains a reference to the owning DataFile instance
@@ -184,7 +182,8 @@ class setas(MutableMapping):
 
     @property
     def x(self):
-        """Quick access to the x column number
+        """Quick access to the x column number.
+
         Just a convenience read only property. If we want to change the setas.x
         value we should use the setas(x=1,y=2) style call (so that reset can
         be handled properly)
@@ -193,7 +192,7 @@ class setas(MutableMapping):
 
     @property
     def y(self):
-        """Quick access to the y column numbers list"""
+        """Quick access to the y column numbers list."""
         return self.cols["ycol"]
 
     @property
@@ -204,10 +203,10 @@ class setas(MutableMapping):
     @property
     def column_headers(self):
         """Get the current column headers."""
-        c = self._size
-        l = len(self._column_headers)
-        if l < c:  # Extend the column headers if necessary
-            self._column_headers.extend(["Column {}".format(i + l) for i in range(c - l)])
+        cols = self._size
+        length = len(self._column_headers)
+        if length < cols:  # Extend the column headers if necessary
+            self._column_headers.extend(["Column {}".format(i + length) for i in range(cols - length)])
         return self._column_headers
 
     @column_headers.setter
@@ -232,11 +231,11 @@ class setas(MutableMapping):
     @property
     def setas(self):
         """Guard the setas attribute."""
-        c = self._size
-        l = len(self._setas)
-        if c > l:
-            self._setas.extend(["."] * (c - l))
-        self._setas = self._setas[:c]
+        cols = self._size
+        length = len(self._setas)
+        if cols > length:
+            self._setas.extend(["."] * (cols - length))
+        self._setas = self._setas[:cols]
         return self._setas
 
     @setas.setter
@@ -344,7 +343,7 @@ class setas(MutableMapping):
         self.unset(name)
 
     def __eq__(self, other):
-        """Checks to see if this is the same object, or has the same headers and the same setas values."""
+        """Check to see if this is the same object, or has the same headers and the same setas values."""
         ret = False
         if isinstance(other, string_types):  # Expand strings and convert to list
             other = [c for c in decode_string(other)]
@@ -643,17 +642,23 @@ class setas(MutableMapping):
             raise KeyError("{} is not in setas and no default was given.".format(name))
 
     def keys(self):
-        """Mapping keys are the same as iterating over the unique headers"""
+        """Acess mapping keys.
+
+        Mapping keys are the same as iterating over the unique headers"""
         for c in self._unique_headers:
             yield c
 
     def values(self):
-        """Mapping values are the same as iterating over setas."""
+        """Access mapping values.
+
+        Mapping values are the same as iterating over setas."""
         for v in self.setas:
             yield v
 
     def items(self):
-        """Mapping items iterates over keys and values."""
+        """Access mapping items.
+
+        Mapping items iterates over keys and values."""
         for k, v in zip(self._unique_headers, self.setas):
             yield k, v
 
@@ -669,6 +674,7 @@ class setas(MutableMapping):
             raise KeyError("{} is not in setas and no default was given.".format(name))
 
     def popitem(self):
+        """Return and clear a column assignment."""
         for c in "xdyezfuvw":
             if c in self:
                 v = self[c]
@@ -752,7 +758,7 @@ class setas(MutableMapping):
         return ret
 
     def to_list(self):
-        """Returns the setas attribute as a list of letter types."""
+        """Return the setas attribute as a list of letter types."""
         return list(self)
 
     def to_string(self, encode=False):
@@ -772,7 +778,7 @@ class setas(MutableMapping):
         return expanded
 
     def _get_cols(self, what=None, startx=0, no_guess=False):
-        """Uses the setas attribute to work out which columns to use for x,y,z etc.
+        """Use the setas attribute to work out which columns to use for x,y,z etc.
 
         Keyword Arguments:
             what (string): Returns either xcol, ycol, zcol, ycols,xcols rather than the full dictionary

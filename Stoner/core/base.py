@@ -165,11 +165,11 @@ class regexpDict(sorteddict):
             return ret
 
     def __getitem__(self, name):
-        """Adds a lookup via regular expression when retrieving items."""
+        """Add a lookup via regular expression when retrieving items."""
         return super(regexpDict, self).__getitem__(self.__lookup__(name))
 
     def __setitem__(self, name, value):
-        """Overwrites any matching key, or if not found adds a new key."""
+        """Overwrite any matching key, or if not found adds a new key."""
         try:
             key = self.__lookup__(name, exact=True)
         except KeyError:
@@ -179,11 +179,11 @@ class regexpDict(sorteddict):
         super(regexpDict, self).__setitem__(key, value)
 
     def __delitem__(self, name):
-        """Deletes keys that match by regular expression as well as exact matches."""
+        """Delete keys that match by regular expression as well as exact matches."""
         super(regexpDict, self).__delitem__(self.__lookup__(name))
 
     def __contains__(self, name):
-        """Returns True if name either is an exact key or matches when interpreted as a regular experssion."""
+        """Return True if name either is an exact key or matches when interpreted as a regular experssion."""
         try:
             name = self.__lookup__(name)
             return True
@@ -338,7 +338,7 @@ class typeHintedDict(regexpDict):
         return self._typehints
 
     def findtype(self, value):
-        """Determines the correct string type to return for common python classes.
+        """Determine the correct string type to return for common python classes.
 
         Args:
             value (any):
@@ -430,7 +430,7 @@ class typeHintedDict(regexpDict):
         return ret
 
     def _get_name_(self, name):
-        """Checks a string name for an embedded type hint and strips it out.
+        """Check a string name for an embedded type hint and strips it out.
 
         Args:
             name(string):
@@ -449,7 +449,7 @@ class typeHintedDict(regexpDict):
         return name, None
 
     def __getitem__(self, name):
-        """Checks whether its been given a typehint in the item name and deals with it appropriately.
+        """Check whether its been given a typehint in the item name and deals with it appropriately.
 
         Args:
             name (string):
@@ -471,7 +471,7 @@ class typeHintedDict(regexpDict):
         return {k: v for k, v in zip(name, value)}
 
     def __setitem__(self, name, value):
-        """Sets an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
+        """Set an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
 
         Arguments:
             name (string):
@@ -503,7 +503,7 @@ class typeHintedDict(regexpDict):
             super(typeHintedDict, self).__setitem__(name, value)
 
     def __delitem__(self, name):
-        """Deletes the specified key.
+        """Delete the specified key.
 
         Args:
             name (string): The keyname to be deleted
@@ -520,7 +520,7 @@ class typeHintedDict(regexpDict):
         return "\n".join(ret)
 
     def copy(self):
-        """Provides a copy method that is aware of the type hinting strings.
+        """Provide a copy method that is aware of the type hinting strings.
 
         This produces a flat dictionary with the type hint embedded in the key name.
 
@@ -559,7 +559,7 @@ class typeHintedDict(regexpDict):
             del self[k]
 
     def type(self, key):
-        """Returns the typehint for the given k(s).
+        """Return the typehint for the given k(s).
 
         This simply looks up the type hinting dictionary for each key it is given.
 
@@ -578,7 +578,7 @@ class typeHintedDict(regexpDict):
             return self._typehints[key]
 
     def export(self, key):
-        """Exports a single metadata value to a string representation with type hint.
+        """Export a single metadata value to a string representation with type hint.
 
         In the ASCII based file format, the type hinted metadata is represented
         in the first column of a tab delimited text file as a series of lines
@@ -609,7 +609,7 @@ class typeHintedDict(regexpDict):
         return [self.export(x) for x in self]
 
     def import_all(self, lines):
-        """Reads multiple lines of strings and tries to import keys from them.
+        """Read multiple lines of strings and tries to import keys from them.
 
         Args:
             lines(list of str):
@@ -635,16 +635,16 @@ class typeHintedDict(regexpDict):
 
 class metadataObject(MutableMapping):
 
-    """Represents some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.
+    """Represent some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.
 
-     Attributes:
+    Attributes:
         metadata (typeHintedDict):
             Dictionary of key-value metadata pairs. The dictionary tries to retain information about the type of data
             so as to aid import and export from CM group LabVIEW code.
-     """
+    """
 
     def __init__(self, *args, **kargs):
-        """Initialises the current metadata attribute."""
+        """Initialise the current metadata attribute."""
         metadata = kargs.pop("metadata", None)
         if metadata is not None:
             self.metadata.update(metadata)

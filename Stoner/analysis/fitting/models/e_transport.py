@@ -17,12 +17,12 @@ except ImportError:
 
 
 def _bgintegrand(x, n):
-    """The integrand for the Bloch Grueneisen model."""
+    """Calculate the integrand for the Bloch Grueneisen model."""
     return x ** n / ((np.exp(x) - 1) * (1 - np.exp(-x)))
 
 
 def wlfit(B, s0, DS, B1, B2):
-    """Weak localisation fitting function.
+    """Implement the Weak localisation fitting function.
 
     Args:
         B (array): mag. field
@@ -42,7 +42,6 @@ def wlfit(B, s0, DS, B1, B2):
             :include-source:
             :outname: wlfit
     """
-
     e = 1.6e-19  # C
     h = 6.62e-34  # Js
     # Sets up conductivity fit array
@@ -87,7 +86,7 @@ def fluchsSondheimer(t, l, p, sigma_0):
         .. plot:: samples/Fitting/f_s.py
             :include-source:
             :outname: fluchssondheimer
-        """
+    """
     k = t / l
 
     kernel = lambda x, k: (x - x ** 3) * np.exp(-k * x) / (1 - np.exp(-k * x))
@@ -101,7 +100,7 @@ def fluchsSondheimer(t, l, p, sigma_0):
 
 
 def blochGrueneisen(T, thetaD, rho0, A, n):
-    """BlochGrueneiseen Function for fitting R(T).
+    """Calculate the BlochGrueneiseen Function for fitting R(T).
 
     Args:
         T (array): Temperature Values to fit
@@ -199,7 +198,7 @@ class FluchsSondheimer(Model):
         super(FluchsSondheimer, self).__init__(fluchsSondheimer, *args, **kwargs)
 
     def guess(self, data, t=None, **kwargs):  # pylint: disable=unused-argument
-        """Guess some starting values - not very clever"""
+        """Guess some starting values - not very clever."""
         pars = self.make_params(l=10.0, p=0.5, sigma_0=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
@@ -231,7 +230,7 @@ class BlochGrueneisen(Model):
         super(BlochGrueneisen, self).__init__(blochGrueneisen, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
-        """Guess some starting values - not very clever"""
+        """Guess some starting values - not very clever."""
         rho0 = data.min()
 
         if x is None:

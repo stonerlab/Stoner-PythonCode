@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Provides the DataArray class - a subclass of :py:class:`numpy.ma.MaskedArray` that knows that columns have  names."""
+"""Provides the DataArray class.
+
+A subclass of :py:class:`numpy.ma.MaskedArray` that knows that columns have  names."""
 
 __all__ = ["DataArray"]
 
@@ -118,7 +120,7 @@ class DataArray(ma.MaskedArray):
             self._setas.shape = getattr(self, "shape", (0,))
 
     def __array_wrap__(self, out_arr, context=None):
-        """Make sure ufuncs do the right thing with DataArrays"""
+        """Make sure ufuncs do the right thing with DataArrays."""
         ret = ma.MaskedArray.__array_wrap__(self, out_arr, context)
         return ret
 
@@ -128,12 +130,12 @@ class DataArray(ma.MaskedArray):
 
     @property
     def _(self):
-        """Return the DataArray as a normal numpy array for those operations that need this"""
+        """Return the DataArray as a normal numpy array for those operations that need this."""
         return ma.getdata(self)
 
     @property
     def isrow(self):
-        """Defines whether this is a single row or a column if 1D."""
+        """Define whether this is a single row or a column if 1D."""
         return self._setas._row
 
     @isrow.setter
@@ -249,7 +251,7 @@ class DataArray(ma.MaskedArray):
 
     @property
     def setas(self):
-        """Returns an object for setting column assignments."""
+        """Return an object for setting column assignments."""
         if self._setas is None:
             self._setas = _setas()
         if self._setas.shape != self.shape:
@@ -258,6 +260,7 @@ class DataArray(ma.MaskedArray):
 
     @setas.setter
     def setas(self, value):
+        """Set the object for setting column assignments."""
         if isinstance(value, _setas):
             value = value.clone
         setas = self.setas
@@ -268,6 +271,7 @@ class DataArray(ma.MaskedArray):
     # ==============================================================================================================
 
     def __reduce__(self):
+        """Implement hooks for pickling."""
         # Get the parent's __reduce__ tuple
         pickled_state = super(DataArray, self).__reduce__()
         # Create our own tuple to pass to __setstate__
@@ -276,6 +280,7 @@ class DataArray(ma.MaskedArray):
         return (pickled_state[0], pickled_state[1], new_state)
 
     def __setstate__(self, state):
+        """Implement hooks for unpickling."""
         self._setas = state[-2]  # Set the info attribute
         # Call the parent's __setstate__ with the other tuple elements.
         super(DataArray, self).__setstate__(state[0:-2])
@@ -462,7 +467,7 @@ class DataArray(ma.MaskedArray):
         zerr=None,
         **kargs,
     ):
-        """Utility method that creates an object which has keys  based either on arguments or setas attribute."""
+        """Create an object which has keys  based either on arguments or setas attribute."""
         cols = {
             "xcol": xcol,
             "ycol": ycol,
@@ -526,7 +531,7 @@ class DataArray(ma.MaskedArray):
         return self._setas.column_headers
 
     def swap_column(self, *swp, **kargs):
-        """Swaps pairs of columns in the data.
+        """Swap pairs of columns in the data.
 
         Useful for reordering data for idiot programs that expect columns in a fixed order.
 

@@ -33,12 +33,12 @@ except ImportError:
 
 
 def linear(x, intercept, slope):
-    """Simple linear function"""
+    """Calculate a linear function."""
     return slope * x + intercept
 
 
 def quadratic(x, a, b, c):
-    r"""A Simple quadratic fitting function.
+    r"""Calculate a simple quadratic fitting function.
 
     Args:
         x (aray): Input data
@@ -81,7 +81,7 @@ def powerLaw(x, A, k):
 
 
 def stretchedExp(x, A, beta, x_0):
-    r"""A stretched exponential fuinction.
+    r"""Calculate a stretched exponential fuinction.
 
     Args:
         x (array): x data values
@@ -111,17 +111,16 @@ def lorentzian_diff(x, A, sigma, mu):
                                                                       \left(- \mu + x\right)^{2}\right)^{2}}`
 
     Example:
-
-    .. plot:: samples/Fitting/lorentzian.py
-        :include-source:
-        :outname: lorentzian_diff_func
+        .. plot:: samples/Fitting/lorentzian.py
+            :include-source:
+            :outname: lorentzian_diff_func
     """
     return A * sigma * (2 * mu - 2 * x) / (np.pi * (sigma ** 2 + (-mu + x) ** 2) ** 2)
 
 
 class Linear(_Linear):
 
-    """Simple linear fit"""
+    """Simple linear fit class."""
 
     pass
 
@@ -213,7 +212,8 @@ class StretchedExp(Model):
 
 
 class Lorentzian_diff(Model):
-    r"""lmfit Model rerprenting the differential form of a Lorentzian Peak.
+
+    r"""Provides a lmfit Model rerprenting the differential form of a Lorentzian Peak.
 
     Args:
         x (array): x data
@@ -226,11 +226,11 @@ class Lorentzian_diff(Model):
                                                                       \left(- \mu + x\right)^{2}\right)^{2}}`
 
     Example:
-
-    .. plot:: samples/Fitting/lorentzian.py
-        :include-source:
-        :outname: lorentzian_diff_class
+        .. plot:: samples/Fitting/lorentzian.py
+            :include-source:
+            :outname: lorentzian_diff_class
     """
+
     display_names = ["A", r"\sigma", r"\mu"]
 
     def __init__(self, *args, **kwargs):
@@ -238,8 +238,7 @@ class Lorentzian_diff(Model):
         super(Lorentzian_diff, self).__init__(lorentzian_diff, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
-        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
-
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
         if x is None:
             x = np.linspace(1, len(data), len(data) + 1)
 

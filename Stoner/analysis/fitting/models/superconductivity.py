@@ -55,7 +55,8 @@ except ImportError:
 
 @jit(float64[:](float64[:], float64, float64, float64, float64))
 def _strijkers_core(V, omega, delta, P, Z):
-    """strijkers Model for point-contact Andreev Reflection Spectroscopy
+    """Implement strijkers Model for point-contact Andreev Reflection Spectroscopy.
+
     Args:
         V = bias voltages, params=list of parameter values, imega, delta,P and Z
         omega (float): Broadening
@@ -66,9 +67,8 @@ def _strijkers_core(V, omega, delta, P, Z):
     Return:
         Conductance vs bias data.
 
-    .. note::
-
-       PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
+    Note:
+           PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
 
     This version only uses 1 delta, not modified for proximity
     """
@@ -156,7 +156,7 @@ def strijkers(V, omega, delta, P, Z):
 
 
 def rsj_noiseless(I, Ic_p, Ic_n, Rn, V_offset):
-    r"""Implements a simple noiseless RSJ model.
+    r"""Implement a simple noiseless RSJ model.
 
     Args:
         I (array-like): Current values
@@ -177,9 +177,7 @@ def rsj_noiseless(I, Ic_p, Ic_n, Rn, V_offset):
         .. plot:: samples/Fitting/rsj_fit.py
             :include-source:
             :outname: rsj_noiseless_func
-
     """
-
     normal_p = np.sign(I) * np.real(np.sqrt(I ** 2 - Ic_p ** 2)) * Rn
     normal_n = np.sign(I) * np.real(np.sqrt(I ** 2 - Ic_n ** 2)) * Rn
     p_branch = np.where(I > Ic_p, normal_p, np.zeros_like(I))
@@ -188,7 +186,7 @@ def rsj_noiseless(I, Ic_p, Ic_n, Rn, V_offset):
 
 
 def rsj_simple(I, Ic, Rn, V_offset):
-    r"""Implements a simple noiseless symmetric RSJ model.
+    r"""Implement a simple noiseless symmetric RSJ model.
 
     Args:
         I (array-like):
@@ -213,16 +211,14 @@ def rsj_simple(I, Ic, Rn, V_offset):
         .. plot:: samples/Fitting/rsj_fit.py
             :include-source:
             :outname: rsj_simple_func
-
     """
-
     normal = Rn * np.sign(I) * np.real(np.sqrt(I ** 2 - Ic ** 2))
     ic_branch = np.zeros_like(I)
     return np.where(np.abs(I) < Ic, ic_branch, normal) + V_offset
 
 
 def ic_B_airy(B, Ic0, B_offset, A):
-    r"""Critical Current for a round Josepshon Junction wrt to Field.
+    r"""Calculate Critical Current for a round Josepshon Junction wrt to Field.
 
     Args:
         B (array-like):
@@ -251,9 +247,7 @@ def ic_B_airy(B, Ic0, B_offset, A):
         .. plot:: samples/Fitting/ic_b_airy.py
             :include-source:
             :outname: ic_b_airy_func
-
     """
-
     arg = (B - B_offset) * A * np.pi / Phi_0
 
     return Ic0 * np.abs(2 * np.where(np.abs(arg) < 1e-5, np.ones_like(arg), J1(arg) / arg))
@@ -358,13 +352,14 @@ class Strijkers(Model):
         super(Strijkers, self).__init__(strijkers, *args, **kwargs)
 
     def guess(self, data, **kwargs):  # pylint: disable=unused-argument
-        """Guess starting values for a good Nb contact to a ferromagnet at 4.2K"""
+        """Guess starting values for a good Nb contact to a ferromagnet at 4.2K."""
         pars = self.make_params(omega=0.36, delta=1.50, P=0.42, Z=0.15)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
 class RSJ_Noiseless(Model):
-    r"""Implements a simple noiseless RSJ model.
+
+    r"""Implement a simple noiseless RSJ model.
 
     Args:
         I (array-like): Current values
@@ -385,7 +380,6 @@ class RSJ_Noiseless(Model):
         .. plot:: samples/Fitting/rsj_fit.py
             :include-source:
             :outname: rsj_noiseless_class
-
     """
 
     display_names = ["I_c^p", "I_c^n", "R_N", "V_{offset}"]
@@ -395,8 +389,7 @@ class RSJ_Noiseless(Model):
         super(RSJ_Noiseless, self).__init__(rsj_noiseless, *args, **kwargs)
 
     def guess(self, data, **kwargs):
-        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
-
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
         x = kwargs.get("x", np.linspace(1, len(data), len(data) + 1))
 
         v_offset_guess = np.mean(data)
@@ -450,8 +443,7 @@ class RSJ_Simple(Model):
         super(RSJ_Simple, self).__init__(rsj_simple, *args, **kwargs)
 
     def guess(self, data, **kwargs):
-        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
-
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
         x = kwargs.get("x", np.linspace(1, len(data), len(data) + 1))
 
         v_offset_guess = np.mean(data)
@@ -510,8 +502,7 @@ class Ic_B_Airy(Model):
         super(Ic_B_Airy, self).__init__(ic_B_airy, *args, **kwargs)
 
     def guess(self, data, **kwargs):
-        """Guess parameters as max(data), x[argmax(data)] and from FWHM of peak"""
-
+        """Guess parameters as max(data), x[argmax(data)] and from FWHM of peak."""
         x = kwargs.get("x", np.linspace(-len(data) / 2, len(data) / 2, len(data)))
 
         Ic0_guess = data.max()
