@@ -4,9 +4,7 @@
 Code based on the PyQt5 Tutorial code,
 """
 __all__ = ["fileDialog"]
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QWidget, QFileDialog
 
 
 class App(QWidget):
@@ -35,6 +33,7 @@ class App(QWidget):
     }
 
     def __init__(self):
+        """Initilaise our PyQT5 dummy application."""
         super().__init__()
         self.title = "PyQt5 file dialogs - pythonspot.com"
         self.left = 10
@@ -44,6 +43,7 @@ class App(QWidget):
         self.initUI()
 
     def initUI(self):
+        """Set up the user interface for a PyQT5 application."""
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
@@ -71,7 +71,6 @@ class App(QWidget):
                 Either a string containing the absolute path to the file or directory, or None if the dialog
                 was cancelled.
         """
-
         if mode not in self.modes:
             raise ValueError(f"Unknown dialog mode {mode}")
         method = self.modes[mode]["method"]

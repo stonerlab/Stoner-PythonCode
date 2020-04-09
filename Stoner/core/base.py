@@ -45,7 +45,7 @@ def literal_eval(string):
     On the first call this will create a new asteval.Interpreter() instance and
     preload some key modules into the symbol table.
     """
-    global _asteval_interp  # pylint: disable=W0603 Ugly!
+    global _asteval_interp  # pylint: disable=W0603
     if _asteval_interp is None:
         _asteval_interp = asteval.Interpreter(
             usersyms={"np": np, "re": re, "NaN": NaN, "nan": NaN, "None": None, "datetime": datetime}
@@ -155,14 +155,13 @@ class regexpDict(sorteddict):
 
         if ret is None or isIterable(ret) and not ret:
             raise KeyError("{} is not a match to any key.".format(name))
+        if multiple:  # sort out returing multiple entries or not
+            if not isinstance(ret, list):
+                ret = [ret]
         else:
-            if multiple:  # sort out returing multiple entries or not
-                if not isinstance(ret, list):
-                    ret = [ret]
-            else:
-                if isinstance(ret, list):
-                    ret = ret[0]
-            return ret
+            if isinstance(ret, list):
+                ret = ret[0]
+        return ret
 
     def __getitem__(self, name):
         """Add a lookup via regular expression when retrieving items."""

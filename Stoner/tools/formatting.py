@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Functions for formatting data."""
 
-__all__ = ["format_error", "format_val", "quantize", "tex_escape"]
+__all__ = ["format_error", "format_val", "quantize", "tex_escape", "ordinal"]
 
 import re
 from cgi import escape as html_escape
@@ -313,3 +313,26 @@ def tex_escape(text):
     }
     regex = re.compile("|".join(re.escape(bytes2str(key)) for key in sorted(conv.keys(), key=lambda item: -len(item))))
     return regex.sub(lambda match: conv[match.group()], text)
+
+
+def ordinal(value):
+    """Format an integer into an ordinal string.
+
+    Args:
+        value (int):
+            Number to be written as an ordinal string
+
+    Return:
+        (str):
+            Ordinal String such as '1st','2nd' etc.
+    """
+    if not isinstance(value, int):
+        raise ValueError
+
+    last_digit = value % 10
+    if value % 100 in [11, 12, 13]:
+        suffix = "th"
+    else:
+        suffix = ["th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"][last_digit]
+
+    return "{}{}".format(value, suffix)

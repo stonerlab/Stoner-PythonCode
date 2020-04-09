@@ -8,7 +8,8 @@ from json import loads, dumps
 
 from skimage.viewer import CollectionViewer
 import numpy as np
-from PIL.TiffImagePlugin import ImageFileDirectory_v2, Image
+from PIL.TiffImagePlugin import ImageFileDirectory_v2
+from PIL import Image
 
 from .core import ImageArray
 from ..Folders import DiskBasedFolderMixin, baseFolder
@@ -287,8 +288,6 @@ class ImageFolderMixin:
     @classmethod
     def from_tiff(cls, filename, **kargs):
         """Create a new ImageArray from a tiff file."""
-        from PIL import Image
-
         self = cls(**kargs)
         with Image.open(filename, "r") as img:
             tags = img.tag_v2

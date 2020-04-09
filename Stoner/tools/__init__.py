@@ -24,6 +24,7 @@ __all__ = [
     "typedList",
     "get_option",
     "set_option",
+    "ordinal",
 ]
 from collections.abc import Iterable, MutableSequence
 import inspect
@@ -44,7 +45,7 @@ except ImportError:
 from ..compat import bytes2str
 from .classes import attributeStore as AttributeStore, typedList, Options, get_option, set_option
 from .tests import all_size, all_type, isAnyNone, isComparable, isIterable, isLikeList, isNone, isProperty, isTuple
-from .formatting import format_error, format_val, quantize, html_escape, tex_escape
+from .formatting import format_error, format_val, quantize, html_escape, tex_escape, ordinal
 
 operator = {
     "eq": lambda k, v: k == v,

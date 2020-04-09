@@ -411,9 +411,6 @@ class KerrStackMixin:
             for things like hysteresis.
     """
 
-    def __init__(self, *args, **kargs):
-        super(KerrStackMixin, self).__init__(*args, **kargs)
-
     @property
     def fields(self):
         """Produce an array of field values from the metadata."""

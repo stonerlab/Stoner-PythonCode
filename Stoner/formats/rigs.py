@@ -231,7 +231,7 @@ class EasyPlotFile(Core.DataFile):
                 line = line.strip()
                 if line == "":
                     continue
-                if line[0] not in "-0123456789" and datastart > 0 and dataend < 0:
+                if line[0] not in "-0123456789" and dataend < 0 <= datastart:
                     dataend = i
                 if line.startswith('"') and ":" in line:
                     parts = [x.strip() for x in line.strip('"').split(":")]

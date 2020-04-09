@@ -1058,27 +1058,23 @@ class DataFile(
 
         return self
 
-    # def adjust_setas(self, *args, **kargs):
-    #     """Adjust the setas of this object and return ourselves.
-
-    #     Returns:
-    #         (DataFikle):
-    #             This DataFile object
-
-    #     This method is useful when chaining methods together to change the setas assignments on the fly.
-    #     """
-    #     self.setas(*args, **kargs)  # pylint: disable=not-callable
-    #     return self
-
-    def columns(self, not_masked=False):
+    def columns(self, not_masked=False, reset=False):
         """Iterate over the columns of data int he datafile.
+
+        Keyword Args:
+            no_masked (bool):
+                Only iterate over columns that don't have masked elements
+            reset (bool):
+                If true then reset the iterator (immediately stops the current iteration without returning any data)./
 
         Yields:
             1D array: Returns the next column of data.
         """
         for ix, col in enumerate(self.data.T):
-            if ma.is_masked(col):
+            if not_masked and ma.is_masked(col):
                 continue
+            if reset:
+                return
             else:
                 yield self.column(ix)
 
@@ -1562,12 +1558,12 @@ class DataFile(
         Keyword Arguments:
             not_masked(bool):
                 If a row is masked and this is true, then don't return this row.
+            reset (bool):
+                If true then reset the iterator (immediately stops the current iteration without returning any data)./
 
         Yields:
             1D array: Returns the next row of data
         """
-        if reset:
-            raise StopIteration
         for ix, row in enumerate(self.data):
             if not isinstance(row, DataArray):
                 row = DataArray([row])
@@ -1575,6 +1571,8 @@ class DataFile(
                 row.setas = self.setas
             if ma.is_masked(row) and not_masked:
                 continue
+            if reset:
+                return
             else:
                 yield row
 

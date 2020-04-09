@@ -242,67 +242,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         """Support the numpy machinery for subclassing ndarray."""
         return super(ImageArray, self).__array_prepare__(arr, context)
 
-    def __array_wrap__(self, out_arr, context=None):
-        """Part of the numpy array machinery.
-
-        see __array_finalize__ for info. This is for if ImageArray is called
-        via ufuncs. array_finalize is called after.
-        """
-        ret = super(ImageArray, self).__array_wrap__(out_arr, context)
-        return ret
-
-    def __init__(self, *args, **kwargs):
-        """Initialise the ImageArray.
-
-        various forms are recognised
-
-        .. py:function:: ImageArray('filename')
-            :noindex:
-
-            Creates the new ImageArray object and then loads data from the
-            given *filename*.
-
-        .. py:function:: ImageArray(array)
-            :noindex:
-
-            Creates a new ImageArray object and assigns the *array*.
-
-        .. py:function:: ImageArray(ImageFile)
-            :noindex:
-
-            Creates a new ImageArray object and assigns the *array* using
-            the ImageFile.image property.
-
-
-        .. py:function:: ImageArray(ImageArray)
-            :noindex:
-
-            Creates the new ImageArray object and initialises all data from the
-            existing :py:class:`ImageArray` instance. This on the face of it does the same as
-            the assignment operator, but is more useful when one or other of the
-            ImageArray objects is an instance of a sub - class of ImageArray
-
-        .. py:function:: ImageArray(bool)
-            :noindex:
-
-           if arg[0] is bool and False then open a file dialog to locate the
-           file to open.
-
-        Args:
-            arg (positional arguments):
-                an argument that matches one of the definitions above
-
-        Keyword Arguments:
-            asfloat(bool):
-                if True  and loading the image from file, convert the image
-                to float values between 0 and 1 (necessary for some forms
-                of processing)
-
-        All keyword arguments that match public attributes are used to set those public attributes eg metadata.
-
-        """
-        super(ImageArray, self).__init__(*args, **kwargs)
-
     def _load(self, filename, *args, **kargs):
         """Load an image from a file and return as a ImageArray."""
         cls = self.__class__
@@ -593,6 +532,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         thus ensuring that Spyder's help window can generate useful information.
 
         """
+        # Avoid PEP257/black issue
 
         @wraps(workingfunc)
         def gen_func(*args, **kwargs):
@@ -1325,6 +1265,7 @@ class ImageFile(metadataObject):
                 * False (default) - Imagearray return types are substituted if they are the same size as the original
                 * None - A copy of the current object is taken and the returned ImageArray provides the data.
         """
+        # Avoid PEP257/black issue
 
         @wraps(workingfunc)
         def gen_func(*args, **kargs):

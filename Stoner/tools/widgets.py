@@ -9,6 +9,8 @@ from PyQt5.QtWidgets import QWidget, QFileDialog
 
 class App(QWidget):
 
+    """Placehold PyQT5 Application for producing filedialog boxes."""
+
     modes = {
         "OpenFile": {
             "method": QFileDialog.getOpenFileName,

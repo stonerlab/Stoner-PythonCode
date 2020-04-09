@@ -16,7 +16,8 @@ from scipy.odr import Model as odrModel
 from scipy.optimize import curve_fit, differential_evolution
 
 from ...compat import string_types, index_types, get_func_params
-from ...tools import isNone, isIterable, isLikeList, AttributeStore
+from ...tools import isNone, isIterable, isLikeList, AttributeStore, ordinal
+
 
 try:  # Allow lmfit to be optional
     import lmfit
@@ -345,8 +346,12 @@ def _get_model_parnames(model):
         model = model.fcn
     if not callable(model):
         raise ValueError(
-            "Unrecognised type for model! - should be lmfit.Model, scipy.odr.Model or callable, not {}",
-            format(type(model)),
+            "".join(
+                [
+                    f"Unrecognised type for model! - should be lmfit.Model, scipy.odr.Model",
+                    f" or callable, not {type(model)}",
+                ]
+            )
         )
     arguments = getfullargspec(model)[0]  # pylint: disable=W1505
     return list(arguments[1:])
@@ -962,8 +967,7 @@ class FittingMixin:
         }
         if output not in retval:
             raise RuntimeError("Failed to recognise output format:{}".format(output))
-        else:
-            return retval[output]
+        return retval[output]
 
     def curve_fit(self, func, xcol=None, ycol=None, sigma=None, **kargs):
         """General curve fitting function passed through from scipy.
@@ -1491,8 +1495,6 @@ class FittingMixin:
             This method is depricated and may be removed in a future version in favour of the more general
                 curve_fit
         """
-        from Stoner.Util import ordinal
-
         _ = self._col_args(xcol=xcol, ycol=ycol, scalar=False)
 
         working = self.search(_.xcol, bounds)
@@ -1501,12 +1503,14 @@ class FittingMixin:
         p = np.zeros((len(_.ycol), polynomial_order + 1))
         if isinstance(result, bool) and result:
             result = self.shape[1]
-        for i, ycol in enumerate(_.ycol):
-            p[i, :] = np.polyfit(working[:, self.find_col(_.xcol)], working[:, self.find_col(ycol)], polynomial_order)
+        for i, ycolumn in enumerate(_.ycol):
+            p[i, :] = np.polyfit(
+                working[:, self.find_col(_.xcol)], working[:, self.find_col(ycolumn)], polynomial_order
+            )
             if result:
                 if header is None:
                     header = "Fitted {} with {} order polynomial".format(
-                        self.column_headers[self.find_col(ycol)], ordinal(polynomial_order)
+                        self.column_headers[self.find_col(ycolumn)], ordinal(polynomial_order)
                     )
                 self.add_column(
                     np.polyval(p[i, :], x=self.column(_.xcol)), index=result, replace=replace, header=header

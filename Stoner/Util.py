@@ -8,7 +8,7 @@ from scipy.optimize import fsolve
 
 from .Core import DataFile
 
-from .tools import format_error, make_Data
+from .tools import format_error, make_Data, ordinal
 from . import DataFolder
 from .analysis.fitting.models.generic import linear
 
@@ -163,29 +163,6 @@ def split_up_down(data, col=None, folder=None):
 
 
 Hickeyify = format_error
-
-
-def ordinal(value):
-    """Format an integer into an ordinal string.
-
-    Args:
-        value (int):
-            Number to be written as an ordinal string
-
-    Return:
-        (str):
-            Ordinal String such as '1st','2nd' etc.
-    """
-    if not isinstance(value, int):
-        raise ValueError
-
-    last_digit = value % 10
-    if value % 100 in [11, 12, 13]:
-        suffix = "th"
-    else:
-        suffix = ["th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"][last_digit]
-
-    return "{}{}".format(value, suffix)
 
 
 def hysteresis_correct(data, **kargs):

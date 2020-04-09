@@ -750,9 +750,9 @@ class STXMImage(ImageFile):
     def __floordiv__(self, other):
         """Implement a // operator to do XMCD calculations on a whole image."""
         if isinstance(other, metadataObject):
-            if self["collection.polarization.value"] > 0 and other["collection.polarization.value"] < 0:
+            if other["collection.polarization.value"] < 0 <= self["collection.polarization.value"]:
                 plus, minus = self, other
-            elif self["collection.polarization.value"] < 0 and other["collection.polarization.value"] > 0:
+            elif other["collection.polarization.value"] > 0 >= self["collection.polarization.value"]:
                 plus, minus = other, self
             else:
                 raise ValueError("XMCD Ratio can only be found from a positive and minus image")

@@ -203,8 +203,7 @@ class DataArray(ma.MaskedArray):
             raise StonerSetasError(
                 "Insufficient axes defined in setas to calculate the phi component. need 3 not {}".format(axes)
             )
-        else:
-            return ret
+        return ret
 
     @property
     def i(self):
