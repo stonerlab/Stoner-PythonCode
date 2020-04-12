@@ -9,9 +9,9 @@ BRANCH		=	`git branch | grep '*' | cut -d ' ' -f 2`
 
 clean:
 	$(MAKE) -C doc clean
-	rm dist/*
-	rm -rf build/*
-	find -name '__pycache__' -exec rm -rf {} \;
+	- rm dist/*
+	- rm -rf build/*
+	- find -name '__pycache__' -exec rm -rf {} \;
 
 test:
 	$(PYTHON_SETUP) test
