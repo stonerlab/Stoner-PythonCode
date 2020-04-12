@@ -32,8 +32,12 @@ import inspect
 import copy
 
 from numpy import log10, floor, abs, logical_and, isnan, round, ndarray, dtype  # pylint: disable=redefined-builtin
-from html import escape as html_escape
 from copy import deepcopy
+
+try:
+    from html import escape as html_escape
+except ImportError:
+    from cgi import escape as html_escape
 
 operator = {
     "eq": lambda k, v: k == v,
