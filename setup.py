@@ -94,6 +94,8 @@ setup(
     package_dir={'Stoner': 'Stoner'},
     package_data={'Stoner':['stylelib/*.mplstyle']},
     test_suite="tests",
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
     install_requires=requires("requirements.txt"),
     extras_require = { "PrettyPrint":["tabulate>=0.7.5"],
                        "mimetype_detection":["magic"],

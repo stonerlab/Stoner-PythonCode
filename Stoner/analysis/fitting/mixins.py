@@ -439,7 +439,7 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
             p0 = lmfit.Parameters()
         for p_name in model.param_names:
             if p_name in kargs:
-                p0[p_name] = lmfit.Parameter(value=kargs.pop(p_name))
+                p0[p_name] = lmfit.Parameter(name=p_name, value=kargs.pop(p_name))
         single_fit = True
 
     if callable(p0):
@@ -457,6 +457,7 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
             else:
                 hint = {}
             hint["value"] = v
+            hint["name"] = n
             p_new[n] = lmfit.Parameter(**hint)
         p0 = p_new
         for p_name in model.param_names:

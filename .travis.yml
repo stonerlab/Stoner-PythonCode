@@ -9,6 +9,7 @@ sudo: true
 python:
     - "3.6"
     - "3.7"
+    - "3.8"
 
 virtualenv:
   system_site_packages: false
@@ -58,6 +59,7 @@ install:
   # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
   # Hyperspy is now an optional dependency for 3.6 onwards
   - conda install hyperspy
+  - conda install pytest pytest-runner pytest-cov
   # Now we unistall the stable stoner - use force to stop downgrading packages!
   - conda remove --yes --force stoner
   - if [[ "$NUMBA" == "0" ]]; then conda remove --yes --force numba; fi
@@ -65,7 +67,7 @@ install:
   - pip install --no-deps .
 
 # command to run tests
-script: coverage run --source=Stoner setup.py test
+script: pytest --cov=Stoner
 
 after_success:
   coveralls

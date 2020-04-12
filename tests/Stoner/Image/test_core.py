@@ -59,7 +59,7 @@ class ImageArrayTest(unittest.TestCase):
         subpath = os.path.join("coretestdata","im1_annotated.png")
         fpath = os.path.join(thisdir, subpath)
         anim=ImageArray(fpath)
-        self.assertTrue(os.path.normpath(anim.metadata['Loaded from']) == os.path.normpath(fpath))
+        self.assertTrue(os.path.normpath(anim.metadata['Loaded from']) == os.path.normpath(fpath), "Failed with {os.path.normpath(anim.metadata['Loaded from'])} and {os.path.normpath(fpath)}")
         cwd = os.getcwd()
         os.chdir(thisdir)
         anim = ImageArray(subpath)
@@ -146,7 +146,7 @@ class ImageArrayTest(unittest.TestCase):
         im = ImageArray(np.linspace(0,1,12).reshape(3,4))
         fpath = os.path.join(thisdir, 'coretestdata/im1_annotated.png')
         self.assertTrue(os.path.normpath(self.imarrfile.filename)\
-                        == os.path.normpath(fpath))
+                        == os.path.normpath(fpath),f"Failed with {os.path.normpath(self.imarrfile.filename)} and {os.path.normpath(fpath)}")
         im = ImageArray(np.linspace(0,1,12).reshape(3,4))
         im['Loaded from']
         im.filename
@@ -425,24 +425,15 @@ class ImageFileTest(unittest.TestCase):
         i=-i
         self.assertEqual(i.sum(),50*255,"Negate operators failed")
 
-
-
-
-
-
-
-
-
-
 if __name__=="__main__": # Run some tests manually to allow debugging
-    #test=ImageArrayTest("test_filename")
+    test=ImageArrayTest("test_filename")
     #test.setUp()
     #test.test_load_from_ImageFile()
     #test.test_load_save_all()
 #    test.test_save()
     #test.test_savetiff()
 #
-    #test2=ImageFileTest("test_constructors")
+    test2=ImageFileTest("test_constructors")
     #test2.setUp()
     #test2.test_constructors()
     #test2.test_mask()
