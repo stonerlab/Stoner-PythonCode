@@ -159,7 +159,7 @@ class MimizerAdaptor(object):
         lower = list()
         for name, hint in hints.items():
             if not isinstance(hint, lmfit.Parameter):
-                hint = lmfit.Parameter(**hint)
+                hint = lmfit.Parameter(name, **hint)
             if not hasattr(hint, "value"):
                 raise RuntimeError("At the very least we need a starting value for the {} parameter".format(name))
             v = hint.value
@@ -427,7 +427,7 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
             p0 = lmfit.Parameters()
         for p_name in model.param_names:
             if p_name in kargs:
-                p0[p_name] = lmfit.Parameter(value=kargs.pop(p_name))
+                p0[p_name] = lmfit.Parameter(p_name, value=kargs.pop(p_name))
         single_fit = True
 
     if callable(p0):
@@ -445,11 +445,11 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
             else:
                 hint = {}
             hint["value"] = v
-            p_new[n] = lmfit.Parameter(**hint)
+            p_new[n] = lmfit.Parameter(n, **hint)
         p0 = p_new
         for p_name in model.param_names:
             if p_name in kargs:
-                p0[p_name] = lmfit.Parameter(value=kargs.pop(p_name))
+                p0[p_name] = lmfit.Parameter(p_name, value=kargs.pop(p_name))
     elif isinstance(p0, _np_.ndarray) and p0.ndim == 2:  # chi^2 mapping
         single_fit = False
         return p0, single_fit

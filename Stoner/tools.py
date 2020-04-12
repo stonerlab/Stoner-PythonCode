@@ -32,7 +32,7 @@ import inspect
 import copy
 
 from numpy import log10, floor, abs, logical_and, isnan, round, ndarray, dtype  # pylint: disable=redefined-builtin
-from cgi import escape as html_escape
+from html import escape as html_escape
 from copy import deepcopy
 
 operator = {
